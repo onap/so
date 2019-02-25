@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +23,8 @@
 package org.onap.so.db.request.data.repository;
 
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
@@ -60,8 +62,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     @Autowired
     private EntityManager entityManager;
 
-    protected static MsoLogger msoLogger =
-            MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, InfraActiveRequestsRepositoryImpl.class);
+    protected static Logger logger = LoggerFactory.getLogger(InfraActiveRequestsRepositoryImpl.class);
 
     protected static final String REQUEST_STATUS = "requestStatus";
     protected static final String SOURCE = "source";
@@ -113,20 +114,15 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
             final List<Predicate> predicates, final Order order) {
 
         final long startTime = System.currentTimeMillis();
-        msoLogger.debug("Execute query on infra active request table");
+        logger.debug("Execute query on infra active request table");
 
         List<InfraActiveRequests> results = new ArrayList<InfraActiveRequests>();
 
-        try {
-            final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            crit.where(cb.and(predicates.toArray(new Predicate[0])));
-            crit.orderBy(order);
-            results = entityManager.createQuery(crit).getResultList();
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        crit.where(cb.and(predicates.toArray(new Predicate[0])));
+        crit.orderBy(order);
+        results = entityManager.createQuery(crit).getResultList();
 
-        } finally {
-            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-                    "Successfully", "RequestDB", "getInfraActiveRequest", null);
-        }
         return results;
     }
 
@@ -140,19 +136,13 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     @Override
     public InfraActiveRequests getRequestFromInfraActive(final String requestId) {
         final long startTime = System.currentTimeMillis();
-        msoLogger.debug("Get request " + requestId + " from InfraActiveRequests DB");
+        logger.debug("Get request {} from InfraActiveRequests DB", requestId);
 
         InfraActiveRequests ar = null;
-        try {
-            final Query query = entityManager.createQuery(
-                    "from InfraActiveRequests where requestId = :requestId OR clientRequestId = :requestId");
-            query.setParameter(REQUEST_ID, requestId);
-            ar = this.getSingleResult(query);
-        } finally {
-
-            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-                    "Successfully", "InfraRequestDB", "getRequestFromInfraActive", null);
-        }
+        final Query query = entityManager
+            .createQuery("from InfraActiveRequests where requestId = :requestId OR clientRequestId = :requestId");
+        query.setParameter(REQUEST_ID, requestId);
+        ar = this.getSingleResult(query);
         return ar;
     }
 
@@ -313,7 +303,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                         predicates.add(cb.between(tableRoot.get(mapKey), minTime, maxTime));
                     }
                 } catch (final Exception e) {
-                    msoLogger.debug("Exception in getOrchestrationFiltersFromInfraActive(): + " + e.getMessage(), e);
+                    logger.debug("Exception in getOrchestrationFiltersFromInfraActive(): {}", e.getMessage(), e);
                     return null;
                 }
             } else if ("DOES_NOT_EQUAL".equalsIgnoreCase(entry.getValue().get(0))) {
@@ -377,7 +367,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
 
                     predicates.add(cb.between(tableRoot.get(mapKey), minTime, maxTime));
                 } catch (final Exception e) {
-                    msoLogger.debug("Exception in getCloudOrchestrationFiltersFromInfraActive(): + " + e.getMessage());
+                    logger.debug("Exception in getCloudOrchestrationFiltersFromInfraActive(): {}", e.getMessage());
                     return null;
                 }
             } else {
@@ -399,7 +389,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     @Override
     public List<InfraActiveRequests> getRequestListFromInfraActive(final String queryAttributeName,
             final String queryValue, final String requestType) {
-        msoLogger.debug("Get list of infra requests from DB with " + queryAttributeName + " = " + queryValue);
+        logger.debug("Get list of infra requests from DB with {} = {}", queryAttributeName, queryValue);
 
 
         try {
@@ -419,7 +409,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                 return arList;
             }
         } catch (final Exception exception) {
-            msoLogger.error("Unable to execute query", exception);
+            logger.error("Unable to execute query", exception);
         }
         return Collections.emptyList();
     }
@@ -435,19 +425,15 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     @Override
     public InfraActiveRequests getRequestFromInfraActive(final String requestId, final String requestType) {
         final long startTime = System.currentTimeMillis();
-        msoLogger.debug("Get infra request from DB with id " + requestId);
+        logger.debug("Get infra request from DB with id {}", requestId);
 
         InfraActiveRequests ar = null;
-        try {
-            final Query query = entityManager.createQuery(
-                    "from InfraActiveRequests where (requestId = :requestId OR clientRequestId = :requestId) and requestType = :requestType");
-            query.setParameter(REQUEST_ID, requestId);
-            query.setParameter(REQUEST_TYPE, requestType);
-            ar = this.getSingleResult(query);
-        } finally {
-            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-                    "Successfully", "RequestDB", "getRequestFromInfraActive", null);
-        }
+
+        final Query query = entityManager.createQuery(
+            "from InfraActiveRequests where (requestId = :requestId OR clientRequestId = :requestId) and requestType = :requestType");
+        query.setParameter(REQUEST_ID, requestId);
+        query.setParameter(REQUEST_TYPE, requestType);
+        ar = this.getSingleResult(query);
         return ar;
     }
 
@@ -464,24 +450,19 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
             final String requestType) {
 
         final long startTime = System.currentTimeMillis();
-        msoLogger.debug("Get infra request from DB for VNF " + vnfName + " and action " + action + " and requestType "
-                + requestType);
+        logger.debug("Get infra request from DB for VNF {} and action {} and requestType {}", vnfName, action,
+            requestType);
 
         InfraActiveRequests ar = null;
-        try {
-            final Query query = entityManager.createQuery(
-                    "from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
-            query.setParameter("vnfName", vnfName);
-            query.setParameter("action", action);
-            query.setParameter(REQUEST_TYPE, requestType);
-            @SuppressWarnings("unchecked")
-            final List<InfraActiveRequests> results = query.getResultList();
-            if (!results.isEmpty()) {
-                ar = results.get(0);
-            }
-        } finally {
-            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-                    "Successfully", "RequestDB", "checkDuplicateByVnfName", null);
+
+        final Query query = entityManager.createQuery(
+            "from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
+        query.setParameter("vnfName", vnfName);
+        query.setParameter("action", action);
+        query.setParameter(REQUEST_TYPE, requestType);
+        @SuppressWarnings("unchecked") final List<InfraActiveRequests> results = query.getResultList();
+        if (!results.isEmpty()) {
+            ar = results.get(0);
         }
 
         return ar;
@@ -499,23 +480,18 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
             final String requestType) {
 
         final long startTime = System.currentTimeMillis();
-        msoLogger.debug("Get list of infra requests from DB for VNF " + vnfId + " and action " + action);
+        logger.debug("Get list of infra requests from DB for VNF {} and action {}", vnfId, action);
 
         InfraActiveRequests ar = null;
-        try {
-            final Query query = entityManager.createQuery(
-                    "from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
-            query.setParameter("vnfId", vnfId);
-            query.setParameter("action", action);
-            query.setParameter(REQUEST_TYPE, requestType);
-            @SuppressWarnings("unchecked")
-            final List<InfraActiveRequests> results = query.getResultList();
-            if (!results.isEmpty()) {
-                ar = results.get(0);
-            }
-        } finally {
-            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-                    "Successfully", "RequestDB", "checkDuplicateByVnfId", null);
+
+        final Query query = entityManager.createQuery(
+            "from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
+        query.setParameter("vnfId", vnfId);
+        query.setParameter("action", action);
+        query.setParameter(REQUEST_TYPE, requestType);
+        @SuppressWarnings("unchecked") final List<InfraActiveRequests> results = query.getResultList();
+        if (!results.isEmpty()) {
+            ar = results.get(0);
         }
 
         return ar;
@@ -530,29 +506,24 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     @Override
     public InfraActiveRequests checkVnfIdStatus(final String operationalEnvironmentId) {
         final long startTime = System.currentTimeMillis();
-        msoLogger.debug("Get Infra request from DB for OperationalEnvironmentId " + operationalEnvironmentId);
+        logger.debug("Get Infra request from DB for OperationalEnvironmentId {}", operationalEnvironmentId);
 
         InfraActiveRequests ar = null;
-        try {
-            final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-            final CriteriaQuery<InfraActiveRequests> crit = cb.createQuery(InfraActiveRequests.class);
-            final Root<InfraActiveRequests> candidateRoot = crit.from(InfraActiveRequests.class);
-            final Predicate operationalEnvEq =
-                    cb.equal(candidateRoot.get("operationalEnvId"), operationalEnvironmentId);
-            final Predicate requestStatusNotEq = cb.notEqual(candidateRoot.get(REQUEST_STATUS), "COMPLETE");
-            final Predicate actionEq = cb.equal(candidateRoot.get("action"), "create");
-            final Order startTimeOrder = cb.desc(candidateRoot.get("startTime"));
-            crit.select(candidateRoot);
-            crit.where(cb.and(operationalEnvEq, requestStatusNotEq, actionEq));
-            crit.orderBy(startTimeOrder);
-            final TypedQuery<InfraActiveRequests> query = entityManager.createQuery(crit);
-            final List<InfraActiveRequests> results = query.getResultList();
-            if (!results.isEmpty()) {
-                ar = results.get(0);
-            }
-        } finally {
-            msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-                    "Successfully", "RequestDB", "checkDuplicateByVnfName", null);
+
+        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        final CriteriaQuery<InfraActiveRequests> crit = cb.createQuery(InfraActiveRequests.class);
+        final Root<InfraActiveRequests> candidateRoot = crit.from(InfraActiveRequests.class);
+        final Predicate operationalEnvEq = cb.equal(candidateRoot.get("operationalEnvId"), operationalEnvironmentId);
+        final Predicate requestStatusNotEq = cb.notEqual(candidateRoot.get(REQUEST_STATUS), "COMPLETE");
+        final Predicate actionEq = cb.equal(candidateRoot.get("action"), "create");
+        final Order startTimeOrder = cb.desc(candidateRoot.get("startTime"));
+        crit.select(candidateRoot);
+        crit.where(cb.and(operationalEnvEq, requestStatusNotEq, actionEq));
+        crit.orderBy(startTimeOrder);
+        final TypedQuery<InfraActiveRequests> query = entityManager.createQuery(crit);
+        final List<InfraActiveRequests> results = query.getResultList();
+        if (!results.isEmpty()) {
+            ar = results.get(0);
         }
 
         return ar;
@@ -595,7 +566,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
             }
             return entityManager.createQuery(criteriaQuery).getResultList();
         } catch (final Exception exception) {
-            msoLogger.error("Unable to execute query using filters: " + filters, exception);
+            logger.error("Unable to execute query using filters: {}", filters, exception);
             return Collections.emptyList();
         }
     }
