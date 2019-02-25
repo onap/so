@@ -22,6 +22,11 @@ spring:
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: org.mariadb.jdbc.Driver
+  flyway:
+    baseline-on-migrate: false
+    url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
+    user: ${DB_ADMIN_USERNAME}
+    password: ${DB_ADMIN_PASSWORD}
   jpa:
       show-sql: false
       hibernate:
@@ -39,11 +44,6 @@ spring:
       username: mso_admin
       password: '$2a$12$tidKuu.h88E2nuL95pTVY.ZOYMN/1dp29A9b1o.0GFDsVVSYlMkHa'
       role: ACTUATOR
-flyway:
-  baseline-on-migrate: false
-  url:  jdbc:mariadb://${DB_HOST}:${DB_PORT}/requestdb
-  user: ${DB_ADMIN_USERNAME}
-  password: ${DB_ADMIN_PASSWORD}
 
 #Actuator
 management:

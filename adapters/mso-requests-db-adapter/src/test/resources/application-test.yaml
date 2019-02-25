@@ -25,6 +25,11 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
     initialize: true
     initialization-mode: never
+  flyway:
+    baseline-on-migrate: false
+    url: jdbc:mariadb://localhost:3307/requestdb
+    user: root
+    password: password
   jpa:   
     generate-ddl: false
     show-sql: false
@@ -61,10 +66,3 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.  
-
-
-flyway:
-  baseline-on-migrate: false
-  url: jdbc:mariadb://localhost:3307/requestdb
-  user: root
-  password: password
