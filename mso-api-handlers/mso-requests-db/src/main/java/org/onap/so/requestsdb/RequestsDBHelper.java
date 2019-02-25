@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,8 +25,9 @@ package org.onap.so.requestsdb;
 import java.sql.Timestamp;
 
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.db.request.client.RequestsDbClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
@@ -33,7 +36,7 @@ import org.springframework.stereotype.Component;
 public class RequestsDBHelper {
 		
 	private static final String UNKNOWN = "UNKNOWN";
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, RequestsDBHelper.class);
+	private static Logger logger = LoggerFactory.getLogger(RequestsDBHelper.class);
 	private String className = this.getClass().getSimpleName() +" class\'s ";
 	private String methodName = "";
 	private String classMethodMessage = "";
@@ -51,7 +54,7 @@ public class RequestsDBHelper {
 	public void updateInfraSuccessCompletion(String msg, String requestId, String operationalEnvironmentId) {
 		methodName = "updateInfraSuccessCompletion() method.";
 		classMethodMessage = className + " " + methodName;
-		msoLogger.debug("Begin of " + classMethodMessage);
+		logger.debug("Begin of {}", classMethodMessage);
 			
 		InfraActiveRequests request = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
 	
@@ -70,7 +73,7 @@ public class RequestsDBHelper {
         request.setEndTime(endTimeStamp);
 		requestsDbClient.save(request);
 		
-		msoLogger.debug("End of " + classMethodMessage);
+		logger.debug("End of {}", classMethodMessage);
 		
 	}
 	
@@ -85,7 +88,7 @@ public class RequestsDBHelper {
 	public void updateInfraFailureCompletion(String msg, String requestId, String operationalEnvironmentId) {
 		methodName = "updateInfraFailureCompletion() method.";
 		classMethodMessage = className + " " + methodName;
-		msoLogger.debug("Begin of " + classMethodMessage);
+		logger.debug("Begin of {}", classMethodMessage);
 		
 		InfraActiveRequests request = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
 		request.setRequestStatus("FAILED");
@@ -103,7 +106,7 @@ public class RequestsDBHelper {
         request.setEndTime(endTimeStamp);
 		requestsDbClient.save(request);
 		
-		msoLogger.debug("End of " + classMethodMessage);
+		logger.debug("End of {}", classMethodMessage);
 		
 	}	
 }
