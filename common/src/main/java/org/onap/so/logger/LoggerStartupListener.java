@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,11 +25,11 @@ package org.onap.so.logger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.LoggerContextListener;
 import ch.qos.logback.core.Context;
@@ -37,8 +39,8 @@ import ch.qos.logback.core.spi.LifeCycle;
 @Component
 public class LoggerStartupListener extends ContextAwareBase implements LoggerContextListener, LifeCycle {
 
-    private boolean started = false;
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL, LoggerStartupListener.class);
+	private boolean started = false;
+	private static final Logger logger = LoggerFactory.getLogger(LoggerStartupListener.class);
 
     @Override
     public void start() {
@@ -48,7 +50,7 @@ public class LoggerStartupListener extends ContextAwareBase implements LoggerCon
 		try {
 			addr = InetAddress.getLocalHost();
 		} catch (UnknownHostException e) {
-			LOGGER.error("UnknownHostException",e);
+			logger.error("UnknownHostException",e);
 			
 		}    
         Context context = getContext();
@@ -73,10 +75,6 @@ public class LoggerStartupListener extends ContextAwareBase implements LoggerCon
 	}
 
 	@Override
-	public void onLevelChange(Logger arg0, Level arg1) {
-	}
-
-	@Override
 	public void onReset(LoggerContext arg0) {
 	}
 
@@ -86,5 +84,9 @@ public class LoggerStartupListener extends ContextAwareBase implements LoggerCon
 
 	@Override
 	public void onStop(LoggerContext arg0) {
+	}
+
+	@Override
+	public void onLevelChange(ch.qos.logback.classic.Logger logger, Level level) {
 	}
 }

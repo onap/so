@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,11 +28,12 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
 
 
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
 
-	private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, RuntimeExceptionMapper.class);
+	private static Logger logger = LoggerFactory.getLogger(RuntimeExceptionMapper.class);
 
 	@Override
 	public Response toResponse(RuntimeException exception) {
@@ -38,8 +41,7 @@ public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException>
 		if (exception instanceof NotFoundException) {
 			return Response.status(Status.NOT_FOUND).build();
 		} else {
-
-			logger.error(exception);
+			logger.error("Error occured", exception);
 			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ExceptionResponse("Unexpected Internal Exception")).build();
 		}
 	}

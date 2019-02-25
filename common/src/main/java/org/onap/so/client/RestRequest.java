@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,13 +28,13 @@ import java.util.concurrent.Callable;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestRequest implements Callable<Response> {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, RestRequest.class);
+	private static final Logger logger = LoggerFactory.getLogger(RestRequest.class);
 
 	private final RestClient client;
 	private final String method;
@@ -73,7 +75,7 @@ public class RestRequest implements Callable<Response> {
 				mapper.get().map(response);
 			} catch (NotFoundException e) {
 				if (this.client.props.mapNotFoundToEmpty() && "GET".equals(method)) {
-					msoLogger.debug("RestClient recieved not found on URL: " + this.client.getWebTarget().getUri());
+					logger.debug("RestClient recieved not found on URL: {}", this.client.getWebTarget().getUri());
 					return response;
 				} else {
 					throw e;

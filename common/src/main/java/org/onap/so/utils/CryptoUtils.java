@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +25,8 @@ package org.onap.so.utils;
 
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -38,7 +42,8 @@ import java.util.Arrays;
  */
 public final class CryptoUtils {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, CryptoUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(CryptoUtils.class);
+
 
     private static final String AES = "AES";
     private static final String CLOUD_KEY = "aa3871669d893c7fb8abbcda31b88b4f";
@@ -86,17 +91,19 @@ public final class CryptoUtils {
     	try {
 	    	return CryptoUtils.encrypt(message, CLOUD_KEY);
 	    } catch (GeneralSecurityException e) {
-	        LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in encryptPassword", e);
-	        return null;
-	    }
+          logger.error("{} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(),
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
+          return null;
+      }
     }
     public static String decryptCloudConfigPassword(String message) {
     	try {
 	    	return CryptoUtils.decrypt(message, CLOUD_KEY);
 	    } catch (GeneralSecurityException e) {
-	        LOGGER.error (MessageEnum.RA_GENERAL_EXCEPTION, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in encryptPassword", e);
-	        return null;
-	    }
+          logger.error("{} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(),
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
+          return null;
+      }
     }
     private static SecretKeySpec getSecretKeySpec (String keyString) {
         byte[] key = hexStringToByteArray (keyString);
