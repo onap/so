@@ -84,10 +84,8 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 		if(!this.exists(uri)){
 			if (obj.isPresent()) {
 				this.create(uri, obj.get());
-				incrementActionAmount();
 			} else {
 				this.createEmpty(uri);
-				incrementActionAmount();
 			}
 			
 		}
@@ -194,7 +192,7 @@ public abstract class GraphInventoryTransactionClient<Self, Uri extends GraphInv
 	protected abstract boolean exists(Uri uri);
 	
 	protected abstract String getGraphDBName();
-
+	
 	/**
 	 * @param obj - can be any object which will marshal into a valid A&AI payload
 	 * @param uri

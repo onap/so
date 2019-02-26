@@ -60,16 +60,18 @@ public class AAISingleTransactionClient extends GraphInventoryTransactionClient<
 	 */
 	@Override
 	public void execute() throws BulkProcessFailed {
-		RestClient client = aaiClient.createClient(AAIUriFactory.createResourceUri(AAIObjectType.SINGLE_TRANSACTION));
 		try {
-			SingleTransactionResponse response = client.post(this.request, SingleTransactionResponse.class);
-			if (response != null) {
-				final Optional<String> errorMessage = this.locateErrorMessages(response);
-				if (errorMessage.isPresent()) {
-					throw new BulkProcessFailed("One or more transactions failed in A&AI. Check logs for payloads.\nMessages:\n" + errorMessage.get());
+			if (!this.request.getOperations().isEmpty()) {
+				RestClient client = aaiClient.createClient(AAIUriFactory.createResourceUri(AAIObjectType.SINGLE_TRANSACTION));
+				SingleTransactionResponse response = client.post(this.request, SingleTransactionResponse.class);
+				if (response != null) {
+					final Optional<String> errorMessage = this.locateErrorMessages(response);
+					if (errorMessage.isPresent()) {
+						throw new BulkProcessFailed("One or more transactions failed in A&AI. Check logs for payloads.\nMessages:\n" + errorMessage.get());
+					}
+				} else {
+					throw new BulkProcessFailed("Transactions acccepted by A&AI, but there was no response. Unsure of result.");
 				}
-			} else {
-				throw new BulkProcessFailed("Transactions acccepted by A&AI, but there was no response. Unsure of result.");
 			}
 		} finally {
 			this.request.getOperations().clear();
