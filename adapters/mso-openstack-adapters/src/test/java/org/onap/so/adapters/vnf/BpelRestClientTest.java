@@ -35,7 +35,6 @@ public class BpelRestClientTest extends BaseRestTestUtils{
 	@LocalServerPort
 	private int port;
 	@Autowired
-	@Qualifier("VnfBpel")
 	private Provider<BpelRestClient> clientProvider;
 
 	@Test
