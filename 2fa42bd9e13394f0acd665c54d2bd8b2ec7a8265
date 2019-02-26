@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9b5efe75_2d90d80f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/serviceTask/AbstractSdncOperationTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 4313
+      },
+      "writtenOn": "2019-02-26T16:54:48Z",
+      "side": 0,
+      "message": "it looks like there are descendants from this class that use logger in bpmn/so-bpmn-infrastructure-common",
+      "range": {
+        "startLine": 61,
+        "startChar": 31,
+        "endLine": 61,
+        "endChar": 40
+      },
+      "revId": "2fa42bd9e13394f0acd665c54d2bd8b2ec7a8265",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
