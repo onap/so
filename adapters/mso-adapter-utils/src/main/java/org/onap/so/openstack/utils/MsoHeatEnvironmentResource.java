@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +23,12 @@
 
 package org.onap.so.openstack.utils;
 
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MsoHeatEnvironmentResource {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoHeatEnvironmentResource.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsoHeatEnvironmentResource.class);
     
 	private String name;
 	private String value;
@@ -87,8 +90,8 @@ public class MsoHeatEnvironmentResource {
 		try {
 			result = this.name.hashCode();
 		} catch (Exception e) {
-		    LOGGER.debug("Exception:", e);
-		}
+        logger.debug("Exception:", e);
+    }
 		return result;
 	}
 
