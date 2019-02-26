@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,14 +31,15 @@ import org.onap.so.bpmn.core.domain.NetworkResource;
 import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.domain.ServiceInstance;
 import org.onap.so.bpmn.core.domain.VnfResource;
-import org.onap.so.logger.MsoLogger;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class DecomposeJsonUtil implements Serializable {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DecomposeJsonUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(DecomposeJsonUtil.class);
 	/**
 	 * 
 	 */

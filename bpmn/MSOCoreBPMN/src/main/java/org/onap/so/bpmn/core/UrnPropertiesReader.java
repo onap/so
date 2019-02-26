@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,7 +25,8 @@ package org.onap.so.bpmn.core;
 import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -36,7 +39,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Configuration
 public class UrnPropertiesReader {
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,UrnPropertiesReader.class);
+    private static final Logger logger = LoggerFactory.getLogger(UrnPropertiesReader.class);
     private static Environment environment;
 
     @Autowired
@@ -56,13 +59,15 @@ public class UrnPropertiesReader {
     public static String getVariable(String variableName, DelegateExecution execution) {
         Object value = execution.getVariable(variableName);
         if (value != null) {
-            LOGGER.trace("Retrieved value for the URN variable, " + variableName + ", from the execution object: " + String.valueOf(value));
+            logger.trace("Retrieved value for the URN variable, {}, from the execution object: {}", variableName,
+                String.valueOf(value));
             return String.valueOf(value);
         }
         String variableValue = null;
         if (environment != null && environment.getProperty(variableName) != null) {
             variableValue = environment.getProperty(variableName);
-            LOGGER.trace("Retrieved value for the URN variable, " + variableName + ", from the environment variable: " + variableValue);
+            logger.trace("Retrieved value for the URN variable, {}, from the environment variable: {}", variableName,
+                variableValue);
             execution.setVariable(variableName, variableValue);
             return variableValue;
         }
