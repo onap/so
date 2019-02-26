@@ -57,7 +57,7 @@ import org.springframework.stereotype.Component;
  * org.onap.so.adapters.vnf.retrylist list of response codes that will trigger a retry (the special code
  * 			900 means "connection was not established")
  */
-@Component("VnfBpel")
+@Component()
 @Scope("prototype")
 public class BpelRestClient {
 	public  static final String MSO_PROP_VNF_ADAPTER     = "MSO_PROP_VNF_ADAPTER";
@@ -249,6 +249,8 @@ public class BpelRestClient {
 		if (credentials != null && !credentials.isEmpty())
 			post.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary(credentials.getBytes()));
 
+		LOGGER.debug("HTTPPost Headers: " + post.getAllHeaders());
+		
         //ContentType
         ContentType ctype = isxml ? ContentType.APPLICATION_XML : ContentType.APPLICATION_JSON;
         post.setEntity(new StringEntity(toBpelStr, ctype));
