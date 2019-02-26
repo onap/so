@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,25 +24,6 @@
 package org.onap.so.openstack.utils;
 
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
-import org.onap.so.openstack.beans.StackInfo;
-import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
-import org.onap.so.openstack.exceptions.MsoException;
-import org.onap.so.openstack.exceptions.MsoOpenstackException;
-import org.onap.so.openstack.exceptions.MsoStackNotFound;
-import org.onap.so.openstack.mappers.StackInfoMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,15 +33,34 @@ import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.model.Stack;
 import com.woorea.openstack.heat.model.Stack.Output;
 import com.woorea.openstack.heat.model.UpdateStackParam;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.logger.MessageEnum;
+import org.onap.so.logger.MsoLogger;
+import org.onap.so.openstack.beans.StackInfo;
+import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
+import org.onap.so.openstack.exceptions.MsoException;
+import org.onap.so.openstack.exceptions.MsoOpenstackException;
+import org.onap.so.openstack.exceptions.MsoStackNotFound;
+import org.onap.so.openstack.mappers.StackInfoMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 
     private static final String UPDATE_STACK = "UpdateStack";
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoHeatUtilsWithUpdate.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsoHeatUtilsWithUpdate.class);
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
-    
+
     @Autowired
     private Environment environment;
     /*
@@ -204,15 +206,15 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         // NOTE: This is specific to the v1 Orchestration API.
         String canonicalName = heatStack.getStackName () + "/" + heatStack.getId ();
 
-        LOGGER.debug ("Ready to Update Stack (" + canonicalName + ") with input params: " + stackInputs);
+        logger.debug ("Ready to Update Stack ({}) with input params: {}", canonicalName, stackInputs);
         //force entire stackInput object to generic Map<String, Object> for openstack compatibility
 		ObjectMapper mapper = new ObjectMapper();
 		Map<String, Object> normalized = new HashMap<>();
 		try {
 			normalized = mapper.readValue(mapper.writeValueAsString(stackInputs), new TypeReference<HashMap<String,Object>>() {});
 		} catch (IOException e1) {
-			LOGGER.debug("could not map json", e1);
-		}
+        logger.debug("could not map json", e1);
+    }
         // Build up the stack update parameters
         // Disable auto-rollback, because error reason is lost. Always rollback in the code.
         UpdateStackParam stack = new UpdateStackParam ();
@@ -229,7 +231,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         // and then add to stack (both are part of "files:" being added to stack)
         if (haveFiles && haveHeatFiles) {
             // Let's do this here - not in the bean
-            LOGGER.debug ("Found files AND heatFiles - combine and add!");
+            logger.debug ("Found files AND heatFiles - combine and add!");
             Map <String, Object> combinedFiles = new HashMap<>();
             for (String keyString : files.keySet ()) {
                 combinedFiles.put (keyString, files.get (keyString));
@@ -275,11 +277,12 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             while (loopAgain) {
                 try {
                     updateStack = queryHeatStack (heatClient, canonicalName);
-                    LOGGER.debug (updateStack.getStackStatus () + " (" + canonicalName + ")");
+                    logger.debug("{} ({}) ", updateStack.getStackStatus(), canonicalName);
                     try {
-                    	LOGGER.debug("Current stack " + this.getOutputsAsStringBuilderWithUpdate(heatStack).toString());
+                        logger
+                            .debug("Current stack {}" + this.getOutputsAsStringBuilderWithUpdate(heatStack).toString());
                     } catch (Exception e) {
-                    	LOGGER.debug("an error occurred trying to print out the current outputs of the stack", e);
+                        logger.debug("an error occurred trying to print out the current outputs of the stack", e);
                     }
 
 
@@ -289,7 +292,10 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                         if (pollTimeout <= 0) {
                             // Note that this should not occur, since there is a timeout specified
                             // in the Openstack call.
-                        	LOGGER.error (MessageEnum.RA_UPDATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName, updateStack.getStackStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError, "Update stack timeout");
+                            logger.error(
+                                "{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Update stack timeout",
+                                MessageEnum.RA_UPDATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+                                updateStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
                             loopAgain = false;
                         } else {
                             try {
@@ -302,7 +308,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                             }
                         }
                         pollTimeout -= createPollInterval;
-                        LOGGER.debug("pollTimeout remaining: " + pollTimeout);
+                        logger.debug("pollTimeout remaining: {}", pollTimeout);
                     } else {
                         loopAgain = false;
                     }
@@ -316,7 +322,9 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             }
 
             if (!"UPDATE_COMPLETE".equals (updateStack.getStackStatus ())) {
-            	LOGGER.error (MessageEnum.RA_UPDATE_STACK_ERR, updateStack.getStackStatus(), updateStack.getStackStatusReason(), "", "", MsoLogger.ErrorCode.DataError, "Update Stack error");
+                logger.error("{} Stack status: {} Stack status reason: {} {} Update Stack error",
+                    MessageEnum.RA_UPDATE_STACK_ERR, updateStack.getStackStatus(), updateStack.getStackStatusReason(),
+                    MsoLogger.ErrorCode.DataError.getValue());
 
                 // TODO: No way to roll back the stack at this point. What to do?
                 // Throw a 'special case' of MsoOpenstackException to report the Heat status
@@ -337,14 +345,14 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             // Return the current status.
             updateStack = queryHeatStack (heatClient, canonicalName);
             if (updateStack != null) {
-                LOGGER.debug ("UpdateStack, status = " + updateStack.getStackStatus ());
+                logger.debug("UpdateStack, status = {}", updateStack.getStackStatus());
             } else {
-                LOGGER.debug ("UpdateStack, stack not found");
+                logger.debug("UpdateStack, stack not found");
             }
         }
         return new StackInfoMapper(updateStack).map();
     }
-    
+
 	private StringBuilder getOutputsAsStringBuilderWithUpdate(Stack heatStack) {
 		// This should only be used as a utility to print out the stack outputs
 		// to the log
@@ -376,16 +384,16 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 					String str = JSON_MAPPER.writeValueAsString(obj);
 					sb.append(str).append(" (a java.util.LinkedHashMap)");
 				} catch (Exception e) {
-					LOGGER.debug("Exception :", e);
-					sb.append("(a LinkedHashMap value that would not convert nicely)");
-				}				
+            logger.debug("Exception :", e);
+            sb.append("(a LinkedHashMap value that would not convert nicely)");
+				}
 			} else if (obj instanceof Integer) {
 				String str = "";
 				try {
 					str = obj.toString() + " (an Integer)\n";
 				} catch (Exception e) {
-					LOGGER.debug("Exception :", e);
-					str = "(an Integer unable to call .toString() on)";
+            logger.debug("Exception :", e);
+            str = "(an Integer unable to call .toString() on)";
 				}
 				sb.append(str);
 			} else if (obj instanceof ArrayList) {
@@ -393,8 +401,8 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 				try {
 					str = obj.toString() + " (an ArrayList)";
 				} catch (Exception e) {
-					LOGGER.debug("Exception :", e);
-					str = "(an ArrayList unable to call .toString() on?)";
+            logger.debug("Exception :", e);
+            str = "(an ArrayList unable to call .toString() on?)";
 				}
 				sb.append(str);
 			} else if (obj instanceof Boolean) {
@@ -402,8 +410,8 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 				try {
 					str = obj.toString() + " (a Boolean)";
 				} catch (Exception e) {
-					LOGGER.debug("Exception :", e);
-					str = "(an Boolean unable to call .toString() on?)";
+            logger.debug("Exception :", e);
+            str = "(an Boolean unable to call .toString() on?)";
 				}
 				sb.append(str);
 			}
@@ -412,8 +420,8 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 				try {
 					str = obj.toString() + " (unknown Object type)";
 				} catch (Exception e) {
-					LOGGER.debug("Exception :", e);
-					str = "(a value unable to call .toString() on?)";
+            logger.debug("Exception :", e);
+            str = "(a value unable to call .toString() on?)";
 				}
 				sb.append(str);
 			}
@@ -422,16 +430,16 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
 		sb.append("[END]");
 		return sb;
 	}
-	
+
 	private String convertNodeWithUpdate(final JsonNode node) {
 		try {
 			final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
 			final String json = JSON_MAPPER.writeValueAsString(obj);
 			return json;
 		} catch (Exception e) {
-			LOGGER.debug("Error converting json to string " + e.getMessage(), e);
-		}
+        logger.debug("Error converting json to string {} ", e.getMessage(), e);
+    }
 		return "[Error converting json to string]";
 	}
-	
+
 }

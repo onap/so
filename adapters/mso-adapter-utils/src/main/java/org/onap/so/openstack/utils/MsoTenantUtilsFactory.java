@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,16 +25,17 @@ package org.onap.so.openstack.utils;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.ServerType;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MsoTenantUtilsFactory {
 
-	protected static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, MsoTenantUtilsFactory.class);
-	@Autowired
+    protected static Logger logger = LoggerFactory.getLogger(MsoTenantUtilsFactory.class);
+    @Autowired
 	protected CloudConfig cloudConfig;
 	@Autowired
 	protected MsoKeystoneUtils keystoneUtils;

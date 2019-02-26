@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,17 +24,16 @@
 package org.onap.so.openstack.utils;
 
 
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MsoHeatEnvironmentEntry {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoHeatEnvironmentEntry.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsoHeatEnvironmentEntry.class);
     
 	private Set<MsoHeatEnvironmentParameter> parameters = null;
 	private Set<MsoHeatEnvironmentResource> resources = null;
@@ -66,8 +67,8 @@ public class MsoHeatEnvironmentEntry {
 				this.resourceRegistryEntryRaw = sb;
 			}
 		} catch (Exception e) {
-		    LOGGER.debug("Exception:", e);
-			this.valid = false;
+        logger.debug("Exception:", e);
+        this.valid = false;
 			this.errorString = e.getMessage();
 			//e.printStackTrace();
 		}
@@ -249,7 +250,7 @@ public class MsoHeatEnvironmentEntry {
                 }
             }
         } catch (Exception e) {
-            LOGGER.debug("Exception:", e);
+            logger.debug("Exception:", e);
             this.errorString = e.getMessage();
             //e.printStackTrace();
         }

@@ -23,6 +23,21 @@
 
 package org.onap.so.openstack.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.woorea.openstack.base.client.OpenStackConnectException;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.heat.Heat;
+import com.woorea.openstack.heat.model.CreateStackParam;
+import com.woorea.openstack.heat.model.Resources;
+import com.woorea.openstack.heat.model.Stack;
+import com.woorea.openstack.heat.model.Stack.Output;
+import com.woorea.openstack.heat.model.Stacks;
+import com.woorea.openstack.keystone.Keystone;
+import com.woorea.openstack.keystone.model.Access;
+import com.woorea.openstack.keystone.model.Authentication;
+import com.woorea.openstack.keystone.utils.KeystoneUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -31,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
 import org.onap.so.adapters.vdu.VduArtifact;
@@ -53,7 +67,6 @@ import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.db.catalog.beans.ServerType;
 import org.onap.so.logger.MessageEnum;
-
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
@@ -66,26 +79,12 @@ import org.onap.so.openstack.exceptions.MsoStackAlreadyExists;
 import org.onap.so.openstack.exceptions.MsoTenantNotFound;
 import org.onap.so.openstack.mappers.StackInfoMapper;
 import org.onap.so.utils.CryptoUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.woorea.openstack.base.client.OpenStackConnectException;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.heat.Heat;
-import com.woorea.openstack.heat.model.CreateStackParam;
-import com.woorea.openstack.heat.model.Resources;
-import com.woorea.openstack.heat.model.Stack;
-import com.woorea.openstack.heat.model.Stack.Output;
-import com.woorea.openstack.heat.model.Stacks;
-import com.woorea.openstack.keystone.Keystone;
-import com.woorea.openstack.keystone.model.Access;
-import com.woorea.openstack.keystone.model.Authentication;
-import com.woorea.openstack.keystone.utils.KeystoneUtils;
 
 @Primary
 @Component
@@ -117,7 +116,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     @Autowired
     private KeystoneV3Authentication keystoneV3Authentication;
     
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoHeatUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsoHeatUtils.class);
 
     // Properties names and variables (with default values)
     protected String createPollIntervalProp = "org.onap.so.adapters.po.pollInterval";
@@ -292,13 +291,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         // Obtain the cloud site information where we will create the stack
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
-        LOGGER.debug("Found: " + cloudSite.toString());
+        logger.debug("Found: {}", cloudSite);
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
         Heat heatClient = getHeatClient (cloudSite, tenantId);
-        LOGGER.debug("Found: " + heatClient.toString());
+        logger.debug("Found: {}", heatClient);
 
-        LOGGER.debug ("Ready to Create Stack (" + heatTemplate + ") with input params: " + stackInputs);
+        logger.debug ("Ready to Create Stack ({}) with input params: {}", heatTemplate, stackInputs);
 
         Stack heatStack = null;
         try {
@@ -313,7 +312,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                 me.addContext (CREATE_STACK);
                 throw me;
         } else {
-                LOGGER.debug("ERROR STATUS = " + e.getStatus() + ",\n" + e.getMessage() + "\n" + e.getLocalizedMessage());
+                logger.debug("ERROR STATUS = {},\n{}\n{}", e.getStatus(), e.getMessage(), e.getLocalizedMessage());
                 throw heatExceptionToMsoException (e, CREATE_STACK);
             }
         } catch (OpenStackConnectException e) {          
@@ -333,7 +332,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         } else {
             // Get initial status, since it will have been null after the create.
             heatStack = queryHeatStack (heatClient, canonicalName);
-            LOGGER.debug (heatStack.getStackStatus ());
+            logger.debug (heatStack.getStackStatus ());
         }
         return new StackInfoMapper(heatStack).map();
     }
@@ -347,28 +346,30 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		int deletePollTimeout = pollTimeout;
 		boolean createTimedOut = false;
 		StringBuilder stackErrorStatusReason = new StringBuilder("");
-		LOGGER.debug("createPollInterval=" + createPollInterval + ", pollTimeout=" + pollTimeout);
+      logger.debug("createPollInterval={}, pollTimeout={}", createPollInterval, pollTimeout);
 
 		while (true) {
 		    try {
 		        heatStack = queryHeatStack (heatClient, canonicalName);
-		        LOGGER.debug (heatStack.getStackStatus () + " (" + canonicalName + ")");
-		        try {
-		            LOGGER.debug("Current stack " + this.getOutputsAsStringBuilder(heatStack).toString());
-		        } catch (Exception e) {
-		            LOGGER.debug("an error occurred trying to print out the current outputs of the stack", e);
+            logger.debug("{} ({})", heatStack.getStackStatus(), canonicalName);
+            try {
+                logger.debug("Current stack {}", this.getOutputsAsStringBuilder(heatStack).toString());
+            } catch (Exception e) {
+		            logger.debug("an error occurred trying to print out the current outputs of the stack", e);
 		        }
 
 		        if ("CREATE_IN_PROGRESS".equals (heatStack.getStackStatus ())) {                       
 		            if (pollTimeout <= 0) {
-		                LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName, heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError, "Create stack timeout");
-		                createTimedOut = true;
+                    logger.error("{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Create stack timeout",
+                        MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+                        heatStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
+                    createTimedOut = true;
 		                break;
 		            }
 		            sleep(createPollInterval * 1000L);
 		            pollTimeout -= createPollInterval;
-		    		LOGGER.debug("pollTimeout remaining: " + pollTimeout);
-		        } else {                    
+                logger.debug("pollTimeout remaining: {}", pollTimeout);
+            } else {
 		        	stackErrorStatusReason.append("Stack error (" + heatStack.getStackStatus() + "): " + heatStack.getStackStatusReason());
 		            break;
 		        }
@@ -377,33 +378,38 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		    	// Try to roll back the stack
 		    	if (!backout)
 		    	{
-		    		LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack, stack deletion suppressed");
-		    	}
+              logger.warn("{} Exception in Create Stack, stack deletion suppressed {}",
+                  MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+          }
 		    	else
 		    	{
 		    		try {
-		    			LOGGER.debug("Create Stack error - unable to query for stack status - attempting to delete stack: " + canonicalName + " - This will likely fail and/or we won't be able to query to see if delete worked");
-		    			OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
+                logger.debug(
+                    "Create Stack error - unable to query for stack status - attempting to delete stack: {}"
+                        + " - This will likely fail and/or we won't be able to query to see if delete worked",
+                    canonicalName);
+                OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
 		    			executeAndRecordOpenstackRequest (request);
 		    			boolean deleted = false;
 		    			while (!deleted) {
 		    				try {
 		    					heatStack = queryHeatStack(heatClient, canonicalName);
 		    					if (heatStack != null) {
-		        					LOGGER.debug(heatStack.getStackStatus());
-		        					if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
+                      logger.debug(heatStack.getStackStatus());
+                      if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
 		        						if (deletePollTimeout <= 0) {
-		        							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-		        									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError,
-		        									"Rollback: DELETE stack timeout");
-		        							break;
+                            logger.error(
+                                "{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Rollback: DELETE stack timeout",
+                                MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+                                heatStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
+                            break;
 		        						} else {
 		        							sleep(deletePollInterval * 1000L);
 		        							deletePollTimeout -= deletePollInterval;
 		        						}
 		        					} else if ("DELETE_COMPLETE".equals(heatStack.getStackStatus())){
-		        						LOGGER.debug("DELETE_COMPLETE for " + canonicalName);
-		        						deleted = true;
+                          logger.debug("DELETE_COMPLETE for {}", canonicalName);
+                          deleted = true;
 		        						continue;
 		        					} else {
 		        						//got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
@@ -411,21 +417,22 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		        					}
 		        				} else {
 		        					// assume if we can't find it - it's deleted
-		        					LOGGER.debug("heatStack returned null - assume the stack " + canonicalName + " has been deleted");
-		        					deleted = true;
+                      logger.debug("heatStack returned null - assume the stack {} has been deleted", canonicalName);
+                      deleted = true;
 		        					continue;
 		    					}
 
 		    				} catch (Exception e3) {
 		    					// Just log this one. We will report the original exception.
-		    					LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e3, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack on error on query");
-
+                    logger.error("{} Create Stack: Nested exception rolling back stack: {} ",
+                        MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e3);
 		    				}
 		    			}
 		    		} catch (Exception e2) {
 		    			// Just log this one. We will report the original exception.
-		    			LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack: Nested exception rolling back stack");
-		    		}
+                logger.error("{} Create Stack: Nested exception rolling back stack: {} ",
+                    MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e2);
+            }
 		    	}
 
 		        // Propagate the original exception from Stack Query.
@@ -435,63 +442,73 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		}
 
 		if (!"CREATE_COMPLETE".equals (heatStack.getStackStatus ())) {
-		    LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack error:  Polling complete with non-success status: "
-		                  + heatStack.getStackStatus () + ", " + heatStack.getStackStatusReason (), "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error");
+        logger.error("{} Create Stack error:  Polling complete with non-success status: {}, {} {} ",
+            MessageEnum.RA_CREATE_STACK_ERR, heatStack.getStackStatus(), heatStack.getStackStatusReason(),
+            MsoLogger.ErrorCode.BusinessProcesssError.getValue());
 
 		    // Rollback the stack creation, since it is in an indeterminate state.
 		    if (!backout)
 		    {
-		    	LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion suppressed", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion suppressed");
-		    }
+            logger.warn(
+                "{} Create Stack errored, stack deletion suppressed {} Create Stack error, stack deletion suppressed",
+                MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+        }
 		    else
 		    {
 		    	try {
-		    		LOGGER.debug("Create Stack errored - attempting to DELETE stack: " + canonicalName);
-		    		LOGGER.debug("deletePollInterval=" + deletePollInterval + ", deletePollTimeout=" + deletePollTimeout);
-		    		OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
+              logger.debug("Create Stack errored - attempting to DELETE stack: {}", canonicalName);
+              logger.debug("deletePollInterval={}, deletePollTimeout={}", deletePollInterval, deletePollTimeout);
+              OpenStackRequest <Void> request = heatClient.getStacks ().deleteByName (canonicalName);
 		    		executeAndRecordOpenstackRequest (request);
 		    		boolean deleted = false;
 		    		while (!deleted) {
 		    			try {
 		    				heatStack = queryHeatStack(heatClient, canonicalName);
 		    				if (heatStack != null) {
-		    					LOGGER.debug(heatStack.getStackStatus() + " (" + canonicalName + ")");
-		    					if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
+                    logger.debug("{} ({})", heatStack.getStackStatus(), canonicalName);
+                    if ("DELETE_IN_PROGRESS".equals(heatStack.getStackStatus())) {
 		    						if (deletePollTimeout <= 0) {
-		    							LOGGER.error (MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-		    									heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError,
-		    									"Rollback: DELETE stack timeout");
-		    							break;
+                        logger.error(
+                            "{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Rollback: DELETE stack timeout",
+                            MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+                            heatStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
+                        break;
 		    						} else {
 		    							sleep(deletePollInterval * 1000L);
 		    							deletePollTimeout -= deletePollInterval;
-		    							LOGGER.debug("deletePollTimeout remaining: " + deletePollTimeout);
-		    						}
+                        logger.debug("deletePollTimeout remaining: {}", deletePollTimeout);
+                    }
 		    					} else if ("DELETE_COMPLETE".equals(heatStack.getStackStatus())){
-		    						LOGGER.debug("DELETE_COMPLETE for " + canonicalName);
-		    						deleted = true;
+                      logger.debug("DELETE_COMPLETE for {}", canonicalName);
+                      deleted = true;
 		    						continue;
 		    					} else if ("DELETE_FAILED".equals(heatStack.getStackStatus())) {
 		    						// Warn about this (?) - but still throw the original exception
-		    						LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, stack deletion FAILED", "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Create Stack error, stack deletion FAILED");
-		    						LOGGER.debug("Stack deletion FAILED on a rollback of a create - " + canonicalName + ", status=" + heatStack.getStackStatus() + ", reason=" + heatStack.getStackStatusReason());
-		    						break;
+                      logger.warn(
+                          "{} Create Stack errored, stack deletion FAILED {} Create Stack error, stack deletion FAILED",
+                          MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+                      logger.debug("Stack deletion FAILED on a rollback of a create - {}, status={}, reason={}",
+                          canonicalName, heatStack.getStackStatus(), heatStack.getStackStatusReason());
+                      break;
 		    					} else {
 		    						//got a status other than DELETE_IN_PROGRESS or DELETE_COMPLETE - so break and evaluate
 		    						break;
 		    					}
 		    				} else {
 		    					// assume if we can't find it - it's deleted
-		    					LOGGER.debug("heatStack returned null - assume the stack " + canonicalName + " has been deleted");
-		    					deleted = true;
+                    logger.debug("heatStack returned null - assume the stack {} has been deleted", canonicalName);
+                    deleted = true;
 		    					continue;
 		    				}
 
 		    			} catch (MsoException me2) {
 		    				// We got an exception on the delete - don't throw this exception - throw the original - just log.
-		    				LOGGER.debug("Exception thrown trying to delete " + canonicalName + " on a create->rollback: " + me2.getContextMessage(), me2);
-		    				LOGGER.warn(MessageEnum.RA_CREATE_STACK_ERR, "Create Stack errored, then stack deletion FAILED - exception thrown", "", "", MsoLogger.ErrorCode.BusinessProcesssError, me2.getContextMessage());
-		    			}
+                  logger.debug("Exception thrown trying to delete {} on a create->rollback: {} ", canonicalName,
+                      me2.getContextMessage(), me2);
+                  logger.warn("{} Create Stack errored, then stack deletion FAILED - exception thrown {} {}",
+                      MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+                      me2.getContextMessage());
+              }
 
 		    		} // end while !deleted
 		    		StringBuilder errorContextMessage;
@@ -507,8 +524,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		    		}
 		    	} catch (Exception e2) {
 		    		// shouldn't happen - but handle
-		    		LOGGER.error (MessageEnum.RA_CREATE_STACK_ERR, "Create Stack: Nested exception rolling back stack: " + e2, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in Create Stack: rolling back stack");
-		    	}
+              logger.error("{} Create Stack: Nested exception rolling back stack: {} ", MessageEnum.RA_CREATE_STACK_ERR,
+                  MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e2);
+          }
 		    }
 		    MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
 		    me.addContext(CREATE_STACK);
@@ -529,27 +547,28 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception.
      */
     public StackInfo queryStack (String cloudSiteId, String tenantId, String stackName) throws MsoException {
-        LOGGER.debug ("Query HEAT stack: " + stackName + " in tenant " + tenantId);
+        logger.debug ("Query HEAT stack: {} in tenant {}", stackName, tenantId);
 
         // Obtain the cloud site information where we will create the stack
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
-        LOGGER.debug("Found: " + cloudSite.toString());
+        logger.debug("Found: {}", cloudSite.toString());
 
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = null;
         try {
             heatClient = getHeatClient (cloudSite, tenantId);
             if (heatClient != null) {
-            	LOGGER.debug("Found: " + heatClient.toString());
+                logger.debug("Found: {}", heatClient.toString());
             }
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
-            LOGGER.debug ("Tenant with id " + tenantId + "not found.", e);
+            logger.debug ("Tenant with id " + tenantId + "not found.", e);
             return new StackInfo (stackName, HeatStatus.NOTFOUND);
         } catch (MsoException me) {
             // Got an Openstack error. Propagate it
-            LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Exception on Token request: " + me, "Openstack", "", MsoLogger.ErrorCode.AvailabilityError, "Connection Exception");
+            logger.error("{} {} Openstack Exception on Token request: ", MessageEnum.RA_CONNECTION_EXCEPTION,
+                MsoLogger.ErrorCode.AvailabilityError.getValue(), me);
             me.addContext ("QueryStack");
             throw me;
         }
@@ -595,22 +614,23 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         // Obtain the cloud site information where we will create the stack
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
                 () -> new MsoCloudSiteNotFound(cloudSiteId));
-        LOGGER.debug("Found: " + cloudSite.toString());
+        logger.debug("Found: {}", cloudSite.toString());
 
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = null;
         try {
             heatClient = getHeatClient (cloudSite, tenantId);
             if (heatClient != null) {
-            	LOGGER.debug("Found: " + heatClient.toString());
+                logger.debug("Found: {}", heatClient.toString());
             }
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
-            LOGGER.debug ("Tenant with id " + tenantId + "not found.", e);
+            logger.debug ("Tenant with id " + tenantId + "not found.", e);
             return new StackInfo (stackName, HeatStatus.NOTFOUND);
         } catch (MsoException me) {
             // Got an Openstack error. Propagate it
-            LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "Openstack", "Openstack Exception on Token request: " + me, "Openstack", "", MsoLogger.ErrorCode.AvailabilityError, "Connection Exception");
+            logger.error("{} {} Openstack Exception on Token request: ", MessageEnum.RA_CONNECTION_EXCEPTION,
+                MsoLogger.ErrorCode.AvailabilityError.getValue(), me);
             me.addContext (DELETE_STACK);
             throw me;
         }
@@ -635,7 +655,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                 request = heatClient.getStacks ().deleteByName (canonicalName);
             }
             else {
-                LOGGER.debug ("Heat Client is NULL" );
+                logger.debug ("Heat Client is NULL" );
             }
 
             executeAndRecordOpenstackRequest (request);
@@ -668,7 +688,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             // When querying by canonical name, Openstack returns DELETE_COMPLETE status
             // instead of "404" (which would result from query by stack name).
             while (heatStack != null && !"DELETE_COMPLETE".equals (heatStack.getStackStatus ())) {
-                LOGGER.debug ("Stack status: " + heatStack.getStackStatus ());
+                logger.debug ("Stack status: {}", heatStack.getStackStatus ());
 
                 if ("DELETE_FAILED".equals (heatStack.getStackStatus ())) {
                     // Throw a 'special case' of MsoOpenstackException to report the Heat status
@@ -685,7 +705,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                 }
 
                 if (pollTimeout <= 0) {
-                    LOGGER.error (MessageEnum.RA_DELETE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName, heatStack.getStackStatus (), "", "", MsoLogger.ErrorCode.AvailabilityError, "Delete Stack Timeout");
+                    logger.error("{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Delete Stack Timeout",
+                        MessageEnum.RA_DELETE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+                        heatStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
 
                     // Throw a 'special case' of MsoOpenstackException to report the Heat status
                     MsoOpenstackException me = new MsoOpenstackException (0, "", "Stack Deletion Timeout");
@@ -700,7 +722,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                 sleep(pollInterval * 1000L);
 
                 pollTimeout -= pollInterval;
-                LOGGER.debug("pollTimeout remaining: " + pollTimeout);
+                logger.debug("pollTimeout remaining: {}", pollTimeout);
 
                 heatStack = queryHeatStack (heatClient, canonicalName);
             }
@@ -753,7 +775,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         } catch (OpenStackResponseException e) {
             if (e.getStatus () == 404) {
                 // Not sure if this can happen, but return an empty list
-                LOGGER.debug ("queryAllStacks - stack not found: ");
+                logger.debug ("queryAllStacks - stack not found: ");
                 return new ArrayList <> ();
             } else {
                 // Convert the OpenStackResponseException to an MsoOpenstackException
@@ -803,7 +825,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         if (missingParams != null) {
             // Problem - missing one or more required parameters
             String error = "Missing Required inputs for HEAT Template: " + missingParams;
-            LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams + " for HEAT Template", "", "", MsoLogger.ErrorCode.SchemaError, "Missing Required inputs for HEAT Template: " + missingParams);
+            logger.error("{} for HEAT Template {} Missing Required inputs for HEAT Template: {}",
+                MessageEnum.RA_MISSING_PARAM, MsoLogger.ErrorCode.SchemaError.getValue(), missingParams);
             throw new IllegalArgumentException (error);
         }
 
@@ -821,9 +844,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         }
 
         if (!extraParams.isEmpty ()) {
-            LOGGER.warn (MessageEnum.RA_GENERAL_WARNING, "Heat Stack (" + heatTemplate.getTemplateName ()
-                         + ") extra input params received: "
-                         + extraParams, "", "", MsoLogger.ErrorCode.DataError, "Heat Stack (" + heatTemplate.getTemplateName () + ") extra input params received: "+ extraParams);
+            logger.warn("{} Heat Stack ({}) extra input params received: {} {}", MessageEnum.RA_GENERAL_WARNING,
+                heatTemplate.getTemplateName(), extraParams, MsoLogger.ErrorCode.DataError.getValue());
         }
 
         return updatedParams;
@@ -851,10 +873,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
         // Obtain an MSO token for the tenant
         CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-        LOGGER.debug("Found: " + cloudIdentity.toString());
+        logger.debug("Found: {}", cloudIdentity.toString());
         MsoTenantUtils tenantUtils = tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
         String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
-        LOGGER.debug("keystoneUrl=" + keystoneUrl);
+        logger.debug("keystoneUrl={}", keystoneUrl);
         String heatUrl = null;
         String tokenId = null;
         Calendar expiration = null;
@@ -873,19 +895,20 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		        try {
 		        	// Isolate trying to printout the region IDs
 		        	try {
-		        		LOGGER.debug("access=" + access.toString());
-		        		for (Access.Service service : access.getServiceCatalog()) {
+                  logger.debug("access={}", access.toString());
+                  for (Access.Service service : access.getServiceCatalog()) {
 		        			List<Access.Service.Endpoint> endpoints = service.getEndpoints();
 		        			for (Access.Service.Endpoint endpoint : endpoints) {
-		        				LOGGER.debug("AIC returned region=" + endpoint.getRegion());
-		        			}
+                      logger.debug("AIC returned region={}", endpoint.getRegion());
+                  }
 		        		}
 		        	} catch (Exception e) {
-		        		LOGGER.debug("Encountered an error trying to printout Access object returned from AIC. " + e.getMessage());
-		        	}
+                  logger.debug("Encountered an error trying to printout Access object returned from AIC. {}",
+                      e.getMessage(), e);
+              }
 		            heatUrl = KeystoneUtils.findEndpointURL (access.getServiceCatalog (), "orchestration", region, "public");
-		            LOGGER.debug("heatUrl=" + heatUrl + ", region=" + region);
-		        } catch (RuntimeException e) {
+                logger.debug("heatUrl={}, region={}", heatUrl, region);
+            } catch (RuntimeException e) {
 		            // This comes back for not found (probably an incorrect region ID)
 		            String error = "AIC did not match an orchestration service for: region=" + region + ",cloud=" + cloudIdentity.getIdentityUrl();
 		            throw new MsoAdapterException (error, e);
@@ -959,7 +982,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             return executeAndRecordOpenstackRequest (request);
         } catch (OpenStackResponseException e) {
             if (e.getStatus () == 404) {
-                LOGGER.debug ("queryHeatStack - stack not found: " + stackName);
+                logger.debug ("queryHeatStack - stack not found: {}", stackName);
                 return null;
             } else {
                 // Convert the OpenStackResponseException to an MsoOpenstackException
@@ -974,8 +997,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
 	public Map<String, Object> queryStackForOutputs(String cloudSiteId,
 			String tenantId, String stackName) throws MsoException {
-		LOGGER.debug("MsoHeatUtils.queryStackForOutputs)");
-		StackInfo heatStack = this.queryStack(cloudSiteId, tenantId, stackName);
+      logger.debug("MsoHeatUtils.queryStackForOutputs)");
+      StackInfo heatStack = this.queryStack(cloudSiteId, tenantId, stackName);
 		if (heatStack == null || heatStack.getStatus() == HeatStatus.NOTFOUND) {
 			return null;
 		}
@@ -998,31 +1021,31 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 						String str = this.convertNode((JsonNode) obj);
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key, e);
-						//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
+              logger.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode {} ", key, e);
+              //effect here is this value will not have been copied to the inputs - and therefore will error out downstream
 					}
 				} else if (obj instanceof java.util.LinkedHashMap) {
-					LOGGER.debug("LinkedHashMap - this is showing up as a LinkedHashMap instead of JsonNode");
-					try {
+            logger.debug("LinkedHashMap - this is showing up as a LinkedHashMap instead of JsonNode");
+            try {
 						String str = JSON_MAPPER.writeValueAsString(obj);
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key, e);
-					}
+              logger.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap {} ", key, e);
+          }
 				} else if (obj instanceof Integer) {
 					try {
 						String str = "" + obj;
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key, e);
-					}
+              logger.debug("DANGER WILL ROBINSON: unable to convert value for Integer {} ", key, e);
+          }
 				} else {
 					try {
 						String str = obj.toString();
 						inputs.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Other "+ key +" (" + e.getMessage() + ")", e);
-						//effect here is this value will not have been copied to the inputs - and therefore will error out downstream
+              logger.debug("DANGER WILL ROBINSON: unable to convert value for Other {} ({}) ", key, e.getMessage(), e);
+              //effect here is this value will not have been copied to the inputs - and therefore will error out downstream
 					}
 				}
 			}
@@ -1057,8 +1080,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 						String str = params.get(key).toString();
 						sb.append("\n").append(key).append("=").append(str);
 					} catch (Exception e) {
-						LOGGER.debug("Exception :",e);
-					}
+              logger.debug("Exception :", e);
+          }
 				}
 			}
 		}
@@ -1071,8 +1094,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 			final String json = JSON_MAPPER.writeValueAsString(obj);
 			return json;
 		} catch (Exception e) {
-			LOGGER.debug("Error converting json to string " + e.getMessage(), e);
-		}
+        logger.debug("Error converting json to string {} ", e.getMessage(), e);
+    }
 		return "[Error converting json to string]";
 	}
 
@@ -1108,7 +1131,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 					String str = JSON_MAPPER.writeValueAsString(obj);
 					sb.append(str).append(" (a java.util.LinkedHashMap)");
 				} catch (Exception e) {
-					LOGGER.debug("Exception :",e);
+            logger.debug("Exception :", e);
 					sb.append("(a LinkedHashMap value that would not convert nicely)");
 				}
 			} else if (obj instanceof Integer) {
@@ -1116,8 +1139,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 				try {
 					str = obj.toString() + " (an Integer)\n";
 				} catch (Exception e) {
-					LOGGER.debug("Exception :",e);
-					str = "(an Integer unable to call .toString() on)";
+            logger.debug("Exception :", e);
+            str = "(an Integer unable to call .toString() on)";
 				}
 				sb.append(str);
 			} else if (obj instanceof ArrayList) {
@@ -1125,8 +1148,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 				try {
 					str = obj.toString() + " (an ArrayList)";
 				} catch (Exception e) {
-					LOGGER.debug("Exception :",e);
-					str = "(an ArrayList unable to call .toString() on?)";
+            logger.debug("Exception :", e);
+            str = "(an ArrayList unable to call .toString() on?)";
 				}
 				sb.append(str);
 			} else if (obj instanceof Boolean) {
@@ -1134,8 +1157,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 				try {
 					str = obj.toString() + " (a Boolean)";
 				} catch (Exception e) {
-					LOGGER.debug("Exception :",e);
-					str = "(an Boolean unable to call .toString() on?)";
+            logger.debug("Exception :", e);
+            str = "(an Boolean unable to call .toString() on?)";
 				}
 				sb.append(str);
 			}
@@ -1144,8 +1167,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 				try {
 					str = obj.toString() + " (unknown Object type)";
 				} catch (Exception e) {
-					LOGGER.debug("Exception :",e);
-					str = "(a value unable to call .toString() on?)";
+            logger.debug("Exception :", e);
+            str = "(a value unable to call .toString() on?)";
 				}
 				sb.append(str);
 			}
@@ -1163,44 +1186,44 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		for (String key : otherStackOutputs.keySet()) {
 			if (paramNames != null) {
 				if (!paramNames.contains(key) && !aliases.containsKey(key)) {
-					LOGGER.debug("\tParameter " + key + " is NOT defined to be in the template - do not copy to inputs");
-					continue;
+            logger.debug("\tParameter {} is NOT defined to be in the template - do not copy to inputs", key);
+            continue;
 				}
 				if (aliases.containsKey(key)) {
-					LOGGER.debug("Found an alias! Will move " + key + " to " + aliases.get(key));
-					Object obj = otherStackOutputs.get(key);
+            logger.debug("Found an alias! Will move {} to {}", key, aliases.get(key));
+            Object obj = otherStackOutputs.get(key);
 					key = aliases.get(key);
 					otherStackOutputs.put(key, obj);
 				}
 			}
 			if (!inputs.containsKey(key)) {
 				Object obj = otherStackOutputs.get(key);
-				LOGGER.debug("\t**Adding " + key + " to inputs (.toString()=" + obj.toString());
-				if (obj instanceof String) {
-					LOGGER.debug("\t\t**A String");
-					inputs.put(key, obj);
+          logger.debug("\t**Adding {} to inputs (.toString()={}", key, obj.toString());
+          if (obj instanceof String) {
+              logger.debug("\t\t**A String");
+              inputs.put(key, obj);
 				} else if (obj instanceof Integer) {
-					LOGGER.debug("\t\t**An Integer");
-					inputs.put(key, obj);
+              logger.debug("\t\t**An Integer");
+              inputs.put(key, obj);
 				} else if (obj instanceof JsonNode) {
-					LOGGER.debug("\t\t**A JsonNode");
-					inputs.put(key, obj);
+              logger.debug("\t\t**A JsonNode");
+              inputs.put(key, obj);
 				} else if (obj instanceof Boolean) {
-					LOGGER.debug("\t\t**A Boolean");
-					inputs.put(key, obj);
+              logger.debug("\t\t**A Boolean");
+              inputs.put(key, obj);
 				} else if (obj instanceof java.util.LinkedHashMap) {
-					LOGGER.debug("\t\t**A java.util.LinkedHashMap **");
-					inputs.put(key, obj);
+              logger.debug("\t\t**A java.util.LinkedHashMap **");
+              inputs.put(key, obj);
 				} else if (obj instanceof java.util.ArrayList) {
-					LOGGER.debug("\t\t**An ArrayList");
-					inputs.put(key, obj);
+              logger.debug("\t\t**An ArrayList");
+              inputs.put(key, obj);
 				} else {
-					LOGGER.debug("\t\t**UNKNOWN OBJECT TYPE");
-					inputs.put(key, obj);
+              logger.debug("\t\t**UNKNOWN OBJECT TYPE");
+              inputs.put(key, obj);
 				}
 			} else {
-				LOGGER.debug("key=" + key + " is already in the inputs - will not overwrite");
-			}
+          logger.debug("key={} is already in the inputs - will not overwrite", key);
+      }
 		}
 		return;
 	}
@@ -1239,51 +1262,52 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		HashMap<String, HeatTemplateParam> paramAliases = new HashMap<>();
 
 		if (inputs == null) {
-			LOGGER.debug("convertInputMap - inputs is null - nothing to do here");
-			return new HashMap<>();
+        logger.debug("convertInputMap - inputs is null - nothing to do here");
+        return new HashMap<>();
 		}
 
-		LOGGER.debug("convertInputMap in MsoHeatUtils called, with " + inputs.size() + " inputs, and template " + template.getArtifactUuid());
-		try {
-			LOGGER.debug(template.toString());
-			Set<HeatTemplateParam> paramSet = template.getParameters();
-			LOGGER.debug("paramSet has " + paramSet.size() + " entries");
-		} catch (Exception e) {
-			LOGGER.debug("Exception occurred in convertInputMap:" + e.getMessage(), e);
-		}
+      logger.debug("convertInputMap in MsoHeatUtils called, with {} inputs, and template {}", inputs.size(),
+          template.getArtifactUuid());
+      try {
+          logger.debug(template.toString());
+          Set<HeatTemplateParam> paramSet = template.getParameters();
+          logger.debug("paramSet has {} entries", paramSet.size());
+      } catch (Exception e) {
+          logger.debug("Exception occurred in convertInputMap:" + e.getMessage(), e);
+      }
 
 		for (HeatTemplateParam htp : template.getParameters()) {
-			LOGGER.debug("Adding " + htp.getParamName());
-			params.put(htp.getParamName(), htp);
+        logger.debug("Adding {}", htp.getParamName());
+        params.put(htp.getParamName(), htp);
 			if (htp.getParamAlias() != null && !"".equals(htp.getParamAlias())) {
-				LOGGER.debug("\tFound ALIAS " + htp.getParamName() + "->" + htp.getParamAlias());
-				paramAliases.put(htp.getParamAlias(), htp);
+          logger.debug("\tFound ALIAS {} -> {}", htp.getParamName(), htp.getParamAlias());
+          paramAliases.put(htp.getParamAlias(), htp);
 			}
 		}
-		LOGGER.debug("Now iterate through the inputs...");
-		for (String key : inputs.keySet()) {
-			LOGGER.debug("key=" + key);
-			boolean alias = false;
+      logger.debug("Now iterate through the inputs...");
+      for (String key : inputs.keySet()) {
+        logger.debug("key={}", key);
+        boolean alias = false;
 			String realName = null;
 			if (!params.containsKey(key)) {
-				LOGGER.debug(key + " is not a parameter in the template! - check for an alias");
-				// add check here for an alias
+          logger.debug("{} is not a parameter in the template! - check for an alias", key);
+          // add check here for an alias
 				if (!paramAliases.containsKey(key)) {
-					LOGGER.debug("The parameter " + key + " is in the inputs, but it's not a parameter for this template - omit");
-					continue;
+            logger.debug("The parameter {} is in the inputs, but it's not a parameter for this template - omit", key);
+            continue;
 				} else {
 					alias = true;
 					realName = paramAliases.get(key).getParamName();
-					LOGGER.debug("FOUND AN ALIAS! Will use " + realName + " in lieu of give key/alias " + key);
-				}
+            logger.debug("FOUND AN ALIAS! Will use {} in lieu of give key/alias {}", realName, key);
+        }
 			}
 			String type = params.get(key).getParamType();
 			if (type == null || "".equals(type)) {
-				LOGGER.debug("**PARAM_TYPE is null/empty for " + key + ", will default to string");
-				type = "string";
+          logger.debug("**PARAM_TYPE is null/empty for {}, will default to string", key);
+          type = "string";
 			}
-			LOGGER.debug("Parameter: " + key + " is of type " + type);
-			if ("string".equalsIgnoreCase(type)) {
+        logger.debug("Parameter: {} is of type {}", key, type);
+        if ("string".equalsIgnoreCase(type)) {
 				// Easiest!
 				String str = inputs.get(key);
 				if (alias)
@@ -1296,8 +1320,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 				try {
 					anInteger = Integer.parseInt(integerString);
 				} catch (Exception e) {
-					LOGGER.debug("Unable to convert " + integerString + " to an integer!!", e);
-					anInteger = null;
+            logger.debug("Unable to convert {} to an integer!!", integerString, e);
+            anInteger = null;
 				}
 				if (anInteger != null) {
 					if (alias)
@@ -1314,8 +1338,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 			} else if ("json".equalsIgnoreCase(type)) {
 				// MSO-1475 - Leave this as a string now
 				String jsonString = inputs.get(key);
-				LOGGER.debug("Skipping conversion to jsonNode...");
-    			if (alias)
+            logger.debug("Skipping conversion to jsonNode...");
+            if (alias)
     				newInputs.put(realName, jsonString);
     			else
     				newInputs.put(key, jsonString);
@@ -1329,8 +1353,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 					else
 						newInputs.put(key, anArrayList);
 				} catch (Exception e) {
-					LOGGER.debug("Unable to convert " + commaSeparated + " to an ArrayList!!", e);
-					if (alias)
+            logger.debug("Unable to convert {} to an ArrayList!!", commaSeparated, e);
+            if (alias)
 						newInputs.put(realName, commaSeparated);
 					else
 						newInputs.put(key, commaSeparated);
@@ -1671,7 +1695,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     	try {
             Thread.sleep(time);
         } catch (InterruptedException e) {
-            LOGGER.debug ("Thread interrupted while sleeping", e);
+            logger.debug ("Thread interrupted while sleeping", e);
             Thread.currentThread().interrupt();
         }
     }

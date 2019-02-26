@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,25 +24,22 @@
 package org.onap.so.openstack.utils;
 
 
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MsoYamlEditorWithEnvt {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoYamlEditorWithEnvt.class);
+    private static final Logger logger = LoggerFactory.getLogger(MsoYamlEditorWithEnvt.class);
     
     private Map <String, Object> yml;
     private Yaml yaml = new Yaml ();
@@ -68,8 +67,8 @@ public class MsoYamlEditorWithEnvt {
     	try {
     		resourceMap = (Map<String,Object>) yml.get("parameters");
     	} catch (Exception e) {
-    	    LOGGER.debug("Exception:", e);
-    		return paramSet;
+          logger.debug("Exception:", e);
+          return paramSet;
     	}
     	if (resourceMap == null) {
     		return paramSet;
@@ -89,7 +88,7 @@ public class MsoYamlEditorWithEnvt {
                 try {
                     value = JSON_MAPPER.writeValueAsString(obj);
                 } catch (Exception e) {
-                    LOGGER.debug("Exception:", e);
+                    logger.debug("Exception:", e);
                     value = "_BAD_JSON_MAPPING";
                 }
             } else {
@@ -117,8 +116,8 @@ public class MsoYamlEditorWithEnvt {
             }
     		return resourceList;
     	} catch (Exception e) {
-    	    LOGGER.debug("Exception:", e);
-    	}
+          logger.debug("Exception:", e);
+      }
     	return null;
     }
     public synchronized Set <HeatTemplateParam> getParameterList () {
@@ -135,7 +134,7 @@ public class MsoYamlEditorWithEnvt {
             try {
                 value = resourceEntry.get("default");
             } catch (ClassCastException cce) {
-                LOGGER.debug("Exception:", cce);
+                logger.debug("Exception:", cce);
                 // This exception only - the value is an integer. For what we're doing
                 // here - we don't care - so set value to something - and it will
                 // get marked as not being required - which is correct.
