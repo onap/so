@@ -55,6 +55,21 @@ public class RequestParametersValidationTest extends BaseTest{
 	}
 	
 	@Test
+	public void testVfModuleWithNoALaCarte() throws IOException, ValidationException {
+		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RequestParameters/VfModuleRequestParametersNoALaCarte.json")));
+		ObjectMapper mapper = new ObjectMapper();
+		ServiceInstancesRequest sir  = mapper.readValue(requestJson, ServiceInstancesRequest.class);
+		ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(), Action.createInstance, 
+																6, false, sir.getRequestDetails().getRequestParameters());
+		info.setRequestScope("vfModule");
+		sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");		
+		RequestParametersValidation validation = new RequestParametersValidation();
+		validation.validate(info);
+		
+		assertFalse(info.getReqParameters().getUsePreload());		
+	}
+	
+	@Test
 	public void testVfModuleWithTrueALaCarte() throws IOException, ValidationException {
 		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RequestParameters/VfModuleRequestParametersIsALaCarte.json")));
 		ObjectMapper mapper = new ObjectMapper();

@@ -21,8 +21,6 @@
 
 package org.onap.so.apihandlerinfra.validation;
 
-import java.util.Map;
-
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.exceptions.ValidationException;
@@ -75,7 +73,7 @@ public class RequestParametersValidation implements ValidationRule{
         		if(action == Action.createInstance || action == Action.updateInstance){        			
         			if(requestParameters.isUsePreload() == null){        				
         				if(reqVersion >= 4){       					
-        					if (requestParameters.getALaCarte() == false) {        						
+        					if (requestParameters.getALaCarte() == null || requestParameters.getALaCarte() == false) {        						
         						requestParameters.setUsePreload(false);
         					}
         					else {        						

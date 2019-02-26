@@ -1,0 +1,55 @@
+{
+  "requestDetails": {
+    "modelInfo": {
+      "modelType": "vfModule",
+      "modelName": "InframsoVsamp10a2..vSAMP10a_addon_2..module-1",
+      "modelVersionId": "dcd3d939-67cd-438c-a55f-48073811f83f",
+      "modelInvariantId": "b42d49f3-6429-4c2e-a73c-29bef87ca1b9",
+      "modelVersion": "1",
+      "modelCustomizationId": "3bec51f8-b410-40f5-b470-25d31f7210dc"
+    },
+    "cloudConfiguration": {
+      "cloudOwner": "CloudOwner",
+      "lcpCloudRegionId": "mtn6",
+      "tenantId": "0422ffb57ba042c0800a29dc85ca70f8"
+    },
+    "requestInfo": {
+      "instanceName": "InfraMSO-vSAMP10a_6.0-VF-Module_1-1902-est01-GR_API-101",
+      "source": "VID",
+      "suppressRollback": false,
+      "requestorId": "bs7527"
+    },
+    "relatedInstanceList": [
+      {
+        "relatedInstance": {
+          "instanceId": "43075e6e-4d95-4bca-b9e5-712d0a14fbc2",
+          "modelInfo": {
+            "modelType": "service",
+            "modelName": "InfraMSO_vSAMP10a_Service",
+            "modelVersionId": "8f6fba78-8eab-4149-8be1-491ef7f63cf7",
+            "modelInvariantId": "653030db-85e2-4bd1-8c61-3764ebf5860a",
+            "modelVersion": "6.0"
+          }
+        }
+      },
+      {
+        "relatedInstance": {
+          "instanceId": "7c1ff5bc-fb41-48a7-b997-f9fdb3ab4a77",
+          "modelInfo": {
+            "modelType": "vnf",
+            "modelName": "InfraMSO_vSAMP10a-2",
+            "modelVersionId": "cb79c25f-b30d-4d95-afb5-97be4021f3db",
+            "modelInvariantId": "e93d3a7a-446d-486b-ae48-d474a9156064",
+            "modelVersion": "1.0",
+            "modelCustomizationId": "034226ae-879a-46b5-855c-d02babcb6cb6",
+            "modelCustomizationName": "InfraMSO_vSAMP10a-2 0"
+          }
+        }
+      }
+    ],
+    "requestParameters": {
+      "testApi": "GR_API",
+      "userParams": []
+    }
+  }
+}
