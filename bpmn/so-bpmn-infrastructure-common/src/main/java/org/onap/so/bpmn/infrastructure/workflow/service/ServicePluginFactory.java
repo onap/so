@@ -64,6 +64,8 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -83,7 +85,7 @@ public class ServicePluginFactory {
 
 	static JsonUtils jsonUtil = new JsonUtils();
 
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ServicePluginFactory.class);
+	private static Logger logger = LoggerFactory.getLogger(ServicePluginFactory.class);
 
 	private static ServicePluginFactory instance;
 	
@@ -227,7 +229,7 @@ public class ServicePluginFactory {
 		            break;
 		        }
 		    }
-			LOGGER.debug("Get Terminal TP from InventoryOSS");
+			logger.debug("Get Terminal TP from InventoryOSS");
 			return tpInfoMap;
 		}
 		
@@ -685,8 +687,8 @@ public class ServicePluginFactory {
 		try {
 			return mapper.readValue(jsonstr, type);
 		} catch (IOException e) {
-			LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
-					"fail to unMarshal json", e);
+			logger.error("{} {} fail to unMarshal json", MessageEnum.RA_NS_EXC.toString(),
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 		}
 		return null;
 	}
@@ -698,7 +700,7 @@ public class ServicePluginFactory {
 		try {
 			jsonStr = mapper.writeValueAsString(srcObj);
 		} catch (JsonProcessingException e) {
-			LOGGER.debug("SdcToscaParserException", e);
+			logger.debug("SdcToscaParserException", e);
 		}
 		return jsonStr;
 	}
@@ -745,9 +747,9 @@ public class ServicePluginFactory {
 				try {
 					responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
 				} catch (ParseException e) {
-					LOGGER.debug("ParseException in sendrequest", e);
+					logger.debug("ParseException in sendrequest", e);
 				} catch (IOException e) {
-					LOGGER.debug("IOException in sendrequest", e);
+					logger.debug("IOException in sendrequest", e);
 				}
 			}
 			if (null != method) {

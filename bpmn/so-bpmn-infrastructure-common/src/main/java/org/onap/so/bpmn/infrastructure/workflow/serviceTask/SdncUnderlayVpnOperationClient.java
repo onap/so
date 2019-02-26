@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,8 +33,9 @@ import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder.Netwo
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNetworkTopologyOperationInputEntity;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import org.onap.so.db.request.beans.ResourceOperationStatusId;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDbConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -41,7 +44,7 @@ public class SdncUnderlayVpnOperationClient {
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
     private static final int DEFAULT_MSB_PORT = 10081;
 
-    private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.GENERAL, SdncUnderlayVpnOperationClient.class);
+    private static Logger logger = LoggerFactory.getLogger(SdncUnderlayVpnOperationClient.class);
 
     public boolean excute(String msbIp,
                        int msbPort,
