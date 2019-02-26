@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,36 +23,6 @@
 package org.onap.so.openstack.utils;
 
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
-import org.onap.so.cloud.authentication.KeystoneAuthHolder;
-import org.onap.so.cloud.authentication.KeystoneV3Authentication;
-import org.onap.so.cloud.authentication.ServiceEndpointNotFoundException;
-import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.db.catalog.beans.ServerType;
-import org.onap.so.logger.MessageEnum;
-
-import org.onap.so.logger.MsoLogger;
-import org.onap.so.openstack.beans.NetworkInfo;
-import org.onap.so.openstack.beans.NeutronCacheEntry;
-import org.onap.so.openstack.exceptions.MsoAdapterException;
-import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
-import org.onap.so.openstack.exceptions.MsoException;
-import org.onap.so.openstack.exceptions.MsoIOException;
-import org.onap.so.openstack.exceptions.MsoNetworkAlreadyExists;
-import org.onap.so.openstack.exceptions.MsoNetworkNotFound;
-import org.onap.so.openstack.exceptions.MsoOpenstackException;
-import org.onap.so.openstack.mappers.NetworkInfoMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.woorea.openstack.base.client.OpenStackBaseException;
 import com.woorea.openstack.base.client.OpenStackConnectException;
 import com.woorea.openstack.base.client.OpenStackRequest;
@@ -63,6 +35,32 @@ import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.Network;
 import com.woorea.openstack.quantum.model.Networks;
 import com.woorea.openstack.quantum.model.Segment;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import org.onap.so.cloud.CloudConfig;
+import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
+import org.onap.so.cloud.authentication.KeystoneAuthHolder;
+import org.onap.so.cloud.authentication.KeystoneV3Authentication;
+import org.onap.so.cloud.authentication.ServiceEndpointNotFoundException;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.db.catalog.beans.ServerType;
+import org.onap.so.logger.MessageEnum;
+import org.onap.so.logger.MsoLogger;
+import org.onap.so.openstack.beans.NetworkInfo;
+import org.onap.so.openstack.exceptions.MsoAdapterException;
+import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
+import org.onap.so.openstack.exceptions.MsoException;
+import org.onap.so.openstack.exceptions.MsoIOException;
+import org.onap.so.openstack.exceptions.MsoNetworkAlreadyExists;
+import org.onap.so.openstack.exceptions.MsoNetworkNotFound;
+import org.onap.so.openstack.exceptions.MsoOpenstackException;
+import org.onap.so.openstack.mappers.NetworkInfoMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class MsoNeutronUtils extends MsoCommonUtils
@@ -80,10 +78,10 @@ public class MsoNeutronUtils extends MsoCommonUtils
 
 	@Autowired
 	private KeystoneV3Authentication keystoneV3Authentication;
-	
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, MsoNeutronUtils.class);
-	
-	public enum NetworkType {
+
+    private static Logger logger = LoggerFactory.getLogger(MsoNeutronUtils.class);
+
+    public enum NetworkType {
 		BASIC, PROVIDER, MULTI_PROVIDER
 	};
 
@@ -119,8 +117,10 @@ public class MsoNeutronUtils extends MsoCommonUtils
 
 		if (network != null) {
 			// Network already exists.  Throw an exception
-			LOGGER.error(MessageEnum.RA_NETWORK_ALREADY_EXIST, networkName, cloudSiteId, tenantId, "Openstack", "", MsoLogger.ErrorCode.DataError, "Network already exists");
-			throw new MsoNetworkAlreadyExists (networkName, tenantId, cloudSiteId);
+        logger.error("{} Network {} on Cloud site {} for tenant {} already exists {}",
+            MessageEnum.RA_NETWORK_ALREADY_EXIST, networkName, cloudSiteId, tenantId,
+            MsoLogger.ErrorCode.DataError.getValue());
+        throw new MsoNetworkAlreadyExists (networkName, tenantId, cloudSiteId);
 		}
 
 		// Does not exist, create a new one
@@ -183,7 +183,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 	 */
     public NetworkInfo queryNetwork(String networkNameOrId, String tenantId, String cloudSiteId) throws MsoException
 	{
-		LOGGER.debug("In queryNetwork");
+      logger.debug("In queryNetwork");
 
 		// Obtain the cloud site information
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
@@ -195,8 +195,8 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		try {
 			Network network = findNetworkByNameOrId (neutronClient, networkNameOrId);
 			if (network == null) {
-				LOGGER.debug ("Query Network: " + networkNameOrId + " not found in tenant " + tenantId);
-				return null;
+          logger.debug("Query Network: {} not found in tenant {}", networkNameOrId, tenantId);
+          return null;
 			}
 			return new NetworkInfoMapper(network).map();
 		}
@@ -235,15 +235,16 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			// Check that the network exists.
 			Network network = findNetworkById (neutronClient, networkId);
 			if (network == null) {
-				LOGGER.info(MessageEnum.RA_DELETE_NETWORK_EXC, networkId, cloudSiteId, tenantId, "Openstack", "");
-				return false;
+          logger.info("{} Network not found! Network id: {} Cloud site: {} Tenant: {} ",
+              MessageEnum.RA_DELETE_NETWORK_EXC, networkId, cloudSiteId, tenantId);
+          return false;
 			}
 
 			OpenStackRequest<Void> request = neutronClient.networks().delete(network.getId());
 			executeAndRecordOpenstackRequest(request);
 
-			LOGGER.debug ("Deleted Network " + network.getId() + " (" + network.getName() + ")");
-		}
+        logger.debug("Deleted Network {} ({})", network.getId(), network.getName());
+    }
 		catch (OpenStackBaseException e) {
 			// Convert Neutron exception to an MsoOpenstackException
 			MsoException me = neutronExceptionToMsoException (e, "Delete Network");
@@ -294,7 +295,8 @@ public class MsoNeutronUtils extends MsoCommonUtils
 
 		if (network == null) {
 			// Network not found.  Throw an exception
-			LOGGER.error(MessageEnum.RA_NETWORK_NOT_FOUND, networkId, cloudSiteId, tenantId, "Openstack", "", MsoLogger.ErrorCode.DataError, "Network not found");
+        logger.error("{} Network {} on Cloud site {} for Tenant {} not found {}", MessageEnum.RA_NETWORK_NOT_FOUND,
+            networkId, cloudSiteId, tenantId, MsoLogger.ErrorCode.DataError.getValue());
 			throw new MsoNetworkNotFound (networkId, tenantId, cloudSiteId);
 		}
 
@@ -480,8 +482,9 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			if (e.getStatus() == 404) {
 				return null;
 			} else {
-				LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Error, GET Network By ID (" + networkId + "): " + e, "Openstack", "", MsoLogger.ErrorCode.DataError, "Exception in Openstack");
-				throw e;
+          logger.error("{} {} Openstack Error, GET Network By ID ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,
+              MsoLogger.ErrorCode.DataError.getValue(), networkId, e);
+          throw e;
 			}
 		}
 	}
@@ -515,19 +518,20 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			Networks networks = executeAndRecordOpenstackRequest(request);
 			for (Network network : networks.getList()) {
 				if (network.getName().equals(networkName)) {
-					LOGGER.debug ("Found match on network name: " + networkName);
-					return network;
+            logger.debug("Found match on network name: {}", networkName);
+            return network;
 				}
 			}
-			LOGGER.debug ("findNetworkByName - no match found for " + networkName);
-			return null;
+        logger.debug("findNetworkByName - no match found for {}", networkName);
+        return null;
 		}
 		catch (OpenStackResponseException e) {
 			if (e.getStatus() == 404) {
 				return null;
 			} else {
-				LOGGER.error (MessageEnum.RA_CONNECTION_EXCEPTION, "OpenStack", "Openstack Error, GET Network By Name (" + networkName + "): " + e, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception in OpenStack");
-				throw e;
+          logger.error("{} {} Openstack Error, GET Network By Name ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,
+              MsoLogger.ErrorCode.DataError.getValue(), networkName, e);
+          throw e;
 			}
 		}
 	}
