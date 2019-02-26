@@ -24,6 +24,7 @@ import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIQueryClient;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.cds.CDSProcessingClient;
 import org.onap.so.client.policy.PolicyClientImpl;
 import org.onap.so.client.sdno.SDNOValidator;
 import org.onap.so.client.sdno.SDNOValidatorImpl;
@@ -66,5 +67,9 @@ public class InjectionHelper {
 	
 	public PolicyClientImpl getPolicyClient() {
 		return new PolicyClientImpl();
+	}
+
+	public CDSProcessingClient getCdsClient() {
+		return new CDSProcessingClient();
 	}
 }
