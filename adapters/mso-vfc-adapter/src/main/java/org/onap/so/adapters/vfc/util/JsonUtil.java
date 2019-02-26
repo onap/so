@@ -5,6 +5,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +34,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Interface for json analyzing.<br/>
@@ -47,7 +50,7 @@ public class JsonUtil {
   /**
    * Log service
    */
-  private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, JsonUtil.class);
+  private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
   /**
    * Mapper.
@@ -83,7 +86,7 @@ public class JsonUtil {
     try {
       return MAPPER.readValue(jsonstr, type);
     } catch (IOException e) {
-      LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
+      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
           UNMARSHAL_FAIL_MSG, e);
       throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
     }
@@ -101,7 +104,7 @@ public class JsonUtil {
     try {
       return MAPPER.readValue(jsonstr, type);
     } catch (IOException e) {
-      LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
+      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
           UNMARSHAL_FAIL_MSG, e);
       throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
     }
@@ -118,7 +121,7 @@ public class JsonUtil {
     try {
       return MAPPER.writeValueAsString(srcObj);
     } catch (IOException e) {
-      LOGGER.error(MessageEnum.RA_NS_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError,
+      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
           "fail to marshal json", e);
       throw new ApplicationException(HttpCode.BAD_REQUEST, "srcObj marshal failed!");
     }

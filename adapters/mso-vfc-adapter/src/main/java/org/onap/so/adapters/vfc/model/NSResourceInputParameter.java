@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * Copyright (C) 2018 CMCC All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +27,10 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * NS Create Input Parameter For VFC Adapter<br>
@@ -40,7 +41,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class NSResourceInputParameter {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, NSResourceInputParameter.class);
+    private static final Logger logger = LoggerFactory.getLogger(NSResourceInputParameter.class);
     
     private NsOperationKey nsOperationKey;
 
@@ -114,7 +115,7 @@ public class NSResourceInputParameter {
             mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
             jsonString = mapper.writeValueAsString(this);
         } catch (Exception e) {
-            LOGGER.debug("Exception:", e);
+            logger.debug("Exception:", e);
         }
         return jsonString;
     }
@@ -128,7 +129,7 @@ public class NSResourceInputParameter {
             marshaller.marshal(this, bs);
             return bs.toString();
         } catch (Exception e) {
-            LOGGER.debug("Exception:", e);
+            logger.debug("Exception:", e);
             return "";
         }
     }
