@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +39,8 @@ import org.onap.so.adapters.sdncrest.SDNCErrorCommon;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
 import org.onap.so.adapters.sdncrest.SDNCServiceError;
 import org.onap.so.adapters.sdncrest.SDNCServiceResponse;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -52,17 +54,17 @@ import org.xml.sax.SAXException;
 @Component
 public class SDNCServiceRequestConnector extends SDNCConnector {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,SDNCServiceRequestConnector.class);
+    private static final Logger logger = LoggerFactory.getLogger(SDNCServiceRequestConnector.class);
 	@Override
 	protected SDNCResponseCommon createResponseFromContent(int statusCode, String statusMessage,
 			String responseContent, TypedRequestTunables rt) {
 		try {
 			return parseResponseContent(responseContent);
 		} catch (ParseException e) {
-			LOGGER.error(e);
+			logger.error("Error occured:", e);
 			return createErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, e.getMessage(), rt);
 		}catch (Exception e) {
-			LOGGER.error(e);
+			logger.error("Error occured:", e);
 			return createErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, e.getMessage(), rt);
 		}
 	}

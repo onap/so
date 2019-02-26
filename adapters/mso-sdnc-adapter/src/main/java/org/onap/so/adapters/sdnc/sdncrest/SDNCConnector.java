@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +55,8 @@ import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
@@ -68,7 +71,7 @@ import org.springframework.core.env.Environment;
  */
 @Component
 public abstract class SDNCConnector {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCConnector.class);
+	private static final Logger logger = LoggerFactory.getLogger(SDNCConnector.class);
 
 	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
 	private static final String XPATH_EXCEPTION="XPath Exception";
@@ -76,8 +79,8 @@ public abstract class SDNCConnector {
 	private Environment env;
 
 	public SDNCResponseCommon send(String content, TypedRequestTunables rt) {
-		LOGGER.debug("SDNC URL: " + rt.getSdncUrl());
-		LOGGER.debug("SDNC Request Body:\n" + content);
+		logger.debug("SDNC URL: {}", rt.getSdncUrl());
+		logger.debug("SDNC Request Body:\n {}", content);
 
 		HttpRequestBase method = null;
 		HttpResponse httpResponse = null;
@@ -122,7 +125,7 @@ public abstract class SDNCConnector {
 			    method.setHeader("Accept", "application/yang.data+xml");
 			}
 			else {
-			    LOGGER.debug("method is NULL:");
+			    logger.debug("method is NULL:");
 			}
 
 			
@@ -137,8 +140,8 @@ public abstract class SDNCConnector {
 			int statusCode = httpResponse.getStatusLine().getStatusCode();
 			String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
 
-			LOGGER.debug("SDNC Response: " + statusCode + " " + statusMessage
-				+ (responseContent == null ? "" : System.lineSeparator() + responseContent));
+			logger.debug("SDNC Response: {} {}", statusCode,
+				statusMessage + (responseContent == null ? "" : System.lineSeparator() + responseContent));
 
 			if (httpResponse.getStatusLine().getStatusCode() >= 300) {
 				String errMsg = "SDNC returned " + statusCode + " " + statusMessage;
@@ -159,12 +162,12 @@ public abstract class SDNCConnector {
 	            method.reset();
 			}
             else {
-                LOGGER.debug("method is NULL:");
+                logger.debug("method is NULL:");
             }
 
 			method = null;
 
-			LOGGER.info(MessageEnum.RA_RESPONSE_FROM_SDNC, responseContent, "SDNC", "");
+			logger.info("{} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), responseContent, "SDNC");
 			return createResponseFromContent(statusCode, statusMessage, responseContent, rt);
 
 		} catch (SocketTimeoutException | ConnectTimeoutException e) {
@@ -182,7 +185,7 @@ public abstract class SDNCConnector {
 				try {
 					EntityUtils.consume(httpResponse.getEntity());
 				} catch (Exception e) {
-				    LOGGER.debug("Exception:", e);
+					logger.debug("Exception:", e);
 				}
 			}
 
@@ -190,22 +193,20 @@ public abstract class SDNCConnector {
 				try {
 					method.reset();
 				} catch (Exception e) {
-				    LOGGER.debug("Exception:", e);
+					logger.debug("Exception:", e);
 				}
 			}
 		}
 	}
 
 	protected void logError(String errMsg) {
-		LOGGER.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "",
-			MsoLogger.ErrorCode.AvailabilityError, errMsg);
-
+		logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
+			MsoLogger.ErrorCode.AvailabilityError.getValue(), errMsg);
 	}
 
 	protected void logError(String errMsg, Throwable t) {
-		LOGGER.error(MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC, "SDNC", "",
-			MsoLogger.ErrorCode.AvailabilityError, errMsg, t);
-
+		logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
+			MsoLogger.ErrorCode.AvailabilityError.getValue(), errMsg, t);
 	}
 
 	/**
@@ -288,8 +289,8 @@ public abstract class SDNCConnector {
 					String errorType = xpath.evaluate("error-type", error);
 					info += "error-type:" + errorType;
 				} catch (XPathExpressionException e) {
-				    LOGGER.error(MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-type", error.toString(), "SDNC", "",
-				    	MsoLogger.ErrorCode.DataError, XPATH_EXCEPTION, e);
+					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-type", error.toString(),
+							"SDNC", MsoLogger.ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
 				}
 
 				try {
@@ -299,8 +300,8 @@ public abstract class SDNCConnector {
 					}
 					info += "error-tag:" + errorTag;
 				} catch (XPathExpressionException e) {
-					LOGGER.error(MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-tag", error.toString(), "SDNC", "",
-						MsoLogger.ErrorCode.DataError, XPATH_EXCEPTION, e);
+					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-tag", error.toString(),
+							"SDNC", MsoLogger.ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
 				}
 
 				try {
@@ -310,8 +311,8 @@ public abstract class SDNCConnector {
 					}
 					info += "error-message:" + errorMessage;
 				} catch (Exception e) {
-					LOGGER.error(MessageEnum.RA_EVALUATE_XPATH_ERROR, "error-message", error.toString(), "SDNC", "",
-						MsoLogger.ErrorCode.DataError, XPATH_EXCEPTION, e);
+					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-message",
+						error.toString(), "SDNC", MsoLogger.ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
 				}
 
 				if (!info.isEmpty()) {
@@ -323,8 +324,8 @@ public abstract class SDNCConnector {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.error (MessageEnum.RA_ANALYZE_ERROR_EXC, "SDNC", "",
-				MsoLogger.ErrorCode.DataError, "Exception while analyzing errors", e);
+			logger.error("{} {} {} {}", MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
+				MsoLogger.ErrorCode.DataError.getValue(), "Exception while analyzing errors", e);
 		}
 
 		return output.toString();

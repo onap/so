@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,13 +35,15 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 public class Utils {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, Utils.class);
+	private static Logger logger = LoggerFactory.getLogger(Utils.class);
 
 	private Utils() {
 	}
@@ -94,11 +98,12 @@ public class Utils {
 			}
 
 			String s = domToStr(newdoc);
-			msoLogger.debug("Formatted SdncReq:\n" + s);
+			logger.debug("Formatted SdncReq:\n",  s);
 			return s;
 
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST, "SDNC", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in genSdncReq", e);
+			logger.error("{} {} {} {}", MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in genSdncReq", e);
 		}
 		return null;
 	}
@@ -127,11 +132,12 @@ public class Utils {
 			}
 
 			String s = domToStr(newdoc);
-			msoLogger.debug("Formatted SdncPutReq:\n" + s);
+			logger.debug("Formatted SdncPutReq:\n {}", s);
 			return s;
 
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST, "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception in genSdncPutReq", e);
+			logger.error("{} {} {} {}", MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
+				MsoLogger.ErrorCode.DataError.getValue(), "Exception in genSdncPutReq", e);
 		}
 		return null;
 	}
@@ -161,11 +167,12 @@ public class Utils {
 			root.appendChild(elem3);
 
 			String s = domToStr(newdoc);
-			msoLogger.debug("Formatted SdncReq:" + s);
+			logger.debug("Formatted SdncReq: {}", s);
 			return s;
 
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.RA_ERROR_CREATE_SDNC_RESPONSE, "SDNC", "", MsoLogger.ErrorCode.DataError, "Exception in genMsoFailResp", e);
+			logger.error("{} {} {} {}", MessageEnum.RA_ERROR_CREATE_SDNC_RESPONSE.toString(), "SDNC",
+				MsoLogger.ErrorCode.DataError.getValue(), "Exception in genMsoFailResp", e);
 		}
 		return null;
 	}
@@ -191,7 +198,8 @@ public class Utils {
 				s = s.replaceAll("xmlns=\"\"", "");
 				return s;
 			} catch (Exception e) {
-				msoLogger.error(MessageEnum.RA_ERROR_CONVERT_XML2STR, "", "", MsoLogger.ErrorCode.DataError, "Exception - domToStr", e);
+				logger.error("{} {} {}", MessageEnum.RA_ERROR_CONVERT_XML2STR.toString(), MsoLogger.ErrorCode.DataError
+						.getValue(), "Exception - domToStr", e);
 			}
 		}
 		return null;

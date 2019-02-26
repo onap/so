@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +25,8 @@ package org.onap.so.adapters.sdnc.impl;
 
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -31,7 +34,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MapRequestTunables {
 	
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,MapRequestTunables.class);
+	private static Logger logger = LoggerFactory.getLogger(MapRequestTunables.class);
 	public static final String GENERATED_KEY = "Generated key: ";
 	
 	@Autowired
@@ -44,14 +47,14 @@ public class MapRequestTunables {
 		String key;
 		if ("query".equals(reqTunable.getAction())) { //due to variable format for reqTunable.getOperation() eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
 			key = Constants.REQUEST_TUNABLES + "." + reqTunable.getMsoAction() + ".." + reqTunable.getAction();
-			msoLogger.debug(GENERATED_KEY + key);
+			logger.debug(GENERATED_KEY + key);
 		}
 		else if ("put".equals(reqTunable.getAction())  || "restdelete".equals(reqTunable.getAction())) { //due to variable format for reqTunable.getOperation() eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
 			key = Constants.REQUEST_TUNABLES + "..." + reqTunable.getAction();
-			msoLogger.debug(GENERATED_KEY + key);
+			logger.debug(GENERATED_KEY + key);
 		} else {
 			key = Constants.REQUEST_TUNABLES + "." + reqTunable.getMsoAction() + "." + reqTunable.getOperation() +"."  + reqTunable.getAction();
-			msoLogger.debug(GENERATED_KEY + key);
+			logger.debug(GENERATED_KEY + key);
 		}
 
 		String value;	
@@ -61,31 +64,32 @@ public class MapRequestTunables {
 
 			String[] parts = value.split("\\|"); //escape pipe
 			if (parts.length < 3) {
-				msoLogger.warn(MessageEnum.RA_SDNC_INVALID_CONFIG, key, value, "SDNC", "", MsoLogger.ErrorCode.DataError, "Invalid config");
+				logger.warn("{} {} {} {} {} {}", MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), key, value, "SDNC",
+					MsoLogger.ErrorCode.DataError.getValue(), "Invalid config");
 			}
 
 			for (int i = 0; i < parts.length; i++) {
 				if (i == 0) {
 					reqTunable.setReqMethod(parts[i]) ;
-					msoLogger.debug("Request Method is set to: " + reqTunable.getReqMethod());
+					logger.debug("Request Method is set to: {}", reqTunable.getReqMethod());
 				} else if (i == 1) {
 					reqTunable.setTimeout( parts[i]);
-					msoLogger.debug("Timeout is set to: " + reqTunable.getTimeout());
+					logger.debug("Timeout is set to: {}", reqTunable.getTimeout());
 				} else if (i == 2) {
 					reqTunable.setSdncUrl(env.getProperty(Constants.REQUEST_TUNABLES + "." + parts[i],""));
 					if (reqTunable.getOperation() != null && reqTunable.getSdncUrl() != null) {
 						reqTunable.setSdncUrl(reqTunable.getSdncUrl()  + reqTunable.getOperation());
 					}
-					msoLogger.debug("SDNC Url is set to: " + reqTunable.getSdncUrl());
+					logger.debug("SDNC Url is set to: {}", reqTunable.getSdncUrl());
 				} else if  (i == 3) {
 					reqTunable.setHeaderName(parts[i]);
-					msoLogger.debug("HeaderName is set to: " + reqTunable.getHeaderName());
+					logger.debug("HeaderName is set to: {}", reqTunable.getHeaderName());
 				} else if  (i == 4) {
 					reqTunable.setNamespace(parts[i]);
-					msoLogger.debug("NameSpace is set to: " + reqTunable.getNamespace());
+					logger.debug("NameSpace is set to: {}", reqTunable.getNamespace());
 				} else if  (i == 5) {
 					reqTunable.setAsyncInd(parts[i]);
-					msoLogger.debug("AsyncInd is set to: " + reqTunable.getAsyncInd());
+					logger.debug("AsyncInd is set to: {}", reqTunable.getAsyncInd());
 				}
 			}
 
@@ -96,9 +100,10 @@ public class MapRequestTunables {
 			error = "Missing configuration for:" + key;
 		}
 		if (error != null) {
-			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, key, "SDNC", "", MsoLogger.ErrorCode.DataError, "Missing config param");		
+			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), key, "SDNC",
+				MsoLogger.ErrorCode.DataError.getValue(), "Missing config param");
 		}
-		msoLogger.debug ("RequestTunables Key:" + key + " Value:" + value + " Tunables:" + this.toString());
+		logger.debug("RequestTunables Key:{} Value:{} Tunables:{}", key, value, this.toString());
 		return reqTunable;
 	}
 }

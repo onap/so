@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +32,8 @@ import org.onap.so.adapters.sdnc.SDNCAdapterResponse;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -40,7 +44,7 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 
 
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCAdapterPortTypeImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(SDNCAdapterPortTypeImpl.class);
 
 	
 	@Autowired
@@ -48,7 +52,7 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 	
 	@PostConstruct
 	public void init () {
-		msoLogger.info(MessageEnum.RA_INIT_SDNC_ADAPTER, "SDNC", "SDNCAdapterPortType", "");
+		logger.info("{} {} {}", MessageEnum.RA_INIT_SDNC_ADAPTER.toString(), "SDNC", "SDNCAdapterPortType");
 	}
 
 	/**
@@ -57,7 +61,7 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 	@Override
 	public void healthCheck ()
 	{
-		msoLogger.debug("Health check call in SDNC Adapter");
+		logger.debug("Health check call in SDNC Adapter");
 	}
 
 
@@ -70,7 +74,8 @@ public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 		}
 		catch (Exception e){
 			String respMsg = "Error sending request to SDNC. Failed to start SDNC Client thread " + e.getMessage();
-			msoLogger.error(MessageEnum.RA_SEND_REQUEST_SDNC_ERR, "SDNC", "", MsoLogger.ErrorCode.DataError, respMsg, e);
+			logger.error("{} {} {} {}", MessageEnum.RA_SEND_REQUEST_SDNC_ERR.toString(), "SDNC",
+				MsoLogger.ErrorCode.DataError.getValue(), respMsg, e);
 
 			SDNCResponse sdncResp = new SDNCResponse(bpelReqId);
 			sdncResp.setRespCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

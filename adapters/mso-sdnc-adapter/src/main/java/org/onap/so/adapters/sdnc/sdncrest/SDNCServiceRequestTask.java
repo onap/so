@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,12 +36,13 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.sdnc.exception.SDNCAdapterException;
 import org.onap.so.adapters.sdncrest.RequestInformation;
-import org.onap.so.adapters.sdncrest.SDNCErrorCommon;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
 import org.onap.so.adapters.sdncrest.SDNCServiceError;
 import org.onap.so.adapters.sdncrest.SDNCServiceRequest;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -48,7 +51,7 @@ import org.w3c.dom.Element;
 
 @Component
 public class SDNCServiceRequestTask {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SDNCServiceRequestTask.class);
+	private static final Logger logger =  LoggerFactory.getLogger(SDNCServiceRequestTask.class);
 
 	@Autowired
 	private SDNCServiceRequestConnector connector;
@@ -91,24 +94,8 @@ public class SDNCServiceRequestTask {
 		long sdncStartTime = System.currentTimeMillis();		
 		SDNCResponseCommon response = connector.send(xml, mappedTunables);
 
-		if (response instanceof SDNCErrorCommon) {
-			LOGGER.recordMetricEvent(sdncStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-				"Received success response from SDNC", "SDNC", sdncService + "." + sdncOperation, null);
-		} else {
-			LOGGER.recordMetricEvent(sdncStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
-				"Received error response from SDNC", "SDNC", sdncService + "." + sdncOperation, null);
-		}
-
 		long bpStartTime = System.currentTimeMillis();
 		boolean callbackSuccess = bpRestCallback.send(request.getBPNotificationUrl(), response.toJson());
-
-		if (callbackSuccess) {
-			LOGGER.recordMetricEvent(bpStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-				"Sent notification", "BPMN", request.getBPNotificationUrl(), null);
-		} else {
-			LOGGER.recordMetricEvent(bpStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
-				"Failed to send notification", "BPMN", request.getBPNotificationUrl(), null);
-		}
 	}
 
 	private Element addChild(Element parent, String tag) {
@@ -206,8 +193,8 @@ public class SDNCServiceRequestTask {
 			addTextChild(agnosticServiceInformation, "content-type", contentType);
 			addTextChild(agnosticServiceInformation, "anydata", anydata);
 		} catch (Exception e) {
-			LOGGER.error(MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST, "SDNC", "",
-					MsoLogger.ErrorCode.BusinessProcesssError, "Exception in genSdncReq", e);
+			logger.error("{} {} {} {}", MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in genSdncReq", e);
 			return null;
 		}
 
@@ -225,12 +212,12 @@ public class SDNCServiceRequestTask {
 			transformer.transform(new DOMSource(doc), new StreamResult(writer));
 			xml = writer.toString();
 		} catch (Exception e) {
-			LOGGER.error(MessageEnum.RA_ERROR_CONVERT_XML2STR, "", "",
-				MsoLogger.ErrorCode.DataError, "Exception - domToStr", e);
+			logger.error("{} {} {}", MessageEnum.RA_ERROR_CONVERT_XML2STR.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+					"Exception - domToStr", e);
 			return null;
 		}
 
-		LOGGER.trace("Formatted SDNC service request XML:\n" + xml);
+		logger.trace("Formatted SDNC service request XML:\n {}", xml);
 		return xml;
 	}
 }

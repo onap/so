@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +35,9 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * <p>Java class for anonymous complex type.
  *
@@ -67,7 +72,7 @@ public class SDNCAdapterCallbackRequest {
     @XmlElement(name = "RequestData")
     protected Object requestData;
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, SDNCAdapterCallbackRequest.class);
+    private static Logger logger = LoggerFactory.getLogger(SDNCAdapterCallbackRequest.class);
 
     /**
      * Gets the value of the callbackHeader property.
@@ -130,8 +135,9 @@ public class SDNCAdapterCallbackRequest {
 		}
 		catch (Exception e)
 		{
-			msoLogger.error(MessageEnum.RA_MARSHING_ERROR, "", "", MsoLogger.ErrorCode.DataError, "Exception - MARSHING_ERROR", e);
-		}
+        logger.error("{} {} {}", MessageEnum.RA_MARSHING_ERROR.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+            "Exception - MARSHING_ERROR", e);
+    }
 		return "";
 	}
 }

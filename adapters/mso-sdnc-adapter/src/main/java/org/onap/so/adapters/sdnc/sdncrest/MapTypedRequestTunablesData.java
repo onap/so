@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +28,8 @@ import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -34,9 +37,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MapTypedRequestTunablesData {
 	
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,MapTypedRequestTunablesData.class);
-	
-	
+	private static Logger logger = LoggerFactory.getLogger(MapTypedRequestTunablesData.class);
 	
 	private static final String MISSING_CONFIGURATION_ERROR_MSG= "Missing configuration for: ";
 	private static final String MISSING_CONFIG_PARAM_ERROR_MSG="Missing config param";
@@ -54,7 +55,8 @@ public class MapTypedRequestTunablesData {
 
 		if ("".equals(value)) {
 			error= MISSING_CONFIGURATION_ERROR_MSG + reqTunable.getKey();
-			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, reqTunable.getKey(), "SDNC", "", MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
+			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), reqTunable.getKey(), "SDNC",
+				MsoLogger.ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 		
 			throw new SDNCAdapterException(error);
 		}
@@ -63,41 +65,42 @@ public class MapTypedRequestTunablesData {
 
 		if (parts.length != 5) {
 			error="Invalid configuration for: " + reqTunable.getKey();
-			msoLogger.error(MessageEnum.RA_SDNC_INVALID_CONFIG, reqTunable.getKey(), value, "SDNC", "", MsoLogger.ErrorCode.DataError, "Invalid config");
-	
+			logger.error("{} {} {} {} {} {}", MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), reqTunable.getKey(), value, "SDNC",
+					MsoLogger.ErrorCode.DataError.getValue(), "Invalid config");
 			throw new SDNCAdapterException(error);
 		}
 
 		reqTunable.setReqMethod(parts[0]);
-		msoLogger.trace("Request Method is set to: " + reqTunable.getReqMethod());
+		logger.trace("Request Method is set to: {}", reqTunable.getReqMethod());
 
 		reqTunable.setTimeout(parts[1]);
-		msoLogger.trace("Timeout is set to: " + reqTunable.getTimeout());
+		logger.trace("Timeout is set to: {}", reqTunable.getTimeout());
 
 		String urlPropKey = Constants.REQUEST_TUNABLES + "." + parts[2];
 		reqTunable.setSdncUrl(env.getProperty(urlPropKey, ""));
 
 		if ("".equals(reqTunable.getSdncUrl())) {
 			error=MISSING_CONFIGURATION_ERROR_MSG + urlPropKey;
-			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, urlPropKey, "SDNC", "", MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
+			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), urlPropKey, "SDNC",
+				MsoLogger.ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 
 			throw new SDNCAdapterException(error);
 		}
 
-		msoLogger.trace("SDNC Url is set to: " + reqTunable.getSdncUrl());
+		logger.trace("SDNC Url is set to: {}", reqTunable.getSdncUrl());
 
 		reqTunable.setHeaderName(parts[3]);
-		msoLogger.trace("Header Name is set to: " + reqTunable.getHeaderName());
+		logger.trace("Header Name is set to: {}", reqTunable.getHeaderName());
 
 		reqTunable.setNamespace(parts[4]);
-		msoLogger.trace("Namespace is set to: " + reqTunable.getNamespace());
+		logger.trace("Namespace is set to: {}", reqTunable.getNamespace());
 
 		reqTunable.setMyUrl(env.getProperty(Constants.MY_URL_PROP, ""));
 
 		if ("".equals(reqTunable.getMyUrl())) {
 			error=MISSING_CONFIGURATION_ERROR_MSG + Constants.MY_URL_PROP;
-			msoLogger.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.MY_URL_PROP, "SDNC", "",
-				MsoLogger.ErrorCode.DataError, MISSING_CONFIG_PARAM_ERROR_MSG);
+			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), Constants.MY_URL_PROP, "SDNC",
+				MsoLogger.ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 		
 			throw new SDNCAdapterException(error);
 		}
@@ -108,7 +111,7 @@ public class MapTypedRequestTunablesData {
 
 		reqTunable.setMyUrl(reqTunable.getMyUrl().concat(reqTunable.getMyUrlSuffix()));
 
-		msoLogger.debug(reqTunable.toString());	
+		logger.debug(reqTunable.toString());
 		return reqTunable;
 	}
 

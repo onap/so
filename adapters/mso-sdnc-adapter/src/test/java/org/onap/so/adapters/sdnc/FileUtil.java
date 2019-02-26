@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +22,8 @@
 
 package org.onap.so.adapters.sdnc;
 
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +33,7 @@ import java.io.InputStream;
  */
 public class FileUtil {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, FileUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      * Read the specified resource file and return the contents as a String.
@@ -53,7 +56,7 @@ public class FileUtil {
                 return "";
             }
         } catch (IOException e) {
-            LOGGER.debug("Exception:", e);
+            logger.debug("Exception:", e);
             return "";
         }
     }

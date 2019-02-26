@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +24,8 @@ package org.onap.so.adapters.sdnc.sdncrest;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.onap.so.adapters.sdnc.impl.Constants;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Typed Request Tunables.  Each entry is identified by a TYPE in the property name.
@@ -39,7 +42,7 @@ import org.onap.so.logger.MsoLogger;
  */
 public class TypedRequestTunables {	
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, TypedRequestTunables.class);
+	private static final Logger logger = LoggerFactory.getLogger(TypedRequestTunables.class);
 
 	private String reqId;
 	private String myUrlSuffix;
@@ -82,7 +85,7 @@ public class TypedRequestTunables {
 	 */
 	public void setServiceKey(String service, String operation) {
 		key = Constants.REQUEST_TUNABLES + ".service." + service + "." + operation;
-		LOGGER.debug("Generated " + getClass().getSimpleName() + " key: " + key);
+		logger.debug("Generated {} key: {}", getClass().getSimpleName(), key);
 	}
 
 	/**

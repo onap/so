@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +36,8 @@ import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -47,7 +50,7 @@ import org.springframework.stereotype.Component;
 @Path("/")
 @Component
 public class SNIROResponse {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,SNIROResponse.class);
+	private static final Logger logger = LoggerFactory.getLogger(SNIROResponse.class);
 
 	
 	@Autowired
@@ -61,34 +64,18 @@ public class SNIROResponse {
 	@Consumes("*/*")
 	@Produces({MediaType.TEXT_PLAIN})
 	public Response serviceNotification(@PathParam("correlator") String correlator, String content) {
-		LOGGER.info(MessageEnum.RA_RECEIVE_SDNC_NOTIF, content, "SDNC", "SDNCNotify/SNIROResponse");
-
-		long startTime = System.currentTimeMillis();
+		logger.info("{} {} {} {}", MessageEnum.RA_RECEIVE_SDNC_NOTIF.toString(), content, "SDNC",
+			"SDNCNotify/SNIROResponse");
 
 		String bpUrl = env.getProperty(Constants.BPEL_REST_URL_PROP, ""); 
 
 		if (bpUrl == null || ("").equals(bpUrl)) {
 			String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
-			LOGGER.error(MessageEnum.RA_SDNC_MISS_CONFIG_PARAM, Constants.BPEL_REST_URL_PROP, "SDNC", "",
-				MsoLogger.ErrorCode.DataError, "Missing config param");
+			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), Constants.BPEL_REST_URL_PROP,
+				"SDNC", MsoLogger.ErrorCode.DataError.getValue(), "Missing config param");
 
 			return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(error).build();
 		}
-
-		long bpStartTime = System.currentTimeMillis();
-		boolean callbackSuccess = callback.send(bpUrl, "SNIROResponse", correlator, content);
-
-		if (callbackSuccess) {
-			LOGGER.recordMetricEvent(bpStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-				"Sent notification", "BPMN", bpUrl, null);
-			LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successful");
-		} else {
-			LOGGER.recordMetricEvent(bpStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
-				"Failed to send notification", "BPMN", bpUrl, null);
-			LOGGER.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
-				"Failed to send notification");
-		}
-
 		return Response.status(204).build();
 	}
 }

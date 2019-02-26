@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,6 +39,8 @@ import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.onap.so.utils.CryptoUtils;
@@ -49,7 +52,7 @@ import org.springframework.core.env.Environment;
  */
 @Component
 public class BPRestCallback {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA,BPRestCallback.class);
+	private static final Logger logger = LoggerFactory.getLogger(BPRestCallback.class);
 
 	private static final String CAMUNDA="Camunda";
 	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
@@ -66,7 +69,7 @@ public class BPRestCallback {
 	 * @return true if the message was consumed successfully by the endpoint
 	 */
 	public boolean send(String workflowMessageUrl, String messageType, String correlator, String message) {
-		LOGGER.debug(getClass().getSimpleName() + ".send("
+		logger.debug(getClass().getSimpleName() + ".send("
 			+ "workflowMessageUrl=" + workflowMessageUrl
 			+ " messageType=" + messageType
 			+ " correlator=" + correlator
@@ -91,12 +94,13 @@ public class BPRestCallback {
 	 * @return true if the message was consumed successfully by the endpoint
 	 */
 	public boolean send(String url, String message) {
-		LOGGER.debug(getClass().getSimpleName() + ".send("
+		logger.debug(getClass().getSimpleName() + ".send("
 			+ "url=" + url
 			+ " message=" + message
 			+ ")");
 
-		LOGGER.info(MessageEnum.RA_CALLBACK_BPEL, message == null ? "[no content]" : message, CAMUNDA, "");
+		logger.info("{} {} {}", MessageEnum.RA_CALLBACK_BPEL.toString(), message == null ? "[no content]" : message,
+			CAMUNDA);
 
 		HttpPost method = null;
 		HttpResponse httpResponse = null;
@@ -129,8 +133,8 @@ public class BPRestCallback {
 				method.setHeader(ONAPLogConstants.Headers.INVOCATION_ID,MDC.get(ONAPLogConstants.MDCs.INVOCATION_ID));
 				method.setHeader(ONAPLogConstants.Headers.PARTNER_NAME,"SO-SDNCAdapter");
 			} catch (Exception e) {
-				LOGGER.error(MessageEnum.RA_SET_CALLBACK_AUTH_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError,
-					"Unable to set authorization in callback request", e);			
+				logger.error("{} {} {} {}", MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Unable to set authorization in callback request", e);
 				error = true;
 			}
 
@@ -146,14 +150,15 @@ public class BPRestCallback {
 
 				if (httpResponse.getStatusLine().getStatusCode() >= 300) {
 					String msg = "Received error response to callback request: " + httpResponse.getStatusLine();
-					LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError, msg);
+					logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA, MsoLogger.ErrorCode
+						.BusinessProcesssError.getValue(), msg);
 
 				}
 			}
 			return true;
 		} catch (Exception e) {
-			LOGGER.error(MessageEnum.RA_CALLBACK_BPEL_EXC, CAMUNDA, "", MsoLogger.ErrorCode.BusinessProcesssError,
-				"Error sending callback request", e);			
+			logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Error sending callback request", e);
 			return false;
 		} finally {
 			if (httpResponse != null) {
@@ -161,7 +166,7 @@ public class BPRestCallback {
 					EntityUtils.consume(httpResponse.getEntity());
 					httpResponse = null;
 				} catch (Exception e) {
-					LOGGER.debug("Exception:", e);
+					logger.debug("Exception:", e);
 				}
 			}
 
@@ -169,10 +174,10 @@ public class BPRestCallback {
 				try {
 					method.reset();
 				} catch (Exception e) {
-					LOGGER.debug("Exception:", e);
+					logger.debug("Exception:", e);
 				}
 			}
-			LOGGER.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE, CAMUNDA, "","");
+			logger.info("{} {}", MessageEnum.RA_CALLBACK_BPEL_COMPLETE.toString(), CAMUNDA);
 		}
 	}
 }

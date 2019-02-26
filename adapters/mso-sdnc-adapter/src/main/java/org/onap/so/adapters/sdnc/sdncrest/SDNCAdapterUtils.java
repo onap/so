@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +23,11 @@
 
 package org.onap.so.adapters.sdnc.sdncrest;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,7 +37,7 @@ import org.w3c.dom.NodeList;
  * Utility methods used by SDNCAdapterRest.
  */
 public final class SDNCAdapterUtils {
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, SDNCAdapterUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SDNCAdapterUtils.class);
     /**
      * Instantiation is not allowed.
      */
