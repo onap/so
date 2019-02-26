@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -58,8 +60,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class AbstractSdncOperationTask extends BaseTask {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractSdncOperationTask.class);
-    protected static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, AbstractSdncOperationTask.class);
-    
+
     @Autowired
     private Environment env;
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
@@ -282,7 +283,9 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         } catch (Exception exception) {
             logger.info("exception: AbstractSdncOperationTask.updateProgress fail!");
             logger.error("exception: AbstractSdncOperationTask.updateProgress fail:", exception);
-            msoLogger.error(MessageEnum.GENERAL_EXCEPTION, " updateProgress catch exception: ", "", this.getTaskName(), MsoLogger.ErrorCode.UnknownError, exception.getClass().toString());
+            logger.error("{} {} {} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(),
+                " updateProgress catch exception: ", this.getTaskName(),
+                MsoLogger.ErrorCode.UnknownError.getValue(), exception.getClass().toString());
         }
     }
 

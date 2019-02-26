@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,23 +26,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.ws.rs.NotFoundException;
-
-import org.onap.aai.domain.yang.ServiceInstance;
-import org.onap.aai.domain.yang.ServiceInstances;
 import org.onap.aai.domain.yang.OwningEntities;
 import org.onap.aai.domain.yang.OwningEntity;
-import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AAICreateResources {
 	
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAICreateResources.class);
+	private static final Logger logger = LoggerFactory.getLogger(AAICreateResources.class);
 
 	public void createAAIProject (String projectName, String serviceInstance){
 		AAIResourceUri projectURI = AAIUriFactory.createResourceUri(AAIObjectType.PROJECT, projectName);
@@ -73,7 +71,7 @@ public class AAICreateResources {
 						.createResourceUri(AAIObjectPlurals.OWNING_ENTITY)
 						.queryParam("owning-entity-name", owningEntityName))
 				.orElseGet(() -> {
-					msoLogger.debug("No Owning Entity matched by name");
+					logger.debug("No Owning Entity matched by name");
 					return null;
 				});
 		
