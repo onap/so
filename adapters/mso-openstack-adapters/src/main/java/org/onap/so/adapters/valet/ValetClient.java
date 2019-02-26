@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +24,11 @@
 
 package org.onap.so.adapters.valet;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
+import javax.annotation.PostConstruct;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriBuilder;
 import org.onap.so.adapters.valet.beans.HeatRequest;
 import org.onap.so.adapters.valet.beans.ValetConfirmRequest;
 import org.onap.so.adapters.valet.beans.ValetConfirmResponse;
@@ -34,16 +40,8 @@ import org.onap.so.adapters.valet.beans.ValetRollbackRequest;
 import org.onap.so.adapters.valet.beans.ValetRollbackResponse;
 import org.onap.so.adapters.valet.beans.ValetUpdateRequest;
 import org.onap.so.adapters.valet.beans.ValetUpdateResponse;
-
-import java.net.URI;
-
-import javax.annotation.PostConstruct;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriBuilder;
-
-import org.onap.so.adapters.valet.GenericValetResponse;
-
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -52,14 +50,13 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class ValetClient {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ValetClient.class);
+
+    private static Logger logger = LoggerFactory.getLogger(ValetClient.class);
 
 	@Autowired
 	private Environment environment;
@@ -93,8 +90,8 @@ public class ValetClient {
             this.basePath = this.environment.getProperty(ValetClient.VALET_BASE_PATH, ValetClient.DEFAULT_BASE_PATH);
 			this.authString = this.environment.getProperty(ValetClient.VALET_AUTH, ValetClient.DEFAULT_AUTH_STRING);
 		} catch (Exception e) {
-			LOGGER.debug("Error retrieving valet properties. " + e.getMessage());
-		}
+        logger.debug("Error retrieving valet properties. {}", e.getMessage());
+    }
 	}
 		
 	/*
@@ -117,8 +114,8 @@ public class ValetClient {
 			response = getRestTemplate().exchange(uri, HttpMethod.POST, entity, ValetCreateResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
-			LOGGER.error("An exception occurred in callValetCreateRequest", e);
-			throw e;
+        logger.error("An exception occurred in callValetCreateRequest", e);
+        throw e;
 		}
 		return gvr;
 	}
@@ -150,8 +147,8 @@ public class ValetClient {
 			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetUpdateResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
-			LOGGER.error("An exception occurred in callValetUpdateRequest", e);
-			throw e;
+        logger.error("An exception occurred in callValetUpdateRequest", e);
+        throw e;
 		}
 		return gvr;
 	}
@@ -177,8 +174,8 @@ public class ValetClient {
 			response = getRestTemplate().exchange(uri, HttpMethod.DELETE, entity, ValetDeleteResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
-			LOGGER.error("An exception occurred in callValetDeleteRequest", e);
-			throw e;
+        logger.error("An exception occurred in callValetDeleteRequest", e);
+        throw e;
 		}
 		return gvr;
 	}
@@ -199,12 +196,12 @@ public class ValetClient {
 			String body = mapper.writeValueAsString(vcr);
 			HttpHeaders headers = generateHeaders(requestId);
 			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-			LOGGER.debug("valet confirm req: " + uri.toString() + HEADERS + headers.toString() + BODY + body);
-			
+        logger.debug("valet confirm req: {} {} {} {} {}", uri, HEADERS, headers, BODY, body);
+
 			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetConfirmResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
-			LOGGER.error("An exception occurred in callValetConfirmRequest", e);
+        logger.error("An exception occurred in callValetConfirmRequest", e);
 			throw e;
 		}
 		return gvr;
@@ -231,7 +228,7 @@ public class ValetClient {
 			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetRollbackResponse.class);
 			gvr = this.getGVRFromResponse(response);
 		} catch (Exception e) {
-			LOGGER.error("An exception occurred in callValetRollbackRequest", e);
+        logger.error("An exception occurred in callValetRollbackRequest", e);
 			throw e;
 		}
 		return gvr;
