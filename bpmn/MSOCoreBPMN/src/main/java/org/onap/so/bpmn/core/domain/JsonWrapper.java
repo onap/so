@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,10 +36,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import org.onap.so.logger.MsoLogger;
-//import com.fasterxml.jackson.map.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -49,7 +50,7 @@ import org.onap.so.logger.MsoLogger;
 @JsonInclude(Include.NON_NULL)
 public abstract class JsonWrapper implements Serializable  {
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, JsonWrapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(JsonWrapper.class);
 	@JsonInclude(Include.NON_NULL)
 	public String toJsonString(){
 
@@ -65,7 +66,7 @@ public abstract class JsonWrapper implements Serializable  {
 			jsonString = ow.writeValueAsString(this);
 		} catch (Exception e){
 
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		}
 		return jsonString;
 	}
@@ -79,13 +80,13 @@ public abstract class JsonWrapper implements Serializable  {
 		try {
 			json = new JSONObject(mapper.writeValueAsString(this));
 		} catch (JsonGenerationException e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		} catch (JsonMappingException e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		} catch (JSONException e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		} catch (IOException e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		}
 		return json; 
 	}
@@ -98,11 +99,11 @@ public abstract class JsonWrapper implements Serializable  {
 		try {
 			jsonString = mapper.writeValueAsString(list);
 		} catch (JsonGenerationException e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		} catch (JsonMappingException e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		} catch (IOException e) {
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		}
 		return jsonString;
 	}
@@ -120,7 +121,7 @@ public abstract class JsonWrapper implements Serializable  {
 			jsonString = ow.writeValueAsString(this);
 		} catch (Exception e){
 
-			LOGGER.debug("Exception :",e);
+			logger.debug("Exception :",e);
 		}
 		return jsonString;
 	}
