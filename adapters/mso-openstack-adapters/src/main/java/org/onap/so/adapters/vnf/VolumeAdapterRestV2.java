@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +24,13 @@
 package org.onap.so.adapters.vnf;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -40,7 +45,6 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
-
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnfrest.CreateVolumeGroupRequest;
@@ -60,15 +64,11 @@ import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 /**
  * This class services calls to the REST interface for VNF Volumes (http://host:port/vnfs/rest/v1/volume-groups)
@@ -83,7 +83,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(value = "/v2/volume-groups", description = "root of volume-groups adapters restful web service v2")
 @Component
 public class VolumeAdapterRestV2 {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, VolumeAdapterRestV2.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(VolumeAdapterRestV2.class);
 	private static final String TESTING_KEYWORD = "___TESTING___";
 	private static final String RESP=", resp=";
 	private static final String EXCEPTION="Exception :";
@@ -113,7 +114,7 @@ public class VolumeAdapterRestV2 {
 			@ApiParam(value = "CreateVolumeGroupRequest", required = true)
 			final CreateVolumeGroupRequest req)
 	{
-		LOGGER.debug("createVNFVolumes enter: " + req.toJsonString());
+      logger.debug("createVNFVolumes enter: {}", req.toJsonString());
 		CreateVNFVolumesTask task = new CreateVNFVolumesTask(req, mode);
 		if (req.isSynchronous()) {
 			// This is a synchronous request
@@ -129,11 +130,12 @@ public class VolumeAdapterRestV2 {
 				t1.start();
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
-				LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, "", "createVNFVolumes", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - createVNFVolumes", e);
+          logger.error("{} {} Exception - createVNFVolumes: ", MessageEnum.RA_CREATE_VNF_ERR,
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
-			LOGGER.debug ("createVNFVolumes exit");
+        logger.debug("createVNFVolumes exit");
 			return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -167,14 +169,14 @@ public class VolumeAdapterRestV2 {
 		}
 		@Override
 		public void run() {
-			LOGGER.debug ("CreateVFModule VolumesTask start");
+        logger.debug("CreateVFModule VolumesTask start");
 			try {
 				// Synchronous Web Service Outputs
 				Holder<String> stackId = new Holder<>();
 				Holder<Map<String, String>> outputs = new Holder<>();
 				Holder<VnfRollback> vnfRollback = new Holder<>();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
-				LOGGER.debug("in createVfModuleVolumes - completeVnfVfModuleType=" + completeVnfVfModuleType);
+          logger.debug("in createVfModuleVolumes - completeVnfVfModuleType={}", completeVnfVfModuleType);
 
 				String cloudsiteId = req.getCloudSiteId();
 				if (cloudsiteId != null && cloudsiteId.equals(TESTING_KEYWORD)) {
@@ -226,7 +228,7 @@ public class VolumeAdapterRestV2 {
 						rb,
 						req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.debug(EXCEPTION,e);
+          logger.debug(EXCEPTION, e);
 				eresp = new VolumeGroupExceptionResponse(
 					e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
@@ -235,7 +237,7 @@ public class VolumeAdapterRestV2 {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("CreateVFModule VolumesTask exit: code=" + getStatusCode() + RESP+ getResponse());
+        logger.debug("CreateVFModule VolumesTask exit: code= {} {} {}", getStatusCode(), RESP, getResponse());
 		}
 	}
 
@@ -259,7 +261,7 @@ public class VolumeAdapterRestV2 {
 		final DeleteVolumeGroupRequest req
 		)
 	{
-		LOGGER.debug("deleteVNFVolumes enter: " + req.toJsonString());
+      logger.debug("deleteVNFVolumes enter: {}", req.toJsonString());
 		if (aaiVolumeGroupId == null || !aaiVolumeGroupId.equals(req.getVolumeGroupId())) {
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
@@ -282,11 +284,12 @@ public class VolumeAdapterRestV2 {
 				t1.start();
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
-				LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, "", "deleteVNFVolumes", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - deleteVNFVolumes", e);
+          logger.error("{} {} Exception - deleteVNFVolumes: ", MessageEnum.RA_DELETE_VNF_ERR,
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
-			LOGGER.debug ("deleteVNFVolumes exit");
+        logger.debug("deleteVNFVolumes exit");
 			return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -320,7 +323,7 @@ public class VolumeAdapterRestV2 {
 		}
 		@Override
 		public void run() {
-			LOGGER.debug("DeleteVNFVolumesTask start");
+        logger.debug("DeleteVNFVolumesTask start");
 			String cloudSiteId = req.getCloudSiteId();
 			try {
 				if (! cloudSiteId.equals(TESTING_KEYWORD)) {
@@ -330,7 +333,7 @@ public class VolumeAdapterRestV2 {
 				}
 				response = new DeleteVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.debug(EXCEPTION,e);
+          logger.debug(EXCEPTION, e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -338,7 +341,7 @@ public class VolumeAdapterRestV2 {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("DeleteVNFVolumesTask exit: code=" + getStatusCode() + RESP+ getResponse());
+        logger.debug("DeleteVNFVolumesTask exit: code= {} {} {}", getStatusCode(), RESP, getResponse());
 		}
 	}
 
@@ -360,7 +363,7 @@ public class VolumeAdapterRestV2 {
 		final RollbackVolumeGroupRequest req
 		)
 	{
-		LOGGER.debug("rollbackVNFVolumes enter: " + req.toJsonString());
+      logger.debug("rollbackVNFVolumes enter: {}", req.toJsonString());
 		if (aaiVolumeGroupId == null || req.getVolumeGroupRollback() == null || !aaiVolumeGroupId.equals(req.getVolumeGroupRollback().getVolumeGroupId())) {
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
@@ -383,11 +386,12 @@ public class VolumeAdapterRestV2 {
 				t1.start();
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
-				LOGGER.error (MessageEnum.RA_ROLLBACK_VNF_ERR, "", "rollbackVNFVolumes", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - rollbackVNFVolumes", e);
+          logger.error("{} {} Exception - rollbackVNFVolumes: ", MessageEnum.RA_ROLLBACK_VNF_ERR,
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
-			LOGGER.debug("rollbackVNFVolumes exit");
+        logger.debug("rollbackVNFVolumes exit");
 			return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -419,7 +423,7 @@ public class VolumeAdapterRestV2 {
 		}
 		@Override
 		public void run() {
-			LOGGER.debug("RollbackVNFVolumesTask start");
+        logger.debug("RollbackVNFVolumesTask start");
 			try {
 				VolumeGroupRollback vgr = req.getVolumeGroupRollback();
 				VnfRollback vrb = new VnfRollback(
@@ -431,7 +435,7 @@ public class VolumeAdapterRestV2 {
 				vnfAdapter.rollbackVnf(vrb);
 				response = new RollbackVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.debug(EXCEPTION,e);
+          logger.debug(EXCEPTION, e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -439,7 +443,7 @@ public class VolumeAdapterRestV2 {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("RollbackVNFVolumesTask exit: code=" + getStatusCode() + RESP+ getResponse());
+        logger.debug("RollbackVNFVolumesTask exit: code= {} {} {}", getStatusCode(), RESP, getResponse());
 		}
 
 	}
@@ -464,7 +468,7 @@ public class VolumeAdapterRestV2 {
 		final UpdateVolumeGroupRequest req
 		)
 	{
-		LOGGER.debug("updateVNFVolumes enter: " + req.toJsonString());
+      logger.debug("updateVNFVolumes enter: {}", req.toJsonString());
 		if (aaiVolumeGroupId == null || !aaiVolumeGroupId.equals(req.getVolumeGroupId())) {
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
@@ -487,11 +491,12 @@ public class VolumeAdapterRestV2 {
 	    		t1.start();
 	    	} catch (Exception e) {
 	    		// problem handling create, send generic failure as sync resp to caller
-	    		LOGGER.error (MessageEnum.RA_UPDATE_VNF_ERR, "", "updateVNFVolumes", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - updateVNFVolumes", e);
+            logger.error("{} {} Exception - updateVNFVolumes: ", MessageEnum.RA_UPDATE_VNF_ERR,
+                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 	    		return Response.serverError().build();
 	    	}
 	    	// send sync response (ACK) to caller
-	    	LOGGER.debug ("updateVNFVolumes exit");
+        logger.debug("updateVNFVolumes exit");
 	    	return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -525,12 +530,12 @@ public class VolumeAdapterRestV2 {
 		}
 		@Override
 		public void run() {
-			LOGGER.debug("UpdateVNFVolumesTask start");
+        logger.debug("UpdateVNFVolumesTask start");
 			try {
 				Holder<Map<String, String>> outputs = new Holder<> ();
 				Holder<VnfRollback> vnfRollback = new Holder<> ();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
-				LOGGER.debug("in updateVfModuleVolume - completeVnfVfModuleType=" + completeVnfVfModuleType);
+          logger.debug("in updateVfModuleVolume - completeVnfVfModuleType={}", completeVnfVfModuleType);
 
 				if (req.getCloudSiteId().equals(TESTING_KEYWORD)) {
 					outputs.value = testMap();
@@ -557,7 +562,7 @@ public class VolumeAdapterRestV2 {
 						req.getVolumeGroupId(), req.getVolumeGroupStackId(),
 						outputs.value, req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.debug(EXCEPTION,e);
+          logger.debug(EXCEPTION, e);
 				eresp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -565,7 +570,7 @@ public class VolumeAdapterRestV2 {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("UpdateVNFVolumesTask exit: code=" + getStatusCode() + RESP+ getResponse());
+        logger.debug("UpdateVNFVolumesTask exit: code= {} {} {}", getStatusCode(), RESP, getResponse());
 		}
 	}
 
@@ -598,7 +603,7 @@ public class VolumeAdapterRestV2 {
 		)
 	{
     	//This request responds synchronously only
-    	LOGGER.debug ("queryVNFVolumes enter:" + aaiVolumeGroupId + " " + volumeGroupStackId);
+      logger.debug("queryVNFVolumes enter: {} {}", aaiVolumeGroupId, volumeGroupStackId);
     	MsoRequest msoRequest = new MsoRequest(requestId, serviceInstanceId);
 
     	try {
@@ -622,23 +627,24 @@ public class VolumeAdapterRestV2 {
 				vnfAdapter.queryVnf(cloudSiteId, tenantId, volumeGroupStackId, msoRequest, vnfExists, vfModuleId, status, outputs);
 			}
     		if (!vnfExists.value) {
-    			LOGGER.debug ("VNFVolumes not found");
+            logger.debug("VNFVolumes not found");
     			qryResp.setVolumeGroupStatus(status.value);
     			respStatus = HttpStatus.SC_NOT_FOUND;
     		} else {
-    			LOGGER.debug ("VNFVolumes found " + vfModuleId.value + ", status=" + status.value);
+            logger.debug("VNFVolumes found {}, status={}", vfModuleId.value, status.value);
     			qryResp.setVolumeGroupStatus(status.value);
     			qryResp.setVolumeGroupOutputs(outputs.value);
     		}
-        	LOGGER.debug("Query queryVNFVolumes exit");
+          logger.debug("Query queryVNFVolumes exit");
     		return Response
     			.status(respStatus)
     			.entity(new GenericEntity<QueryVolumeGroupResponse>(qryResp) {})
     			.build();
     	} catch (VnfException e) {
-    		LOGGER.error(MessageEnum.RA_QUERY_VNF_ERR,  aaiVolumeGroupId, "", "queryVNFVolumes", MsoLogger.ErrorCode.BusinessProcesssError, "VnfException - queryVNFVolumes", e);
+          logger.error("{} {} AaiVolumeGroupId: {} VnfException - queryVNFVolumes: ", MessageEnum.RA_QUERY_VNF_ERR,
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), aaiVolumeGroupId, e);
     		VolumeGroupExceptionResponse excResp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.FALSE, null);
-        	LOGGER.debug("Query queryVNFVolumes exit");
+          logger.debug("Query queryVNFVolumes exit");
     		return Response
     			.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
     			.entity(new GenericEntity<VolumeGroupExceptionResponse>(excResp) {})
