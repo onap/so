@@ -22,7 +22,7 @@
   },
   "vf-module-information" : {    
     "vf-module-id" : "testVfModuleId",
-    "from-preload": null  
+    "from-preload": false  
  },
   "vnf-information" : {    
     "vnf-id" : "testVnfId",

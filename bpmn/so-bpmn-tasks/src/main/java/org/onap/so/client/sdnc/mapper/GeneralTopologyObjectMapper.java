@@ -139,7 +139,7 @@ public class GeneralTopologyObjectMapper {
 			vfModuleInformation.setFromPreload(requestContext.getRequestParameters().getUsePreload());			
 		}
 		else {
-			vfModuleInformation.setFromPreload(null);
+			vfModuleInformation.setFromPreload(false);
 		}
 		
 		return vfModuleInformation;

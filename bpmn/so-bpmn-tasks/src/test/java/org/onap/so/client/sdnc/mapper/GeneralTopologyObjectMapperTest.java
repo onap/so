@@ -361,7 +361,7 @@ public class GeneralTopologyObjectMapperTest  extends TestDataSetup {
 		assertNull(gcRequestInput.getOnapModelInformation());
 		assertEquals(vfModule.getVfModuleId(),gcRequestInput.getVfModuleId());
 		assertNotNull(gcRequestInput.getVfModuleId());
-		assertNull(gcRequestInput.getFromPreload());
+		assertFalse(gcRequestInput.getFromPreload());
 	}
 	
 	@Test
@@ -385,7 +385,7 @@ public class GeneralTopologyObjectMapperTest  extends TestDataSetup {
 		assertNull(gcRequestInput.getOnapModelInformation());
 		assertEquals(vfModule.getVfModuleId(),gcRequestInput.getVfModuleId());
 		assertNotNull(gcRequestInput.getVfModuleId());
-		assertNull(gcRequestInput.getFromPreload());
+		assertFalse(gcRequestInput.getFromPreload());
 	}
 	
 	@Test
