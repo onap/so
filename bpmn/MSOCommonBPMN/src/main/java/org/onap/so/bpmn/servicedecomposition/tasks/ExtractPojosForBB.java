@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +35,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.CaseFormat;
@@ -41,7 +44,7 @@ import com.google.common.base.CaseFormat;
 @Component
 public class ExtractPojosForBB {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExtractPojosForBB.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExtractPojosForBB.class);
 	
 	public <T> T extractByKey(BuildingBlockExecution execution, ResourceKey key, String value)
 			throws BBObjectNotFoundException {
@@ -93,7 +96,8 @@ public class ExtractPojosForBB {
 		} catch (BBObjectNotFoundException e) { // re-throw parent object not found
 			throw e;
 		} catch (Exception e) { // convert all other exceptions to object not found
-			msoLogger.warnSimple("BBObjectNotFoundException in ExtractPojosForBB", "BBObject " + key + " was not found in gBBInput using reference value: " + value);
+			logger.warn("BBObjectNotFoundException in ExtractPojosForBB", "BBObject " + key + " was not found in "
+				+ "gBBInput using reference value: " + value);
 			throw new BBObjectNotFoundException(key, value);
 		}
 		

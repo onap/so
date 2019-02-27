@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +27,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -34,10 +35,12 @@ import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseDefinitionTransformer {
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCAdapterNetworkTopologyMockTransformer.class);
+	private static final Logger logger = LoggerFactory.getLogger(SDNCAdapterNetworkTopologyMockTransformer.class);
 	
 	private String callbackResponse;
 	private String requestId;
@@ -61,22 +64,22 @@ public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseDefinitio
 		
 		String callbackUrl = requestBody.substring(requestBody.indexOf("<sdncadapter:CallbackUrl>")+25, requestBody.indexOf("</sdncadapter:CallbackUrl>"));
 		String requestId = requestBody.substring(requestBody.indexOf("<sdncadapter:RequestId>")+23, requestBody.indexOf("</sdncadapter:RequestId>"));
-		System.out.println("request callbackUrl : " + callbackUrl);
-		System.out.println("request requestId : " + requestId);
-		
-		System.out.println("file path/name : " + responseDefinition.getBodyFileName());
+		logger.info("request callbackUrl : " + callbackUrl);
+		logger.info("request requestId : " + requestId);
+
+		logger.info("file path/name : " + responseDefinition.getBodyFileName());
 		callbackResponse = FileUtil.readResourceFile("__files/" + responseDefinition.getBodyFileName());		
 		// extract Response responseRequestId
 		String responseRequestId = callbackResponse.substring(callbackResponse.indexOf("<RequestId>")+11, callbackResponse.indexOf("</RequestId>"));
-		System.out.println("response requestId: " + responseRequestId);		
-		System.out.println("callbackResponse (before): " + callbackResponse);
+		logger.info("response requestId: " + responseRequestId);
+		logger.info("callbackResponse (before): " + callbackResponse);
 		callbackResponse = callbackResponse.replace(responseRequestId, requestId);				
 		if (this.requestId != null) {
 			callbackResponse = callbackResponse.replace(this.requestId, requestId);
 		} else {
 			callbackResponse = callbackResponse.replace(responseRequestId, requestId);
 		}	
-		System.out.println("callbackResponse (after):" + callbackResponse);		
+		logger.info("callbackResponse (after):" + callbackResponse);
 
 		Object sdncDelay = MockResource.getMockProperties().get("sdnc_delay");
 		int delay = 300;
@@ -85,7 +88,7 @@ public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseDefinitio
 		}
 		
 		//Kick off callback thread
-		System.out.println("(NetworkTopologyMockTransformer) callback Url:" + callbackUrl + ":delay:" + delay);
+		logger.info("(NetworkTopologyMockTransformer) callback Url:" + callbackUrl + ":delay:" + delay);
 		CallbackResponseThread calbackResponseThread = new CallbackResponseThread(callbackUrl,callbackResponse, delay);
 		calbackResponseThread.start();
 		
@@ -119,19 +122,18 @@ public class SDNCAdapterNetworkTopologyMockTransformer extends ResponseDefinitio
 				sleep(delay);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
-				LOGGER.debug("Exception :",e1);
+				logger.debug("Exception :", e1);
 			}
-			LOGGER.debug("Sending callback response to url: " + callbackUrl);
+			logger.debug("Sending callback response to url: {}", callbackUrl);
 			try {
-				HttpClient client = new HttpClientFactory().newTextXmlClient(
-					UriBuilder.fromUri(callbackUrl).build().toURL(),
-					TargetEntity.SDNC_ADAPTER);
+				HttpClient client = new HttpClientFactory()
+					.newTextXmlClient(UriBuilder.fromUri(callbackUrl).build().toURL(), TargetEntity.SDNC_ADAPTER);
 				Response response = client.post(payLoad);
-				LOGGER.debug("Successfully posted callback? Status: " + response.getStatus());
+				logger.debug("Successfully posted callback? Status: {}", response.getStatus());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-			    LOGGER.debug("catch error in - request.post() ");
-				LOGGER.debug("Exception :",e);
+				logger.debug("catch error in - request.post() ");
+				logger.debug("Exception :", e);
 			}
 		}
 		

@@ -5,6 +5,8 @@ package org.onap.so.bpmn.common.workflow.context;
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +28,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -37,7 +41,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WorkflowContextHolder {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,WorkflowContextHolder.class);
+	private static Logger logger = LoggerFactory.getLogger(WorkflowContextHolder.class);
 	private static final String logMarker = "[WORKFLOW-CONTEXT-HOLDER]";
 	private static WorkflowContextHolder instance = null;
 	
@@ -67,14 +71,12 @@ public class WorkflowContextHolder {
 	}
 	
 	public void put(WorkflowContext context) {
-		msoLogger.debug(logMarker + " Adding context to the queue: "
-			+ context.getRequestId());
+		logger.debug("{} Adding context to the queue: {}", logMarker, context.getRequestId());
 		responseQueue.put(context);
 	}
 	
 	public void remove(WorkflowContext context) {
-		msoLogger.debug(logMarker + " Removing context from the queue: "
-			+ context.getRequestId());
+		logger.debug("{} Removing context from the queue: {}", logMarker, context.getRequestId());
 		responseQueue.remove(context);
 	}
 	
@@ -120,18 +122,20 @@ public class WorkflowContextHolder {
 				try {
 					WorkflowContext requestObject = responseQueue.take();
 					MsoLogger.setLogContext(requestObject.getRequestId(), null);
-					msoLogger.debug("Time remaining for request id: " + requestObject.getRequestId() + ":" + requestObject.getDelay(TimeUnit.MILLISECONDS));
-					msoLogger.debug("Preparing timeout response for " + requestObject.getProcessKey() + ":" + ":" + requestObject.getRequestId());
+					logger.debug("Time remaining for request id: {}:{}", requestObject.getRequestId(), requestObject
+						.getDelay
+						(TimeUnit.MILLISECONDS));
+					logger.debug("Preparing timeout response for {}:{}", requestObject.getProcessKey(), requestObject
+						.getRequestId());
 				} catch (InterruptedException e) {
 					Thread.currentThread().interrupt();
 				} catch (Exception e) {
-					msoLogger.debug("WorkflowContextHolder timeout thread caught exception: " + e);
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "BPMN", MsoLogger.getServiceName(), 
-						MsoLogger.ErrorCode.UnknownError, "Error in WorkflowContextHolder timeout thread");
-				
+					logger.debug("WorkflowContextHolder timeout thread caught exception: ", e);
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN", MsoLogger.getServiceName(),
+							MsoLogger.ErrorCode.UnknownError.getValue(), "Error in WorkflowContextHolder timeout thread");
 				}
 			}
-			msoLogger.debug("WorkflowContextHolder timeout thread interrupted, quitting");
+			logger.debug("WorkflowContextHolder timeout thread interrupted, quitting");
 		}
 	}
 }

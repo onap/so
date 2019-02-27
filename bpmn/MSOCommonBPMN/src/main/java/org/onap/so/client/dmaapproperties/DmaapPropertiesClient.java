@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +29,8 @@ import org.onap.so.client.avpn.dmaap.beans.AsyncRequestStatus;
 import org.onap.so.client.avpn.dmaap.beans.InstanceReferences;
 import org.onap.so.client.avpn.dmaap.beans.RequestStatus;
 import org.onap.so.client.exception.MapperException;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class DmaapPropertiesClient {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DmaapPropertiesClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(DmaapPropertiesClient.class);
 
 	@Autowired
 	private Provider<GlobalDmaapPublisher> dmaapPublisher;
@@ -62,7 +65,7 @@ public class DmaapPropertiesClient {
 		try {
 			return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dmaapBean);
 		} catch (JsonProcessingException e) {
-			msoLogger.error(e);
+			logger.error("Exception occurred", e);
 			throw new MapperException(e.getMessage());
 		}
 	}

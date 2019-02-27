@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,7 +22,6 @@
 package org.onap.so.bpmn.common.recipe;
 
 import org.onap.so.bpmn.core.domain.ModelInfo;
-import org.onap.so.logger.MsoLogger;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -28,6 +29,8 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * the inputs for the resource recipe
@@ -42,7 +45,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @JsonRootName("variables")
 public class ResourceInput {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL, ResourceInput.class);
+	private static Logger logger = LoggerFactory.getLogger(ResourceInput.class);
 	
     @JsonProperty("resourceInstanceName")
     private String resourceInstanceName;
@@ -307,8 +310,8 @@ public class ResourceInput {
         String jsonStr = "";
         try {
             jsonStr = mapper.writeValueAsString(this);
-        } catch(JsonProcessingException e) {
-        	msoLogger.error("JsonProcessingException", e);
+        } catch (JsonProcessingException e) {
+            logger.error("JsonProcessingException", e);
         }
         return jsonStr;
     }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,14 +22,14 @@
 
 package org.onap.so.bpmn.common.recipe;
 
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * java object of the resource recipe , it
@@ -37,7 +39,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @JsonRootName("variables")
 public class ResourceRecipeRequest {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.GENERAL, ResourceRecipeRequest.class);
+	private static Logger logger = LoggerFactory.getLogger(ResourceRecipeRequest.class);
 	
     @JsonProperty("resourceInput")
     private BpmnParam resourceInput;
@@ -145,15 +147,14 @@ public class ResourceRecipeRequest {
 
 	@Override
     public String toString() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-        String jsonStr = "ResourceRecipeRequest";
-        try {
-            jsonStr = mapper.writeValueAsString(this);
-        } catch(JsonProcessingException e) {
-        	msoLogger.error("JsonProcessingException", e);
-        }
+      ObjectMapper mapper = new ObjectMapper();
+      mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+      String jsonStr = "ResourceRecipeRequest";
+      try {
+          jsonStr = mapper.writeValueAsString(this);
+      } catch (JsonProcessingException e) {
+          logger.error("JsonProcessingException", e);
+      }
         return jsonStr;
     }
-
 }

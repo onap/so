@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +38,8 @@ import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -53,6 +57,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class BpmnRestClient {
 
+    private static Logger logger = LoggerFactory.getLogger(BpmnRestClient.class);
+
     public static final String DEFAULT_BPEL_AUTH = "admin:admin";
 
     public static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
@@ -64,7 +70,6 @@ public class BpmnRestClient {
     private static final  String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
     @Autowired
     private UrnPropertiesReader urnPropertiesReader;
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, BpmnRestClient.class);
 
     private static boolean noProperties = true;
 
@@ -101,7 +106,7 @@ public class BpmnRestClient {
         RequestConfig requestConfig =
                 RequestConfig.custom().setSocketTimeout(recipeTimeout).setConnectTimeout(recipeTimeout).setConnectionRequestTimeout(recipeTimeout).build();
         post.setConfig(requestConfig);
-        msoLogger.debug("call the bpmn,  url:" + recipeUri);
+        logger.debug("call the bpmn,  url: {}", recipeUri);
         String jsonReq = wrapResourceRequest(requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, requestDetails, recipeParamXsd);
 
         StringEntity input = new StringEntity(jsonReq);
@@ -177,10 +182,10 @@ public class BpmnRestClient {
             recipeRequest.setResourceInput(resourceInput);
             recipeRequest.setRecipeTimeout(recipeTimeoutInput);
             jsonReq = recipeRequest.toString();
-            msoLogger.trace("request body is " + jsonReq);
+            logger.trace("request body is {}", jsonReq);
         } catch(Exception e) {
-            msoLogger.error(MessageEnum.APIH_WARP_REQUEST, "Camunda", "wrapVIDRequest", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH Warp request",
-                    e);
+            logger.error("{} {} {} {} {}", MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapVIDRequest",
+                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
         }
         return jsonReq;
     }
@@ -198,7 +203,7 @@ public class BpmnRestClient {
         try {
             return CryptoUtils.decrypt(prop, urnPropertiesReader.getVariable(encryptionKey));
         } catch(GeneralSecurityException e) {
-            msoLogger.debug("Security exception", e);
+            logger.debug("Security exception", e);
         }
         return defaultValue;
     }
