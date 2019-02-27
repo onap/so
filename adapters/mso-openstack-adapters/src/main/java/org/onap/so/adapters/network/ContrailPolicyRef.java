@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,15 +23,17 @@
 package org.onap.so.adapters.network;
 
 
-import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.logger.MessageEnum;
+import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ContrailPolicyRef {
-	private static final MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, ContrailPolicyRef.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(ContrailPolicyRef.class);
 	 
 	@JsonProperty("network_policy_refs_data_sequence")
 	private ContrailPolicyRefSeq seq;
@@ -44,7 +48,8 @@ public class ContrailPolicyRef {
 		}
 		catch (Exception e)
 		{
-			logger.error (MessageEnum.RA_MARSHING_ERROR, "Error creating JsonString for Contrail Policy Ref", "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Policy Ref", e);
+        logger.error("{} {} Error creating JsonString for Contrail Policy Ref: ", MessageEnum.RA_MARSHING_ERROR,
+            MsoLogger.ErrorCode.SchemaError.getValue(), e);
 		}
 		
 		return node;
@@ -60,7 +65,8 @@ public class ContrailPolicyRef {
 		}
 		catch (Exception e)
 		{
-			logger.error (MessageEnum.RA_MARSHING_ERROR, "Error creating JsonString for Contrail Policy Ref", "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Policy Ref", e);
+        logger.error("{} {} Error creating JsonString for Contrail Policy Ref: ", MessageEnum.RA_MARSHING_ERROR,
+            MsoLogger.ErrorCode.SchemaError.getValue(), e);
 		}
 		
 		return jsonString;

@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,10 +24,14 @@
 package org.onap.so.adapters.network;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.inject.Provider;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -40,7 +46,6 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
-
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.network.exceptions.NetworkException;
 import org.onap.so.adapters.nwrest.ContrailNetwork;
@@ -67,25 +72,21 @@ import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.NetworkStatus;
 import org.onap.so.openstack.beans.RouteTarget;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Path("/v1/networks")
 @Api(value = "/v1/networks", description = "root of network adapters restful web service")
 @Component
 @Transactional
 public class NetworkAdapterRest {
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,NetworkAdapterRest.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(NetworkAdapterRest.class);
 	private static final String TESTING_KEYWORD = "___TESTING___";
-	private String APPEND_RESPONSE = ", resp=";
 	private String EXCEPTION = "Exception:";
 
 	@Autowired
@@ -109,7 +110,7 @@ public class NetworkAdapterRest {
 	public Response createNetwork(
 				@ApiParam(value = "details of network being created", required = true) 
 				CreateNetworkRequest req) {
-		LOGGER.debug("createNetwork enter: " + req.toJsonString());
+      logger.debug("createNetwork enter: {}", req.toJsonString());
 		CreateNetworkTask task = new CreateNetworkTask(req);
 		if (req.isSynchronous()) {
 			// This is a synchronous request
@@ -125,11 +126,12 @@ public class NetworkAdapterRest {
 				t1.start();
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
-				LOGGER.error (MessageEnum.RA_CREATE_NETWORK_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception while create network", e);
+          logger.error("{} {} Exception while create network ", MessageEnum.RA_CREATE_NETWORK_EXC,
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
-			LOGGER.debug ("createNetwork exit");
+        logger.debug("createNetwork exit");
 			return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -161,7 +163,7 @@ public class NetworkAdapterRest {
 		}
 		@Override
 		public void run() {
-			LOGGER.debug ("CreateNetworkTask start");
+        logger.debug("CreateNetworkTask start");
 			try {
 				// Synchronous Web Service Outputs
 				Holder<String> networkId = new Holder<>();
@@ -269,7 +271,7 @@ public class NetworkAdapterRest {
 						rollback.value,
 						req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug (EXCEPTION, e);
+          logger.debug(EXCEPTION, e);
 				eresp = new CreateNetworkError(
 					e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
@@ -278,7 +280,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("CreateNetworkTask exit: code=" + getStatusCode() + APPEND_RESPONSE+ getResponse());
+        logger.debug("CreateNetworkTask exit: code={}, resp={}", getStatusCode(), getResponse());
 		}
 	}
 
@@ -299,7 +301,7 @@ public class NetworkAdapterRest {
 		@ApiParam(value = "details of network being deleted", required = true) 
 		DeleteNetworkRequest req)
 	{
-		LOGGER.debug("deleteNetwork enter: " + req.toJsonString());
+      logger.debug("deleteNetwork enter: {}", req.toJsonString());
 		if (aaiNetworkId == null || !aaiNetworkId.equals(req.getNetworkId())) {
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
@@ -322,11 +324,12 @@ public class NetworkAdapterRest {
 				t1.start();
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
-				LOGGER.error (MessageEnum.RA_DELETE_NETWORK_EXC, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception while delete network", e);
+          logger.error("{} {} Exception while delete network ", MessageEnum.RA_DELETE_NETWORK_EXC,
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
-			LOGGER.debug ("deleteNetwork exit");
+        logger.debug("deleteNetwork exit");
 			return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -358,7 +361,7 @@ public class NetworkAdapterRest {
 		}
 		@Override
 		public void run() {
-			LOGGER.debug("DeleteNetworkTask start");
+        logger.debug("DeleteNetworkTask start");
 			try {
 				Holder<Boolean> networkDeleted = new Holder<>();
 				if (req.getCloudSiteId().equals(TESTING_KEYWORD)) {
@@ -375,7 +378,7 @@ public class NetworkAdapterRest {
 				}
 				response = new DeleteNetworkResponse(req.getNetworkId(), networkDeleted.value, req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug (EXCEPTION, e);
+          logger.debug(EXCEPTION, e);
 				eresp = new DeleteNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -383,7 +386,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("DeleteNetworkTask exit: code=" + getStatusCode() + APPEND_RESPONSE+ getResponse());
+        logger.debug("DeleteNetworkTask exit: code={}, resp={}", getStatusCode(), getResponse());
 		}
 	}
 
@@ -413,7 +416,7 @@ public class NetworkAdapterRest {
 		@PathParam("aaiNetworkId") String aaiNetworkId)
 	{
 		//This request responds synchronously only
-		LOGGER.debug ("Query network enter:" + aaiNetworkId);
+      logger.debug("Query network enter:{}" + aaiNetworkId);
 		MsoRequest msoRequest = new MsoRequest(requestId, serviceInstanceId);
 
 		try {
@@ -430,10 +433,10 @@ public class NetworkAdapterRest {
 				networkExists, networkId, neutronNetworkId, status, routeTargets, subnetIdMap);
 
 			if (!networkExists.value) {
-				LOGGER.debug ("network not found");
+          logger.debug("network not found");
 				respStatus = HttpStatus.SC_NOT_FOUND;
 			} else {
-				LOGGER.debug ("network found" + networkId.value + ", status=" + status.value);
+          logger.debug("network found {}, status={}", networkId.value, status.value);
 				resp.setNetworkExists(networkExists.value);
 				resp.setNetworkId(networkId.value);
 				resp.setNeutronNetworkId(neutronNetworkId.value);
@@ -441,13 +444,14 @@ public class NetworkAdapterRest {
 				resp.setRouteTargets(routeTargets.value);
 				resp.setSubnetIdMap(subnetIdMap.value);
 			}
-			LOGGER.debug ("Query network exit");
+        logger.debug("Query network exit");
 			return Response
 				.status(respStatus)
 				.entity(new GenericEntity<QueryNetworkResponse>(resp) {})
 				.build();
 		} catch (NetworkException e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, aaiNetworkId, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception when query VNF", e);
+        logger.error("{} {} Exception when query VNF ", MessageEnum.RA_QUERY_VNF_ERR,
+            MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 			QueryNetworkError err = new QueryNetworkError();
 			err.setMessage(e.getMessage());
 			err.setCategory(MsoExceptionCategory.INTERNAL);
@@ -473,7 +477,7 @@ public class NetworkAdapterRest {
 		@ApiParam(value = "RollbackNetworkRequest in JSON format", required = true)
 		RollbackNetworkRequest req)
 	{
-		LOGGER.debug("rollbackNetwork enter: " + req.toJsonString());
+      logger.debug("rollbackNetwork enter: {}", req.toJsonString());
 		RollbackNetworkTask task = new RollbackNetworkTask(req);
 		if (req.isSynchronous()) {
 			// This is a synchronous request
@@ -489,11 +493,12 @@ public class NetworkAdapterRest {
 				t1.start();
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
-				LOGGER.error (MessageEnum.RA_ROLLBACK_NULL, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in rollbackNetwork", e);
+          logger.error("{} {} Exception in rollbackNetwork ", MessageEnum.RA_ROLLBACK_NULL,
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
-			LOGGER.debug("rollbackNetwork exit");
+        logger.debug("rollbackNetwork exit");
 			return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -525,13 +530,13 @@ public class NetworkAdapterRest {
 		}
 		@Override
 		public void run() {
-			LOGGER.debug("RollbackNetworkTask start");
+        logger.debug("RollbackNetworkTask start");
 			try {
 				NetworkRollback nwr = req.getNetworkRollback();
 				adapter.rollbackNetwork(nwr);
 				response = new RollbackNetworkResponse(true, req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug (EXCEPTION, e);
+          logger.debug(EXCEPTION, e);
 				eresp = new RollbackNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -539,7 +544,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("RollbackNetworkTask exit: code=" + getStatusCode() + APPEND_RESPONSE+ getResponse());
+        logger.debug("RollbackNetworkTask exit: code={}, resp={}", getStatusCode(), getResponse());
 		}
 	}
 
@@ -560,7 +565,7 @@ public class NetworkAdapterRest {
 		@ApiParam(value = "UpdateNetworkRequest in JSON format", required = true)
 		UpdateNetworkRequest req)
 	{
-		LOGGER.debug("updateNetwork enter: " + req.toJsonString());
+      logger.debug("updateNetwork enter: {}", req.toJsonString());
 		if (aaiNetworkId == null || !aaiNetworkId.equals(req.getNetworkId())) {
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
@@ -583,11 +588,12 @@ public class NetworkAdapterRest {
 	    		t1.start();
 	    	} catch (Exception e) {
 	    		// problem handling create, send generic failure as sync resp to caller
-	    		LOGGER.error (MessageEnum.RA_UPDATE_NETWORK_ERR, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in updateNetwork", e);
+            logger.error("{} {} Exception in updateNetwork ", MessageEnum.RA_UPDATE_NETWORK_ERR,
+                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
 	    		return Response.serverError().build();
 	    	}
 	    	// send sync response (ACK) to caller
-	    	LOGGER.debug ("updateNetwork exit");
+        logger.debug("updateNetwork exit");
 	    	return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -619,7 +625,7 @@ public class NetworkAdapterRest {
 		}
 		@Override
 		public void run() {
-			LOGGER.debug("UpdateNetworkTask start");
+        logger.debug("UpdateNetworkTask start");
 			try {
 				Holder<Map<String, String>> subnetIdMap = new Holder<>();
 				Holder<NetworkRollback> rollback = new Holder<> ();
@@ -709,7 +715,7 @@ public class NetworkAdapterRest {
 					subnetIdMap.value,
 					req.getMessageId());
 			} catch (NetworkException e) {
-			    LOGGER.debug (EXCEPTION, e);
+          logger.debug(EXCEPTION, e);
 				eresp = new UpdateNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -717,7 +723,7 @@ public class NetworkAdapterRest {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug("UpdateNetworkTask exit: code=" + getStatusCode() + APPEND_RESPONSE+ getResponse());
+        logger.debug("UpdateNetworkTask exit: code={}, resp={}", getStatusCode(), getResponse());
 		}
 	}
 

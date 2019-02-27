@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,10 +26,8 @@ package org.onap.so.adapters.vnf;
 import java.security.GeneralSecurityException;
 import java.util.Set;
 import java.util.TreeSet;
-
 import javax.annotation.PostConstruct;
 import javax.xml.bind.DatatypeConverter;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -40,6 +40,8 @@ import org.apache.http.util.EntityUtils;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
@@ -69,7 +71,7 @@ public class BpelRestClient {
 	private static final String RETRY_INTERVAL_PROPERTY  = PROPERTY_DOMAIN+".retryinterval";
 	private static final String RETRY_LIST_PROPERTY      = PROPERTY_DOMAIN+".retrylist";
 	private static final String ENCRYPTION_KEY_PROP      = "org.onap.so.adapters.network.encryptionKey";
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, BpelRestClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(BpelRestClient.class);
 
 	/** Default socket timeout (in seconds) */
 	public static final int DEFAULT_SOCKET_TIMEOUT = 5;
@@ -218,7 +220,8 @@ public class BpelRestClient {
 			}
 			if (totalretries >= retryCount) {
 				debug("Retried " + totalretries + " times, giving up.");
-				LOGGER.error(MessageEnum.RA_SEND_VNF_NOTIF_ERR, "Could not deliver response to BPEL after "+totalretries+" tries: "+toBpelStr, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError, "Could not deliver response to BPEL");
+          logger.error("{} {} Could not deliver response to BPEL after {} tries: {}", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
+              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), totalretries, toBpelStr);
 				return false;
 			}
 			totalretries++;
@@ -232,26 +235,26 @@ public class BpelRestClient {
 			try {
 				Thread.sleep(sleepinterval * 1000L);
 			} catch (InterruptedException e) {
-				LOGGER.debug("Exception while Thread sleep", e);
+          logger.debug("Exception while Thread sleep", e);
 				Thread.currentThread().interrupt();
 			}
 		}
 	}
 	private void debug(String m) {
-		LOGGER.debug(m);
+		logger.debug(m);
 	}
 	private void sendOne(final String toBpelStr, final String bpelUrl, final boolean isxml) {
-		LOGGER.debug("Sending to BPEL server: "+bpelUrl);
-		LOGGER.debug("Content is: "+toBpelStr);
+      logger.debug("Sending to BPEL server: {}", bpelUrl);
+      logger.debug("Content is: {}", toBpelStr);
 
 		//POST
 		HttpPost post = new HttpPost(bpelUrl);
 		if (credentials != null && !credentials.isEmpty())
 			post.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary(credentials.getBytes()));
 
-		LOGGER.debug("HTTPPost Headers: " + post.getAllHeaders());
-		
-        //ContentType
+      logger.debug("HTTPPost Headers: {}", post.getAllHeaders());
+
+      //ContentType
         ContentType ctype = isxml ? ContentType.APPLICATION_XML : ContentType.APPLICATION_JSON;
         post.setEntity(new StringEntity(toBpelStr, ctype));
 
@@ -274,14 +277,14 @@ public class BpelRestClient {
 				lastResponse = "";
 			}
 		} catch (Exception e) {
-			String error = "Error sending Bpel notification:" + toBpelStr;
-			LOGGER.error (MessageEnum.RA_SEND_VNF_NOTIF_ERR, error, "Camunda", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - Error sending Bpel notification", e);
+            logger.error("{} {} Exception - Error sending Bpel notification: {} ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
+                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), toBpelStr, e);
 			lastResponseCode = 900;
 			lastResponse = "";
 		}
 
-		LOGGER.debug("Response code from BPEL server: "+lastResponseCode);
-		LOGGER.debug("Response body is: "+lastResponse);
+      logger.debug("Response code from BPEL server: {}", lastResponseCode);
+      logger.debug("Response body is: {}", lastResponse);
 	}
 	
 	private String getEncryptedProperty(String key, String defaultValue, String encryptionKey) {
@@ -289,7 +292,7 @@ public class BpelRestClient {
 			try {
 				return CryptoUtils.decrypt(env.getProperty(key), env.getProperty(encryptionKey));
 			} catch (GeneralSecurityException e) {
-				LOGGER.debug("Exception while decrypting property: " + env.getProperty(key), e);
+          logger.debug("Exception while decrypting property: {} ", env.getProperty(key), e);
 			}
 		}
 		return defaultValue;
