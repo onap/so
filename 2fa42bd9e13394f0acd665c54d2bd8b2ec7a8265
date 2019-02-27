@@ -22,6 +22,30 @@
       "revId": "2fa42bd9e13394f0acd665c54d2bd8b2ec7a8265",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ac480e22_b4e14239",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/workflow/serviceTask/AbstractSdncOperationTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-02-27T07:48:04Z",
+      "side": 0,
+      "message": "Yeah, you are right. I will fix that.",
+      "parentUuid": "9b5efe75_2d90d80f",
+      "range": {
+        "startLine": 61,
+        "startChar": 31,
+        "endLine": 61,
+        "endChar": 40
+      },
+      "revId": "2fa42bd9e13394f0acd665c54d2bd8b2ec7a8265",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
