@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -53,7 +55,6 @@ import org.onap.so.cloudify.base.client.CloudifyConnectException;
 import org.onap.so.cloudify.base.client.CloudifyRequest;
 import org.onap.so.cloudify.base.client.CloudifyResponse;
 import org.onap.so.cloudify.base.client.CloudifyResponseException;
-import org.onap.so.logger.MsoLogger;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -61,13 +62,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HttpClientConnector implements CloudifyClientConnector {
 
 	private static ObjectMapper DEFAULT_MAPPER;
 	private static ObjectMapper WRAPPED_MAPPER;
 	
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, HttpClientConnector.class);
+    private static Logger logger = LoggerFactory.getLogger(HttpClientConnector.class);
 
 	static {
 		DEFAULT_MAPPER = new ObjectMapper();
@@ -141,7 +144,8 @@ public class HttpClientConnector implements CloudifyClientConnector {
 					String entityJson = mapper.writeValueAsString (request.entity().getEntity());
 					entity = new StringEntity(entityJson, ContentType.create(request.entity().getContentType()));
 					
-					LOGGER.debug ("Request JSON Body: " + entityJson.replaceAll("\"password\":\"[^\"]*\"", "\"password\":\"***\""));
+					logger.debug ("Request JSON Body: {}", entityJson.replaceAll("\"password\":\"[^\"]*\"",
+						"\"password\":\"***\""));
 	
 				} catch (JsonProcessingException e) {
 					throw new HttpClientException ("Json processing error on request entity", e);
@@ -198,7 +202,7 @@ public class HttpClientConnector implements CloudifyClientConnector {
 		try {
 			httpResponse = httpClient.execute(httpRequest);
 
-			LOGGER.debug ("Response status: " + httpResponse.getStatusLine().getStatusCode());
+			logger.debug ("Response status: {}", httpResponse.getStatusLine().getStatusCode());
 			
 			httpClientResponse = new HttpClientResponse (httpResponse);
 
@@ -223,7 +227,7 @@ public class HttpClientConnector implements CloudifyClientConnector {
 		}
 		catch (Exception e) {
 			// Catchall for anything else, must throw as a RuntimeException
-			LOGGER.error("Client exception", e);
+			logger.error("Client exception", e);
 			throw new RuntimeException("Unexpected client exception", e);
 		}
 		finally {
@@ -232,7 +236,7 @@ public class HttpClientConnector implements CloudifyClientConnector {
 				try {
 					httpResponse.close();
 				} catch (IOException e) {
-					LOGGER.debug("Unable to close HTTP Response: " + e);
+					logger.debug("Unable to close HTTP Response: " + e);
 				}
 		}
 		
