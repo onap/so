@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +25,12 @@
 package org.onap.so.adapters.tenant;
 
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -38,7 +43,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.xml.ws.Holder;
-
 import org.onap.so.adapters.tenant.exceptions.TenantAlreadyExists;
 import org.onap.so.adapters.tenant.exceptions.TenantException;
 import org.onap.so.adapters.tenantrest.CreateTenantError;
@@ -53,17 +57,12 @@ import org.onap.so.adapters.tenantrest.RollbackTenantError;
 import org.onap.so.adapters.tenantrest.RollbackTenantRequest;
 import org.onap.so.adapters.tenantrest.RollbackTenantResponse;
 import org.onap.so.adapters.tenantrest.TenantRollback;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 /**
  * This class services calls to the REST interface for Tenants (http://host:port/vnfs/rest/v1/tenants)
@@ -73,7 +72,8 @@ import io.swagger.annotations.ApiResponses;
 @Api(value = "/v1/tenants", description = "root of tenant adapters restful web service")
 @Component
 public class TenantAdapterRest {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, TenantAdapterRest.class);
+
+    private static Logger logger = LoggerFactory.getLogger(TenantAdapterRest.class);
 	private static final String EXCEPTION= "Exception :";
 	//RAA? No logging in wrappers
 	@Autowired
@@ -122,7 +122,7 @@ public class TenantAdapterRest {
 	public Response createTenant(
 			@ApiParam(value = "details of tenant being created", required = true) 			
 			CreateTenantRequest req) {
-		LOGGER.debug("createTenant enter: " + req.toJsonString());
+      logger.debug("createTenant enter: {}", req.toJsonString());
 
 		String newTenantId = null;
 		TenantRollback tenantRollback = new TenantRollback ();
@@ -145,17 +145,17 @@ public class TenantAdapterRest {
 
 		}
 		catch (TenantAlreadyExists tae) {
-			LOGGER.debug(EXCEPTION,tae);
+        logger.debug(EXCEPTION, tae);
 			CreateTenantError exc = new CreateTenantError(tae.getMessage(), tae.getFaultInfo().getCategory(), Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_NOT_IMPLEMENTED).entity(exc).build();
 		}
 		catch (TenantException te) {
-			LOGGER.debug(EXCEPTION,te);
+        logger.debug(EXCEPTION, te);
 			CreateTenantError exc = new CreateTenantError(te.getFaultInfo().getMessage(), te.getFaultInfo().getCategory(), Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
 		catch (Exception e) {
-			LOGGER.debug(EXCEPTION,e);
+        logger.debug(EXCEPTION, e);
 			CreateTenantError exc = new CreateTenantError(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
@@ -208,12 +208,12 @@ public class TenantAdapterRest {
 		    tenantDeleted = deleted.value;
 		}
 		catch (TenantException te) {
-			LOGGER.debug(EXCEPTION,te);
+        logger.debug(EXCEPTION, te);
 			DeleteTenantError exc = new DeleteTenantError(te.getFaultInfo().getMessage(), te.getFaultInfo().getCategory(), Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
 		catch (Exception e) {
-			LOGGER.debug(EXCEPTION,e);
+        logger.debug(EXCEPTION, e);
 			DeleteTenantError exc = new DeleteTenantError(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
@@ -272,12 +272,12 @@ public class TenantAdapterRest {
 
 		}
 		catch (TenantException te) {
-			LOGGER.debug(EXCEPTION,te);
+        logger.debug(EXCEPTION, te);
 			QueryTenantError exc = new QueryTenantError(te.getFaultInfo().getMessage(), te.getFaultInfo().getCategory());
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
 		catch (Exception e) {
-			LOGGER.debug(EXCEPTION,e);
+        logger.debug(EXCEPTION, e);
 			QueryTenantError exc = new QueryTenantError(e.getMessage(), MsoExceptionCategory.INTERNAL);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
@@ -321,12 +321,12 @@ public class TenantAdapterRest {
 		    impl.rollbackTenant(req.getTenantRollback());
 		}
 		catch (TenantException te) {
-			LOGGER.debug(EXCEPTION,te);
+        logger.debug(EXCEPTION, te);
 			RollbackTenantError exc = new RollbackTenantError(te.getFaultInfo().getMessage(), te.getFaultInfo().getCategory(), Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}
 		catch (Exception e) {
-			LOGGER.debug(EXCEPTION,e);
+        logger.debug(EXCEPTION, e);
 			RollbackTenantError exc = new RollbackTenantError(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE);
 			return Response.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR).entity(exc).build();
 		}

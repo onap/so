@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,23 +22,24 @@
 
 package org.onap.so.adapters.network;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.HostRoute;
 import org.onap.so.openstack.beans.Pool;
 import org.onap.so.openstack.beans.Subnet;
 import org.onap.so.openstack.utils.MsoCommonUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 public class ContrailSubnet {
-	private static final MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, ContrailSubnet.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(ContrailSubnet.class);
 	@Autowired
 	private MsoCommonUtils msoCommonUtils;
 	
@@ -129,8 +132,8 @@ public class ContrailSubnet {
 		}
 		catch (Exception e)
 		{
-			String error = "Error creating JsonNode for Contrail Subnet:" + subnetName;
-			logger.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonNode for Contrail Subnet", e);
+        logger.error("{} {} Error creating JsonNode for Contrail Subnet: {} ", MessageEnum.RA_MARSHING_ERROR,
+            MsoLogger.ErrorCode.SchemaError.getValue(), subnetName, e);
 		}
 		
 		return node;
@@ -146,8 +149,8 @@ public class ContrailSubnet {
 		}
 		catch (Exception e)
 		{
-			String error = "Error creating JsonString for Contrail Subnet:" + subnetName;
-			logger.error (MessageEnum.RA_MARSHING_ERROR, error, "", "", MsoLogger.ErrorCode.SchemaError, "Exception creating JsonString for Contrail Subnet", e);
+        logger.error("{} {} Error creating JsonString for Contrail Subnet: {} ", MessageEnum.RA_MARSHING_ERROR,
+            MsoLogger.ErrorCode.SchemaError.getValue(), subnetName, e);
 		}
 		
 		return jsonString;
