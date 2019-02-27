@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +35,8 @@ import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -41,8 +44,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExecuteBuildingBlockRainyDay {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
-			ExecuteBuildingBlockRainyDay.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExecuteBuildingBlockRainyDay.class);
 	public static final String HANDLING_CODE = "handlingCode";
 
 	@Autowired
@@ -65,7 +67,7 @@ public class ExecuteBuildingBlockRainyDay {
 			String RetryDuration = "PT" + retryTimeToWait + "S";
 			execution.setVariable("RetryDuration", RetryDuration);
 		} catch (Exception e) {
-			msoLogger.error(e);
+			logger.error("Exception occurred", e);
 			throw new BpmnError("Unknown error incrementing retry counter");
 		}
 	}
@@ -125,7 +127,7 @@ public class ExecuteBuildingBlockRainyDay {
 					// Extract error data to be returned to WorkflowAction
 					execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
 				} catch (Exception e) {
-					msoLogger.error("No WorkflowException Found",e);
+					logger.error("No WorkflowException Found",e);
 				}
 				RainyDayHandlerStatus rainyDayHandlerStatus;
 				rainyDayHandlerStatus = catalogDbClient
@@ -163,25 +165,25 @@ public class ExecuteBuildingBlockRainyDay {
 						request.setRetryStatusMessage("Retries have been exhausted.");
 						requestDbclient.updateInfraActiveRequests(request);
 					} catch (Exception ex) {
-						msoLogger.error("Failed to update Request Db Infra Active Requests with Retry Status",ex);
+						logger.error("Failed to update Request Db Infra Active Requests with Retry Status",ex);
 					}
 				}
 				if (handlingCode.equals("RollbackToAssigned") && !aLaCarte) {
 					handlingCode = "Rollback";
 				}
 			}
-			msoLogger.debug("RainyDayHandler Status Code is: " + handlingCode);
+			logger.debug("RainyDayHandler Status Code is: {}", handlingCode);
 			execution.setVariable(HANDLING_CODE, handlingCode);
 		} catch (Exception e) {
 			String code = this.environment.getProperty(defaultCode);
-			msoLogger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = "+ code, e);
+			logger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = {}", code, e);
 			execution.setVariable(HANDLING_CODE, code);
 		}
 		try{
 			int envMaxRetries = Integer.parseInt(this.environment.getProperty(maxRetries));
 			execution.setVariable("maxRetries", envMaxRetries);
 		} catch (Exception ex) {
-			msoLogger.error("Could not read maxRetries from config file. Setting max to 5 retries");
+			logger.error("Could not read maxRetries from config file. Setting max to 5 retries");
 			execution.setVariable("maxRetries", 5);
 		}
 	}

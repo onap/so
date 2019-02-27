@@ -38,7 +38,6 @@ import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -46,6 +45,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceRequestBuilder {
 
@@ -53,7 +54,7 @@ public class ResourceRequestBuilder {
 
     private static String SERVICE_URL_SERVICE_INSTANCE = "/v2/serviceResources";
 
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ResourceRequestBuilder.class);
+    private static Logger logger = LoggerFactory.getLogger(ResourceRequestBuilder.class);
 
     static JsonUtils jsonUtil = new JsonUtils();
 
@@ -74,7 +75,7 @@ public class ResourceRequestBuilder {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("not able to retrieve service order.");
+            logger.error("not able to retrieve service order.");
         }
         return resourceSequence;
 	}
@@ -161,7 +162,7 @@ public class ResourceRequestBuilder {
            }
 
         } catch (Exception e) {
-            LOGGER.error("not able to retrieve service instance");
+            logger.error("not able to retrieve service instance");
         }
         return new HashMap();
     }
@@ -227,8 +228,8 @@ public class ResourceRequestBuilder {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
         try {
             return mapper.readValue(jsonstr, type);
-        } catch(IOException e) {
-            LOGGER.error("fail to unMarshal json" + e.getMessage ());
+        } catch (IOException e) {
+            logger.error("fail to unMarshal json {}", e.getMessage());
         }
         return null;
     }
@@ -239,8 +240,8 @@ public class ResourceRequestBuilder {
         String jsonStr = null;
         try {
             jsonStr = mapper.writeValueAsString(srcObj);
-        } catch(JsonProcessingException e) {
-        	LOGGER.error("SdcToscaParserException", e);
+        } catch (JsonProcessingException e) {
+            logger.error("SdcToscaParserException", e);
         }
         return jsonStr;
     }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,9 +57,10 @@ import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -68,7 +71,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @Component("BBInputSetupUtils")
 public class BBInputSetupUtils {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, BBInputSetupUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(BBInputSetupUtils.class);
 	private ObjectMapper objectMapper = new ObjectMapper();
 	private static final String REQUEST_ERROR = "Could not find request.";
 
@@ -86,7 +89,7 @@ public class BBInputSetupUtils {
 			request.setVnfId(vnfId);
 			this.requestsDbClient.updateInfraActiveRequests(request);
 		} else {
-			msoLogger.debug(REQUEST_ERROR);
+			logger.debug(REQUEST_ERROR);
 		}
 	}
 
@@ -95,7 +98,7 @@ public class BBInputSetupUtils {
 			request.setVfModuleId(vfModuleId);
 			this.requestsDbClient.updateInfraActiveRequests(request);
 		} else {
-			msoLogger.debug(REQUEST_ERROR);
+			logger.debug(REQUEST_ERROR);
 		}
 	}
 
@@ -104,7 +107,7 @@ public class BBInputSetupUtils {
 			request.setVolumeGroupId(volumeGroupId);
 			this.requestsDbClient.updateInfraActiveRequests(request);
 		} else {
-			msoLogger.debug(REQUEST_ERROR);
+			logger.debug(REQUEST_ERROR);
 		}
 	}
 
@@ -113,7 +116,7 @@ public class BBInputSetupUtils {
 			request.setNetworkId(networkId);
 			this.requestsDbClient.updateInfraActiveRequests(request);
 		} else {
-			msoLogger.debug(REQUEST_ERROR);
+			logger.debug(REQUEST_ERROR);
 		}
 	}
 	
@@ -226,7 +229,7 @@ public class BBInputSetupUtils {
 								customer.getServiceSubscription().getServiceType())
 						.queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO))
 				.orElseGet(() -> {
-					msoLogger.debug("No Service Instance matched by name");
+					logger.debug("No Service Instance matched by name");
 					return null;
 				});
 	}
@@ -254,7 +257,7 @@ public class BBInputSetupUtils {
 				AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, globalCustomerId, serviceType)
 						.queryParam("service-instance-name", serviceInstanceName).depth(Depth.TWO))
 				.orElseGet(() -> {
-					msoLogger.debug("No Service Instance matched by name");
+					logger.debug("No Service Instance matched by name");
 					return null;
 				});
 	}
@@ -299,7 +302,7 @@ public class BBInputSetupUtils {
 		return this.injectionHelper.getAaiClient().get(Configuration.class,
 				AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId).depth(Depth.ONE))
 				.orElseGet(() -> {
-					msoLogger.debug("No Configuration matched by id");
+					logger.debug("No Configuration matched by id");
 					return null;
 				});
 	}
@@ -309,7 +312,7 @@ public class BBInputSetupUtils {
 		return this.injectionHelper.getAaiClient().get(GenericVnf.class,
 				AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE))
 				.orElseGet(() -> {
-					msoLogger.debug("No Generic Vnf matched by id");
+					logger.debug("No Generic Vnf matched by id");
 					return null;
 				});
 	}
@@ -318,7 +321,7 @@ public class BBInputSetupUtils {
 		return this.injectionHelper.getAaiClient().get(VolumeGroup.class,
 				AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwnerId, cloudRegionId, volumeGroupId).depth(Depth.ONE))
 				.orElseGet(() -> {
-					msoLogger.debug("No Generic Vnf matched by id");
+					logger.debug("No Generic Vnf matched by id");
 					return null;
 				});
 	}
@@ -327,7 +330,7 @@ public class BBInputSetupUtils {
 		return this.injectionHelper.getAaiClient().get(VfModule.class,
 				AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId).depth(Depth.ONE))
 				.orElseGet(() -> {
-					msoLogger.debug("No Generic Vnf matched by id");
+					logger.debug("No Generic Vnf matched by id");
 					return null;
 				});
 	}
@@ -337,7 +340,7 @@ public class BBInputSetupUtils {
 		return this.injectionHelper.getAaiClient().get(L3Network.class,
 				AAIUriFactory.createResourceUri(AAIObjectType.L3_NETWORK, networkId).depth(Depth.ONE))
 				.orElseGet(() -> {
-					msoLogger.debug("No Generic Vnf matched by id");
+					logger.debug("No Generic Vnf matched by id");
 					return null;
 				});
 		
@@ -349,7 +352,7 @@ public class BBInputSetupUtils {
 		Optional<L3Networks> networks = injectionHelper.getAaiClient().get(L3Networks.class, uri);
 		L3Network network = null;
 		if (!networks.isPresent()) {
-			msoLogger.debug("No Networks matched by name");
+			logger.debug("No Networks matched by name");
 			return Optional.empty();
 		} else {
 			if (networks.get().getL3Network().size() > 1) {
@@ -367,7 +370,7 @@ public class BBInputSetupUtils {
 		Optional<GenericVnfs> vnfs = injectionHelper.getAaiClient().get(GenericVnfs.class, uri);
 		GenericVnf vnf = null;
 		if (!vnfs.isPresent()) {
-			msoLogger.debug("No Vnfs matched by name");
+			logger.debug("No Vnfs matched by name");
 			return Optional.empty();
 		} else {
 			 if (vnfs.get().getGenericVnf().size() > 1) {
@@ -385,7 +388,7 @@ public class BBInputSetupUtils {
 		Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
 		VolumeGroup volumeGroup = null;
 		if (!volumeGroups.isPresent()) {
-			msoLogger.debug("No VolumeGroups matched by name");
+			logger.debug("No VolumeGroups matched by name");
 			return Optional.empty();
 		} else {
 			if (volumeGroups.get().getVolumeGroup().size() > 1) {
@@ -403,7 +406,7 @@ public class BBInputSetupUtils {
 		Optional<VolumeGroups> volumeGroups = injectionHelper.getAaiClient().get(VolumeGroups.class, uri);
 		VolumeGroup volumeGroup = null;
 		if (!volumeGroups.isPresent()) {
-			msoLogger.debug("No VolumeGroups matched by name");
+			logger.debug("No VolumeGroups matched by name");
 			return Optional.empty();
 		} else {
 			if (volumeGroups.get().getVolumeGroup().size() > 1) {

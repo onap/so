@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,16 +29,18 @@ import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ExceptionBuilder {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExceptionBuilder.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExceptionBuilder.class);
 
 	public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, Exception exception) {
 		String msg = "Exception in %s.%s ";
 		try{
-			msoLogger.error(exception);
+			logger.error("Exception occurred", exception);
 
 			String errorVariable = "Error%s%s";
 
@@ -50,11 +54,12 @@ public class ExceptionBuilder {
 				}
 			}
 
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, msg.toString());
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), msg.toString());
 			execution.setVariable(errorVariable, exception.getMessage());
 		} catch (Exception ex){
 			//log trace, allow process to complete gracefully
-			msoLogger.error(ex);
+			logger.error("Exception occurred", ex);
 		}
 
 		if (exception.getMessage() != null)
@@ -65,7 +70,7 @@ public class ExceptionBuilder {
 	public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, Exception exception) {
 		String msg = "Exception in %s.%s ";
 		try{
-			msoLogger.error(exception);
+			logger.error("Exception occurred", exception);
 
 			String errorVariable = "Error%s%s";
 
@@ -78,11 +83,12 @@ public class ExceptionBuilder {
 					break;
 				}
 			}
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, msg.toString());
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), msg.toString());
 			execution.setVariable(errorVariable, exception.getMessage());
 		} catch (Exception ex){
 			//log trace, allow process to complete gracefully
-			msoLogger.error(ex);
+			logger.error("Exception occurred", ex);
 		}
 
 		if (exception.getMessage() != null)
@@ -98,13 +104,13 @@ public class ExceptionBuilder {
 
 	public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
 		String processKey = getProcessKey(execution);
-		msoLogger.info("Building a WorkflowException for Subflow");
+		logger.info("Building a WorkflowException for Subflow");
 
 		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
 		execution.setVariable("WorkflowException", exception);
 		execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
-		msoLogger.info("Outgoing WorkflowException is " + exception);
-		msoLogger.info("Throwing MSOWorkflowException");
+		logger.info("Outgoing WorkflowException is {}", exception);
+		logger.info("Throwing MSOWorkflowException");
 		throw new BpmnError("MSOWorkflowException");
 	}
 	

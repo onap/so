@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -78,9 +80,10 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component("BBInputSetupMapperLayer")
@@ -88,8 +91,7 @@ public class BBInputSetupMapperLayer {
 	private static final String USER_PARAM_NAME_KEY = "name";
     private static final String USER_PARAM_VALUE_KEY = "value";
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
-			BBInputSetupMapperLayer.class);
+	private static final Logger logger = LoggerFactory.getLogger(BBInputSetupMapperLayer.class);
 
 	private ModelMapper modelMapper = new ModelMapper();
 
