@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +27,8 @@ import org.apache.http.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.onap.so.cloudify.base.client.CloudifyResponse;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,7 +39,7 @@ import java.util.Map;
 
 public class HttpClientResponse implements CloudifyResponse {
 
-    private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, HttpClientResponse.class);
+    private static Logger logger = LoggerFactory.getLogger(HttpClientResponse.class);
 	
     private HttpResponse response = null;
     private String entityBody = null;
@@ -47,9 +50,9 @@ public class HttpClientResponse implements CloudifyResponse {
         
         // Read the body so InputStream can be closed
         if (response.getEntity() == null) {
-        	// No body
-        	LOGGER.debug ("No Response Body");
-        	return;
+            // No body
+            logger.debug("No Response Body");
+            return;
         }
         
 		ByteArrayOutputStream responseBody = new ByteArrayOutputStream();
@@ -59,7 +62,7 @@ public class HttpClientResponse implements CloudifyResponse {
 			throw new HttpClientException ("Error Reading Response Body", e);
 		}
 		entityBody = responseBody.toString();
-		LOGGER.debug (entityBody);
+        logger.debug(entityBody);
     }
 
     
@@ -94,7 +97,7 @@ public class HttpClientResponse implements CloudifyResponse {
 
     @Override
     public Map<String, String> headers() {
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
 
         Header responseHeaders[] = response.getAllHeaders();
         for (Header h : responseHeaders) {
