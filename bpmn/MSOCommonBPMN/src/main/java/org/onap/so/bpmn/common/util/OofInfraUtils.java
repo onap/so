@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018. Intel Corp. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,16 +26,14 @@ import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HomingInstance;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.logger.MsoLogger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class OofInfraUtils {
 
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, OofInfraUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(OofInfraUtils.class);
 
     /**
      * This method creates a cloudsite in catalog database.
@@ -53,16 +53,16 @@ public class OofInfraUtils {
             getCloudsite = Optional.ofNullable(client.getCloudSite(cloudSite.getId(), endpoint + "/cloudSite/")).orElse(new CloudSite());
             if (!cloudSite.getId().equals(getCloudsite.getId())) {
                 client.postCloudSite(cloudSite);
-                LOGGER.debug("Did not findd cloudsite : " + cloudSite.getId());
-                LOGGER.debug("Will create cloudSite: " + cloudSite.toString());
+                logger.debug("Did not findd cloudsite : {}", cloudSite.getId());
+                logger.debug("Will create cloudSite: {}", cloudSite.toString());
             }
             else {
-                LOGGER.debug("Found cloudsite : " + cloudSite.getId());
-                LOGGER.debug("Will not create cloudSite: " + cloudSite.toString());
+                logger.debug("Found cloudsite : {}", cloudSite.getId());
+                logger.debug("Will not create cloudSite: {}", cloudSite.toString());
             }
         } catch (Exception e) {
-            LOGGER.debug("Error looking up or creating cloudsite : " + cloudSite.getId());
-            LOGGER.debug("CloudSite Lookup/Creation Error: " + e);
+            logger.debug("Error looking up or creating cloudsite : {}", cloudSite.getId());
+            logger.debug("CloudSite Lookup/Creation Error: " + e);
         }
 
 
@@ -83,8 +83,8 @@ public class OofInfraUtils {
         try {
             client.postHomingInstance(homingInstance);
         } catch (Exception exception) {
-            LOGGER.debug("Could not create HomingInstance : " + homingInstance.getServiceInstanceId());
-            LOGGER.debug("HomingInstance Creation Error: " + exception);
+            logger.debug("Could not create HomingInstance : {}", homingInstance.getServiceInstanceId());
+            logger.debug("HomingInstance Creation Error: {}", exception);
         }
 
     }
@@ -104,8 +104,8 @@ public class OofInfraUtils {
         try {
             return client.getHomingInstance(serviceInstanceId, endpoint + "/homingInstance/");
         } catch (Exception exception) {
-            LOGGER.debug("Could not get HomingInstance for serviceInstanceId : " + serviceInstanceId);
-            LOGGER.debug("Get HomingInstance Error: " + exception);
+            logger.debug("Could not get HomingInstance for serviceInstanceId : {}", serviceInstanceId);
+            logger.debug("Get HomingInstance Error: {}", exception);
         }
         return null;
     }

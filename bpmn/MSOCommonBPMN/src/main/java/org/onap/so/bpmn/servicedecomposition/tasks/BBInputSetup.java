@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -75,7 +77,6 @@ import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -87,17 +88,18 @@ import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.Resources;
 import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Component("BBInputSetup")
 public class BBInputSetup implements JavaDelegate {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, BBInputSetup.class);
+	private static final Logger logger = LoggerFactory.getLogger(BBInputSetup.class);
 	private static final String FLOW_VAR_NAME = "flowToBeCalled";
 	private static final String LOOKUP_KEY_MAP_VAR_NAME = "lookupKeyMap";
 	private static final String GBB_INPUT_VAR_NAME = "gBBInput";
@@ -157,7 +159,7 @@ public class BBInputSetup implements JavaDelegate {
 			outputBB = this.getGBB(executeBB, lookupKeyMap, requestAction, aLaCarte, resourceId, vnfType);
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.enable(SerializationFeature.INDENT_OUTPUT);
-			msoLogger.debug("GeneralBB: " + mapper.writeValueAsString(outputBB));
+			logger.debug("GeneralBB: " + mapper.writeValueAsString(outputBB));
 
 			setHomingFlag(outputBB, homing, lookupKeyMap);
 
@@ -170,7 +172,7 @@ public class BBInputSetup implements JavaDelegate {
 			execution.setVariable("RetryCount", 1);
 			execution.setVariable("handlingCode", "Success");
 		} catch (Exception e) {
-			msoLogger.error(e);
+			logger.error("Exception occurred", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e.getMessage());
 		}
 	}
@@ -244,8 +246,8 @@ public class BBInputSetup implements JavaDelegate {
 					resourceId, vnfType);
 			return this.populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
 		} else {
-			msoLogger.debug("Related Service Instance from AAI: " + aaiServiceInstance);
-			msoLogger.debug("Related Service Instance Model Info from AAI: " + service);
+			logger.debug("Related Service Instance from AAI: {}", aaiServiceInstance);
+			logger.debug("Related Service Instance Model Info from AAI: {}", service);
 			throw new Exception("Could not find relevant information for related Service Instance");
 		}
 	}
@@ -419,7 +421,7 @@ public class BBInputSetup implements JavaDelegate {
 				mapCatalogVfModule(vfModule, modelInfo, service, vnfModelCustomizationUUID);
 			}
 		} else {
-			msoLogger.debug("Related VNF instance Id not found:  " + lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
+			logger.debug("Related VNF instance Id not found: {}", lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
 			throw new Exception("Could not find relevant information for related VNF");
 		}
 	}
@@ -526,7 +528,7 @@ public class BBInputSetup implements JavaDelegate {
 				mapCatalogVolumeGroup(volumeGroup, modelInfo, service, vnfModelCustomizationUUID);
 			}
 		} else {
-			msoLogger.debug("Related VNF instance Id not found:  " + lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
+			logger.debug("Related VNF instance Id not found: {}", lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID));
 			throw new Exception("Could not find relevant information for related VNF");
 		}
 	}
@@ -968,10 +970,10 @@ public class BBInputSetup implements JavaDelegate {
 					this.populateL3Network(null, networkModelInfo, service, bbName, serviceInstance, lookupKeyMap,
 							networkId, null);
 				} else {
-					msoLogger.debug("Could not find a network customization with key: " + key);
+					logger.debug("Could not find a network customization with key: {}", key);
 				}
 			} else {
-				msoLogger.debug("Orchestrating on Collection Network Resource Customization");
+				logger.debug("Orchestrating on Collection Network Resource Customization");
 				CollectionNetworkResourceCustomization collectionNetworkResourceCust = bbInputSetupUtils.getCatalogCollectionNetworkResourceCustByID(key);
 				L3Network l3Network = getVirtualLinkL3Network(lookupKeyMap, bbName, key, networkId, collectionNetworkResourceCust, serviceInstance);
 				NetworkResourceCustomization networkResourceCustomization = 
@@ -1039,8 +1041,8 @@ public class BBInputSetup implements JavaDelegate {
 			serviceInstance.setModelInfoServiceInstance(this.mapperLayer.mapCatalogServiceIntoServiceInstance(service));
 			gBB = populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
 		} else {
-			msoLogger.debug("Related Service Instance from AAI: " + aaiServiceInstance);
-			msoLogger.debug("Related Service Instance Model Info from AAI: " + service);
+			logger.debug("Related Service Instance from AAI: {}", aaiServiceInstance);
+			logger.debug("Related Service Instance Model Info from AAI: {}", service);
 			throw new Exception("Could not find relevant information for related Service Instance");
 		}
 		ServiceInstance serviceInstance = gBB.getServiceInstance();
@@ -1212,7 +1214,7 @@ public class BBInputSetup implements JavaDelegate {
 			if(configurationCust != null) {
 				this.populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, lookupKeyMap, configurationId, null, executeBB.getConfigurationResourceKeys());
 			} else {
-				msoLogger.debug("Could not find a configuration customization with key: " + key);
+				logger.debug("Could not find a configuration customization with key: {}", key);
 			}
 		}
 		return gBB;
@@ -1276,7 +1278,7 @@ public class BBInputSetup implements JavaDelegate {
 			org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils.getCloudRegion(cloudConfiguration);
 			return mapperLayer.mapCloudRegion(cloudConfiguration, aaiCloudRegion);
 		} else {
-			msoLogger.debug("Could not find any cloud configuration for this request.");
+			logger.debug("Could not find any cloud configuration for this request.");
 			return null;
 		}
 	}

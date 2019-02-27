@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +27,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.TargetEntity;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
@@ -34,6 +35,8 @@ import com.github.tomakehurst.wiremock.extension.Parameters;
 import com.github.tomakehurst.wiremock.extension.ResponseDefinitionTransformer;
 import com.github.tomakehurst.wiremock.http.Request;
 import com.github.tomakehurst.wiremock.http.ResponseDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Please describe the VnfAdapterCreateMockTransformer.java class
@@ -41,7 +44,7 @@ import com.github.tomakehurst.wiremock.http.ResponseDefinition;
  */
 public class VnfAdapterCreateMockTransformer extends ResponseDefinitionTransformer {
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterCreateMockTransformer.class);
+	private static final Logger logger = LoggerFactory.getLogger(VnfAdapterCreateMockTransformer.class);
 	
 	private String notifyCallbackResponse;
 	private String ackResponse;
@@ -74,17 +77,17 @@ public class VnfAdapterCreateMockTransformer extends ResponseDefinitionTransform
 			responseMessageId = ackResponse.substring(ackResponse.indexOf("<messageId>")+11, ackResponse.indexOf("</messageId>"));
 		    updatedResponse = ackResponse.replace(responseMessageId, messageId);
 		} catch (Exception ex) {
-			LOGGER.debug("Exception :",ex);
+			logger.debug("Exception :",ex);
 			System.out.println(" ******* Use default response file in '__files/vnfAdapterMocks/vnfCreateSimResponse.xml'");
 		    responseMessageId = notifyCallbackResponse.substring(notifyCallbackResponse.indexOf("<messageId>")+11, notifyCallbackResponse.indexOf("</messageId>"));
 			updatedResponse = notifyCallbackResponse.replace(responseMessageId, messageId);
 		}
 
-		System.out.println("response (mock) messageId       : " + responseMessageId);
-		System.out.println("request  (replacement) messageId: " + messageId);
+		logger.info("response (mock) messageId       : {}", responseMessageId);
+		logger.info("request  (replacement) messageId: {}", messageId);
 
-		System.out.println("vnf Response (before):" + notifyCallbackResponse);
-		System.out.println("vnf Response (after):" + updatedResponse);
+		logger.info("vnf Response (before): {}", notifyCallbackResponse);
+		logger.info("vnf Response (after): {}", updatedResponse);
 
 		Object vnfDelay = MockResource.getMockProperties().get("vnf_delay");
 		int delay = 300;
@@ -93,7 +96,7 @@ public class VnfAdapterCreateMockTransformer extends ResponseDefinitionTransform
 		}
 
 		//Kick off callback thread
-		System.out.println("VnfAdapterCreateMockTransformer notficationUrl: " + notficationUrl + ":delay: " + delay);
+		logger.info("VnfAdapterCreateMockTransformer notficationUrl: {} :delay: {}", notficationUrl, delay);
 		CallbackResponseThread callbackResponseThread = new CallbackResponseThread(notficationUrl,updatedResponse, delay);
 		callbackResponseThread.start();
 
@@ -128,20 +131,19 @@ public class VnfAdapterCreateMockTransformer extends ResponseDefinitionTransform
 				sleep(delay);
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
-				LOGGER.debug("Exception :",e1);
+				logger.debug("Exception :",e1);
 			}
-			LOGGER.debug("Sending callback response to url: " + callbackUrl);
+			logger.debug("Sending callback response to url: {}", callbackUrl);
 			try {
 				HttpClient client = new HttpClientFactory().newTextXmlClient(
 					UriBuilder.fromUri(callbackUrl).build().toURL(),
 					TargetEntity.VNF_ADAPTER);
 				Response response = client.post(payLoad);
-				LOGGER.debug("Successfully posted callback? Status: " + response.getStatus());
-				//System.err.println("Successfully posted callback:" + result.getStatus());
+				logger.debug("Successfully posted callback? Status: {}", response.getStatus());
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
-			    LOGGER.debug("catch error in - request.post() ");
-				LOGGER.debug("Exception :",e);
+				logger.debug("catch error in - request.post() ");
+				logger.debug("Exception :", e);
 			}
 		}
 
