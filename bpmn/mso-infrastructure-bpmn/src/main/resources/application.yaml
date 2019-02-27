@@ -8,7 +8,7 @@ mso:
 spring: 
   datasource:
      driver-class-name: org.mariadb.jdbc.Driver 
-     jdbcUrl: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
+     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/camundabpmn
      username: ${DB_ADMIN_USERNAME}
      password: ${DB_ADMIN_PASSWORD}
   http:
