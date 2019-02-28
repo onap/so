@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,8 +29,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.onap.sdc.api.consumer.IConfiguration;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -40,6 +43,7 @@ public class ASDCConfiguration implements IConfiguration {
     // SHell command to obtain the same encryption, 128 bits key, key must be HEX
     // echo -n "This is a test string" | openssl aes-128-ecb -e -K 546573746F736973546573746F736973 -nosalt | xxd
 
+    private static Logger logger = LoggerFactory.getLogger(ASDCConfiguration.class);
    
 
     private String asdcControllerName;
@@ -72,9 +76,6 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String TOSCA_CSAR="TOSCA_CSAR";
     public static final String WORKFLOWS="Workflows";
     public static final String VF_MODULES_METADATA="VF_MODULES_METADATA";
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.ASDC,ASDCConfiguration.class);
-    
-   
 
     private static final String[] SUPPORTED_ARTIFACT_TYPES = {HEAT,
     		HEAT_ARTIFACT,
@@ -176,7 +177,7 @@ public class ASDCConfiguration implements IConfiguration {
 		try {
 				decryptedKey = CryptoUtils.decrypt(config, this.configKey);
 			} catch (GeneralSecurityException e) {
-				msoLogger.debug("Exception while decrypting property: " + propertyName, e);
+				logger.debug("Exception while decrypting property: {}", propertyName, e);
 				return null;
 			}
 			

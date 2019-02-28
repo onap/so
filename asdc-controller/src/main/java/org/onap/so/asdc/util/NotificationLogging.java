@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,15 +36,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.onap.so.logger.MsoLogger;
 import org.onap.sdc.api.notification.INotificationData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class NotificationLogging implements InvocationHandler {
 	
 	private static Map<Object, List<Method>> objectMethodsToLog = new HashMap<>();
 
-	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC, NotificationLogging.class);
+	protected static final Logger logger = LoggerFactory.getLogger(NotificationLogging.class);
 	
 	private static InvocationHandler handler = (arg0, arg1, arg2) -> {
 			List<Method> methods = objectMethodsToLog.get(arg0);
@@ -93,7 +96,7 @@ public class NotificationLogging implements InvocationHandler {
 					buffer.append(testNull(m.invoke(iNotif, (Object[])null)));
 				} catch (IllegalAccessException | IllegalArgumentException
 						| InvocationTargetException e) {
-					LOGGER.debug("Exception :"+e);
+					logger.debug("Exception", e);
 					buffer.append("UNREADABLE");
 				}
 				buffer.append(System.lineSeparator());

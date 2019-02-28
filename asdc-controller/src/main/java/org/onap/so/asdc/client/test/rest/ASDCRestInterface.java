@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +42,8 @@ import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -65,7 +69,7 @@ public class ASDCRestInterface {
 	
 	private static JsonStatusData statusData;
 	
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,ASDCRestInterface.class );
+	private static final Logger logger = LoggerFactory.getLogger(ASDCRestInterface.class );
 	
 	@Autowired
 	private ASDCController asdcController;
@@ -100,21 +104,18 @@ public class ASDCRestInterface {
 			statusData = JsonStatusData.instantiateNotifFromJsonFile("resource-examples/");
 		
 			ASDCController asdcController = new ASDCController("asdc-controller1", distributionClientEmulator);
-			//LOGGER.info(MessageEnum.ASDC_INIT_ASDC_CLIENT_EXC, notifDataWithoutModuleInfo.getServiceUUID(), "ASDC", "initASDC()");
 			asdcController.initASDC();
-			//LOGGER.info(MessageEnum.ASDC_INIT_ASDC_CLIENT_EXC, notifDataWithoutModuleInfo.getServiceUUID(), "ASDC", "treatNotification()");
 			toscaInstaller.installTheComponentStatus(statusData);
-			//asdcController.treatNotification(notifDataWithoutModuleInfo);
-			//LOGGER.info(MessageEnum.ASDC_INIT_ASDC_CLIENT_EXC, notifDataWithoutModuleInfo.getServiceUUID(), "ASDC", "closeASDC()");
 			asdcController.closeASDC();
 		}catch(Exception e){
-			System.out.println("Error caught " + e.getMessage());
-			LOGGER.error(MessageEnum.ASDC_GENERAL_EXCEPTION,
-					"Exception caught during ASDCRestInterface", "ASDC", "invokeASDCService", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in invokeASDCService", e);
+			logger.info("Error caught " + e.getMessage());
+			logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION.toString(),
+				"Exception caught during ASDCRestInterface", "ASDC", "invokeASDCService",
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in invokeASDCService", e);
 		}
-		System.out.println("ASDC Updates are complete");
-		LOGGER.info(MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC, statusData.getDistributionID(), "ASDC", "ASDC Updates Are Complete");
-		
+		logger.info("ASDC Updates are complete");
+		logger.info("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(), statusData.getDistributionID(), "ASDC",
+			"ASDC Updates Are Complete");
 		return null;
 	}
 }

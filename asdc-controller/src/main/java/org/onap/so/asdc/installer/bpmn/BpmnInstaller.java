@@ -47,13 +47,15 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
 public class BpmnInstaller {
-	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,BpmnInstaller.class);
+	protected static final Logger logger = LoggerFactory.getLogger(BpmnInstaller.class);
 	private static final String BPMN_SUFFIX = ".bpmn";
 	private static final String CAMUNDA_URL = "mso.camundaURL";
 	private static final String CREATE_DEPLOYMENT_PATH = "/sobpmnengine/deployment/create";
@@ -62,7 +64,7 @@ public class BpmnInstaller {
 	private Environment env;	
 	
 	public void installBpmn(String csarFilePath) {
-		LOGGER.info("Deploying BPMN files from " + csarFilePath);		
+		logger.info("Deploying BPMN files from {}", csarFilePath);
 		try {			
 			ZipInputStream csarFile = new ZipInputStream(new FileInputStream(Paths.get(csarFilePath).normalize().toString()));
 			ZipEntry entry = csarFile.getNextEntry();		
@@ -70,45 +72,39 @@ public class BpmnInstaller {
 			while (entry != null) {				
 				String name = entry.getName();
 				if (name.endsWith(BPMN_SUFFIX)) {
-					LOGGER.debug("Attempting to deploy BPMN file: " + name);
+					logger.debug("Attempting to deploy BPMN file: {}", name);
 					try {
 						Path p = Paths.get(name);
 						String fileName = p.getFileName().toString();
 						extractBpmnFileFromCsar(csarFile, fileName);
 						HttpResponse response = sendDeploymentRequest(fileName);
-						LOGGER.debug("Response status line: " + response.getStatusLine());
-						LOGGER.debug("Response entity: " + response.getEntity().toString());
+						logger.debug("Response status line: {}", response.getStatusLine());
+						logger.debug("Response entity: {}", response.getEntity().toString());
 						if (response.getStatusLine().getStatusCode() != 200) {
-							LOGGER.debug("Failed deploying BPMN " + name);
-			                LOGGER.error(MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL,
-			        				name,
-			        				fileName,
-			        				"",
-			        				Integer.toString(response.getStatusLine().getStatusCode()), "", "", MsoLogger.ErrorCode.DataError, "ASDC BPMN deploy failed"); 	
+							logger.debug("Failed deploying BPMN {}", name);
+							logger
+								.error("{} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), name, fileName,
+									Integer.toString(response.getStatusLine().getStatusCode()), MsoLogger.ErrorCode.DataError.getValue(),
+									"ASDC BPMN deploy failed");
 						}						
 						else {
-							LOGGER.debug("Successfully deployed to Camunda: " + name);
+							logger.debug("Successfully deployed to Camunda: {}", name);
 						}
 					}
 					catch (Exception e) {
-						LOGGER.debug("Exception :",e);
-		                LOGGER.error(MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL,
-		        				name,
-		        				"",
-		        				"",
-		        				e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "ASDC BPMN deploy failed"); 					
+						logger.debug("Exception :", e);
+						logger
+							.error("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), name, e.getMessage(),
+								MsoLogger.ErrorCode.DataError.getValue(), "ASDC BPMN deploy failed");
 					}							
 				}
 				entry = csarFile.getNextEntry();
 	        }
 			csarFile.close();
 		} catch (IOException ex) {
-			LOGGER.debug("Exception :",ex);
-            LOGGER.error(MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL,
-    				csarFilePath,
-    				"",
-    				"",
-    				ex.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "ASDC reading CSAR with workflows failed");
+			logger.debug("Exception :", ex);
+			logger.error("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), csarFilePath,
+				ex.getMessage(), MsoLogger.ErrorCode.DataError.getValue(), "ASDC reading CSAR with workflows failed");
 		}
 		return;
 	}
@@ -125,12 +121,10 @@ public class BpmnInstaller {
                 }
             }
         } catch (Exception e) {
-            LOGGER.debug("Exception :", e);
-            LOGGER.error(MessageEnum.ASDC_ARTIFACT_CHECK_EXC,
-                csarFilePath,"","",
-                e.getMessage(), "", "",
-                MsoLogger.ErrorCode.DataError, "ASDC Unable to check CSAR entries");
-        }
+					logger.debug("Exception :", e);
+					logger.error("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(), csarFilePath, e.getMessage(),
+						MsoLogger.ErrorCode.DataError.getValue(), "ASDC Unable to check CSAR entries");
+				}
         return workflowsInCsar;
     }
 
@@ -194,7 +188,7 @@ public class BpmnInstaller {
 		}
 		/* outputStream.close(); */
 		} catch (IOException e) {
-              LOGGER.error("Unable to open file.", e);
+              logger.error("Unable to open file.", e);
         }
 	}
 }

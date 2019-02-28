@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.onap.so.asdc.installer.IVfModuleData;
-import org.onap.so.logger.MsoLogger;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.consumer.IComponentDoneStatusMessage;
 import org.onap.sdc.api.consumer.IConfiguration;
@@ -42,6 +43,8 @@ import org.onap.sdc.api.results.IDistributionClientResult;
 import org.onap.sdc.impl.DistributionClientDownloadResultImpl;
 import org.onap.sdc.impl.DistributionClientResultImpl;
 import org.onap.sdc.utils.DistributionActionResultEnum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DistributionClientEmulator implements IDistributionClient {
 
@@ -52,7 +55,7 @@ public class DistributionClientEmulator implements IDistributionClient {
 	private List<IDistributionStatusMessage> distributionMessageReceived = new LinkedList<>();
 	
 	
-	private static final MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,DistributionClientEmulator.class );
+	private static final Logger logger = LoggerFactory.getLogger(DistributionClientEmulator.class );
 	
 	public DistributionClientEmulator() {			
 	}
@@ -90,9 +93,8 @@ public class DistributionClientEmulator implements IDistributionClient {
 		byte[] inputStream=null;
 		try {
 			inputStream = getData(filename);
-		} catch (IOException e) {	
-			
-			logger.error("IOException in DistributionClientEmulator.download() method :",e);
+		} catch (IOException e) {
+			logger.error("IOException in DistributionClientEmulator.download() method", e);
 		}		
 	
 		return new DistributionClientDownloadResultImpl(DistributionActionResultEnum.SUCCESS, DistributionActionResultEnum.SUCCESS.name(),arg0.getArtifactName(),inputStream);		

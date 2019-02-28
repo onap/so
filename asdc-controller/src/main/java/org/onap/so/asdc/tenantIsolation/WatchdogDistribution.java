@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +38,8 @@ import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogServiceModVerIdLookupRepository;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -44,7 +47,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class WatchdogDistribution {
 
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,WatchdogDistribution.class);
+	private static final Logger logger = LoggerFactory.getLogger(WatchdogDistribution.class);
 
 	private AAIResourcesClient aaiClient;
 	
@@ -64,7 +67,7 @@ public class WatchdogDistribution {
 	private String[] componentNames;
 	   
 	public String getOverallDistributionStatus(String distributionId) throws Exception {
-		LOGGER.debug("Entered getOverallDistributionStatus method for distrubutionId: " + distributionId);
+		logger.debug("Entered getOverallDistributionStatus method for distrubutionId: {}", distributionId);
 		
 		String status = null;
 		try {
@@ -78,11 +81,13 @@ public class WatchdogDistribution {
 			String distributionStatus = watchdogDistributionStatus.getDistributionIdStatus();
 			
 			if(DistributionStatus.TIMEOUT.name().equalsIgnoreCase(distributionStatus)) {
-				LOGGER.debug("Ignoring to update WatchdogDistributionStatus as distributionId: " + distributionId + " status is set to: " + distributionStatus);
+				logger.debug("Ignoring to update WatchdogDistributionStatus as distributionId: {} status is set to: {}",
+					distributionId, distributionStatus);
 				return DistributionStatus.TIMEOUT.name();
 			} else {
 				List<WatchdogComponentDistributionStatus> results = watchdogCDStatusRepository.findByDistributionId(distributionId);
-				LOGGER.debug("Executed RequestDB getWatchdogComponentDistributionStatus for distrubutionId: " + distributionId);
+				logger.debug("Executed RequestDB getWatchdogComponentDistributionStatus for distrubutionId: {}",
+					distributionId);
 		
 				//*************************************************************************************************************************************************
 				//**** Compare config values verse DB watchdog component names to see if every component has reported status before returning final result back to ASDC
@@ -98,13 +103,13 @@ public class WatchdogDistribution {
 		                
 						for(WatchdogComponentDistributionStatus cdStatus: cdStatuses){							
 							if(name.equals(cdStatus.getComponentName())){
-								LOGGER.debug("Found componentName " + name + " in the WatchDog Component DB");
+								logger.debug("Found componentName {} in the WatchDog Component DB", name);
 								match = true;
 								break;
 							}
 						}						
 						if(!match){
-							LOGGER.debug(name + " has not be updated in the the WatchDog Component DB yet, so ending the loop");
+							logger.debug("{} has not be updated in the the WatchDog Component DB yet, so ending the loop", name);
 							allComponentsComplete = false;
 							break;
 						}
@@ -112,11 +117,12 @@ public class WatchdogDistribution {
 		         
 				
 				if(allComponentsComplete) {				
-					LOGGER.debug("Components Size matched with the WatchdogComponentDistributionStatus results.");
+					logger.debug("Components Size matched with the WatchdogComponentDistributionStatus results.");
 					
 					 for(WatchdogComponentDistributionStatus componentDist : results) {
 						 String componentDistributionStatus = componentDist.getComponentDistributionStatus();
-						 LOGGER.debug("Component status: " + componentDistributionStatus + " on componentName: " + componentDist.getComponentName());
+						 logger.debug("Component status: {} on componentName: ", componentDistributionStatus, componentDist
+							 .getComponentName());
 						 if(componentDistributionStatus.equalsIgnoreCase("COMPONENT_DONE_ERROR")) {
 							 status = DistributionStatus.FAILURE.name();
 							 break;
@@ -127,27 +133,28 @@ public class WatchdogDistribution {
 						 }
 					 }
 					 
-					 LOGGER.debug("Updating overall DistributionStatus to: " + status + " for distributionId: " + distributionId);
+					 logger.debug("Updating overall DistributionStatus to: {} for distributionId: ", status, distributionId);
 					 
 					 watchdogDistributionStatus.setDistributionIdStatus(status);
 					 watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
 				} else {
-					LOGGER.debug("Components Size Didn't match with the WatchdogComponentDistributionStatus results.");
+					logger.debug("Components Size Didn't match with the WatchdogComponentDistributionStatus results.");
 					status = DistributionStatus.INCOMPLETE.name();
 					return status;
 				}
 			}
 		}catch (Exception e) {
-			LOGGER.debug("Exception occurred on getOverallDistributionStatus : " + e.getMessage());
-			LOGGER.error(e);
+			logger.debug("Exception occurred on getOverallDistributionStatus : {}", e.getMessage());
+			logger.error("Exception occurred",  e);
 			throw new Exception(e);
 		}		
-		LOGGER.debug("Exiting getOverallDistributionStatus method in WatchdogDistribution");
+		logger.debug("Exiting getOverallDistributionStatus method in WatchdogDistribution");
 		return status;
 	}
 	
 	public void executePatchAAI(String distributionId, String serviceModelInvariantUUID, String distributionStatus) throws Exception {
-		LOGGER.debug("Entered executePatchAAI method with distrubutionId: " + distributionId + " and distributionStatus: " + distributionStatus);
+		logger.debug("Entered executePatchAAI method with distrubutionId: {} and distributionStatus: ", distributionId,
+			distributionStatus);
 		
 		try {
 			WatchdogServiceModVerIdLookup lookup = watchdogModVerIdLookupRepository.findOneByDistributionId(distributionId);
@@ -156,28 +163,29 @@ public class WatchdogDistribution {
 			if(lookup != null) {
 				serviceModelVersionId = lookup.getServiceModelVersionId();
 			}
-			
-			LOGGER.debug("Executed RequestDB getWatchdogServiceModVerIdLookup with distributionId: " + distributionId + " and serviceModelVersionId: " + serviceModelVersionId);
-			LOGGER.debug("ASDC Notification ServiceModelInvariantUUID : " + serviceModelInvariantUUID);
+
+			logger.debug("Executed RequestDB getWatchdogServiceModVerIdLookup with distributionId: {} "
+				+ "and serviceModelVersionId: {}", distributionId, serviceModelVersionId);
+			logger.debug("ASDC Notification ServiceModelInvariantUUID : {}", serviceModelInvariantUUID);
 			
 			if(serviceModelInvariantUUID == null || "".equals(serviceModelVersionId)) {
 				String error = "No Service found with serviceModelInvariantUUID: " + serviceModelInvariantUUID;
-				LOGGER.debug(error);
+				logger.debug(error);
 				throw new Exception(error);
 			}
 			
 			AAIResourceUri aaiUri = AAIUriFactory.createResourceUri(AAIObjectType.MODEL_VER, serviceModelInvariantUUID, serviceModelVersionId);
 			aaiUri.depth(Depth.ZERO); //Do not return relationships if any
-			LOGGER.debug("Target A&AI Resource URI: " + aaiUri.build().toString());
+			logger.debug("Target A&AI Resource URI: {}", aaiUri.build().toString());
 			
 			Map<String, String> payload = new HashMap<>();
 			payload.put("distribution-status", distributionStatus);
 			getAaiClient().update(aaiUri, payload);
-			
-			LOGGER.debug("A&AI UPDATE MODEL Version is success!");
+
+			logger.debug("A&AI UPDATE MODEL Version is success!");
 		} catch (Exception e) {
-			LOGGER.debug("Exception occurred on executePatchAAI : " + e.getMessage());
-			LOGGER.error(e);
+			logger.debug("Exception occurred on executePatchAAI : {}", e.getMessage());
+			logger.error("Exception occurred", e);
 			throw new Exception(e);
 		}
 	}
