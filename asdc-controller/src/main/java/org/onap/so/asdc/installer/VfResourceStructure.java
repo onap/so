@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,7 +35,6 @@ import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VnfResource;
-import org.onap.so.logger.MsoLogger;
 import org.onap.sdc.api.IDistributionClient;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.INotificationData;
@@ -44,6 +45,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * This structure exists to avoid having issues if the order of the vfResource/vfmodule artifact is not good (tree structure).
  *
@@ -52,7 +56,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class VfResourceStructure {
 	
-	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC, VfResourceStructure.class);
+	protected static final Logger logger = LoggerFactory.getLogger(VfResourceStructure.class);
 
 	private boolean isDeployedSuccessfully=false;
 	/**
@@ -134,8 +138,9 @@ public class VfResourceStructure {
 
 		//for vender tosca VNF there is no VFModule in VF
 		if (vfModulesMetadataList == null) {
-		    LOGGER.info(MessageEnum.ASDC_GENERAL_INFO,"There is no VF mudules in the VF.", "ASDC", "createVfModuleStructures");
-		    return;
+			logger.info("{} {} {} {}", MessageEnum.ASDC_GENERAL_INFO.toString(), "There is no VF mudules in the VF.", "ASDC",
+				"createVfModuleStructures");
+			return;
 		}
 			for (IVfModuleData vfModuleMeta:vfModulesMetadataList) {
 				vfModulesStructureList.add(new VfModuleStructure(this,vfModuleMeta));
@@ -218,11 +223,11 @@ public class VfResourceStructure {
 			return listVFModuleMetaData;
 
 		} catch (JsonParseException e) {
-			LOGGER.debug("JsonParseException : ",e);
+			logger.debug("JsonParseException : ",e);
 		} catch (JsonMappingException e) {
-			LOGGER.debug("JsonMappingException : ",e);
+			logger.debug("JsonMappingException : ",e);
 		} catch (IOException e) {
-			LOGGER.debug("IOException : ",e);
+			logger.debug("IOException : ",e);
 		}
 		return null;
 	}

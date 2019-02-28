@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +36,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.hibernate.StaleObjectStateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.sdc.api.notification.IArtifactInfo;
@@ -124,6 +125,8 @@ import org.onap.so.db.request.data.repository.WatchdogDistributionStatusReposito
 import org.onap.so.db.request.data.repository.WatchdogServiceModVerIdLookupRepository;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Component;
@@ -222,7 +225,7 @@ public class ToscaResourceInstaller {
 	@Autowired
 	protected ExternalServiceToInternalServiceRepository externalServiceToInternalServiceRepository;
 	
-	protected static final MsoLogger logger = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,ToscaResourceInstaller.class);
+	protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
 
 	public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStruct) throws ArtifactInstallerException {
 		boolean status = false;
@@ -258,15 +261,16 @@ public class ToscaResourceInstaller {
 			}
 			return status;
 		} catch (Exception e) {
-			logger.error(MessageEnum.ASDC_ARTIFACT_CHECK_EXC, "", "", MsoLogger.ErrorCode.SchemaError,
+			logger
+				.error("{} {} {}", MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(), MsoLogger.ErrorCode.SchemaError.getValue(),
 					"Exception - isResourceAlreadyDeployed");
 			throw new ArtifactInstallerException("Exception caught during checking existence of the VNF Resource.", e);
 		}
 	}
 
 	public void installTheComponentStatus(IStatusData iStatus) throws ArtifactInstallerException {
-		logger.debug("Entering installTheComponentStatus for distributionId " + iStatus.getDistributionID()
-				+ " and ComponentName " + iStatus.getComponentName());
+		logger.debug("Entering installTheComponentStatus for distributionId {} and ComponentName {}",
+			iStatus.getDistributionID(), iStatus.getComponentName());
 
 		try {
 			WatchdogComponentDistributionStatus cdStatus = new WatchdogComponentDistributionStatus(iStatus.getDistributionID(),
@@ -275,7 +279,7 @@ public class ToscaResourceInstaller {
 			watchdogCDStatusRepository.save(cdStatus);
 
 		} catch (Exception e) {
-			logger.debug("Exception caught in installTheComponentStatus " + e.getMessage());
+			logger.debug("Exception caught in installTheComponentStatus {}", e.getMessage());
 			throw new ArtifactInstallerException("Exception caught in installTheComponentStatus " + e.getMessage());
 		}
 	}
@@ -338,18 +342,18 @@ public class ToscaResourceInstaller {
 
 			if (dbExceptionToCapture instanceof ConstraintViolationException
 					|| dbExceptionToCapture instanceof LockAcquisitionException) {
-				logger.warn(MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED,
-						vfResourceStructure.getResourceInstance().getResourceName(),
-						vfResourceStructure.getNotification().getServiceVersion(), "", MsoLogger.ErrorCode.DataError, "Exception - ASCDC Artifact already deployed", e);
+				logger.warn("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
+					vfResourceStructure.getResourceInstance().getResourceName(),
+					vfResourceStructure.getNotification().getServiceVersion(), MsoLogger.ErrorCode.DataError.getValue(),
+					"Exception - ASCDC Artifact already deployed", e);
 			} else {
 				String elementToLog = (!artifactListForLogging.isEmpty()
 						? artifactListForLogging.get(artifactListForLogging.size() - 1).toString()
 						: "No element listed");
-				logger.error(MessageEnum.ASDC_ARTIFACT_INSTALL_EXC, elementToLog, "", "", MsoLogger.ErrorCode.DataError,
-						"Exception caught during installation of "
-								+ vfResourceStructure.getResourceInstance().getResourceName()
-								+ ". Transaction rollback",
-						e);
+				logger.error("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), elementToLog,
+					MsoLogger.ErrorCode.DataError.getValue(),
+					"Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName()
+						+ ". Transaction rollback", e);
 				throw new ArtifactInstallerException("Exception caught during installation of "
 						+ vfResourceStructure.getResourceInstance().getResourceName() + ". Transaction rollback.", e);
 			}
@@ -739,10 +743,9 @@ public class ToscaResourceInstaller {
 				break;
 			case ASDCConfiguration.HEAT_NET:
 			case ASDCConfiguration.OTHER:
-				logger.warn(MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT,
-						vfModuleArtifact.getArtifactInfo().getArtifactType() + "(Artifact Name:"
-								+ vfModuleArtifact.getArtifactInfo().getArtifactName() + ")",
-						"", "", MsoLogger.ErrorCode.DataError, "Artifact type not supported");
+				logger.warn("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT.toString(),
+					vfModuleArtifact.getArtifactInfo().getArtifactType() + "(Artifact Name:" + vfModuleArtifact.getArtifactInfo()
+						.getArtifactName() + ")", MsoLogger.ErrorCode.DataError.getValue(), "Artifact type not supported");
 				break;
 			default:
 				break;

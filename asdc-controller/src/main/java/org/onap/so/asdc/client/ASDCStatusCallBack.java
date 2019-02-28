@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,8 +29,8 @@ import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
-import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,18 +40,13 @@ public final class ASDCStatusCallBack implements IStatusCallback {
 	@Autowired
 	private ToscaResourceInstaller toscaInstaller;
 
-	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,ASDCStatusCallBack.class);
+	protected static final Logger logger = LoggerFactory.getLogger(ASDCStatusCallBack.class);
 	
 	@Autowired
 	private WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
 
 	@Override
 	public void activateCallback (IStatusData iStatus) {
-		
-		long startTime = System.currentTimeMillis ();
-		UUIDChecker.generateUUID (LOGGER);
-		MsoLogger.setServiceName ("ASDCStatusCallBack");
-		MsoLogger.setLogContext (iStatus.getDistributionID (), iStatus.getComponentName());
 		String event = "Receive a callback componentStatus in ASDC, for componentName: " + iStatus.getComponentName() + " and status of " + iStatus.getStatus() + " distributionID of " + iStatus.getDistributionID();
 
 		try{
@@ -63,15 +60,14 @@ public final class ASDCStatusCallBack implements IStatusCallback {
 					watchdogDistributionStatus.setDistributionId(iStatus.getDistributionID ());
 					watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
 				}
-				LOGGER.debug(event); 
+				logger.debug(event);
 				toscaInstaller.installTheComponentStatus(iStatus);
 				
 			}
 		  }
 		}catch(ArtifactInstallerException e){
-			LOGGER.error("Error in ASDCStatusCallback " + e.getMessage(),e);
-			LOGGER.debug("Error in ASDCStatusCallback " + e.getMessage());
+			logger.error("Error in ASDCStatusCallback {}", e.getMessage(), e);
+			logger.debug("Error in ASDCStatusCallback {}", e.getMessage());
 		}         
-		LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Completed the treatment of the notification");
-	} 	
+	}
 }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,6 +52,8 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ToscaResourceStructure {
 	
@@ -94,9 +98,7 @@ public class ToscaResourceStructure {
 	private VfModule vfModule;
 	
 	private VfModuleCustomization vfModuleCustomization;
-	
-	//private VnfResource vnfResource;
-	
+
 	private VnfResourceCustomization vnfResourceCustomization;
 		
 	private AllottedResource allottedResource;
@@ -109,7 +111,7 @@ public class ToscaResourceStructure {
 	
 	private ToscaCsar toscaCsar;
 	
-	protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC, ToscaResourceStructure.class);
+	protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceStructure.class);
 		
 	
 	public ToscaResourceStructure(){
@@ -122,22 +124,24 @@ public class ToscaResourceStructure {
 				
 			SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();//Autoclosable
 			
-			LOGGER.debug("MSO config path is: " + System.getProperty("mso.config.path"));
+			logger.debug("MSO config path is: " + System.getProperty("mso.config.path"));
 			
 			String filePath = Paths.get(System.getProperty("mso.config.path"), "ASDC",  artifact.getArtifactVersion(), artifact.getArtifactName()).normalize().toString();
 
 			File spoolFile = new File(filePath);
- 
-			LOGGER.debug("ASDC File path is: " + spoolFile.getAbsolutePath());
-			LOGGER.info(MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF, "***PATH", "ASDC", spoolFile.getAbsolutePath());
-			
+
+			logger.debug("ASDC File path is: {}", spoolFile.getAbsolutePath());
+			logger.info("{} {} {} {}", MessageEnum.ASDC_RECEIVE_SERVICE_NOTIF.toString(), "***PATH", "ASDC",
+				spoolFile.getAbsolutePath());
 
 			sdcCsarHelper = factory.getSdcCsarHelper(spoolFile.getAbsolutePath(),false);
 
 		}catch(Exception e){
-			System.out.println("System out " + e.getMessage());
-			LOGGER.error(MessageEnum.ASDC_GENERAL_EXCEPTION_ARG,
-					"Exception caught during parser *****LOOK********* " + artifact.getArtifactName(), "ASDC", "processResourceNotification", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in processResourceNotification", e);
+			logger.info("System out {}", e.getMessage());
+			logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
+				"Exception caught during parser *****LOOK********* " + artifact.getArtifactName(), "ASDC",
+				"processResourceNotification", MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+				"Exception in " + "processResourceNotification", e);
 			
 			throw new ASDCDownloadException ("Exception caught when passing the csar file to the parser ", e);
 		}	
@@ -474,10 +478,6 @@ public class ToscaResourceStructure {
 		this.toscaCsar = toscaCsar;
 	}
 
-	public static MsoLogger getLogger() {
-		return LOGGER;
-	}
-	
 	public boolean isDeployedSuccessfully() {
 		return isDeployedSuccessfully;
 	}

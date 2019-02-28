@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,8 +24,8 @@ package org.onap.so.asdc.client;
 
 import org.onap.sdc.api.consumer.INotificationCallback;
 import org.onap.sdc.api.notification.INotificationData;
-import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,7 +40,7 @@ public final class ASDCNotificationCallBack implements INotificationCallback {
 	@Autowired
     private ASDCController asdcController;
     
-    protected static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.ASDC,ASDCNotificationCallBack.class);
+    protected static final Logger logger = LoggerFactory.getLogger(ASDCNotificationCallBack.class);
 
     /**
      * This method can be called multiple times at the same moment.
@@ -46,13 +48,8 @@ public final class ASDCNotificationCallBack implements INotificationCallback {
      */
     @Override
     public void activateCallback (INotificationData iNotif) {
-        long startTime = System.currentTimeMillis ();
-        UUIDChecker.generateUUID (LOGGER);
-        MsoLogger.setServiceName ("NotificationHandler");
-        MsoLogger.setLogContext (iNotif.getDistributionID (), iNotif.getServiceUUID ());
         String event = "Receive a callback notification in ASDC, nb of resources: " + iNotif.getResources ().size ();
-        LOGGER.debug(event);
+        logger.debug(event);
         asdcController.treatNotification (iNotif);
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Completed the treatment of the notification");
     }
 }
