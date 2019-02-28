@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,18 +23,18 @@
 package org.onap.so.bpmn.core.utils;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Sets up the unit test (H2) database for Camunda.
  */
 public class CamundaDBSetup {
 	private static boolean isDBConfigured = false;
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CamundaDBSetup.class);
+	private static final Logger logger = LoggerFactory.getLogger(CamundaDBSetup.class);
 	
 	private CamundaDBSetup() {
 	}
@@ -42,7 +44,7 @@ public class CamundaDBSetup {
 			return;
 		}
 
-		LOGGER.debug ("Configuring the Camunda H2 database for MSO");
+		logger.debug ("Configuring the Camunda H2 database for MSO");
 
 		Connection connection = null;
 		PreparedStatement stmt = null;
@@ -57,7 +59,7 @@ public class CamundaDBSetup {
 				try {
 					stmt.close();
 				} catch (Exception e) {
-					LOGGER.debug("Exception :",e);
+					logger.debug("Exception :",e);
 				}
 			}
 
@@ -65,7 +67,7 @@ public class CamundaDBSetup {
 				try {
 					connection.close();
 				} catch (Exception e) {
-					LOGGER.debug("Exception :",e);
+					logger.debug("Exception :",e);
 				}
 			}
 		}

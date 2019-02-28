@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +23,6 @@
 
 package org.onap.so.bpmn.core.xml;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -50,9 +51,9 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -64,7 +65,7 @@ import org.xml.sax.SAXException;
 public final class XmlTool {
 
 	private static final Map<String, Integer> ENTITIES = new HashMap<>();
-	private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.BPEL, XmlTool.class);
+	private static final Logger logger = LoggerFactory.getLogger(XmlTool.class);
 	static {
 		ENTITIES.put("amp", 38);
 		ENTITIES.put("quot", 34);
@@ -165,7 +166,7 @@ public final class XmlTool {
 	 */
 	public static String removeNamespaces(Object xml) {
 		if (xml == null) {
-		LOGGER.debug("removeNamespaces input object is null , returning null");
+			logger.debug("removeNamespaces input object is null , returning null");
 			return null;
 		}
 
@@ -204,7 +205,7 @@ public final class XmlTool {
 			}
 			return out.toString();
 		} catch (Exception e) {
-			LOGGER.debug("Exception at readResourceFile stream: " + e);
+			logger.debug("Exception at readResourceFile stream: " + e);
 			return null;
 		}
 	}
@@ -242,7 +243,7 @@ public final class XmlTool {
 			//System.out.println("Did not find element tag " + elementTag + " in XML");
 			return Optional.empty();
 		} else {
-			modNode.setTextContent(newValue);			
+			modNode.setTextContent(newValue);
 		}
 		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
