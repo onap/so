@@ -297,18 +297,6 @@ public class ToscaResourceInstaller {
 			createToscaCsar(toscaResourceStruct);			
 			createService(toscaResourceStruct, vfResourceStruct);			
 			Service service = toscaResourceStruct.getCatalogService();				
-			List<NodeTemplate> vfNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
-			
-		
-			for (NodeTemplate nodeTemplate : vfNodeTemplatesList) {	
-				
-				Metadata metadata = nodeTemplate.getMetaData();		
-				String serviceType = toscaResourceStruct.getCatalogService().getServiceType();			
-				String vfCustomizationCategory = toscaResourceStruct.getSdcCsarHelper()
-						.getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CATEGORY);
-				processVfModules(toscaResourceStruct, vfResourceStructure, service, nodeTemplate, metadata,
-						vfCustomizationCategory);
-			}
 			
 			processResourceSequence(toscaResourceStruct, service);
 			processVFResources(toscaResourceStruct, service, vfResourceStructure);
