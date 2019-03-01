@@ -33,10 +33,11 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class UpdateNetworkBBTest extends BaseBPMNTest {
     @Test
     public void updateNetworkBBTest() throws InterruptedException {
+    	mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
     	ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("UpdateNetworkBB", variables);
     	assertThat(processInstance).isNotNull();
     	assertThat(processInstance).isStarted().hasPassedInOrder(
-    			"UpdateNetworkBB_Start", "SDNCChangeAssignNetwork", 
+    			"UpdateNetworkBB_Start", "SDNCChangeAssignNetwork", "CallActivity_sdncHandlerCallChangeAssign",
     			"QueryVpnBindingAAI", "QueryNetworkPolicyAAI", "QueryNetworkTableRefAAI", 
     			"Create_Network_ServiceTask", "CallActivity_NetworkAdapterRestV1", "ServiceTask_ProcessResponse", "Update_Network_AAI_ServiceTask", "UpdateNetworkBB_End");
     	assertThat(processInstance).isEnded();
@@ -44,11 +45,12 @@ public class UpdateNetworkBBTest extends BaseBPMNTest {
 
 	@Test
 	public void updateNetworkBBExceptionTest() throws Exception {
+		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiQueryTasks).queryNetworkVpnBinding(any(BuildingBlockExecution.class));
 		
 		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("UpdateNetworkBB", variables);
 		assertThat(processInstance).isStarted().hasPassedInOrder(
-				"UpdateNetworkBB_Start", "SDNCChangeAssignNetwork",
+				"UpdateNetworkBB_Start", "SDNCChangeAssignNetwork", "CallActivity_sdncHandlerCallChangeAssign",
 				"QueryVpnBindingAAI")
 			.hasNotPassed("QueryNetworkPolicyAAI", "QueryNetworkTableRefAAI", 
     			"UpdateNetworkAdapter", "UpdateNetworkAAI", "UpdateNetworkBB_End");

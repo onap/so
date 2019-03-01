@@ -6,14 +6,13 @@
     </bpmn2:startEvent>
     <bpmn2:serviceTask id="SDNCChangeAssignNetwork" name="SDNC ChangeAssign Network" camunda:expression="${SDNCChangeAssignTasks.changeAssignNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
       <bpmn2:incoming>SequenceFlow_074w2et</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_04yezm3</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_0rvstwt</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:sequenceFlow id="SequenceFlow_074w2et" sourceRef="UpdateNetworkBB_Start" targetRef="SDNCChangeAssignNetwork" />
     <bpmn2:intermediateThrowEvent id="SDNC_End" name="To AAI">
-      <bpmn2:incoming>SequenceFlow_04yezm3</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_1eacnem</bpmn2:incoming>
       <bpmn2:linkEventDefinition name="SDNC_to_AAI" />
     </bpmn2:intermediateThrowEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_04yezm3" sourceRef="SDNCChangeAssignNetwork" targetRef="SDNC_End" />
     <bpmn2:intermediateCatchEvent id="AAI_Start" name="To AAI">
       <bpmn2:outgoing>SequenceFlow_1trqq6d</bpmn2:outgoing>
       <bpmn2:linkEventDefinition name="SDNC_to_AAI" />
@@ -71,6 +70,18 @@
     <bpmn2:sequenceFlow id="SequenceFlow_06ei0em" sourceRef="Update_Network_AAI_ServiceTask" targetRef="UpdateNetworkBB_End" />
     <bpmn2:sequenceFlow id="SequenceFlow_07hq1eg" sourceRef="Create_Network_ServiceTask" targetRef="CallActivity_NetworkAdapterRestV1" />
     <bpmn2:sequenceFlow id="SequenceFlow_183ph5i" sourceRef="CallActivity_NetworkAdapterRestV1" targetRef="ServiceTask_ProcessResponse" />
+    <bpmn2:callActivity id="CallActivity_sdncHandlerCallChangeAssign" name="SDNC Change Assign (network)" calledElement="SDNCHandler">
+      <bpmn2:extensionElements>
+        <camunda:in source="SDNCRequest" target="SDNCRequest" />
+        <camunda:out source="SDNCResponse" target="SDNCResponse" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0rvstwt</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1eacnem</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:sequenceFlow id="SequenceFlow_0rvstwt" sourceRef="SDNCChangeAssignNetwork" targetRef="CallActivity_sdncHandlerCallChangeAssign" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1eacnem" sourceRef="CallActivity_sdncHandlerCallChangeAssign" targetRef="SDNC_End" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -94,18 +105,11 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_0pce3rm_di" bpmnElement="SDNC_End">
-        <dc:Bounds x="487" y="77" width="36" height="36" />
+        <dc:Bounds x="665" y="77" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="490" y="117" width="33" height="12" />
+          <dc:Bounds x="669" y="117" width="32" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_04yezm3_di" bpmnElement="SequenceFlow_04yezm3">
-        <di:waypoint xsi:type="dc:Point" x="378" y="95" />
-        <di:waypoint xsi:type="dc:Point" x="487" y="95" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="432.5" y="74" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="IntermediateCatchEvent_1hbb3j8_di" bpmnElement="AAI_Start">
         <dc:Bounds x="144" y="215" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -214,6 +218,23 @@
         <di:waypoint xsi:type="dc:Point" x="625" y="402" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="585" y="381" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1da6ys0_di" bpmnElement="CallActivity_sdncHandlerCallChangeAssign">
+        <dc:Bounds x="455" y="55" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0rvstwt_di" bpmnElement="SequenceFlow_0rvstwt">
+        <di:waypoint xsi:type="dc:Point" x="378" y="95" />
+        <di:waypoint xsi:type="dc:Point" x="455" y="95" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="416.5" y="74" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1eacnem_di" bpmnElement="SequenceFlow_1eacnem">
+        <di:waypoint xsi:type="dc:Point" x="555" y="95" />
+        <di:waypoint xsi:type="dc:Point" x="665" y="95" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="610" y="74" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
