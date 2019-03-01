@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +37,8 @@ import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
@@ -54,7 +58,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class VfModuleTopologyOperationRequestMapper {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VfModuleTopologyOperationRequestMapper.class);
+	private static final Logger logger = LoggerFactory.getLogger(VfModuleTopologyOperationRequestMapper.class);
 	static GeneralTopologyObjectMapper generalTopologyObjectMapper = new GeneralTopologyObjectMapper();
 
 	public GenericResourceApiVfModuleOperationInformation reqMapper(SDNCSvcOperation svcOperation,
@@ -166,8 +170,9 @@ public class VfModuleTopologyOperationRequestMapper {
 			try {
 				GenericResourceApiVfModuleResponseInformation assignResponseInfo = mapper.readValue(sdncAssignResponse, GenericResourceApiVfModuleResponseInformation.class);				
 				objectPath = assignResponseInfo.getVfModuleResponseInformation().getObjectPath();
-			} catch (Exception e) {				
-			    msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, e.getMessage(), "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.getMessage());
+			} catch (Exception e) {
+				logger.error("{} {} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), e.getMessage(), "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
 			}
 		}
 		return objectPath;
