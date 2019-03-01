@@ -60,7 +60,6 @@ import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import io.swagger.annotations.Api;
@@ -90,7 +89,6 @@ public class VnfAdapterRestV2 {
 	private VnfAdapterRestUtils vnfAdapterRestUtils;
 
 	@Autowired
-	@Qualifier("VnfBpel")
 	private Provider<BpelRestClient> bpelRestClientProvider;
 
    /*

@@ -61,7 +61,6 @@ import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,7 +90,6 @@ public class VnfAdapterRest {
 	//TODO Logging, SkipAAI, CREATED flags, Integrate with BPEL, Auth,
 
 	@Autowired
-	@Qualifier("VnfBpel")
 	private Provider<BpelRestClient> bpelRestClientProvider;
 
 
