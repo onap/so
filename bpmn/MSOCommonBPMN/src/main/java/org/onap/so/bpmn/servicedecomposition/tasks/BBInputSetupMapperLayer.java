@@ -355,8 +355,8 @@ public class BBInputSetupMapperLayer {
 		return requestParams;
 	}
 	
-	protected HashMap<String,String> mapNameValueUserParams(org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {		
-		HashMap<String,String> userParamsResult = new HashMap<String,String>();
+	protected Map<String,Object> mapNameValueUserParams(org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {		
+		Map<String,Object> userParamsResult = new HashMap<String,Object>();
 		if (requestParameters.getUserParams() != null) {
 			List<Map<String, Object>> userParams = requestParameters.getUserParams();
 			for (Map<String, Object> userParamsMap : userParams) {

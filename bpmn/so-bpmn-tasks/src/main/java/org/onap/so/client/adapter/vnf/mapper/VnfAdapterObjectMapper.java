@@ -110,8 +110,8 @@ public class VnfAdapterObjectMapper {
 		return deleteVolumeGroupRequest;
 	}
 	
-	public Map<String, String> createVolumeGroupParams(RequestContext requestContext,GenericVnf genericVnf, VolumeGroup volumeGroup, String sdncVfModuleQueryResponse) throws JsonParseException, JsonMappingException, IOException {
-		Map<String, String> volumeGroupParams = new HashMap<>();
+	public Map<String, Object> createVolumeGroupParams(RequestContext requestContext,GenericVnf genericVnf, VolumeGroup volumeGroup, String sdncVfModuleQueryResponse) throws JsonParseException, JsonMappingException, IOException {
+		Map<String, Object> volumeGroupParams = new HashMap<>();
 		final String USER_PARAM_NAME_KEY = "name";
         final String USER_PARAM_VALUE_KEY = "value";
 		// sdncVfModuleQueryResponse will not be available in aLaCarte case
@@ -147,7 +147,7 @@ public class VnfAdapterObjectMapper {
 		return msoRequest;
 	}
 	
-	private void buildParamsMapFromSdncParams(Map<String,String> volumeGroupParams, GenericResourceApiParam sdncParameters) {		
+	private void buildParamsMapFromSdncParams(Map<String,Object> volumeGroupParams, GenericResourceApiParam sdncParameters) {		
 		if (sdncParameters != null) {
 			List<GenericResourceApiParamParam> sdncParametersList = sdncParameters.getParam();
 			if (sdncParametersList != null) {

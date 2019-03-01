@@ -76,7 +76,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value2");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -150,7 +150,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value2");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -223,7 +223,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 		
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value2");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -295,7 +295,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 
 		//
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value2");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -375,7 +375,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 
 		//
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value2");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -450,7 +450,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value2");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -521,7 +521,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -591,7 +591,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -661,7 +661,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -798,7 +798,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 		
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");
 		requestContext.setMsoRequestId("requestId");
 		requestContext.setUserParams(userParams);
@@ -853,7 +853,7 @@ public class VnfAdapterVfModuleObjectMapperPayloadTest {
 		
 		String json = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "grApiVmNetworkSubSectionWith5GParams.json")));
 		GenericResourceApiVmNetworkData network = omapper.readValue(json, GenericResourceApiVmNetworkData.class);
-		Map<String, String> paramsMap = new HashMap<>();
+		Map<String, Object> paramsMap = new HashMap<>();
 		vfModuleObjectMapper.buildVlanInformation(paramsMap, network, "testKey", "testType");
 		
 		assertEquals("1,3", paramsMap.get("testKey_testType_private_vlans"));

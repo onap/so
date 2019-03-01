@@ -161,7 +161,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		return msoRequest;		
 	}
 	
-	private Map<String,String> buildVfModuleParamsMap(RequestContext requestContext, ServiceInstance serviceInstance, GenericVnf genericVnf, 
+	private Map<String,Object> buildVfModuleParamsMap(RequestContext requestContext, ServiceInstance serviceInstance, GenericVnf genericVnf, 
 				VfModule vfModule, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse) throws JsonParseException, JsonMappingException, IOException {
 		
 		
@@ -169,7 +169,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		GenericResourceApiVfModuleTopology vfModuleTop = mapper.readValue(sdncVfModuleQueryResponse, GenericResourceApiVfModuleTopology.class);
 		GenericResourceApiVnftopologyVnfTopology vnfTopology = vnfTop.getVnfTopology();
 		GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology = vfModuleTop.getVfModuleTopology();
-		Map<String,String> paramsMap = new HashMap<>();
+		Map<String,Object> paramsMap = new HashMap<>();
 
 		if( vfModuleTopology.getSdncGeneratedCloudResources()) {
 			buildParamsMapFromVfModuleSdncResponse(paramsMap, vfModuleTopology, true);
@@ -184,17 +184,15 @@ public class VnfAdapterVfModuleObjectMapper {
 		buildMandatoryParamsMap(paramsMap, serviceInstance, genericVnf, vfModule);
 		
 		// Parameters received from the request should overwrite any parameters received from SDNC
+		paramsMap.putAll(requestContext.getUserParams());
 		
-		if (requestContext.getUserParams() != null) {
-			paramsMap.putAll(requestContext.getUserParams());
-		}
 		if (vfModule.getCloudParams() != null) {
 			paramsMap.putAll(vfModule.getCloudParams());
 		}
 		return paramsMap;
 	}
 	
-	private void  buildMandatoryParamsMap(Map<String,String> paramsMap, ServiceInstance serviceInstance, GenericVnf genericVnf, VfModule vfModule) {		
+	private void  buildMandatoryParamsMap(Map<String,Object> paramsMap, ServiceInstance serviceInstance, GenericVnf genericVnf, VfModule vfModule) {		
 		paramsMap.put("vnf_id", genericVnf.getVnfId());
 		paramsMap.put("vnf_name", genericVnf.getVnfName());
 		paramsMap.put("vf_module_id", vfModule.getVfModuleId());
@@ -209,7 +207,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}		
 	}
 	
-	private void buildParamsMapFromVnfSdncResponse(Map<String,String> paramsMap, GenericResourceApiVnftopologyVnfTopology vnfTopology, Map<String,String> networkRoleMap, boolean skipVnfResourceAssignments) throws JsonParseException, JsonMappingException, IOException {				
+	private void buildParamsMapFromVnfSdncResponse(Map<String,Object> paramsMap, GenericResourceApiVnftopologyVnfTopology vnfTopology, Map<String,String> networkRoleMap, boolean skipVnfResourceAssignments) throws JsonParseException, JsonMappingException, IOException {				
 		// Get VNF parameters from SDNC response
 		GenericResourceApiParam vnfParametersData = vnfTopology.getVnfParametersData();
 		buildParamsMapFromSdncParams(paramsMap, vnfParametersData);
@@ -225,7 +223,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
-	private void buildAvailabilityZones (Map<String,String> paramsMap, GenericResourceApiVnfresourceassignmentsVnfResourceAssignments vnfResourceAssignments) {		
+	private void buildAvailabilityZones (Map<String,Object> paramsMap, GenericResourceApiVnfresourceassignmentsVnfResourceAssignments vnfResourceAssignments) {		
 		GenericResourceApiVnfresourceassignmentsVnfresourceassignmentsAvailabilityZones availabilityZones = vnfResourceAssignments.getAvailabilityZones();
 		if (availabilityZones != null) {
 			List<String> availabilityZonesList = availabilityZones.getAvailabilityZone();
@@ -237,7 +235,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
-	private void buildVnfNetworks (Map<String,String> paramsMap, GenericResourceApiVnfresourceassignmentsVnfResourceAssignments vnfResourceAssignments, Map<String,String> networkRoleMap) {
+	private void buildVnfNetworks (Map<String,Object> paramsMap, GenericResourceApiVnfresourceassignmentsVnfResourceAssignments vnfResourceAssignments, Map<String,String> networkRoleMap) {
 		GenericResourceApiVnfresourceassignmentsVnfresourceassignmentsVnfNetworks vnfNetworks = vnfResourceAssignments.getVnfNetworks();
 		if (vnfNetworks != null) {
 			List<GenericResourceApiVnfNetworkData> vnfNetworksList = vnfNetworks.getVnfNetwork();
@@ -264,7 +262,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
-	private void buildVnfNetworkSubnets(Map<String,String> paramsMap, GenericResourceApiVnfNetworkData vnfNetwork, String vnfNetworkKey) {
+	private void buildVnfNetworkSubnets(Map<String,Object> paramsMap, GenericResourceApiVnfNetworkData vnfNetwork, String vnfNetworkKey) {
 		String vnfNetworkString = convertToString(vnfNetwork);
 		Optional<String> ipv4Ips = jsonPath.locateResult(vnfNetworkString, "$.subnets-data.subnet-data[*].[?(@.ip-version == 'ipv4' && @.dhcp-enabled == 'Y')].subnet-id");
 		if(ipv4Ips.isPresent())
@@ -275,7 +273,7 @@ public class VnfAdapterVfModuleObjectMapper {
 			addPairToMap(paramsMap, vnfNetworkKey, V6_SUBNET_ID, ipv6Ips.get());
 	}	
 
-	private void buildParamsMapFromVfModuleSdncResponse(Map<String,String> paramsMap, GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology, boolean skipVfModuleAssignments) throws JsonParseException, JsonMappingException, IOException {		
+	private void buildParamsMapFromVfModuleSdncResponse(Map<String,Object> paramsMap, GenericResourceApiVfmoduletopologyVfModuleTopology vfModuleTopology, boolean skipVfModuleAssignments) throws JsonParseException, JsonMappingException, IOException {		
 		// Get VF Module parameters from SDNC response
 		GenericResourceApiParam vfModuleParametersData = vfModuleTopology.getVfModuleParameters();
 		buildParamsMapFromSdncParams(paramsMap, vfModuleParametersData);
@@ -322,7 +320,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
-	protected void buildVlanInformation(Map<String, String> paramsMap,
+	protected void buildVlanInformation(Map<String, Object> paramsMap,
 			GenericResourceApiVmNetworkData network, String key, String networkKey) {
 		
 		String networkString = convertToString(network);
@@ -352,7 +350,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 
-	private void buildVfModuleVmNames(Map<String,String> paramsMap, GenericResourceApiVmTopologyData vm, String key) {
+	private void buildVfModuleVmNames(Map<String,Object> paramsMap, GenericResourceApiVmTopologyData vm, String key) {
 		String values = "";
 		GenericResourceApiVmtopologydataVmNames vmNames = vm.getVmNames();
 		if (vmNames != null) {
@@ -373,7 +371,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
-	private void buildVfModuleFloatingIps(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
+	private void buildVfModuleFloatingIps(Map<String,Object> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
 		GenericResourceApiVmnetworkdataFloatingIps floatingIps = network.getFloatingIps();
 		if (floatingIps != null) {
 			List<String> floatingIpV4List = floatingIps.getFloatingIpV4();
@@ -397,7 +395,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
-	private void buildVfModuleInterfaceRoutePrefixes(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
+	private void buildVfModuleInterfaceRoutePrefixes(Map<String,Object> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
 		GenericResourceApiVmnetworkdataInterfaceRoutePrefixes interfaceRoutePrefixes = network.getInterfaceRoutePrefixes();
 		if (interfaceRoutePrefixes != null) {
 			List<String> interfaceRoutePrefixesList = interfaceRoutePrefixes.getInterfaceRoutePrefix();
@@ -421,7 +419,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
-	private void buildVfModuleSriovParameters(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String networkKey) {
+	private void buildVfModuleSriovParameters(Map<String,Object> paramsMap, GenericResourceApiVmNetworkData network, String networkKey) {
 		// SRIOV Parameters
 		GenericResourceApiVmnetworkdataSriovParameters sriovParameters = network.getSriovParameters();
 		if (sriovParameters != null) {
@@ -447,7 +445,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		}
 	}
 	
-	private void buildVfModuleNetworkInformation(Map<String,String> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
+	private void buildVfModuleNetworkInformation(Map<String,Object> paramsMap, GenericResourceApiVmNetworkData network, String key, String networkKey) {
 		
 		GenericResourceApiVmnetworkdataNetworkInformationItems networkInformationItems = network.getNetworkInformationItems();
 		StringBuilder sbIpv4Ips = new StringBuilder();
@@ -500,7 +498,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * Build Count of SubInterfaces, VLAN Tag, network_name, network_id,
 	 * ip_address (V4 and V6) and Floating IPs Addresses (V4 and V6) for Heat Template
 	 */	
-	private void buildParamsMapFromVfModuleForHeatTemplate(Map<String,String> paramsMap, GenericResourceApiVmTopologyData vm) {
+	private void buildParamsMapFromVfModuleForHeatTemplate(Map<String,Object> paramsMap, GenericResourceApiVmTopologyData vm) {
 		GenericResourceApiVmtopologydataVmNames vmNames = vm.getVmNames();
 	
 		if (vmNames != null) {
@@ -520,7 +518,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	/*
 	 * Parse vnfcNames data to build Mapping from GenericResourceApi SDNC for Heat Template.
 	 */	
-	private void parseVnfcNamesData(Map<String,String> paramsMap, GenericResourceApiVmtopologydataVmnamesVnfcNames vnfcNames) {
+	private void parseVnfcNamesData(Map<String,Object> paramsMap, GenericResourceApiVmtopologydataVmnamesVnfcNames vnfcNames) {
 		
 		if (vnfcNames != null) {
 			GenericResourceApiVnfcNetworkData vnfcNetworks = vnfcNames.getVnfcNetworks();
@@ -544,7 +542,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * Build Count of SubInterfaces, VLAN Tag, network_name, network_id,
 	 * ip_address (V4 and V6) and Floating IPs Addresses (V4 and V6) for Heat Template
 	 */	
-	private void parseVnfcNetworkData(Map<String,String> paramsMap, GenericResourceApiVnfcnetworkdataVnfcNetworkData vnfcNetworkdata, int networkDataIdx) {
+	private void parseVnfcNetworkData(Map<String,Object> paramsMap, GenericResourceApiVnfcnetworkdataVnfcNetworkData vnfcNetworkdata, int networkDataIdx) {
 		
 		String vmTypeKey = vnfcNetworkdata.getVnfcType();
 		GenericResourceApiVnfcnetworkdataVnfcnetworkdataVnfcPorts vnfcPorts = vnfcNetworkdata.getVnfcPorts();
@@ -588,7 +586,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * Example: fw_subint_ctrl_port_0_subintcount
 	 * 
 	 */
-	private void buildVfModuleSubInterfacesCount(Map<String,String> paramsMap, String keyPrefix, GenericResourceApiSubInterfaceNetworkData vnicSubInterfaces) {
+	private void buildVfModuleSubInterfacesCount(Map<String,Object> paramsMap, String keyPrefix, GenericResourceApiSubInterfaceNetworkData vnicSubInterfaces) {
 
 		List<GenericResourceApiSubinterfacenetworkdataSubInterfaceNetworkData> subInterfaceNetworkDataList = vnicSubInterfaces.getSubInterfaceNetworkData();
 		
@@ -614,7 +612,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * Example: fw_0_subint_ctrl_port_0_vlan_ids
 	 * 
 	 */
-	protected void buildVfModuleVlanTag(Map<String,String> paramsMap, String keyPrefix, String vnicSubInterfaces) {
+	protected void buildVfModuleVlanTag(Map<String,Object> paramsMap, String keyPrefix, String vnicSubInterfaces) {
 		
 		List<String> vlanTagIds = jsonPath.locateResultList(vnicSubInterfaces, "$.sub-interface-network-data[*].vlan-tag-id");
 
@@ -627,7 +625,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * Example: fw_0_subint_ctrl_port_0_net_names
 	 * 
 	 */
-	protected void buildVfModuleNetworkName(Map<String,String> paramsMap, String keyPrefix, String vnicSubInterfaces) {
+	protected void buildVfModuleNetworkName(Map<String,Object> paramsMap, String keyPrefix, String vnicSubInterfaces) {
 		
 		List<String> neworkNames = jsonPath.locateResultList(vnicSubInterfaces, "$.sub-interface-network-data[*].network-name");
 		
@@ -641,7 +639,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * Example: fw_0_subint_ctrl_port_0_net_ids
 	 * 
 	 */
-	protected void buildVfModuleNetworkId(Map<String,String> paramsMap, String keyPrefix, String vnicSubInterfaces) {
+	protected void buildVfModuleNetworkId(Map<String,Object> paramsMap, String keyPrefix, String vnicSubInterfaces) {
 		
 		List<String> neworkIds = jsonPath.locateResultList(vnicSubInterfaces, "$.sub-interface-network-data[*].network-id");
 		
@@ -654,7 +652,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * {vm-type}_{index}_subint_{network-role}_port_{index}_ip_{index}  -- for ipV4
 	 * key = vm-type, networkRoleKey = NetWork-Role
 	 */
-	protected void buildVfModuleIpV4AddressHeatTemplate(Map<String,String> paramsMap, String keyPrefix, String vnicSubInterfaces) {
+	protected void buildVfModuleIpV4AddressHeatTemplate(Map<String,Object> paramsMap, String keyPrefix, String vnicSubInterfaces) {
 		
 		List<String> ipv4Ips = jsonPath.locateResultList(vnicSubInterfaces, "$.sub-interface-network-data[*].network-information-items.network-information-item[?(@.ip-version == 'ipv4')].network-ips.network-ip[*]");
 		
@@ -672,7 +670,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * {vm-type}_{index}_subint_{network-role}_port_{index}_v6_ip_{index} -- for ipV6
 	 * key = vm-type, networkRoleKey = NetWork-Role
 	 */
-	protected void buildVfModuleIpV6AddressHeatTemplate(Map<String,String> paramsMap, String keyPrefix, String vnicSubInterfaces) {
+	protected void buildVfModuleIpV6AddressHeatTemplate(Map<String,Object> paramsMap, String keyPrefix, String vnicSubInterfaces) {
 		
 		List<String> ipv6Ips = jsonPath.locateResultList(vnicSubInterfaces, "$.sub-interface-network-data[*].network-information-items.network-information-item[?(@.ip-version == 'ipv6')].network-ips.network-ip[*]");
 
@@ -688,7 +686,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * Building Criteria : 
 	 * {vm-type}_subint_{network-role}_port_{index}_floating_ip  -- for ipV4
 	 */
-	protected void buildVfModuleFloatingIpV4HeatTemplate(Map<String,String> paramsMap, String keyPrefix, String vnicSubInterfaces) {
+	protected void buildVfModuleFloatingIpV4HeatTemplate(Map<String,Object> paramsMap, String keyPrefix, String vnicSubInterfaces) {
 		
 		List<String> floatingV4 = jsonPath.locateResultList(vnicSubInterfaces, "$.sub-interface-network-data[*].floating-ips.floating-ip-v4[*]");
 
@@ -704,7 +702,7 @@ public class VnfAdapterVfModuleObjectMapper {
 	 * Building Criteria : 
 	 * {vm-type}_subint_{network-role}_port_{index}_floating_v6_ip -- for ipV6
 	 */
-	protected void buildVfModuleFloatingIpV6HeatTemplate(Map<String,String> paramsMap, String keyPrefix, String vnicSubInterfaces) {
+	protected void buildVfModuleFloatingIpV6HeatTemplate(Map<String,Object> paramsMap, String keyPrefix, String vnicSubInterfaces) {
 				
 		List<String> floatingV6 = jsonPath.locateResultList(vnicSubInterfaces, "$.sub-interface-network-data[*].floating-ips.floating-ip-v6[*]");
 		
@@ -714,19 +712,19 @@ public class VnfAdapterVfModuleObjectMapper {
 		addPairToMap(paramsMap, keyPrefix, FLOATING_V6_IP, floatingV6);
 	}
 	
-	protected void addPairToMap(Map<String, String> paramsMap, String keyPrefix, String key, String value) {
+	protected void addPairToMap(Map<String, Object> paramsMap, String keyPrefix, String key, String value) {
 		
 		addPairToMap(paramsMap, keyPrefix, key, Collections.singletonList(value));
 	}
 
-	protected void addPairToMap(Map<String, String> paramsMap, String keyPrefix, String key, List<String> value) {
+	protected void addPairToMap(Map<String, Object> paramsMap, String keyPrefix, String key, List<String> value) {
 		
 		if (!value.isEmpty()) {
 			paramsMap.put(keyPrefix + key, Joiner.on(",").join(value));
 		}
 	}
 	
-	private void buildParamsMapFromSdncParams(Map<String,String> paramsMap, GenericResourceApiParam parametersData) {		
+	private void buildParamsMapFromSdncParams(Map<String,Object> paramsMap, GenericResourceApiParam parametersData) {		
 		if (parametersData != null) {
 			List<GenericResourceApiParamParam> paramsList = parametersData.getParam();
 			if (paramsList != null) {

@@ -53,7 +53,7 @@ public interface MsoVnfAdapterAsync
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
 							@WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
-							@WebParam(name="inputs") Map<String,String> inputs,
+							@WebParam(name="inputs") Map<String,Object> inputs,
 							@WebParam(name="failIfExists") Boolean failIfExists,
 							@WebParam(name="backout") Boolean backout,
 							@WebParam(name="enableBridge") Boolean enableBridge,
@@ -70,7 +70,7 @@ public interface MsoVnfAdapterAsync
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
 							@WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
-							@WebParam(name="inputs") Map<String,String> inputs,
+							@WebParam(name="inputs") Map<String,Object> inputs,
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );

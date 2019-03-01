@@ -58,7 +58,7 @@ public class UpdateVfModuleRequest extends VfRequestCommon {
 	private Boolean failIfExists;
 	private Boolean backout;
 
-	private Map<String,String> vfModuleParams = new HashMap<>();
+	private Map<String,Object> vfModuleParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 
 	public String getCloudSiteId() {
@@ -197,11 +197,11 @@ public class UpdateVfModuleRequest extends VfRequestCommon {
 		this.backout = backout;
 	}
 
-	public Map<String, String> getVfModuleParams() {
+	public Map<String, Object> getVfModuleParams() {
 		return vfModuleParams;
 	}
 
-	public void setVfModuleParams(Map<String, String> vfModuleParams) {
+	public void setVfModuleParams(Map<String, Object> vfModuleParams) {
 		this.vfModuleParams = vfModuleParams;
 	}
 

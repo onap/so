@@ -86,6 +86,24 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.woorea.openstack.base.client.OpenStackConnectException;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.heat.Heat;
+import com.woorea.openstack.heat.model.CreateStackParam;
+import com.woorea.openstack.heat.model.Resources;
+import com.woorea.openstack.heat.model.Stack;
+import com.woorea.openstack.heat.model.Stack.Output;
+import com.woorea.openstack.heat.model.Stacks;
+import com.woorea.openstack.keystone.Keystone;
+import com.woorea.openstack.keystone.model.Access;
+import com.woorea.openstack.keystone.model.Authentication;
+import com.woorea.openstack.keystone.utils.KeystoneUtils;
+
 @Primary
 @Component
 public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
@@ -1005,7 +1023,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		return heatStack.getOutputs();
 	}
 
-	public void copyStringOutputsToInputs(Map<String, String> inputs,
+	public void copyStringOutputsToInputs(Map<String, Object> inputs,
 			Map<String, Object> otherStackOutputs, boolean overWrite) {
 		if (inputs == null || otherStackOutputs == null)
 			return;
@@ -1245,7 +1263,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * (heat variable type) -> java Object type
      * string -> String
      * number -> Integer
-     * json -> JsonNode XXX Removed with MSO-1475 / 1802
+     * json -> marshal object to json
      * comma_delimited_list -> ArrayList
      * boolean -> Boolean
      * if any of the conversions should fail, we will default to adding it to the inputs
@@ -1256,7 +1274,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * @param template the HeatTemplate object - this is so we can also verify if the param is valid for this template
      * @return HashMap<String, Object> of the inputs, cleaned and converted
      */
-	public Map<String, Object> convertInputMap(Map<String, String> inputs, HeatTemplate template) {
+	public Map<String, Object> convertInputMap(Map<String, Object> inputs, HeatTemplate template) {
 		HashMap<String, Object> newInputs = new HashMap<>();
 		HashMap<String, HeatTemplateParam> params = new HashMap<>();
 		HashMap<String, HeatTemplateParam> paramAliases = new HashMap<>();
@@ -1309,13 +1327,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         logger.debug("Parameter: {} is of type {}", key, type);
         if ("string".equalsIgnoreCase(type)) {
 				// Easiest!
-				String str = inputs.get(key);
+				String str = inputs.get(key).toString();
 				if (alias)
 					newInputs.put(realName, str);
 				else
 					newInputs.put(key, str);
 			} else if ("number".equalsIgnoreCase(type)) {
-				String integerString = inputs.get(key);
+				String integerString = inputs.get(key).toString();
 				Integer anInteger = null;
 				try {
 					anInteger = Integer.parseInt(integerString);
@@ -1336,16 +1354,21 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 						newInputs.put(key, integerString);
 				}
 			} else if ("json".equalsIgnoreCase(type)) {
-				// MSO-1475 - Leave this as a string now
-				String jsonString = inputs.get(key);
-            logger.debug("Skipping conversion to jsonNode...");
-            if (alias)
+				Object jsonObj = inputs.get(key);
+				String jsonString;
+				try {
+					jsonString = JSON_MAPPER.writeValueAsString(jsonObj);
+				} catch (JsonProcessingException e) {
+					logger.error("failed to map to json, directly converting to string instead", e);
+					jsonString = jsonObj.toString();
+				}
+    			if (alias)
     				newInputs.put(realName, jsonString);
     			else
     				newInputs.put(key, jsonString);
     			//}
 			} else if ("comma_delimited_list".equalsIgnoreCase(type)) {
-				String commaSeparated = inputs.get(key);
+				String commaSeparated = inputs.get(key).toString();
 				try {
 					List<String> anArrayList = this.convertCdlToArrayList(commaSeparated);
 					if (alias)
@@ -1360,7 +1383,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 						newInputs.put(key, commaSeparated);
 				}
 			} else if ("boolean".equalsIgnoreCase(type)) {
-				String booleanString = inputs.get(key);
+				String booleanString = inputs.get(key).toString();
 				Boolean aBool = Boolean.valueOf(booleanString);
 				if (alias)
 					newInputs.put(realName, aBool);
@@ -1368,7 +1391,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 					newInputs.put(key, aBool);
 			} else {
 				// it's null or something undefined - just add it back as a String
-				String str = inputs.get(key);
+				String str = inputs.get(key).toString();
 				if (alias)
 					newInputs.put(realName, str);
 				else

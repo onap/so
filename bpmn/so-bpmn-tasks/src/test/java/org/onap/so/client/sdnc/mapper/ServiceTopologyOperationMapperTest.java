@@ -26,8 +26,13 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
@@ -41,7 +46,14 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnum
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ServiceTopologyOperationMapperTest {
+
+	@Spy
+	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
+	
+	@InjectMocks
+	private ServiceTopologyOperationMapper mapper = new ServiceTopologyOperationMapper();
 
 	@Test
 	public void reqMapperTest() throws Exception {
@@ -64,12 +76,11 @@ public class ServiceTopologyOperationMapperTest {
 
 		//prepare RequestContext
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
 
-		ServiceTopologyOperationMapper mapper = new ServiceTopologyOperationMapper();
 		GenericResourceApiServiceOperationInformation serviceOpInformation = mapper.reqMapper(
 				SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
 				requestContext);

@@ -125,7 +125,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                             String vnfName,
                             String requestType,
                             String volumeGroupHeatStackId,
-                            Map <String, String> inputs,
+                            Map <String, Object> inputs,
                             Boolean failIfExists,
                             Boolean backout,
                             Boolean enableBridge,
@@ -214,7 +214,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                             String vnfName,
                             String requestType,
                             String volumeGroupHeatStackId,
-                            Map <String, String> inputs,
+                            Map <String, Object> inputs,
                             String messageId,
                             MsoRequest msoRequest,
                             String notificationUrl) {

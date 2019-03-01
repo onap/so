@@ -58,7 +58,7 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 	private Boolean backout = true;
 	private Boolean enableBridge;
 
-	private Map<String, String> vfModuleParams = new HashMap<>();
+	private Map<String, Object> vfModuleParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 
 	public String getCloudSiteId() {
@@ -189,11 +189,11 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 		this.backout = backout;
 	}
 
-	public Map<String, String> getVfModuleParams() {
+	public Map<String, Object> getVfModuleParams() {
 		return vfModuleParams;
 	}
 
-	public void setVfModuleParams(Map<String, String> vfModuleParams) {
+	public void setVfModuleParams(Map<String, Object> vfModuleParams) {
 		this.vfModuleParams = vfModuleParams;
 	}
 

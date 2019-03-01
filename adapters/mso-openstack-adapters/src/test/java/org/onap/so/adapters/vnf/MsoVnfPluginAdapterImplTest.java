@@ -56,7 +56,7 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
     public void createVfModule_ModelCustUuidIsNull() throws Exception {
         expectedException.expect(VnfException.class);
         MsoRequest msoRequest = getMsoRequest();
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         msoVnfPluginAdapter.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", null, map,
@@ -68,7 +68,7 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
     public void createVfModule_ModelCustUuidIsNotFound() throws Exception {
         expectedException.expect(VnfException.class);
         MsoRequest msoRequest = getMsoRequest();
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         msoVnfPluginAdapter.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -80,7 +80,7 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
     public void createVfModule_VduException() throws Exception {
         expectedException.expect(VnfException.class);
         MsoRequest msoRequest = getMsoRequest();
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         msoVnfPluginAdapter.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
@@ -94,7 +94,7 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         mockOpenStackGetStackVfModule_200();
 
         MsoRequest msoRequest = getMsoRequest();
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         msoVnfPluginAdapter.createVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
                 null, "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
@@ -107,7 +107,7 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         expectedException.expect(VnfException.class);
         mockOpenStackResponseAccess(wireMockPort);
         MsoRequest msoRequest = getMsoRequest();
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         msoVnfPluginAdapter.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
                 "volumeGroupHeatStackId|1", "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
@@ -125,7 +125,7 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
                         .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json")
                         .withStatus(HttpStatus.SC_OK)));
         MsoRequest msoRequest = getMsoRequest();
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         msoVnfPluginAdapter.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
                 "volumeGroupHeatStackId", "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,

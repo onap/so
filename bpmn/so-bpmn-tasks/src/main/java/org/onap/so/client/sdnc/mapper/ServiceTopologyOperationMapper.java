@@ -23,13 +23,6 @@ package org.onap.so.client.sdnc.mapper;
 import java.util.Map;
 import java.util.UUID;
 
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.client.sdnc.beans.SDNCSvcAction;
-import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-import org.springframework.stereotype.Component;
-
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
@@ -38,11 +31,19 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheader
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServicerequestinputServiceRequestInput;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.sdnc.beans.SDNCSvcAction;
+import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class ServiceTopologyOperationMapper{
 
-	static GeneralTopologyObjectMapper generalTopologyObjectMapper = new GeneralTopologyObjectMapper();
+	@Autowired
+	public GeneralTopologyObjectMapper generalTopologyObjectMapper;
 	
 	public GenericResourceApiServiceOperationInformation reqMapper (SDNCSvcOperation svcOperation,
 			SDNCSvcAction svcAction, GenericResourceApiRequestActionEnumeration resourceAction,ServiceInstance serviceInstance, Customer customer, RequestContext requestContext) {
@@ -62,13 +63,13 @@ public class ServiceTopologyOperationMapper{
 		servOpInput.setServiceRequestInput(servReqInfo);
 		
 		if(requestContext.getUserParams()!=null){
-			for (Map.Entry<String, String> entry : requestContext.getUserParams().entrySet()) {
+			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
 				GenericResourceApiServicerequestinputServiceRequestInput serviceRequestInput = new GenericResourceApiServicerequestinputServiceRequestInput(); 
 				serviceRequestInput.setServiceInstanceName(serviceInstance.getServiceInstanceName()); 
 				GenericResourceApiParam serviceInputParameters = new GenericResourceApiParam(); 
 				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam(); 
 				paramItem.setName(entry.getKey()); 
-				paramItem.setValue(entry.getValue()); 
+				paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue())); 
 				serviceInputParameters.addParamItem(paramItem ); 
 				serviceRequestInput.serviceInputParameters(serviceInputParameters); 
 				servOpInput.setServiceRequestInput(serviceRequestInput ); 

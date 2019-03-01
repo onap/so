@@ -26,18 +26,6 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.License;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
-import org.onap.so.client.sdnc.beans.SDNCSvcAction;
-import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-import org.springframework.stereotype.Component;
-
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
@@ -48,11 +36,24 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInfor
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfinformationVnfInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfrequestinputVnfRequestInput;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.License;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
+import org.onap.so.client.sdnc.beans.SDNCSvcAction;
+import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class VnfTopologyOperationRequestMapper {
 
-	static GeneralTopologyObjectMapper generalTopologyObjectMapper = new GeneralTopologyObjectMapper();
+	@Autowired
+	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
 	public GenericResourceApiVnfOperationInformation reqMapper(SDNCSvcOperation svcOperation, SDNCSvcAction svcAction,
 			GenericResourceApiRequestActionEnumeration requestAction, GenericVnf vnf, ServiceInstance serviceInstance,
@@ -84,10 +85,10 @@ public class VnfTopologyOperationRequestMapper {
 
 		GenericResourceApiParam vnfInputParameters = new GenericResourceApiParam();
 		if (requestContext.getUserParams() != null) {
-			for (Map.Entry<String, String> entry : requestContext.getUserParams().entrySet()) {
+			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
 				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
 				paramItem.setName(entry.getKey());
-				paramItem.setValue(entry.getValue());
+				paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue()));
 				vnfInputParameters.addParamItem(paramItem);
 				vnfRequestInput.setVnfInputParameters(vnfInputParameters);
 			}

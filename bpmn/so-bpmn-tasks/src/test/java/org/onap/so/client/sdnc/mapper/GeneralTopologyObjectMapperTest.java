@@ -29,6 +29,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -104,7 +105,7 @@ public class GeneralTopologyObjectMapperTest  extends TestDataSetup {
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		//
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");

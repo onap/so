@@ -23,15 +23,6 @@ package org.onap.so.client.sdnc.mapper;
 import java.util.Map;
 import java.util.UUID;
 
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.client.sdnc.beans.SDNCSvcAction;
-import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-import org.springframework.stereotype.Component;
-
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkinformationNetworkInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkrequestinputNetworkRequestInput;
@@ -41,6 +32,15 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnum
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestinformationRequestInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.client.sdnc.beans.SDNCSvcAction;
+import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * Mapper creating SDNC request
@@ -49,7 +49,8 @@ import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformatio
 @Component
 public class NetworkTopologyOperationRequestMapper {
 	
-	static GeneralTopologyObjectMapper generalTopologyObjectMapper = new GeneralTopologyObjectMapper();
+	@Autowired
+	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
 	public GenericResourceApiNetworkOperationInformation reqMapper(SDNCSvcOperation svcOperation,
 			SDNCSvcAction svcAction, GenericResourceApiRequestActionEnumeration reqAction, L3Network network, ServiceInstance serviceInstance,
@@ -68,11 +69,11 @@ public class NetworkTopologyOperationRequestMapper {
 		req.setNetworkInformation(networkInformation);
 
 		if (requestContext.getUserParams() != null) {
-			for (Map.Entry<String, String> entry : requestContext.getUserParams().entrySet()) {
+			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
 				GenericResourceApiParam networkInputParameters = new GenericResourceApiParam();
 				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
-				paramItem.setName(entry.getKey()); 
-				paramItem.setValue(entry.getValue()); 
+				paramItem.setName(entry.getKey());
+				paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue())); 
 				networkInputParameters.addParamItem(paramItem);
 				networkRequestInput.setNetworkInputParameters(networkInputParameters);
 			}

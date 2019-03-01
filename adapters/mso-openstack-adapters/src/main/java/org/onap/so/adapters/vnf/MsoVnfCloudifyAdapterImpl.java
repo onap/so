@@ -132,7 +132,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            String requestType,
                            String volumeGroupHeatStackId,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            Boolean failIfExists,
                            Boolean backout,
                            Boolean enableBridge,
@@ -160,7 +160,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            String requestType,
                            String volumeGroupHeatStackId,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs,
                            Holder <VnfRollback> rollback)
@@ -428,7 +428,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     	return;
     }
 
-    private void sendMapToDebug(Map<String, String> inputs) {
+    private void sendMapToDebug(Map<String, Object> inputs) {
     	int i = 0;
     	StringBuilder sb = new StringBuilder("inputs:");
     	if (inputs == null) {
@@ -567,7 +567,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             String volumeGroupId,
             String baseVfModuleId,
             String modelCustomizationUuid,
-            Map <String, String> inputs,
+            Map <String, Object> inputs,
             Boolean failIfExists,
             Boolean backout,
             Boolean enableBridge,
@@ -605,7 +605,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
         if (inputs == null) {
         	// Create an empty set of inputs
-        	inputs = new HashMap<String,String>();
+        	inputs = new HashMap<>();
         	LOGGER.debug("inputs == null - setting to empty");
         } else {
         	this.sendMapToDebug(inputs);
@@ -1212,7 +1212,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                            String baseVfHeatStackId,
                            String vfModuleStackId,
                            String modelCustomizationUuid,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs,
                            Holder <VnfRollback> rollback) throws VnfException

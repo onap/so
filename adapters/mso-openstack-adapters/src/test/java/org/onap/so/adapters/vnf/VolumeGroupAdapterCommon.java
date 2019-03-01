@@ -56,7 +56,7 @@ public class VolumeGroupAdapterCommon extends BaseRestTestUtils {
         request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
         request.setSkipAAI(true);
         request.setVolumeGroupStackId(VOUME_GROUP_NAME);
-        Map<String, String> volumeGroupParams = getVolumeGroupParamsMap();
+        Map<String, Object> volumeGroupParams = getVolumeGroupParamsMap();
         request.setVolumeGroupParams(volumeGroupParams);
         MsoRequest msoReq = getMsoRequest();
         request.setMsoRequest(msoReq);
@@ -104,7 +104,7 @@ public class VolumeGroupAdapterCommon extends BaseRestTestUtils {
         request.setFailIfExists(true);
         request.setEnableBridge(false);
         request.setSuppressBackout(true);
-        Map<String, String> volumeGroupParams = getVolumeGroupParamsMap();
+        Map<String, Object> volumeGroupParams = getVolumeGroupParamsMap();
         request.setVolumeGroupParams(volumeGroupParams);
         MsoRequest msoReq = getMsoRequest();
         request.setMsoRequest(msoReq);
@@ -112,8 +112,8 @@ public class VolumeGroupAdapterCommon extends BaseRestTestUtils {
         return request;
     }
 
-    private Map<String, String> getVolumeGroupParamsMap() {
-        Map<String, String> volumeGroupParams =  new HashMap<>();
+    private Map<String, Object> getVolumeGroupParamsMap() {
+        Map<String, Object> volumeGroupParams =  new HashMap<>();
         volumeGroupParams.put("fsb_volume_type_0","volume_type");
         volumeGroupParams.put("fsb_volume_image_name_1","vol_img_1");
         volumeGroupParams.put("fsb_volume_image_name_0","vol_img_0");

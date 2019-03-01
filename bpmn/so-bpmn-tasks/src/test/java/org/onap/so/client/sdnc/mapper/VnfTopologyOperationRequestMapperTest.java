@@ -25,9 +25,14 @@ import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -45,7 +50,14 @@ import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VnfTopologyOperationRequestMapperTest {
+
+	@Spy
+	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
+	
+	@InjectMocks
+	private VnfTopologyOperationRequestMapper mapper = new VnfTopologyOperationRequestMapper();
 
 	@Test
 	public void reqMapperTest() throws Exception {
@@ -106,14 +118,13 @@ public class VnfTopologyOperationRequestMapperTest {
 
 		//prepare RequestContext
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
 
 		CloudRegion cloudRegion = new CloudRegion();
 
-		VnfTopologyOperationRequestMapper mapper = new VnfTopologyOperationRequestMapper();
 		GenericResourceApiVnfOperationInformation vnfOpInformation = mapper.reqMapper(
 				SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
 				cloudRegion, requestContext,true);

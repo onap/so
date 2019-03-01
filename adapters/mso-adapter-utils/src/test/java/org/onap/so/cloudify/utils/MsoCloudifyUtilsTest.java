@@ -23,7 +23,7 @@ package org.onap.so.cloudify.utils;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -33,7 +33,9 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,17 +54,23 @@ import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.cloud.CloudConfig;
-import org.onap.so.cloudify.beans.DeploymentInfoBuilder;
-import org.onap.so.db.catalog.beans.CloudIdentity;
-import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.cloudify.beans.DeploymentInfo;
+import org.onap.so.cloudify.beans.DeploymentInfoBuilder;
 import org.onap.so.cloudify.beans.DeploymentStatus;
 import org.onap.so.cloudify.v3.client.Cloudify;
 import org.onap.so.cloudify.v3.model.AzureConfig;
+import org.onap.so.db.catalog.beans.CloudIdentity;
+import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoException;
+import org.skyscreamer.jsonassert.JSONAssert;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MsoCloudifyUtilsTest {
 
@@ -282,21 +290,31 @@ public class MsoCloudifyUtilsTest {
 	}
 
 	@Test
-	public void convertInputValue_successful() {
-		MsoCloudifyUtils testedObject = new MsoCloudifyUtils();
+	public void convertInputValueTest() throws JsonParseException, JsonMappingException, IOException {
+		MsoCloudifyUtils utils = new MsoCloudifyUtils();
+		ObjectMapper mapper = new ObjectMapper();
+		HeatTemplateParam paramNum = new HeatTemplateParam();
+		paramNum.setParamType("number");
+		paramNum.setParamName("my-number");
+		
+		HeatTemplateParam paramString = new HeatTemplateParam();
+		paramString.setParamType("string");
+		paramString.setParamName("my-string");
+		
+		HeatTemplateParam paramJson = new HeatTemplateParam();
+		paramJson.setParamType("json");
+		paramJson.setParamName("my-json");
+		
+		Map<String, Object> jsonMap = mapper.readValue(getJson("free-form.json"), new TypeReference<Map<String, Object>>(){});
+		
+		assertEquals(3, utils.convertInputValue("3", paramNum));
+		assertEquals("hello", utils.convertInputValue("hello", paramString));
+		JSONAssert.assertEquals(getJson("free-form.json"), utils.convertInputValue(jsonMap, paramJson).toString(), false);
+		
+	}
 
-		HeatTemplateParam heatTemplateParam = new HeatTemplateParam();
-		heatTemplateParam.setParamType("number");
-		Object result = testedObject.convertInputValue("5", heatTemplateParam);
-		assertTrue(result instanceof Integer);
-
-		heatTemplateParam.setParamType("json");
-		Object result2 = testedObject.convertInputValue("{\"key\": \"value\"}", heatTemplateParam);
-		assertTrue(result2 instanceof JsonNode);
-
-		heatTemplateParam.setParamType("boolean");
-		Object result3 = testedObject.convertInputValue("true", heatTemplateParam);
-		assertTrue(result3 instanceof Boolean);
+	private String getJson(String filename) throws IOException {
+		 return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/MsoHeatUtils/" + filename)));
 	}
 
 	private void mockCloudConfig(MsoCloudifyUtils testedObjectSpy) {
