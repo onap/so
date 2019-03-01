@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +42,15 @@ import org.onap.so.apihandler.camundabeans.CamundaRequest;
 import org.onap.so.apihandler.camundabeans.CamundaVIDRequest;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class CamundaClient extends RequestClient{
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, CamundaClient.class);
+	private static Logger logger = LoggerFactory.getLogger(CamundaClient.class);
 	private static final String CAMUNDA_URL_MESAGE = "Camunda url is: ";
 
 	public CamundaClient() {
@@ -60,19 +63,19 @@ public class CamundaClient extends RequestClient{
 			String requestTimeout, String schemaVersion, String serviceInstanceId, String action)
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
+		logger.debug(CAMUNDA_URL_MESAGE + url);
 		String jsonReq = wrapRequest(camundaReqXML, requestId, serviceInstanceId, requestTimeout,  schemaVersion);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
-		msoLogger.info("Camunda Request Content: " + jsonReq);
+		logger.info("Camunda Request Content: {}", jsonReq);
 		
 
 		post.setEntity(input);
 		setupHeaders(post);
 
 		HttpResponse response = client.execute(post);
-		msoLogger.debug("Response is: " + response);
+		logger.debug("Response is: {}", response);
 		
 		return response;
 	}
@@ -98,7 +101,7 @@ public class CamundaClient extends RequestClient{
 	public HttpResponse post(String jsonReq)
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug(CAMUNDA_URL_MESAGE + url);
+		logger.debug(CAMUNDA_URL_MESAGE + url);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
@@ -118,7 +121,7 @@ public class CamundaClient extends RequestClient{
 
 		post.setEntity(input);
 		HttpResponse response = client.execute(post);
-		msoLogger.debug("Response is: " + response);
+		logger.debug("Response is: {}", response);
 
 		return response;
 	}
@@ -126,7 +129,7 @@ public class CamundaClient extends RequestClient{
 	public HttpResponse post(RequestClientParameter parameterObject)
 					throws ClientProtocolException, IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug(CAMUNDA_URL_MESAGE+ url);
+		logger.debug(CAMUNDA_URL_MESAGE+ url);
 		String jsonReq = wrapVIDRequest(parameterObject.getRequestId(), parameterObject.isBaseVfModule(), parameterObject.getRecipeTimeout(), parameterObject.getRequestAction(),
 				parameterObject.getServiceInstanceId(), parameterObject.getPnfCorrelationId(), parameterObject.getVnfId(), parameterObject.getVfModuleId(), parameterObject.getVolumeGroupId(), parameterObject.getNetworkId(), parameterObject.getConfigurationId(),
 				parameterObject.getServiceType(), parameterObject.getVnfType(), parameterObject.getVfModuleType(), parameterObject.getNetworkType(), parameterObject.getRequestDetails(), parameterObject.getApiVersion(), parameterObject.isaLaCarte(), parameterObject.getRequestUri(), parameterObject.getRecipeParamXsd(),
@@ -151,7 +154,7 @@ public class CamundaClient extends RequestClient{
 
 		post.setEntity(input);
 		HttpResponse response = client.execute(post);
-		msoLogger.debug("Response is: " + response);
+		logger.debug("Response is: {}", response);
 
 		return response;
 	}
@@ -189,9 +192,10 @@ public class CamundaClient extends RequestClient{
 			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
 			jsonReq = mapper.writeValueAsString(camundaRequest);
-			msoLogger.trace("request body is " + jsonReq);
+			logger.trace("request body is {}", jsonReq);
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.APIH_WARP_REQUEST, "Camunda", "wrapRequest", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH Warp request", e);
+			logger.error("{} {} {} {} {}", MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapRequest",
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
 		}
 		return jsonReq;
 	}
@@ -281,9 +285,10 @@ public class CamundaClient extends RequestClient{
 			mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
 			jsonReq = mapper.writeValueAsString(camundaRequest);
-			msoLogger.trace("request body is " + jsonReq);
+			logger.trace("request body is {}", jsonReq);
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.APIH_WARP_REQUEST, "Camunda", "wrapVIDRequest", MsoLogger.ErrorCode.BusinessProcesssError, "Error in APIH Warp request", e);
+			logger.error("{} {} {} {} {}", MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapVIDRequest",
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
 		}
 		return jsonReq;
 	}

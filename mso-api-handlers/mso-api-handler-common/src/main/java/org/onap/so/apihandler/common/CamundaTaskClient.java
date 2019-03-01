@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,10 +30,11 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CamundaTaskClient extends RequestClient{
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, CamundaTaskClient.class);
+	private static Logger logger = LoggerFactory.getLogger(CamundaTaskClient.class);
 
 	public CamundaTaskClient() {
 		super(CommonConstants.CAMUNDATASK);
@@ -40,7 +43,7 @@ public class CamundaTaskClient extends RequestClient{
 	@Override
 	public HttpResponse post(String jsonReq) throws IOException{
 		HttpPost post = new HttpPost(url);
-		msoLogger.debug("Camunda Task url is: "+ url);		
+		logger.debug("Camunda Task url is: {}", url);
 
 		StringEntity input = new StringEntity(jsonReq);
 		input.setContentType(CommonConstants.CONTENT_TYPE_JSON);
@@ -75,7 +78,7 @@ public class CamundaTaskClient extends RequestClient{
 	@Override
 	public HttpResponse get() throws IOException {
 		HttpGet get = new HttpGet(url);
-		msoLogger.debug("Camunda Task url is: "+ url);
+		logger.debug("Camunda Task url is: {}", url);
 		String encryptedCredentials;
 		if(props!=null){
 			encryptedCredentials = props.getProperty(CommonConstants.CAMUNDA_AUTH);

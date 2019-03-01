@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,11 +50,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
 
-    private static MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.RA, ApiExceptionMapper.class);
+    private static Logger logger = LoggerFactory.getLogger(ApiExceptionMapper.class);
 
     
     private final JAXBContext context;
@@ -132,7 +136,8 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
             }
         } catch (JsonProcessingException | JAXBException e) {
             String errorMsg = "Exception in buildServiceErrorResponse writing exceptionType to string " + e.getMessage();
-            logger.error(MessageEnum.GENERAL_EXCEPTION, "BuildServiceErrorResponse", "", "", MsoLogger.ErrorCode.DataError, errorMsg, e);
+            logger.error("{} {} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(), "BuildServiceErrorResponse",
+                MsoLogger.ErrorCode.DataError.getValue(), errorMsg, e);
             return errorMsg;
         }
 
@@ -141,7 +146,7 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
 
     protected void writeErrorLog(Exception e, String errorText, ErrorLoggerInfo errorLogInfo) {
         if( e!= null)
-            logger.error(e);
+            logger.error("Exception occurred", e);
         if(errorLogInfo != null)
             logger.error(errorLogInfo.getLoggerMessageType().toString(), errorLogInfo.getErrorSource(), errorLogInfo.getTargetEntity(), errorLogInfo.getTargetServiceName(), errorLogInfo.getErrorCode(), errorText);
   
