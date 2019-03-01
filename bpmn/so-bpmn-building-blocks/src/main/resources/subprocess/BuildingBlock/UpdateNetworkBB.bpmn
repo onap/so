@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.10.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.2" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="UpdateNetworkBB" name="UpdateNetworkBB" isExecutable="true">
     <bpmn2:startEvent id="UpdateNetworkBB_Start" name="Start">
       <bpmn2:outgoing>SequenceFlow_074w2et</bpmn2:outgoing>
@@ -38,24 +38,39 @@
       <bpmn2:linkEventDefinition name="AAI_to_AIC" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:sequenceFlow id="SequenceFlow_00xbxe7" sourceRef="QueryNetworkTableRefAAI" targetRef="AAI_End" />
-    <bpmn2:intermediateCatchEvent id="AIC_Start" name="To AIC">
-      <bpmn2:outgoing>SequenceFlow_196cgux</bpmn2:outgoing>
+    <bpmn2:intermediateCatchEvent id="IntermediateCatchEvent_0y5f10a" name="To AIC">
+      <bpmn2:outgoing>SequenceFlow_0qrtpcy</bpmn2:outgoing>
       <bpmn2:linkEventDefinition name="AAI_to_AIC" />
     </bpmn2:intermediateCatchEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_196cgux" sourceRef="AIC_Start" targetRef="UpdateNetworkAdapter" />
-    <bpmn2:serviceTask id="UpdateNetworkAdapter" name="Update Network (Network Adapter)" camunda:expression="${NetworkAdapterUpdateTasks.updateNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn2:incoming>SequenceFlow_196cgux</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0hsvgje</bpmn2:outgoing>
-    </bpmn2:serviceTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_0hsvgje" sourceRef="UpdateNetworkAdapter" targetRef="UpdateNetworkAAI" />
-    <bpmn2:serviceTask id="UpdateNetworkAAI" name="Update Network (AAI)" camunda:expression="${AAIUpdateTasks.updateObjectNetwork(execution.getVariable(&#34;&#34;))}">
-      <bpmn2:incoming>SequenceFlow_0hsvgje</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0fhfitm</bpmn2:outgoing>
+    <bpmn2:serviceTask id="Update_Network_AAI_ServiceTask" name="Update Network (AAI)" camunda:expression="${AAIUpdateTasks.updateNetworkUpdated(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn2:incoming>SequenceFlow_001ursg</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_06ei0em</bpmn2:outgoing>
     </bpmn2:serviceTask>
     <bpmn2:endEvent id="UpdateNetworkBB_End" name="End">
-      <bpmn2:incoming>SequenceFlow_0fhfitm</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_06ei0em</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_0fhfitm" sourceRef="UpdateNetworkAAI" targetRef="UpdateNetworkBB_End" />
+    <bpmn2:callActivity id="CallActivity_NetworkAdapterRestV1" name="Call NetworkAdapterRestV1" calledElement="NetworkAdapterRestV1">
+      <bpmn2:extensionElements>
+        <camunda:in source="networkAdapterRequest" target="networkAdapterRequest" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:out source="updateNetworkResponse" target="updateNetworkResponse" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_07hq1eg</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_183ph5i</bpmn2:outgoing>
+    </bpmn2:callActivity>
+    <bpmn2:serviceTask id="ServiceTask_ProcessResponse" name="Process Response From Openstack" camunda:expression="${NetworkAdapterUpdateTasks.processResponseFromOpenstack(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn2:incoming>SequenceFlow_183ph5i</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_001ursg</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="Create_Network_ServiceTask" name="&#10;AIC&#10;Update&#10;(network)&#10;" camunda:expression="${NetworkAdapterUpdateTasks.updateNetwork(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn2:incoming>SequenceFlow_0qrtpcy</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_07hq1eg</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0qrtpcy" sourceRef="IntermediateCatchEvent_0y5f10a" targetRef="Create_Network_ServiceTask" />
+    <bpmn2:sequenceFlow id="SequenceFlow_001ursg" sourceRef="ServiceTask_ProcessResponse" targetRef="Update_Network_AAI_ServiceTask" />
+    <bpmn2:sequenceFlow id="SequenceFlow_06ei0em" sourceRef="Update_Network_AAI_ServiceTask" targetRef="UpdateNetworkBB_End" />
+    <bpmn2:sequenceFlow id="SequenceFlow_07hq1eg" sourceRef="Create_Network_ServiceTask" targetRef="CallActivity_NetworkAdapterRestV1" />
+    <bpmn2:sequenceFlow id="SequenceFlow_183ph5i" sourceRef="CallActivity_NetworkAdapterRestV1" targetRef="ServiceTask_ProcessResponse" />
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -140,43 +155,65 @@
           <dc:Bounds x="755" y="212" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="IntermediateCatchEvent_0sx0nb6_di" bpmnElement="AIC_Start">
-        <dc:Bounds x="144" y="332" width="36" height="36" />
+      <bpmndi:BPMNShape id="IntermediateCatchEvent_0y5f10a_di" bpmnElement="IntermediateCatchEvent_0y5f10a">
+        <dc:Bounds x="144" y="384" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="146" y="372" width="34" height="12" />
+          <dc:Bounds x="147" y="424" width="33" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_196cgux_di" bpmnElement="SequenceFlow_196cgux">
-        <di:waypoint xsi:type="dc:Point" x="180" y="350" />
-        <di:waypoint xsi:type="dc:Point" x="248" y="350" />
+      <bpmndi:BPMNShape id="ServiceTask_1ltcf7v_di" bpmnElement="Update_Network_AAI_ServiceTask">
+        <dc:Bounds x="806" y="362" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1nhzcte_di" bpmnElement="UpdateNetworkBB_End">
+        <dc:Bounds x="983" y="384" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="169" y="329" width="90" height="12" />
+          <dc:Bounds x="992" y="424" width="19" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_1jpfzuh_di" bpmnElement="CallActivity_NetworkAdapterRestV1">
+        <dc:Bounds x="445" y="362" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1kgckv9_di" bpmnElement="ServiceTask_ProcessResponse">
+        <dc:Bounds x="625" y="362" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_03ywm5v_di" bpmnElement="Create_Network_ServiceTask">
+        <dc:Bounds x="278" y="362" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qrtpcy_di" bpmnElement="SequenceFlow_0qrtpcy">
+        <di:waypoint xsi:type="dc:Point" x="180" y="402" />
+        <di:waypoint xsi:type="dc:Point" x="229" y="402" />
+        <di:waypoint xsi:type="dc:Point" x="229" y="402" />
+        <di:waypoint xsi:type="dc:Point" x="278" y="402" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="199" y="396" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0i66n9g_di" bpmnElement="UpdateNetworkAdapter">
-        <dc:Bounds x="248" y="310" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0hsvgje_di" bpmnElement="SequenceFlow_0hsvgje">
-        <di:waypoint xsi:type="dc:Point" x="348" y="350" />
-        <di:waypoint xsi:type="dc:Point" x="422" y="350" />
+      <bpmndi:BPMNEdge id="SequenceFlow_001ursg_di" bpmnElement="SequenceFlow_001ursg">
+        <di:waypoint xsi:type="dc:Point" x="725" y="402" />
+        <di:waypoint xsi:type="dc:Point" x="806" y="402" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="340" y="329" width="90" height="12" />
+          <dc:Bounds x="720.5" y="381" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_1ydm5u9_di" bpmnElement="UpdateNetworkAAI">
-        <dc:Bounds x="422" y="310" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_0fsts2w_di" bpmnElement="UpdateNetworkBB_End">
-        <dc:Bounds x="637" y="332" width="36" height="36" />
+      <bpmndi:BPMNEdge id="SequenceFlow_06ei0em_di" bpmnElement="SequenceFlow_06ei0em">
+        <di:waypoint xsi:type="dc:Point" x="906" y="402" />
+        <di:waypoint xsi:type="dc:Point" x="983" y="402" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="646" y="372" width="19" height="12" />
+          <dc:Bounds x="899.5" y="381" width="0" height="12" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0fhfitm_di" bpmnElement="SequenceFlow_0fhfitm">
-        <di:waypoint xsi:type="dc:Point" x="522" y="350" />
-        <di:waypoint xsi:type="dc:Point" x="637" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_07hq1eg_di" bpmnElement="SequenceFlow_07hq1eg">
+        <di:waypoint xsi:type="dc:Point" x="378" y="402" />
+        <di:waypoint xsi:type="dc:Point" x="445" y="402" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="535" y="329" width="90" height="12" />
+          <dc:Bounds x="411.5" y="381" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_183ph5i_di" bpmnElement="SequenceFlow_183ph5i">
+        <di:waypoint xsi:type="dc:Point" x="545" y="402" />
+        <di:waypoint xsi:type="dc:Point" x="625" y="402" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="381" width="0" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
+import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
@@ -338,7 +339,7 @@ public class AAIUpdateTasks {
 	}
 	
 	/**
-	 * BPMN access method to update L3Network after it was created in AIC
+	 * BPMN access method to update L3Network after it was created in cloud
 	 * @param execution
 	 * @throws Exception
 	 */
@@ -374,6 +375,34 @@ public class AAIUpdateTasks {
 			}
 			
 			execution.setVariable("aaiNetworkActivateRollback", true);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	/**
+	 * BPMN access method to update L3Network after it was updated in cloud
+	 * @param execution
+	 * @throws Exception
+	 */
+	public void updateNetworkUpdated(BuildingBlockExecution execution) throws Exception {
+		L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+		L3Network copiedl3network = l3network.shallowCopyId();
+		UpdateNetworkResponse response = execution.getVariable("updateNetworkResponse");
+		try {
+			copiedl3network.setNeutronNetworkId(response.getNeutronNetworkId());
+			aaiNetworkResources.updateNetwork(copiedl3network);
+			
+			Map<String, String> subnetMap = response.getSubnetMap();
+			List<Subnet> subnets = l3network.getSubnets();
+			if (subnets != null && subnetMap != null){
+				for (Subnet subnet: subnets){
+					Subnet copiedSubnet = subnet.shallowCopyId();
+					copiedSubnet.setNeutronSubnetId(subnetMap.get(copiedSubnet.getSubnetId()));
+					copiedSubnet.setOrchestrationStatus(OrchestrationStatus.CREATED);
+					aaiNetworkResources.updateSubnet(copiedl3network, copiedSubnet);
+				}
+			}
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
