@@ -104,7 +104,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -124,7 +124,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -144,7 +144,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -164,7 +164,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -181,7 +181,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -195,7 +195,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		expectedException.expect(VnfException.class);
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -211,7 +211,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -230,7 +230,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -250,7 +250,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -268,7 +268,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -300,7 +300,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -337,7 +337,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "XVFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", null, map,
@@ -355,7 +355,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
@@ -375,7 +375,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		expectedException.expect(VnfException.class);
 		MsoRequest msoRequest = getMsoRequest();
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
@@ -388,7 +388,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		expectedException.expect(VnfNotFound.class);
 		MsoRequest msoRequest = getMsoRequest();
 		mockOpenStackResponseAccess(wireMockPort);
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
@@ -405,7 +405,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
@@ -422,7 +422,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withStatus(HttpStatus.SC_NOT_FOUND)));
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
@@ -438,7 +438,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		mockOpenStackGetStackVfModule_200();
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_INTERNAL_SERVER_ERROR,"OpenstackResponse_Stack_Created_VfModule.json");
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
@@ -454,7 +454,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		mockOpenStackGetStackVfModule_200();
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_NOT_FOUND,"OpenstackResponse_Stack_Created_VfModule.json");
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
@@ -470,7 +470,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		mockOpenStackGetStackVfModule_200();
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
@@ -489,7 +489,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		VfModuleCustomization vfModuleCustomization = getVfModuleCustomization();
 		vfModuleCustomization.getVfModule().getModuleHeatTemplate().setParameters(new HashSet<>());
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
@@ -509,7 +509,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		VfModuleCustomization vfModuleCustomization = getVfModuleCustomization();
 		vfModuleCustomization.getVfModule().getModuleHeatTemplate().setParameters(new HashSet<>());
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",

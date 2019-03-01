@@ -72,7 +72,6 @@ public class VnfAdapterObjectMapperTest {
 	}
 	
 	@Test
-	@Ignore
 	public void test_createVolumeGroupRequestMapper() throws Exception {
 		RequestContext requestContext = new RequestContext();
 		requestContext.setMsoRequestId("msoRequestId");
@@ -123,7 +122,7 @@ public class VnfAdapterObjectMapperTest {
 		expectedCreateVolumeGroupRequest.setVfModuleType(volumeGroup.getModelInfoVfModule().getModelName());
 		expectedCreateVolumeGroupRequest.setModelCustomizationUuid(volumeGroup.getModelInfoVfModule().getModelCustomizationUUID());
 		
-		Map<String, String> volumeGroupParams = new HashMap<>();
+		Map<String, Object> volumeGroupParams = new HashMap<>();
 		volumeGroupParams.put("vnf_id", genericVnf.getVnfId());
 		volumeGroupParams.put("vnf_name", genericVnf.getVnfName());
 		volumeGroupParams.put("vf_module_id", volumeGroup.getVolumeGroupId());
@@ -201,7 +200,7 @@ public class VnfAdapterObjectMapperTest {
 		expectedCreateVolumeGroupRequest.setVfModuleType(volumeGroup.getModelInfoVfModule().getModelName());
 		expectedCreateVolumeGroupRequest.setModelCustomizationUuid(volumeGroup.getModelInfoVfModule().getModelCustomizationUUID());
 
-		Map<String, String> volumeGroupParams = new HashMap<>();
+		Map<String, Object> volumeGroupParams = new HashMap<>();
 		volumeGroupParams.put("vnf_id", genericVnf.getVnfId());
 		volumeGroupParams.put("vnf_name", genericVnf.getVnfName());
 		volumeGroupParams.put("vf_module_id", volumeGroup.getVolumeGroupId());
@@ -285,7 +284,6 @@ public class VnfAdapterObjectMapperTest {
 	}
 	
 	@Test
-	@Ignore
 	public void test_createVolumeGroupParams() throws Exception {
 		GenericVnf genericVnf = new GenericVnf();
 		genericVnf.setVnfId("vnfId");
@@ -308,7 +306,7 @@ public class VnfAdapterObjectMapperTest {
 		expectedVolumeGroupParams.put("paramTwo", "paramTwoValue");
 		expectedVolumeGroupParams.put("paramThree", "paramThreeValue");
 		
-		Map<String, String> actualVolumeGroupParams = vnfAdapterObjectMapper.createVolumeGroupParams(requestContext,genericVnf, volumeGroup, sdncVfModuleQueryResponse);
+		Map<String, Object> actualVolumeGroupParams = vnfAdapterObjectMapper.createVolumeGroupParams(requestContext,genericVnf, volumeGroup, sdncVfModuleQueryResponse);
 		
 		assertEquals(expectedVolumeGroupParams, actualVolumeGroupParams);
 	}
@@ -329,13 +327,12 @@ public class VnfAdapterObjectMapperTest {
 		expectedVolumeGroupParams.put("vf_module_id", volumeGroup.getVolumeGroupId());
 		expectedVolumeGroupParams.put("vf_module_name", volumeGroup.getVolumeGroupName());
 		RequestContext requestContext = new RequestContext();
-		Map<String, String> actualVolumeGroupParams = vnfAdapterObjectMapper.createVolumeGroupParams(requestContext,genericVnf, volumeGroup, null);
+		Map<String, Object> actualVolumeGroupParams = vnfAdapterObjectMapper.createVolumeGroupParams(requestContext,genericVnf, volumeGroup, null);
 
 		assertEquals(expectedVolumeGroupParams, actualVolumeGroupParams);
 	}
 
     @Test
-    @Ignore
     public void test_createVolumeGroupParams_with_user_params() throws Exception {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setVnfId("vnfId");
@@ -366,7 +363,7 @@ public class VnfAdapterObjectMapperTest {
         expectedVolumeGroupParams.put("paramThree", "paramThreeValue");
         expectedVolumeGroupParams.put("userParamKey", "userParamValue");
 
-        Map<String, String> actualVolumeGroupParams = vnfAdapterObjectMapper.createVolumeGroupParams(requestContext,genericVnf, volumeGroup, sdncVfModuleQueryResponse);
+        Map<String, Object> actualVolumeGroupParams = vnfAdapterObjectMapper.createVolumeGroupParams(requestContext,genericVnf, volumeGroup, sdncVfModuleQueryResponse);
 
         assertEquals(expectedVolumeGroupParams, actualVolumeGroupParams);
     }

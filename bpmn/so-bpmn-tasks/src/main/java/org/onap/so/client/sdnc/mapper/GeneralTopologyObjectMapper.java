@@ -20,18 +20,42 @@
 
 package org.onap.so.client.sdnc.mapper;
 
-import org.onap.sdnc.northbound.client.model.*;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.onap.sdnc.northbound.client.model.GenericResourceApiConfigurationinformationConfigurationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiGcrequestinputGcRequestInput;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkinformationNetworkInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiOnapmodelinformationOnapModelInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestinformationRequestInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVfmoduleinformationVfModuleInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfinformationVnfInformation;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.client.sdnc.beans.SDNCSvcAction;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 import org.onap.so.client.exception.MapperException;
+import org.onap.so.client.sdnc.beans.SDNCSvcAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class GeneralTopologyObjectMapper {
 	
+	private static final Logger logger = LoggerFactory.getLogger(GeneralTopologyObjectMapper.class);
+	private ObjectMapper mapper = new ObjectMapper();
 
 	/*
 	 * Build GenericResourceApiRequestinformationRequestInformation
@@ -194,4 +218,22 @@ public class GeneralTopologyObjectMapper {
         }
 	    return gcRequestInput;
 	}
+    
+    
+    public String mapUserParamValue(Object value) {
+    	if (value == null) {
+    		return null;
+    	} else {
+	    	if (value instanceof Map || value instanceof Set || value instanceof List) {
+	    		try {
+					return mapper.writeValueAsString(value);
+				} catch (JsonProcessingException e) {
+					logger.error("could not map value to string", e);
+					throw new IllegalArgumentException(e);
+				}
+	    	} else {
+	    		return value.toString();
+	    	}
+    	}
+    }
 }

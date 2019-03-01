@@ -155,7 +155,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            String requestType,
                            String volumeGroupHeatStackId,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            Boolean failIfExists,
                            Boolean backout,
                            Boolean enableBridge,
@@ -183,7 +183,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            String requestType,
                            String volumeGroupHeatStackId,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs,
                            Holder <VnfRollback> rollback)
@@ -379,14 +379,14 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 	 * Normalize an input value to an Object, based on the target parameter type.
 	 * If the type is not recognized, it will just be returned unchanged (as a string).
 	 */
-	private Object convertInputValue (String inputValue, HeatTemplateParam templateParam)
+	private Object convertInputValue (Object inputValue, HeatTemplateParam templateParam)
 	{
 		String type = templateParam.getParamType();
 		LOGGER.debug("Parameter: " + templateParam.getParamName() + " is of type " + type);
 
 		if (type.equalsIgnoreCase("number")) {
 			try {
-				return Integer.valueOf(inputValue);
+				return Integer.valueOf(inputValue.toString());
 			}
 			catch (Exception e) {
 				LOGGER.debug("Unable to convert " + inputValue + " to an integer!" , e);
@@ -394,7 +394,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 			}
 		} else if (type.equalsIgnoreCase("json")) {
 			try {
-				JsonNode jsonNode = new ObjectMapper().readTree(inputValue);
+				JsonNode jsonNode = JSON_MAPPER.readTree(JSON_MAPPER.writeValueAsString(inputValue));
 				return jsonNode;
 			}
 			catch (Exception e) {
@@ -402,7 +402,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 				return null;
 			}
 		} else if (type.equalsIgnoreCase("boolean")) {
-			return new Boolean(inputValue);
+			return new Boolean(inputValue.toString());
 		}
 
 		// Nothing else matched.  Return the original string
@@ -471,7 +471,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     	return;
     }
 
-    private void sendMapToDebug(Map<String, String> inputs) {
+    private void sendMapToDebug(Map<String, Object> inputs) {
     	int i = 0;
     	StringBuilder sb = new StringBuilder("inputs:");
     	if (inputs == null) {
@@ -608,7 +608,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             String volumeGroupId,
             String baseVfModuleId,
             String modelCustomizationUuid,
-            Map <String, String> inputs,
+            Map <String, Object> inputs,
             Boolean failIfExists,
             Boolean backout,
             Boolean enableBridge,
@@ -1212,7 +1212,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                            String baseVfHeatStackId,
                            String vfModuleStackId,
                            String modelCustomizationUuid,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs,
                            Holder <VnfRollback> rollback) throws VnfException

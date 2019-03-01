@@ -67,7 +67,7 @@ public class VnfAdapterVfModuleObjectMapperTest {
 	
 	@Test
 	public void addPairToMapTest() {
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		
 		mapper.addPairToMap(map, "test", "_key", Arrays.asList("a", "b"));
 		

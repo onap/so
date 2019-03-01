@@ -41,7 +41,7 @@ public class CreateVolumeGroupRequest extends VfRequestCommon {
 	private String vnfVersion;
 	private String vfModuleType;
 	private String modelCustomizationUuid;
-	private Map<String,String> volumeGroupParams = new HashMap<>();
+	private Map<String,Object> volumeGroupParams = new HashMap<>();
 	private Boolean failIfExists;
 	private Boolean enableBridge;
 	private Boolean suppressBackout;
@@ -91,11 +91,11 @@ public class CreateVolumeGroupRequest extends VfRequestCommon {
 		this.vfModuleType = vfModuleType;
 	}
 
-	public Map<String, String> getVolumeGroupParams() {
+	public Map<String, Object> getVolumeGroupParams() {
 		return volumeGroupParams;
 	}
 
-	public void setVolumeGroupParams(Map<String, String> volumeGroupParams) {
+	public void setVolumeGroupParams(Map<String, Object> volumeGroupParams) {
 		this.volumeGroupParams = volumeGroupParams;
 	}
 

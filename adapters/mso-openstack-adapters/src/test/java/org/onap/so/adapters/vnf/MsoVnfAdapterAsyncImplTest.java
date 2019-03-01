@@ -76,7 +76,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 		String vnfName = "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId";
 		String notificationUrl = "http://localhost:"+wireMockPort+"/notify/adapterNotify/updateVnfNotificationRequest";
 		instance.createVnfA("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
-				"volumeGroupHeatStackId|1", new HashMap<String, String>(), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, "messageId",
+				"volumeGroupHeatStackId|1", new HashMap<String, Object>(), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, "messageId",
 				msoRequest, notificationUrl);
 
 		verify(1,postRequestedFor(urlEqualTo("/notify/adapterNotify/updateVnfNotificationRequest")));
@@ -86,7 +86,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 	public void createVNFTest_Exception() throws Exception {
 		String notificationUrl = "http://localhost:"+wireMockPort+"/notify/adapterNotify/updateVnfNotificationRequest";
 		instance.createVnfA("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
-				"volumeGroupHeatStackId|1", new HashMap<String, String>(), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, "messageId",
+				"volumeGroupHeatStackId|1", new HashMap<String, Object>(), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, "messageId",
 				null, notificationUrl);
 
 		verify(1,postRequestedFor(urlEqualTo("/notify/adapterNotify/updateVnfNotificationRequest")));
@@ -99,7 +99,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		stubFor(post(urlPathEqualTo("/notify/adapterNotify/updateVnfNotificationRequest")).withRequestBody
 				(containing("messageId"))
@@ -116,7 +116,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		stubFor(post(urlPathEqualTo("/notify/adapterNotify/updateVnfNotificationRequest")).withRequestBody
 				(containing("messageId"))

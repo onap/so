@@ -22,16 +22,27 @@ package org.onap.so.client.sdnc.mapper;
 
 import java.net.URI;
 
-import org.onap.sdnc.northbound.client.model.*;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.*;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiConfigurationinformationConfigurationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiGcrequestinputGcRequestInput;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestinformationRequestInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiSdncrequestheaderSdncRequestHeader;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceinformationServiceInformation;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component(value = "sdncGCTopologyOperationRequestMapper")
 public class GCTopologyOperationRequestMapper {
 
-    private static final GeneralTopologyObjectMapper generalTopologyObjectMapper = new GeneralTopologyObjectMapper();
+	@Autowired
+    private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
     public GenericResourceApiGcTopologyOperationInformation assignOrActivateVnrReqMapper(SDNCSvcAction svcAction,
                                                                                          GenericResourceApiRequestActionEnumeration reqAction,
@@ -81,6 +92,5 @@ public class GCTopologyOperationRequestMapper {
         return req;
 
     }
-
 
 }

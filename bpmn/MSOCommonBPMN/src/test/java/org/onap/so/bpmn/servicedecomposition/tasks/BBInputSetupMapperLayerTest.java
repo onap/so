@@ -643,7 +643,7 @@ public class BBInputSetupMapperLayerTest {
 	@Test
 	public void testMapNameValueUserParams() throws IOException {		
 		RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetailsInput_mapReqContext.json"), RequestDetails.class);
-		HashMap<String,String> actual = bbInputSetupMapperLayer.mapNameValueUserParams(requestDetails.getRequestParameters());
+		Map<String,Object> actual = bbInputSetupMapperLayer.mapNameValueUserParams(requestDetails.getRequestParameters());
 
 		assertTrue(actual.containsKey("name1"));
 		assertTrue(actual.containsValue("value1"));

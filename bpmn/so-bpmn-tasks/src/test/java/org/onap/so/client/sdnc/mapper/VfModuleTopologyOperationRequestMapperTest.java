@@ -35,6 +35,10 @@ import java.util.Map;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -54,11 +58,18 @@ import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVfModuleOperationInformation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VfModuleTopologyOperationRequestMapperTest {
 
 	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
 	private final static String ERRORMESSAGE = "VF Module model info is null for testVfModuleId";
 	
+	@Spy
+	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
+	
+	@InjectMocks
+	private VfModuleTopologyOperationRequestMapper mapper = new VfModuleTopologyOperationRequestMapper();
+
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 
@@ -84,7 +95,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		//
 		RequestContext requestContext = new RequestContext();
-		HashMap<String,String> userParams = new HashMap<String,String>();
+		Map<String,Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");		
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
@@ -124,7 +135,6 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
 		CloudRegion cloudRegion = new CloudRegion();
 
-		VfModuleTopologyOperationRequestMapper mapper = new VfModuleTopologyOperationRequestMapper();
 		GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest = mapper.reqMapper(
 				SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule, volumeGroup, vnf, serviceInstance, customer,
 				cloudRegion, requestContext, null);
@@ -159,7 +169,6 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		vfModule.setVfModuleId("testVfModuleId");
 		vfModule.setVfModuleName("testVfModuleName");
 
-		VfModuleTopologyOperationRequestMapper mapper = new VfModuleTopologyOperationRequestMapper();
 		GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest = mapper.reqMapper(
 				SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null,
 				null, null, null);
@@ -197,9 +206,9 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		//
 		RequestContext requestContext = new RequestContext();
 		RequestParameters requestParameters = new RequestParameters();
-		HashMap<String,Object> userParams1 = new HashMap<String,Object>();
+		HashMap<String,Object> userParams1 = new HashMap<>();
 		userParams1.put("key1", "value1");
-		List<Map<String,Object>> userParams = new ArrayList<Map<String,Object>>();
+		List<Map<String,Object>> userParams = new ArrayList<>();
 		userParams.add(userParams1);
 		
 		requestParameters.setUserParams(userParams);
@@ -230,7 +239,6 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
 		CloudRegion cloudRegion = new CloudRegion();
 
-		VfModuleTopologyOperationRequestMapper mapper = new VfModuleTopologyOperationRequestMapper();
 		GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest = mapper.reqMapper(
 				SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule, null, vnf, serviceInstance, customer,
 				cloudRegion, requestContext, null);
@@ -261,7 +269,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		//
 		RequestContext requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<String, Object>();
 		userParams.put("key1", "value1");
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
@@ -284,7 +292,6 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
 		CloudRegion cloudRegion = new CloudRegion();
 		
-		VfModuleTopologyOperationRequestMapper mapper = new VfModuleTopologyOperationRequestMapper();
 		expectedException.expect(MapperException.class);
 		expectedException.expectMessage(ERRORMESSAGE);
 		

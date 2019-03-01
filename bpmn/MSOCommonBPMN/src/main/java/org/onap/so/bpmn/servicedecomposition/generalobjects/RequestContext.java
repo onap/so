@@ -43,7 +43,7 @@ public class RequestContext implements Serializable{
 	@JsonProperty("subscription-service-type")
 	private String subscriptionServiceType;
 	@JsonProperty("user-params")
-	private HashMap<String, String> userParams;
+	private Map<String, Object> userParams = new HashMap<>();
 	@JsonProperty("action")
 	private String action;
 	@JsonProperty("callback-url")
@@ -87,10 +87,10 @@ public class RequestContext implements Serializable{
 	public void setSubscriptionServiceType(String subscriptionServiceType) {
 		this.subscriptionServiceType = subscriptionServiceType;
 	}
-	public HashMap<String, String> getUserParams() {
+	public Map<String, Object> getUserParams() {
 		return userParams;
 	}
-	public void setUserParams(HashMap<String, String> userParams) {
+	public void setUserParams(Map<String, Object> userParams) {
 		this.userParams = userParams;
 	}
 	public String getAction() {

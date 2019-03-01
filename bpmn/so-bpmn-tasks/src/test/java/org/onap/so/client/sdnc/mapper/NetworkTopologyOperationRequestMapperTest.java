@@ -29,9 +29,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Collection;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
@@ -45,10 +52,9 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
 
-import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
-import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NetworkTopologyOperationRequestMapperTest {
 
 	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/";
@@ -59,6 +65,12 @@ public class NetworkTopologyOperationRequestMapperTest {
 	private RequestContext requestContext;
 	private L3Network network;
 	private CloudRegion cloudRegion;
+	
+	@Spy
+	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
+	
+	@InjectMocks
+	private NetworkTopologyOperationRequestMapper mapper = new NetworkTopologyOperationRequestMapper();
 
 	@Before
 	public void before() {
@@ -93,7 +105,7 @@ public class NetworkTopologyOperationRequestMapperTest {
 		serviceInstance.setCollection(networkCollection);
 		//
 		requestContext = new RequestContext();
-		HashMap<String, String> userParams = new HashMap<String, String>();
+		Map<String, Object> userParams = new HashMap<>();
 		userParams.put("key1", "value1");
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
@@ -115,7 +127,6 @@ public class NetworkTopologyOperationRequestMapperTest {
 	@Test
 	public void createGenericResourceApiNetworkOperationInformationTest() throws Exception {
 
-		NetworkTopologyOperationRequestMapper mapper = new NetworkTopologyOperationRequestMapper();
 		GenericResourceApiNetworkOperationInformation networkSDNCrequest = mapper.reqMapper(
 				SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
 				requestContext, cloudRegion);
@@ -132,7 +143,6 @@ public class NetworkTopologyOperationRequestMapperTest {
 	@Test
 	public void reqMapperTest() throws Exception {
 
-		NetworkTopologyOperationRequestMapper mapper = new NetworkTopologyOperationRequestMapper();
 		GenericResourceApiNetworkOperationInformation networkSDNCrequest = mapper.reqMapper(
 				SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
 				requestContext, cloudRegion);
@@ -143,7 +153,6 @@ public class NetworkTopologyOperationRequestMapperTest {
 
 	@Test
 	public void reqMapperNoCollectionTest() throws Exception {
-		NetworkTopologyOperationRequestMapper mapper = new NetworkTopologyOperationRequestMapper();
 		GenericResourceApiNetworkOperationInformation networkSDNCrequest = mapper.reqMapper(
 				SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstanceNoCollection, customer,
 				requestContext, cloudRegion);
@@ -154,7 +163,7 @@ public class NetworkTopologyOperationRequestMapperTest {
 	@Test
 	public void createGenericResourceApiNetworkOperationInformation_UnassignTest() throws Exception {
 
-		NetworkTopologyOperationRequestMapper mapperUnassign = new NetworkTopologyOperationRequestMapper();
+		NetworkTopologyOperationRequestMapper mapperUnassign = mapper;
 		GenericResourceApiNetworkOperationInformation networkSDNCrequestUnassign = mapperUnassign.reqMapper(
 				SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
 				requestContext, cloudRegion);
@@ -172,7 +181,6 @@ public class NetworkTopologyOperationRequestMapperTest {
 	@Test
 	public void createGenericResourceApiNetworkOperationInformationNoNetworkNameTest() throws Exception {
 
-		NetworkTopologyOperationRequestMapper mapper = new NetworkTopologyOperationRequestMapper();
 		//set network name NULL
 		network.setNetworkName(null);
 		GenericResourceApiNetworkOperationInformation networkSDNCrequest = mapper.reqMapper(

@@ -24,9 +24,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Spy;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -38,11 +44,14 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBondingLink;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 
-import org.onap.sdnc.northbound.client.model.GenericResourceApiGcTopologyOperationInformation;
+@RunWith(MockitoJUnitRunner.Silent.class)
+public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
 
-
-public class GCTopologyOperationRequestMapperTest extends TestDataSetup{
-
+	
+	@Spy
+	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
+	
+	@InjectMocks
     private GCTopologyOperationRequestMapper genObjMapper = new GCTopologyOperationRequestMapper();
 
     @Test
@@ -80,13 +89,13 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup{
     private RequestContext getRequestContext() {
         RequestContext requestContext = new RequestContext();
         requestContext.setMsoRequestId("MsoRequestId");
-        HashMap<String, String> userParams = getUserParams();
+        Map<String, Object> userParams = getUserParams();
         requestContext.setUserParams(userParams);
         return requestContext;
     }
 
-    private HashMap<String, String> getUserParams() {
-        HashMap<String,String> userParams = new HashMap<>();
+    private Map<String, Object> getUserParams() {
+        Map<String,Object> userParams = new HashMap<>();
         userParams.put("lppCustomerId","lppCustomerId");
         return userParams;
     }

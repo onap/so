@@ -265,7 +265,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		try {
 			instance.createVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
@@ -282,7 +282,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		Map<String, String> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		
 		map.put("key1", "value1");
 		try {

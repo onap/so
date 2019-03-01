@@ -169,7 +169,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		MsoRequest msoReq = new MsoRequest();
 		boolean failIfExists = true;
 		Boolean enableBridge = null;
-		Map<String, String> vfModuleParams = new HashMap<String, String>();
+		Map<String, Object> vfModuleParams = new HashMap<>();
 
 
 		vfModuleParams.put("vf_module_id", VF_MODULE_ID);
@@ -236,7 +236,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		MsoRequest msoReq = new MsoRequest();
 		boolean failIfExists = true;
 		boolean enableBridge = false;
-		Map<String, String> vfModuleParams = new HashMap<String, String>();
+		Map<String, Object> vfModuleParams = new HashMap<>();
 
 		vfModuleParams.put("vf_module_id", VF_MODULE_ID);
 		vfModuleParams.put("vnf_id", AAI_VNF_ID);
@@ -385,7 +385,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		msoRequest.setRequestId(MSO_REQUEST_ID);
 		msoRequest.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
 		
-		Map<String, String> vfModuleParams = new HashMap<String, String>();
+		Map<String, Object> vfModuleParams = new HashMap<>();
 
 		vfModuleParams.put("exn_direct_net_fqdn", EXN_DIRECT_NET_FQDN);
 		vfModuleParams.put("exn_hsl_net_fqdn", EXN_HSL_NET_FQDN);
@@ -511,7 +511,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		MsoRequest msoReq = new MsoRequest();
 		boolean failIfExists = true;
 		boolean enableBridge = false;
-		Map<String, String> vfModuleParams = new HashMap<String, String>();
+		Map<String, Object> vfModuleParams = new HashMap<>();
 
 		vfModuleParams.put("vf_module_id", VF_MODULE_ID);
 		vfModuleParams.put("vnf_id", AAI_VNF_ID);

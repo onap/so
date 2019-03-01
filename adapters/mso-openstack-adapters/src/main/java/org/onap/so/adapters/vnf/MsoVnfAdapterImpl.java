@@ -180,7 +180,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            String requestType,
                            String volumeGroupHeatStackId,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            Boolean failIfExists,
                            Boolean backout,
                            Boolean enableBridge,
@@ -265,7 +265,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            String requestType,
                            String volumeGroupHeatStackId,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs,
                            Holder <VnfRollback> rollback) throws VnfException {
@@ -474,7 +474,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         return stringOutputs;
     }
 
-    private Map <String, Object> copyStringInputs (Map <String, String> stringInputs) {
+    private Map <String, Object> copyStringInputs (Map <String, Object> stringInputs) {
         return new HashMap <> (stringInputs);
     }
 
@@ -579,7 +579,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             String volumeGroupHeatStackId,
             String baseVfHeatStackId,
             String modelCustomizationUuid,
-            Map <String, String> inputs,
+            Map <String, Object> inputs,
             Boolean failIfExists,
             Boolean backout,
             Boolean enableBridge,
@@ -1343,7 +1343,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            String baseVfHeatStackId,
                            String vfModuleStackId,
                            String modelCustomizationUuid,
-                           Map <String, String> inputs,
+                           Map <String, Object> inputs,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs,
                            Holder <VnfRollback> rollback) throws VnfException {
@@ -1794,8 +1794,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 		hasJson = true;
                 		String jsonString = null;
                 		try {
-                			jsonString = inputs.get(parm.getParamName());
-                			jsonNode = new ObjectMapper().readTree(jsonString);
+                			jsonString = JSON_MAPPER.writeValueAsString(inputs.get(parm.getParamName()));
+                			jsonNode = JSON_MAPPER.readTree(jsonString);
                 		} catch (JsonParseException jpe) {
                 			//TODO - what to do here?
                 			//for now - send the error to debug, but just leave it as a String
@@ -1816,8 +1816,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 		hasJson = true;
                 		String jsonString = null;
                    		try {
-                			jsonString = inputs.get(parm.getParamAlias());
-                			jsonNode = new ObjectMapper().readTree(jsonString);
+                			jsonString = (String)inputs.get(parm.getParamAlias());
+                			jsonNode = JSON_MAPPER.readTree(jsonString);
                 		} catch (JsonParseException jpe) {
                 			//TODO - what to do here?
                 			//for now - send the error to debug, but just leave it as a String
@@ -1847,7 +1847,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                         // They've submitted using an alias name. Remove that from inputs, and add back using real name.
                         String realParamName = parm.getParamName ();
                         String alias = parm.getParamAlias ();
-                        String value = inputs.get (alias);
+                        Object value = inputs.get (alias);
                         LOGGER.debug ("*Found an Alias: paramName=" + realParamName
                                       + ",alias="
                                       + alias
@@ -1911,9 +1911,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             Map<String, Object> inputsTwo = null;
             if (hasJson && jsonParams.size() > 0) {
             	inputsTwo = new HashMap<>();
-            	for (Map.Entry<String, String> entry : inputs.entrySet()) {
+            	for (Map.Entry<String, Object> entry : inputs.entrySet()) {
             		String keyParamName = entry.getKey();
-            		String value = entry.getValue();
+            		Object value = entry.getValue();
             		if (jsonParams.containsKey(keyParamName)) {
             			inputsTwo.put(keyParamName, jsonParams.get(keyParamName));
             		} else {
@@ -2085,7 +2085,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
      */
     private boolean valetCreateRequest(String cloudSiteId, String tenantId, Map<String, Object> heatFilesObjects, Map<String, Object> nestedTemplatesChecked,
     		String vfModuleName, boolean backout, HeatTemplate heatTemplate, String newEnvironmentString, Map<String, Object> goldenInputs,
-    		MsoRequest msoRequest, Map<String, String> inputs, boolean failRequestOnValetFailure, Holder<Map<String, Object>> valetModifiedParamsHolder) throws VnfException {
+    		MsoRequest msoRequest, Map<String, Object> inputs, boolean failRequestOnValetFailure, Holder<Map<String, Object>> valetModifiedParamsHolder) throws VnfException {
 		boolean valetSucceeded = false;
 		String valetErrorMessage = "more detail not available";
 		try {
@@ -2095,8 +2095,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 			HeatRequest heatRequest = new HeatRequest(vfModuleName, backout, heatTemplate.getTimeoutMinutes(),
 					heatTemplate.getTemplateBody(), newEnvironmentString, files, goldenInputs);
 			GenericValetResponse<ValetCreateResponse> createReq = this.vci.callValetCreateRequest(msoRequest.getRequestId(),
-					cloudSiteId, tenantId, msoRequest.getServiceInstanceId(), inputs.get("vnf_id"),
-					inputs.get("vnf_name"), inputs.get("vf_module_id"), inputs.get("vf_module_name"), keystoneUrl,
+					cloudSiteId, tenantId, msoRequest.getServiceInstanceId(), (String)inputs.get("vnf_id"),
+					(String)inputs.get("vnf_name"), (String)inputs.get("vf_module_id"), (String)inputs.get("vf_module_name"), keystoneUrl,
 					heatRequest);
 			ValetCreateResponse vcr = createReq.getReturnObject();
 			if (vcr != null && createReq.getStatusCode() == 200) {
@@ -2145,7 +2145,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 	private boolean valetUpdateRequest(String cloudSiteId, String tenantId,
 			Map<String, Object> heatFilesObjects, Map<String, Object> nestedTemplatesChecked, String vfModuleName,
 			boolean backout, HeatTemplate heatTemplate, String newEnvironmentString,
-			Map<String, Object> goldenInputs, MsoRequest msoRequest, Map<String, String> inputs,
+			Map<String, Object> goldenInputs, MsoRequest msoRequest, Map<String, Object> inputs,
 			boolean failRequestOnValetFailure, Holder<Map<String, Object>> valetModifiedParamsHolder) throws VnfException {
 
 		boolean valetSucceeded = false;
@@ -2158,8 +2158,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 					heatTemplate.getTemplateBody(), newEnvironmentString, files, goldenInputs);
 			// vnf name is not sent to MSO on update requests - so we will set it to the vf module name for now
 			GenericValetResponse<ValetUpdateResponse> updateReq = this.vci.callValetUpdateRequest(msoRequest.getRequestId(),
-					cloudSiteId, tenantId, msoRequest.getServiceInstanceId(), inputs.get("vnf_id"),
-					vfModuleName, inputs.get("vf_module_id"), vfModuleName, keystoneUrl,
+					cloudSiteId, tenantId, msoRequest.getServiceInstanceId(), (String)inputs.get("vnf_id"),
+					vfModuleName, (String)inputs.get("vf_module_id"), vfModuleName, keystoneUrl,
 					heatRequest);
 			ValetUpdateResponse vur = updateReq.getReturnObject();
 			if (vur != null && updateReq.getStatusCode() == 200) {

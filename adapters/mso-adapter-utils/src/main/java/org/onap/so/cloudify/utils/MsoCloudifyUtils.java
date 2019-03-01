@@ -1032,14 +1032,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 	 * Normalize an input value to an Object, based on the target parameter type.
 	 * If the type is not recognized, it will just be returned unchanged (as a string).
 	 */
-	public Object convertInputValue (String inputValue, HeatTemplateParam templateParam)
+	public Object convertInputValue (Object inputValue, HeatTemplateParam templateParam)
 	{
 		String type = templateParam.getParamType();
       logger.debug("Parameter: {} is of type {}", templateParam.getParamName(), type);
 
       if (type.equalsIgnoreCase("number")) {
 			try {
-				return Integer.valueOf(inputValue);
+				return Integer.valueOf(inputValue.toString());
 			}
 			catch (Exception e) {
           logger.debug("Unable to convert {} to an integer!", inputValue);
@@ -1047,14 +1047,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			}
 		} else if (type.equalsIgnoreCase("json")) {
 			try {
-				return new ObjectMapper().readTree(inputValue);
+				return JSON_MAPPER.writeValueAsString(inputValue);
 			}
 			catch (Exception e) {
           logger.debug("Unable to convert {} to a JsonNode!", inputValue);
           return null;
 			}
 		} else if (type.equalsIgnoreCase("boolean")) {
-			return new Boolean(inputValue);
+			return new Boolean(inputValue.toString());
 		}
 
 		// Nothing else matched.  Return the original string
