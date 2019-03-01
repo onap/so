@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,13 +35,14 @@ import org.onap.so.db.catalog.beans.OrchestrationStatusStateTransitionDirective;
 import org.onap.so.db.catalog.beans.OrchestrationStatusValidationDirective;
 import org.onap.so.db.catalog.beans.ResourceType;
 import org.onap.so.db.catalog.client.CatalogDbClient;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class OrchestrationStatusValidator {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, OrchestrationStatusValidator.class);
+	private static final Logger logger = LoggerFactory.getLogger(OrchestrationStatusValidator.class);
 	
 	private static final String BUILDING_BLOCK_DETAIL_NOT_FOUND = "Building Block (%s) not set up in Orchestration_Status_Validation table in CatalogDB.";
 	private static final String UNKNOWN_RESOURCE_TYPE = "Building Block (%s) not set up correctly in Orchestration_Status_Validation table in CatalogDB. ResourceType=(%s), TargetAction=(%s)";

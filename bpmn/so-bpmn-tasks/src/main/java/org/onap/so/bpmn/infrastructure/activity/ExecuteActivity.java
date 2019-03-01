@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +40,8 @@ import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component("ExecuteActivity")
 public class ExecuteActivity implements JavaDelegate {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExecuteActivity.class);	
+	private static final Logger logger = LoggerFactory.getLogger(ExecuteActivity.class);
 	private static final String G_BPMN_REQUEST = "bpmnRequest";	
 	private static final String VNF_TYPE = "vnfType";
 	private static final String G_ACTION = "requestAction";	
@@ -70,12 +74,12 @@ public class ExecuteActivity implements JavaDelegate {
 		
 		try {
 			final String implementationString = execution.getBpmnModelElementInstance().getAttributeValue(SERVICE_TASK_IMPLEMENTATION_ATTRIBUTE);
-			msoLogger.debug("activity implementation String: " + implementationString);
+			logger.debug("activity implementation String: {}", implementationString);
 			if (!implementationString.startsWith(ACTIVITY_PREFIX)) {
 				buildAndThrowException(execution, "Implementation attribute has a wrong format");
 			}
 			String activityName = implementationString.replaceFirst(ACTIVITY_PREFIX, "");
-			msoLogger.info("activityName is: " + activityName);	
+			logger.info("activityName is: {}", activityName);
 			
 			BuildingBlock buildingBlock = buildBuildingBlock(activityName);
 			ExecuteBuildingBlock executeBuildingBlock = buildExecuteBuildingBlock(execution, requestId, buildingBlock);
@@ -91,7 +95,7 @@ public class ExecuteActivity implements JavaDelegate {
 			
 			WorkflowException workflowException = (WorkflowException) variableMap.get("WorklfowException");
 			if (workflowException != null) {
-				msoLogger.error("Workflow exception is: " + workflowException.getErrorMessage());
+				logger.error("Workflow exception is: {}", workflowException.getErrorMessage());
 			}
 			execution.setVariable("WorkflowException", workflowException);
 		}
@@ -131,14 +135,14 @@ public class ExecuteActivity implements JavaDelegate {
 	}
 	
 	protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, msg, ex);
+		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), msg, ex);
 		execution.setVariable("ExecuteActivityErrorMessage", msg);
 		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
 	}
 
 	protected void buildAndThrowException(DelegateExecution execution, String msg) {
-		msoLogger.error(msg);
+		logger.error(msg);
 		execution.setVariable("ExecuteActuvityErrorMessage", msg);
 		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
 	}
