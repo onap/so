@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e46350f4_079adc30",
+        "filename": "mso-api-handlers/mso-api-handler-common/src/main/java/org/onap/so/apihandler/common/PathResourceResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-01T15:25:18Z",
+      "side": 1,
+      "message": "Fix indent please",
+      "revId": "85abd0c592e82eade34ff60a99b923de1385afa0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
