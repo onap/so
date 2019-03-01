@@ -43,6 +43,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
+import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -454,6 +455,29 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		assertEquals(createNetworkResponse.getNetworkStackId(), network.getHeatStackId());
 		assertEquals(createNetworkResponse.getNeutronNetworkId(), network.getNeutronNetworkId());
 		String neutronSubnetId = createNetworkResponse.getSubnetMap().entrySet().iterator().next().getValue();
+		assertEquals(neutronSubnetId, network.getSubnets().get(0).getNeutronSubnetId());
+	}
+	
+	@Test
+	public void updateNetworkUpdatedTest() throws Exception {
+		UpdateNetworkResponse updateNetworkResponse = new UpdateNetworkResponse();
+		updateNetworkResponse.setNeutronNetworkId("testNeutronNetworkId");
+		HashMap<String, String> subnetMap = new HashMap<>();
+		subnetMap.put("testSubnetId", "testNeutronSubnetId");
+		updateNetworkResponse.setSubnetMap(subnetMap);
+		
+		network.getSubnets().add(subnet);
+		
+		execution.setVariable("updateNetworkResponse", updateNetworkResponse);
+		
+		doNothing().when(aaiNetworkResources).updateNetwork(network);
+		doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+
+		aaiUpdateTasks.updateNetworkUpdated(execution);
+		verify(aaiNetworkResources, times(1)).updateNetwork(network);
+		verify(aaiNetworkResources, times(1)).updateSubnet(network, subnet);
+		
+		String neutronSubnetId = updateNetworkResponse.getSubnetMap().entrySet().iterator().next().getValue();
 		assertEquals(neutronSubnetId, network.getSubnets().get(0).getNeutronSubnetId());
 	}
 

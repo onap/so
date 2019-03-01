@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -39,6 +40,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
+import org.onap.so.adapters.nwrest.CreateNetworkRequest;
+import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -83,35 +86,15 @@ public class NetworkAdapterUpdateTasksTest extends BaseTaskTest{
 	
 	@Test
 	public void updateNetworkTest() throws Exception {
-		UpdateNetworkResponse updateNetworkResponse = new UpdateNetworkResponse();
-		updateNetworkResponse.setMessageId("messageId");
-		updateNetworkResponse.setNetworkId("networkId");
-		Optional<UpdateNetworkResponse> oUpdateNetworkResponse = Optional.of(updateNetworkResponse);
-		
-		doReturn(oUpdateNetworkResponse).when(networkAdapterResources).updateNetwork(requestContext, cloudRegion, orchestrationContext, serviceInstance, network, userInput, customer);
-		
+		String cloudRegionPo = "cloudRegionPo";
+		UpdateNetworkRequest updateNetworkRequest = new UpdateNetworkRequest();
+		execution.setVariable("cloudRegionPo", cloudRegionPo);
+
+		doReturn(updateNetworkRequest).when(networkAdapterObjectMapper).createNetworkUpdateRequestMapper(isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class), isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(Customer.class));
 		networkAdapterUpdateTasks.updateNetwork(execution);
-		
-		verify(networkAdapterResources, times(1)).updateNetwork(requestContext, cloudRegion, orchestrationContext, serviceInstance, network, userInput, customer);
-		assertEquals(updateNetworkResponse, execution.getVariable("NetworkAdapterUpdateNetworkResponse"));
+		verify(networkAdapterObjectMapper, times(1)).createNetworkUpdateRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, network, userInput, customer);
+		assertEquals(updateNetworkRequest, execution.getVariable("networkAdapterRequest"));	
 	}
 	
-	@Test
-	public void updateNetworkNoResponseTest() throws Exception {
-		doReturn(Optional.empty()).when(networkAdapterResources).updateNetwork(requestContext, cloudRegion, orchestrationContext, serviceInstance, network, userInput, customer);
-		
-		networkAdapterUpdateTasks.updateNetwork(execution);
-		
-		verify(networkAdapterResources, times(1)).updateNetwork(requestContext, cloudRegion, orchestrationContext, serviceInstance, network, userInput, customer);
-		assertNull(execution.getVariable("NetworkAdapterUpdateNetworkResponse"));
-	}
-	
-	@Test
-	public void updateNetworkExceptionTest() throws UnsupportedEncodingException, NetworkAdapterClientException {
-		expectedException.expect(BpmnError.class);
-		doThrow(new NetworkAdapterClientException("ERROR")).when(networkAdapterResources).updateNetwork(any(RequestContext.class),any(CloudRegion.class), 
-				any(OrchestrationContext.class),eq(serviceInstance),eq(network),any(Map.class),any(Customer.class));
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		networkAdapterUpdateTasks.updateNetwork(execution);
-	}
+
 }
