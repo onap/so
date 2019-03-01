@@ -264,24 +264,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 					execution.setVariable("vmIdList", vmidsArray.toString())
 					execution.setVariable("vserverIdList", vserveridsArray.toString())
 				}
-			}
-						
-			if (cloudRegionId != null) {			
-				AAIUri cloudRegionUri = AAIUriFactory.createResourceUri(AAIObjectType.DEFAULT_CLOUD_REGION, cloudRegionId)				
-				// Check if this client region exists
-				if (!client.exists(cloudRegionUri)) {
-					msoLogger.debug("Cloud Region with cloudRegionId " + cloudRegionId + " does not exist in A&AI")
-					exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Cloud Region with cloudRegionId " + cloudRegionId + " does not exist in A&AI")
-				}
+			}					
 			
-				AAIResultWrapper aaiRWCloud = client.get(cloudRegionUri)
-			
-				Map<String, Object> resultCloud = aaiRWCloud.asMap()			
-			
-				String aicIdentity = resultCloud.get("identity-url")
-				msoLogger.debug("aicIdentity from A&AI is: " + aicIdentity)
-				execution.setVariable("aicIdentity", aicIdentity)
-			}
 			// preserve relationships if exist
 			Optional<Relationships> relationships = aaiRW.getRelationships()
 			
@@ -825,7 +809,5 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		}
 		msoLogger.trace("Exit postProcessRollback ")
 	}
- 
-
 	
 }
