@@ -105,7 +105,7 @@ public class AuditStackServiceDataTest extends AuditStackServiceData {
 		doReturn(1).when(mockExternalTask).getRetries();
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);		
 		Mockito.verify(mockExternalTaskService).handleBpmnError(mockExternalTask,
-				"AuditAAIInventoryFailure", "Number of Retries Exceeded auditing inventory");
+				"AuditAAIInventoryFailure");
 	}
 
 	@Test

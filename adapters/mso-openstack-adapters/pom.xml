@@ -13,8 +13,8 @@
 
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
-		
-		<plugins>			
+
+		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -36,75 +36,25 @@
 				</executions>
 			</plugin>
 
-<!--  run the following plugin only when there's a wsdl change and you need to recompile the java classes
+			<!-- run the following plugin only when there's a wsdl change and you 
+				need to recompile the java classes <plugin> <groupId>org.codehaus.mojo</groupId> 
+				<artifactId>jaxws-maven-plugin</artifactId> <version>2.4.1</version> <executions> 
+				<execution> <id>generate-network-async-stubs</id> <phase>process-classes</phase> 
+				<goals> <goal>wsimport</goal> </goals> <configuration> <vmArgs> <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg> 
+				</vmArgs> <wsdlDirectory>src/main/resources/wsdl</wsdlDirectory> <wsdlFiles> 
+				<wsdlFile>NetworkAdapterNotify.wsdl</wsdlFile> </wsdlFiles> <wsdlLocation>/NetworkAdapterNotify.wsdl</wsdlLocation> 
+				<packageName>org.onap.so.adapters.network.async.client</packageName> <xnocompile>false</xnocompile> 
+				<keep>true</keep> </configuration> </execution> <execution> <id>generate-vnf-async-stubs</id> 
+				<phase>process-classes</phase> <goals> <goal>wsimport</goal> </goals> <configuration> 
+				<vmArgs> <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg> </vmArgs> <wsdlDirectory>src/main/resources/wsdl</wsdlDirectory> 
+				<wsdlFiles> <wsdlFile>VnfAdapterNotify.wsdl</wsdlFile> </wsdlFiles> <wsdlLocation>/VnfAdapterNotify.wsdl</wsdlLocation> 
+				<packageName>org.onap.so.adapters.vnf.async.client</packageName> <xnocompile>false</xnocompile> 
+				<keep>true</keep> </configuration> </execution> </executions> </plugin> <plugin> 
+				<groupId>org.codehaus.mojo</groupId> <artifactId>build-helper-maven-plugin</artifactId> 
+				<version>3.0.0</version> <executions> <execution> <id>add-source</id> <phase>generate-sources</phase> 
+				<goals> <goal>add-source</goal> </goals> <configuration> <sources> <source>${project.build.directory}/generated-sources/wsimport/</source> 
+				</sources> </configuration> </execution> </executions> </plugin> -->
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxws-maven-plugin</artifactId>
-				<version>2.4.1</version>
-				<executions>
-					<execution>
-						<id>generate-network-async-stubs</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>wsimport</goal>
-						</goals>
-						<configuration>
-                            <vmArgs>
-                                <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-                            </vmArgs>
-							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
-							<wsdlFiles>
-								<wsdlFile>NetworkAdapterNotify.wsdl</wsdlFile>
-							</wsdlFiles>
-							<wsdlLocation>/NetworkAdapterNotify.wsdl</wsdlLocation>
-							<packageName>org.onap.so.adapters.network.async.client</packageName>
-							<xnocompile>false</xnocompile>
-							<keep>true</keep>
-						</configuration>
-					</execution>
-					
-					<execution>
-						<id>generate-vnf-async-stubs</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>wsimport</goal>
-						</goals>
-						<configuration>
-					        <vmArgs>
-					            <vmArg>-Djavax.xml.accessExternalSchema=all</vmArg>
-					        </vmArgs>
-							<wsdlDirectory>src/main/resources/wsdl</wsdlDirectory>
-							<wsdlFiles>
-								<wsdlFile>VnfAdapterNotify.wsdl</wsdlFile>
-							</wsdlFiles>
-							<wsdlLocation>/VnfAdapterNotify.wsdl</wsdlLocation>
-							<packageName>org.onap.so.adapters.vnf.async.client</packageName>
-							<xnocompile>false</xnocompile>
-							<keep>true</keep>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-			    <groupId>org.codehaus.mojo</groupId>
-			    <artifactId>build-helper-maven-plugin</artifactId>
-			    <version>3.0.0</version>
-			    <executions>
-			        <execution>
-			            <id>add-source</id>
-			            <phase>generate-sources</phase>
-			            <goals>
-			                <goal>add-source</goal>
-			            </goals>
-			            <configuration>
-			                <sources>
-			                    <source>${project.build.directory}/generated-sources/wsimport/</source>
-			                </sources>
-			            </configuration>
-			        </execution>
-			    </executions>
-			 </plugin>			
- -->		<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 			</plugin>
@@ -126,12 +76,12 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>		
-		
-		
+		</plugins>
+
+
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
@@ -168,10 +118,10 @@
 	</build>
 
 	<dependencies>
-	<!-- added for spring boot support -->	
+		<!-- added for spring boot support -->
 		<dependency>
-    		<groupId>org.springframework.boot</groupId>
-    		<artifactId>spring-boot-starter-actuator</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -184,7 +134,7 @@
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
 			<artifactId>cxf-spring-boot-starter-jaxws</artifactId>
-   		 	<version>${cxf.version}</version>
+			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.cxf</groupId>
@@ -192,31 +142,31 @@
 			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
-    		<groupId>org.apache.cxf</groupId>
-    		<artifactId>cxf-rt-rs-service-description-swagger</artifactId>
-    		<version>${cxf.version}</version>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-service-description-swagger</artifactId>
+			<version>${cxf.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>swagger-ui</artifactId>
-            <version>3.5.0</version>
-        </dependency>
+			<groupId>org.webjars</groupId>
+			<artifactId>swagger-ui</artifactId>
+			<version>3.5.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-    		<groupId>janino</groupId>
-    		<artifactId>janino</artifactId>
-    		<version>2.5.15</version>
+			<groupId>janino</groupId>
+			<artifactId>janino</artifactId>
+			<version>2.5.15</version>
 		</dependency>
-        
-	<!-- end added for spring boot support -->	
-	
-	
-	
-	<!-- added for unit testing -->		
+
+		<!-- end added for spring boot support -->
+
+
+
+		<!-- added for unit testing -->
 		<dependency>
 			<groupId>org.onap.so.adapters</groupId>
 			<artifactId>mso-adapter-utils</artifactId>
@@ -231,23 +181,23 @@
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<scope>test</scope>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
 			<artifactId>common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>ch.vorburger.mariaDB4j</groupId>
-            <artifactId>mariaDB4j</artifactId>
-            <version>2.2.3</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
+			<groupId>ch.vorburger.mariaDB4j</groupId>
+			<artifactId>mariaDB4j</artifactId>
+			<version>2.2.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-contract-wiremock</artifactId>
 			<version>1.2.4.RELEASE</version>
@@ -260,13 +210,13 @@
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so.libs.openstack-java-sdk</groupId>
-            <artifactId>nova-model</artifactId>
+			<artifactId>nova-model</artifactId>
 			<version>${openstack.version}</version>
 		</dependency>
 		<dependency>
-  			<groupId>org.camunda.bpm</groupId>
-  			<artifactId>camunda-external-task-client</artifactId>
-  			<version>1.2.0-SNAPSHOT</version>
-		</dependency>	
+			<groupId>org.camunda.bpm</groupId>
+			<artifactId>camunda-external-task-client</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 	</dependencies>
 </project>

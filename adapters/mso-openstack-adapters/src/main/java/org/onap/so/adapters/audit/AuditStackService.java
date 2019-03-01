@@ -59,9 +59,9 @@ public class AuditStackService {
 		ClientRequestInterceptor interceptor = new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"),
 				auth);
 		ExternalTaskClient client = ExternalTaskClient.create()
-				.baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(5).addInterceptor(interceptor)
-				.asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(5000, 2, 30000)).build();
-		client.subscribe("InventoryAudit").lockDuration(5000)
+				.baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
+				.asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(10000, 2, 120000)).build();
+		client.subscribe("InventoryAudit").lockDuration(60000)
 				.handler(auditStack::executeExternalTask).open();
 	}
 
