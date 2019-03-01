@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +31,8 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.ManagerProperties;
 import org.onap.so.client.sniro.beans.SniroConductorRequest;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
@@ -42,7 +45,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @Component
 public class SniroClient {
 
-	private static final MsoLogger log = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SniroClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(SniroClient.class);
 
 	@Autowired
 	private ManagerProperties managerProperties;
@@ -61,10 +64,10 @@ public class SniroClient {
 	 * @throws BpmnError
 	 */
 	public void postDemands(SniroManagerRequest homingRequest) throws BadResponseException, JsonProcessingException{
-		log.trace("Started Sniro Client Post Demands");
+		logger.trace("Started Sniro Client Post Demands");
 		String url = managerProperties.getHost() + managerProperties.getUri().get("v2");
-		log.debug("Post demands url: " + url);
-		log.debug("Post demands payload: " + homingRequest.toJsonString());
+		logger.debug("Post demands url: {}", url);
+		logger.debug("Post demands payload: {}", homingRequest.toJsonString());
 
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_JSON);
@@ -79,7 +82,7 @@ public class SniroClient {
 
 		LinkedHashMap<String, Object> response = baseClient.post(homingRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
 		validator.validateDemandsResponse(response);
-		log.trace("Completed Sniro Client Post Demands");
+		logger.trace("Completed Sniro Client Post Demands");
 	}
 
 	/**
@@ -94,10 +97,10 @@ public class SniroClient {
 	 * @throws BadResponseException
 	 */
 	public void postRelease(SniroConductorRequest releaseRequest) throws BadResponseException {
-		log.trace("Started Sniro Client Post Release");
+		logger.trace("Started Sniro Client Post Release");
 		String url = UrnPropertiesReader.getVariable("sniro.conductor.host") + UrnPropertiesReader.getVariable("sniro.conductor.uri");
-		log.debug("Post release url: " + url);
-		log.debug("Post release payload: " + releaseRequest.toJsonString());
+		logger.debug("Post release url: {}", url);
+		logger.debug("Post release payload: {}", releaseRequest.toJsonString());
 
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_JSON);
@@ -110,7 +113,7 @@ public class SniroClient {
 		LinkedHashMap<String, Object> response = baseClient.post(releaseRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
 		SniroValidator v = new SniroValidator();
 		v.validateReleaseResponse(response);
-		log.trace("Completed Sniro Client Post Release");
+		logger.trace("Completed Sniro Client Post Release");
 	}
 
 }

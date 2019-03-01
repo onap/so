@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,6 +41,8 @@ import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,7 +52,7 @@ import com.jayway.jsonpath.JsonPath;
 @Component
 public class ConfigurationScaleOut {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ConfigurationScaleOut.class);
+	private static final Logger logger = LoggerFactory.getLogger(ConfigurationScaleOut.class);
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
 	@Autowired
@@ -100,7 +104,7 @@ public class ConfigurationScaleOut {
 							configScaleOutParam = JsonPath.parse(sdncVfModuleQueryResponse).read(paramValue);
 						}catch(ClassCastException e){
 							configScaleOutParam = null;
-							msoLogger.warnSimple("Incorrect JSON path. Path points to object rather than value causing: ", e);
+							logger.warn("Incorrect JSON path. Path points to object rather than value causing: ", e);
 						}
 						paramsMap.put(key, configScaleOutParam);
 					}
@@ -125,7 +129,7 @@ public class ConfigurationScaleOut {
 	}
 	
 	public void callAppcClient(BuildingBlockExecution execution) {
-		msoLogger.trace("Start runAppcCommand ");
+		logger.trace("Start runAppcCommand ");
 		String appcCode = "1002";
 		String appcMessage = "";
 		try{
@@ -141,20 +145,22 @@ public class ConfigurationScaleOut {
 			HashMap<String, String> payloadInfo = new HashMap<>();
 			payloadInfo.put(VNF_NAME, execution.getVariable(VNF_NAME));
 			payloadInfo.put(VFMODULE_ID,execution.getVariable(VFMODULE_ID));
-			msoLogger.debug("Running APP-C action: " + commandAction.toString());
-			msoLogger.debug("VNFID: " + vnfId);	
+			logger.debug("Running APP-C action: {}", commandAction.toString());
+			logger.debug("VNFID: {}", vnfId);
 			//PayloadInfo contains extra information that adds on to payload before making request to appc
 			appCClient.runAppCCommand(commandAction, msoRequestId, vnfId, payloadString, payloadInfo, controllerType);
 			appcCode = appCClient.getErrorCode();
 			appcMessage = appCClient.getErrorMessage();
 		
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "Caught exception in runAppcCommand in ConfigurationScaleOut", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "APPC Error", e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+				"Caught exception in runAppcCommand in ConfigurationScaleOut", "BPMN",
+				MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
 			appcMessage = e.getMessage();
 		}
-		msoLogger.error("Error Message: " + appcMessage);
-		msoLogger.error("ERROR CODE: " + appcCode);
-		msoLogger.trace("End of runAppCommand ");
+		logger.error("Error Message: " + appcMessage);
+		logger.error("ERROR CODE: " + appcCode);
+		logger.trace("End of runAppCommand ");
 		if (appcCode != null && !appcCode.equals("0")) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 		}

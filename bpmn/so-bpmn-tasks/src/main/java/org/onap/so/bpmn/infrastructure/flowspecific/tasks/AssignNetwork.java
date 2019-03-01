@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,15 +26,15 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AssignNetwork {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
-			AssignNetwork.class);
+	private static final Logger logger = LoggerFactory.getLogger(AssignNetwork.class);
 
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;
@@ -50,7 +52,7 @@ public class AssignNetwork {
 
 			if (!OrchestrationStatus.PRECREATED.equals(l3network.getOrchestrationStatus())){
 				networkFound = true;
-				msoLogger.debug("network found in NOT PRECREATED status");
+				logger.debug("network found in NOT PRECREATED status");
 			}
 		} catch (Exception ex) {
 			// return false if no network present

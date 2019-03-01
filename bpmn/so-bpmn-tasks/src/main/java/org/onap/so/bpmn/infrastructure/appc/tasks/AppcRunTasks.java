@@ -39,12 +39,14 @@ import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AppcRunTasks {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AppcRunTasks.class);
+	private static final Logger logger = LoggerFactory.getLogger(AppcRunTasks.class);
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
 	@Autowired
@@ -72,7 +74,7 @@ public class AppcRunTasks {
 	}
 	
 	public void runAppcCommand(BuildingBlockExecution execution, Action action) {
-		msoLogger.trace("Start runAppcCommand ");
+		logger.trace("Start runAppcCommand ");
 		String appcCode = "1002";
 		String appcMessage = "";
 		try {
@@ -123,22 +125,24 @@ public class AppcRunTasks {
 				if (pay != null) {
 					payload =  Optional.of(pay);
 				}
-			}			
-			msoLogger.debug("Running APP-C action: " + action.toString());
-			msoLogger.debug("VNFID: " + vnfId);	
+			}
+			logger.debug("Running APP-C action: {}", action.toString());
+			logger.debug("VNFID: {}", vnfId);
 			appCClient.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
 			appcCode = appCClient.getErrorCode();
 			appcMessage = appCClient.getErrorMessage();
 			mapRollbackVariables(execution, action, appcCode);
 		}
 		catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "Caught exception in runAppcCommand", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "APPC Error", e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+				"Caught exception in runAppcCommand", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
 			appcMessage = e.getMessage();
 		}		
 		
-		msoLogger.error("Error Message: " + appcMessage);
-		msoLogger.error("ERROR CODE: " + appcCode);
-		msoLogger.trace("End of runAppCommand ");
+		logger.error("Error Message: {}", appcMessage);
+		logger.error("ERROR CODE: {}", appcCode);
+		logger.trace("End of runAppCommand ");
 		if (appcCode != null && !appcCode.equals("0")) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 		}
