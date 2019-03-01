@@ -72,7 +72,7 @@ public class AuditStackServiceData {
 			}else if(externalTask.getRetries() != null &&
 					externalTask.getRetries()-1 == 0){
 				logger.debug("The External Task Id: {}  Failed, All Retries Exhausted", externalTask.getId());
-				externalTaskService.handleBpmnError(externalTask, "AuditAAIInventoryFailure", "Number of Retries Exceeded auditing inventory");
+				externalTaskService.handleBpmnError(externalTask, "AuditAAIInventoryFailure");
 			}else{
 				logger.debug("The External Task Id: {}  Failed, Decrementing Retries: {} , Retry Delay: ", externalTask.getId(),externalTask.getRetries()-1, calculateRetryDelay(externalTask.getRetries()));
 				externalTaskService.handleFailure(externalTask, UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI, UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI, externalTask.getRetries()-1, calculateRetryDelay(externalTask.getRetries()));
