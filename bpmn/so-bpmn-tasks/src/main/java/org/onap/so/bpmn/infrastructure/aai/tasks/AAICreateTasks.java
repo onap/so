@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -70,9 +72,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AAICreateTasks {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAICreateTasks.class);
-	private static final Logger logger = LoggerFactory.getLogger(AAICreateTasks.class.getName());
-	
+	private static final Logger logger = LoggerFactory.getLogger(AAICreateTasks.class);
 	private static final String networkTypeProvider = "PROVIDER";
 	private static String NETWORK_COLLECTION_NAME = "networkCollectionName";
 	private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
@@ -117,9 +117,9 @@ public class AAICreateTasks {
             if (null == customer) {
                 String errorMessage = "Exception in creating ServiceSubscription. Customer not present for ServiceInstanceID: "
                         + serviceInstance.getServiceInstanceId();
-                msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, errorMessage, "BPMN", MsoLogger.getServiceName(),
-                        MsoLogger.ErrorCode.UnknownError, errorMessage);
-                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, errorMessage);
+							logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), errorMessage, "BPMN",
+								MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), errorMessage);
+							exceptionUtil.buildAndThrowWorkflowException(execution, 7000, errorMessage);
             }
             aaiSIResources.createServiceSubscription(customer);
         } catch (BpmnError ex) {
@@ -136,7 +136,7 @@ public class AAICreateTasks {
 			Project project = serviceInstance.getProject();
 			if(project != null) {
 				if (project.getProjectName() == null || "".equals(project.getProjectName())) {
-					msoLogger.info("ProjectName is null in input. Skipping create project...");
+					logger.info("ProjectName is null in input. Skipping create project...");
 				} else {
 					aaiSIResources.createProjectandConnectServiceInstance(project, serviceInstance);
 				}
@@ -162,14 +162,14 @@ public class AAICreateTasks {
 				} else {
 					if (owningEntityName == null || "".equals(owningEntityName)) {
 						String msg = "Exception in AAICreateOwningEntity. Can't create an owningEntity with no owningEntityName.";
-						msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(),
-								MsoLogger.ErrorCode.UnknownError, msg);
+						logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), msg);
 						exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
 					} else {
 						if(aaiSIResources.existsOwningEntityName(owningEntityName)){
 							String msg = "Exception in AAICreateOwningEntity. Can't create OwningEntity as name already exists in AAI associated with a different owning-entity-id (name must be unique)";
-							msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(),
-									MsoLogger.ErrorCode.UnknownError, msg);
+							logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+								MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), msg);
 							exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
 						}else{
 							aaiSIResources.createOwningEntityandConnectServiceInstance(owningEntity, serviceInstance);
@@ -199,7 +199,7 @@ public class AAICreateTasks {
 			Platform platform = vnf.getPlatform();
 			if(platform != null) {
 				if (platform.getPlatformName() == null || "".equals(platform.getPlatformName())) {
-					msoLogger.debug("PlatformName is null in input. Skipping create platform...");
+					logger.debug("PlatformName is null in input. Skipping create platform...");
 				} else {
 					aaiVnfResources.createPlatformandConnectVnf(platform,vnf);
 				}
@@ -216,7 +216,7 @@ public class AAICreateTasks {
 			LineOfBusiness lineOfBusiness = vnf.getLineOfBusiness();
 			if(lineOfBusiness != null) {
 				if (lineOfBusiness.getLineOfBusinessName() == null || "".equals(lineOfBusiness.getLineOfBusinessName())) {
-					msoLogger.info("lineOfBusiness is null in input. Skipping create lineOfBusiness...");
+					logger.info("lineOfBusiness is null in input. Skipping create lineOfBusiness...");
 				} else {
 					aaiVnfResources.createLineOfBusinessandConnectVnf(lineOfBusiness,vnf);
 				}
@@ -269,7 +269,7 @@ public class AAICreateTasks {
 			try{
 				volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
 			} catch (BBObjectNotFoundException e){
-				msoLogger.info("VolumeGroup not found. Skipping Connect between VfModule and VolumeGroup");
+				logger.info("VolumeGroup not found. Skipping Connect between VfModule and VolumeGroup");
 			}
 			if (volumeGroup != null) {
 				aaiVfModuleResources.connectVfModuleToVolumeGroup(vnf, vfModule, volumeGroup, execution.getGeneralBuildingBlock().getCloudRegion());
@@ -463,9 +463,9 @@ public class AAICreateTasks {
 						uri.queryParam(NETWORK_POLICY_FQDN_PARAM, fqdn);
 						Optional<org.onap.aai.domain.yang.NetworkPolicy> oNetPolicy = aaiNetworkResources.getNetworkPolicy(uri);
 						if(!oNetPolicy.isPresent()) {								
-							msoLogger.debug("This network policy FQDN is not in AAI yet: " + fqdn);									
+							logger.debug("This network policy FQDN is not in AAI yet: {}", fqdn);
 							String networkPolicyId = UUID.randomUUID().toString();
-							msoLogger.debug("Adding network-policy with network-policy-id " + networkPolicyId);
+							logger.debug("Adding network-policy with network-policy-id {}", networkPolicyId);
 							NetworkPolicy networkPolicy = new NetworkPolicy();
 							networkPolicy.setNetworkPolicyId(networkPolicyId);
 							networkPolicy.setNetworkPolicyFqdn(fqdn);

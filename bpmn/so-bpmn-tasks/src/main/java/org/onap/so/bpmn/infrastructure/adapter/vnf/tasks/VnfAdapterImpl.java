@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +39,8 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.exceptions.MarshallerException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.xml.sax.InputSource;
@@ -55,7 +59,7 @@ import java.util.Map;
 
 @Component
 public class VnfAdapterImpl {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterImpl.class);
+	private static final Logger logger =  LoggerFactory.getLogger(VnfAdapterImpl.class);
 	private static final String CONTRAIL_SERVICE_INSTANCE_FQDN = "contrailServiceInstanceFqdn";
 	private static final String OAM_MANAGEMENT_V4_ADDRESS = "oamManagementV4Address";
 	private static final String OAM_MANAGEMENT_V6_ADDRESS = "oamManagementV6Address";
@@ -163,8 +167,9 @@ public class VnfAdapterImpl {
             SAXSource source = new SAXSource(xmlReader, inputSource);
             return jaxbUnmarshaller.unmarshal(source);
         } catch (Exception e) {
-            msoLogger.error(MessageEnum.GENERAL_EXCEPTION, "", "", "", MsoLogger.ErrorCode.SchemaError, e.getMessage(), e);
-            throw new MarshallerException("Error parsing VNF Adapter response. " + e.getMessage(), MsoLogger.ErrorCode.SchemaError.getValue(), e);
+					logger.error("{} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(), MsoLogger.ErrorCode.SchemaError.getValue(),
+						e.getMessage(), e);
+					throw new MarshallerException("Error parsing VNF Adapter response. " + e.getMessage(), MsoLogger.ErrorCode.SchemaError.getValue(), e);
         }
     }
     
@@ -181,24 +186,24 @@ public class VnfAdapterImpl {
 	    		String key = keys.next();	    		
 	    		if (key.equals("contrail-service-instance-fqdn")) {
 					String contrailServiceInstanceFqdn = vfModuleOutputs.get(key);				
-					msoLogger.debug("Obtained contrailServiceInstanceFqdn: " + contrailServiceInstanceFqdn);
+					logger.debug("Obtained contrailServiceInstanceFqdn: {}", contrailServiceInstanceFqdn);
 					vfModule.setContrailServiceInstanceFqdn(contrailServiceInstanceFqdn);
 					execution.setVariable(CONTRAIL_SERVICE_INSTANCE_FQDN, contrailServiceInstanceFqdn);
 				}
 				else if (key.endsWith("contrail_network_policy_fqdn")) {
 					String contrailNetworkPolicyFqdn = vfModuleOutputs.get(key);
-					msoLogger.debug("Obtained contrailNetworkPolicyFqdn: " + contrailNetworkPolicyFqdn);
+					logger.debug("Obtained contrailNetworkPolicyFqdn: {}", contrailNetworkPolicyFqdn);
 					contrailNetworkPolicyFqdnList.add(contrailNetworkPolicyFqdn);
 				}
 				else if (key.equals("oam_management_v4_address")) {
 					String oamManagementV4Address = vfModuleOutputs.get(key);
-					msoLogger.debug("Obtained oamManagementV4Address: " + oamManagementV4Address);
+					logger.debug("Obtained oamManagementV4Address: {}", oamManagementV4Address);
 					genericVnf.setIpv4OamAddress(oamManagementV4Address);
 					execution.setVariable(OAM_MANAGEMENT_V4_ADDRESS, oamManagementV4Address);
 				}
 				else if (key.equals("oam_management_v6_address")) {
 					String oamManagementV6Address = vfModuleOutputs.get(key);
-					msoLogger.debug("Obtained oamManagementV6Address: " + oamManagementV6Address);
+					logger.debug("Obtained oamManagementV6Address: {}", oamManagementV6Address);
 					genericVnf.setManagementV6Address(oamManagementV6Address);
 					execution.setVariable(OAM_MANAGEMENT_V6_ADDRESS, oamManagementV6Address);
 				}

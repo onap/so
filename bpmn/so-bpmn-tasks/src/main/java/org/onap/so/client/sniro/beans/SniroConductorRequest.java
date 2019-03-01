@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,19 +26,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SniroConductorRequest implements Serializable{
 
 	private static final long serialVersionUID = 1906052095861777655L;
-	private static final MsoLogger log = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SniroConductorRequest.class);
+	private static final Logger logger = LoggerFactory.getLogger(SniroConductorRequest.class);
 
 	@JsonProperty("release-locks")
 	private List<Resource> resources = new ArrayList<Resource>();
@@ -55,7 +57,7 @@ public class SniroConductorRequest implements Serializable{
 		try{
 			json = ow.writeValueAsString(this);
 		}catch (Exception e){
-			log.error("Unable to convert SniroConductorRequest to string", e);
+			logger.error("Unable to convert SniroConductorRequest to string", e);
 		}
 		return json;
 	}

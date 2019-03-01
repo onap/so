@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,9 +23,6 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.HashMap;
 import java.util.Optional;
-import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
-import org.apache.http.conn.ConnectTimeoutException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -37,13 +36,15 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class GenericVnfHealthCheck {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, GenericVnfHealthCheck.class);
+	private static final Logger logger = LoggerFactory.getLogger(GenericVnfHealthCheck.class);
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
 	@Autowired
@@ -82,7 +83,7 @@ public class GenericVnfHealthCheck {
 	}
 	
 	public void callAppcClient(BuildingBlockExecution execution) {
-		msoLogger.trace("Start runAppcCommand ");
+		logger.trace("Start runAppcCommand ");
 		String appcCode = "1002";
 		String appcMessage = "";
 		try {
@@ -102,32 +103,38 @@ public class GenericVnfHealthCheck {
 			payloadInfo.put("oamIpAddress",execution.getVariable("oamIpAddress"));
 			payloadInfo.put("vnfHostIpAddress",execution.getVariable("vnfHostIpAddress"));
 			
-			msoLogger.debug("Running APP-C action: " + action.toString());
-			msoLogger.debug("VNFID: " + vnfId);	
+			logger.debug("Running APP-C action: {}", action.toString());
+			logger.debug("VNFID: {}", vnfId);
 			//PayloadInfo contains extra information that adds on to payload before making request to appc
 			appCClient.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType);
 			appcCode = appCClient.getErrorCode();
 			appcMessage = appCClient.getErrorMessage();
         } catch (BpmnError ex) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Caught exception in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + ex);
+			logger.error("", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Caught exception in GenericVnfHealthCheck", "BPMN",
+				MsoLogger
+				.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), ex);
             appcMessage = ex.getMessage();
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 		} catch (Exception e) {
 			if (e instanceof java.util.concurrent.TimeoutException )
 			{
 				appcMessage = "Request to APPC timed out. ";
-				msoLogger.error(MessageEnum.RA_CONNECTION_EXCEPTION, "Caught timedOut exception in runAppcCommand in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "APPC Error", e);
+				logger.error("{} {} {} {} {} {}", MessageEnum.RA_CONNECTION_EXCEPTION.toString(),
+					"Caught timedOut exception in runAppcCommand in GenericVnfHealthCheck", "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
 				throw e;
 			}
 			else {
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION, "Caught exception in runAppcCommand in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "APPC Error", e);
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+					"Caught exception in runAppcCommand in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
 				appcMessage = e.getMessage();
 				exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 			}
 		}
-		msoLogger.error("Error Message: " + appcMessage);
-		msoLogger.error("ERROR CODE: " + appcCode);
-		msoLogger.trace("End of runAppCommand ");
+		logger.error("Error Message: " + appcMessage);
+		logger.error("ERROR CODE: " + appcCode);
+		logger.trace("End of runAppCommand ");
 		if (appcCode != null && !appcCode.equals("0")) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 		}

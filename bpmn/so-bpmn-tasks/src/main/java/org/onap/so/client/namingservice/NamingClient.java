@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +31,8 @@ import org.onap.namingservice.model.NameGenDeleteResponse;
 import org.onap.namingservice.model.NameGenRequest;
 import org.onap.namingservice.model.NameGenResponse;
 import org.onap.so.client.exception.BadResponseException;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -45,7 +48,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class NamingClient{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, NamingClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(NamingClient.class);
 	private static final String ENDPOINT = "mso.naming.endpoint";
 	private static final String AUTH = "mso.naming.auth";
 	
@@ -59,7 +62,7 @@ public class NamingClient{
 	public String postNameGenRequest(NameGenRequest request) throws BadResponseException, IOException {
 		String targetUrl = env.getProperty(ENDPOINT);
 		HttpHeaders headers = setHeaders(env.getProperty(AUTH)); 
-		msoLogger.info("Sending postNameGenRequest to url: " + targetUrl);
+		logger.info("Sending postNameGenRequest to url: {}", targetUrl);
 		HttpEntity<NameGenRequest> requestEntity = new HttpEntity<>(request, headers);
 		ResponseEntity<NameGenResponse> response;
 		try{
@@ -73,7 +76,7 @@ public class NamingClient{
 	public String deleteNameGenRequest(NameGenDeleteRequest request) throws BadResponseException, IOException {
 		String targetUrl = env.getProperty(ENDPOINT);
 		HttpHeaders headers = setHeaders(env.getProperty(AUTH)); 
-		msoLogger.info("Sending deleteNameGenRequest to url: " + targetUrl);
+		logger.info("Sending deleteNameGenRequest to url: {}", targetUrl);
 		HttpEntity<NameGenDeleteRequest> requestEntity = new HttpEntity<>(request, headers);
 		ResponseEntity<NameGenDeleteResponse> response;
 		try{
