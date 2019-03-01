@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +37,8 @@ import org.apache.commons.io.IOUtils;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 public class XMLValidator {
@@ -54,7 +58,7 @@ public class XMLValidator {
     private SchemaFactory factory;
     private Schema schema;
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, XMLValidator.class);
+    private static Logger logger = LoggerFactory.getLogger(XMLValidator.class);
 
 
     public XMLValidator (String xsdFile){
@@ -73,7 +77,7 @@ public class XMLValidator {
 
         } catch (IOException | SAXException e) {
 
-            msoLogger.debug ("Cannot open file " + XSDS_PATH + xsdFile, e);
+            logger.debug ("Cannot open file {}", XSDS_PATH + xsdFile, e);
             errorMsg = "ErrorDetails: xsd file " + xsdFile + "could not be opened - " + e.getMessage ();
         }
     }
@@ -89,11 +93,12 @@ public class XMLValidator {
             validator.validate (src2);
 
         } catch (IOException | SAXException e) {
-            msoLogger.debug ("Exception: ", e);
+            logger.debug ("Exception: ", e);
             return "ErrorDetails: " + e.getMessage ();
 
         } catch (Exception e) {
-            msoLogger.error (MessageEnum.APIH_CANNOT_READ_SCHEMA, "", "", MsoLogger.ErrorCode.SchemaError, "APIH cannot read schema file", e);
+            logger.error("{} {} {}", MessageEnum.APIH_CANNOT_READ_SCHEMA.toString(),
+                MsoLogger.ErrorCode.SchemaError.getValue(), "APIH cannot read schema file", e);
 
             return "ErrorDetails: " + "Unable to read the schema file";
         }

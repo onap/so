@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,13 +28,14 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
 public class PathResourceResolver implements LSResourceResolver {
 	
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, PathResourceResolver.class);
+    private static Logger logger = LoggerFactory.getLogger(PathResourceResolver.class);
 
     private String path;
 	
@@ -50,7 +53,7 @@ public class PathResourceResolver implements LSResourceResolver {
 		try {
 			stream = new FileInputStream(path + systemId);
 		} catch (FileNotFoundException e) {
-		    msoLogger.debug ("Could not resolve resource based on file: " + path + systemId, e);
+        logger.debug ("Could not resolve resource based on file: {}", path + systemId, e);
 		}
  
         input.setPublicId(publicId);
