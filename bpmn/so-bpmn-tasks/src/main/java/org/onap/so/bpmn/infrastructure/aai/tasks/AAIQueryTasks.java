@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,14 +44,15 @@ import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAINetworkResources;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AAIQueryTasks {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAIQueryTasks.class);
+	private static final Logger logger = LoggerFactory.getLogger(AAIQueryTasks.class);
 	private static final String ERROR_MSG = "No relationships were returned from AAIResultWrapper.getRelationships()";
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;
@@ -116,7 +119,7 @@ public class AAIQueryTasks {
 					.getRelatedAAIUris(AAIObjectType.VPN_BINDING);
 			List<org.onap.so.openstack.beans.RouteTarget> routeTargets = new ArrayList<>();
 			for (AAIResourceUri netBindingUri : netBindingsUriList) {
-				msoLogger.info("Get Route Targests");
+				logger.info("Get Route Targests");
 				Optional<VpnBinding> oVpnBinding = aaiNetworkResources.getVpnBinding(netBindingUri);
 				if (oVpnBinding.isPresent()) {
 					VpnBinding vpnBinding = oVpnBinding.get();

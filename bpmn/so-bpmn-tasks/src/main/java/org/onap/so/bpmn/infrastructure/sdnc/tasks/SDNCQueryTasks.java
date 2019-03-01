@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,17 +29,17 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
-import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.SDNCVnfResources;
 import org.onap.so.client.orchestration.SDNCVfModuleResources;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCQueryTasks {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCQueryTasks.class);	
+	private static final Logger logger = LoggerFactory.getLogger(SDNCQueryTasks.class);
 	@Autowired
 	private SDNCVnfResources sdncVnfResources;
 	@Autowired

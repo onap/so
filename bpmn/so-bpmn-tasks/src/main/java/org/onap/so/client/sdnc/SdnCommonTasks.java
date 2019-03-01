@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +32,8 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -42,7 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class SdnCommonTasks {
 
-    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(SDNCClient.class);
     private static final String RESPONSE_CODE = "response-code";
     private static final String RESPONSE_MESSAGE = "response-message";
     private static final String NO_RESPONSE_FROM_SDNC = "Error did not receive a response from SDNC.";
@@ -63,11 +67,13 @@ public class SdnCommonTasks {
         try {
             jsonRequest = objMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
         } catch (JsonProcessingException e) {
-            msoLogger.error(MessageEnum.JAXB_EXCEPTION, COULD_NOT_CONVERT_SDNC_POJO_TO_JSON, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError, e.getMessage());
+            logger.error("{} {} {} {} {} {}", MessageEnum.JAXB_EXCEPTION.toString(),
+                COULD_NOT_CONVERT_SDNC_POJO_TO_JSON,
+                    "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError.getValue(), e.getMessage());
             throw new MapperException(COULD_NOT_CONVERT_SDNC_POJO_TO_JSON);
         }
         jsonRequest = "{\"input\":" + jsonRequest + "}";
-        msoLogger.info(jsonRequest);
+        logger.info(jsonRequest);
         return jsonRequest;
     }
 
@@ -94,8 +100,8 @@ public class SdnCommonTasks {
      */
 	public String validateSDNResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
 		if (CollectionUtils.isEmpty(output)) {
-			msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, NO_RESPONSE_FROM_SDNC, "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, NO_RESPONSE_FROM_SDNC);
+			logger.error("{} {} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
 			throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
 		}
         LinkedHashMap<String, Object> embeddedResponse =(LinkedHashMap<String, Object>) output.get("output");
@@ -109,21 +115,21 @@ public class SdnCommonTasks {
         String jsonResponse;
 		try {
 			jsonResponse = objMapper.writeValueAsString(output);
-			msoLogger.debug(jsonResponse);
+			logger.debug(jsonResponse);
 		} catch (JsonProcessingException e) {
-			msoLogger.warnSimple("Could not convert SDNC Response to String", e);
+			logger.warn("Could not convert SDNC Response to String", e);
 			jsonResponse = "";
 		}
-		msoLogger.info("ResponseCode: " + responseCode + " ResponseMessage: " + responseMessage);
+		logger.info("ResponseCode: {} ResponseMessage: {}", responseCode, responseMessage);
 		int code = StringUtils.isNotEmpty(responseCode) ? Integer.parseInt(responseCode) : 0;
 		if (isHttpCodeSuccess(code)) {
-			msoLogger.info("Successful Response from SDNC");
+			logger.info("Successful Response from SDNC");
 			return jsonResponse;
 		} else {
 			String errorMessage = String.format(SDNC_CODE_NOT_0_OR_IN_200_299, responseMessage);
-			msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, errorMessage, "BPMN", MsoLogger.getServiceName(),
-					MsoLogger.ErrorCode.DataError, errorMessage);
-			throw new BadResponseException(errorMessage);
+        logger.error("{} {} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), errorMessage, "BPMN",
+            MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError.getValue(), errorMessage);
+        throw new BadResponseException(errorMessage);
 		}
 	}
     
@@ -135,20 +141,23 @@ public class SdnCommonTasks {
      */
     public String validateSDNGetResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
         if (CollectionUtils.isEmpty(output)) {
-            msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, NO_RESPONSE_FROM_SDNC, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, NO_RESPONSE_FROM_SDNC);
+            logger.error("{} {} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
+                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
             throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
         }
         ObjectMapper objMapper = new ObjectMapper();
-        msoLogger.debug("Using object mapper");
+        logger.debug("Using object mapper");
         String stringOutput = "";
         try {
         	stringOutput = objMapper.writeValueAsString(output);
         }
         catch (Exception e) {
-        	msoLogger.error(MessageEnum.RA_RESPONSE_FROM_SDNC, BAD_RESPONSE_FROM_SDNC, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, BAD_RESPONSE_FROM_SDNC);
+            logger.error("{} {} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), BAD_RESPONSE_FROM_SDNC,
+                "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+                BAD_RESPONSE_FROM_SDNC);
             throw new BadResponseException(BAD_RESPONSE_FROM_SDNC);
         }
-        msoLogger.debug("Received from GET request: " + stringOutput);
+        logger.debug("Received from GET request: {}", stringOutput);
         return stringOutput;
     }
 	

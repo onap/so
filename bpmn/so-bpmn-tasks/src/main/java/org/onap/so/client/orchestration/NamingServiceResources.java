@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,8 +23,6 @@
 package org.onap.so.client.orchestration;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.onap.namingservice.model.Element;
 import org.onap.namingservice.model.Deleteelement;
@@ -30,13 +30,14 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.namingservice.NamingClient;
 import org.onap.so.client.namingservice.NamingRequestObjectBuilder;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class NamingServiceResources {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, NamingServiceResources.class);
+	private static final Logger logger = LoggerFactory.getLogger(NamingServiceResources.class);
 	private static final String NAMING_TYPE = "instanceGroup";
 	
 	@Autowired
