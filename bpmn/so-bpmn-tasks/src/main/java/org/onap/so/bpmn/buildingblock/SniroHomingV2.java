@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -67,7 +69,8 @@ import org.onap.so.client.sniro.beans.ServiceInfo;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
 import org.onap.so.client.sniro.beans.SubscriberInfo;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -84,7 +87,7 @@ import org.springframework.web.util.UriUtils;
 @Component("SniroHoming")
 public class SniroHomingV2 {
 
-	private static final MsoLogger log = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SniroHomingV2.class);
+	private static final Logger logger =  LoggerFactory.getLogger(SniroHomingV2.class);
 	private JsonUtils jsonUtils = new JsonUtils();
 	@Autowired
 	private Environment env;
@@ -114,7 +117,7 @@ public class SniroHomingV2 {
 	 * @param execution
 	 */
 	public void callSniro(BuildingBlockExecution execution){
-		log.debug("Started Sniro Homing Call Sniro");
+		logger.debug("Started Sniro Homing Call Sniro");
 		try{
 			GeneralBuildingBlock bb = execution.getGeneralBuildingBlock();
 
@@ -153,7 +156,7 @@ public class SniroHomingV2 {
 			if(placementDemands.size() > 0 || licenseDemands.size() > 0){
 				client.postDemands(request);
 			}else{
-				log.debug(SERVICE_MISSING_DATA + "resources eligible for homing or licensing");
+				logger.debug(SERVICE_MISSING_DATA + "resources eligible for homing or licensing");
 				throw new BpmnError(UNPROCESSABLE, SERVICE_MISSING_DATA + "resources eligible for homing or licensing");
 			}
 
@@ -162,15 +165,15 @@ public class SniroHomingV2 {
 			execution.setVariable("asyncMessageType", "SNIROResponse");
 			execution.setVariable("asyncTimeout", timeout);
 
-			log.trace("Completed Sniro Homing Call Sniro");
+			logger.trace("Completed Sniro Homing Call Sniro");
 		}catch(BpmnError e){
-			log.error(e);
+			logger.error("Exception occurred", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
 		}catch(BadResponseException e){
-			log.error(e);
+			logger.error("Exception occurred", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
 		}catch(Exception e){
-			log.error(e);
+			logger.error("Exception occurred", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while preparing sniro request: " + e.getMessage());
 		}
 	}
@@ -183,13 +186,13 @@ public class SniroHomingV2 {
 	 * @param asyncResponse
 	 */
 	public void processSolution(BuildingBlockExecution execution, String asyncResponse){
-		log.trace("Started Sniro Homing Process Solution");
+		logger.trace("Started Sniro Homing Process Solution");
 		try{
 			//TODO improve handling multiple solutions but is dependent on sniro enhancing api + work with sniro conductor to improve "inventoryType" representation
 			validateSolution(asyncResponse);
 			ServiceInstance serviceInstance = execution.getGeneralBuildingBlock().getCustomer().getServiceSubscription().getServiceInstances().get(0);
 
-			log.debug("Processing sniro manager asyncronous response");
+			logger.debug("Processing sniro manager asyncronous response");
 			JSONObject response = new JSONObject(asyncResponse);
 			if(response.has(SOLUTIONS)){
 				JSONObject allSolutions = response.getJSONObject(SOLUTIONS);
@@ -212,15 +215,15 @@ public class SniroHomingV2 {
 
 			execution.setVariable("generalBuildingBlock", execution.getGeneralBuildingBlock());
 
-			log.trace("Completed Sniro Homing Process Solution");
+			logger.trace("Completed Sniro Homing Process Solution");
 		}catch(BpmnError e){
-			log.error(e);
+			logger.error("Exception occurred", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
 		}catch(BadResponseException e){
-			log.error(e);
+			logger.error("Exception occurred", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
 		}catch(Exception e){
-			log.error(e);
+			logger.error("Exception occurred", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while processing sniro asynchronous response: " + e.getMessage());
 		}
 	}
@@ -231,7 +234,7 @@ public class SniroHomingV2 {
 	 * @throws Exception
 	 */
 	private RequestInfo buildRequestInfo(String requestId, String timeout) throws Exception{
-		log.trace("Building request information");
+		logger.trace("Building request information");
 		RequestInfo requestInfo = new RequestInfo();
 		if(requestId != null){
 			String host = env.getProperty("mso.workflow.message.endpoint");
@@ -256,7 +259,7 @@ public class SniroHomingV2 {
 	 *
 	 */
 	private ServiceInfo buildServiceInfo(ServiceInstance serviceInstance){
-		log.trace("Building service information");
+		logger.trace("Building service information");
 		ServiceInfo info = new ServiceInfo();
 		ModelInfoServiceInstance modelInfo = serviceInstance.getModelInfoServiceInstance();
 		if(isNotBlank(modelInfo.getModelInvariantUuid()) && isNotBlank(modelInfo.getModelUuid())){
@@ -281,14 +284,14 @@ public class SniroHomingV2 {
 	private PlacementInfo buildPlacementInfo(Customer customer, RequestParameters requestParams){
 		PlacementInfo placementInfo = new PlacementInfo();
 		if(customer != null){
-			log.debug("Adding subscriber to placement information");
+			logger.debug("Adding subscriber to placement information");
 			SubscriberInfo subscriber = new SubscriberInfo();
 			subscriber.setGlobalSubscriberId(customer.getGlobalCustomerId());
 			subscriber.setSubscriberName(customer.getSubscriberName());
 			subscriber.setSubscriberCommonSiteId(customer.getSubscriberCommonSiteId());
 			placementInfo.setSubscriberInfo(subscriber);
 			if(requestParams != null){
-				log.debug("Adding request parameters to placement information");
+				logger.debug("Adding request parameters to placement information");
 				placementInfo.setRequestParameters(requestParams.toJsonString());
 			}
 		}else{
@@ -303,12 +306,12 @@ public class SniroHomingV2 {
 	 *
 	 */
 	private List<Demand> buildPlacementDemands(ServiceInstance serviceInstance){
-		log.trace("Building placement information demands");
+		logger.trace("Building placement information demands");
 		List<Demand> placementDemands = new ArrayList<Demand>();
 
 		List<AllottedResource> allottedResourceList = serviceInstance.getAllottedResources();
 		if(!allottedResourceList.isEmpty()){
-			log.debug("Adding allotted resources to placement demands list");
+			logger.debug("Adding allotted resources to placement demands list");
 			for(AllottedResource ar : allottedResourceList){
 				if(isBlank(ar.getId())){
 					ar.setId(UUID.randomUUID().toString());
@@ -320,7 +323,7 @@ public class SniroHomingV2 {
 		}
 		List<VpnBondingLink> vpnBondingLinkList = serviceInstance.getVpnBondingLinks();
 		if(!vpnBondingLinkList.isEmpty()){
-			log.debug("Adding vpn bonding links to placement demands list");
+			logger.debug("Adding vpn bonding links to placement demands list");
 			for(VpnBondingLink vbl:vpnBondingLinkList){
 				List<ServiceProxy> serviceProxyList = vbl.getServiceProxies();
 				for(ServiceProxy sp : serviceProxyList){
@@ -341,11 +344,11 @@ public class SniroHomingV2 {
 	 *
 	 */
 	private List<Demand> buildLicenseDemands(ServiceInstance serviceInstance){
-		log.trace("Building license information");
+		logger.trace("Building license information");
 		List<Demand> licenseDemands = new ArrayList<Demand>();
 		List<GenericVnf> vnfList = serviceInstance.getVnfs();
 		if(!vnfList.isEmpty()){
-			log.debug("Adding vnfs to license demands list");
+			logger.debug("Adding vnfs to license demands list");
 			for(GenericVnf vnf : vnfList){
 				Demand demand = buildDemand(vnf.getVnfId(), vnf.getModelInfoGenericVnf());
 				licenseDemands.add(demand);
@@ -359,7 +362,7 @@ public class SniroHomingV2 {
 	 *
 	 */
 	private Demand buildDemand(String id, ModelInfoMetadata metadata){
-		log.debug("Building demand for service or resource: " + id);
+		logger.debug("Building demand for service or resource: " + id);
 		Demand demand = new Demand();
 		if(isNotBlank(id) && isNotBlank(metadata.getModelInstanceName())){
 			demand.setServiceResourceId(id);
@@ -431,7 +434,7 @@ public class SniroHomingV2 {
 	private void processLicenseSolution(ServiceInstance serviceInstance, JSONArray licenseSolutions){
 		List<GenericVnf> vnfs = serviceInstance.getVnfs();
 
-		log.debug("Processing the license solution");
+		logger.debug("Processing the license solution");
 		for(int i = 0; i < licenseSolutions.length(); i++){
 			JSONObject licenseSolution = licenseSolutions.getJSONObject(i);
 			for(GenericVnf vnf:vnfs){
@@ -460,7 +463,7 @@ public class SniroHomingV2 {
 		List<AllottedResource> allottes = serviceInstance.getAllottedResources();
 		List<GenericVnf> vnfs = serviceInstance.getVnfs();
 
-		log.debug("Processing placement solution " + i+1);
+		logger.debug("Processing placement solution " + i+1);
 		for(int p = 0; p < placements.length(); p++){
 			JSONObject placement = placements.getJSONObject(p);
 			SolutionInfo solutionInfo = new SolutionInfo();
@@ -508,7 +511,7 @@ public class SniroHomingV2 {
 	 *
 	 */
 	private ServiceInstance setSolution(SolutionInfo solutionInfo, JSONObject placement){
-		log.debug("Mapping placement solution");
+		logger.debug("Mapping placement solution");
 		String invalidMessage = "Sniro Managers Response contains invalid: ";
 
 		JSONObject solution = placement.getJSONObject("solution");
@@ -530,13 +533,13 @@ public class SniroHomingV2 {
 				si.setOrchestrationStatus(OrchestrationStatus.CREATED);
 				cloud.setLcpCloudRegionId(assignmentsMap.get("cloudRegionId"));
 				if(assignmentsMap.containsKey("vnfHostName")){
-					log.debug("Resources has been homed to a vnf");
+					logger.debug("Resources has been homed to a vnf");
 					GenericVnf vnf = setVnf(assignmentsMap);
 					vnf.setCloudRegion(cloud);
 					si.getVnfs().add(vnf);
 
 				}else if(assignmentsMap.containsKey("primaryPnfName")){
-					log.debug("Resources has been homed to a pnf");
+					logger.debug("Resources has been homed to a pnf");
 					Pnf priPnf = setPnf(assignmentsMap, "primary");
 					priPnf.setCloudRegion(cloud);
 					si.getPnfs().add(priPnf);
@@ -547,22 +550,22 @@ public class SniroHomingV2 {
 					}
 				}
 			}else{
-				log.debug(invalidMessage + IDENTIFIER_TYPE);
+				logger.debug(invalidMessage + IDENTIFIER_TYPE);
 				throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
 			}
 		}else if(type.equals("cloud")){
 			if(identifierType.equals(CandidateType.CLOUD_REGION_ID.toString())){
-				log.debug("Resources has been homed to a cloud region");
+				logger.debug("Resources has been homed to a cloud region");
 				cloud.setLcpCloudRegionId(identifierValue);
 				solutionInfo.setHomed(false);
 				solutionInfo.setTargetedCloudRegion(cloud);
 				si.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 			}else{
-				log.debug(invalidMessage + IDENTIFIER_TYPE);
+				logger.debug(invalidMessage + IDENTIFIER_TYPE);
 				throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
 			}
 		}else{
-			log.debug(invalidMessage + INVENTORY_TYPE);
+			logger.debug(invalidMessage + INVENTORY_TYPE);
 			throw new BpmnError(UNPROCESSABLE, invalidMessage + INVENTORY_TYPE);
 		}
 		si.setSolutionInfo(solutionInfo);

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,13 +48,14 @@ import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.client.orchestration.AAIVolumeGroupResources;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class AAIDeleteTasks {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AAIDeleteTasks.class);
+	private static final Logger logger = LoggerFactory.getLogger(AAIDeleteTasks.class);
 	
 	private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
 	private static String NETWORK_POLICY_FQDN_PARAM = "network-policy-fqdn";
@@ -177,7 +180,7 @@ public class AAIDeleteTasks {
 							if (networkPolicyList != null && !networkPolicyList.isEmpty()) {
 								NetworkPolicy networkPolicy = networkPolicyList.get(0);
 								String networkPolicyId = networkPolicy.getNetworkPolicyId();
-								msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId);								
+								logger.debug("Deleting network-policy with network-policy-id {}", networkPolicyId);
 								aaiNetworkResources.deleteNetworkPolicy(networkPolicyId);								
 							}							
 						}

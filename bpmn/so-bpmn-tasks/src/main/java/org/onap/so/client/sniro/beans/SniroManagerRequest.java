@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,20 +24,19 @@ package org.onap.so.client.sniro.beans;
 
 import java.io.Serializable;
 
-import org.onap.so.logger.MsoLogger;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class SniroManagerRequest implements Serializable{
 
 	private static final long serialVersionUID = -1541132882892163132L;
-	private static final MsoLogger log = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SniroManagerRequest.class);
+	private static final Logger logger = LoggerFactory.getLogger(SniroManagerRequest.class);
 
 	@JsonProperty("requestInfo")
 	private RequestInfo requestInformation;
@@ -82,7 +83,7 @@ public class SniroManagerRequest implements Serializable{
 		try{
 			json = ow.writeValueAsString(this);
 		}catch (Exception e){
-			log.error("Unable to convert SniroManagerRequest to string", e);
+			logger.error("Unable to convert SniroManagerRequest to string", e);
 		}
 		return json.replaceAll("\\\\", "");
 	}
