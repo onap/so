@@ -38,7 +38,7 @@ public class UpdateNetworkBBTest extends BaseBPMNTest {
     	assertThat(processInstance).isStarted().hasPassedInOrder(
     			"UpdateNetworkBB_Start", "SDNCChangeAssignNetwork", 
     			"QueryVpnBindingAAI", "QueryNetworkPolicyAAI", "QueryNetworkTableRefAAI", 
-    			"UpdateNetworkAdapter", "UpdateNetworkAAI", "UpdateNetworkBB_End");
+    			"Create_Network_ServiceTask", "CallActivity_NetworkAdapterRestV1", "ServiceTask_ProcessResponse", "Update_Network_AAI_ServiceTask", "UpdateNetworkBB_End");
     	assertThat(processInstance).isEnded();
     }
 

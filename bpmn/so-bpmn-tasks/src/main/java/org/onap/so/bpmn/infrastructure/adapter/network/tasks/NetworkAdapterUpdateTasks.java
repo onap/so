@@ -22,8 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
-import java.util.Optional;
-
+import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
@@ -31,6 +30,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.NetworkAdapterResources;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class NetworkAdapterUpdateTasks {
 	@Autowired
 	private ExtractPojosForBB extractPojosForBB;
 	@Autowired
-	private NetworkAdapterResources networkAdapterResources;
+	private NetworkAdapterObjectMapper networkAdapterObjectMapper;
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
 	
@@ -54,13 +54,22 @@ public class NetworkAdapterUpdateTasks {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
 			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-			Optional<UpdateNetworkResponse> oUpdateNetworkResponse = networkAdapterResources.updateNetwork(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), gBBInput.getOrchContext(), serviceInstance, l3Network, gBBInput.getUserInput(), gBBInput.getCustomer());
 			
-			if(oUpdateNetworkResponse.isPresent()) {
-				UpdateNetworkResponse updateNetworkResponse = oUpdateNetworkResponse.get();
-				execution.setVariable("NetworkAdapterUpdateNetworkResponse", updateNetworkResponse);
-			}
+			UpdateNetworkRequest updateNetworkRequest = networkAdapterObjectMapper.createNetworkUpdateRequestMapper(gBBInput.getRequestContext(), gBBInput.getCloudRegion(),  gBBInput.getOrchContext(), serviceInstance, l3Network, gBBInput.getUserInput(), gBBInput.getCustomer());
+			execution.setVariable("networkAdapterRequest", updateNetworkRequest);
+			
 		} catch(Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	public void processResponseFromOpenstack(BuildingBlockExecution execution) {
+		try {			
+			UpdateNetworkResponse updateNetworkResponse = execution.getVariable("updateNetworkResponse");
+			if(updateNetworkResponse == null) {
+				throw new Exception("No response was sent back from NetworkAdapterRestV1 subflow.");
+			}
+		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 	}
