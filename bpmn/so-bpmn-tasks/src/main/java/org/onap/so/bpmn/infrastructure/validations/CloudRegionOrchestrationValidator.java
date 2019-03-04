@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.validation.PreBuildingBlockValidator;
+import org.onap.so.bpmn.common.validation.Skip;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.slf4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+@Skip
 public class CloudRegionOrchestrationValidator implements PreBuildingBlockValidator {
 
 	private static Logger logger = LoggerFactory.getLogger(CloudRegionOrchestrationValidator.class);
