@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -66,7 +68,6 @@ import org.onap.so.apihandlerinfra.vnfbeans.VnfInputs;
 import org.onap.so.apihandlerinfra.vnfbeans.VnfRequest;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
-import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MessageEnum;
@@ -84,6 +85,8 @@ import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceException;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -107,7 +110,7 @@ public class MsoRequest {
 	@Autowired
 	private ResponseBuilder builder;
     
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH,MsoRequest.class);
+    private static Logger logger = LoggerFactory.getLogger(MsoRequest.class);
     
     public Response buildServiceErrorResponse (int httpResponseCode, MsoException exceptionType, 
     		String errorText, String messageId, List<String> variables, String version) {
@@ -150,8 +153,9 @@ public class MsoRequest {
         	mapper.setSerializationInclusion(Include.NON_DEFAULT);
         	requestErrorStr = mapper.writeValueAsString(re);
         }catch(Exception e){
-        	msoLogger.error (MessageEnum.APIH_VALIDATION_ERROR, "", "", MsoLogger.ErrorCode.DataError, "Exception in buildServiceErrorResponse writing exceptionType to string ", e);
-        }
+					logger.error("{} {} {}", MessageEnum.APIH_VALIDATION_ERROR.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+							"Exception in buildServiceErrorResponse writing exceptionType to string ", e);
+				}
 
         return builder.buildResponse(httpResponseCode, null, requestErrorStr, version);
     }
@@ -162,9 +166,9 @@ public class MsoRequest {
     public void parse (ServiceInstancesRequest sir, HashMap<String,String> instanceIdMap, Actions action, String version,
     		String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag) throws ValidationException, IOException {
     	
-        msoLogger.debug ("Validating the Service Instance request");
+        logger.debug ("Validating the Service Instance request");
         List<ValidationRule> rules = new ArrayList<>();
-        msoLogger.debug ("Incoming version is: " + version + " coverting to int: " + reqVersion);
+        logger.debug ("Incoming version is: {} coverting to int: {}", version, reqVersion);
 	    RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();
         ValidationInformation info = new ValidationInformation(sir, instanceIdMap, action,
         		reqVersion, aLaCarteFlag, requestParameters);
@@ -249,9 +253,7 @@ public class MsoRequest {
           	  }
 
             }catch(Exception e){
-                //msoLogger.error (MessageEnum.APIH_VALIDATION_ERROR, e);
                 throw new ValidationException ("QueryParam ServiceInfo", e);
-
         	}
 
         }
@@ -382,9 +384,10 @@ public class MsoRequest {
             aq.setRequestStatus (status.toString ());
             aq.setLastModifiedBy (Constants.MODIFIED_BY_APIHANDLER);           
         } catch (Exception e) {
-        	msoLogger.error (MessageEnum.APIH_DB_INSERT_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception when creation record request", e);
-        
-            if (!status.equals (Status.FAILED)) {
+					logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+						"Exception when creation record request", e);
+
+					if (!status.equals (Status.FAILED)) {
                 throw e;
             }
         }
@@ -421,9 +424,10 @@ public class MsoRequest {
            aq.setLastModifiedBy (Constants.MODIFIED_BY_APIHANDLER);
                   
        } catch (Exception e) {
-       	msoLogger.error (MessageEnum.APIH_DB_INSERT_EXC, "", "", MsoLogger.ErrorCode.DataError, "Exception when creation record request", e);
-       
-           if (!status.equals (Status.FAILED)) {
+				 logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+					 "Exception when creation record request", e);
+
+				 if (!status.equals (Status.FAILED)) {
                throw e;
            }
        }
@@ -447,9 +451,10 @@ public class MsoRequest {
             request.setRequestUrl(MDC.get(LogConstants.HTTP_URL));            
 			requestsDbClient.save(request);
         } catch (Exception e) {
-        	msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception when updating record in DB");
-            msoLogger.debug ("Exception: ", e);
-        }
+					logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
+						MsoLogger.ErrorCode.DataError.getValue(), "Exception when updating record in DB");
+					logger.debug("Exception: ", e);
+				}
     }
     
     
@@ -531,8 +536,9 @@ public class MsoRequest {
             return null;
 
         } catch (Exception e) {
-            msoLogger.error (MessageEnum.APIH_DOM2STR_ERROR, "", "", MsoLogger.ErrorCode.DataError, "Exception in domToStr", e);
-        }
+					logger.error("{} {} {}", MessageEnum.APIH_DOM2STR_ERROR.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+						"Exception in domToStr", e);
+				}
         return null;
     }
 
@@ -556,12 +562,12 @@ public class MsoRequest {
     	ObjectMapper mapper = new ObjectMapper();
     	mapper.setSerializationInclusion(Include.NON_NULL);
     	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
-    	msoLogger.debug ("building sir from object " + sir);
+    	logger.debug ("building sir from object {}", sir);
     	String requestJSON = mapper.writeValueAsString(sir);
     	
     	// Perform mapping from VID-style modelInfo fields to ASDC-style modelInfo fields
     	
-    	msoLogger.debug("REQUEST JSON before mapping: " + requestJSON);
+    	logger.debug("REQUEST JSON before mapping: {}", requestJSON);
     	// modelUuid = modelVersionId
     	requestJSON = requestJSON.replaceAll("\"modelVersionId\":","\"modelUuid\":");
     	// modelCustomizationUuid = modelCustomizationId
@@ -570,7 +576,7 @@ public class MsoRequest {
     	requestJSON = requestJSON.replaceAll("\"modelCustomizationName\":","\"modelInstanceName\":");
     	// modelInvariantUuid = modelInvariantId 
     	requestJSON = requestJSON.replaceAll("\"modelInvariantId\":","\"modelInvariantUuid\":");    	
-    	msoLogger.debug("REQUEST JSON after mapping: " + requestJSON);
+    	logger.debug("REQUEST JSON after mapping: {}", requestJSON);
     	
     	return requestJSON;
     }

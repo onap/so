@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,7 +24,8 @@ package org.onap.so.apihandler.recipe;
 
 import java.io.IOException;
 
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
@@ -31,15 +34,12 @@ import org.springframework.web.client.ResponseErrorHandler;
 
 public class CamundaClientErrorHandler implements ResponseErrorHandler{
 	
-	 private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, CamundaClientErrorHandler.class);
+	 private static Logger logger = LoggerFactory.getLogger(CamundaClientErrorHandler.class);
 	
 	  @Override
 	  public void handleError(ClientHttpResponse response) throws IOException {
-		    
-			msoLogger.debug(response.getBody().toString());
-			//msoLogger.recordMetricEvent(startTime, MsoLogger.StatusCode.ERROR,
-		//			MsoLogger.ResponseCode.CommunicationError, e.getMessage(), "BPMN", fullURL, null);
-	  }
+			logger.debug(response.getBody().toString());
+		}
 
 	  @Override
 	  public boolean hasError(ClientHttpResponse response) throws IOException {

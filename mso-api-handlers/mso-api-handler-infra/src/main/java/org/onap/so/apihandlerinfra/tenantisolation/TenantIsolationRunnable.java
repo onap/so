@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +37,8 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.OperationalEnvironment;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
-import org.slf4j.MDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Async;
@@ -45,7 +48,7 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class TenantIsolationRunnable {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, TenantIsolationRunnable.class);
+	private static final Logger logger = LoggerFactory.getLogger(TenantIsolationRunnable.class);
 	
 	@Autowired 
 	private RequestsDBHelper requestDb; 
@@ -62,8 +65,9 @@ public class TenantIsolationRunnable {
 	
 	@Async
 	public void run(Action action, String operationalEnvType, CloudOrchestrationRequest cor, String requestId) throws ApiException {
-		
-		msoLogger.debug ("Starting threadExecution in TenantIsolationRunnable for Action " + action.name() + " and OperationalEnvType: " + operationalEnvType);
+
+		logger.debug("Starting threadExecution in TenantIsolationRunnable for Action {} and OperationalEnvType: {}",
+			action.name(), operationalEnvType);
 		try {
 			
 			if(Action.create.equals(action)) {
@@ -74,7 +78,8 @@ public class TenantIsolationRunnable {
 				} else {
                     ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
                     ValidateException validateException = new ValidateException.Builder("Invalid OperationalEnvironment Type specified for Create Action",
-                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
+											.build();
 
                     throw validateException;
 				}

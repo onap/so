@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,7 +56,8 @@ import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -68,7 +71,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value="/onap/so/infra/cloudResources",description="API Requests for cloud resources - Tenant Isolation")
 public class CloudOrchestration {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, CloudOrchestration.class);
+	private static Logger logger = LoggerFactory.getLogger(CloudOrchestration.class);
 	private static final String ENVIRONMENT_ID_KEY = "operationalEnvironmentId";
 	
 	@Autowired
@@ -87,7 +90,7 @@ public class CloudOrchestration {
 	@ApiOperation(value="Create an Operational Environment",response=Response.class)
 	@Transactional
 	public Response createOperationEnvironment(String request, @PathParam("version") String version, @Context ContainerRequestContext requestContext) throws ApiException{
-		msoLogger.debug("Received request to Create Operational Environment");
+		logger.debug("Received request to Create Operational Environment");
 		return cloudOrchestration(request, Action.create, null, version, getRequestId(requestContext));
 	}
 
@@ -99,7 +102,7 @@ public class CloudOrchestration {
 	@Transactional
 	public Response activateOperationEnvironment(String request, @PathParam("version") String version, @PathParam("operationalEnvironmentId") String operationalEnvironmentId,
 												@Context ContainerRequestContext requestContext) throws ApiException{
-		msoLogger.debug("Received request to Activate an Operational Environment");
+		logger.debug("Received request to Activate an Operational Environment");
 		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put(ENVIRONMENT_ID_KEY, operationalEnvironmentId);
 		return cloudOrchestration(request, Action.activate, instanceIdMap, version, getRequestId(requestContext));
@@ -112,7 +115,7 @@ public class CloudOrchestration {
 	@ApiOperation(value="Deactivate an Operational Environment",response=Response.class)
 	@Transactional
 	public Response deactivateOperationEnvironment(String request, @PathParam("version") String version, @PathParam("operationalEnvironmentId") String operationalEnvironmentId, @Context ContainerRequestContext requestContext) throws ApiException{
-		msoLogger.debug("Received request to Deactivate an Operational Environment");
+		logger.debug("Received request to Deactivate an Operational Environment");
 		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put(ENVIRONMENT_ID_KEY, operationalEnvironmentId);
 		return cloudOrchestration(request, Action.deactivate, instanceIdMap, version, getRequestId(requestContext));
@@ -120,8 +123,7 @@ public class CloudOrchestration {
 
 
 	private Response cloudOrchestration(String requestJSON, Action action, HashMap<String, String> instanceIdMap, String version, String requestId) throws ApiException{
-		MsoLogger.setLogContext(requestId, null);
-	    msoLogger.info(MessageEnum.APIH_GENERATED_REQUEST_ID, requestId, "", "");
+		logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
 		long startTime = System.currentTimeMillis ();
 		CloudOrchestrationRequest cor = null;
 		tenantIsolationRequest.setRequestId(requestId);
@@ -168,8 +170,6 @@ public class CloudOrchestration {
 		if(instanceIdMap != null && instanceIdMap.get(ENVIRONMENT_ID_KEY) != null) {
 			instanceId = instanceIdMap.get(ENVIRONMENT_ID_KEY);
 		} else {
-			instanceId = UUIDChecker.generateUUID(msoLogger);
-			tenantIsolationRequest.setOperationalEnvironmentId(instanceId);
 			cor.setOperationalEnvironmentId(instanceId);
 		}
 
@@ -217,7 +217,7 @@ public class CloudOrchestration {
 	private CloudOrchestrationRequest convertJsonToCloudOrchestrationRequest(String requestJSON, Action action, long startTime,
                                                                              CloudOrchestrationRequest cor) throws ApiException {
 		try{
-			msoLogger.debug("Converting incoming JSON request to Object");
+			logger.debug("Converting incoming JSON request to Object");
 			ObjectMapper mapper = new ObjectMapper();
 			return mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
 		} catch(IOException e){

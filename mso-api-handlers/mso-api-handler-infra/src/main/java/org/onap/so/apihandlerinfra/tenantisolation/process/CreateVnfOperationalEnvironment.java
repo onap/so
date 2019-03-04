@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,6 +50,8 @@ import org.onap.so.client.grm.beans.Version;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +60,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
 public class CreateVnfOperationalEnvironment {
 	
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, CreateVnfOperationalEnvironment.class);
+	private static Logger logger = LoggerFactory.getLogger(CreateVnfOperationalEnvironment.class);
 	protected CloudOrchestrationRequest request;
 	
 	@Autowired 
@@ -78,7 +82,7 @@ public class CreateVnfOperationalEnvironment {
 			OperationalEnvironment aaiEnv = aaiResultWrapper.asBean(OperationalEnvironment.class).get();
 
 			//Find ECOMP environments in GRM
-			msoLogger.debug(" Start of GRM findRunningServicesAsString");
+			logger.debug(" Start of GRM findRunningServicesAsString");
 			String searchKey = getSearchKey(aaiEnv);
 			String tenantContext = getTenantContext().toUpperCase();
 			String jsonResponse = getGrmClient().findRunningServicesAsString(searchKey, 1, tenantContext);
@@ -92,7 +96,7 @@ public class CreateVnfOperationalEnvironment {
 			int ctr = 0;
 			int total = serviceEndpointRequestList.size();
 			for (ServiceEndPointRequest requestList : serviceEndpointRequestList) {
-				msoLogger.debug("Creating endpoint " + ++ctr + " of " + total + ": " + requestList.getServiceEndPoint().getName());
+				logger.debug("Creating endpoint " + ++ctr + " of " + total + ": " + requestList.getServiceEndPoint().getName());
 				getGrmClient().addServiceEndPoint(requestList);
 			}
 
@@ -137,7 +141,7 @@ public class CreateVnfOperationalEnvironment {
 	
 	private List<ServiceEndPointRequest> buildEndPointRequestList(ServiceEndPointList serviceEndPointList) throws TenantIsolationException {
 		List<ServiceEndPoint> endpointList = serviceEndPointList.getServiceEndPointList();
-		msoLogger.debug("Number of service endpoints from GRM: " + endpointList.size());
+		logger.debug("Number of service endpoints from GRM: {}", endpointList.size());
 		List<ServiceEndPointRequest> serviceEndPointRequestList = new ArrayList<ServiceEndPointRequest>(); 
 		for(ServiceEndPoint serviceEndpoint : endpointList) {
 			serviceEndPointRequestList.add(buildServiceEndpoint(serviceEndpoint));

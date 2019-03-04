@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,7 +62,8 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -74,7 +77,7 @@ import io.swagger.annotations.ApiOperation;
 @Api(value="onap/so/infra/cloudResourcesRequests",description="API GET Requests for cloud resources - Tenant Isolation")
 public class CloudResourcesOrchestration {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, CloudResourcesOrchestration.class);
+	private static Logger logger = LoggerFactory.getLogger(CloudResourcesOrchestration.class);
 
 	@Autowired
 	RequestsDbClient requestDbClient;
@@ -94,7 +97,7 @@ public class CloudResourcesOrchestration {
 
 		CloudOrchestrationRequest cor = null;
 
-		msoLogger.debug ("requestId is: " + requestId);
+		logger.debug ("requestId is: " + requestId);
 		
 		try{
 			ObjectMapper mapper = new ObjectMapper();
@@ -156,7 +159,6 @@ public class CloudResourcesOrchestration {
 	@Transactional
 	public Response getOperationEnvironmentStatusFilter(@Context UriInfo ui, @PathParam("version") String version ) throws ApiException{
 		MsoLogger.setServiceName ("getOperationEnvironmentStatusFilter");
-		UUIDChecker.generateUUID(msoLogger);
 
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 		List<String> requestIdKey = queryParams.get("requestId");

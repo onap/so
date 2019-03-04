@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,27 +22,20 @@
 
 package org.onap.so.apihandlerinfra;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
-import org.onap.so.logger.MsoLogger;
-import org.onap.so.logger.MsoLogger.Catalog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.Sql.ExecutionPhase;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
@@ -55,7 +50,7 @@ import java.nio.file.Paths;
 @Transactional
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseTest {
-	protected MsoLogger logger = MsoLogger.getMsoLogger(Catalog.GENERAL, BaseTest.class);
+	protected Logger logger = LoggerFactory.getLogger(BaseTest.class);
 	protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
 	@Autowired

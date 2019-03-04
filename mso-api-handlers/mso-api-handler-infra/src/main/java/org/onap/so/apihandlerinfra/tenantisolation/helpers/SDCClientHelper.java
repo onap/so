@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,13 +41,15 @@ import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.TargetEntity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SDCClientHelper {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, SDCClientHelper.class);
+	private static Logger logger = LoggerFactory.getLogger(SDCClientHelper.class);
 	private static final String SDC_CONTENT_TYPE = "application/json";
 	private static final String SDC_ACCEPT_TYPE = "application/json";
 	private static String PARTIAL_SDC_URI = "/sdc/v1/catalog/services/";
@@ -106,9 +110,9 @@ public class SDCClientHelper {
 			sdcResponseJsonObj = enhanceJsonResponse(new JSONObject(responseData), statusCode);
 
 		} catch (Exception ex) {
-			msoLogger.debug("calling SDC Exception message: " + ex.getMessage());
+			logger.debug("calling SDC Exception message: {}", ex.getMessage());
 			String errorMessage = " Encountered Error while calling SDC POST Activate. " + ex.getMessage();
-			msoLogger.debug(errorMessage);
+			logger.debug(errorMessage);
 			sdcResponseJsonObj.put("statusCode", String.valueOf(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode()));
 			sdcResponseJsonObj.put("messageId", "");
 			sdcResponseJsonObj.put("message", errorMessage);
@@ -217,7 +221,7 @@ public class SDCClientHelper {
 
 		}
 		catch (Exception e) {
-			msoLogger.debug("Failed to decrypt credentials: " + toDecrypt, e);
+			logger.debug("Failed to decrypt credentials: {}", toDecrypt, e);
 		}
 		return result;
 	}

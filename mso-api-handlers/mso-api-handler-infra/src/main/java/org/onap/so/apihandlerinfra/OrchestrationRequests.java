@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,6 +65,8 @@ import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.RequestList;
 import org.onap.so.serviceinstancebeans.RequestStatus;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -76,7 +80,7 @@ import io.swagger.annotations.ApiOperation;
 @Component
 public class OrchestrationRequests {
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, OrchestrationRequests.class);
+    private static Logger logger = LoggerFactory.getLogger(OrchestrationRequests.class);
     
 
     @Autowired
@@ -106,7 +110,7 @@ public class OrchestrationRequests {
 	        requestProcessingData = requestsDbClient.getRequestProcessingDataBySoRequestId(requestId);
 
 		} catch (Exception e) {
-		    msoLogger.error(e);
+		    logger.error("Exception occurred", e);
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.AvailabilityError).build();
 
 
@@ -164,7 +168,7 @@ public class OrchestrationRequests {
 				throw new ValidationException("At least one filter query param must be specified");
 			}
 		}catch(ValidationException ex){
-		    msoLogger.error(ex);
+		    logger.error("Exception occurred", ex);
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.DataError).build();
 			ValidateException validateException = new ValidateException.Builder(ex.getMessage(),
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).cause(ex).errorInfo(errorLoggerInfo).build();
@@ -202,7 +206,7 @@ public class OrchestrationRequests {
 	public Response unlockOrchestrationRequest(String requestJSON, @PathParam("requestId") String requestId, @PathParam("version") String version) throws ApiException{
 
 		long startTime = System.currentTimeMillis ();
-		msoLogger.debug ("requestId is: " + requestId);
+		logger.debug ("requestId is: {}", requestId);
 		ServiceInstancesRequest sir = null;
 
 		InfraActiveRequests infraActiveRequest = null;
@@ -212,7 +216,7 @@ public class OrchestrationRequests {
 			ObjectMapper mapper = new ObjectMapper();
 			sir = mapper.readValue(requestJSON, ServiceInstancesRequest.class);
 		} catch(IOException e){
-		    msoLogger.error(e);
+		    logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
             ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
                     HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
@@ -223,7 +227,7 @@ public class OrchestrationRequests {
 		try{
 			msoRequest.parseOrchestration(sir);
 		} catch (Exception e) {
-		    msoLogger.error(e);
+		    logger.error("Exception occurred", e);
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
 			 ValidateException validateException = new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
 	                 .errorInfo(errorLoggerInfo).build();
@@ -319,7 +323,7 @@ public class OrchestrationRequests {
 				   requestDetails = mapper.readValue(requestBody, RequestDetails.class);
 			   }
 		   } catch (IOException e) {
-		       msoLogger.error(e);
+		       logger.error("Exception occurred", e);
 			   ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
 			   ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : ",
 					   HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();

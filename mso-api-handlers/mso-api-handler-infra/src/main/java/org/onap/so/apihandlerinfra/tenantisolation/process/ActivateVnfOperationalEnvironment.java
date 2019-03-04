@@ -50,6 +50,8 @@ import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -58,7 +60,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActivateVnfOperationalEnvironment {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, ActivateVnfOperationalEnvironment.class);
+	private static final Logger logger = LoggerFactory.getLogger(ActivateVnfOperationalEnvironment.class);
 	private static final int DEFAULT_ACTIVATE_RETRY_COUNT = 3;
 	private static final String DISTRIBUTION_STATUS_SENT = "SENT";	
 	private static final String OPER_ENVIRONMENT_ID_KEY = "operational-environment-id";
@@ -100,12 +102,12 @@ public class ActivateVnfOperationalEnvironment {
 			   ecompOperationalEnvironmentId = operationalEnvironments.get(0).getURIKeys().get(OPER_ENVIRONMENT_ID_KEY);
 		   }
 		}
-		msoLogger.debug("  vnfOperationalEnvironmentId   : " + vnfOperationalEnvironmentId);		
-		msoLogger.debug("  ecompOperationalEnvironmentId : " + ecompOperationalEnvironmentId);
+		logger.debug("  vnfOperationalEnvironmentId   : {}", vnfOperationalEnvironmentId);
+		logger.debug("  ecompOperationalEnvironmentId : {}", ecompOperationalEnvironmentId);
 
 		OperationalEnvironment operationalEnv = wrapper.asBean(OperationalEnvironment.class).get();
 		String workloadContext = operationalEnv.getWorkloadContext();
-		msoLogger.debug("  aai workloadContext: " + workloadContext);
+		logger.debug("  aai workloadContext: {}", workloadContext);
 		if (!vidWorkloadContext.equals(workloadContext)) {
 			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
 			throw new ValidateException.Builder(" The vid workloadContext did not match from aai record. " + " vid workloadContext:" + vidWorkloadContext + " aai workloadContext:" + workloadContext,
