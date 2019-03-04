@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -23,6 +25,9 @@ package org.onap.so.apihandlerinfra;
 
 import java.net.URI;
 import java.util.Collections;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -38,13 +43,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 
-import java.util.UUID;
 import org.apache.http.HttpStatus;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -59,16 +61,16 @@ import io.swagger.annotations.ApiOperation;
 @Path("/globalhealthcheck")
 @Api(value="/globalhealthcheck",description="APIH Infra Global Health Check")
 public class GlobalHealthcheckHandler {
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, GlobalHealthcheckHandler.class);
-    private static final String CONTEXTPATH_PROPERTY = "management.context-path";    
-    private static final String PROPERTY_DOMAIN	 = "mso.health.endpoints";    
-    private static final String CATALOGDB_PROPERTY = PROPERTY_DOMAIN+".catalogdb";
-	private static final String REQUESTDB_PROPERTY = PROPERTY_DOMAIN+".requestdb";
-	private static final String SDNC_PROPERTY = PROPERTY_DOMAIN+".sdnc";
-	private static final String OPENSTACK_PROPERTY = PROPERTY_DOMAIN+".openstack";
-	private static final String BPMN_PROPERTY = PROPERTY_DOMAIN+".bpmn";
-	private static final String ASDC_PROPERTY = PROPERTY_DOMAIN+".asdc";
-	private static final String REQUESTDBATTSVC_PROPERTY = PROPERTY_DOMAIN+".requestdbattsvc";
+	private static Logger logger = LoggerFactory.getLogger(GlobalHealthcheckHandler.class);
+	private static final String CONTEXTPATH_PROPERTY = "management.context-path";
+	private static final String PROPERTY_DOMAIN = "mso.health.endpoints";
+	private static final String CATALOGDB_PROPERTY = PROPERTY_DOMAIN + ".catalogdb";
+	private static final String REQUESTDB_PROPERTY = PROPERTY_DOMAIN + ".requestdb";
+	private static final String SDNC_PROPERTY = PROPERTY_DOMAIN + ".sdnc";
+	private static final String OPENSTACK_PROPERTY = PROPERTY_DOMAIN + ".openstack";
+	private static final String BPMN_PROPERTY = PROPERTY_DOMAIN + ".bpmn";
+	private static final String ASDC_PROPERTY = PROPERTY_DOMAIN + ".asdc";
+	private static final String REQUESTDBATTSVC_PROPERTY = PROPERTY_DOMAIN + ".requestdbattsvc";
 	private static final String DEFAULT_PROPERTY_VALUE = "";
 	
     // e.g. /manage
@@ -117,7 +119,7 @@ public class GlobalHealthcheckHandler {
             // Generated RequestId
             String requestId = requestContext.getProperty("requestId").toString();
             MsoLogger.setLogContext(requestId, null);
-            msoLogger.info(MessageEnum.APIH_GENERATED_REQUEST_ID, requestId, "", "");
+            logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
             
             // set APIH status, this is the main entry point
             rsp.setApih(HealthcheckStatus.UP.toString());
@@ -137,14 +139,14 @@ public class GlobalHealthcheckHandler {
             rsp.setRequestdbAdapterAttsvc(querySubsystemHealth(MsoSubsystems.REQUESTDBATT));
             // set Message
             rsp.setMessage(String.format("HttpStatus: %s", HttpStatus.SC_OK));
-            msoLogger.info(rsp.toString(), "", "");
+            logger.info(rsp.toString());
 
             HEALTH_CHECK_RESPONSE = Response.status (HttpStatus.SC_OK)
                     .entity (rsp)
                     .build ();
             
     	}catch (Exception ex){
-    		msoLogger.error(ex);
+    		logger.error("Exception occurred", ex);
     		rsp.setMessage(ex.getMessage());
             HEALTH_CHECK_RESPONSE = Response.status (HttpStatus.SC_INTERNAL_SERVER_ERROR)
                     .entity (rsp)
@@ -170,7 +172,7 @@ public class GlobalHealthcheckHandler {
         	// build final endpoint url
 			UriBuilder builder = UriBuilder.fromPath(ept).path(actuatorContextPath).path(health);
 			URI uri = builder.build();
-        	msoLogger.info("Calculated URL: "+uri.toString(), "", "");        	
+        	logger.info("Calculated URL: {}", uri.toString());
             
             ResponseEntity<SubsystemHealthcheckResponse> result = 
             		restTemplate.exchange(uri, HttpMethod.GET, buildHttpEntityForRequest(), SubsystemHealthcheckResponse.class);
@@ -178,13 +180,13 @@ public class GlobalHealthcheckHandler {
     		return processResponseFromSubsystem(result,subsystem);
     		
     	}catch(Exception ex){
-			msoLogger.error("Exception occured in GlobalHealthcheckHandler.querySubsystemHealth() "+ ex);
+			logger.error("Exception occured in GlobalHealthcheckHandler.querySubsystemHealth() ", ex);
     		return HealthcheckStatus.DOWN.toString();
     	}
     }
 	protected String processResponseFromSubsystem(ResponseEntity<SubsystemHealthcheckResponse> result, MsoSubsystems subsystem){
         if(result == null || result.getStatusCodeValue() != HttpStatus.SC_OK){
-        	msoLogger.error(String.format("Globalhealthcheck: checking subsystem: %s failed ! result object is: %s", 
+        	logger.error(String.format("Globalhealthcheck: checking subsystem: %s failed ! result object is: %s",
         			subsystem,
         			result == null? "NULL": result));
         	return HealthcheckStatus.DOWN.toString();
@@ -196,7 +198,7 @@ public class GlobalHealthcheckHandler {
 		if("UP".equalsIgnoreCase(status)){
 			return HealthcheckStatus.UP.toString();
 		}else{
-			msoLogger.error(subsystem + ", query health endpoint did not return UP status!");
+			logger.error("{}, query health endpoint did not return UP status!", subsystem);
 			return HealthcheckStatus.DOWN.toString();
 		}
 	}

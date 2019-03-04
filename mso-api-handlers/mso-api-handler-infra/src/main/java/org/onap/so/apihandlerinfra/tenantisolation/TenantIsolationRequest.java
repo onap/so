@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,6 +51,8 @@ import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 
 import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -75,7 +79,7 @@ public class TenantIsolationRequest {
     @Autowired
 	private RequestsDbClient requestsDbClient;
     
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, TenantIsolationRequest.class);
+    private static Logger logger = LoggerFactory.getLogger(TenantIsolationRequest.class);
 
 
 	TenantIsolationRequest (String requestId) {
@@ -351,8 +355,9 @@ public class TenantIsolationRequest {
 			request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
 			requestsDbClient.save(request);
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_UPDATE_EXC, e.getMessage(), "", "", MsoLogger.ErrorCode.DataError, "Exception when updating record in DB");
-			msoLogger.debug ("Exception: ", e);
+			logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
+				MsoLogger.ErrorCode.DataError.getValue(), "Exception when updating record in DB");
+			logger.debug("Exception: ", e);
 		}
 	}
 	

@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,7 +27,6 @@ import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.apihandlerinfra.Constants;
 import org.onap.so.exceptions.ValidationException;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.InstanceDirection;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -33,11 +34,16 @@ import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RelatedInstancesValidation implements ValidationRule{
-    private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
-    }
+
+	private static Logger logger = LoggerFactory.getLogger(RelatedInstancesValidation.class);
+
+	private static boolean empty(String s) {
+		return (s == null || s.trim().isEmpty());
+	}
 	@Override
 	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
 		ServiceInstancesRequest sir = info.getSir();
@@ -50,7 +56,6 @@ public class RelatedInstancesValidation implements ValidationRule{
       	String vfModuleType = null;
       	String vfModuleModelName = null;
 		ModelInfo modelInfo = info.getSir().getRequestDetails().getModelInfo();
-	    MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, RelatedInstancesValidation.class);
 		RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
 		String serviceModelName = null;
         String vnfModelName = null;
@@ -229,7 +234,7 @@ public class RelatedInstancesValidation implements ValidationRule{
         		(reqVersion >= 4 && (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name ()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) && action == Action.updateInstance ||
         		(requestScope.equalsIgnoreCase(ModelType.vfModule.name ()) && action == Action.scaleOut)) ||
         			(requestScope.equalsIgnoreCase(ModelType.service.name()) && (action.equals(Action.addRelationships) || action.equals(Action.removeRelationships)))){
-        	 msoLogger.debug ("related instance exception");
+        	 logger.debug("related instance exception");
         	throw new ValidationException ("related instances");
         }
 	    if(instanceList == null && requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString()) && action == Action.createInstance){

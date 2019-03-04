@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,13 +34,15 @@ import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientObjectBuilde
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CreateEcompOperationalEnvironment {
 	
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.APIH, CreateEcompOperationalEnvironment.class);
+	private static Logger logger = LoggerFactory.getLogger(CreateEcompOperationalEnvironment.class);
     
 	@Autowired 
 	private AAIClientObjectBuilder aaiClientObjectBuilder;
@@ -56,11 +60,12 @@ public class CreateEcompOperationalEnvironment {
 
 			// Call client to publish to DMaap
         try {
-        	msoLogger.debug("1" + request.getOperationalEnvironmentId());
-        	msoLogger.debug("2" + request.getRequestDetails().getRequestInfo().getInstanceName());
-        	msoLogger.debug("3" + request.getRequestDetails().getRequestParameters().getOperationalEnvironmentType().toString());
-        	msoLogger.debug("4" + request.getRequestDetails().getRequestParameters().getTenantContext());
-        	msoLogger.debug("5" + request.getRequestDetails().getRequestParameters().getWorkloadContext());
+					logger.debug("1 {}", request.getOperationalEnvironmentId());
+					logger.debug("2 {}", request.getRequestDetails().getRequestInfo().getInstanceName());
+					logger.debug("3 {}", request.getRequestDetails().getRequestParameters().getOperationalEnvironmentType()
+						.toString());
+					logger.debug("4 {}", request.getRequestDetails().getRequestParameters().getTenantContext());
+					logger.debug("5 {}", request.getRequestDetails().getRequestParameters().getWorkloadContext());
 
 
             dmaapClient.dmaapPublishOperationalEnvRequest(request.getOperationalEnvironmentId(),

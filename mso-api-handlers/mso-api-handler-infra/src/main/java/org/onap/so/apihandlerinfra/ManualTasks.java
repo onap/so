@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,6 +57,8 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -68,7 +72,7 @@ import io.swagger.annotations.ApiOperation;
 @Path("/tasks")
 @Component
 public class ManualTasks {
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, ManualTasks.class);
+	private static Logger logger = LoggerFactory.getLogger(ManualTasks.class);
 
 	
 	@org.springframework.beans.factory.annotation.Value("${mso.camunda.rest.task.uri}")
@@ -94,9 +98,9 @@ public class ManualTasks {
 		
 		String requestId = requestContext.getProperty("requestId").toString();
         MsoLogger.setLogContext(requestId, null);
-        msoLogger.info(MessageEnum.APIH_GENERATED_REQUEST_ID, requestId, "", "");
+        logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
 		long startTime = System.currentTimeMillis ();
-		msoLogger.debug ("requestId is: " + requestId);
+		logger.debug ("requestId is: {}", requestId);
 		TasksRequest taskRequest = null;
 		String apiVersion = version.substring(1);
 		
@@ -203,9 +207,7 @@ public class ManualTasks {
 
 		// BPEL accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_NO_CONTENT || bpelStatus == HttpStatus.SC_ACCEPTED) {			
-			msoLogger.debug ("Received good response from Camunda");
-		
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "BPMN completed the request");
+			logger.debug ("Received good response from Camunda");
 			TaskRequestReference trr = new TaskRequestReference();
 			trr.setTaskId(taskId);
 			String completeResp = null;
@@ -224,8 +226,8 @@ public class ManualTasks {
 
                 throw validateException;
 			}
-			msoLogger.debug("Response to the caller: " + completeResp);			
-			msoLogger.debug ("End of the transaction, the final response is: " + (String) completeResp);
+			logger.debug("Response to the caller: {}", completeResp);
+			logger.debug ("End of the transaction, the final response is: {}", completeResp);
 			return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, completeResp, apiVersion);
 		} else {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();

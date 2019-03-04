@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -83,6 +85,8 @@ import org.onap.so.serviceinstancebeans.VfModules;
 import org.onap.so.serviceinstancebeans.Vnfs;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
@@ -126,7 +130,7 @@ import java.util.Optional;
 @Api(value="/onap/so/infra/serviceInstantiation",description="Infrastructure API Requests for Service Instances")
 public class ServiceInstances {
 
-	private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH,MsoRequest.class);
+	private static Logger logger = LoggerFactory.getLogger(MsoRequest.class);
 	private static String NAME = "name";
 	private static String VALUE = "value";
 	private static final String SAVE_TO_DB = "save instance to db";
@@ -893,7 +897,7 @@ public class ServiceInstances {
 		try {
 			validateHeaders(requestContext);
 		} catch (ValidationException e) {
-			msoLogger.error(e);
+			logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                         .errorInfo(errorLoggerInfo).build();
@@ -1016,7 +1020,7 @@ public class ServiceInstances {
             respHandler = new ResponseHandler (response, requestClient.getType ());
             bpelStatus = respHandler.getStatus ();
         } catch (ApiException e) {
-            msoLogger.error(e);
+            logger.error("Exception occurred", e);
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ValidateException validateException = new ValidateException.Builder("Exception caught mapping Camunda JSON response to object", HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                         .errorInfo(errorLoggerInfo).build();
@@ -1041,7 +1045,7 @@ public class ServiceInstances {
 					    jsonResponse.getRequestReferences().setRequestSelfLink(null);
 					}    
 				} catch (IOException e) {
-					msoLogger.error(e);
+					logger.error("Exception occurred", e);
 					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 					ValidateException validateException = new ValidateException.Builder("Exception caught mapping Camunda JSON response to object", HttpStatus.SC_NOT_ACCEPTABLE, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
 			                    .errorInfo(errorLoggerInfo).build();
@@ -1130,7 +1134,7 @@ public class ServiceInstances {
 		    	sir.getRequestDetails().setCloudConfiguration(serviceInstRequest.getRequestDetails().getCloudConfiguration());
 		    	sir.getRequestDetails().getRequestParameters().setUserParams(serviceInstRequest.getRequestDetails().getRequestParameters().getUserParams());
 	    	}
-	    	msoLogger.debug("Value as string: " + mapper.writeValueAsString(sir));
+	    	logger.debug("Value as string: {}", mapper.writeValueAsString(sir));
 	    	return mapper.writeValueAsString(sir);
     	}
     	return null;
@@ -1214,7 +1218,7 @@ public class ServiceInstances {
        			headers.add(HttpHeaders.AUTHORIZATION, "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
        		}
         } catch(GeneralSecurityException e) {
-                msoLogger.error("Security exception", e);
+                logger.error("Security exception", e);
         }
 		return headers;
 	}
@@ -1453,7 +1457,7 @@ public class ServiceInstances {
 	}
 
 	protected List<Map<String, Object>> configureUserParams(RequestParameters reqParams) throws IOException {
-    	msoLogger.debug("Configuring UserParams for Macro Request");
+    	logger.debug("Configuring UserParams for Macro Request");
     	Map<String, Object> userParams = new HashMap<>();
     	
     	for(Map<String, Object> params : reqParams.getUserParams()){
@@ -1789,7 +1793,7 @@ public class ServiceInstances {
 			testApi = TestApi.valueOf(requestTestApi);
 			return Optional.of(testApi.getModelName());
 		} catch (Exception e) {
-			msoLogger.warnSimple("Catching the exception on the valueOf enum call and continuing", e);
+			logger.warn("Catching the exception on the valueOf enum call and continuing", e);
 			throw new IllegalArgumentException("Invalid TestApi is provided", e);
 		}
     }

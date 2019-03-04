@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,7 +57,8 @@ import org.onap.so.apihandlerinfra.tasksbeans.TasksGetResponse;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.logger.MsoLogger;
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -72,7 +75,7 @@ import io.swagger.annotations.ApiOperation;
 public class TasksHandler {
 
 
-    private static MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH,TasksHandler.class);
+    private static Logger logger = LoggerFactory.getLogger(TasksHandler.class);
        
     @Value("${mso.camunda.rest.task.uri}")
     private String requestUrl;
@@ -95,14 +98,9 @@ public class TasksHandler {
                                   @QueryParam("originalRequestDate") String originalRequestDate,
                                   @QueryParam("originalRequestorId") String originalRequestorId,
                                   @PathParam("version") String version) throws ApiException {
-    	Response responseBack = null;
-
-        String requestId = UUIDChecker.generateUUID(msoLogger);
-        MsoLogger.setServiceName ("ManualTasksQuery");
-        // Generate a Request Id
-        UUIDChecker.generateUUID(msoLogger);
+   	Response responseBack = null;
 		String apiVersion = version.substring(1);
-        
+
         // Prepare the query string to /task interface
         TaskVariables tv = new TaskVariables();
         
@@ -229,13 +227,9 @@ public class TasksHandler {
 			throw validateException;
 		}
 		
-		return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, jsonResponse, apiVersion);
+		return builder.buildResponse(HttpStatus.SC_ACCEPTED, "", jsonResponse, apiVersion);
     }    
 
-    protected MsoLogger getMsoLogger () {
-        return msoLogger;
-    }
-    
     // Makes a GET call to Camunda to get variables for this task
     private TaskList getTaskInfo(String taskId) throws ApiException{
     	TaskList taskList;
