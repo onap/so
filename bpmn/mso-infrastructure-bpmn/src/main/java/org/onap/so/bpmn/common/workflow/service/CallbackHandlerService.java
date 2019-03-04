@@ -50,12 +50,16 @@ public class CallbackHandlerService {
 	public static final long FAST_POLL_DUR_SECONDS = 5;
 	public static final long FAST_POLL_INT_MS = 100;
 	public static final long SLOW_POLL_INT_MS = 1000;
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(CallbackHandlerService.class);
 
+	private RuntimeService runtimeService;
+
 	@Autowired
-	RuntimeService runtimeService;
-	
+	public CallbackHandlerService(RuntimeService runtimeService) {
+		this.runtimeService = runtimeService;
+	}
+
 	/**
 	 * Parameterized callback handler.
 	 */
