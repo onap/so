@@ -83,6 +83,15 @@ public class ExecuteBuildingBlockRainyDay {
 			boolean aLaCarte = (boolean) execution.getVariable("aLaCarte");
 			boolean suppressRollback = (boolean) execution.getVariable("suppressRollback");
 			String handlingCode = "";
+			
+			WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+			try {
+				// Extract error data to be returned to WorkflowAction
+				execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
+			} catch (Exception e) {
+				logger.error("No WorkflowException Found",e);
+			}
+			
 			if (suppressRollback) {
 				handlingCode = "Abort";
 			} else {
@@ -103,7 +112,7 @@ public class ExecuteBuildingBlockRainyDay {
 				} catch (Exception ex) {
 					// keep default vnfType value
 				}
-				WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+				
 				String errorCode = ASTERISK;
 				try {
 					errorCode = "" + workflowException.getErrorCode();
@@ -123,12 +132,6 @@ public class ExecuteBuildingBlockRainyDay {
 					// keep default workStep value
 				}
 				
-				try {
-					// Extract error data to be returned to WorkflowAction
-					execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
-				} catch (Exception e) {
-					logger.error("No WorkflowException Found",e);
-				}
 				RainyDayHandlerStatus rainyDayHandlerStatus;
 				rainyDayHandlerStatus = catalogDbClient
 						.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
