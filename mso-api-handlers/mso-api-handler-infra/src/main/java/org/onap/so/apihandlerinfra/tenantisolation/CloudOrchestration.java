@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,6 +26,7 @@ package org.onap.so.apihandlerinfra.tenantisolation;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
+import java.util.UUID;
 
 import javax.inject.Provider;
 import javax.transaction.Transactional;
@@ -56,6 +57,7 @@ import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.onap.so.utils.UUIDChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,9 +73,9 @@ import io.swagger.annotations.ApiOperation;
 @Api(value="/onap/so/infra/cloudResources",description="API Requests for cloud resources - Tenant Isolation")
 public class CloudOrchestration {
 
-	private static Logger logger = LoggerFactory.getLogger(CloudOrchestration.class);
+	private static Logger logger = LoggerFactory.getLogger (CloudOrchestration.class);
 	private static final String ENVIRONMENT_ID_KEY = "operationalEnvironmentId";
-	
+
 	@Autowired
 	private TenantIsolationRequest tenantIsolationRequest ;
 
@@ -123,7 +125,8 @@ public class CloudOrchestration {
 
 
 	private Response cloudOrchestration(String requestJSON, Action action, HashMap<String, String> instanceIdMap, String version, String requestId) throws ApiException{
-		logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
+		MsoLogger.setLogContext(requestId, null);
+	    logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
 		long startTime = System.currentTimeMillis ();
 		CloudOrchestrationRequest cor = null;
 		tenantIsolationRequest.setRequestId(requestId);
@@ -170,6 +173,8 @@ public class CloudOrchestration {
 		if(instanceIdMap != null && instanceIdMap.get(ENVIRONMENT_ID_KEY) != null) {
 			instanceId = instanceIdMap.get(ENVIRONMENT_ID_KEY);
 		} else {
+			instanceId = UUID.randomUUID().toString();
+			tenantIsolationRequest.setOperationalEnvironmentId(instanceId);
 			cor.setOperationalEnvironmentId(instanceId);
 		}
 
