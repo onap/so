@@ -1,0 +1,132 @@
+{
+	"requestContext": {
+		"product-family-id": "productFamilyId",
+		"source": "source",
+		"requestor-id": "requestorId",
+		"mso-request-id": "requestId",
+		"subscription-service-type": "subscriptionServiceType",
+		"user-params": {
+						
+				"mns_vfw_protected_route_prefixes": [ {
+				"interface_route_table_routes_route" : "1.1.1.1/32"
+        		}, {
+          		"interface_route_table_routes_route" : "0::1/128"
+        	} ],
+        	"name1": "value1"
+				},
+		"action": "createInstance",
+		"callback-url": "callbackURL",
+		"requestParameters": {
+			"subscriptionServiceType": "subscriptionServiceType",
+			"userParams": [
+					
+					{
+			"name" : "mns_vfw_protected_route_prefixes",
+			"value" : [ {
+				"interface_route_table_routes_route" : "1.1.1.1/32"
+        		}, {
+          		"interface_route_table_routes_route" : "0::1/128"
+        	} ]
+        },
+        {
+						"name": "name1",
+						"value": "value1"
+					},
+					{
+						"ignore": "false",
+						"skip":	 "ignore"
+					}
+		]	
+	},
+	"configurationParameters": [ 
+         { 
+            "availability-zone":"$.vnf-topology.vnf-resource-assignments.availability-zones.availability-zone[0]", 
+            "xtz-123":"$.vnf-topology.vnf-resource-assignments.availability-zones.availability-zone[0]" 
+         } 
+     ]
+	},
+	"orchContext": {
+		"is-rollback-enabled": false
+	},
+	"cloudRegion": {
+		"lcp-cloud-region-id": "lcpCloudRegionId",
+		"cloud-owner": "test-owner-name",
+		"tenant-id": "tenantId",
+		"complex": "complexName"
+	},
+	"userInput": null,
+	"customer": {
+		"global-customer-id": "globalCustomerId",
+		"subscriber-name": "subscriberName",
+		"subscriber-type": "subscriberType",
+		"service-subscription": {
+			"service-type": "subscriptionServiceType",
+			"service-instances": [
+				{
+					"service-instance-id": "3655a595-05d1-433c-93c0-3afd6b572545",
+					"service-instance-name": "serviceInstanceName",
+					"orchestration-status": "PRECREATED",
+					"owning-entity": {
+						"owning-entity-id": "owningEntityId",
+						"owning-entity-name": "owningEntityName"
+					},
+					"project": {
+						"project-name": "projectName"
+					},
+					"vnfs": [],
+					"allotted-resources": [],
+					"networks": [],
+					"vhn-portal-url": null,
+					"service-instance-location-id": null,
+					"selflink": null,
+					"metadata": null,
+					"configurations": [],
+					"model-info-service-instance": {
+						"description": "description",
+						"created": null,
+						"model-name": "modelName",
+						"model-uuid": "modelUUID",
+						"model-invariant-uuid": "modelInvariantUUID",
+						"model-version": "modelVersion",
+						"service-type": "serviceType",
+						"service-role": "serviceRole",
+						"environment-context": "environmentContext",
+						"workload-context": "workloadContext"
+					}
+				}
+			]
+		}
+	},
+	"serviceInstance": {
+		"service-instance-id": "3655a595-05d1-433c-93c0-3afd6b572545",
+		"service-instance-name": "serviceInstanceName",
+		"orchestration-status": "PRECREATED",
+		"owning-entity": {
+			"owning-entity-id": "owningEntityId",
+			"owning-entity-name": "owningEntityName"
+		},
+		"project": {
+			"project-name": "projectName"
+		},
+		"vnfs": [],
+		"allotted-resources": [],
+		"networks": [],
+		"vhn-portal-url": null,
+		"service-instance-location-id": null,
+		"selflink": null,
+		"metadata": null,
+		"configurations": [],
+		"model-info-service-instance": {
+			"description": "description",
+			"created": null,
+			"model-name": "modelName",
+			"model-uuid": "modelUUID",
+			"model-invariant-uuid": "modelInvariantUUID",
+			"model-version": "modelVersion",
+			"service-type": "serviceType",
+			"service-role": "serviceRole",
+			"environment-context": "environmentContext",
+			"workload-context": "workloadContext"
+		}
+	}
+}

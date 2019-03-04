@@ -361,8 +361,8 @@ public class BBInputSetupMapperLayer {
 			List<Map<String, Object>> userParams = requestParameters.getUserParams();
 			for (Map<String, Object> userParamsMap : userParams) {
 				if ( userParamsMap.containsKey(USER_PARAM_NAME_KEY) && (userParamsMap.get(USER_PARAM_NAME_KEY) instanceof String)
-						&& userParamsMap.containsKey(USER_PARAM_VALUE_KEY) && (userParamsMap.get(USER_PARAM_VALUE_KEY) instanceof String)) {
-					userParamsResult.put((String) userParamsMap.get(USER_PARAM_NAME_KEY), (String) userParamsMap.get(USER_PARAM_VALUE_KEY));
+						&& userParamsMap.containsKey(USER_PARAM_VALUE_KEY)) {
+					userParamsResult.put((String) userParamsMap.get(USER_PARAM_NAME_KEY), userParamsMap.get(USER_PARAM_VALUE_KEY));
 				}
 			}
 		}

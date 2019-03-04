@@ -643,14 +643,16 @@ public class BBInputSetupMapperLayerTest {
 	@Test
 	public void testMapNameValueUserParams() throws IOException {		
 		RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetailsInput_mapReqContext.json"), RequestDetails.class);
-		Map<String,Object> actual = bbInputSetupMapperLayer.mapNameValueUserParams(requestDetails.getRequestParameters());
+		Map<String,Object> actual = bbInputSetupMapperLayer.mapNameValueUserParams(requestDetails.getRequestParameters());		
 
+		assertTrue(actual.containsKey("mns_vfw_protected_route_prefixes"));
+		assertTrue(actual.get("mns_vfw_protected_route_prefixes").toString().contains("interface_route_table_routes_route"));
+		assertTrue(actual.get("mns_vfw_protected_route_prefixes").toString().contains("1.1.1.1/32"));
+		assertTrue(actual.get("mns_vfw_protected_route_prefixes").toString().contains("0::1/128"));
 		assertTrue(actual.containsKey("name1"));
 		assertTrue(actual.containsValue("value1"));
 		assertTrue(actual.get("name1").equals("value1"));
-		assertTrue(actual.containsKey("name2"));
-		assertTrue(actual.containsValue("value2"));
-		assertTrue(actual.get("name2").equals("value2"));		
+				
 		assertFalse(actual.containsKey("ignore"));
 		assertFalse(actual.containsValue("ignore"));		
 	}
