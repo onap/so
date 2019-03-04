@@ -776,7 +776,7 @@ public class BBInputSetupTest {
 
 	@Test
 	public void testPopulateGBBWithSIAndAdditionalInfo() throws Exception {
-		GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpected.json"),
+		GeneralBuildingBlock expected = mapper.readValue(new File(RESOURCE_PATH + "GeneralBuildingBlockExpectedWUserParamsInfo.json"),
 				GeneralBuildingBlock.class);
 		ExecuteBuildingBlock executeBB = mapper.readValue(new File(RESOURCE_PATH + "ExecuteBuildingBlockSimple.json"),
 				ExecuteBuildingBlock.class);
