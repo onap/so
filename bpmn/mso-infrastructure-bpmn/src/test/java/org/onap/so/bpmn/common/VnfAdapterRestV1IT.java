@@ -1,9 +1,11 @@
 /*- 
- * ============LICENSE_START======================================================= 
+ * ============LICENSE_START=======================================================
  * ONAP - SO 
- * ================================================================================ 
+ * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
+ * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -38,7 +40,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.core.WorkflowException;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit tests for VnfAdapterRestV1.
@@ -46,7 +49,7 @@ import org.onap.so.logger.MsoLogger;
 
 public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,VnfAdapterRestV1IT.class);
+	Logger logger = LoggerFactory.getLogger(VnfAdapterRestV1IT.class);
 	
 
 	private static final String EOL = "\n";
@@ -256,7 +259,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 		waitForProcessEnd(businessKey, 10000);
 
 		String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
-		logger.debug("Response:\n" + response);
+		logger.debug("Response:\n{}", response);
 		assertTrue(response!=null && response.contains("<createVfModuleResponse>"));
 		assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 
@@ -285,7 +288,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 		waitForProcessEnd(businessKey, 10000);
 
 		String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
-		logger.debug("Response:\n" + response);
+		logger.debug("Response:\n{}", response);
 		assertTrue(response.contains("<updateVfModuleResponse>"));
 		assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 
@@ -314,7 +317,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 		waitForProcessEnd(businessKey, 10000);
 
 		String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
-		logger.debug("Response:\n" + response);
+		logger.debug("Response:\n{}", response);
 		assertTrue(response.contains("<deleteVfModuleResponse>"));
 		assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 
@@ -343,7 +346,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 		waitForProcessEnd(businessKey, 10000);
 
 		String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
-		logger.debug("Response:\n" + response);
+		logger.debug("Response:\n{}", response);
 		assertTrue(response.contains("<rollbackVfModuleResponse>"));
 		assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 
@@ -376,7 +379,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 		logger.debug(wfe.toString());
 
 		String response = (String) getVariableFromHistory(businessKey, "WorkflowResponse");
-		logger.debug("Response:\n" + response);
+		logger.debug("Response:\n{}", response);
 		assertTrue(response.contains("<vfModuleException>"));
 		assertFalse((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 

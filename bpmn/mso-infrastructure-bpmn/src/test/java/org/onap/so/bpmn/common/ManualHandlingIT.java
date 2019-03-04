@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,13 +35,14 @@ import org.camunda.bpm.engine.task.TaskQuery;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for RainyDayHandler.bpmn.
  */
 public class ManualHandlingIT extends BaseIntegrationTest {
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,ManualHandlingIT.class);
+	Logger logger = LoggerFactory.getLogger(ManualHandlingIT.class);
 	
 	@Test
 	public void  TestManualHandlingSuccess() {
@@ -76,8 +79,8 @@ public class ManualHandlingIT extends BaseIntegrationTest {
 		List<Task> tasks = q.orderByTaskCreateTime().asc().list();
 		
 		for (Task task : tasks) {
-			logger.debug("TASK ID: " + task.getId());
-			logger.debug("TASK NAME: " + task.getName());
+			logger.debug("TASK ID: {}", task.getId());
+			logger.debug("TASK NAME: {}", task.getName());
 			
 			try {
 				logger.debug("Completing the task");
@@ -85,7 +88,7 @@ public class ManualHandlingIT extends BaseIntegrationTest {
 				completeVariables.put("responseValue", "skip");
 				taskService.complete(task.getId(), completeVariables);
 			} catch(Exception e) {
-				logger.debug("GOT EXCEPTION: " + e.getMessage());
+				logger.debug("GOT EXCEPTION: {}", e.getMessage());
 			}
 		}
 		

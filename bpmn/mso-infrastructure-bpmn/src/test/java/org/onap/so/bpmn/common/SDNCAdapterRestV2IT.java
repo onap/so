@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +37,8 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit tests for SDNCAdapterRestV2.bpmn.
@@ -48,7 +51,7 @@ public class SDNCAdapterRestV2IT extends BaseIntegrationTest {
 
 	private final CallbackSet callbacks = new CallbackSet();
 
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,SDNCAdapterRestV2IT.class);
+	Logger logger = LoggerFactory.getLogger(SDNCAdapterRestV2IT.class);
 
 
 	/**

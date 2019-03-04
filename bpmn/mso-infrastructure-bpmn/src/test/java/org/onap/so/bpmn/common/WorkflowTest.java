@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -81,7 +83,8 @@ import org.onap.so.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowResource;
 import org.onap.so.bpmn.core.domain.Resource;
 import org.onap.so.bpmn.core.domain.ServiceDecomposition;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -106,7 +109,7 @@ import org.xml.sax.SAXException;
 
 public abstract class WorkflowTest {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, WorkflowTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowTest.class);
 
 	//TODO this is not used anymore, can maybe be removed
 	@Rule
@@ -165,14 +168,14 @@ public abstract class WorkflowTest {
 	 * Logs a test start method.
 	 */
 	protected void logStart() {
-		msoLogger.debug("STARTED TEST");
+		logger.debug("STARTED TEST");
 	}
 
 	/**
 	 * Logs a test end method.
 	 */
 	protected void logEnd() {
-		msoLogger.debug("ENDED TEST");
+		logger.debug("ENDED TEST");
 	}
 
 	/**
@@ -184,14 +187,14 @@ public abstract class WorkflowTest {
 	protected void invokeSubProcess(String processKey, String businessKey, Map<String, Object> injectedVariables) {
 		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
 		List<String> arguments = runtimeMxBean.getInputArguments();
-		msoLogger.debug("JVM args = " + arguments);
+		logger.debug("JVM args = {}", arguments);
 
 		msoRequestId = (String) injectedVariables.get("mso-request-id");
 		String requestId = (String) injectedVariables.get("msoRequestId");
 
 		if (msoRequestId == null && requestId == null) {
 			String msg = "mso-request-id variable was not provided";
-			msoLogger.debug(msg);
+			logger.debug(msg);
 			fail(msg);
 		}
 
@@ -205,14 +208,14 @@ public abstract class WorkflowTest {
 	protected String invokeSubProcess(String processKey,  Map<String, Object> injectedVariables) {
 		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
 		List<String> arguments = runtimeMxBean.getInputArguments();
-		msoLogger.debug("JVM args = " + arguments);
+		logger.debug("JVM args = {}", arguments);
 
 		msoRequestId = (String) injectedVariables.get("mso-request-id");
 		String requestId = (String) injectedVariables.get("msoRequestId");
 
 		if (msoRequestId == null && requestId == null) {
 			String msg = "mso-request-id variable was not provided";
-			msoLogger.debug(msg);
+			logger.debug(msg);
 			fail(msg);
 		}
 
@@ -256,13 +259,13 @@ public abstract class WorkflowTest {
 
 		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
 		List<String> arguments = runtimeMxBean.getInputArguments();
-		msoLogger.debug("JVM args = " + arguments);
+		logger.debug("JVM args = {}", arguments);
 
 		Map<String, Object> variables = createVariables(schemaVersion, businessKey,
 			request, injectedVariables, false);
 		VariableMapImpl variableMapImpl = createVariableMapImpl(variables);
 
-		msoLogger.debug("Sending " + request + " to " + processKey + " process");
+		logger.debug("Sending {} to {} process", request, processKey);
 
 		TestAsyncResponse asyncResponse = new TestAsyncResponse();
 
@@ -290,13 +293,13 @@ public abstract class WorkflowTest {
 
 		RuntimeMXBean runtimeMxBean = ManagementFactory.getRuntimeMXBean();
 		List<String> arguments = runtimeMxBean.getInputArguments();
-		msoLogger.debug("JVM args = " + arguments);
+		logger.debug("JVM args = {}", arguments);
 
 		Map<String, Object> variables = createVariables(schemaVersion, businessKey,
 			request, injectedVariables, serviceInstantiationModel);
 		VariableMapImpl variableMapImpl = createVariableMapImpl(variables);
 
-		msoLogger.debug("Sending " + request + " to " + processKey + " process");
+		logger.debug("Sending {} to {} process", request, processKey);
 
 		return workflowResource.startProcessInstanceByKey( processKey, variableMapImpl);
 
@@ -337,7 +340,7 @@ public abstract class WorkflowTest {
 				for (String var : notAllowed) {
 					if (var.equals(key)) {
 						String msg = "Cannot specify " + var + " in injected variables";
-						msoLogger.debug(msg);
+						logger.debug(msg);
 						fail(msg);
 					}
 				}
@@ -367,11 +370,11 @@ public abstract class WorkflowTest {
 			catch(Exception e) {
 			}
 			if (msoRequestId == null || msoRequestId.trim().equals("")) {
-				msoLogger.debug("No requestId element in injectedVariables");
+				logger.debug("No requestId element in injectedVariables");
 				variables.put("mso-request-id", UUID.randomUUID().toString());
 			}
 			if (msoServiceInstanceId == null || msoServiceInstanceId.trim().equals("")) {
-				msoLogger.debug("No seviceInstanceId element in injectedVariables");
+				logger.debug("No seviceInstanceId element in injectedVariables");
 				variables.put("mso-service-instance-id", UUID.randomUUID().toString());
 			}
 
@@ -387,7 +390,7 @@ public abstract class WorkflowTest {
 				}
 				if (msoRequestId == null || msoRequestId.trim().equals("")) {
 					String msg = "No request-id element in " + request;
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 			}
@@ -446,8 +449,7 @@ public abstract class WorkflowTest {
 	 */
 	protected WorkflowResponse receiveResponse(String businessKey,
 			TestAsyncResponse asyncResponse, long timeout) {
-		msoLogger.debug("Waiting " + timeout + "ms for process with business key " + businessKey
-			+ " to send a response");
+		logger.debug("Waiting {}ms for process with business key {} to send a response", timeout, businessKey);
 
 		long now = System.currentTimeMillis() + timeout;
 		long endTime = now + timeout;
@@ -456,7 +458,7 @@ public abstract class WorkflowTest {
 			Response response = asyncResponse.getResponse();
 
 			if (response != null) {
-				msoLogger.debug("Received a response from process with business key " + businessKey);
+				logger.debug("Received a response from process with business key {}", businessKey);
 
 				Object entity = response.getEntity();
 
@@ -464,7 +466,7 @@ public abstract class WorkflowTest {
 					String msg = "Response entity is " +
 						(entity == null ? "null" : entity.getClass().getName()) +
 						", expected WorkflowResponse";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 					return null; // unreachable
 				}
@@ -477,7 +479,7 @@ public abstract class WorkflowTest {
 			} catch (InterruptedException e) {
 				String msg = "Interrupted waiting for a response from process with business key " +
 					businessKey;
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 				return null; // unreachable
 			}
@@ -487,7 +489,7 @@ public abstract class WorkflowTest {
 
 		String msg = "No response received from process with business key " + businessKey +
 			" within " + timeout + "ms";
-		msoLogger.debug(msg);
+		logger.debug(msg);
 		fail("Process with business key " + businessKey + " did not end within 10000ms");
 		return null; // unreachable
 	}
@@ -525,7 +527,7 @@ public abstract class WorkflowTest {
 
 				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' SDNC request";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
@@ -536,7 +538,7 @@ public abstract class WorkflowTest {
 				contentType = JSON;
 			} else {
 				String msg = "Invalid SDNC program modifier: '" + modifier + "'";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -625,7 +627,7 @@ public abstract class WorkflowTest {
 
 				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' SDNC request";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
@@ -637,7 +639,7 @@ public abstract class WorkflowTest {
 
 				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' SDNC request";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
@@ -650,7 +652,7 @@ public abstract class WorkflowTest {
 				respMsg = "SERVER ERROR";
 			} else {
 				String msg = "Invalid SDNC program modifier: '" + modifier + "'";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -699,7 +701,7 @@ public abstract class WorkflowTest {
 
 				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' VNF REST request";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
@@ -710,7 +712,7 @@ public abstract class WorkflowTest {
 				contentType = "text/plain";
 			} else {
 				String msg = "Invalid VNF REST program modifier: '" + modifier + "'";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -763,18 +765,18 @@ public abstract class WorkflowTest {
 
 				if (callbackData == null) {
 					String msg = "No callback defined for '" + action + "' VNF request";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
 				content = callbackData.getContent();
 			} else if ("ERR".equals(modifier)) {
 				String msg = "Currently unsupported VNF program modifier: '" + modifier + "'";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			} else {
 				String msg = "Invalid VNF program modifier: '" + modifier + "'";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -790,7 +792,7 @@ public abstract class WorkflowTest {
 
 			if (!injected) {
 				String msg = "Failed to inject VNF '" + action + "' callback";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -810,8 +812,7 @@ public abstract class WorkflowTest {
 	 * @param timeout the timeout in milliseconds
 	 */
 	protected void waitForRunningProcessCount(String processKey, int count, long timeout) {
-		msoLogger.debug("Waiting " + timeout + "ms for there to be " + count + " "
-			+ processKey + " instances");
+		logger.debug("Waiting {}ms for there to be {} {} instances", timeout, count, processKey);
 
 		long now = System.currentTimeMillis() + timeout;
 		long endTime = now + timeout;
@@ -824,8 +825,7 @@ public abstract class WorkflowTest {
 				.list().size();
 
 			if (actual != last) {
-				msoLogger.debug("There are now " + actual + " "
-					+ processKey + " instances");
+				logger.debug("There are now {} {} instances", actual, processKey);
 				last = actual;
 			}
 
@@ -838,7 +838,7 @@ public abstract class WorkflowTest {
 			} catch (InterruptedException e) {
 				String msg = "Interrupted waiting for there to be " + count + " "
 					+ processKey + " instances";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -847,7 +847,7 @@ public abstract class WorkflowTest {
 
 		String msg = "Timed out waiting for there to be " + count + " "
 			+ processKey + " instances";
-		msoLogger.debug(msg);
+		logger.debug(msg);
 		fail(msg);
 	}
 
@@ -862,8 +862,7 @@ public abstract class WorkflowTest {
 	protected Object getProcessVariable(String processKey, String variable,
 			long timeout) {
 
-		msoLogger.debug("Waiting " + timeout + "ms for "
-			+ processKey + "." + variable + " to be set");
+		logger.debug("Waiting " + timeout + "ms for " + processKey + "." + variable + " to be set");
 
 		long now = System.currentTimeMillis() + timeout;
 		long endTime = now + timeout;
@@ -874,10 +873,10 @@ public abstract class WorkflowTest {
 		while (value == null) {
 			if (now > endTime) {
 				if (processInstance == null) {
-					msoLogger.debug("Timed out waiting for "
+					logger.debug("Timed out waiting for "
 						+ processKey + " to start");
 				} else {
-					msoLogger.debug("Timed out waiting for "
+					logger.debug("Timed out waiting for "
 						+ processKey + "[" + processInstance.getId()
 						+ "]." + variable + " to be set");
 				}
@@ -896,7 +895,8 @@ public abstract class WorkflowTest {
 				processInstance = processInstanceQuery.singleResult();
 			}else{
 				//TODO There shouldnt be more than one in the list but seems to be happening, need to figure out why happening and best way to get correct one from list
-				msoLogger.debug("Process Instance Query returned " + processInstanceQuery.count() + " instance. Getting the last instance in the list");
+				logger.debug("Process Instance Query returned {} instance. Getting the last instance in the list",
+					processInstanceQuery.count());
 				List<ProcessInstance> processList = processInstanceQuery.list();
 				processInstance = processList.get((processList.size() - 1));
 			}
@@ -910,15 +910,14 @@ public abstract class WorkflowTest {
 			try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
-				msoLogger.debug("Interrupted waiting for "
-					+ processKey + "." + variable + " to be set");
+				logger.debug("Interrupted waiting for {}.{} to be set", processKey, variable);
 				return null;
 			}
 
 			now = System.currentTimeMillis();
 		}
 
-		msoLogger.debug(processKey + "["
+		logger.debug(processKey + "["
 			+ processInstance.getId() + "]." + variable + "="
 			+ value);
 
@@ -952,10 +951,10 @@ public abstract class WorkflowTest {
 		// Deprecated usage.  All test code should switch to the (( ... )) syntax.
 		content = content.replace("{{REQUEST-ID}}", sdncRequestId);
 
-		msoLogger.debug("Injecting SDNC adapter callback");
+		logger.debug("Injecting SDNC adapter callback");
 
 		Response response = workflowMessageResource.deliver(contentType, "SDNCAResponse", sdncRequestId, content);
-		msoLogger.debug("Workflow response to SDNC adapter callback: " + response);
+		logger.debug("Workflow response to SDNC adapter callback: " + response);
 		return true;
 	}
 
@@ -987,7 +986,7 @@ public abstract class WorkflowTest {
 		// TODO this needs to be fixed. It is causing double tags and content
 		// Need to parse content before setting below since content includes not just RequestData or modify callback files to only contain RequestData contents.
 
-		msoLogger.debug("Injecting SDNC adapter callback");
+		logger.debug("Injecting SDNC adapter callback");
 		CallbackHeader callbackHeader = new CallbackHeader();
 		callbackHeader.setRequestId(sdncRequestId);
 		callbackHeader.setResponseCode(String.valueOf(respCode));
@@ -996,7 +995,7 @@ public abstract class WorkflowTest {
 		sdncAdapterCallbackRequest.setCallbackHeader(callbackHeader);
 		sdncAdapterCallbackRequest.setRequestData(content);
 		SDNCAdapterResponse sdncAdapterResponse = callbackService.sdncAdapterCallback(sdncAdapterCallbackRequest);
-		msoLogger.debug("Workflow response to SDNC adapter callback: " + sdncAdapterResponse);
+		logger.debug("Workflow response to SDNC adapter callback: " + sdncAdapterResponse);
 
 		return true;
 	}
@@ -1023,10 +1022,10 @@ public abstract class WorkflowTest {
 		// Deprecated usage.  All test code should switch to the (( ... )) syntax.
 		content = content.replace("{{MESSAGE-ID}}", messageId);
 
-		msoLogger.debug("Injecting VNF adapter callback");
+		logger.debug("Injecting VNF adapter callback");
 
 		Response response = workflowMessageResource.deliver(contentType, "VNFAResponse", messageId, content);
-		msoLogger.debug("Workflow response to VNF adapter callback: " + response);
+		logger.debug("Workflow response to VNF adapter callback: {}", response);
 		return true;
 	}
 
@@ -1059,7 +1058,7 @@ public abstract class WorkflowTest {
 			content = content.replace("{{REQUEST-ID}}", msoRequestId);
 		}
 
-		msoLogger.debug("Injecting VNF adapter callback");
+		logger.debug("Injecting VNF adapter callback");
 
 		// Is it possible to unmarshal this with JAXB?  I couldn't.
 
@@ -1132,8 +1131,8 @@ public abstract class WorkflowTest {
 			createVnfNotification.setRollback(rollback);
 
 		} catch (Exception e) {
-			msoLogger.debug("Failed to unmarshal VNF callback content:");
-			msoLogger.debug(content);
+			logger.debug("Failed to unmarshal VNF callback content:");
+			logger.debug(content);
 			return false;
 		}
 
@@ -1175,7 +1174,7 @@ public abstract class WorkflowTest {
 		// Deprecated usage.  All test code should switch to the (( ... )) syntax.
 		content = content.replace("{{MESSAGE-ID}}", messageId);
 
-		msoLogger.debug("Injecting VNF adapter delete callback");
+		logger.debug("Injecting VNF adapter delete callback");
 
 		// Is it possible to unmarshal this with JAXB?  I couldn't.
 
@@ -1195,8 +1194,8 @@ public abstract class WorkflowTest {
 			}
 
 		} catch (Exception e) {
-			msoLogger.debug("Failed to unmarshal VNF Delete callback content:");
-			msoLogger.debug(content);
+			logger.debug("Failed to unmarshal VNF Delete callback content:");
+			logger.debug(content);
 			return false;
 		}
 
@@ -1239,7 +1238,7 @@ public abstract class WorkflowTest {
 		// Deprecated usage.  All test code should switch to the (( ... )) syntax.
 		content = content.replace("{{REQUEST-ID}}", msoRequestId);
 
-		msoLogger.debug("Injecting VNF adapter callback");
+		logger.debug("Injecting VNF adapter callback");
 
 		// Is it possible to unmarshal this with JAXB?  I couldn't.
 
@@ -1308,8 +1307,8 @@ public abstract class WorkflowTest {
 			updateVnfNotification.setRollback(rollback);
 
 		} catch (Exception e) {
-			msoLogger.debug("Failed to unmarshal VNF callback content:");
-			msoLogger.debug(content);
+			logger.debug("Failed to unmarshal VNF callback content:");
+			logger.debug(content);
 			return false;
 		}
 
@@ -1362,7 +1361,7 @@ public abstract class WorkflowTest {
 
 				if (callbackData == null) {
 					String msg = "No '" + action + "' workflow message callback is defined";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
@@ -1370,7 +1369,7 @@ public abstract class WorkflowTest {
 
 				if (messageType == null || messageType.trim().equals("")) {
 					String msg = "No workflow message type is defined in the '" + action + "' callback";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
@@ -1378,7 +1377,7 @@ public abstract class WorkflowTest {
 				contentType = callbackData.getContentType();
 			} else {
 				String msg = "Invalid workflow message program modifier: '" + modifier + "'";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -1416,10 +1415,10 @@ public abstract class WorkflowTest {
 			content = content.replace("((CORRELATOR))", correlator);
 		}
 
-		msoLogger.debug("Injecting " + messageType + " message");
+		logger.debug("Injecting " + messageType + " message");
 
 		Response response = workflowMessageResource.deliver(contentType, messageType, correlator, content);
-		msoLogger.debug("Workflow response to " + messageType + " message: " + response);
+		logger.debug("Workflow response to {} message: {}", messageType, response);
 		return true;
 	}
 
@@ -1458,7 +1457,7 @@ public abstract class WorkflowTest {
 
 				if (callbackData == null) {
 					String msg = "No '" + action + "' workflow message callback is defined";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
@@ -1466,7 +1465,7 @@ public abstract class WorkflowTest {
 
 				if (messageType == null || messageType.trim().equals("")) {
 					String msg = "No workflow message type is defined in the '" + action + "' callback";
-					msoLogger.debug(msg);
+					logger.debug(msg);
 					fail(msg);
 				}
 
@@ -1474,7 +1473,7 @@ public abstract class WorkflowTest {
 				contentType = callbackData.getContentType();
 			} else {
 				String msg = "Invalid workflow message program modifier: '" + modifier + "'";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -1588,10 +1587,10 @@ public abstract class WorkflowTest {
 				}
 			}
 		}
-		msoLogger.debug("Injecting " + messageType + " message");
+		logger.debug("Injecting " + messageType + " message");
 
 		Response response = workflowMessageResource.deliver(contentType, messageType, correlator, content);
-		msoLogger.debug("Workflow response to " + messageType + " message: " + response);
+		logger.debug("Workflow response to {} message: {}", messageType, response);
 		return true;
 	}
 
@@ -1602,15 +1601,14 @@ public abstract class WorkflowTest {
 	 * @param timeout the amount of time to wait, in milliseconds
 	 */
 	protected void waitForProcessEnd(String businessKey, long timeout) {
-		msoLogger.debug("Waiting " + timeout + "ms for process with business key " +
-			businessKey + " to end");
+		logger.debug("Waiting {}ms for process with business key {} to end", timeout, businessKey);
 
 		long now = System.currentTimeMillis() + timeout;
 		long endTime = now + timeout;
 
 		while (now <= endTime) {
 			if (isProcessEnded(businessKey)) {
-				msoLogger.debug("Process with business key " + businessKey + " has ended");
+				logger.debug("Process with business key {} has ended", businessKey);
 				return;
 			}
 
@@ -1619,7 +1617,7 @@ public abstract class WorkflowTest {
 			} catch (InterruptedException e) {
 				String msg = "Interrupted waiting for process with business key " +
 					businessKey + " to end";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -1628,7 +1626,7 @@ public abstract class WorkflowTest {
 
 		String msg = "Process with business key " + businessKey +
 			" did not end within " + timeout + "ms";
-		msoLogger.debug(msg);
+		logger.debug(msg);
 		fail(msg);
 	}
 
@@ -1643,15 +1641,14 @@ public abstract class WorkflowTest {
 	 * @author cb645j
 	 */
 	protected void waitForProcessEnd(String businessKey, String processName, long timeout) {
-		msoLogger.debug("Waiting " + timeout + "ms for process with business key " +
-			businessKey + " to end");
+		logger.debug("Waiting {}ms for process with business key {} to end", timeout, businessKey);
 
 		long now = System.currentTimeMillis() + timeout;
 		long endTime = now + timeout;
 
 		while (now <= endTime) {
 			if (isProcessEnded(businessKey, processName)) {
-				msoLogger.debug("Process with business key " + businessKey + " has ended");
+				logger.debug("Process with business key {} has ended", businessKey);
 				return;
 			}
 
@@ -1660,7 +1657,7 @@ public abstract class WorkflowTest {
 			} catch (InterruptedException e) {
 				String msg = "Interrupted waiting for process with business key " +
 					businessKey + " to end";
-				msoLogger.debug(msg);
+				logger.debug(msg);
 				fail(msg);
 			}
 
@@ -1669,7 +1666,7 @@ public abstract class WorkflowTest {
 
 		String msg = "Process with business key " + businessKey +
 			" did not end within " + timeout + "ms";
-		msoLogger.debug(msg);
+		logger.debug(msg);
 		fail(msg);
 	}
 
@@ -1747,8 +1744,8 @@ public abstract class WorkflowTest {
 				.variableName(variableName).singleResult();
 			return v == null ? null : v.getValue();
 		} catch (Exception e) {
-			msoLogger.debug("Error retrieving variable " + variableName +
-				" from historical process with business key " + businessKey + ": " + e);
+			logger.debug("Error retrieving variable {} from historical process with business key {}: ", variableName, businessKey,
+					e);
 			return null;
 		}
 	}
@@ -1777,10 +1774,12 @@ public abstract class WorkflowTest {
 
 			return variable == null ? null : variable.getValue();
 		}catch(ProcessEngineException e){
-			msoLogger.debug("Multiple proccess instances exist with process name " + processName + " and business key " + businessKey + ". Must pass instance index as a parameter.");
+			logger.debug("Multiple proccess instances exist with process name {} and business key {}. Must pass instance "
+				+ "index as a parameter.", processName, businessKey);
 			return null;
 		}catch(Exception e){
-			msoLogger.debug("Error retrieving variable " + variableName + " from historical process for process " + processName + " with business key " + businessKey + ": " + e);
+			logger.debug("Error retrieving variable {} from historical process for process {} with business key {}: ",
+				variableName, processName, businessKey, e);
 			return null;
 		}
 	}
@@ -1814,7 +1813,8 @@ public abstract class WorkflowTest {
 
 			return variable == null ? null : variable.getValue();
 		}catch(Exception e) {
-			msoLogger.debug("Error retrieving variable " + variableName + " from historical process for process " + processName + " with business key " + businessKey + ": " + e);
+			logger.debug("Error retrieving variable {} from historical process for process {} with business key {}: ",
+				variableName, processName, businessKey, e);
 			return null;
 		}
 	}
@@ -1851,8 +1851,7 @@ public abstract class WorkflowTest {
 				.variableName(variableName).singleResult();
 			return v == null ? null : v.getValue();
 		} catch (Exception e) {
-			msoLogger.debug("Error retrieving variable " + variableName +
-					" from sub flow: " + subflowName + ", Exception is: " + e);
+			logger.debug("Error retrieving variable {} from sub flow: {}, Exception is: ", variableName, subflowName, e);
 			return null;
 		}
 	}
@@ -1886,8 +1885,8 @@ public abstract class WorkflowTest {
 				.variableName(variableName).singleResult();
 			return v == null ? null : v.getValue();
 		} catch (Exception e) {
-			msoLogger.debug("Error retrieving variable " + variableName +
-				" from " + subflowInstanceIndex + " instance index of sub flow: " + subflowName + ", Exception is: " + e);
+			logger.debug("Error retrieving variable {} from {} instance index of sub flow: {}, Exception is: ", variableName,
+				subflowInstanceIndex, subflowName, e);
 			return null;
 		}
 	}

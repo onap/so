@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +36,8 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition;
 import org.onap.so.bpmn.core.domain.ServiceInstance;
 import org.onap.so.bpmn.core.domain.VnfResource;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,7 +59,7 @@ import static org.onap.so.bpmn.mock.StubResponseOof.mockOof_500;
 @Ignore
 public class OofHomingTestIT extends BaseIntegrationTest {
 
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,CreateAAIVfModuleIT.class);
+	Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
 
     ServiceDecomposition serviceDecomposition = new ServiceDecomposition();
     String subscriber = "";
@@ -261,7 +264,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         vnfModel.setModelType("testModelTypeVNF");
         vnf.setModelInfo(vnfModel);
         vnfList.add(vnf);
-        logger.debug("SERVICE DECOMP: " + serviceDecomposition.getServiceResourcesJsonString());
+        logger.debug("SERVICE DECOMP: {}", serviceDecomposition.getServiceResourcesJsonString());
         serviceDecomposition.setModelInfo(sModel);
         serviceDecomposition.setAllottedResources(arList);
         serviceDecomposition.setVnfResources(vnfList);
@@ -416,9 +419,8 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
         ServiceDecomposition sd = (ServiceDecomposition) getVariableFromHistory(busKey,
                 "serviceDecomposition");
-        logger.debug("In testHoming_success_vnfResourceList, ServiceDecomposition = " + sd);
+        logger.debug("In testHoming_success_vnfResourceList, ServiceDecomposition = {}", sd);
         List<VnfResource> vnfResourceList = sd.getVnfResources();
-//logger.debug(" vnfResourceList = " + vnfResourceList);
         vnfResourceList.get(0).setResourceId("test-resource-id-000");
 
         // Invoke Homing
@@ -454,28 +456,26 @@ public class OofHomingTestIT extends BaseIntegrationTest {
                 "WorkflowException");
         ServiceDecomposition serviceDecompositionExp = (ServiceDecomposition) getVariableFromHistory(businessKey,
                 "serviceDecomposition");
-        logger.debug("serviceDecompositionExp is: " + serviceDecompositionExp);
+        logger.debug("serviceDecompositionExp is: {}", serviceDecompositionExp);
 
         Resource resourceVnf = serviceDecompositionExp.getServiceResource("test-resource-id-000");
-        logger.debug("resourceVnf is: " + resourceVnf);
+        logger.debug("resourceVnf is: {}", resourceVnf);
         HomingSolution resourceVnfHoming = resourceVnf.getHomingSolution();
 
         String resourceVnfHomingString = resourceVnfHoming.toString();
-        logger.debug("resourceVnfHomingString is: " + resourceVnfHomingString);
+        logger.debug("resourceVnfHomingString is: {}", resourceVnfHomingString);
         resourceVnfHomingString = resourceVnfHomingString.replaceAll("\\s+", " ");
-        logger.debug("Now resourceVnfHomingString is: " + resourceVnfHomingString);
+        logger.debug("Now resourceVnfHomingString is: {}", resourceVnfHomingString);
 
         assertNull(workflowException);
 
         //Verify request
         String oofRequest = (String) getVariableFromHistory(businessKey, "oofRequest");
-        logger.debug("oofRequest is: " + oofRequest);
+        logger.debug("oofRequest is: {}", oofRequest);
         assertEquals(FileUtil.readResourceFile("__files/BuildingBlocks/oofRequest_infravnf").
                 replaceAll("\n", "").replaceAll("\r", "").
                 replaceAll("\t", ""), oofRequest.replaceAll("\n", "").
                 replaceAll("\r", "").replaceAll("\t", ""));
-
-        //logger.debug("resourceVnfHoming.getVnf().getResourceId() is: " + resourceVnfHoming.getVnf().getResourceId());
 
         assertEquals(homingSolutionService("service", "service-instance-01234",
                 "MDTNJ01", "test-resource-id-000","CloudOwner",
@@ -539,7 +539,6 @@ public class OofHomingTestIT extends BaseIntegrationTest {
     }
 
     @Test
-
     public void testHoming_error_inputVariable() throws Exception {
 
         String businessKey = UUID.randomUUID().toString();

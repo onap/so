@@ -3,7 +3,9 @@
  * ONAP - SO 
  * ================================================================================ 
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
+ * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -39,7 +41,8 @@ import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit tests for UpdateAAIGenericVnf bpmn.
@@ -47,7 +50,7 @@ import org.onap.so.logger.MsoLogger;
 
 public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 	
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,CreateAAIVfModuleIT.class);
+	Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
 	
 		
 	/**
@@ -73,8 +76,8 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 		Assert.assertTrue(isProcessEnded(businessKey));
 		String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponseCode");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(200, responseCode.intValue());
 		
 		logEnd();
@@ -103,7 +106,7 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 		
 		Assert.assertTrue(isProcessEnded(businessKey));
 		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
-		logger.debug("Workflow Exception: " + workflowException);
+		logger.debug("Workflow Exception: {}", workflowException);
 		Assert.assertNotNull(workflowException);
 		
 		logEnd();
@@ -132,8 +135,8 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 		Assert.assertTrue(isProcessEnded(businessKey));
 		String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_getGenericVnfResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_getGenericVnfResponseCode");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(404, responseCode.intValue());
 		
 		logEnd();
@@ -164,8 +167,8 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 		Assert.assertTrue(isProcessEnded(businessKey));
 		String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponseCode");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(404, responseCode.intValue());
 		
 		logEnd();

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,10 +38,11 @@ import org.onap.so.bpmn.common.adapter.vnf.VnfAdapterNotify;
 import org.onap.so.bpmn.common.workflow.service.WorkflowAsyncResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowMessageResource;
 import org.onap.so.bpmn.common.workflow.service.WorkflowResource;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -52,7 +55,7 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 @Configuration
 public class CXFConfiguration {
     
-	private static final MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,CXFConfiguration.class);
+	private static final Logger logger = LoggerFactory.getLogger(CXFConfiguration.class);
 	
     @Autowired
     private Bus bus;    

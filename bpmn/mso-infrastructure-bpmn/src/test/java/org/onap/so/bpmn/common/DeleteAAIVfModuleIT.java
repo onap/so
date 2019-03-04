@@ -33,11 +33,11 @@ import java.util.UUID;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.core.WorkflowException;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for DeleteAAIVfModule.bpmn.
@@ -46,7 +46,7 @@ import org.onap.so.logger.MsoLogger;
 public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 	private static final String EOL = "\n";
 	
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,DeleteAAIVfModuleIT.class);
+	Logger logger = LoggerFactory.getLogger(DeleteAAIVfModuleIT.class);
 	
 	@Test	
 	public void  TestDeleteGenericVnfSuccess_200() {

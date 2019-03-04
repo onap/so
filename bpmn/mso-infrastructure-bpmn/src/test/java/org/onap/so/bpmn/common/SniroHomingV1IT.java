@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +40,8 @@ import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.core.domain.*;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -47,7 +50,7 @@ import org.onap.so.logger.MsoLogger;
 @Ignore
 public class SniroHomingV1IT extends BaseIntegrationTest {
 	
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,SniroHomingV1IT.class);
+	Logger logger = LoggerFactory.getLogger(SniroHomingV1IT.class);
 	
 
 	ServiceDecomposition serviceDecomposition = new ServiceDecomposition();
@@ -121,7 +124,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 		vnfModel.setModelType("testModelTypeVNF");
 		vnf.setModelInfo(vnfModel);
 		vnfList.add(vnf);
-		logger.debug("SERVICE DECOMP: " + serviceDecomposition.getServiceResourcesJsonString());
+		logger.debug("SERVICE DECOMP: {}", serviceDecomposition.getServiceResourcesJsonString());
 		serviceDecomposition.setModelInfo(sModel);
 		serviceDecomposition.setAllottedResources(arList);
 		serviceDecomposition.setVnfResources(vnfList);

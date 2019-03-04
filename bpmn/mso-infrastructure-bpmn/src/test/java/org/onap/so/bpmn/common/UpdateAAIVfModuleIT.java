@@ -3,7 +3,9 @@
  * ONAP - SO 
  * ================================================================================ 
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
+ * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -39,6 +41,8 @@ import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.mock.FileUtil;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit tests for UpdateAAIVfModuleTest.bpmn.
@@ -46,7 +50,7 @@ import org.onap.so.logger.MsoLogger;
 
 public class UpdateAAIVfModuleIT extends BaseIntegrationTest {
 	
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,CreateAAIVfModuleIT.class);
+	Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
 	
 		
 	/**
@@ -72,8 +76,8 @@ public class UpdateAAIVfModuleIT extends BaseIntegrationTest {
 		Assert.assertTrue(isProcessEnded(businessKey));
 		String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponseCode");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(200, responseCode.intValue());
 		
 		logEnd();
@@ -101,8 +105,8 @@ public class UpdateAAIVfModuleIT extends BaseIntegrationTest {
 		Assert.assertTrue(isProcessEnded(businessKey));
 		String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_getVfModuleResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_getVfModuleResponseCode");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(404, responseCode.intValue());
 		
 		logEnd();
@@ -132,8 +136,8 @@ public class UpdateAAIVfModuleIT extends BaseIntegrationTest {
 		Assert.assertTrue(isProcessEnded(businessKey));
 		String response = (String) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIVfMod_updateVfModuleResponseCode");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(404, responseCode.intValue());
 		
 		logEnd();
