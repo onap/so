@@ -39,7 +39,6 @@ import org.camunda.bpm.engine.delegate.BpmnError;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.AllottedResource;
@@ -211,13 +210,13 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 		JSONObject asyncResponse = new JSONObject();
 		asyncResponse.put("transactionId", "testRequestId").put("requestId", "testRequestId").put("requestState", "completed");
 		JSONArray solution1 = new JSONArray();
-		solution1.put(new JSONObject().put("serviceResourceId", "testProxyId1").put("inventoryType", "service").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testProxyId1").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId1")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName1"))
 						.put(new JSONObject().put("key", "aicClli").put("value", "testAicClli1")).put(new JSONObject().put("key", "aicVersion").put("value", "3"))
 						.put(new JSONObject().put("key", "vnfId").put("value", "testVnfId1")).put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId1"))));
-		solution1.put(new JSONObject().put("serviceResourceId", "testProxyId2").put("inventoryType", "service").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testProxyId2").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId2")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "primaryPnfName").put("value", "testPrimaryPnfName2"))
@@ -255,13 +254,13 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 		JSONObject asyncResponse = new JSONObject();
 		asyncResponse.put("transactionId", "testRequestId").put("requestId", "testRequestId").put("requestState", "completed");
 		JSONArray solution1 = new JSONArray();
-		solution1.put(new JSONObject().put("serviceResourceId", "testProxyId1").put("inventoryType", "service").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testProxyId1").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId1")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName1"))
 						.put(new JSONObject().put("key", "aicClli").put("value", "testAicClli1")).put(new JSONObject().put("key", "aicVersion").put("value", "3"))
 						.put(new JSONObject().put("key", "vnfId").put("value", "testVnfId1")).put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId1"))));
-		solution1.put(new JSONObject().put("serviceResourceId", "testProxyId2").put("inventoryType", "service").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testProxyId2").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId2")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "primaryPnfName").put("value", "testPrimaryPnfName2"))
@@ -269,13 +268,13 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 						.put(new JSONObject().put("key", "secondaryPnfName").put("value", "testSecondaryPnfName2")).put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId2"))));
 
 		JSONArray solution2 = new JSONArray();
-		solution2.put(new JSONObject().put("serviceResourceId", "testProxyId1").put("inventoryType", "service").put("solution", new JSONObject()
+		solution2.put(new JSONObject().put("serviceResourceId", "testProxyId1").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId3")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName3"))
 						.put(new JSONObject().put("key", "aicClli").put("value", "testAicClli3")).put(new JSONObject().put("key", "aicVersion").put("value", "3"))
 						.put(new JSONObject().put("key", "vnfId").put("value", "testVnfId3")).put(new JSONObject().put("key", "cloudRegionId").put("value", "testSloudRegionId3"))));
-		solution2.put(new JSONObject().put("serviceResourceId", "testProxyId2").put("inventoryType", "service").put("solution", new JSONObject()
+		solution2.put(new JSONObject().put("serviceResourceId", "testProxyId2").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId4")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "primaryPnfName").put("value", "testPrimaryPnfName4"))
@@ -335,19 +334,19 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 		JSONObject asyncResponse = new JSONObject();
 		asyncResponse.put("transactionId", "testRequestId").put("requestId", "testRequestId").put("requestState", "completed");
 		JSONArray solution1 = new JSONArray();
-		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId1").put("inventoryType", "service").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId1").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId1")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName1"))
 						.put(new JSONObject().put("key", "aicClli").put("value", "testAicClli1")).put(new JSONObject().put("key", "aicVersion").put("value", "3"))
 						.put(new JSONObject().put("key", "vnfId").put("value", "testVnfId1")).put(new JSONObject().put("key", "cloudRegionId").put("value", "testCloudRegionId1"))));
-		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId2").put("inventoryType", "service").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId2").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId2")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName2"))
 						.put(new JSONObject().put("key", "aicClli").put("value", "testAicClli2")).put(new JSONObject().put("key", "aicVersion").put("value", "3"))
 						.put(new JSONObject().put("key", "vnfId").put("value", "testVnfId1")).put(new JSONObject().put("key", "cloudRegionId").put("value", "testCloudRegionId2"))));
-		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId3").put("inventoryType", "cloud").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId3").put("solution", new JSONObject()
 				.put("identifierType", "cloudRegionId").put("identifiers", new JSONArray().put("testCloudRegionId3")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic"))
@@ -387,19 +386,19 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 		asyncResponse.put("transactionId", "testRequestId").put("requestId", "testRequestId").put("requestState", "completed");
 		JSONArray solution1 = new JSONArray();
 		JSONArray licenseSolution = new JSONArray();
-		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId1").put("inventoryType", "service").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId1").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId1")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName1"))
 						.put(new JSONObject().put("key", "aicClli").put("value", "testAicClli1")).put(new JSONObject().put("key", "aicVersion").put("value", "3"))
 						.put(new JSONObject().put("key", "vnfId").put("value", "testVnfId1")).put(new JSONObject().put("key", "cloudRegionId").put("value", "testCloudRegionId1"))));
-		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId2").put("inventoryType", "service").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId2").put("solution", new JSONObject()
 				.put("identifierType", "serviceInstanceId").put("identifiers", new JSONArray().put("testServiceInstanceId2")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "vnfHostName").put("value", "testVnfHostName2"))
 						.put(new JSONObject().put("key", "aicClli").put("value", "testAicClli2")).put(new JSONObject().put("key", "aicVersion").put("value", "3"))
 						.put(new JSONObject().put("key", "vnfId").put("value", "testVnfId1")).put(new JSONObject().put("key", "cloudRegionId").put("value", "testCloudRegionId2"))));
-		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId3").put("inventoryType", "cloud").put("solution", new JSONObject()
+		solution1.put(new JSONObject().put("serviceResourceId", "testAllottedResourceId3").put("solution", new JSONObject()
 				.put("identifierType", "cloudRegionId").put("identifiers", new JSONArray().put("testCloudRegionId3")))
 				.put("assignmentInfo", new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "True"))
 						.put(new JSONObject().put("key", "cloudOwner").put("value", "aic")).put(new JSONObject().put("key", "aicClli").put("value", "testAicClli2"))
