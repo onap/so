@@ -3,7 +3,9 @@
  * ONAP - SO 
  * ================================================================================ 
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
+ * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -33,7 +35,8 @@ import java.util.UUID;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for FalloutHandler.bpmn.
@@ -41,7 +44,7 @@ import org.onap.so.logger.MsoLogger;
 
 public class FalloutHandlerIT extends BaseIntegrationTest {
 	
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,FalloutHandlerIT.class);
+	Logger logger = LoggerFactory.getLogger(FalloutHandlerIT.class);
 	
 	
 	private void setupMocks() {
@@ -147,7 +150,7 @@ public class FalloutHandlerIT extends BaseIntegrationTest {
 	public void msoFalloutHandlerWithNotificationurlNoRequestId() throws Exception{
 		String method = getClass().getSimpleName() + "." + new Object() {
 		}.getClass().getEnclosingMethod().getName();
-		logger.debug("STARTED TEST: " + method);		
+		logger.debug("STARTED TEST: {}", method);
 		//Setup Mocks
 		setupMocks();
 		//Execute Flow
@@ -186,7 +189,7 @@ public class FalloutHandlerIT extends BaseIntegrationTest {
 	public void msoFalloutHandlerWithNoNotificationurlNoRequestId() throws Exception{
 		String method = getClass().getSimpleName() + "." + new Object() {
 		}.getClass().getEnclosingMethod().getName();
-		logger.debug("STARTED TEST: " + method);		
+		logger.debug("STARTED TEST: {}", method);
 		//Setup Mocks
 		setupMocks();
 		//Execute Flow

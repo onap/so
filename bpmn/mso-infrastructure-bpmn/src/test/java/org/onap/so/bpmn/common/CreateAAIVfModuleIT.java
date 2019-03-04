@@ -3,7 +3,9 @@
  * ONAP - SO 
  * ================================================================================ 
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
+ * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -31,14 +33,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.core.WorkflowException;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit test for CreateAAIVfModule.bpmn.
@@ -46,7 +46,7 @@ import org.onap.so.logger.MsoLogger;
 
 public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 	
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,CreateAAIVfModuleIT.class);
+	Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
 	
 	@Test	
 	public void  TestCreateGenericVnfSuccess_200() {

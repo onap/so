@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,6 +52,8 @@ import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
@@ -61,7 +65,7 @@ import io.swagger.annotations.ApiOperation;
 @Component
 public class WorkflowResource extends ProcessEngineAwareService {
 	
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, WorkflowResource.class);
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowResource.class);
 	private static final String LOGMARKER = "[WRKFLOW-RESOURCE]";
 
 	private static final int DEFAULT_WAIT_TIME = 30000;
@@ -99,7 +103,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 
 		try {
 			//Kickoff the process
-			ProcessThread thread = new ProcessThread(inputVariables,processKey,msoLogger);
+			ProcessThread thread = new ProcessThread(inputVariables,processKey);
 			thread.start();
 
 			Map<String, Object> responseMap = null;
@@ -141,7 +145,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 				processInstance = thread.getProcessInstance();
 
 				if (processInstance == null) {
-					msoLogger.debug(LOGMARKER + processKey + " process has not been created yet");
+					logger.debug("{} process has not been created yet", LOGMARKER + processKey );
 					continue;
 				}
 
@@ -151,7 +155,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 				responseMap = getResponseMap(processInstance, processKey, timeProcessEnded);
 
 				if (responseMap == null) {
-					msoLogger.debug(LOGMARKER + processKey + " has not produced a response yet");
+					logger.debug("{} has not produced a response yet", LOGMARKER + processKey);
 
 					if (timeProcessEnded.longValue() != 0) {
 						long elapsedSinceEnded = System.currentTimeMillis() - timeProcessEnded.longValue();
@@ -192,14 +196,15 @@ public class WorkflowResource extends ProcessEngineAwareService {
 			workflowResponse.setMessageCode(500);
 			return Response.status(500).entity(workflowResponse).build();
 		} catch (Exception ex) {
-			msoLogger.debug(LOGMARKER + "Exception in startProcessInstance by key",ex);
+			logger.debug(LOGMARKER + "Exception in startProcessInstance by key",ex);
 			workflowResponse.setMessage("Fail" );
 			workflowResponse.setResponse("Error occurred while executing the process: " + ex.getMessage());
 			if (processInstance != null) workflowResponse.setProcessInstanceID(processInstance.getId());
-			
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG,  "BPMN", MDC.get(processKey), 
-					MsoLogger.ErrorCode.UnknownError, LOGMARKER + workflowResponse.getMessage()
-					+ " for processKey: " + processKey + " with response: " + workflowResponse.getResponse());
+
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "BPMN", MDC.get(processKey),
+				MsoLogger.ErrorCode.UnknownError.getValue(),
+				LOGMARKER + workflowResponse.getMessage() + " for processKey: " + processKey + " with response: "
+					+ workflowResponse.getResponse());
 			
 			workflowResponse.setMessageCode(500);
 			recordEvents(processKey, workflowResponse, startTime);
@@ -222,21 +227,13 @@ public class WorkflowResource extends ProcessEngineAwareService {
 			try {
 				return Integer.parseInt(timeout)*1000;
 			} catch (NumberFormatException nex) {
-				msoLogger.debug("Invalid input for mso-service-request-timeout");
+				logger.debug("Invalid input for mso-service-request-timeout");
 			}
 		}
 		return DEFAULT_WAIT_TIME;
 	}
 	
 	private void recordEvents(String processKey, WorkflowResponse response, long startTime) {
-		
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				LOGMARKER + response.getMessage() + " for processKey: "
-				+ processKey + " with response: " + response.getResponse(), "BPMN", MDC.get(processKey), null);
-		
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				LOGMARKER + response.getMessage() + " for processKey: "
-				+ processKey + " with response: " + response.getResponse());
 	}
 
 	private void setLogContext(String processKey, Map<String, Object> inputVariables) {
@@ -266,7 +263,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 		try {
 			return pes.getRuntimeService().createProcessInstanceQuery().processInstanceId(processInstanceId).singleResult() == null ? true : false ;
 		} catch (Exception e) {
-			msoLogger.debug("Exception :",e);
+			logger.debug("Exception :",e);
 			return true;
 		}        
 	}
@@ -287,7 +284,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 		try {
 			workflowResponse.setMessageCode(Integer.parseInt(responseCode));
 		} catch(NumberFormatException nex) {
-			msoLogger.debug(LOGMARKER + "Failed to parse ResponseCode: " + responseCode);
+			logger.debug(LOGMARKER + "Failed to parse ResponseCode: " + responseCode);
 			workflowResponse.setMessageCode(-1);
 		}
 
@@ -298,7 +295,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 		} else if ("Fail".equalsIgnoreCase(String.valueOf(status))) {
 			workflowResponse.setMessage("Fail");
 		} else {
-			msoLogger.debug(LOGMARKER + "Unrecognized Status: " + responseCode);
+			logger.debug(LOGMARKER + "Unrecognized Status: " + responseCode);
 			workflowResponse.setMessage("Fail");
 		}
 	}
@@ -310,15 +307,13 @@ public class WorkflowResource extends ProcessEngineAwareService {
 	private class ProcessThread extends Thread {
 		private final Map<String,Object> inputVariables;
 		private final String processKey;
-		private final MsoLogger msoLogger;
 		private final String businessKey;
 		private ProcessInstance processInstance = null;
 		private Exception exception = null;
 
-		public ProcessThread(Map<String, Object> inputVariables, String processKey, MsoLogger msoLogger) {
+		public ProcessThread(Map<String, Object> inputVariables, String processKey) {
 			this.inputVariables = inputVariables;
 			this.processKey = processKey;
-			this.msoLogger = msoLogger;
 			this.businessKey = UUID.randomUUID().toString();
 		}
 
@@ -352,14 +347,6 @@ public class WorkflowResource extends ProcessEngineAwareService {
 			long startTime = System.currentTimeMillis();
 			
 			try {
-				msoLogger.debug(LOGMARKER + "***Received MSO startProcessInstanceByKey with processKey:"
-					+ processKey + " and variables: " + inputVariables);
-				
-				msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, LOGMARKER
-						+ "Call to MSO workflow/services in Camunda. Received MSO startProcessInstanceByKey with"
-						+ " processKey:" + processKey
-						+ " businessKey:" + businessKey
-						+ " variables: " + inputVariables);
 						
 				RuntimeService runtimeService = getProcessEngineServices().getRuntimeService();
 
@@ -370,7 +357,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 					processKey, inputVariables);
 
 			} catch (Exception e) {
-				msoLogger.debug(LOGMARKER + "ProcessThread caught an exception executing "
+				logger.debug(LOGMARKER + "ProcessThread caught an exception executing "
 					+ processKey + ": " + e);
 				setException(e);
 			}
@@ -441,7 +428,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 					responseMapVariable);
 
 			if (responseMap != null) {
-				msoLogger.debug(LOGMARKER + "Obtained " + responseMapVariable
+				logger.debug(LOGMARKER + "Obtained " + responseMapVariable
 					+ " from process " + processInstanceId + " history");
 				return responseMap;
 			}
@@ -455,12 +442,12 @@ public class WorkflowResource extends ProcessEngineAwareService {
 				// Check for 'WorkflowResponse' variable
 				Object workflowResponseObject = getVariableFromHistory(historyService, processInstanceId, "WorkflowResponse");
 				String workflowResponse = workflowResponseObject == null ? null : String.valueOf(workflowResponseObject);
-				msoLogger.debug(LOGMARKER + "WorkflowResponse: " + workflowResponse);
+				logger.debug(LOGMARKER + "WorkflowResponse: " + workflowResponse);
 				
 				if (workflowResponse != null) {
 					Object responseCodeObject = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
 					String responseCode = responseCodeObject == null ? null : String.valueOf(responseCodeObject);
-					msoLogger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
+					logger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
 					responseMap = new HashMap<>();
 					responseMap.put("WorkflowResponse", workflowResponse);
 					responseMap.put("ResponseCode", responseCode);
@@ -496,17 +483,17 @@ public class WorkflowResource extends ProcessEngineAwareService {
 					}
 					
 				}
-				msoLogger.debug(LOGMARKER + "WorkflowException: " + workflowExceptionText);
+				logger.debug(LOGMARKER + "WorkflowException: " + workflowExceptionText);
 				
 				// BEGIN LEGACY SUPPORT.  TODO: REMOVE THIS CODE
 				Object object = getVariableFromHistory(historyService, processInstanceId, processKey + "Response");
 				String response = object == null ? null : String.valueOf(object);
-				msoLogger.debug(LOGMARKER + processKey + "Response: " + response);
+				logger.debug(LOGMARKER + processKey + "Response: " + response);
 
 				if (response != null) {
 					object = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
 					String responseCode = object == null ? null : String.valueOf(object);
-					msoLogger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
+					logger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
 					responseMap = new HashMap<>();
 					responseMap.put("Response", response);
 					responseMap.put("ResponseCode", responseCode);
@@ -516,12 +503,12 @@ public class WorkflowResource extends ProcessEngineAwareService {
 	
 				object = getVariableFromHistory(historyService, processInstanceId, prefix + "ErrorResponse");
 				String errorResponse = object == null ? null : String.valueOf(object);
-				msoLogger.debug(LOGMARKER + prefix + "ErrorResponse: " + errorResponse);
+				logger.debug(LOGMARKER + prefix + "ErrorResponse: " + errorResponse);
 
 				if (errorResponse != null) {
 					object = getVariableFromHistory(historyService, processInstanceId, prefix + "ResponseCode");
 					String responseCode = object == null ? null : String.valueOf(object);
-					msoLogger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
+					logger.debug(LOGMARKER + prefix + "ResponseCode: " + responseCode);
 					responseMap = new HashMap<>();
 					responseMap.put("Response", errorResponse);
 					responseMap.put("ResponseCode", responseCode);
@@ -545,7 +532,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 			return runtimeService.getVariable(executionId, variableName);
 		} catch (ProcessEngineException e) {
 			// Most likely cause is that the execution no longer exists.
-			msoLogger.debug("Error retrieving execution " + executionId
+			logger.debug("Error retrieving execution " + executionId
 				+ " variable " + variableName + ": " + e);
 			return null;
 		}
@@ -562,8 +549,8 @@ public class WorkflowResource extends ProcessEngineAwareService {
 				.processInstanceId(processInstanceId).variableName(variableName).singleResult();
 			return v == null ? null : v.getValue();
 		} catch (Exception e) {
-			msoLogger.debug("Error retrieving process " + processInstanceId
-				+ " variable " + variableName + " from history: " + e);
+			logger.debug("Error retrieving process {} variable {} from history: ", processInstanceId,
+				variableName, e);
 			return null;
 		}
 	}
@@ -589,42 +576,27 @@ public class WorkflowResource extends ProcessEngineAwareService {
 				variablesMap.put(variableInstance.getName(), variableInstance.getValue().toString());
 			}
 
-			msoLogger.debug(LOGMARKER + "***Received MSO getProcessVariables with processKey:" + processKey + " and variables: " + variablesMap.toString());
-			
-			msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, LOGMARKER 
-					+ "Call to MSO workflow/services in Camunda. Received MSO getProcessVariables with processKey:" 
-					+ processKey + " and variables: " 
-					+ variablesMap.toString());
-			
+			logger.debug(LOGMARKER + "***Received MSO getProcessVariables with processKey:" + processKey + " and variables: " +
+				variablesMap.toString());
 			
 			response.setVariables(variablesMap);
 			response.setMessage("Success");
 			response.setResponse("Successfully retrieved the variables");
 			response.setProcessInstanceID(processInstanceId);
 
-			msoLogger.debug(LOGMARKER + response.getMessage() + " for processKey: " + processKey + " with response: " + response.getResponse());
+			logger.debug(LOGMARKER + response.getMessage() + " for processKey: " + processKey + " with response: " + response
+				.getResponse());
 		} catch (Exception ex) {
 			response.setMessage("Fail");
 			response.setResponse("Failed to retrieve the variables," + ex.getMessage());
 			response.setProcessInstanceID(processInstanceId);
-			
-			msoLogger.error (MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "BPMN", MDC.get(processKey), MsoLogger.ErrorCode.UnknownError, LOGMARKER 
-					+ response.getMessage() 
-					+ " for processKey: " 
-					+ processKey 
-					+ " with response: " 
-					+ response.getResponse());
-			msoLogger.debug("Exception :",ex);
+
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "BPMN", MDC.get(processKey),
+				MsoLogger.ErrorCode.UnknownError.getValue(),
+				LOGMARKER + response.getMessage() + " for processKey: " + processKey + " with response: " + response
+					.getResponse());
+			logger.debug("Exception :",ex);
 		}
-		
-		msoLogger.recordMetricEvent ( startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				LOGMARKER + response.getMessage() + " for processKey: "
-				+ processKey + " with response: " + response.getResponse(), "BPMN", MDC.get(processKey), null);
-		
-		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, 
-				LOGMARKER + response.getMessage() + " for processKey: "
-				+ processKey + " with response: " + response.getResponse());
-		
 		return response;
 	}
 }

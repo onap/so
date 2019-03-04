@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,15 +31,16 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
-import org.onap.so.logger.MsoLogger;
 import org.openecomp.mso.bpmn.common.workflow.service.WorkflowProcessorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WorkflowProcessor extends ProcessEngineAwareService {
 	
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, WorkflowProcessor.class);
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowProcessor.class);
 	protected static final String logMarker = "[WRKFLOW-RESOURCE]";
 	
 	@Async
@@ -55,21 +58,17 @@ public class WorkflowProcessor extends ProcessEngineAwareService {
 			// Note: this creates a random businessKey if it wasn't specified.
 			String businessKey = getBusinessKey(inputVariables);
 
-			msoLogger.debug("***Received MSO startProcessInstanceByKey with processKey: " + processKey
-					+ " and variables: " + inputVariables);
+			logger.debug("***Received MSO startProcessInstanceByKey with processKey: {} and variables: {}", processKey,
+				inputVariables);
 
 			RuntimeService runtimeService = getProcessEngineServices().getRuntimeService();
 			ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processKey, businessKey,
 					inputVariables);
 			processInstanceId = processInstance.getId();
 
-			msoLogger.debug(logMarker + "Process " + processKey + ":" + processInstanceId + " "
+			logger.debug(logMarker + "Process " + processKey + ":" + processInstanceId + " "
 					+ (processInstance.isEnded() ? "ENDED" : "RUNNING"));
 		} catch (Exception e) {
-
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
-					logMarker + "Error in starting the process: " + e.getMessage());
-
 			WorkflowResponse workflowResponse = new WorkflowResponse();
 			workflowResponse.setResponse("Error occurred while executing the process: " + e);
 			workflowResponse.setProcessInstanceID(processInstanceId);

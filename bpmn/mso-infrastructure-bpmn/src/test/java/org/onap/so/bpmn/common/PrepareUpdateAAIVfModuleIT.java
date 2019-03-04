@@ -3,7 +3,9 @@
  * ONAP - SO 
  * ================================================================================ 
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
- * ================================================================================ 
+ * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
@@ -33,12 +35,12 @@ import java.util.UUID;
 
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Unit tests for PrepareUpdateAAIVfModule.bpmn.
@@ -46,7 +48,7 @@ import org.onap.so.logger.MsoLogger;
 
 public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
 	
-	MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,PrepareUpdateAAIVfModuleIT.class);
+	Logger logger = LoggerFactory.getLogger(PrepareUpdateAAIVfModuleIT.class);
 	
 	/**
 	 * Test the happy path through the flow.
@@ -73,11 +75,11 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
 		Assert.assertTrue(isProcessEnded(businessKey));
 		String response = (String) getVariableFromHistory(businessKey, "PUAAIVfMod_updateVfModuleResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "PUAAIVfMod_updateVfModuleResponseCode");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(200, responseCode.intValue());
 		String heatStackId = (String) getVariableFromHistory(businessKey, "PUAAIVfMod_heatStackId");
-		logger.debug("Ouput heat-stack-id:" + heatStackId);
+		logger.debug("Ouput heat-stack-id:{}", heatStackId);
 		Assert.assertEquals("slowburn", heatStackId);
 		
 		logEnd();
@@ -106,11 +108,11 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
 		String response = (String) getVariableFromHistory(businessKey, "PUAAIVfMod_getVnfResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "PUAAIVfMod_getVnfResponseCode");
 		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(404, responseCode.intValue());
 		Assert.assertNotNull(workflowException);
-		logger.debug("Subflow WorkflowException error message: " + workflowException.getErrorMessage());
+		logger.debug("Subflow WorkflowException error message: {}", workflowException.getErrorMessage());
 		
 		logEnd();
 	}
@@ -137,7 +139,7 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
 		
 		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 		Assert.assertNotNull(workflowException);
-		logger.debug("Subflow WorkflowException error message: " + workflowException.getErrorMessage());
+		logger.debug("Subflow WorkflowException error message: {}", workflowException.getErrorMessage());
 		Assert.assertTrue(workflowException.getErrorMessage().startsWith("VF Module validation error: Orchestration"));
 		
 		logEnd();
@@ -165,7 +167,7 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
 			
 		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 		Assert.assertNotNull(workflowException);
-		logger.debug("Subflow WorkflowException error message: " + workflowException.getErrorMessage());
+		logger.debug("Subflow WorkflowException error message: {}", workflowException.getErrorMessage());
 		Assert.assertTrue(workflowException.getErrorMessage().startsWith("VF Module validation error: VF Module"));
 		
 		logEnd();
@@ -196,11 +198,11 @@ public class PrepareUpdateAAIVfModuleIT extends BaseIntegrationTest {
 		String response = (String) getVariableFromHistory(businessKey, "PUAAIVfMod_updateVfModuleResponse");
 		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "PUAAIVfMod_updateVfModuleResponseCode");
 		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
-		logger.debug("Subflow response code: " + responseCode);
-		logger.debug("Subflow response: " + response);
+		logger.debug("Subflow response code: {}", responseCode);
+		logger.debug("Subflow response: {}", response);
 		Assert.assertEquals(404, responseCode.intValue());
 		Assert.assertNotNull(workflowException);
-		logger.debug("Subflow WorkflowException error message: " + workflowException.getErrorMessage());
+		logger.debug("Subflow WorkflowException error message: {}", workflowException.getErrorMessage());
 		
 		logEnd();
 	}

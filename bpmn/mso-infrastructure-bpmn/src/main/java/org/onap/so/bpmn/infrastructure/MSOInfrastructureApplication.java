@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,8 +30,9 @@ import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -52,8 +55,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 				@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class) })
 public class MSOInfrastructureApplication {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,
-			MSOInfrastructureApplication.class);
+	private static final Logger logger = LoggerFactory.getLogger(MSOInfrastructureApplication.class);
 
 	@Value("${mso.async.core-pool-size}")
 	private int corePoolSize;
@@ -81,20 +83,11 @@ public class MSOInfrastructureApplication {
 
 	@PostDeploy
 	public void postDeploy(ProcessEngine processEngineInstance) {
-		long startTime = System.currentTimeMillis();
-
-		msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-				"Post deployment complete...");
 	}
 
 	@PreUndeploy
 	public void cleanup(ProcessEngine processEngine, ProcessApplicationInfo processApplicationInfo,
 			List<ProcessEngine> processEngines) {
-		long startTime = System.currentTimeMillis();
-
-		msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-				"Pre Undeploy complete...");
-
 	}
 
 	@Bean

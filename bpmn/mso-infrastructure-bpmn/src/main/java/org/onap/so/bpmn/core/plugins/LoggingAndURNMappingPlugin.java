@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -56,7 +58,8 @@ import org.onap.so.bpmn.core.BPMNLogger;
 
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.MsoLogger;
-import org.slf4j.MDC;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
@@ -279,7 +282,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 	 * Logs details about the current activity.
 	 */	
 	public class LoggingExecutionListener implements ExecutionListener {
-		private final MsoLogger logger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL,LoggingExecutionListener.class);	
+		private final Logger logger = LoggerFactory.getLogger(LoggingExecutionListener.class);
 
 		private String event;
 		
@@ -317,7 +320,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 						MsoLogger.setLogContext(requestId, svcid);							
 					}
 				} catch(Exception e) {					
-					logger.error(e);
+					logger.error("Exception occurred", e);
 				}
 			}
 		}
