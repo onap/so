@@ -103,7 +103,6 @@ public class SniroHomingV2 {
 	private static final String RESOURCE_MODULE_NAME = "resourceModuleName";
 	private static final String RESOURCE_MODEL_INFO = "resourceModelInfo";
 	private static final String IDENTIFIER_TYPE = "identifierType";
-	private static final String INVENTORY_TYPE = "inventoryType";
 	private static final String SOLUTIONS = "solutions";
 	private static final String RESOURCE_MISSING_DATA = "Resource does not contain: ";
 	private static final String SERVICE_MISSING_DATA = "Service Instance does not contain: ";
@@ -522,51 +521,40 @@ public class SniroHomingV2 {
 		JSONArray assignments = placement.getJSONArray("assignmentInfo");
 		Map<String, String> assignmentsMap = jsonUtils.entryArrayToMap(assignments.toString(), "key", "value");
 		solutionInfo.setRehome(Boolean.parseBoolean(assignmentsMap.get("isRehome")));
-		String type = placement.getString(INVENTORY_TYPE);
 
 		ServiceInstance si = new ServiceInstance();
 		CloudRegion cloud = setCloud(assignmentsMap);
-		if(type.equals("service")){
-			if(identifierType.equals(CandidateType.SERVICE_INSTANCE_ID.toString())){
-				solutionInfo.setHomed(true);
-				si.setServiceInstanceId(identifierValue);
-				si.setOrchestrationStatus(OrchestrationStatus.CREATED);
-				cloud.setLcpCloudRegionId(assignmentsMap.get("cloudRegionId"));
-				if(assignmentsMap.containsKey("vnfHostName")){
-					logger.debug("Resources has been homed to a vnf");
-					GenericVnf vnf = setVnf(assignmentsMap);
-					vnf.setCloudRegion(cloud);
-					si.getVnfs().add(vnf);
+		if(identifierType.equals(CandidateType.SERVICE_INSTANCE_ID.toString())){
+			solutionInfo.setHomed(true);
+			si.setServiceInstanceId(identifierValue);
+			si.setOrchestrationStatus(OrchestrationStatus.CREATED);
+			cloud.setLcpCloudRegionId(assignmentsMap.get("cloudRegionId"));
+			if(assignmentsMap.containsKey("vnfHostName")){
+				logger.debug("Resources has been homed to a vnf");
+				GenericVnf vnf = setVnf(assignmentsMap);
+				vnf.setCloudRegion(cloud);
+				si.getVnfs().add(vnf);
 
-				}else if(assignmentsMap.containsKey("primaryPnfName")){
-					logger.debug("Resources has been homed to a pnf");
-					Pnf priPnf = setPnf(assignmentsMap, "primary");
-					priPnf.setCloudRegion(cloud);
-					si.getPnfs().add(priPnf);
-					if(assignmentsMap.containsKey("secondaryPnfName")){
-						Pnf secPnf = setPnf(assignmentsMap, "secondary");
-						secPnf.setCloudRegion(cloud);
-						si.getPnfs().add(secPnf);
-					}
+			}else if(assignmentsMap.containsKey("primaryPnfName")){
+				logger.debug("Resources has been homed to a pnf");
+				Pnf priPnf = setPnf(assignmentsMap, "primary");
+				priPnf.setCloudRegion(cloud);
+				si.getPnfs().add(priPnf);
+				if(assignmentsMap.containsKey("secondaryPnfName")){
+					Pnf secPnf = setPnf(assignmentsMap, "secondary");
+					secPnf.setCloudRegion(cloud);
+					si.getPnfs().add(secPnf);
 				}
-			}else{
-				logger.debug(invalidMessage + IDENTIFIER_TYPE);
-				throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
 			}
-		}else if(type.equals("cloud")){
-			if(identifierType.equals(CandidateType.CLOUD_REGION_ID.toString())){
-				logger.debug("Resources has been homed to a cloud region");
-				cloud.setLcpCloudRegionId(identifierValue);
-				solutionInfo.setHomed(false);
-				solutionInfo.setTargetedCloudRegion(cloud);
-				si.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
-			}else{
-				logger.debug(invalidMessage + IDENTIFIER_TYPE);
-				throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
-			}
+		}else if(identifierType.equals(CandidateType.CLOUD_REGION_ID.toString())){
+			logger.debug("Resources has been homed to a cloud region");
+			cloud.setLcpCloudRegionId(identifierValue);
+			solutionInfo.setHomed(false);
+			solutionInfo.setTargetedCloudRegion(cloud);
+			si.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 		}else{
-			logger.debug(invalidMessage + INVENTORY_TYPE);
-			throw new BpmnError(UNPROCESSABLE, invalidMessage + INVENTORY_TYPE);
+			logger.debug(invalidMessage + IDENTIFIER_TYPE);
+			throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
 		}
 		si.setSolutionInfo(solutionInfo);
 		return si;
