@@ -999,6 +999,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             OpenStackRequest <Stack> request = heatClient.getStacks ().byName (stackName);
             return executeAndRecordOpenstackRequest (request);
         } catch (OpenStackResponseException e) {
+        	LOGGER.error("Error in Query Stack", e);
             if (e.getStatus () == 404) {
                 logger.debug ("queryHeatStack - stack not found: {}", stackName);
                 return null;

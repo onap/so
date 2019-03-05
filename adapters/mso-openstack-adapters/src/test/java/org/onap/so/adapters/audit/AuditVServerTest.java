@@ -58,8 +58,6 @@ import com.woorea.openstack.heat.model.Resources;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AuditVServerTest extends AuditVServer {
 
-	private ObjectMapper objectMapper = new ObjectMapper();
-
 	@InjectMocks
 	private AuditVServer auditNova = new AuditVServer();
 
@@ -225,9 +223,13 @@ public class AuditVServerTest extends AuditVServer {
 	
 	@Test
 	public void audit_Vserver_Empty_HashSet() throws JsonParseException, JsonMappingException, IOException {
-		boolean exists = auditNova.auditVservers(new HashSet<Vserver>(), tenantId, cloudOwner, cloudRegion);		
+		boolean exists = auditNova.auditAllVserversDoExist(new HashSet<Vserver>(), tenantId, cloudOwner, cloudRegion);
 		assertEquals(false, exists);
+		
+		boolean doNotExist = auditNova.auditAllVserversDoNotExist(new HashSet<Vserver>(), tenantId, cloudOwner, cloudRegion);
+		assertEquals(true, doNotExist);
 	}
+	
 
 	@Test
 	public void audit_Vserver_Found_Test() throws JsonParseException, JsonMappingException, IOException {
@@ -246,8 +248,11 @@ public class AuditVServerTest extends AuditVServer {
 		doReturn(true).when(aaiResourcesMock).exists(service1_sub_0_uri);
 		doReturn(true).when(aaiResourcesMock).exists(service1_sub_1_uri);
 
-		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		boolean exists = auditNova.auditAllVserversDoExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
 		assertEquals(true, exists);
+		
+		boolean doNotExist = auditNova.auditAllVserversDoNotExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		assertEquals(false, doNotExist);
 	}
 
 	@Test
@@ -268,8 +273,11 @@ public class AuditVServerTest extends AuditVServer {
 		doReturn(true).when(aaiResourcesMock).exists(service1_sub_0_uri);
 		doReturn(true).when(aaiResourcesMock).exists(service1_sub_1_uri);
 
-		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		boolean exists = auditNova.auditAllVserversDoExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
 		assertEquals(false, exists);
+		
+		boolean doNotExist = auditNova.auditAllVserversDoNotExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		assertEquals(false, doNotExist);
 	}
 
 	@Test
@@ -288,16 +296,23 @@ public class AuditVServerTest extends AuditVServer {
 		doReturn(true).when(aaiResourcesMock).exists(service2_sub_1_uri);
 		doReturn(true).when(aaiResourcesMock).exists(service1_sub_0_uri);
 		doReturn(true).when(aaiResourcesMock).exists(service1_sub_1_uri);
-		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);
+		boolean exists = auditNova.auditAllVserversDoExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);
 		assertEquals(false, exists);
+		
+		boolean doNotExist = auditNova.auditAllVserversDoNotExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		assertEquals(false, doNotExist);
 	}
 
 	@Test
-	public void audit_Vserver_Not_Found_Test() throws JsonParseException, JsonMappingException, IOException {
+	public void audit_Vservers_Not_Found_Test() throws JsonParseException, JsonMappingException, IOException {
 		doReturn(false).when(aaiResourcesMock).exists(vserverURI);
 		doReturn(false).when(aaiResourcesMock).exists(vserverURI2);
-		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		
+		boolean exists = auditNova.auditAllVserversDoExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
 		assertEquals(false, exists);
+		
+		boolean doNotExist = auditNova.auditAllVserversDoNotExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		assertEquals(true, doNotExist);
 	}
 
 	@Test
@@ -306,8 +321,11 @@ public class AuditVServerTest extends AuditVServer {
 		doReturn(true).when(aaiResourcesMock).exists(vserverURI2);
 		doReturn(Optional.of(test_port_1_plural)).when(aaiResourcesMock).get(LInterface.class,test_port_1_uri);
 		doReturn(Optional.of(test_port_2_plural)).when(aaiResourcesMock).get(LInterface.class,test_port_2_uri);
-		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		boolean exists = auditNova.auditAllVserversDoExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
 		assertEquals(false, exists);
+		
+		boolean doNotExist = auditNova.auditAllVserversDoNotExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		assertEquals(false, doNotExist);
 	}
 
 	@Test
@@ -325,8 +343,12 @@ public class AuditVServerTest extends AuditVServer {
 		doReturn(true).when(aaiResourcesMock).exists(service1_sub_0_uri);
 		doReturn(true).when(aaiResourcesMock).exists(service1_sub_1_uri);
 		doReturn(false).when(aaiResourcesMock).exists(vserverURI2);
-		boolean exists = auditNova.auditVservers(vserversToAudit, tenantId, cloudOwner, cloudRegion);
+		
+		boolean exists = auditNova.auditAllVserversDoExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);
 		assertEquals(false, exists);
+		
+		boolean doNotExist = auditNova.auditAllVserversDoNotExist(vserversToAudit, tenantId, cloudOwner, cloudRegion);		
+		assertEquals(false, doNotExist);
 	}
 
 }

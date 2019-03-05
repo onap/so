@@ -173,7 +173,7 @@ public class BBInputSetupUtils {
 			if (cloudRegionId != null && cloudOwner != null && !cloudRegionId.isEmpty() && !cloudOwner.isEmpty()) {
 				return injectionHelper.getAaiClient().get(CloudRegion.class,
 						AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudOwner,
-								cloudRegionId)).orElse(null);
+								cloudRegionId).depth(Depth.TWO)).orElse(null);
 			
 			} else {
 				return null;

@@ -50,6 +50,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
@@ -601,6 +602,23 @@ public class BBInputSetupMapperLayerTest {
 		cloudRegion.setCloudRegionVersion("cloudRegionVersion");
 
 		CloudRegion actual = bbInputSetupMapperLayer.mapCloudRegion(cloudConfig, cloudRegion);
+
+		assertThat(actual, sameBeanAs(expected));
+	}
+	
+	@Test
+	public void testMapTenant() {
+		Tenant expected = new Tenant();
+		expected.setTenantId("tenantId");
+		expected.setTenantName("tenantName");
+		expected.setTenantContext("tenantContext");
+
+		org.onap.aai.domain.yang.Tenant aaiTenant = new org.onap.aai.domain.yang.Tenant();
+		aaiTenant.setTenantId("tenantId");
+		aaiTenant.setTenantName("tenantName");
+		aaiTenant.setTenantContext("tenantContext");
+
+		Tenant actual = bbInputSetupMapperLayer.mapTenant(aaiTenant);
 
 		assertThat(actual, sameBeanAs(expected));
 	}

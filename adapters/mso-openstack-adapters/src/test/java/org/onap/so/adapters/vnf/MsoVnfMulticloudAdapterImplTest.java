@@ -65,7 +65,7 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
 
     @Test
     public void createVfModule() throws Exception {
-        //expectedException.expect(VnfException.class);
+        
         Map<String, Object> stackInputs = new HashMap<>();
         stackInputs.put("oof_directives", "{}");
         stackInputs.put("sdnc_directives", "{}");
