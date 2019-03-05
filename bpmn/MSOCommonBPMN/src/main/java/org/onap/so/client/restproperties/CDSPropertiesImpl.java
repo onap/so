@@ -24,6 +24,7 @@ public class CDSPropertiesImpl implements CDSProperties {
 
     private static final String ENDPOINT = "cds.endpoint";
     private static final String PORT = "cds.port";
+    private static final String AUTH = "cds.auth";
 
     public CDSPropertiesImpl() {
         // Needed for service loader
@@ -37,6 +38,11 @@ public class CDSPropertiesImpl implements CDSProperties {
     @Override
     public int getPort() {
         return Integer.parseInt(Objects.requireNonNull(UrnPropertiesReader.getVariable(PORT)));
+    }
+
+    @Override
+    public String getBasicAuth() {
+        return Objects.requireNonNull(UrnPropertiesReader.getVariable(AUTH));
     }
 
     @Override
