@@ -126,7 +126,7 @@ public abstract class GraphInventoryRelationships<Wrapper extends GraphInventory
 	protected List<String> getRelatedLinks(Optional<GraphInventoryObjectName> type) {
 		String matcher = "";
 		if (type.isPresent()) {
-			matcher = "[?(@.related-to=='" + type.get() + "')]";
+			matcher = "[?(@.related-to=='" + type.get().typeName() + "')]";
 		}
 		return JsonPathUtil.getInstance().locateResultList(this.jsonBody, String.format("$.relationship%s.related-link", matcher));
 	}

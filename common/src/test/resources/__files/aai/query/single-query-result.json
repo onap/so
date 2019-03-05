@@ -1,0 +1,80 @@
+{
+    "results": [
+        {
+            "url": "/aai/v14/cloud-infrastructure/complexes/complex/complex-id-15100-jc689q",
+            "complex": {
+                "physical-location-id": "complex-id-15100-jc689q",
+                "resource-version": "1541786379243",
+                "physical-location-type": "lvXHWJC",
+                "street1": "uAAi5qjc1",
+                "street2": "vkK6XQjc2",
+                "city": "3Ec8JSW0JC",
+                "state": "COczHmeJC",
+                "postal-code": "D4J1",
+                "country": "K0JC1",
+                "region": "JzHqJC1",
+                "relationship-list": {
+                    "relationship": [
+                        {
+                            "related-to": "pserver",
+                            "relationship-label": "org.onap.relationships.inventory.LocatedIn",
+                            "related-link": "/aai/v14/cloud-infrastructure/pservers/pserver/pserver-15100-jc689q",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "pserver-15100-jc689q"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                },
+                                {
+                                    "property-key": "pserver.fqdn"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "url": "/aai/v14/cloud-infrastructure/complexes/complex/complex-id-15100-jc689q2",
+            "complex": {
+                "physical-location-id": "complex-id-15100-jc689q2",
+                "resource-version": "1541786379243",
+                "physical-location-type": "lvXHWJC",
+                "street1": "uAAi5qjc1",
+                "street2": "vkK6XQjc2",
+                "city": "3Ec8JSW0JC",
+                "state": "COczHmeJC",
+                "postal-code": "D4J1",
+                "country": "K0JC1",
+                "region": "JzHqJC1",
+                "relationship-list": {
+                    "relationship": [
+                        {
+                            "related-to": "pserver",
+                            "relationship-label": "org.onap.relationships.inventory.LocatedIn",
+                            "related-link": "/aai/v14/cloud-infrastructure/pservers/pserver/pserver-15100-jc689q",
+                            "relationship-data": [
+                                {
+                                    "relationship-key": "pserver.hostname",
+                                    "relationship-value": "pserver-15100-jc689q"
+                                }
+                            ],
+                            "related-to-property": [
+                                {
+                                    "property-key": "pserver.pserver-name2"
+                                },
+                                {
+                                    "property-key": "pserver.fqdn"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

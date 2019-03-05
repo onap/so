@@ -86,14 +86,8 @@ public abstract class GraphInventoryResultWrapper<R extends GraphInventoryRelati
 	}
 	
 	public Map<String, Object> asMap() {
-		if (isEmpty()) {
-			return new HashMap<>();
-		}
-		try {
-			return mapper.readValue(this.jsonBody, new TypeReference<Map<String, Object>>(){});
-		} catch (IOException e) {
-			return new HashMap<>();
-		}
+		
+		return asBean(new TypeReference<Map<String, Object>>(){}).orElse(new HashMap<>());
 	}
 	
 	public <T> Optional<T> asBean(Class<T> clazz) {
@@ -102,6 +96,17 @@ public abstract class GraphInventoryResultWrapper<R extends GraphInventoryRelati
 		}
 		try {
 			return Optional.of(mapper.readValue(this.jsonBody, clazz));
+		} catch (IOException e) {
+			return Optional.empty();
+		}
+	}
+	
+	public <T> Optional<T> asBean(TypeReference<T> reference) {
+		if (isEmpty()) {
+			return Optional.empty();
+		}
+		try {
+			return Optional.of(mapper.readValue(this.jsonBody, reference));
 		} catch (IOException e) {
 			return Optional.empty();
 		}

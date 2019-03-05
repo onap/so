@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.onap.so.client.aai.entities.QueryStep;
+import org.onap.so.client.graphinventory.GraphInventoryObjectName;
 
 import com.google.common.base.Joiner;
 
@@ -92,6 +93,14 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
 			return query.toString();
 		});
 		return this;
+	}
+	
+	public DSLQueryBuilder<S, E> to(GraphInventoryObjectName name) {
+		return to(__.node(name));
+	}
+	
+	public DSLQueryBuilder<S, E> to(GraphInventoryObjectName name, DSLNodeKey... key) {
+		return to(__.node(name, key));
 	}
 	
 	public String limit(int limit) {

@@ -50,6 +50,21 @@ public class DefaultAAIPropertiesImpl implements AAIProperties {
 		this.props = temp;
 
 	}
+	
+	public DefaultAAIPropertiesImpl(int port) {
+		File initialFile = new File("src/test/resources/aai.properties");
+		Map<Object, Object> temp;
+		try (InputStream targetStream = new FileInputStream(initialFile)) {
+			Properties properties = new Properties();
+			properties.load(targetStream);
+			temp = properties;
+		} catch (IOException e) {
+			temp = new HashMap<>();
+		}
+		this.props = temp;
+		this.props.put("aai.endpoint", this.props.get("aai.endpoint").toString().replaceFirst(":\\d+", ":" + port));
+
+	}
 	@Override
 	public URL getEndpoint() throws MalformedURLException {
 		return new URL(props.get("aai.endpoint").toString());
