@@ -787,7 +787,9 @@ public class BBInputSetupTest {
 		ServiceInstance serviceInstance = mapper.readValue(
 				new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
 				ServiceInstance.class);
-
+		CloudConfiguration cloudConfiguration = new CloudConfiguration();
+		cloudConfiguration.setTenantId("tenantId");
+		requestDetails.setCloudConfiguration(cloudConfiguration);
 		OrchestrationContext orchestrationContext = new OrchestrationContext();
 		orchestrationContext.setIsRollbackEnabled(false);
 
@@ -808,17 +810,30 @@ public class BBInputSetupTest {
 		customer.setSubscriberName("subscriberName");
 		customer.setSubscriberType("subscriberType");
 		customer.setServiceSubscription(serviceSubscription);
+		
+		org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant tenant = new org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant();
+		tenant.setTenantContext("tenantContext");
+		tenant.setTenantId("tenantId");
+		tenant.setTenantName("tenantName");
 
 		org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = Mockito.mock(org.onap.aai.domain.yang.CloudRegion.class);
+		org.onap.aai.domain.yang.Tenants aaiTenants = Mockito.mock(org.onap.aai.domain.yang.Tenants.class);
+		org.onap.aai.domain.yang.Tenant aaiTenant = new org.onap.aai.domain.yang.Tenant();
+		aaiTenant.setTenantId("tenantId");
+		List<org.onap.aai.domain.yang.Tenant> tenants = new ArrayList<>();
+		tenants.add(aaiTenant);
 
 		String requestAction = "createInstance";
-
+		
 		doReturn(uriKeys).when(SPY_bbInputSetupUtils).getURIKeysFromServiceInstance(serviceInstance.getServiceInstanceId());
 		doReturn(customer).when(SPY_bbInputSetup).mapCustomer(uriKeys.get("global-customer-id"),uriKeys.get("service-type"));
 		doReturn(aaiCloudRegion).when(SPY_bbInputSetupUtils).getCloudRegion(requestDetails.getCloudConfiguration());
 		doReturn(orchestrationContext).when(bbInputSetupMapperLayer).mapOrchestrationContext(requestDetails);
 		doReturn(requestContext).when(bbInputSetupMapperLayer).mapRequestContext(requestDetails);
 		doReturn(cloudRegion).when(bbInputSetupMapperLayer).mapCloudRegion(requestDetails.getCloudConfiguration(), aaiCloudRegion);
+		doReturn(tenant).when(bbInputSetupMapperLayer).mapTenant(aaiTenant);
+		doReturn(aaiTenants).when(aaiCloudRegion).getTenants();
+		doReturn(tenants).when(aaiTenants).getTenant();
 
 		GeneralBuildingBlock actual = SPY_bbInputSetup.populateGBBWithSIAndAdditionalInfo(requestDetails,
 				serviceInstance, executeBB, requestAction, null);

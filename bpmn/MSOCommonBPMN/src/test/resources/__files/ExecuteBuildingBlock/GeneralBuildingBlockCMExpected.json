@@ -16,6 +16,8 @@
   "cloudRegion": {
     "lcp-cloud-region-id" : "myRegionId",
     "cloud-owner": "CloudOwner"
+  },  
+  "tenant": {
   },
   "userInput": null,
   "customer": {

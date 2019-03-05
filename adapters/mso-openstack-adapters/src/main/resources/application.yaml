@@ -30,8 +30,19 @@ spring:
         ddl-auto: validate
         naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
         enable-lazy-load-no-trans: true
-  
-
+org:
+  onap:
+    so:
+      adapters:
+        default_keystone_url_version: /v2.0
+        default_keystone_reg_ex: "/[vV][0-9]"        
+        po:
+          retryCodes: 504
+          retryDelay: 5
+          retryCount: 3
+          pollTimeout: 7500
+          pollInterval: 15
+          
 #Actuator
 management:
   endpoints:

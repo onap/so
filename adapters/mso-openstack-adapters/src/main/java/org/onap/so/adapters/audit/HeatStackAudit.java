@@ -57,26 +57,51 @@ public class HeatStackAudit {
 	@Autowired
 	protected AuditVServer auditVservers;
 
-	public boolean auditHeatStack(String cloudRegion, String cloudOwner, String tenantId, String heatStackName) {
+	public boolean auditHeatStackCreate(String cloudRegion, String cloudOwner, String tenantId, String heatStackName) {
 		try {
-			logger.debug("Fetching Top Level Stack Information");
-			Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName);
-			List<Resource> novaResources = resources.getList().stream()
-					.filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
-			List<Resource> resourceGroups = resources.getList().stream()
-					.filter(p -> "OS::Heat::ResourceGroup".equals(p.getType()) && p.getName().contains("subinterfaces")).collect(Collectors.toList());
-			if(novaResources.isEmpty())
-				return true;
-			else{				
-				Set<Vserver> vserversToAudit = createVserverSet(resources, novaResources);
-				Set<Vserver> vserversWithSubInterfaces = processSubInterfaces(cloudRegion, tenantId, resourceGroups,
-					vserversToAudit);
-				return auditVservers.auditVservers(vserversWithSubInterfaces, tenantId, cloudOwner, cloudRegion);
-			}
+			return auditStack(cloudRegion,cloudOwner,tenantId,heatStackName,true);
 		} catch (Exception e) {
 			logger.error("Error during auditing stack resources", e);
 			return false;
 		}
+	}
+	
+	public boolean auditHeatStackDeleted(String cloudRegion, String cloudOwner, String tenantId, String heatStackName) {
+		try {
+			return auditStack(cloudRegion,cloudOwner,tenantId,heatStackName,false);
+		} catch (Exception e) {
+			logger.error("Error during auditing stack resources", e);
+			return false;
+		}
+	}
+	
+	private boolean auditStack(String cloudRegion, String cloudOwner, String tenantId, String heatStackName,boolean isCreateAudit) throws Exception{
+		logger.debug("Fetching Top Level Stack Information");
+		Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName);
+		List<Resource> novaResources = extractNovaResources(resources);
+		if(novaResources.isEmpty())
+			return true;
+		else{
+			List<Resource> resourceGroups = extractResourceGroups(resources);
+			Set<Vserver> vserversToAudit = createVserverSet(resources, novaResources);
+			Set<Vserver> vserversWithSubInterfaces = processSubInterfaces(cloudRegion, tenantId, resourceGroups,
+				vserversToAudit);
+			if(isCreateAudit){
+				return auditVservers.auditAllVserversDoExist(vserversWithSubInterfaces, tenantId, cloudOwner, cloudRegion);
+			}else{
+				return auditVservers.auditAllVserversDoNotExist(vserversWithSubInterfaces, tenantId, cloudOwner, cloudRegion);
+			}
+		}
+	}
+
+	private List<Resource> extractResourceGroups(Resources resources) {
+		return resources.getList().stream()
+				.filter(p -> "OS::Heat::ResourceGroup".equals(p.getType()) && p.getName().contains("subinterfaces")).collect(Collectors.toList());
+	}
+
+	private List<Resource> extractNovaResources(Resources resources) {
+		return resources.getList().stream()
+				.filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
 	} 
 
 	protected Set<Vserver> processSubInterfaces(String cloudRegion, String tenantId, List<Resource> resourceGroups,
@@ -207,6 +232,5 @@ public class HeatStackAudit {
 		}
 		return Optional.empty();
 	}
-	
 	
 }

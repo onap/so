@@ -49,6 +49,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
@@ -831,7 +832,7 @@ public class BBInputSetup implements JavaDelegate {
 	}
 
 	protected GeneralBuildingBlock populateGBBWithSIAndAdditionalInfo(RequestDetails requestDetails,
-			ServiceInstance serviceInstance, ExecuteBuildingBlock executeBB, String requestAction, Customer customer) {
+			ServiceInstance serviceInstance, ExecuteBuildingBlock executeBB, String requestAction, Customer customer) throws Exception {
 		GeneralBuildingBlock outputBB = new GeneralBuildingBlock();
 		OrchestrationContext orchContext = mapperLayer.mapOrchestrationContext(requestDetails);
 		RequestContext requestContext = mapperLayer.mapRequestContext(requestDetails);
@@ -840,9 +841,11 @@ public class BBInputSetup implements JavaDelegate {
 		org.onap.aai.domain.yang.CloudRegion aaiCloudRegion = bbInputSetupUtils
 				.getCloudRegion(requestDetails.getCloudConfiguration());
 		CloudRegion cloudRegion = mapperLayer.mapCloudRegion(requestDetails.getCloudConfiguration(), aaiCloudRegion);
+		Tenant tenant = getTenant(requestDetails.getCloudConfiguration(), aaiCloudRegion);
 		outputBB.setOrchContext(orchContext);
 		outputBB.setRequestContext(requestContext);
 		outputBB.setCloudRegion(cloudRegion);
+		outputBB.setTenant(tenant);
 		if(customer == null){
 			Map<String, String> uriKeys = bbInputSetupUtils.getURIKeysFromServiceInstance(serviceInstance.getServiceInstanceId());
 			String globalCustomerId = uriKeys.get("global-customer-id");
@@ -855,6 +858,23 @@ public class BBInputSetup implements JavaDelegate {
 		}
 		outputBB.setCustomer(customer);
 		return outputBB;
+	}
+
+	protected Tenant getTenant(CloudConfiguration cloudConfiguration, org.onap.aai.domain.yang.CloudRegion aaiCloudRegion) throws Exception {
+		Tenant tenant = new Tenant();
+		if(cloudConfiguration != null && cloudConfiguration.getTenantId() != null 
+				&& aaiCloudRegion != null && aaiCloudRegion.getTenants() != null) {
+			for(org.onap.aai.domain.yang.Tenant aaiTenant : aaiCloudRegion.getTenants().getTenant()) {
+				if(aaiTenant.getTenantId().equalsIgnoreCase(cloudConfiguration.getTenantId())) {
+					tenant = mapperLayer.mapTenant(aaiTenant);
+				}
+			}
+			if(tenant.getTenantId() == null || tenant.getTenantName() == null) { 
+				throw new Exception("Invalid tenant information retrieved: tenantId = " + tenant.getTenantId() 
+				+ " tenantName = " + tenant.getTenantName()); 
+			}
+		}
+		return tenant;
 	}
 
 	protected ServiceSubscription getServiceSubscription(RequestDetails requestDetails, Customer customer) {

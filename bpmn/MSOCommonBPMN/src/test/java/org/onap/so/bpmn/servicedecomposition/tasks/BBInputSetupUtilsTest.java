@@ -181,10 +181,10 @@ public class BBInputSetupUtilsTest {
 		expected.get().setCloudRegionId("lcpCloudRegionId");
 		doReturn(expected).when(MOCK_aaiResourcesClient).get(org.onap.aai.domain.yang.CloudRegion.class,
 				AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudConfig.getCloudOwner(),
-						cloudConfig.getLcpCloudRegionId()));
+						cloudConfig.getLcpCloudRegionId()).depth(Depth.TWO));
 
 		AAIResourceUri expectedUri = AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, cloudConfig.getCloudOwner(),
-				cloudConfig.getLcpCloudRegionId());
+				cloudConfig.getLcpCloudRegionId()).depth(Depth.TWO);
 		bbInputSetupUtils.getCloudRegion(cloudConfig);
 		
 		verify(MOCK_aaiResourcesClient, times(1)).get(CloudRegion.class, expectedUri);

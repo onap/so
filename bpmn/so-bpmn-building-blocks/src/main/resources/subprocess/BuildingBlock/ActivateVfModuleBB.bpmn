@@ -35,7 +35,7 @@
       <bpmn:incoming>SequenceFlow_0ghzwlo</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0xndboi</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Audit_AAI_Inventory" name="Validate A&#38;AI Inventory" camunda:type="external" camunda:topic="InventoryAudit">
+    <bpmn:serviceTask id="Audit_AAI_Inventory" name="Validate A&#38;AI Inventory" camunda:type="external" camunda:topic="InventoryAddAudit">
       <bpmn:incoming>SequenceFlow_0xndboi</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0ee42yq</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -54,7 +54,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="SequenceFlow_07ybdik" sourceRef="ExclusiveGateway_1v8bmbu" targetRef="ActivateVfModule" />
     <bpmn:sequenceFlow id="SequenceFlow_0ghzwlo" sourceRef="ExclusiveGateway_1v8bmbu" targetRef="Setup_AAI_Inventory_Audit">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("auditInventoryNeeded").equals("true")}]]></bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression"><![CDATA[${execution.getVariable("auditInventoryNeeded") == true}]]></bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="SequenceFlow_0ee42yq" sourceRef="Audit_AAI_Inventory" targetRef="ActivateVfModule" />
     <bpmn:serviceTask id="CheckAuditVariable" name="Check Audit Variable" camunda:expression="${AuditTasks.isAuditNeeded(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">

@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import static org.apache.commons.lang3.StringUtils.*;
 
 @Component
 public class VnfAdapterCreateTasks {
@@ -91,25 +92,27 @@ public class VnfAdapterCreateTasks {
 	public void createVfModule(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			
+
 			ServiceInstance serviceInstance = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0);
 			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
 			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
 			VolumeGroup volumeGroup = null;
 			try {
 				volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
-			} catch(BBObjectNotFoundException bbException) {				
+			} catch(BBObjectNotFoundException bbException) {
 			}
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			RequestContext requestContext = gBBInput.getRequestContext();
 			OrchestrationContext orchestrationContext = gBBInput.getOrchContext();
 			String sdncVfModuleQueryResponse = execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId());
 			String sdncVnfQueryResponse = execution.getVariable("SDNCQueryResponse_" + genericVnf.getVnfId());
-			
+
 			CreateVfModuleRequest createVfModuleRequest = vnfAdapterVfModuleResources.createVfModuleRequest(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
 			execution.setVariable(VNFREST_REQUEST, createVfModuleRequest.toXmlString());
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 	}
+
+	
 }
