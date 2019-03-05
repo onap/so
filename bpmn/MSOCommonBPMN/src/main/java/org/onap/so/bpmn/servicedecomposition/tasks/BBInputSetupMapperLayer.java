@@ -53,6 +53,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.SegmentationAssignment;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
@@ -382,6 +383,14 @@ public class BBInputSetupMapperLayer {
 		if(aaiCloudRegion != null)
 			modelMapper.map(aaiCloudRegion, cloudRegion);
 		return cloudRegion;
+	}
+	
+	protected Tenant mapTenant(org.onap.aai.domain.yang.Tenant aaiTenant) {
+		Tenant tenant = new Tenant();
+		if(aaiTenant != null) {
+			modelMapper.map(aaiTenant, tenant);
+		}
+		return tenant;
 	}
 
 	protected Collection mapAAICollectionIntoCollection(org.onap.aai.domain.yang.Collection aaiCollection) {

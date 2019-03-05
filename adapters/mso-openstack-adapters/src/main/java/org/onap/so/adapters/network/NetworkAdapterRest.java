@@ -90,6 +90,7 @@ public class NetworkAdapterRest {
 
 	@Autowired
 	private MsoNetworkAdapterImpl adapter;
+	
 	@Autowired
 	private Provider<BpelRestClient> bpelRestClientProvider;
 	

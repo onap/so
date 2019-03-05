@@ -26,6 +26,7 @@ import java.util.Map;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 
@@ -39,9 +40,19 @@ public class GeneralBuildingBlock implements Serializable {
 	private OrchestrationContext orchContext;
 	private Map<String, String> userInput;
 	private CloudRegion cloudRegion;
+	private Tenant tenant;
 
 	private Customer customer;
 	private ServiceInstance serviceInstance;
+
+	
+	public Tenant getTenant() {
+		return tenant;
+	}
+
+	public void setTenant(Tenant tenant) {
+		this.tenant = tenant;
+	}
 
 	public CloudRegion getCloudRegion() {
 		return cloudRegion;

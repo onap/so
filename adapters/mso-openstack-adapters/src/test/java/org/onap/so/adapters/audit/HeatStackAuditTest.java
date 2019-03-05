@@ -203,7 +203,7 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		Resources getResource = objectMapper.readValue(new File("src/test/resources/Service1ResourceGroupResponse.json"), Resources.class);
 		doReturn(getResource).when(msoHeatUtilsMock).queryStackResources(cloudRegion,	tenantId, "heatStackName");
 		
-		boolean actual = heatStackAudit.auditHeatStack(cloudRegion, "cloudOwner", tenantId, "heatStackName");
+		boolean actual = heatStackAudit.auditHeatStackCreate(cloudRegion, "cloudOwner", tenantId, "heatStackName");
 		assertEquals(true, actual);
 	}
 	

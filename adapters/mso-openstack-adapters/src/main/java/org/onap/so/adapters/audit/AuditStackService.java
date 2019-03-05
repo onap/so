@@ -46,10 +46,13 @@ public class AuditStackService {
 	public Environment env;
 
 	@Autowired
-	private AuditStackServiceData auditStack;
+	private AuditCreateStackService auditCreateStack;
+	
+	@Autowired
+	private AuditDeleteStackService auditDeleteStack;
 
 	@PostConstruct
-	public void auditAAIInventory() {
+	public void auditAddAAIInventory() {
 		String auth = "";
 		try {
 			auth = CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
@@ -60,9 +63,26 @@ public class AuditStackService {
 				auth);
 		ExternalTaskClient client = ExternalTaskClient.create()
 				.baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
-				.asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(10000, 2, 120000)).build();
-		client.subscribe("InventoryAudit").lockDuration(60000)
-				.handler(auditStack::executeExternalTask).open();
+				.asyncResponseTimeout(120000).build();
+		client.subscribe("InventoryAddAudit").lockDuration(60000)
+				.handler(auditCreateStack::executeExternalTask).open();
+	}
+	
+	@PostConstruct
+	public void auditDeleteAAIInventory() {
+		String auth = "";
+		try {
+			auth = CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
+		} catch (IllegalStateException | GeneralSecurityException e) {
+			logger.error("Error Decrypting Password", e);
+		}
+		ClientRequestInterceptor interceptor = new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"),
+				auth);
+		ExternalTaskClient client = ExternalTaskClient.create()
+				.baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
+				.asyncResponseTimeout(120000).build();
+		client.subscribe("InventoryDeleteAudit").lockDuration(60000)
+				.handler(auditDeleteStack::executeExternalTask).open();
 	}
 
 }

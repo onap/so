@@ -44,6 +44,11 @@
 		"tenant-id": "tenantId",
 		"complex": "complexName"
 	},
+	"tenant": {
+		"tenant-name": "tenantName",
+		"tenant-context": "tenantContext",
+		"tenant-id": "tenantId"
+	},
 	"userInput": null,
 	"customer": {
 		"global-customer-id": "globalCustomerId",
