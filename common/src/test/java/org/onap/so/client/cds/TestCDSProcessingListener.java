@@ -27,6 +27,15 @@ public class TestCDSProcessingListener implements CDSProcessingListener {
     @Override
     public void onMessage(ExecutionServiceOutput message) {
         log.info("Received notification from CDS: {}", message);
+
+        if (message.getStatus().getEventType() == "EVENT-COMPONENT-FAILURE") {
+            // failed processing with failure
+        } else if (message.getStatus().getEventType() == "EVENT-COMPONENT-PROCESSING") {
+            // still processing
+            // update SO request status
+        } else if (message.getStatus().getEventType() == "EVENT-COMPONENT-SUCCESS") {
+            // done with async processing
+        }
     }
 
     @Override

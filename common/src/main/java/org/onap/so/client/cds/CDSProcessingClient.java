@@ -73,6 +73,7 @@ public class CDSProcessingClient implements AutoCloseable {
             .forAddress(props.getHost(), props.getPort())
             .nameResolverFactory(new DnsNameResolverProvider())
             .loadBalancerFactory(new PickFirstLoadBalancerProvider())
+            .intercept(new BasicAuthClientInterceptor(props))
             .usePlaintext()
             .build();
         this.handler = new CDSProcessingHandler(listener);
