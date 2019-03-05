@@ -33,9 +33,9 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
 
 import javax.ws.rs.BadRequestException;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,7 +50,6 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
-import org.onap.so.client.graphinventory.GraphInventoryClient;
 
 import com.github.tomakehurst.wiremock.admin.NotFoundException;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
@@ -60,7 +59,7 @@ public class AAIResourcesClientTest {
 
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(8443));
+	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -72,9 +71,11 @@ public class AAIResourcesClientTest {
 	@InjectMocks
 	public AAIResourcesClient aaiClient = new AAIResourcesClient();
 	
+	private String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/query/";
+
 	@Before
 	public void beforeTest() {
-		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
+		doReturn(new DefaultAAIPropertiesImpl(wireMockRule.port())).when(client).getRestProperties();
 	}
 	
 	@Test
