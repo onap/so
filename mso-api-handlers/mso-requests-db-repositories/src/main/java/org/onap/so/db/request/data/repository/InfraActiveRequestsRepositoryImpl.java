@@ -22,23 +22,6 @@
 
 package org.onap.so.db.request.data.repository;
 
-import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.NonUniqueResultException;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +34,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+
+import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Repository
@@ -219,17 +220,17 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                 }
             }
         }
-        if(!predicates.isEmpty()){
-        	predicates.add(tableRoot.get(REQUEST_STATUS)
-                .in(Arrays.asList("PENDING", "IN_PROGRESS", "TIMEOUT", "PENDING_MANUAL_TASK")));
+        if (!predicates.isEmpty()) {
+            predicates.add(tableRoot.get(REQUEST_STATUS)
+                    .in(Arrays.asList("PENDING", "IN_PROGRESS", "TIMEOUT", "PENDING_MANUAL_TASK")));
 
-	        final Order order = cb.desc(tableRoot.get(START_TIME));
-	
-	        final List<InfraActiveRequests> dupList = executeInfraQuery(crit, predicates, order);
-	
-	        if (dupList != null && !dupList.isEmpty()) {
-	            infraActiveRequests = dupList.get(0);
-	        }
+            final Order order = cb.desc(tableRoot.get(START_TIME));
+
+            final List<InfraActiveRequests> dupList = executeInfraQuery(crit, predicates, order);
+
+            if (dupList != null && !dupList.isEmpty()) {
+                infraActiveRequests = dupList.get(0);
+            }
         }
 
         return infraActiveRequests;
@@ -560,7 +561,14 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
             predicates.add(criteriaBuilder.greaterThanOrEqualTo(tableRoot.get(START_TIME), minTime));
             predicates.add(criteriaBuilder.lessThanOrEqualTo(tableRoot.get(END_TIME), maxTime));
 
-            criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
+            final Predicate basePredicate = criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
+            
+            final Predicate additionalPredicate = criteriaBuilder.and(tableRoot.get(END_TIME).isNull(),
+                    criteriaBuilder.greaterThanOrEqualTo(tableRoot.get(START_TIME), minTime),
+                    criteriaBuilder.lessThanOrEqualTo(tableRoot.get(START_TIME), maxTime));
+
+            criteriaQuery.where(criteriaBuilder.or(basePredicate, additionalPredicate));
+
             if (maxResult != null) {
                 return entityManager.createQuery(criteriaQuery).setMaxResults(maxResult).getResultList();
             }
