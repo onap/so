@@ -39,23 +39,32 @@ import org.springframework.stereotype.Component;
 public class AuditVServer extends AbstractAudit {
 	private static final Logger logger = LoggerFactory.getLogger(AuditVServer.class);
 
-	public boolean auditVservers(Set<Vserver> vServersToAudit, String tenantId, String cloudOwner, String cloudRegion) {
+	public boolean auditAllVserversDoExist(Set<Vserver> vServersToAudit, String tenantId, String cloudOwner, String cloudRegion) {
 		if (vServersToAudit == null || vServersToAudit.isEmpty()){
 			return false;
 		}
 		return vServersToAudit.stream()
-				.filter(vServer -> !doesVServerExistInAAI(vServer, tenantId, cloudOwner, cloudRegion)).findFirst()
+				.filter(vServer -> !doesVServerExistInAAI(vServer, tenantId, cloudOwner, cloudRegion,true)).findFirst()
+				.map(v -> false).orElse(true);
+	}
+	
+	public boolean auditAllVserversDoNotExist(Set<Vserver> vServersToAudit, String tenantId, String cloudOwner, String cloudRegion) {
+		if (vServersToAudit == null || vServersToAudit.isEmpty()){
+			return true;
+		}
+		return vServersToAudit.stream()
+				.filter(vServer -> doesVServerExistInAAI(vServer, tenantId, cloudOwner, cloudRegion,false)).findFirst()
 				.map(v -> false).orElse(true);
 	}
 
-	private boolean doesVServerExistInAAI(Vserver vServer, String tenantId, String cloudOwner, String cloudRegion) {
+	private boolean doesVServerExistInAAI(Vserver vServer, String tenantId, String cloudOwner, String cloudRegion, boolean checkLinterfaces) {
 		AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion,
 				tenantId, vServer.getVserverId());
 		boolean vServerExists = getAaiClient().exists(vserverURI);
 		boolean doesExist = getAaiClient().exists(vserverURI);
 		logger.info("v-server {} exists: {}", vServer.getVserverId(), doesExist);
 		boolean allNeutronNetworksExist = true;
-		if (vServerExists && vServer.getLInterfaces() != null) {
+		if (vServerExists && vServer.getLInterfaces() != null && checkLinterfaces) {
 			allNeutronNetworksExist = vServer.getLInterfaces()
 					.getLInterface().stream().filter(lInterface -> !doesLinterfaceExistinAAI(lInterface,
 							vServer.getVserverId(), tenantId, cloudOwner, cloudRegion))

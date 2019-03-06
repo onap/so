@@ -28,6 +28,7 @@ spring:
     password: ${DB_ADMIN_PASSWORD}
     outOfOrder: true
     validateOnMigrate: false
+    repeatableSqlMigrationPrefix: RATT
   jpa:
       show-sql: true
       hibernate:

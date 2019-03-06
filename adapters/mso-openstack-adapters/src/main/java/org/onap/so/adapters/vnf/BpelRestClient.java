@@ -59,7 +59,7 @@ import org.springframework.stereotype.Component;
  * org.onap.so.adapters.vnf.retrylist list of response codes that will trigger a retry (the special code
  * 			900 means "connection was not established")
  */
-@Component()
+@Component
 @Scope("prototype")
 public class BpelRestClient {
 	public  static final String MSO_PROP_VNF_ADAPTER     = "MSO_PROP_VNF_ADAPTER";

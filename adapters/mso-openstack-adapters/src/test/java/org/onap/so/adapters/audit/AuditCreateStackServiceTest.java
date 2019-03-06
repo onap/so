@@ -40,10 +40,10 @@ import org.springframework.core.env.Environment;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-public class AuditStackServiceDataTest extends AuditStackServiceData {
+public class AuditCreateStackServiceTest extends AuditCreateStackService {
 
 	@InjectMocks
-	AuditStackServiceData auditStackService = new AuditStackServiceData();
+	AuditCreateStackService auditStackService = new AuditCreateStackService();
 
 	@Mock
 	HeatStackAudit heatStackAuditMock;
@@ -73,14 +73,14 @@ public class AuditStackServiceDataTest extends AuditStackServiceData {
 
 	@Test
 	public void execute_external_task_audit_success_Test() {
-		doReturn(true).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
+		doReturn(true).when(heatStackAuditMock).auditHeatStackCreate("cloudRegion", "cloudOwner", "tenantId", "stackName");
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
 		Mockito.verify(mockExternalTaskService).complete(mockExternalTask);
 	}
 
 	@Test
 	public void execute_external_task_audit_first_failure_Test() {
-		doReturn(false).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
+		doReturn(false).when(heatStackAuditMock).auditHeatStackCreate("cloudRegion", "cloudOwner", "tenantId", "stackName");
 		doReturn(null).when(mockExternalTask).getRetries();
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
 		Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
@@ -90,7 +90,7 @@ public class AuditStackServiceDataTest extends AuditStackServiceData {
 
 	@Test
 	public void execute_external_task_audit_intermediate_failure_Test() {
-		doReturn(false).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
+		doReturn(false).when(heatStackAuditMock).auditHeatStackCreate("cloudRegion", "cloudOwner", "tenantId", "stackName");
 		doReturn(6).when(mockExternalTask).getRetries();
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);		
 		Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
@@ -101,11 +101,11 @@ public class AuditStackServiceDataTest extends AuditStackServiceData {
 
 	@Test
 	public void execute_external_task_audit_final_failure_Test() {
-		doReturn(false).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
+		doReturn(false).when(heatStackAuditMock).auditHeatStackCreate("cloudRegion", "cloudOwner", "tenantId", "stackName");
 		doReturn(1).when(mockExternalTask).getRetries();
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);		
 		Mockito.verify(mockExternalTaskService).handleBpmnError(mockExternalTask,
-				"AuditAAIInventoryFailure");
+				"AuditAAIInventoryFailure", "Number of Retries Exceeded auditing inventory");
 	}
 
 	@Test

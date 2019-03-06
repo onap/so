@@ -128,6 +128,6 @@ public class KeystoneV3Authentication {
 				}
 			}
 		}
-		throw new ServiceEndpointNotFoundException("endpoint url not found");
+		throw new ServiceEndpointNotFoundException("endpoint url not found: type:" + type +" region: " + region + " facing: " + facing);
 	}
 }

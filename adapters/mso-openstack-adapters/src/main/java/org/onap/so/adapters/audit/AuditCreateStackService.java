@@ -22,7 +22,6 @@
 
 package org.onap.so.adapters.audit;
 
-
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -35,14 +34,14 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AuditStackServiceData {
+public class AuditCreateStackService {
 	
 	private static final String UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI = "Unable to find all VServers and L-Interaces in A&AI";
 	
 	private static final int[] RETRY_SEQUENCE = new int[] { 1, 1, 2, 3, 5, 8, 13, 20};
 
 	
-	private static final Logger logger = LoggerFactory.getLogger(AuditStackServiceData.class);
+	private static final Logger logger = LoggerFactory.getLogger(AuditCreateStackService.class);
 	
 	@Autowired
 	public HeatStackAudit heatStackAudit; 
@@ -56,7 +55,7 @@ public class AuditStackServiceData {
 		boolean success = false;
 		try {
 			logger.info("Executing External Task Audit Inventory, Retry Number: {} \n {}", auditInventory,externalTask.getRetries());
-			success=heatStackAudit.auditHeatStack(auditInventory.getCloudRegion(), auditInventory.getCloudOwner(),
+			success=heatStackAudit.auditHeatStackCreate(auditInventory.getCloudRegion(), auditInventory.getCloudOwner(),
 					auditInventory.getTenantId(), auditInventory.getHeatStackName());
 		} catch (Exception e) {
 			logger.error("Error during audit of stack", e);
@@ -72,7 +71,7 @@ public class AuditStackServiceData {
 			}else if(externalTask.getRetries() != null &&
 					externalTask.getRetries()-1 == 0){
 				logger.debug("The External Task Id: {}  Failed, All Retries Exhausted", externalTask.getId());
-				externalTaskService.handleBpmnError(externalTask, "AuditAAIInventoryFailure");
+				externalTaskService.handleBpmnError(externalTask, "AuditAAIInventoryFailure", "Number of Retries Exceeded auditing inventory");
 			}else{
 				logger.debug("The External Task Id: {}  Failed, Decrementing Retries: {} , Retry Delay: ", externalTask.getId(),externalTask.getRetries()-1, calculateRetryDelay(externalTask.getRetries()));
 				externalTaskService.handleFailure(externalTask, UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI, UNABLE_TO_FIND_ALL_V_SERVERS_AND_L_INTERACES_IN_A_AI, externalTask.getRetries()-1, calculateRetryDelay(externalTask.getRetries()));
