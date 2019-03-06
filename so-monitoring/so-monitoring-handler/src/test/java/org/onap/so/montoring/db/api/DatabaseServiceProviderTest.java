@@ -79,7 +79,6 @@ public class DatabaseServiceProviderTest {
         assertTrue(objUnderTest.getSoInfraRequest(Collections.emptyMap(), 0, 0, null).isEmpty());
     }
 
-
     @Test
     public void test_GetSoInfraRequest_WithFilters_InfraActiveRequestsList() {
         final String searchUrl = URL_PROVIDER.getSearchUrl(0, 0, null);
@@ -87,7 +86,7 @@ public class DatabaseServiceProviderTest {
         final Map<String, String[]> filters = new HashMap<>();
         filters.put("requestId", new String[] {"EQ", requestID});
 
-        SoActiveInfraRequests soActiveInfraRequests = new SoActiveInfraRequests();
+        final SoActiveInfraRequests soActiveInfraRequests = new SoActiveInfraRequests();
         soActiveInfraRequests.setRequestId(requestID);
 
         final Optional<SoActiveInfraRequests[]> response =

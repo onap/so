@@ -23,6 +23,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.onap.so.monitoring.configuration.rest.RestTemplateConfiguration.CAMUNDA_REST_TEMPLATE;
+import static org.onap.so.monitoring.configuration.rest.RestTemplateConfiguration.DATABASE_REST_TEMPLATE;
+import static org.onap.so.monitoring.rest.api.Constants.ACTIVITY_INSTANCE_RESPONSE_JSON_FILE;
+import static org.onap.so.monitoring.rest.api.Constants.EMPTY_ARRAY_RESPONSE;
+import static org.onap.so.monitoring.rest.api.Constants.EMPTY_STRING;
+import static org.onap.so.monitoring.rest.api.Constants.END_TIME_IN_MS;
+import static org.onap.so.monitoring.rest.api.Constants.ID;
+import static org.onap.so.monitoring.rest.api.Constants.PROCCESS_INSTANCE_RESPONSE_JSON_FILE;
+import static org.onap.so.monitoring.rest.api.Constants.PROCESS_DEF_RESPONSE_JSON_FILE;
+import static org.onap.so.monitoring.rest.api.Constants.PROCESS_INSTACE_ID;
+import static org.onap.so.monitoring.rest.api.Constants.PROCESS_INSTANCE_VARIABLES_RESPONSE_JSON_FILE;
+import static org.onap.so.monitoring.rest.api.Constants.PROCRESS_DEF_ID;
+import static org.onap.so.monitoring.rest.api.Constants.SEARCH_RESULT_RESPONSE_JSON_FILE;
+import static org.onap.so.monitoring.rest.api.Constants.SINGLE_PROCCESS_INSTANCE_RESPONSE_JSON_FILE;
+import static org.onap.so.monitoring.rest.api.Constants.START_TIME_IN_MS;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -31,9 +45,10 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -42,11 +57,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.monitoring.configuration.camunda.CamundaRestUrlProvider;
+import org.onap.so.monitoring.configuration.database.DatabaseUrlProvider;
 import org.onap.so.monitoring.model.ActivityInstanceDetail;
 import org.onap.so.monitoring.model.ProcessDefinitionDetail;
 import org.onap.so.monitoring.model.ProcessInstanceDetail;
 import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
 import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
+import org.onap.so.monitoring.model.SoInfraRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,49 +74,31 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 
-
 /**
- * @author waqas.ikram@ericsson.com
+ * @author waqas.ikram@ericsson.com, andrei.barcovschi@ericsson.com
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("test")
 @SpringBootTest
 public class SoMonitoringControllerTest {
 
-    private static final String PROCRESS_DEF_ID = "AFRFLOW:1:c6eea1b7-9722-11e8-8caf-022ac9304eeb";
-
-    private static final String EMPTY_ARRAY_RESPONSE = "[]";
-
-    private static final String PROCESS_INSTACE_ID = "5956a99d-9736-11e8-8caf-022ac9304eeb";
-
-    private static final String EMPTY_STRING = "";
-
-    private static final String SOURCE_TEST_FOLDER = "src/test/resources/camundaResponses/";
-
-    private static final Path PROCESS_DEF_RESPONSE_JSON_FILE = Paths.get(SOURCE_TEST_FOLDER + "processDefinition.json");
-
-    private static final Path ACTIVITY_INSTANCE_RESPONSE_JSON_FILE =
-            Paths.get(SOURCE_TEST_FOLDER + "activityInstance.json");
-
-    private static final Path PROCESS_INSTANCE_VARIABLES_RESPONSE_JSON_FILE =
-            Paths.get(SOURCE_TEST_FOLDER + "processInstanceVariables.json");
-
-    private static final Path PROCCESS_INSTANCE_RESPONSE_JSON_FILE =
-            Paths.get(SOURCE_TEST_FOLDER + "processInstance.json");
-
-    private static final Path SINGLE_PROCCESS_INSTANCE_RESPONSE_JSON_FILE =
-            Paths.get(SOURCE_TEST_FOLDER + "singleprocessInstance.json");
-
-    private static final String ID = UUID.randomUUID().toString();
-
     @Autowired
     @Qualifier(CAMUNDA_REST_TEMPLATE)
     private RestTemplate restTemplate;
 
     @Autowired
+    @Qualifier(DATABASE_REST_TEMPLATE)
+    private RestTemplate dataBaseRestTemplate;
+
+    @Autowired
     private CamundaRestUrlProvider urlProvider;
 
+    @Autowired
+    private DatabaseUrlProvider databaseUrlProvider;
+
     private MockRestServiceServer camundaMockServer;
+
+    private MockRestServiceServer databaseMockServer;
 
     @Autowired
     private SoMonitoringController objUnderTest;
@@ -107,6 +106,7 @@ public class SoMonitoringControllerTest {
     @Before
     public void setUp() throws Exception {
         camundaMockServer = MockRestServiceServer.bindTo(restTemplate).build();
+        databaseMockServer = MockRestServiceServer.bindTo(dataBaseRestTemplate).build();
     }
 
     @Test
@@ -339,7 +339,7 @@ public class SoMonitoringControllerTest {
         final List<ProcessInstanceVariableDetail> actual = (List<ProcessInstanceVariableDetail>) response.getEntity();
         assertEquals(230, actual.size());
 
-        ProcessInstanceVariableDetail variableDetail = actual.get(0);
+        final ProcessInstanceVariableDetail variableDetail = actual.get(0);
         assertEquals("serviceType", variableDetail.getName());
         assertEquals("String", variableDetail.getType());
         assertEquals("PNFSERVICE", variableDetail.getValue());
@@ -391,6 +391,30 @@ public class SoMonitoringControllerTest {
         assertEquals(Status.BAD_REQUEST.getStatusCode(), response.getStatus());
         assertNotNull(response.getEntity());
 
+    }
+
+    @Test
+    public void test_GetInfraActiveRequests_SuccessResponseWithSoInfraRequestList() throws Exception {
+        final String jsonString = getJsonResponse(SEARCH_RESULT_RESPONSE_JSON_FILE);
+        this.databaseMockServer
+                .expect(requestTo(databaseUrlProvider.getSearchUrl(START_TIME_IN_MS, END_TIME_IN_MS, null)))
+                .andRespond(withSuccess(jsonString, MediaType.APPLICATION_JSON));
+
+        final Response response =
+                objUnderTest.getInfraActiveRequests(Collections.emptyMap(), START_TIME_IN_MS, END_TIME_IN_MS, null);
+
+        assertEquals(Status.OK.getStatusCode(), response.getStatus());
+        @SuppressWarnings("unchecked")
+        final List<SoInfraRequest> actual = (List<SoInfraRequest>) response.getEntity();
+        assertEquals(3, actual.size());
+
+        final Map<String, SoInfraRequest> actualRequests = new HashMap<>();
+        for (final SoInfraRequest soInfraRequest : actual) {
+            actualRequests.put(soInfraRequest.getRequestId(), soInfraRequest);
+        }
+        final SoInfraRequest infraRequest = actualRequests.get("9383dc81-7a6c-4673-8082-650d50a82a1a");
+        assertNull(infraRequest.getEndTime());
+        assertEquals("IN_PROGRESS", infraRequest.getRequestStatus());
     }
 
     private String getJsonResponse(final Path path) throws IOException {

@@ -13,3 +13,12 @@ camunda:
       url: http://localhost:8080/engine-rest/engine/
       engine: default
       auth: Basic YWRtaW46S3A4Yko0U1hzek0wV1hsaGFrM2VIbGNzZTJnQXc4NHZhb0dHbUp2VXkyVQ==
+
+mso:
+  database:
+    rest:
+      api:
+        url: http://localhost:8083/infraActiveRequests/
+        auth: Basic YnBlbDpwYXNzd29yZDEk
+
+      

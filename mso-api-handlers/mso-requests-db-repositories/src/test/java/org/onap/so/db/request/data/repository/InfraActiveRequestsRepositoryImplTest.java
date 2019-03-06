@@ -49,9 +49,26 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("test")
 public class InfraActiveRequestsRepositoryImplTest {
 
+    /**
+     * January 1, 2019 2:00:00 PM
+     */
+    private static final long END_TIME = 1546351200000l;
+
+    /**
+     * January 1, 2019 12:45:00 PM
+     */
+    private static final long START_TIME = 1546346700000l;
     private static final int MAX_LIMIT = 1;
-    private static final long END_TIME_IN_MILISEC = 1482580740000l;      // December 23, 2016 23:59 PM
-    private static final long START_TIME_IN_MILISEC = 1482282000000l;    // December 21, 2016 01:00 AM
+
+    /**
+     * December 23, 2016 23:59 PM
+     */
+    private static final long END_TIME_IN_MILISEC = 1482580740000l;
+
+    /**
+     * December 21, 2016 01:00 AM
+     */
+    private static final long START_TIME_IN_MILISEC = 1482282000000l;
     private static final String REQUEST_ID_VALUE = "00032ab7-3fb3-42e5-965d-8ea592502017";
     private static final String SERVICE_INSTANCE_ID_VALUE = "e3b5744d-2ad1-4cdd-8390-c999a38829bc";
 
@@ -95,7 +112,6 @@ public class InfraActiveRequestsRepositoryImplTest {
 
         assertEquals(SERVICE_INSTANCE_ID_VALUE, actualRequests.get(0).getServiceInstanceId());
     }
-
 
     @Test
     public void test_GetInfraActiveRequestsData_withLikeRequestID() {
@@ -182,12 +198,34 @@ public class InfraActiveRequestsRepositoryImplTest {
                 objUnderTest.getInfraActiveRequests(null, START_TIME_IN_MILISEC, END_TIME_IN_MILISEC, MAX_LIMIT);
         assertTrue(actualRequests.isEmpty());
     }
-    
+
     @Test
-    public void checkInstanceNameDuplicateNullInstanceNameTest(){
-    	Map<String, String> instanceIdMap = new HashMap<>();
+    public void checkInstanceNameDuplicateNullInstanceNameTest() {
+        final Map<String, String> instanceIdMap = new HashMap<>();
         instanceIdMap.put("serviceInstanceId", "e05864f0-ab35-47d0-8be4-56fd9619ba3b");
-    	InfraActiveRequests results = objUnderTest.checkInstanceNameDuplicate((HashMap<String, String>)instanceIdMap, null, "vnf");
-    	assertNull(results);
+        final InfraActiveRequests results =
+                objUnderTest.checkInstanceNameDuplicate((HashMap<String, String>) instanceIdMap, null, "vnf");
+        assertNull(results);
     }
+
+    @Test
+    public void test_GetInfraActiveRequestsData_returnRecordWithNullEndTime() {
+        final Map<String, String[]> values = new HashMap<>();
+        values.put(SERVICE_INSTANCE_ID,
+                new String[] {QueryOperationType.EQ.name(), "f7712652-b516-4925-a243-64550d26fd84"});
+        final List<InfraActiveRequests> actualRequests =
+                objUnderTest.getInfraActiveRequests(values, START_TIME, END_TIME, null);
+        assertFalse(actualRequests.isEmpty());
+
+        assertEquals(3, actualRequests.size());
+        final Map<String, InfraActiveRequests> result = new HashMap<>();
+        for (final InfraActiveRequests actualActiveRequests : actualRequests) {
+            result.put(actualActiveRequests.getRequestId(), actualActiveRequests);
+
+        }
+        final InfraActiveRequests actualInfraActiveRequests = result.get("9383dc81-7a6c-4673-8082-650d50a82a1a");
+        assertNull(actualInfraActiveRequests.getEndTime());
+        assertEquals("IN_PROGRESS", actualInfraActiveRequests.getRequestStatus());
+    }
+
 }
