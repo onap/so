@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,6 +60,8 @@ import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -81,7 +84,7 @@ import io.swagger.annotations.ApiResponses;
 @Api(value = "/v2/vnfs", description = "root of vnf adapters restful web service v2")
 @Component
 public class VnfAdapterRestV2 {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, VnfAdapterRestV2.class);
+	private static Logger logger = LoggerFactory.getLogger(VnfAdapterRestV2.class);
 	private static final String TESTING_KEYWORD = "___TESTING___";
 	private static final String RESP=", resp=";
 
@@ -130,9 +133,9 @@ public class VnfAdapterRestV2 {
 		@ApiParam(value = "DeleteVfModuleRequest", required = true)
 		final DeleteVfModuleRequest req)
 	{
-		LOGGER.debug("Delete VfModule enter: " + req.toJsonString());
+		logger.debug("Delete VfModule enter: " + req.toJsonString());
 		if (aaiVnfId == null || !aaiVnfId.equals(req.getVnfId())) {
-			LOGGER.debug("Req rejected - aaiVnfId not provided or doesn't match URL");
+			logger.debug("Req rejected - aaiVnfId not provided or doesn't match URL");
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
 				.type(MediaType.TEXT_PLAIN)
@@ -140,7 +143,7 @@ public class VnfAdapterRestV2 {
 				.build();
 		}
 	   	if (aaiVfModuleId == null || !aaiVfModuleId.equals(req.getVfModuleId())) {
-			LOGGER.debug("Req rejected - aaiVfModuleId not provided or doesn't match URL");
+				logger.debug("Req rejected - aaiVfModuleId not provided or doesn't match URL");
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
 				.type(MediaType.TEXT_PLAIN)
@@ -163,11 +166,12 @@ public class VnfAdapterRestV2 {
    				t1.start();
    			} catch (Exception e) {
 				// problem handling delete, send generic failure as sync resp to caller
-				LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, "", "deleteVfModule", MsoLogger.ErrorCode.BusinessProcesssError, "Exception in deleteVfModule", e);
+				logger.error("{} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), "deleteVfModule",
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in deleteVfModule", e);
 				return Response.serverError().build();
    			}
    			// send sync response (ACK) to caller
-   			LOGGER.debug ("deleteVNFVolumes exit");
+   			logger.debug("deleteVNFVolumes exit");
    			return Response.status(HttpStatus.SC_ACCEPTED).build();
    		}
 	}
@@ -213,14 +217,15 @@ public class VnfAdapterRestV2 {
 				}
 				response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE, req.getMessageId(), outputs.value);
 			} catch (VnfException e) {
-				LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "VnfException - Delete VNF Module", e);
+				logger.error("{} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(),
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "VnfException - " + "Delete VNF Module", e);
 				eresp = new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.TRUE, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("Delete vfModule exit: code=" + getStatusCode() + RESP+ getResponse());
+			logger.debug("Delete vfModule exit: code=" + getStatusCode() + RESP + getResponse());
 		}
 	}
 
@@ -268,7 +273,7 @@ public class VnfAdapterRestV2 {
 		@QueryParam("mode") String mode)
 	{
 		//This request responds synchronously only
-		LOGGER.debug ("Query vfModule enter:" + vfModuleName);
+		logger.debug("Query vfModule enter:" + vfModuleName);
 		MsoRequest msoRequest = new MsoRequest(requestId, serviceInstanceId);
 
 		try {
@@ -284,21 +289,22 @@ public class VnfAdapterRestV2 {
 			adapter.queryVnf (cloudSiteId, tenantId, vfModuleName, msoRequest, vnfExists, vfModuleId, status, outputs);
 
 			if (!vnfExists.value) {
-				LOGGER.debug ("vfModule not found");
+				logger.debug("vfModule not found");
 				respStatus = HttpStatus.SC_NOT_FOUND;
 			} else {
-				LOGGER.debug ("vfModule found" + vfModuleId.value + ", status=" + status.value);
+				logger.debug("vfModule found" + vfModuleId.value + ", status=" + status.value);
 				qryResp.setVfModuleId(vfModuleId.value);
 				qryResp.setVnfStatus(status.value);
 				qryResp.setVfModuleOutputs(outputs.value);
 			}
-			LOGGER.debug ("Query vfModule exit");
+			logger.debug ("Query vfModule exit");
 			return Response
 				.status(respStatus)
 				.entity(new GenericEntity<QueryVfModuleResponse>(qryResp) {})
 				.build();
 		} catch (VnfException e) {
-			LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR,  vfModuleName, "", "queryVfModule", MsoLogger.ErrorCode.BusinessProcesssError, "VnfException - queryVfModule", e);
+			logger.error("{} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, "queryVfModule",
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "VnfException - queryVfModule", e);
 			VfModuleExceptionResponse excResp = new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.FALSE, null);
 			return Response
 				.status(HttpStatus.SC_INTERNAL_SERVER_ERROR)
@@ -353,9 +359,9 @@ public class VnfAdapterRestV2 {
 		@ApiParam(value = "CreateVfModuleRequest", required = true)
 		final CreateVfModuleRequest req)
 	{
-		LOGGER.debug("Create VfModule enter inside VnfAdapterRest: " + req.toJsonString());
+		logger.debug("Create VfModule enter inside VnfAdapterRest: " + req.toJsonString());
 		if (aaiVnfId == null || !aaiVnfId.equals(req.getVnfId())) {
-			LOGGER.debug("Req rejected - aaiVnfId not provided or doesn't match URL");
+			logger.debug("Req rejected - aaiVnfId not provided or doesn't match URL");
 			return Response
 				.status(HttpStatus.SC_BAD_REQUEST)
 				.type(MediaType.TEXT_PLAIN)
@@ -378,11 +384,12 @@ public class VnfAdapterRestV2 {
    				t1.start();
    			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
-				LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, "", "createVfModule", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - createVfModule", e);
+				logger.error("{} {} {} {}", MessageEnum.RA_CREATE_VNF_ERR.toString(), "createVfModule",
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception - createVfModule", e);
 				return Response.serverError().build();
    			}
    			// send sync response (ACK) to caller
-   			LOGGER.debug ("createVfModule exit");
+   			logger.debug("createVfModule exit");
    			return Response.status(HttpStatus.SC_ACCEPTED).build();
    		}
 	}
@@ -417,14 +424,14 @@ public class VnfAdapterRestV2 {
 
 		@Override
 		public void run() {
-			LOGGER.debug ("CreateVfModuleTask start");
+			logger.debug("CreateVfModuleTask start");
 			try {
 				// Synchronous Web Service Outputs
 				Holder <String> vfModuleStackId = new Holder <String> ();
 				Holder <Map <String, String>> outputs = new Holder <Map <String, String>> ();
 				Holder <VnfRollback> vnfRollback = new Holder <VnfRollback> ();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
-				LOGGER.debug("completeVnfVfModuleType=" + completeVnfVfModuleType);
+				logger.debug("completeVnfVfModuleType=" + completeVnfVfModuleType);
 
 				String cloudsiteId = req.getCloudSiteId();
 				if (cloudsiteId != null && cloudsiteId.equals(TESTING_KEYWORD)) {
@@ -470,7 +477,7 @@ public class VnfAdapterRestV2 {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost(getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("CreateVfModuleTask exit: code=" + getStatusCode() + RESP+ getResponse());
+			logger.debug("CreateVfModuleTask exit: code=" + getStatusCode() + RESP + getResponse());
 		}
 	}
 
@@ -495,7 +502,7 @@ public class VnfAdapterRestV2 {
 			@ApiParam(value = "UpdateVfModuleRequest", required = true)
 			final UpdateVfModuleRequest req)
 	{
-		LOGGER.debug("Update VfModule enter: " + req.toJsonString());
+		logger.debug("Update VfModule enter: " + req.toJsonString());
 		UpdateVfModulesTask task = new UpdateVfModulesTask(req, mode);
 		if (req.isSynchronous()) {
 			// This is a synchronous request
@@ -511,11 +518,12 @@ public class VnfAdapterRestV2 {
 	    		t1.start();
 	    	} catch (Exception e) {
 	    		// problem handling create, send generic failure as sync resp to caller
-	    		LOGGER.error (MessageEnum.RA_UPDATE_VNF_ERR, "", "updateVfModule", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - updateVfModule", e);
-	    		return Response.serverError().build();
+					logger.error("{} {} {} {}", MessageEnum.RA_UPDATE_VNF_ERR.toString(), "updateVfModule",
+						MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception - updateVfModule", e);
+					return Response.serverError().build();
 	    	}
 	    	// send sync response (ACK) to caller
-	    	LOGGER.debug ("updateVfModules exit");
+	    	logger.debug("updateVfModules exit");
 	    	return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -557,7 +565,7 @@ public class VnfAdapterRestV2 {
 				Holder <Map <String, String>> outputs = new Holder <Map <String, String>> ();
 				Holder <VnfRollback> vnfRollback = new Holder <VnfRollback> ();
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
-				LOGGER.debug("in updateVf - completeVnfVfModuleType=" + completeVnfVfModuleType);
+				logger.debug("in updateVf - completeVnfVfModuleType=" + completeVnfVfModuleType);
 
 				String cloudsiteId = req.getCloudSiteId();
 
@@ -588,7 +596,7 @@ public class VnfAdapterRestV2 {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost (getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("Update VfModule exit: code=" + getStatusCode() + RESP+ getResponse());
+			logger.debug("Update VfModule exit: code=" + getStatusCode() + RESP + getResponse());
 		}
 	}
 	/*
@@ -629,7 +637,7 @@ public class VnfAdapterRestV2 {
 			//@QueryParam("rollback") String rollback,
 			final RollbackVfModuleRequest req)
 	{
-		LOGGER.debug("Rollback VfModule enter: " + req.toJsonString());
+		logger.debug("Rollback VfModule enter: " + req.toJsonString());
 		RollbackVfModulesTask task = new RollbackVfModulesTask(req);
 		if (req.isSynchronous()) {
 			// This is a synchronous request
@@ -645,11 +653,12 @@ public class VnfAdapterRestV2 {
 	    		t1.start();
 	    	} catch (Exception e) {
 	    		// problem handling create, send generic failure as sync resp to caller
-	    		LOGGER.error (MessageEnum.RA_ROLLBACK_VNF_ERR, "", "rollbackVfModule", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - rollbackVfModule", e);
-	    		return Response.serverError().build();
+					logger.error("{} {} {} {}", MessageEnum.RA_ROLLBACK_VNF_ERR.toString(), "rollbackVfModule",
+						MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception - rollbackVfModule", e);
+					return Response.serverError().build();
 	    	}
 	    	// send sync response (ACK) to caller
-	    	LOGGER.debug ("rollbackVfModule exit");
+	    	logger.debug("rollbackVfModule exit");
 	    	return Response.status(HttpStatus.SC_ACCEPTED).build();
 		}
 	}
@@ -693,7 +702,8 @@ public class VnfAdapterRestV2 {
 
 				response = new RollbackVfModuleResponse(Boolean.TRUE, req.getMessageId());
 			} catch (VnfException e) {
-				LOGGER.error (MessageEnum.RA_ROLLBACK_VNF_ERR, "", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - rollbackVfModule", e);
+				logger.error("{} {} {}", MessageEnum.RA_ROLLBACK_VNF_ERR.toString(),
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception - rollbackVfModule", e);
 				eresp = new VfModuleExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, false, req.getMessageId());
 			}
 			if (!req.isSynchronous()) {
@@ -701,7 +711,7 @@ public class VnfAdapterRestV2 {
 				BpelRestClient bpelClient = bpelRestClientProvider.get();
 				bpelClient.bpelPost (getResponse(), req.getNotificationUrl(), sendxml);
 			}
-			LOGGER.debug ("RollbackVfModulesTask exit: code=" + getStatusCode() + RESP+ getResponse());
+			logger.debug("RollbackVfModulesTask exit: code=" + getStatusCode() + RESP + getResponse());
 		}
 	}
 }

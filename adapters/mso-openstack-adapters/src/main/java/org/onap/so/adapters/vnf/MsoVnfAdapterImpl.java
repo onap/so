@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -73,6 +75,8 @@ import org.onap.so.adapters.valet.beans.ValetRollbackResponse;
 import org.onap.so.adapters.valet.beans.ValetStatus;
 import org.onap.so.adapters.valet.beans.ValetUpdateResponse;
 import org.onap.so.adapters.valet.GenericValetResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
@@ -93,10 +97,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 	@Autowired
 	private Environment environment;
 
+    private static final Logger logger = LoggerFactory.getLogger(MsoVnfAdapterImpl.class);
+
     private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static final String VNF_ADAPTER_SERVICE_NAME = "MSO-BPMN:MSO-VnfAdapter.";
-    private static final MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA,MsoVnfAdapterImpl.class);
-
     private static final String CHECK_REQD_PARAMS = "org.onap.so.adapters.vnf.checkRequiredParameters";
     private static final String ADD_GET_FILES_ON_VOLUME_REQ = "org.onap.so.adapters.vnf.addGetFilesOnVolumeReq";
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
@@ -132,7 +136,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
      */
     @Override
     public void healthCheck () {
-        LOGGER.debug ("Health check call in VNF Adapter");
+        logger.debug ("Health check call in VNF Adapter");
     }
 
     /**
@@ -193,7 +197,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         String vfModuleId = "";
     	// Create a hook here to catch shortcut createVf requests:
     	if (requestType != null && requestType.startsWith("VFMOD")) {
-			LOGGER.debug("Calling createVfModule from createVnf -- requestType=" + requestType);
+			logger.debug("Calling createVfModule from createVnf -- requestType=" + requestType);
 			String newRequestType = requestType.substring(5);
 			String vfVolGroupHeatStackId = "";
 			String vfBaseHeatStackId = "";
@@ -204,7 +208,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 				}
 			} catch (Exception e) {
 				// might be ok - both are just blank
-				LOGGER.debug("ERROR trying to parse the volumeGroupHeatStackId " + volumeGroupHeatStackId,e);
+				logger.debug("ERROR trying to parse the volumeGroupHeatStackId " + volumeGroupHeatStackId,e);
 			}
 			this.createVfModule(cloudSiteId,
 					tenantId,
@@ -258,7 +262,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         }
 
     @Override
-    public void updateVnf (String cloudSiteId,
+    public void updateVnf(String cloudSiteId,
                            String tenantId,
                            String vnfType,
                            String vnfVersion,
@@ -272,7 +276,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	// As of 1707 - this method should no longer be called
     	MsoLogger.setLogContext (msoRequest.getRequestId (), msoRequest.getServiceInstanceId ());
     	MsoLogger.setServiceName ("UpdateVnf");
-    	LOGGER.debug("UpdateVnf called?? This should not be called any longer - update vfModule");
+      logger.debug("UpdateVnf called?? This should not be called any longer - update vfModule");
     }
 
     /**
@@ -301,7 +305,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                           Holder <Map <String, String>> outputs) throws VnfException {
         MsoLogger.setLogContext (msoRequest);
     	MsoLogger.setServiceName ("QueryVnf");
-        LOGGER.debug ("Querying VNF " + vnfName + " in " + cloudSiteId + "/" + tenantId);
+        logger.debug("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
 
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
@@ -310,15 +314,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             heatStack = heat.queryStack (cloudSiteId, tenantId, vnfName);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "QueryStack", vnfName);
         } catch (MsoException me) {
             me.addContext ("QueryVNF");
             // Failed to query the Stack due to an openstack exception.
             // Convert to a generic VnfException
             String error = "Query VNF: " + vnfName + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", vnfName);
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudSiteId, tenantId, "OpenStack", "QueryVNF", MsoLogger.ErrorCode.DataError, "Exception - queryStack", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudSiteId,
+                tenantId, "OpenStack", "QueryVNF", MsoLogger.ErrorCode.DataError.getValue(), "Exception - queryStack",
+                me);
+            logger.debug(error);
             throw new VnfException (me);
         }
 
@@ -331,16 +335,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             vnfId.value = null;
             outputs.value = new HashMap<>(); // Return as an empty map
 
-            LOGGER.debug ("VNF " + vnfName + " not found");
+            logger.debug ("VNF {} not found", vnfName);
         } else {
             vnfExists.value = Boolean.TRUE;
             status.value = stackStatusToVnfStatus (heatStack.getStatus ());
             vnfId.value = heatStack.getCanonicalName ();
             outputs.value = copyStringOutputs (heatStack.getOutputs ());
 
-            LOGGER.debug ("VNF " + vnfName + " found, ID = " + vnfId.value);
+            logger.debug ("VNF {} found, ID = {}", vnfName, vnfId.value);
         }
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully query VNF");
         return;
     }
 
@@ -362,7 +365,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            MsoRequest msoRequest) throws VnfException {
         MsoLogger.setLogContext (msoRequest);
     	MsoLogger.setServiceName ("DeleteVnf");
-        LOGGER.debug ("Deleting VNF " + vnfName + " in " + cloudSiteId + "/" + tenantId);
+        logger.debug("Deleting VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
 
@@ -373,20 +376,19 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             heat.deleteStack (tenantId, cloudSiteId, vnfName, true);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "DeleteStack", vnfName);
         } catch (MsoException me) {
             me.addContext ("DeleteVNF");
             // Failed to query the Stack due to an openstack exception.
             // Convert to a generic VnfException
             String error = "Delete VNF: " + vnfName + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "DeleteStack", vnfName);
-            LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, vnfName, cloudSiteId, tenantId, "OpenStack", "DeleteVNF", MsoLogger.ErrorCode.DataError, "Exception - DeleteVNF", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudSiteId,
+                tenantId, "OpenStack", "DeleteVNF", MsoLogger.ErrorCode.DataError.getValue(), "Exception - DeleteVNF",
+                me);
+            logger.debug(error);
             throw new VnfException (me);
         }
 
         // On success, nothing is returned.
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully delete VNF");
         return;
     }
 
@@ -402,8 +404,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         MsoLogger.setServiceName ("RollbackVnf");
     	// rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
-            LOGGER.info (MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf");
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, "Rollback request content is null");
+            logger.info(MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf");
             return;
         }
 
@@ -414,7 +415,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         MsoLogger.setLogContext (rollback.getMsoRequest());
 
-        LOGGER.debug ("Rolling Back VNF " + vnfId + " in " + cloudSiteId + "/" + tenantId);
+        logger.debug("Rolling Back VNF {} in {}", vnfId, cloudSiteId + "/" + tenantId);
 
         // Use the MsoHeatUtils to delete the stack. Set the polling flag to true.
         // The possible outcomes of deleteStack are a StackInfo object with status
@@ -423,18 +424,17 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             heat.deleteStack (tenantId, cloudSiteId, vnfId, true);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "DeleteStack", null);
         } catch (MsoException me) {
             // Failed to rollback the Stack due to an openstack exception.
             // Convert to a generic VnfException
             me.addContext ("RollbackVNF");
             String error = "Rollback VNF: " + vnfId + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "DeleteStack", null);
-            LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, vnfId, cloudSiteId, tenantId, "OpenStack", "DeleteStack", MsoLogger.ErrorCode.DataError, "Exception - DeleteStack", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfId, cloudSiteId,
+                tenantId, "OpenStack", "DeleteStack", MsoLogger.ErrorCode.DataError.getValue(),
+                "Exception - DeleteStack", me);
+            logger.debug(error);
             throw new VnfException (me);
         }
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully roll back VNF");
         return;
     }
 
@@ -468,7 +468,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             	} else {
             		msg.append(" - unable to call .toString() " + e.getMessage());
             	}
-            	LOGGER.debug(msg.toString(), e);
+            	logger.debug(msg.toString(), e);
             }
         }
         return stringOutputs;
@@ -483,26 +483,28 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	String openstackIdentityUrl = "", username = "", password = "", tenant = "", region = "", owner = "";
         long waitTimeMs = 10000L;
     	try {
-    		String[] cmdarray = {"/usr/bin/python", "HeatBridgeMain.py", openstackIdentityUrl, username, password, tenant, region, owner, heatStackId};
-    		String[] envp = null;
-    		File dir = new File(executionDir);
-    		LOGGER.debug("Calling HeatBridgeMain.py in " + dir + " with arguments " + Arrays.toString(cmdarray));
-    		Runtime r = Runtime.getRuntime();
-    		Process p = r.exec(cmdarray, envp, dir);
-    		boolean wait = p.waitFor(waitTimeMs, TimeUnit.MILLISECONDS);
+          String[] cmdarray =
+              {"/usr/bin/python", "HeatBridgeMain.py", openstackIdentityUrl, username, password, tenant, region, owner,
+                  heatStackId};
+          String[] envp = null;
+          File dir = new File(executionDir);
+          logger.debug("Calling HeatBridgeMain.py in {} with arguments {}", dir, Arrays.toString(cmdarray));
+          Runtime r = Runtime.getRuntime();
+          Process p = r.exec(cmdarray, envp, dir);
+          boolean wait = p.waitFor(waitTimeMs, TimeUnit.MILLISECONDS);
 
-    		LOGGER.debug(" HeatBridgeMain.py returned " + wait + " with code " + p.exitValue());
-    		return wait && p.exitValue()==0;
-    	} catch (IOException e) {
-    		LOGGER.debug(" HeatBridgeMain.py failed with IO Exception! " + e);
-    		return false;
+          logger.debug(" HeatBridgeMain.py returned {} with code {}", wait, p.exitValue());
+          return wait && p.exitValue() == 0;
+      } catch (IOException e) {
+          logger.debug(" HeatBridgeMain.py failed with IO Exception! " + e);
+          return false;
     	} catch (RuntimeException e) {
-    		LOGGER.debug(" HeatBridgeMain.py failed during runtime!" + e);
-    		return false;
-    	}
+          logger.debug(" HeatBridgeMain.py failed during runtime!" + e);
+          return false;
+      }
 		catch (Exception e) {
-    		LOGGER.debug(" HeatBridgeMain.py failed for unknown reasons! " + e);
-    		return false;
+        logger.debug(" HeatBridgeMain.py failed for unknown reasons! " + e);
+        return false;
     	}
     }
 
@@ -511,9 +513,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
             return JSON_MAPPER.writeValueAsString(obj);
         } catch (JsonParseException jpe) {
-            LOGGER.debug("Error converting json to string " + jpe.getMessage(),jpe);
+            logger.debug("Error converting json to string " + jpe.getMessage(),jpe);
         } catch (Exception e) {
-            LOGGER.debug("Error converting json to string " + e.getMessage(),e);
+            logger.debug("Error converting json to string " + e.getMessage(),e);
         }
         return "[Error converting json to string]";
     }
@@ -535,30 +537,30 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                         String str = this.convertNode((JsonNode) obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key,e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value for JsonNode "+ key,e);
                         //okay in this instance - only string values (fqdn) are expected to be needed
                     }
                 } else if (obj instanceof java.util.LinkedHashMap) {
-                    LOGGER.debug("LinkedHashMap - this is showing up as a LinkedHashMap instead of JsonNode");
+                    logger.debug("LinkedHashMap - this is showing up as a LinkedHashMap instead of JsonNode");
                     try {
                         String str = JSON_MAPPER.writeValueAsString(obj);
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key,e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value for LinkedHashMap "+ key,e);
 					}
 				}  else if (obj instanceof Integer) {
 					try {
 						String str = "" + obj;
 						stringMap.put(key, str);
 					} catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key,e);
+              logger.debug("DANGER WILL ROBINSON: unable to convert value for Integer "+ key,e);
                     }
                 } else {
                     try {
 						String str = obj.toString();
                         stringMap.put(key, str);
                     } catch (Exception e) {
-						LOGGER.debug("DANGER WILL ROBINSON: unable to convert value "+ key + " (" + e.getMessage() + ")",e);
+                        logger.debug("DANGER WILL ROBINSON: unable to convert value "+ key + " (" + e.getMessage() + ")",e);
                     }
                 }
             }
@@ -594,11 +596,11 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         boolean useMCUuid = false;
         if (mcu != null && !mcu.isEmpty()) {
             if ("null".equalsIgnoreCase(mcu)) {
-                LOGGER.debug("modelCustomizationUuid: passed in as the string 'null' - will ignore: " + modelCustomizationUuid);
+                logger.debug("modelCustomizationUuid: passed in as the string 'null' - will ignore: " + modelCustomizationUuid);
                 useMCUuid = false;
                 mcu = "";
             } else {
-                LOGGER.debug("Found modelCustomizationUuid! Will use that: " + mcu);
+                logger.debug("Found modelCustomizationUuid! Will use that: " + mcu);
                 useMCUuid = true;
             }
         }
@@ -621,7 +623,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         boolean oldWay = false;
         if (requestTypeString.startsWith("X")) {
         	oldWay = true;
-        	LOGGER.debug("orchestrating a VNF - *NOT* a module!");
+            logger.debug("orchestrating a VNF - *NOT* a module!");
         	requestTypeString = requestTypeString.substring(1);
         }
 
@@ -632,7 +634,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	isVolumeRequest = true;
         }
 
-        LOGGER.debug("requestTypeString = " + requestTypeString + ", nestedStackId = " + nestedStackId + ", nestedBaseStackId = " + nestedBaseStackId);
+        logger.debug("requestTypeString = " + requestTypeString + ", nestedStackId = " + nestedStackId + ", nestedBaseStackId = " + nestedBaseStackId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
 
@@ -656,15 +658,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime1 = System.currentTimeMillis ();
         try {
             heatStack = heat.queryStack (cloudSiteId, tenantId, vfModuleName);
-            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "QueryStack", vfModuleName);
         } catch (MsoException me) {
             String error = "Create VF Module: Query " + vfModuleName + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-            LOGGER.recordMetricEvent (subStartTime1, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", vfModuleName);
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Exception - queryStack", me);
+            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudSiteId,
+                tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError.getValue(), "Exception - queryStack",
+                me);
+            logger.debug(error);
             // Failed to query the Stack due to an openstack exception.
             // Convert to a generic VnfException
             me.addContext ("CreateVFModule");
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
             throw new VnfException (me);
         }
         // New with 1607 - more precise handling/messaging if the stack already exists
@@ -674,40 +676,50 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	if (status == HeatStatus.INIT || status == HeatStatus.BUILDING || status == HeatStatus.DELETING || status == HeatStatus.UPDATING) {
         		// fail - it's in progress - return meaningful error
                 String error = "Create VF: Stack " + vfModuleName + " already exists and has status " + status.toString() + " in " + cloudSiteId + "/" + tenantId + "; please wait for it to complete, or fix manually.";
-                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Stack " + vfModuleName + " already exists");
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
+              logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                  cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError.getValue(),
+                  "Stack " + vfModuleName + " already exists");
+              logger.debug(error);
                 throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, heatStack.getCanonicalName ());
         	}
         	if (status == HeatStatus.FAILED) {
         		// fail - it exists and is in a FAILED state
-                String error = "Create VF: Stack " + vfModuleName + " already exists and is in FAILED state in " + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
-                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Stack " + vfModuleName + " already exists and is in FAILED state");
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
+              String error = "Create VF: Stack " + vfModuleName + " already exists and is in FAILED state in " + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
+              logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                  cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError.getValue(),
+                  "Stack " + vfModuleName + " already exists and is " + "in FAILED state");
+              logger.debug(error);
                 throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, heatStack.getCanonicalName ());
         	}
         	if (status == HeatStatus.UNKNOWN || status == HeatStatus.UPDATED) {
         		// fail - it exists and is in a FAILED state
-                String error = "Create VF: Stack " + vfModuleName + " already exists and has status " + status.toString() + " in " + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
-                LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Stack " + vfModuleName + " already exists and is in UPDATED or UNKNOWN state");
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
-                throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, heatStack.getCanonicalName ());
-        	}
+              String error =
+                  "Create VF: Stack " + vfModuleName + " already exists and has status " + status.toString() + " in "
+                      + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
+              logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                  cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError.getValue(),
+                  "Stack " + vfModuleName + " already exists and is " + "in UPDATED or UNKNOWN state");
+              logger.debug(error);
+              throw new VnfAlreadyExists(vfModuleName, cloudSiteId, tenantId, heatStack.getCanonicalName());
+          }
         	if (status == HeatStatus.CREATED) {
         		// fail - it exists
         		if (failIfExists != null && failIfExists) {
-        			String error = "Create VF: Stack " + vfModuleName + " already exists in " + cloudSiteId + "/" + tenantId;
-        			LOGGER.error (MessageEnum.RA_VNF_ALREADY_EXIST, vfModuleName, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError, "Stack " + vfModuleName + " already exists");
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
-        			throw new VnfAlreadyExists (vfModuleName, cloudSiteId, tenantId, heatStack.getCanonicalName ());
-        		} else {
-        			LOGGER.debug ("Found Existing stack, status=" + heatStack.getStatus ());
+                String error =
+                    "Create VF: Stack " + vfModuleName + " already exists in " + cloudSiteId + "/" + tenantId;
+                logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                    cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.DataError.getValue(),
+                    "Stack " + vfModuleName + " already exists");
+                logger.debug(error);
+                throw new VnfAlreadyExists(vfModuleName, cloudSiteId, tenantId, heatStack.getCanonicalName());
+            } else {
+        			logger.debug ("Found Existing stack, status={}", heatStack.getStatus ());
         			// Populate the outputs from the existing stack.
         			vnfId.value = heatStack.getCanonicalName ();
         			outputs.value = copyStringOutputs (heatStack.getOutputs ());
         			rollback.value = vfRollback; // Default rollback - no updates performed
         		}
         	}
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully create VF Module");
             return;
 
         }
@@ -718,28 +730,29 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         Map<String, Object> nestedVolumeOutputs = null;
         if (nestedStackId != null) {
         	try {
-        		LOGGER.debug("Querying for nestedStackId = " + nestedStackId);
+        		logger.debug("Querying for nestedStackId = {}", nestedStackId);
         		nestedHeatStack = heat.queryStack(cloudSiteId, tenantId, nestedStackId);
-                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "QueryStack", vfModuleName);
         	} catch (MsoException me) {
         	    // Failed to query the Stack due to an openstack exception.
         	    // Convert to a generic VnfException
         	    me.addContext ("CreateVFModule");
         	    String error = "Create VFModule: Attached heatStack ID Query " + nestedStackId + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-                LOGGER.recordMetricEvent (subStartTime2, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", vfModuleName);
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.BusinessProcesssError, "MsoException trying to query nested stack", me);
-        		LOGGER.debug("ERROR trying to query nested stack= " + error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+              logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudSiteId,
+                      tenantId, "OpenStack", "queryStack", MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+                      "MsoException trying to query nested stack", me);
+              logger.debug("ERROR trying to query nested stack= {}", error);
         	    throw new VnfException (me);
         	}
         	if (nestedHeatStack == null || nestedHeatStack.getStatus() == HeatStatus.NOTFOUND) {
         	    String error = "Create VFModule: Attached heatStack ID DOES NOT EXIST " + nestedStackId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, error, "OpenStack", "queryStack", MsoLogger.ErrorCode.BusinessProcesssError, "Create VFModule: Attached heatStack ID DOES NOT EXIST");
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
-        	    LOGGER.debug(error);
-        	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
+              logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName,
+                  cloudSiteId, tenantId, error, "OpenStack", "queryStack",
+                  MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+                  "Create VFModule: Attached heatStack ID " + "DOES NOT EXIST");
+              logger.debug(error);
+              throw new VnfException (error, MsoExceptionCategory.USERDATA);
         	} else {
-        		LOGGER.debug("Found nested volume heat stack - copying values to inputs *later*");
+        		logger.debug("Found nested volume heat stack - copying values to inputs *later*");
         		nestedVolumeOutputs = nestedHeatStack.getOutputs();
         	}
         }
@@ -750,28 +763,30 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         Map<String, Object> baseStackOutputs = null;
         if (nestedBaseStackId != null) {
         	try {
-        		LOGGER.debug("Querying for nestedBaseStackId = " + nestedBaseStackId);
+        		logger.debug("Querying for nestedBaseStackId = {}", nestedBaseStackId);
         		nestedBaseHeatStack = heat.queryStack(cloudSiteId, tenantId, nestedBaseStackId);
-                LOGGER.recordMetricEvent (subStartTime3, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "QueryStack", vfModuleName);
         	} catch (MsoException me) {
         	    // Failed to query the Stack due to an openstack exception.
         	    // Convert to a generic VnfException
         	    me.addContext ("CreateVFModule");
         	    String error = "Create VFModule: Attached baseHeatStack ID Query " + nestedBaseStackId + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-                LOGGER.recordMetricEvent (subStartTime3, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", vfModuleName);
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.BusinessProcesssError, "MsoException trying to query nested base stack", me);
-        		LOGGER.debug("ERROR trying to query nested base stack= " + error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
-        	    throw new VnfException (me);
+              logger
+                  .error("{} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudSiteId,
+                      tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+                      "MsoException trying to query nested base stack", me);
+              logger.debug("ERROR trying to query nested base stack= {}", error);
+              throw new VnfException (me);
         	}
         	if (nestedBaseHeatStack == null || nestedBaseHeatStack.getStatus() == HeatStatus.NOTFOUND) {
         	    String error = "Create VFModule: Attached base heatStack ID DOES NOT EXIST " + nestedBaseStackId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, error, "OpenStack", "QueryStack", MsoLogger.ErrorCode.BusinessProcesssError, "Create VFModule: Attached base heatStack ID DOES NOT EXIST");
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.Conflict, error);
-        	    LOGGER.debug(error);
+              logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName,
+                  cloudSiteId, tenantId, error, "OpenStack", "QueryStack",
+                  MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+                  "Create VFModule: Attached base heatStack ID DOES NOT EXIST");
+              logger.debug("Exception occurred", error);
         	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
         	} else {
-        		LOGGER.debug("Found nested base heat stack - these values will be copied to inputs *later*");
+        		logger.debug("Found nested base heat stack - these values will be copied to inputs *later*");
         		baseStackOutputs = nestedBaseHeatStack.getOutputs();
         	}
         }
@@ -785,7 +800,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	VfModule vf = null;
         	VnfResource vnfResource = null;
         	VfModuleCustomization vfmc = null;
-        	LOGGER.debug("version: " + vfVersion);
+        	logger.debug("version: {}", vfVersion);
             if (useMCUuid) {
         		// 1707 - db refactoring
         		vfmc = vfModuleCustomRepo.findByModelCustomizationUUID(mcu);
@@ -796,22 +811,24 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
                 // 1702 - this will be the new way going forward. We find the vf by mcu - otherwise, code is the same.
                 if (vf == null) {
-        			LOGGER.debug("Unable to find vfModuleCust with modelCustomizationUuid=" + mcu);
+        			logger.debug("Unable to find vfModuleCust with modelCustomizationUuid={}", mcu);
         			String error = "Create vfModule error: Unable to find vfModuleCust with modelCustomizationUuid=" + mcu;
-                    LOGGER.error(MessageEnum.RA_VNF_UNKNOWN_PARAM,
-                            "VF Module ModelCustomizationUuid", modelCustomizationUuid, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create VF Module: Unable to find vfModule with modelCustomizationUuid=" + mcu);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
+                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(),
+                        "VF Module ModelCustomizationUuid", modelCustomizationUuid, "OpenStack",
+                        MsoLogger.ErrorCode.DataError.getValue(),
+                        "Create VF Module: Unable to find vfModule with " + "modelCustomizationUuid=" + mcu);
+                    logger.debug(error);
                     throw new VnfException(error, MsoExceptionCategory.USERDATA);
                 } else {
-        			LOGGER.trace("Found vfModuleCust entry " + vfmc.toString());
+        			logger.trace("Found vfModuleCust entry {}", vfmc.toString());
                 }
                 if (vf.getIsBase()) {
                     isBaseRequest = true;
-                    LOGGER.debug("This is a BASE VF request!");
+                    logger.debug("This is a BASE VF request!");
                 } else {
-                    LOGGER.debug("This is *not* a BASE VF request!");
+                    logger.debug("This is *not* a BASE VF request!");
                     if (!isVolumeRequest && nestedBaseStackId == null) {
-                        LOGGER.debug("DANGER WILL ROBINSON! This is unexpected - no nestedBaseStackId with this non-base request");
+                        logger.debug("DANGER WILL ROBINSON! This is unexpected - no nestedBaseStackId with this non-base request");
                     }
                 }
         	}
@@ -823,15 +840,14 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 					vnfResource = vnfResourceRepo.findByModelName(vnfType);
 				}
 				if (vnfResource == null) {
-					String error = "Create VNF: Unknown VNF Type: " + vnfType;
-					LOGGER.error(MessageEnum.RA_VNF_UNKNOWN_PARAM, "VNF Type",
-							vnfType, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create VNF: Unknown VNF Type");
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
-					throw new VnfException(error, MsoExceptionCategory.USERDATA);
-				}
-				LOGGER.debug("Got VNF module definition from Catalog: "
-						+ vnfResource.toString());
-			}
+            String error = "Create VNF: Unknown VNF Type: " + vnfType;
+            logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "VNF Type", vnfType,
+                "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), "Create VNF: Unknown VNF Type");
+            logger.debug(error);
+            throw new VnfException(error, MsoExceptionCategory.USERDATA);
+        }
+                logger.debug("Got VNF module definition from Catalog: {}", vnfResource.toString());
+            }
 			// By here - we have either a vf or vnfResource
 
             //1607 - Add version check
@@ -840,7 +856,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             if (!oldWay && vf.getVnfResources() != null) {
         		vnfResource = vf.getVnfResources();
         		if (vnfResource == null) {
-        			LOGGER.debug("Unable to find vnfResource will not error for now...");
+        			logger.debug("Unable to find vnfResource will not error for now...");
         		}
             }
             String minVersionVnf = null;
@@ -850,7 +866,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		minVersionVnf = vnfResource.getAicVersionMin();
             		maxVersionVnf = vnfResource.getAicVersionMax();
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to pull min/max version for this VNF Resource entry",e);
+            		logger.debug("Unable to pull min/max version for this VNF Resource entry",e);
             		minVersionVnf = null;
             		maxVersionVnf = null;
             	}
@@ -881,29 +897,35 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 							moreThanMax = aicV.isMoreRecentThan(maxVersionVnf);
 							equalToMax = aicV.isTheSameVersion(maxVersionVnf);
 						} catch (Exception e) {
-							LOGGER.debug("An exception occured while trying to test AIC Version " + e.getMessage() + " - will default to not check",e);
-							doNotTest = true;
+                logger.debug("An exception occurred while trying to test AIC Version {} - will default to not check",
+                    e.getMessage(), e);
+                doNotTest = true;
 						}
 						if (!doNotTest) {
 							if ((moreThanMin || equalToMin) // aic >= min
 									&& (equalToMax || !(moreThanMax))) { //aic <= max
-								LOGGER.debug("VNF Resource " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSiteOpt.get().getCloudVersion());
-							} else {
+                  logger.debug(
+                      "VNF Resource " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID()
+                          + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " supported on Cloud: "
+                          + cloudSiteId + " with AIC_Version:" + cloudSiteOpt.get().getCloudVersion());
+              } else {
 								// ERROR
 								String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID() + " VersionMin=" + minVersionVnf + " VersionMax:" + maxVersionVnf + " NOT supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSiteOpt.get().getCloudVersion();
-								LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "", MsoLogger.ErrorCode.BusinessProcesssError, "Exception - setVersion");
-								LOGGER.debug(error);
+                  logger.error("{} {} {} {} {}", MessageEnum.RA_CONFIG_EXC.toString(), error, "OpenStack",
+                      MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
+                  logger.debug(error);
 								throw new VnfException(error, MsoExceptionCategory.USERDATA);
 							}
 						} else {
-							LOGGER.debug("bypassing testing AIC version...");
+							logger.debug("bypassing testing AIC version...");
 						}
 					} // let this error out downstream to avoid introducing uncertainty at this stage
 				} else {
-					LOGGER.debug("cloudConfig is NULL - cannot check cloud site version");
+					logger.debug("cloudConfig is NULL - cannot check cloud site version");
 				}
 			} else {
-				LOGGER.debug("AIC Version not set in VNF_Resource - this is expected thru 1607 - do not error here - not checked.");
+				logger.debug("AIC Version not set in VNF_Resource - this is expected thru 1607 - do not error here - not checked"
+            + ".");
 			}
 			// End Version check 1607
 
@@ -931,28 +953,31 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
 			if (heatTemplate == null) {
 				String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType + ", reqType=" + requestTypeString;
-				LOGGER.error(MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Template ID", vfModuleType, "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);		
+          logger
+              .error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID", vfModuleType,
+                  "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), error);
+          logger.debug(error);
 				throw new VnfException(error, MsoExceptionCategory.INTERNAL);
 			} else {
-				LOGGER.debug ("Got HEAT Template from DB: " + heatTemplate.getHeatTemplate());
+				logger.debug("Got HEAT Template from DB: {}", heatTemplate.getHeatTemplate());
 			}
 
 			if (oldWay) {
 				//This will handle old Gamma BrocadeVCE VNF
-				LOGGER.debug ("No environment parameter found for this Type " + vfModuleType);
+				logger.debug("No environment parameter found for this Type " + vfModuleType);
 			} else {
 	            if (heatEnvironment == null) {
 	               String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
-	                    LOGGER.error (MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Environment ID", "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
-	                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
+                  logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
+                      "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), error);
+                  logger.debug(error);
 	                    throw new VnfException (error, MsoExceptionCategory.INTERNAL);
 	            } else {
-	                LOGGER.debug ("Got Heat Environment from DB: " + heatEnvironment.getEnvironment());
-	            }
+                  logger.debug("Got Heat Environment from DB: {}", heatEnvironment.getEnvironment());
+              }
 			}
 
-            LOGGER.debug ("In MsoVnfAdapterImpl, about to call db.getNestedTemplates avec templateId="
+            logger.debug("In MsoVnfAdapterImpl, about to call db.getNestedTemplates avec templateId="
                           + heatTemplate.getArtifactUuid ());
 
 
@@ -960,13 +985,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             Map <String, Object> nestedTemplatesChecked = new HashMap <> ();
             if (nestedTemplates != null && !nestedTemplates.isEmpty()) {
                 // for debugging print them out
-                LOGGER.debug ("Contents of nestedTemplates - to be added to files: on stack:");
+                logger.debug("Contents of nestedTemplates - to be added to files: on stack:");
                 for (HeatTemplate entry : nestedTemplates) {
                     nestedTemplatesChecked.put (entry.getTemplateName(), entry.getTemplateBody());
-                    LOGGER.debug (entry.getTemplateName() + " -> " + entry.getTemplateBody());
+                    logger.debug(entry.getTemplateName() + " -> " + entry.getTemplateBody());
                 }
             } else {
-                LOGGER.debug ("No nested templates found - nothing to do here");
+                logger.debug("No nested templates found - nothing to do here");
                 nestedTemplatesChecked = null;
             }
 
@@ -982,18 +1007,20 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             	String propertyString = this.environment.getProperty(MsoVnfAdapterImpl.ADD_GET_FILES_ON_VOLUME_REQ);
             	if ("true".equalsIgnoreCase(propertyString) || "y".equalsIgnoreCase(propertyString)) {
             		addGetFilesOnVolumeReq = true;
-            		LOGGER.debug("AddGetFilesOnVolumeReq - setting to true! " + propertyString);
+                  logger.debug("AddGetFilesOnVolumeReq - setting to true! {}", propertyString);
             	}
             } catch (Exception e) {
-            	LOGGER.debug("An error occured trying to get property " + MsoVnfAdapterImpl.ADD_GET_FILES_ON_VOLUME_REQ + " - default to false", e);
+                logger.debug("An error occured trying to get property " + MsoVnfAdapterImpl.ADD_GET_FILES_ON_VOLUME_REQ
+                    + " - default to false", e);
             }
 
 			if (!isVolumeRequest || addGetFilesOnVolumeReq) {
 				if (oldWay) {
-					LOGGER.debug("In MsoVnfAdapterImpl createVfModule, this should not happen - old way is gamma only - no heat files!");
+					logger.debug("In MsoVnfAdapterImpl createVfModule, this should not happen - old way is gamma only - no heat "
+              + "files!");
 				} else {
 					// 1607 - now use VF_MODULE_TO_HEAT_FILES table
-					LOGGER.debug("In MsoVnfAdapterImpl createVfModule, about to call db.getHeatFilesForVfModule avec vfModuleId="
+					logger.debug("In MsoVnfAdapterImpl createVfModule, about to call db.getHeatFilesForVfModule avec vfModuleId="
 							+ vf.getModelUUID());
 					heatFiles = vf.getHeatFiles();
 				}
@@ -1002,17 +1029,16 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 					// here, we will map them to Map<String, Object> from
 					// Map<String, HeatFiles>
 					// this will match the nested templates format
-					LOGGER.debug("Contents of heatFiles - to be added to files: on stack");
+					logger.debug("Contents of heatFiles - to be added to files: on stack");
 
-					for(HeatFiles heatfile : heatFiles){
-						LOGGER.debug(heatfile.getFileName() + " -> "
-								+ heatfile.getFileBody());
-						heatFilesObjects.put(heatfile.getFileName(), heatfile.getFileBody());
-					}
-				} else {
-					LOGGER.debug("No heat files found -nothing to do here");
-					heatFilesObjects = null;
-				}
+            for (HeatFiles heatfile : heatFiles) {
+                logger.debug(heatfile.getFileName() + " -> " + heatfile.getFileBody());
+                heatFilesObjects.put(heatfile.getFileName(), heatfile.getFileBody());
+            }
+        } else {
+            logger.debug("No heat files found -nothing to do here");
+            heatFilesObjects = null;
+        }
 			}
 
             // Check that required parameters have been supplied
@@ -1029,12 +1055,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 String propertyString = this.environment.getProperty (MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
                 if ("false".equalsIgnoreCase (propertyString) || "n".equalsIgnoreCase (propertyString)) {
                     checkRequiredParameters = false;
-                    LOGGER.debug ("CheckRequiredParameters is FALSE. Will still check but then skip blocking..."
-                                  + MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
+                    logger.debug("CheckRequiredParameters is FALSE. Will still check but then skip blocking..."
+                        + MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
                 }
             } catch (Exception e) {
                 // No problem - default is true
-                LOGGER.debug ("An exception occured trying to get property " + MsoVnfAdapterImpl.CHECK_REQD_PARAMS, e);
+                logger.debug("An exception occured trying to get property {}", MsoVnfAdapterImpl.CHECK_REQD_PARAMS, e);
             }
             // 1604 - Add enhanced environment & parameter checking
             // Part 1: parse envt entries to see if reqd parameter is there (before used a simple grep
@@ -1043,7 +1069,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             MsoHeatEnvironmentEntry mhee = null;
             if (heatEnvironment != null && heatEnvironment.getEnvironment() != null && heatEnvironment.getEnvironment().contains ("parameters:")) {
 
-            	LOGGER.debug("Enhanced environment checking enabled - 1604");
+            	logger.debug("Enhanced environment checking enabled - 1604");
                 StringBuilder sb = new StringBuilder(heatEnvironment.getEnvironment());
 
                 mhee = new MsoHeatEnvironmentEntry(sb);
@@ -1057,14 +1083,14 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 	sb2.append("\nEnvironment:");
                 	sb2.append(mhee.toFullString());
                 }
-                LOGGER.debug(sb2.toString());
+                logger.debug(sb2.toString());
             } else {
-            	LOGGER.debug("NO ENVIRONMENT for this entry");
+                logger.debug("NO ENVIRONMENT for this entry");
             }
             // New with 1707 - all variables converted to their native object types
             Map<String, Object> goldenInputs = null;
 
-            LOGGER.debug("Now handle the inputs....first convert");
+            logger.debug("Now handle the inputs....first convert");
             ArrayList<String> parameterNames = new ArrayList<>();
             HashMap<String, String> aliasToParam = new HashMap<>();
             StringBuilder sb = new StringBuilder("\nTemplate Parameters:\n");
@@ -1079,36 +1105,35 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		}
             		sb.append("\n");
             	}
-            	LOGGER.debug(sb.toString());
+                logger.debug(sb.toString());
             } catch (Exception e) {
-            	LOGGER.debug("??An exception occurred trying to go through Parameter Names " + e.getMessage(),e);
+                logger.debug("??An exception occurred trying to go through Parameter Names {}", e.getMessage(),e);
             }
             // Step 1 - convert what we got as inputs (Map<String, String>) to a
             // Map<String, Object> - where the object matches the param type identified in the template
             // This will also not copy over params that aren't identified in the template
             goldenInputs = heat.convertInputMap(inputs, heatTemplate);
             // Step 2 - now simply add the outputs as we received them - no need to convert to string
-            LOGGER.debug("Now add in the base stack outputs if applicable");
+            logger.debug("Now add in the base stack outputs if applicable");
             heat.copyBaseOutputsToInputs(goldenInputs, baseStackOutputs, parameterNames, aliasToParam);
             // Step 3 - add the volume inputs if any
-            LOGGER.debug("Now add in the volume stack outputs if applicable");
+            logger.debug("Now add in the volume stack outputs if applicable");
             heat.copyBaseOutputsToInputs(goldenInputs, nestedVolumeOutputs, parameterNames, aliasToParam);
 
             for (HeatTemplateParam parm : heatTemplate.getParameters ()) {
-                LOGGER.debug ("Parameter:'" + parm.getParamName ()
-                              + "', isRequired="
-                              + parm.isRequired ()
-                              + ", alias="
-                              + parm.getParamAlias ());
+                logger.debug(
+                    "Parameter:'" + parm.getParamName() + "', isRequired=" + parm.isRequired() + ", alias=" + parm
+                        .getParamAlias());
 
                 if (parm.isRequired () && (goldenInputs == null || !goldenInputs.containsKey (parm.getParamName ()))) {
                 	// The check for an alias was moved to the method in MsoHeatUtils - when we converted the Map<String, String> to Map<String, Object>
-                	LOGGER.debug("**Parameter " + parm.getParamName() + " is required and not in the inputs...check environment");
+                	logger.debug("**Parameter " + parm.getParamName() + " is required and not in the inputs...check "
+                      + "environment");
                     if (mhee != null && mhee.containsParameter(parm.getParamName())) {
-                        LOGGER.debug ("Required parameter " + parm.getParamName ()
-                                      + " appears to be in environment - do not count as missing");
+                        logger.debug("Required parameter {} appears to be in environment - do not count as missing",
+                            parm.getParamName());
                     } else {
-                        LOGGER.debug ("adding to missing parameters list: " + parm.getParamName ());
+                        logger.debug("adding to missing parameters list: {}", parm.getParamName());
                         if (missingParams == null) {
                             missingParams = parm.getParamName ();
                         } else {
@@ -1122,14 +1147,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             	if (checkRequiredParameters) {
             		// Problem - missing one or more required parameters
             		String error = "Create VFModule: Missing Required inputs: " + missingParams;
-            		LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Create VFModule: Missing Required inputs");
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
+                  logger.error("{} {} {} {} {}", MessageEnum.RA_MISSING_PARAM.toString(), missingParams, "OpenStack",
+                      MsoLogger.ErrorCode.DataError.getValue(), "Create VFModule: Missing Required inputs");
+                  logger.debug(error);
             		throw new VnfException (error, MsoExceptionCategory.USERDATA);
             	} else {
-            		LOGGER.debug ("found missing parameters - but checkRequiredParameters is false - will not block");
+            		logger.debug ("found missing parameters - but checkRequiredParameters is false - will not block");
             	}
             } else {
-                LOGGER.debug ("No missing parameters found - ok to proceed");
+                logger.debug ("No missing parameters found - ok to proceed");
             }
             // We can now remove the recreating of the ENV with only legit params - that check is done for us,
             // and it causes problems with json that has arrays
@@ -1145,10 +1171,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Valet - 1806
             boolean isValetEnabled = this.checkBooleanProperty(MsoVnfAdapterImpl.VALET_ENABLED, false);
             boolean failRequestOnValetFailure = this.checkBooleanProperty(MsoVnfAdapterImpl.FAIL_REQUESTS_ON_VALET_FAILURE, false);
-            LOGGER.debug("isValetEnabled=" + isValetEnabled + ", failRequestsOnValetFailure=" + failRequestOnValetFailure);
+            logger.debug("isValetEnabled={}, failRequestsOnValetFailure={}", isValetEnabled, failRequestOnValetFailure);
             if (oldWay || isVolumeRequest) {
             	isValetEnabled = false;
-            	LOGGER.debug("do not send to valet for volume requests or brocade");
+                logger.debug("do not send to valet for volume requests or brocade");
             }
             boolean sendResponseToValet = false;
             if (isValetEnabled) {
@@ -1172,7 +1198,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		backout = true;
             	}
             	if (heat != null) {
-            		LOGGER.debug("heat is not null!!");
+                  logger.debug("heat is not null!!");
 
             		heatStack = heat.createStack (cloudSiteId,
                                               tenantId,
@@ -1187,39 +1213,40 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                                               backout.booleanValue());
             	}
             	else {
-            		LOGGER.debug("heat is null!");
+                  logger.debug("heat is null!");
             		throw new MsoHeatNotFoundException();
             	}
-                LOGGER.recordMetricEvent (createStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "CreateStack", vfModuleName);
             } catch (MsoException me) {
                 me.addContext ("CreateVFModule");
                 String error = "Create VF Module " + vfModuleType + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-                LOGGER.recordMetricEvent (createStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "CreateStack", vfModuleName);
-                LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "MsoException - createStack", me);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+                logger
+                    .error("{} {} {} {} {} {} {}", MessageEnum.RA_CREATE_VNF_ERR.toString(), vfModuleType, cloudSiteId,
+                        tenantId, "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), "MsoException - createStack",
+                        me);
+                logger.debug(error);
                 if (isValetEnabled && sendResponseToValet) {
-                	LOGGER.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
+                	logger.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
                 	try {
                 		GenericValetResponse<ValetRollbackResponse> gvr = this.vci.callValetRollbackRequest(msoRequest.getRequestId(), null, backout, me.getMessage());
                 		// Nothing to really do here whether it succeeded or not other than log it.
-                		LOGGER.debug("Return code from Rollback response is " + gvr.getStatusCode());
+                		logger.debug("Return code from Rollback response is {}", gvr.getStatusCode());
                 	} catch (Exception e) {
-                		LOGGER.error("Exception encountered while sending Rollback to Valet ", e);
+                		logger.error("Exception encountered while sending Rollback to Valet ", e);
                 	}
                 }
                 throw new VnfException (me);
             } catch (NullPointerException npe) {
                 String error = "Create VFModule " + vfModuleType + " in " + cloudSiteId + "/" + tenantId + ": " + npe;
-                LOGGER.recordMetricEvent (createStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "CreateStack", vfModuleName);
-                LOGGER.error (MessageEnum.RA_CREATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "NullPointerException - createStack", npe);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
-                LOGGER.debug("NULL POINTER EXCEPTION at heat.createStack");
+                logger
+                    .error("{} {} {} {} {} {} {}", MessageEnum.RA_CREATE_VNF_ERR.toString(), vfModuleType, cloudSiteId,
+                        tenantId, "OpenStack", MsoLogger.ErrorCode.DataError.getValue(),
+                        "NullPointerException - createStack", npe);
+                logger.debug(error);
+                logger.debug("NULL POINTER EXCEPTION at heat.createStack");
                 //npe.addContext ("CreateVNF");
                 throw new VnfException ("NullPointerException during heat.createStack");
             } catch (Exception e) {
-                LOGGER.recordMetricEvent (createStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while creating stack with OpenStack", "OpenStack", "CreateStack", vfModuleName);
-                LOGGER.debug("unhandled exception at heat.createStack",e);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, "Exception while creating stack with OpenStack");
+                logger.debug("unhandled exception at heat.createStack",e);
             	throw new VnfException("Exception during heat.createStack! " + e.getMessage());
             }
             // Reach this point if createStack is successful.
@@ -1231,20 +1258,19 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             outputs.value = copyStringOutputs (heatStack.getOutputs ());
             rollback.value = vfRollback;
             if (isValetEnabled && sendResponseToValet) {
-            	LOGGER.debug("valet is enabled, the orchestration succeeded - now send confirm to valet with stack id");
+            	logger.debug("valet is enabled, the orchestration succeeded - now send confirm to valet with stack id");
             	try {
                     GenericValetResponse<ValetConfirmResponse> gvr = this.vci.callValetConfirmRequest(msoRequest.getRequestId(), heatStack.getCanonicalName());
                     // Nothing to really do here whether it succeeded or not other than log it.
-                    LOGGER.debug("Return code from Confirm response is " + gvr.getStatusCode());
+                    logger.debug("Return code from Confirm response is {}", gvr.getStatusCode());
                 } catch (Exception e) {
-                    LOGGER.error("Exception encountered while sending Confirm to Valet ", e);
+                    logger.error("Exception encountered while sending Confirm to Valet ", e);
                 }
             }
-            LOGGER.debug ("VF Module " + vfModuleName + " successfully created");
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully create VF Module");
+            logger.debug("VF Module {} successfully created", vfModuleName);
             return;
         } catch (Exception e) {
-        	LOGGER.debug("unhandled exception in create VF",e);
+        	logger.debug("unhandled exception in create VF",e);
         	throw new VnfException("Exception during create VF " + e.getMessage());
         }
     }
@@ -1255,9 +1281,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs) throws VnfException {
-        MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("DeleteVf");
-        LOGGER.debug ("Deleting VF " + vnfName + " in " + cloudSiteId + "/" + tenantId);
+
+        logger.debug("Deleting VF {} in ", vnfName, cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
 
@@ -1271,9 +1296,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Convert to a generic VnfException
             me.addContext ("DeleteVFModule");
             String error = "Delete VFModule: Query to get outputs: " + vnfName + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", null);
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudSiteId, tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError, "Exception - QueryStack", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudSiteId,
+                tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError.getValue(), "Exception - QueryStack",
+                me);
+            logger.debug(error);
             throw new VnfException (me);
         }
         // call method which handles the conversion from Map<String,Object> to Map<String,String> for our expected Object types
@@ -1281,7 +1307,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         boolean isValetEnabled = this.checkBooleanProperty(MsoVnfAdapterImpl.VALET_ENABLED, false);
         boolean failRequestOnValetFailure = this.checkBooleanProperty(MsoVnfAdapterImpl.FAIL_REQUESTS_ON_VALET_FAILURE, false);
-        LOGGER.debug("isValetEnabled=" + isValetEnabled + ", failRequestsOnValetFailure=" + failRequestOnValetFailure);
+        logger.debug("isValetEnabled={}, failRequestsOnValetFailure={}", isValetEnabled, failRequestOnValetFailure);
         boolean valetDeleteRequestSucceeded = false;
         if (isValetEnabled) {
         	valetDeleteRequestSucceeded = this.valetDeleteRequest(cloudSiteId, tenantId, vnfName, msoRequest, failRequestOnValetFailure);
@@ -1294,41 +1320,40 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         long subStartTime = System.currentTimeMillis ();
         try {
             heat.deleteStack (tenantId, cloudSiteId, vnfName, true);
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, SUCCESS_MSG, "OpenStack", "DeleteStack", vnfName);
         } catch (MsoException me) {
             me.addContext ("DeleteVNF");
             // Failed to query the Stack due to an openstack exception.
             // Convert to a generic VnfException
             String error = "Delete VF: " + vnfName + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (subStartTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "DeleteStack", vnfName);
-            LOGGER.error (MessageEnum.RA_DELETE_VNF_ERR, vnfName, cloudSiteId, tenantId, "OpenStack", "DeleteStack", MsoLogger.ErrorCode.DataError, "Exception - deleteStack", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudSiteId,
+                tenantId, "OpenStack", "DeleteStack", MsoLogger.ErrorCode.DataError.getValue(),
+                "Exception - deleteStack", me);
+            logger.debug(error);
             if (isValetEnabled && valetDeleteRequestSucceeded) {
-            	LOGGER.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
+            	logger.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
             	try {
             		GenericValetResponse<ValetRollbackResponse> gvr = this.vci.callValetRollbackRequest(msoRequest.getRequestId(), vnfName, false, me.getMessage());
             		// Nothing to really do here whether it succeeded or not other than log it.
-            		LOGGER.debug("Return code from Rollback response is " + gvr.getStatusCode());
+            		logger.debug("Return code from Rollback response is {}", gvr.getStatusCode());
             	} catch (Exception e) {
-            		LOGGER.error("Exception encountered while sending Rollback to Valet ", e);
+            		logger.error("Exception encountered while sending Rollback to Valet ", e);
             	}
             }
             throw new VnfException (me);
         }
         if (isValetEnabled && valetDeleteRequestSucceeded) {
         	// only if the original request succeeded do we send a confirm
-        	LOGGER.debug("valet is enabled, the delete succeeded - now send confirm to valet");
+        	logger.debug("valet is enabled, the delete succeeded - now send confirm to valet");
         	try {
                 GenericValetResponse<ValetConfirmResponse> gvr = this.vci.callValetConfirmRequest(msoRequest.getRequestId(), vnfName);
                 // Nothing to really do here whether it succeeded or not other than log it.
-                LOGGER.debug("Return code from Confirm response is " + gvr.getStatusCode());
+              logger.debug("Return code from Confirm response is {}", gvr.getStatusCode());
             } catch (Exception e) {
-                LOGGER.error("Exception encountered while sending Confirm to Valet ", e);
+              logger.error("Exception encountered while sending Confirm to Valet ", e);
             }
         }
 
         // On success, nothing is returned.
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully delete VF");
         return;
     }
 
@@ -1366,17 +1391,18 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	sbInit.append("baseVfHeatStackId=" + baseVfHeatStackId + "\n");
     	sbInit.append("vfModuleStackId=" + vfModuleStackId + "\n");
     	sbInit.append("modelCustomizationUuid=" + modelCustomizationUuid + "\n");
-    	LOGGER.debug(sbInit.toString());
+      logger.debug(sbInit.toString());
 
         String mcu = modelCustomizationUuid;
         boolean useMCUuid = false;
         if (mcu != null && !mcu.isEmpty()) {
             if ("null".equalsIgnoreCase(mcu)) {
-                LOGGER.debug("modelCustomizationUuid: passed in as the string 'null' - will ignore: " + modelCustomizationUuid);
+                logger.debug("modelCustomizationUuid: passed in as the string 'null' - will ignore: {}",
+                    modelCustomizationUuid);
                 useMCUuid = false;
                 mcu = "";
             } else {
-                LOGGER.debug("Found modelCustomizationUuid! Will use that: " + mcu);
+                logger.debug("Found modelCustomizationUuid! Will use that: {}", mcu);
                 useMCUuid = true;
             }
         }
@@ -1398,7 +1424,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         if (inputs == null) {
         	// Create an empty set of inputs
         	inputs = new HashMap<>();
-        	LOGGER.debug("inputs == null - setting to empty");
+            logger.debug("inputs == null - setting to empty");
         }
 
         boolean isBaseRequest = false;
@@ -1410,8 +1436,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	vfModuleName = this.getVfModuleNameFromModuleStackId(vfModuleStackId);
         }
 
-        LOGGER.debug ("Updating VFModule: " + vfModuleName + " of type " + vfModuleType + "in " + cloudSiteId + "/" + tenantId);
-        LOGGER.debug("requestTypeString = " + requestTypeString + ", nestedVolumeStackId = " + nestedStackId + ", nestedBaseStackId = " + nestedBaseStackId);
+        logger.debug ("Updating VFModule: " + vfModuleName + " of type " + vfModuleType + "in " + cloudSiteId + "/" + tenantId);
+        logger.debug("requestTypeString = " + requestTypeString + ", nestedVolumeStackId = " + nestedStackId + ", nestedBaseStackId = " + nestedBaseStackId);
 
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
@@ -1430,18 +1456,18 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         StackInfo heatStack = null;
         long queryStackStarttime = System.currentTimeMillis ();
-        LOGGER.debug("UpdateVfModule - querying for " + vfModuleName);
+        logger.debug("UpdateVfModule - querying for {}", vfModuleName);
         try {
             heatStack = heat.queryStack (cloudSiteId, tenantId, vfModuleName);
-            LOGGER.recordMetricEvent (queryStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully receive response from Open Stack", "OpenStack", "QueryStack", null);
         } catch (MsoException me) {
             // Failed to query the Stack due to an openstack exception.
             // Convert to a generic VnfException
             me.addContext ("UpdateVFModule");
             String error = "Update VFModule: Query " + vfModuleName + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-            LOGGER.recordMetricEvent (queryStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", null);
-            LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError, "Exception - QueryStack", me);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudSiteId,
+                tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError.getValue(), "Exception - QueryStack",
+                me);
+            logger.debug(error);
             throw new VnfException (me);
         }
 
@@ -1449,11 +1475,11 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         if (heatStack == null || heatStack.getStatus () == HeatStatus.NOTFOUND) {
             // Not Found
             String error = "Update VF: Stack " + vfModuleName + " does not exist in " + cloudSiteId + "/" + tenantId;
-            LOGGER.error (MessageEnum.RA_VNF_NOT_EXIST, vfModuleName, cloudSiteId, tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError, error);
-            LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
+            logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_NOT_EXIST.toString(), vfModuleName, cloudSiteId,
+                tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError.getValue(), error);
             throw new VnfNotFound (cloudSiteId, tenantId, vfModuleName);
         } else {
-            LOGGER.debug ("Found Existing stack, status=" + heatStack.getStatus ());
+            logger.debug("Found Existing stack, status={}", heatStack.getStatus());
             // Populate the outputs from the existing stack.
             outputs.value = copyStringOutputs (heatStack.getOutputs ());
             rollback.value = vfRollback; // Default rollback - no updates performed
@@ -1465,29 +1491,28 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         Map<String, Object> nestedVolumeOutputs = null;
         if (nestedStackId != null) {
         	try {
-        		LOGGER.debug("Querying for nestedStackId = " + nestedStackId);
+        		logger.debug("Querying for nestedStackId = {}", nestedStackId);
         		nestedHeatStack = heat.queryStack(cloudSiteId, tenantId, nestedStackId);
-                LOGGER.recordMetricEvent (queryStackStarttime2, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully receive response from Open Stack", "OpenStack", "QueryStack", null);
         	} catch (MsoException me) {
         	    // Failed to query the Stack due to an openstack exception.
         	    // Convert to a generic VnfException
         	    me.addContext ("UpdateVFModule");
         	    String error = "Update VF: Attached heatStack ID Query " + nestedStackId + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-                LOGGER.recordMetricEvent (queryStackStarttime2, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", null);
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudSiteId, tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError, "Exception - " + error, me);
-        		LOGGER.debug("ERROR trying to query nested stack= " + error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
-        	    throw new VnfException (me);
+              logger.error("{} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudSiteId,
+                  tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError.getValue(), "Exception - " + error,
+                  me);
+              logger.debug("ERROR trying to query nested stack= {}", error);
+              throw new VnfException (me);
         	}
         	if (nestedHeatStack == null || nestedHeatStack.getStatus() == HeatStatus.NOTFOUND) {
         		MsoLogger.setServiceName (serviceName);
         	    String error = "Update VFModule: Attached volume heatStack ID DOES NOT EXIST " + nestedStackId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vnfName, cloudSiteId, tenantId, error, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError, error);
-        	    LOGGER.debug(error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
+              logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudSiteId,
+                  tenantId, error, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError.getValue(), error);
+              logger.debug(error);
         	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
         	} else {
-        		LOGGER.debug("Found nested heat stack - copying values to inputs *later*");
+        		logger.debug("Found nested heat stack - copying values to inputs *later*");
         		nestedVolumeOutputs = nestedHeatStack.getOutputs();
         		heat.copyStringOutputsToInputs(inputs, nestedHeatStack.getOutputs(), false);
         	}
@@ -1498,29 +1523,30 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         if (nestedBaseStackId != null) {
             long queryStackStarttime3 = System.currentTimeMillis ();
         	try {
-        		LOGGER.debug("Querying for nestedBaseStackId = " + nestedBaseStackId);
+        		logger.debug("Querying for nestedBaseStackId = {}", nestedBaseStackId);
         		nestedBaseHeatStack = heat.queryStack(cloudSiteId, tenantId, nestedBaseStackId);
-                LOGGER.recordMetricEvent (queryStackStarttime3, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully receive response from Open Stack", "OpenStack", "QueryStack", null);
         	} catch (MsoException me) {
         	    // Failed to query the Stack due to an openstack exception.
         	    // Convert to a generic VnfException
         	    me.addContext ("UpdateVfModule");
         	    String error = "Update VFModule: Attached baseHeatStack ID Query " + nestedBaseStackId + " in " + cloudSiteId + "/" + tenantId + ": " + me ;
-                LOGGER.recordMetricEvent (queryStackStarttime3, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "QueryStack", null);
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError, "Exception - " + error, me);
-        		LOGGER.debug("ERROR trying to query nested base stack= " + error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+              logger
+                  .error("{} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName, cloudSiteId,
+                      tenantId, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError.getValue(),
+                      "Exception - " + error, me);
+              logger.debug("ERROR trying to query nested base stack= {}", error);
         	    throw new VnfException (me);
         	}
         	if (nestedBaseHeatStack == null || nestedBaseHeatStack.getStatus() == HeatStatus.NOTFOUND) {
         		MsoLogger.setServiceName (serviceName);
         	    String error = "Update VFModule: Attached base heatStack ID DOES NOT EXIST " + nestedBaseStackId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
-        	    LOGGER.error (MessageEnum.RA_QUERY_VNF_ERR, vfModuleName, cloudSiteId, tenantId, error, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError, error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
-        	    LOGGER.debug(error);
+        	    logger.error ("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName,
+                  cloudSiteId, tenantId, error, "OpenStack",
+                  "QueryStack", MsoLogger.ErrorCode.DataError.getValue(), error);
+        	    logger.debug(error);
         	    throw new VnfException (error, MsoExceptionCategory.USERDATA);
         	} else {
-        		LOGGER.debug("Found nested base heat stack - copying values to inputs *later*");
+        		logger.debug("Found nested base heat stack - copying values to inputs *later*");
         		baseStackOutputs = nestedBaseHeatStack.getOutputs();
         		heat.copyStringOutputsToInputs(inputs, nestedBaseHeatStack.getOutputs(), false);
         	}
@@ -1538,25 +1564,25 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         		vfmc = vfModuleCustomRepo.findByModelCustomizationUUID(modelCustomizationUuid);
         		vf = vfmc != null ? vfmc.getVfModule() : null;
                 if (vf == null) {
-                    LOGGER.debug("Unable to find a vfModule matching modelCustomizationUuid=" + mcu);
+                    logger.debug("Unable to find a vfModule matching modelCustomizationUuid={}", mcu);
                 }
         	} else {
-        		LOGGER.debug("1707 and later - MUST PROVIDE Model Customization UUID!");
+        		logger.debug("1707 and later - MUST PROVIDE Model Customization UUID!");
             }
             	if (vf == null) {
-            	String error = "Update VfModule: unable to find vfModule with modelCustomizationUuid=" + mcu;
-                LOGGER.error (MessageEnum.RA_VNF_UNKNOWN_PARAM, "VF Module Type", vfModuleType, "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataError, error);
-                throw new VnfException (error, MsoExceptionCategory.USERDATA);
+                  String error = "Update VfModule: unable to find vfModule with modelCustomizationUuid=" + mcu;
+                  logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "VF Module Type",
+                      vfModuleType, "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), error);
+                  throw new VnfException(error, MsoExceptionCategory.USERDATA);
             }
-            LOGGER.debug ("Got VF module definition from Catalog: " + vf.toString ());
+            logger.debug("Got VF module definition from Catalog: {}", vf.toString());
             if (vf.getIsBase()) {
             	isBaseRequest = true;
-            	LOGGER.debug("This a BASE update request");
+            	logger.debug("This a BASE update request");
             } else {
-            	LOGGER.debug("This is *not* a BASE VF update request");
+            	logger.debug("This is *not* a BASE VF update request");
             	if (!isVolumeRequest && nestedBaseStackId == null) {
-            		LOGGER.debug("DANGER WILL ROBINSON! This is unexpected - no nestedBaseStackId with this non-base request");
+            		logger.debug("DANGER WILL ROBINSON! This is unexpected - no nestedBaseStackId with this non-base request");
             	}
             }
 
@@ -1568,7 +1594,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             	vnfResource = vf.getVnfResources();
             	if (vnfResource == null) {
-            		LOGGER.debug("Unable to find vnfResource at " + vnfResourceModelUuid + " will not error for now...");
+            		logger.debug("Unable to find vnfResource at ? will not error for now...", vnfResourceModelUuid);
             	}
             }
 
@@ -1579,7 +1605,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		minVersionVnf = vnfResource.getAicVersionMin();
             		maxVersionVnf = vnfResource.getAicVersionMax();
             	} catch (Exception e) {
-            		LOGGER.debug("Unable to pull min/max version for this VNF Resource entry",e);
+            		logger.debug("Unable to pull min/max version for this VNF Resource entry",e);
             		minVersionVnf = null;
             		maxVersionVnf = null;
             		}
@@ -1609,36 +1635,36 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 						moreThanMax = aicV.isMoreRecentThan(maxVersionVnf);
 						equalToMax = aicV.isTheSameVersion(maxVersionVnf);
 					} catch (Exception e) {
-						LOGGER.debug("An exception occured while trying to test AIC Version " + e.getMessage()
-								+ " - will default to not check", e);
-						doNotTest = true;
+              logger.debug("An exception occured while trying to test AIC Version {} - will default to not check",
+                  e.getMessage(), e);
+              doNotTest = true;
 					}
 					if (!doNotTest) {
 						if ((moreThanMin || equalToMin) // aic >= min
 								&& ((equalToMax) || !(moreThanMax))) { // aic <= max
-							LOGGER.debug("VNF Resource " + vnfResource.getModelName() + " VersionMin=" + minVersionVnf
-									+ " VersionMax:" + maxVersionVnf + " supported on Cloud: " + cloudSiteId
-									+ " with AIC_Version:" + aicV);
-						} else {
+                logger.debug(
+                    "VNF Resource " + vnfResource.getModelName() + " VersionMin=" + minVersionVnf + " VersionMax:"
+                        + maxVersionVnf + " supported on Cloud: " + cloudSiteId + " with AIC_Version:" + aicV);
+            } else {
 							// ERROR
 							String error = "VNF Resource type: " + vnfResource.getModelName() + " VersionMin="
 									+ minVersionVnf + " VersionMax:" + maxVersionVnf + " NOT supported on Cloud: "
 									+ cloudSiteId + " with AIC_Version:" + aicV;
-							LOGGER.error(MessageEnum.RA_CONFIG_EXC, error, "OpenStack", "",
-									MsoLogger.ErrorCode.BusinessProcesssError, "Exception - setVersion");
-							LOGGER.debug(error);
+                logger.error("{} {} {} {} {}", MessageEnum.RA_CONFIG_EXC.toString(), error, "OpenStack",
+                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
+                logger.debug(error);
 							throw new VnfException(error, MsoExceptionCategory.USERDATA);
 						}
 					} else {
-						LOGGER.debug("bypassing testing AIC version...");
+						logger.debug("bypassing testing AIC version...");
 					}
 				} // let this error out downstream to avoid introducing uncertainty at this stage
                 } else {
-					LOGGER.debug("cloudConfig is NULL - cannot check cloud site version");
+					logger.debug("cloudConfig is NULL - cannot check cloud site version");
                 }
 
 			} else {
-				LOGGER.debug("AIC Version not set in VNF_Resource - do not error for now - not checked.");
+				logger.debug("AIC Version not set in VNF_Resource - do not error for now - not checked.");
             }
 			// End Version check 1607
 
@@ -1654,45 +1680,46 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
 			if (heatTemplate == null) {
 				String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType + ", reqType=" + requestTypeString;
-				LOGGER.error(MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Template ID", vfModuleType, "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
-				throw new VnfException(error, MsoExceptionCategory.INTERNAL);
+          logger
+              .error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID", vfModuleType,
+                  "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), error);
+          throw new VnfException(error, MsoExceptionCategory.INTERNAL);
 			} else {
-				LOGGER.debug ("Got HEAT Template from DB: " + heatTemplate.getHeatTemplate());
-			}
+          logger.debug("Got HEAT Template from DB: {}", heatTemplate.getHeatTemplate());
+      }
 
             if (heatEnvironment == null) {
                String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
-                    LOGGER.error (MessageEnum.RA_VNF_UNKNOWN_PARAM, "Heat Environment ID", "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound, error);
+                logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
+                    "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), error);
                     throw new VnfException (error, MsoExceptionCategory.INTERNAL);
             } else {
-                LOGGER.debug ("Got Heat Environment from DB: " + heatEnvironment.getEnvironment());
+                logger.debug ("Got Heat Environment from DB: {}", heatEnvironment.getEnvironment());
             }
 
-            LOGGER.debug ("In MsoVnfAdapterImpl, about to call db.getNestedTemplates avec templateId="
-                          + heatTemplate.getArtifactUuid ());
+        logger.debug("In MsoVnfAdapterImpl, about to call db.getNestedTemplates avec templateId={}",
+            heatTemplate.getArtifactUuid());
 
 
             List<HeatTemplate> nestedTemplates = heatTemplate.getChildTemplates();
             Map <String, Object> nestedTemplatesChecked = new HashMap <> ();
             if (nestedTemplates != null && !nestedTemplates.isEmpty()) {
                 // for debugging print them out
-                LOGGER.debug ("Contents of nestedTemplates - to be added to files: on stack:");
+                logger.debug("Contents of nestedTemplates - to be added to files: on stack:");
                 for (HeatTemplate entry : nestedTemplates) {
 
                     nestedTemplatesChecked.put (entry.getTemplateName(), entry.getTemplateBody());
-                    LOGGER.debug (entry.getTemplateName() + " -> " + entry.getTemplateBody());
+                    logger.debug(entry.getTemplateName() + " -> " + entry.getTemplateBody());
                 }
             } else {
-                LOGGER.debug ("No nested templates found - nothing to do here");
+                logger.debug("No nested templates found - nothing to do here");
                 nestedTemplatesChecked = null;
             }
 
             // Also add the files: for any get_files associated with this VfModule
             // *if* there are any
-            LOGGER.debug ("In MsoVnfAdapterImpl.updateVfModule, about to call db.getHeatFiles avec vfModuleId="
-                          + vf.getModelUUID());
+            logger.debug("In MsoVnfAdapterImpl.updateVfModule, about to call db.getHeatFiles avec vfModuleId={}",
+            vf.getModelUUID());
 
             List<HeatFiles> heatFiles = null;
             Map <String, Object> heatFilesObjects = new HashMap <> ();
@@ -1703,28 +1730,28 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             	String propertyString = this.environment.getProperty(MsoVnfAdapterImpl.ADD_GET_FILES_ON_VOLUME_REQ);
             	if ("true".equalsIgnoreCase(propertyString) || "y".equalsIgnoreCase(propertyString)) {
             		addGetFilesOnVolumeReq = true;
-            		LOGGER.debug("AddGetFilesOnVolumeReq - setting to true! " + propertyString);
+            		logger.debug("AddGetFilesOnVolumeReq - setting to true! {}", propertyString);
             	}
             } catch (Exception e) {
-            	LOGGER.debug("An error occured trying to get property " + MsoVnfAdapterImpl.ADD_GET_FILES_ON_VOLUME_REQ + " - default to false", e);
+                logger.debug("An error occured trying to get property {} - default to false",
+                    MsoVnfAdapterImpl.ADD_GET_FILES_ON_VOLUME_REQ, e);
             }
             if (!isVolumeRequest || addGetFilesOnVolumeReq) {
-            	LOGGER.debug("In MsoVnfAdapterImpl updateVfModule, about to call db.getHeatFilesForVfModule avec vfModuleId="
-						+ vf.getModelUUID());
+            logger.debug("In MsoVnfAdapterImpl updateVfModule, about to call db.getHeatFilesForVfModule avec "
+                + "vfModuleId={}", vf.getModelUUID());
 
             	heatFiles = vf.getHeatFiles();
                 if (heatFiles != null && !heatFiles.isEmpty()) {
                     // add these to stack - to be done in createStack
                     // here, we will map them to Map<String, Object> from Map<String, HeatFiles>
                     // this will match the nested templates format
-                    LOGGER.debug ("Contents of heatFiles - to be added to files: on stack:");
-					for(HeatFiles heatfile : heatFiles){
-						LOGGER.debug(heatfile.getFileName() + " -> "
-								+ heatfile.getFileBody());
-						heatFilesObjects.put(heatfile.getFileName(), heatfile.getFileBody());
-					}
+                    logger.debug("Contents of heatFiles - to be added to files: on stack:");
+                    for (HeatFiles heatfile : heatFiles) {
+                        logger.debug(heatfile.getFileName() + " -> " + heatfile.getFileBody());
+                        heatFilesObjects.put(heatfile.getFileName(), heatfile.getFileBody());
+                    }
                 } else {
-                    LOGGER.debug ("No heat files found -nothing to do here");
+                    logger.debug("No heat files found -nothing to do here");
                     heatFilesObjects = null;
                 }
             }
@@ -1743,12 +1770,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 String propertyString = this.environment.getProperty (MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
                 if ("false".equalsIgnoreCase (propertyString) || "n".equalsIgnoreCase (propertyString)) {
                     checkRequiredParameters = false;
-                    LOGGER.debug ("CheckRequiredParameters is FALSE. Will still check but then skip blocking..."
-                                  + MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
+                    logger.debug("CheckRequiredParameters is FALSE. Will still check but then skip blocking...",
+                        MsoVnfAdapterImpl.CHECK_REQD_PARAMS);
                 }
             } catch (Exception e) {
                 // No problem - default is true
-                LOGGER.debug ("An exception occured trying to get property " + MsoVnfAdapterImpl.CHECK_REQD_PARAMS, e);
+                logger.debug ("An exception occured trying to get property {}", MsoVnfAdapterImpl.CHECK_REQD_PARAMS,
+                    e);
             }
          // 1604 - Add enhanced environment & parameter checking
             // Part 1: parse envt entries to see if reqd parameter is there (before used a simple grep
@@ -1756,7 +1784,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             // Note this also removes any comments
             MsoHeatEnvironmentEntry mhee = null;
             if (heatEnvironment != null && heatEnvironment.getEnvironment().toLowerCase ().contains ("parameters:")) {
-            	LOGGER.debug("Enhanced environment checking enabled - 1604");
+            	logger.debug("Enhanced environment checking enabled - 1604");
                 StringBuilder sb = new StringBuilder(heatEnvironment.getEnvironment());
                 mhee = new MsoHeatEnvironmentEntry(sb);
                 StringBuilder sb2 = new StringBuilder("\nHeat Template Parameters:\n");
@@ -1769,16 +1797,16 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 	sb2.append("\nEnvironment:");
                 	sb2.append(mhee.toFullString());
                 }
-                LOGGER.debug(sb2.toString());
+                logger.debug(sb2.toString());
             } else {
-            	LOGGER.debug("NO ENVIRONMENT for this entry");
+            	logger.debug("NO ENVIRONMENT for this entry");
             }
             // New for 1607 - support params of json type
             HashMap<String, JsonNode> jsonParams = new HashMap<>();
             boolean hasJson = false;
 
             for (HeatTemplateParam parm : heatTemplate.getParameters ()) {
-                LOGGER.debug ("Parameter:'" + parm.getParamName ()
+                logger.debug ("Parameter:'" + parm.getParamName ()
                               + "', isRequired="
                               + parm.isRequired ()
                               + ", alias="
@@ -1800,15 +1828,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 			//TODO - what to do here?
                 			//for now - send the error to debug, but just leave it as a String
                 			String errorMessage = jpe.getMessage();
-                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage,jpe);
+                			logger.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage,jpe);
                 			hasJson = false;
                 			jsonNode = null;
                 		} catch (Exception e) {
-                			// or here?
-                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage(),e);
-                			hasJson = false;
-                			jsonNode = null;
-                		}
+                        // or here?
+                        logger.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage(), e);
+                        hasJson = false;
+                        jsonNode = null;
+                    }
                 		if (jsonNode != null) {
                 			jsonParams.put(parm.getParamName(), jsonNode);
                 		}
@@ -1822,15 +1850,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 			//TODO - what to do here?
                 			//for now - send the error to debug, but just leave it as a String
                 			String errorMessage = jpe.getMessage();
-                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage,jpe);
+                			logger.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage,jpe);
                 			hasJson = false;
                 			jsonNode = null;
                 		} catch (Exception e) {
-                			// or here?
-                			LOGGER.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage(),e);
-                			hasJson = false;
-                			jsonNode = null;
-                		}
+                          // or here?
+                          logger.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage(), e);
+                          hasJson = false;
+                          jsonNode = null;
+                      }
                    		if (jsonNode != null) {
                    			// Notice here - we add it to the jsonParams hashMap with the actual name -
                    			// then manipulate the inputs so when we check for aliases below - it will not
@@ -1848,23 +1876,23 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                         String realParamName = parm.getParamName ();
                         String alias = parm.getParamAlias ();
                         Object value = inputs.get (alias);
-                        LOGGER.debug ("*Found an Alias: paramName=" + realParamName
+                        logger.debug ("*Found an Alias: paramName=" + realParamName
                                       + ",alias="
                                       + alias
                                       + ",value="
                                       + value);
                         inputs.remove (alias);
                         inputs.put (realParamName, value);
-                        LOGGER.debug (alias + " entry removed from inputs, added back using " + realParamName);
+                        logger.debug ("{} entry removed from inputs, added back using {}", alias, realParamName);
                     }
                     // enhanced - check if it's in the Environment (note: that method
                     else if (mhee != null && mhee.containsParameter(parm.getParamName())) {
 
-                        LOGGER.debug ("Required parameter " + parm.getParamName ()
-                                      + " appears to be in environment - do not count as missing");
+                        logger.debug("Required parameter {} appears to be in environment - do not count as missing",
+                            parm.getParamName());
                     }
                     else {
-                        LOGGER.debug ("adding to missing parameters list: " + parm.getParamName ());
+                        logger.debug("adding to missing parameters list: {}", parm.getParamName());
                         if (missingParams == null) {
                             missingParams = parm.getParamName ();
                         } else {
@@ -1880,14 +1908,14 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 // Problem - missing one or more required parameters
             	if (checkRequiredParameters) {
                 String error = "Update VNF: Missing Required inputs: " + missingParams;
-                LOGGER.error (MessageEnum.RA_MISSING_PARAM, missingParams, "OpenStack", "", MsoLogger.ErrorCode.DataError, error);
-                    LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.BadRequest, error);
+                  logger.error("{} {} {} {} {}", MessageEnum.RA_MISSING_PARAM.toString(), missingParams, "OpenStack",
+                      MsoLogger.ErrorCode.DataError.getValue(), error);
                 throw new VnfException (error, MsoExceptionCategory.USERDATA);
             	} else {
-            		LOGGER.debug ("found missing parameters - but checkRequiredParameters is false - will not block");
-            	}
+                  logger.debug("found missing parameters - but checkRequiredParameters is false - will not block");
+              }
             } else {
-                LOGGER.debug ("No missing parameters found - ok to proceed");
+                logger.debug("No missing parameters found - ok to proceed");
             }
 
             // Just submit the envt entry as received from the database
@@ -1902,7 +1930,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 // This is not a valid parameter for this template
                 extraParams.removeAll (paramList);
                 if (!extraParams.isEmpty ()) {
-                	LOGGER.warn (MessageEnum.RA_VNF_EXTRA_PARAM, vnfType, extraParams.toString(), "OpenStack", "", MsoLogger.ErrorCode.DataError, "Extra params");
+                    logger.warn("{} {} {} {} {} {}", MessageEnum.RA_VNF_EXTRA_PARAM.toString(), vnfType,
+                        extraParams.toString(), "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), "Extra params");
                     inputs.keySet ().removeAll (extraParams);
                 }
             }
@@ -1929,10 +1958,10 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
             boolean isValetEnabled = this.checkBooleanProperty(MsoVnfAdapterImpl.VALET_ENABLED, false);
             boolean failRequestOnValetFailure = this.checkBooleanProperty(MsoVnfAdapterImpl.FAIL_REQUESTS_ON_VALET_FAILURE, false);
-            LOGGER.debug("isValetEnabled=" + isValetEnabled + ", failRequestsOnValetFailure=" + failRequestOnValetFailure);
+            logger.debug("isValetEnabled={}, failRequestsOnValetFailure={}", isValetEnabled, failRequestOnValetFailure);
             if (isVolumeRequest) {
             	isValetEnabled = false;
-            	LOGGER.debug("never send a volume request to valet");
+            	logger.debug("never send a volume request to valet");
             }
             boolean sendResponseToValet = false;
             if (isValetEnabled) {
@@ -1968,21 +1997,20 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 					nestedTemplatesChecked,
 					heatFilesObjects
 				);
-				LOGGER.recordMetricEvent (updateStackStarttime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully receive response from Open Stack", "OpenStack", "UpdateStack", null);
             } catch (MsoException me) {
                 me.addContext ("UpdateVFModule");
                 String error = "Update VFModule " + vfModuleType + " in " + cloudSiteId + "/" + tenantId + ": " + me;
-                LOGGER.recordMetricEvent (updateStackStarttime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error, "OpenStack", "UpdateStack", null);
-                LOGGER.error (MessageEnum.RA_UPDATE_VNF_ERR, vfModuleType, cloudSiteId, tenantId, "OpenStack", "", MsoLogger.ErrorCode.DataError, "Exception - " + error, me);
-                LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError, error);
+                logger
+                    .error("{} {} {} {} {} {} {}", MessageEnum.RA_UPDATE_VNF_ERR.toString(), vfModuleType, cloudSiteId,
+                        tenantId, "OpenStack", MsoLogger.ErrorCode.DataError.getValue(), "Exception - " + error, me);
                 if (isValetEnabled && sendResponseToValet) {
-                	LOGGER.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
+                	logger.debug("valet is enabled, the orchestration failed - now sending rollback to valet");
                 	try {
                 		GenericValetResponse<ValetRollbackResponse> gvr = this.vci.callValetRollbackRequest(msoRequest.getRequestId(), null, false, me.getMessage());
                 		// Nothing to really do here whether it succeeded or not other than log it.
-                		LOGGER.debug("Return code from Rollback response is " + gvr.getStatusCode());
+                		logger.debug("Return code from Rollback response is {}", gvr.getStatusCode());
                 	} catch (Exception e) {
-                		LOGGER.error("Exception encountered while sending Rollback to Valet ", e);
+                		logger.error("Exception encountered while sending Rollback to Valet ", e);
                 	}
                 }
                 throw new VnfException (me);
@@ -1995,19 +2023,18 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         vfRollback.setVnfCreated (true);
 
         if (isValetEnabled && sendResponseToValet) {
-        	LOGGER.debug("valet is enabled, the update succeeded - now send confirm to valet with stack id");
+        	logger.debug("valet is enabled, the update succeeded - now send confirm to valet with stack id");
         	try {
                 GenericValetResponse<ValetConfirmResponse> gvr = this.vci.callValetConfirmRequest(msoRequest.getRequestId(), heatStack.getCanonicalName());
                 // Nothing to really do here whether it succeeded or not other than log it.
-                LOGGER.debug("Return code from Confirm response is " + gvr.getStatusCode());
+                logger.debug("Return code from Confirm response is {}", gvr.getStatusCode());
             } catch (Exception e) {
-                LOGGER.error("Exception encountered while sending Confirm to Valet ", e);
+                logger.error("Exception encountered while sending Confirm to Valet ", e);
             }
         }
 
         outputs.value = copyStringOutputs (heatStack.getOutputs ());
         rollback.value = vfRollback;
-        LOGGER.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, "Successfully update VF Module");
         return;
     }
 
@@ -2023,7 +2050,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	try {
     		vfModuleName = vfModuleStackId.substring(0, index);
     	} catch (Exception e) {
-    		LOGGER.debug("Exception", e);
+    		logger.debug("Exception", e);
     		vfModuleName = null;
     	}
     	return vfModuleName;
@@ -2042,8 +2069,8 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     			property = false;
     		}
     	} catch (Exception e) {
-    		LOGGER.debug ("An exception occured trying to get property " + propertyName + " - defaulting to " + defaultValue, e);
-    		property = defaultValue;
+          logger.debug("An exception occured trying to get property {} - defaulting to ", propertyName, defaultValue, e);
+          property = defaultValue;
     	}
     	return property;
     }
@@ -2107,13 +2134,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 						Map<String, Object> newInputs = vcr.getParameters();
 						if (newInputs != null) {
 							Map<String, Object> oldGold = goldenInputs;
-							LOGGER.debug("parameters before being modified by valet:" + oldGold.toString());
+							logger.debug("parameters before being modified by valet:{}", oldGold.toString());
 							goldenInputs = new HashMap<String, Object>();
 							for (String key : newInputs.keySet()) {
 								goldenInputs.put(key, newInputs.get(key));
 							}
 							valetModifiedParamsHolder.value = goldenInputs;
-							LOGGER.debug("parameters after being modified by valet:" + goldenInputs.toString());
+							logger.debug("parameters after being modified by valet:{}", goldenInputs.toString());
 							valetSucceeded = true;
 						}
 					} else {
@@ -2121,15 +2148,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 					}
 				}
 			} else {
-				LOGGER.debug("Got a bad response back from valet");
+				logger.debug("Got a bad response back from valet");
 				valetErrorMessage = "Bad response back from Valet";
 				valetSucceeded = false;
 			}
 		} catch (Exception e) {
-			LOGGER.error("An exception occurred trying to call valet ...", e);
-			valetSucceeded = false;
-			valetErrorMessage = e.getMessage();
-		}
+        logger.error("An exception occurred trying to call valet ...", e);
+        valetSucceeded = false;
+        valetErrorMessage = e.getMessage();
+    }
 		if (failRequestOnValetFailure && !valetSucceeded) {
 			// The valet request failed - and property says to fail the request
 			//TODO Create a new exception class for valet?
@@ -2170,13 +2197,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 						Map<String, Object> newInputs = vur.getParameters();
 						if (newInputs != null) {
 							Map<String, Object> oldGold = goldenInputs;
-							LOGGER.debug("parameters before being modified by valet:" + oldGold.toString());
+							logger.debug("parameters before being modified by valet:{}", oldGold.toString());
 							goldenInputs = new HashMap<String, Object>();
 							for (String key : newInputs.keySet()) {
 								goldenInputs.put(key, newInputs.get(key));
 							}
 							valetModifiedParamsHolder.value = goldenInputs;
-							LOGGER.debug("parameters after being modified by valet:" + goldenInputs.toString());
+							logger.debug("parameters after being modified by valet:{}", goldenInputs.toString());
 							valetSucceeded = true;
 						}
 					} else {
@@ -2184,15 +2211,15 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 					}
 				}
 			} else {
-				LOGGER.debug("Got a bad response back from valet");
+				logger.debug("Got a bad response back from valet");
 				valetErrorMessage = "Got a bad response back from valet";
 				valetSucceeded = false;
 			}
 		} catch (Exception e) {
-			LOGGER.error("An exception occurred trying to call valet - will continue processing for now...", e);
-			valetErrorMessage = e.getMessage();
-			valetSucceeded = false;
-		}
+        logger.error("An exception occurred trying to call valet - will continue processing for now...", e);
+        valetErrorMessage = e.getMessage();
+        valetSucceeded = false;
+    }
 		if (failRequestOnValetFailure && !valetSucceeded) {
 			// The valet request failed - and property says to fail the request
 			// TODO Create a new exception class for valet?
@@ -2216,7 +2243,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 				vfModuleId = vnfName.substring(vnfName.indexOf('/') + 1);
 			} catch (Exception e) {
 				// do nothing - send what we got for vnfName for both to valet
-				LOGGER.error("An exception occurred trying to call MsoVnfAdapterImpl.valetDeleteRequest() method", e);
+				logger.error("An exception occurred trying to call MsoVnfAdapterImpl.valetDeleteRequest() method", e);
 			}
 			GenericValetResponse<ValetDeleteResponse> deleteReq = this.vci.callValetDeleteRequest(msoRequest.getRequestId(),
 					cloudSiteId, tenantId, vfModuleId, vfModuleName);
@@ -2225,27 +2252,28 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 				ValetStatus status = vdr.getStatus();
 				if (status != null) {
 					String statusCode = status.getStatus(); // "ok" or "failed"
-					if ("ok".equalsIgnoreCase(statusCode)) {
-						LOGGER.debug("delete request to valet returned success");
-						valetDeleteRequestSucceeded = true;
-					} else {
-						LOGGER.debug("delete request to valet returned failure");
-						valetDeleteRequestSucceeded = false;
-						valetErrorMessage = status.getMessage();
-					}
-				}
+            if ("ok".equalsIgnoreCase(statusCode)) {
+                logger.debug("delete request to valet returned success");
+                valetDeleteRequestSucceeded = true;
+            } else {
+                logger.debug("delete request to valet returned failure");
+                valetDeleteRequestSucceeded = false;
+                valetErrorMessage = status.getMessage();
+            }
+        }
 			} else {
-				LOGGER.debug("Got a bad response back from valet - delete request failed");
+				logger.debug("Got a bad response back from valet - delete request failed");
 				valetDeleteRequestSucceeded = false;
 				valetErrorMessage = "Got a bad response back from valet - delete request failed";
 			}
 		} catch (Exception e) {
-			LOGGER.error("An exception occurred trying to call valet - valetDeleteRequest failed", e);
-			valetDeleteRequestSucceeded = false;
-			valetErrorMessage = e.getMessage();
-		}
+        logger.error("An exception occurred trying to call valet - valetDeleteRequest failed", e);
+        valetDeleteRequestSucceeded = false;
+        valetErrorMessage = e.getMessage();
+    }
 		if (valetDeleteRequestSucceeded == false && failRequestOnValetFailure == true) {
-			LOGGER.error("ValetDeleteRequestFailed - del req still will be sent to openstack", new VnfException("ValetDeleteRequestFailedError"));
+			logger.error("ValetDeleteRequestFailed - del req still will be sent to openstack", new VnfException
+          ("ValetDeleteRequestFailedError"));
 		}
 		return valetDeleteRequestSucceeded;
 	}
