@@ -1,0 +1,262 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2098e81b_1ab4e750",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/AbstractCDSProcessor.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "9",
+      "range": {
+        "startLine": 5,
+        "startChar": 20,
+        "endLine": 5,
+        "endChar": 22
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d97e4405_9c8a1024",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/AbstractCDSProcessor.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "please don\u0027t use groovy, use java as done for the ConfigAssignBB",
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "11f5ffdc_f9f1e062",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/AbstractCDSProcessor.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "don\u0027t use mso logger",
+      "range": {
+        "startLine": 33,
+        "startChar": 1,
+        "endLine": 34,
+        "endChar": 0
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "87dbea77_a37471bf",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "don\u0027t need this here",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 41
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ef60dc7_e4417739",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "you can new the client directly",
+      "range": {
+        "startLine": 90,
+        "startChar": 34,
+        "endLine": 90,
+        "endChar": 86
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36043cce_9e0ded59",
+        "filename": "bpmn/so-bpmn-building-blocks/src/main/resources/subprocess/BuildingBlock/ConfigAssignVnfBB.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "this should be ConfigAssignBB, should be angostic to VNF or PNF",
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d6cd7a84_a56fae6b",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/main/resources/subprocess/AbstractCDSProcessing.bpmn",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "this shouldbe under so-bpbmn-building-block, should be call AbbstractCDSBB",
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2cc2ccb1_7c78778b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "This could bbe ConfigAssign, agnostic to VNF and PNF.",
+      "range": {
+        "startLine": 39,
+        "startChar": 13,
+        "endLine": 39,
+        "endChar": 28
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0f8a603f_de6069c6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "this should be generic, to retrieve either vnf or pnf based on nf-type. I believe information availabble in BuildingBlockExecution could be used",
+      "range": {
+        "startLine": 56,
+        "startChar": 13,
+        "endLine": 56,
+        "endChar": 34
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "409abd7b_680e96b0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "The payload is more than the requestObject only, see bellow\n\n{\n          \"commonHeader\": {\n            \"originatorId\": \"System\",\n            \"requestId\": \"1234\",\n            \"subRequestId\": \"1234-12234\"\n          },\n          \"actionIdentifiers\": {\n            \"blueprintName\": \"test\",\n            \"blueprintVersion\": \"1.0.0\",\n            \"actionName\": \"config-assign\",\n            \"mode\": \"sync\"\n          },\n          \"payload\": {\n            \"config-assign-request\": {\n              \"config-assign-properties\": {\n                  \"{requestObject}\"\n              }\n            }\n          }\n        }\n\n\nThe payload is\n\n            \"config-assign-request\": {\n              \"config-assign-properties\": {\n                  \"{requestObject}\"\n              }\n            }",
+      "range": {
+        "startLine": 63,
+        "startChar": 4,
+        "endLine": 63,
+        "endChar": 60
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "18ba43a3_c721bfd1",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "function shouldn\u0027t start with capital letter",
+      "range": {
+        "startLine": 71,
+        "startChar": 13,
+        "endLine": 71,
+        "endChar": 14
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d4aaa489_14067793",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-03-06T13:26:33Z",
+      "side": 1,
+      "message": "don\u0027t see all this in the execution context. instead build the ExecutionServiceInput request here, and put that in the execution context, so the AbstractCDSBB can simply get the request and send it.",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 81,
+        "endChar": 49
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
