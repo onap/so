@@ -44,7 +44,7 @@ public class RelationshipsTest {
 		AAIResultWrapper wrapper = new AAIResultWrapper(content);
 		Relationships relationships = wrapper.getRelationships().get();
 		
-		List<AAIResourceUri> test = relationships.getRelatedAAIUris(AAIObjectType.VCE);
+		List<AAIResourceUri> test = relationships.getRelatedUris(AAIObjectType.VCE);
 		
 		System.out.println(test.get(0).build());
 		List<AAIResourceUri> uris = Arrays.asList(

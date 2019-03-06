@@ -69,7 +69,7 @@ public class ServiceInstanceUriTest {
 	private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/resources/";
 	
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(8443));
+	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 	
 	@Rule
 	public final ExpectedException exception = ExpectedException.none();
@@ -82,7 +82,7 @@ public class ServiceInstanceUriTest {
 	
 	@Before
 	public void beforeTest() {
-		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
+		doReturn(new DefaultAAIPropertiesImpl(wireMockRule.port())).when(client).getRestProperties();
 	}
 	@Test
 	public void found() throws IOException {

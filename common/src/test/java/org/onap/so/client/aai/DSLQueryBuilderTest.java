@@ -80,4 +80,13 @@ public class DSLQueryBuilderTest {
 		
 		assertEquals("cloud-region* !('cloud-owner', ' ', ' null ')", builder.build());
 	}
+	
+	@Test
+	public void shortCutToTest() {
+		DSLQueryBuilder<DSLNode, DSLNode> builder = new DSLQueryBuilder<>(new DSLNode(AAIObjectType.PSERVER,
+				__.key("hostname", "my-hostname")).output());
+		
+		builder.to(AAIObjectType.P_INTERFACE).to(AAIObjectType.SRIOV_PF, __.key("pf-pci-id", "my-id"));
+		assertEquals("pserver*('hostname', 'my-hostname') > p-interface > sriov-pf('pf-pci-id', 'my-id')", builder.build());
+	}
 }

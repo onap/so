@@ -33,6 +33,7 @@ import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.Results;
 import org.onap.so.client.graphinventory.Format;
+import org.onap.so.client.graphinventory.entities.Pathed;
 import org.onap.so.client.graphinventory.entities.uri.HttpAwareUri;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
@@ -82,9 +83,9 @@ public abstract class HttpLookupUri extends AAISimpleUri implements HttpAwareUri
 		Optional<String> result;
 		ObjectMapper mapper = new ObjectMapper();
 		
-		Results<Map<String, String>> results = mapper.readValue(jsonString, new TypeReference<Results<Map<String, String>>>(){});
+		Results<Pathed> results = mapper.readValue(jsonString, new TypeReference<Results<Pathed>>(){});
 		if (results.getResult().size() == 1) {
-			String uriString = results.getResult().get(0).get("resource-link");
+			String uriString = results.getResult().get(0).getResourceLink();
 			URI uri = UriBuilder.fromUri(uriString).build();
 			String rawPath = uri.getRawPath();
 			result = Optional.of(rawPath.replaceAll("/aai/v\\d+", ""));

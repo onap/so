@@ -1,0 +1,12 @@
+{
+  "results": [
+    {
+      "resource-type": "service-instance",
+      "resource-link": "https://localhost:8443/aai/v9/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3"
+    },
+    {
+      "resource-type": "service-instance",
+      "resource-link": "https://localhost:8443/aai/v9/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3"
+    }
+  ]
+}

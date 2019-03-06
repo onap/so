@@ -262,6 +262,10 @@ public abstract class RestClient {
 	public <T> T put(Object obj, Class<T> resultClass) {
 		return format(method("PUT", obj), resultClass).orElse(null);
 	}
+	
+	public <T> T put(Object obj, GenericType<T> resultClass) {
+		return format(method("PUT", obj), resultClass).orElse(null);
+	}
 
 	public <T> T delete(Class<T> resultClass) {
 		return format(method("DELETE", null), resultClass).orElse(null);

@@ -20,12 +20,13 @@
 
 package org.onap.so.client.aai;
 
+import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryQueryClient;
 import org.onap.so.client.graphinventory.entities.DSLQuery;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-public class AAIDSLQueryClient extends GraphInventoryQueryClient<AAIDSLQueryClient, DSLQuery> {
+public class AAIDSLQueryClient extends GraphInventoryQueryClient<AAIDSLQueryClient, DSLQuery, AAIResultWrapper, AAIObjectType> {
 
 	public AAIDSLQueryClient() {
 		super(new AAIClient());
@@ -38,6 +39,17 @@ public class AAIDSLQueryClient extends GraphInventoryQueryClient<AAIDSLQueryClie
 	@Override
 	protected GraphInventoryUri getQueryUri() {
 		return AAIUriFactory.createResourceUri(AAIObjectType.DSL);
+	}
+	
+
+	@Override
+	public AAIResultWrapper createWrapper(String json) {
+		return new AAIResultWrapper(json);
+	}
+
+	@Override
+	public AAIObjectType createType(String name) {
+		return AAIObjectType.fromTypeName(name);
 	}
 	
 }
