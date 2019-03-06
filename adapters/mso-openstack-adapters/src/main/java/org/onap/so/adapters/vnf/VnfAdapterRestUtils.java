@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,14 +26,15 @@ import java.util.Optional;
 
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class VnfAdapterRestUtils
 {
-	private static MsoLogger LOGGER = MsoLogger.getMsoLogger (MsoLogger.Catalog.RA, VnfAdapterRestUtils.class);
+	private static Logger logger = LoggerFactory.getLogger(VnfAdapterRestUtils.class);
 
 	private static final String HEAT_MODE = "HEAT";
 	private static final String CLOUDIFY_MODE = "CLOUDIFY";
@@ -59,7 +62,7 @@ public class VnfAdapterRestUtils
 		// If was explicitly provided as a parameter, use that.  Else if specified for the
 		// cloudsite, use that.  Otherwise, the default is the (original) HEAT-based impl.
 
-		LOGGER.debug ("Entered GetVnfAdapterImpl: mode=" + mode + ", cloudSite=" + cloudSiteId);
+		logger.debug("Entered GetVnfAdapterImpl: mode=" + mode + ", cloudSite=" + cloudSiteId);
 
 		if (mode == null) {
 			// Didn't get an explicit mode type requested.
@@ -67,7 +70,7 @@ public class VnfAdapterRestUtils
 			// has a CloudifyManager assigned to it
 			Optional<CloudSite> cloudSite = cloudConfig.getCloudSite(cloudSiteId);
 			if (cloudSite.isPresent()) {
-				LOGGER.debug("Got CloudSite: " + cloudSite.toString());
+				logger.debug("Got CloudSite: " + cloudSite.toString());
 				if (cloudConfig.getCloudifyManager(cloudSite.get().getCloudifyId()) != null) {
 					mode = CLOUDIFY_MODE;
 				} else if (MULTICLOUD_MODE.equalsIgnoreCase(cloudSite.get().getOrchestrator())) {
@@ -79,26 +82,26 @@ public class VnfAdapterRestUtils
 			}
 		}
 
-		LOGGER.debug ("GetVnfAdapterImpl: mode=" + mode);
+		logger.debug ("GetVnfAdapterImpl: mode=" + mode);
 
 		MsoVnfAdapter vnfAdapter = null;
 
 		// TODO:  Make this more dynamic (e.g. Service Loader)
 		if (CLOUDIFY_MODE.equalsIgnoreCase(mode)) {
-			LOGGER.debug ("GetVnfAdapterImpl: Return Cloudify Adapter");
+			logger.debug("GetVnfAdapterImpl: Return Cloudify Adapter");
 			vnfAdapter = cloudifyImpl;
 		}
 		else if (HEAT_MODE.equalsIgnoreCase(mode)) {
-			LOGGER.debug ("GetVnfAdapterImpl: Return Heat Adapter");
+			logger.debug("GetVnfAdapterImpl: Return Heat Adapter");
 			vnfAdapter = vnfImpl;
 		}
 		else if (MULTICLOUD_MODE.equalsIgnoreCase(mode)) {
-			LOGGER.debug ("GetVnfAdapterImpl: Return Plugin (multicloud) Adapter");
+			logger.debug("GetVnfAdapterImpl: Return Plugin (multicloud) Adapter");
 			vnfAdapter = vnfPluginImpl;
 		}
 		else {
 			// Don't expect this, but default is the HEAT adapter
-			LOGGER.debug ("GetVnfAdapterImpl: Return Default (Heat) Adapter");
+			logger.debug("GetVnfAdapterImpl: Return Default (Heat) Adapter");
 			vnfAdapter = vnfImpl;
 		}
 
