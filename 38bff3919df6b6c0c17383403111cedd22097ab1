@@ -65,6 +65,23 @@
     },
     {
       "key": {
+        "uuid": "31577b92_5c025125",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/AbstractCDSProcessor.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-06T13:54:14Z",
+      "side": 1,
+      "message": "please remove any of this type of logging, slf4j will not require it",
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "87dbea77_a37471bf",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
         "patchSetId": 1
@@ -105,6 +122,23 @@
         "endLine": 90,
         "endChar": 86
       },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c5cd3442_dd0fa28d",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-06T13:54:14Z",
+      "side": 1,
+      "message": "There a reason to leave out stack trace? or will this only occur in a time out scenario?",
       "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -191,6 +225,30 @@
     },
     {
       "key": {
+        "uuid": "36f2af9d_eb561409",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-06T13:54:14Z",
+      "side": 1,
+      "message": "Yes VNF will already be in GBBInput, we can add the code to retrieve PNF as well",
+      "parentUuid": "0f8a603f_de6069c6",
+      "range": {
+        "startLine": 56,
+        "startChar": 13,
+        "endLine": 56,
+        "endChar": 34
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "409abd7b_680e96b0",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
         "patchSetId": 1
@@ -202,6 +260,30 @@
       "writtenOn": "2019-03-06T13:26:33Z",
       "side": 1,
       "message": "The payload is more than the requestObject only, see bellow\n\n{\n          \"commonHeader\": {\n            \"originatorId\": \"System\",\n            \"requestId\": \"1234\",\n            \"subRequestId\": \"1234-12234\"\n          },\n          \"actionIdentifiers\": {\n            \"blueprintName\": \"test\",\n            \"blueprintVersion\": \"1.0.0\",\n            \"actionName\": \"config-assign\",\n            \"mode\": \"sync\"\n          },\n          \"payload\": {\n            \"config-assign-request\": {\n              \"config-assign-properties\": {\n                  \"{requestObject}\"\n              }\n            }\n          }\n        }\n\n\nThe payload is\n\n            \"config-assign-request\": {\n              \"config-assign-properties\": {\n                  \"{requestObject}\"\n              }\n            }",
+      "range": {
+        "startLine": 63,
+        "startChar": 4,
+        "endLine": 63,
+        "endChar": 60
+      },
+      "revId": "38bff3919df6b6c0c17383403111cedd22097ab1",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0eb884b7_73e390f6",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-06T13:54:14Z",
+      "side": 1,
+      "message": "Why are we even setting this?",
+      "parentUuid": "409abd7b_680e96b0",
       "range": {
         "startLine": 63,
         "startChar": 4,
