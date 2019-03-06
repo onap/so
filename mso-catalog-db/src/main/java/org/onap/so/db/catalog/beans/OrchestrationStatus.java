@@ -29,7 +29,8 @@ public enum OrchestrationStatus {
 	PENDING_ACTIVATION("PendingActivation", "pending.?activation"),
 	PENDING_CREATE("PendingCreate", "pending.?create"),
 	PENDING_DELETE("PendingDelete", "pending.?delete"),
-	PRECREATED("PreCreated", "pre.?created");
+	PRECREATED("PreCreated", "pre.?created"),
+	CONFIGASSIGNED("ConfigAssigned", "config.?assigned");
 
 	private final String name;
 	private final String fuzzyMatcher;

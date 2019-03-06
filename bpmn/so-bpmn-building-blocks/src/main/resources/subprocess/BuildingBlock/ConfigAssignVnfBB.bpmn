@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1ahlzqg" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.1">
+  <bpmn:process id="ConfigAssignVnfBB" name="ConfigAssignVnfBB" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>SequenceFlow_0gmfit3</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Pre-ProcessRequest" name="Pre-Process Request" camunda:expression="${ConfigAssignVnf.preProcessForConfig(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0gmfit3</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ailccy</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0gmfit3" sourceRef="StartEvent_1" targetRef="Pre-ProcessRequest" />
+    <bpmn:serviceTask id="GetVnfObject" name="Get Vnf object from AAI" camunda:expression="${ConfigAssignVnf.getVnfInstanceFromAAI(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1ailccy</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1rf31im</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1ailccy" sourceRef="Pre-ProcessRequest" targetRef="GetVnfObject" />
+    <bpmn:sequenceFlow id="SequenceFlow_1rf31im" sourceRef="GetVnfObject" targetRef="Task_0bhf6tp" />
+    <bpmn:endEvent id="EndEvent_0lgvk82">
+      <bpmn:incoming>SequenceFlow_1mkhog2</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1mkhog2" sourceRef="Task_1hs1mn0" targetRef="EndEvent_0lgvk82" />
+    <bpmn:callActivity id="CallActivity_1gfzi2g" name="Abstract CDS&#10;(CDS Call)&#10;" calledElement="AbstractCDSProcessingBB">
+      <bpmn:extensionElements>
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="requestId" target="requestId" />
+        <camunda:in source="originatorId" target="originatorId" />
+        <camunda:in source="subRequestId" target="subRequestId" />
+        <camunda:in source="actionName" target="actionName" />
+        <camunda:in source="mode" target="mode" />
+        <camunda:in source="requestObject" target="requestObject" />
+        <camunda:in source="blueprintName" target="blueprintName" />
+        <camunda:in source="blueprintVersion" target="blueprintVersion" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_05qembo</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_004kjrs</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_004kjrs" sourceRef="CallActivity_1gfzi2g" targetRef="Task_1hs1mn0" />
+    <bpmn:serviceTask id="Task_1hs1mn0" name="Update AAI&#10;(VNF)&#10;" camunda:expression="${AAIUpdateTasks.updateOrchestrationStatusConfigAssignedVnf(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_004kjrs</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1mkhog2</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_05qembo" sourceRef="Task_0bhf6tp" targetRef="CallActivity_1gfzi2g" />
+    <bpmn:serviceTask id="Task_0bhf6tp" name="PreProcess Abstract CDS Processing" camunda:expression="${ConfigAssignVnf.PreProcessAbstractCDSProcessing(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1rf31im</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05qembo</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ConfigAssignVnfBB">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="148" y="187" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_04ss589_di" bpmnElement="Pre-ProcessRequest">
+        <dc:Bounds x="260" y="165" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0gmfit3_di" bpmnElement="SequenceFlow_0gmfit3">
+        <di:waypoint x="184" y="205" />
+        <di:waypoint x="260" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_1ttpk5z_di" bpmnElement="GetVnfObject">
+        <dc:Bounds x="433" y="165" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ailccy_di" bpmnElement="SequenceFlow_1ailccy">
+        <di:waypoint x="360" y="205" />
+        <di:waypoint x="433" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1rf31im_di" bpmnElement="SequenceFlow_1rf31im">
+        <di:waypoint x="533" y="205" />
+        <di:waypoint x="614" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0lgvk82_di" bpmnElement="EndEvent_0lgvk82">
+        <dc:Bounds x="1150" y="187" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1mkhog2_di" bpmnElement="SequenceFlow_1mkhog2">
+        <di:waypoint x="1061" y="205" />
+        <di:waypoint x="1150" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_1gfzi2g_di" bpmnElement="CallActivity_1gfzi2g">
+        <dc:Bounds x="788" y="165" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_004kjrs_di" bpmnElement="SequenceFlow_004kjrs">
+        <di:waypoint x="888" y="205" />
+        <di:waypoint x="961" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0404s6a_di" bpmnElement="Task_1hs1mn0">
+        <dc:Bounds x="961" y="165" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_05qembo_di" bpmnElement="SequenceFlow_05qembo">
+        <di:waypoint x="714" y="205" />
+        <di:waypoint x="788" y="205" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_01mv1si_di" bpmnElement="Task_0bhf6tp">
+        <dc:Bounds x="614" y="165" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
