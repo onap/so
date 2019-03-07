@@ -26,12 +26,17 @@ public class TestCDSPropertiesImpl implements CDSProperties {
 
     @Override
     public String getHost() {
-        return "endpoint";
+        return "localhost";
     }
 
     @Override
     public int getPort() {
-        return 9999;
+        return 9111;
+    }
+
+    @Override
+    public String getBasicAuth() {
+        return "Basic Y2NzZGthcHBzOmNjc2RrYXBwcw==";
     }
 
     @Override

@@ -21,5 +21,8 @@ import org.onap.so.client.RestProperties;
 public interface CDSProperties extends RestProperties {
 
     String getHost();
+
     int getPort();
+
+    String getBasicAuth();
 }
