@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +31,8 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.AAIObjectType
@@ -45,7 +49,7 @@ import javax.ws.rs.NotFoundException
  *
  */
 public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DeleteVcpeResCustService.class);
+	private static final Logger logger = LoggerFactory.getLogger(DeleteVcpeResCustService.class);
 
 	private static final String DebugFlag = "isDebugLogEnabled"
 
@@ -79,7 +83,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside preProcessRequest DeleteVcpeResCustService Request ")
+		logger.trace("Inside preProcessRequest DeleteVcpeResCustService Request ")
 
 		try {
 			// initialize flow variables
@@ -87,7 +91,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 
 			// check for incoming json message/input
 			String DeleteVcpeResCustServiceRequest = execution.getVariable("bpmnRequest")
-			msoLogger.debug(DeleteVcpeResCustServiceRequest)
+			logger.debug(DeleteVcpeResCustServiceRequest)
 			execution.setVariable("DeleteVcpeResCustServiceRequest", DeleteVcpeResCustServiceRequest);
 			println 'DeleteVcpeResCustServiceRequest - ' + DeleteVcpeResCustServiceRequest
 
@@ -120,34 +124,34 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 
 			String suppressRollback = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.requestInfo.suppressRollback")
 			execution.setVariable("disableRollback", suppressRollback)
-			msoLogger.debug("Incoming Suppress/Disable Rollback is: " + suppressRollback)
+			logger.debug("Incoming Suppress/Disable Rollback is: " + suppressRollback)
 
 			String productFamilyId = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.requestInfo.productFamilyId")
 			execution.setVariable("productFamilyId", productFamilyId)
-			msoLogger.debug("Incoming productFamilyId is: " + productFamilyId)
+			logger.debug("Incoming productFamilyId is: " + productFamilyId)
 
 			// extract subscriptionServiceType
 			String subscriptionServiceType = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.requestParameters.subscriptionServiceType")
 			execution.setVariable("subscriptionServiceType", subscriptionServiceType)
-			msoLogger.debug("Incoming subscriptionServiceType is: " + subscriptionServiceType)
+			logger.debug("Incoming subscriptionServiceType is: " + subscriptionServiceType)
 
 			// extract cloud configuration
 			String cloudConfiguration = jsonUtil.getJsonValue(DeleteVcpeResCustServiceRequest, "requestDetails.cloudConfiguration")
 			execution.setVariable("cloudConfiguration", cloudConfiguration)
-			msoLogger.debug("cloudConfiguration: "+ cloudConfiguration)
+			logger.debug("cloudConfiguration: "+ cloudConfiguration)
 			String lcpCloudRegionId = jsonUtil.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
 			execution.setVariable("lcpCloudRegionId", lcpCloudRegionId)
-			msoLogger.debug("lcpCloudRegionId: "+ lcpCloudRegionId)
+			logger.debug("lcpCloudRegionId: "+ lcpCloudRegionId)
 			String cloudOwner = jsonUtil.getJsonValue(cloudConfiguration, "cloudOwner")
 			execution.setVariable("cloudOwner", cloudOwner)
-			msoLogger.debug("cloudOwner: "+ cloudOwner)
+			logger.debug("cloudOwner: "+ cloudOwner)
 			String tenantId = jsonUtil.getJsonValue(cloudConfiguration, "tenantId")
 			execution.setVariable("tenantId", tenantId)
-			msoLogger.debug("tenantId: "+ tenantId)
+			logger.debug("tenantId: "+ tenantId)
 
 			String sdncVersion = "1707"
 			execution.setVariable("sdncVersion", sdncVersion)
-			msoLogger.debug("sdncVersion: "+ sdncVersion)
+			logger.debug("sdncVersion: "+ sdncVersion)
 
 			//For Completion Handler & Fallout Handler
 			String requestInfo =
@@ -159,7 +163,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 
 			execution.setVariable(Prefix+"requestInfo", requestInfo)
 
-			msoLogger.trace("Completed preProcessRequest DeleteVcpeResCustServiceRequest Request ")
+			logger.trace("Completed preProcessRequest DeleteVcpeResCustServiceRequest Request ")
 
 		} catch (BpmnError e) {
 			throw e;
@@ -172,7 +176,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	public void sendSyncResponse(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 
-		msoLogger.trace("Inside sendSyncResponse of DeleteVcpeResCustService ")
+		logger.trace("Inside sendSyncResponse of DeleteVcpeResCustService ")
 
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -181,7 +185,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			// RESTResponse (for API Handler (APIH) Reply Task)
 			String syncResponse ="""{"requestReferences":{"instanceId":"${serviceInstanceId}","requestId":"${requestId}"}}""".trim()
 
-			msoLogger.debug(" sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse)
+			logger.debug(" sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse)
 			sendWorkflowResponse(execution, 202, syncResponse)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. Unexpected from method preProcessRequest() - " + ex.getMessage()
@@ -225,23 +229,23 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 						def id = jsonUtil.getJsonValue(ar, "id")
 
 						if(type == "TunnelXConn" || type == "Tunnel XConn") {
-							msoLogger.debug("TunnelXConn AR found")
+							logger.debug("TunnelXConn AR found")
 							TXC_found = true
 							TXC_id = id
 
 						}else if(type == "BRG") {
-							msoLogger.debug("BRG AR found")
+							logger.debug("BRG AR found")
 							BRG_found = true
 							BRG_id = id
 						}
 
 						execution.setVariable(Prefix+"TunnelXConn", TXC_found)
 						execution.setVariable("TXC_allottedResourceId", TXC_id)
-						msoLogger.debug("TXC_allottedResourceId: " + TXC_id)
+						logger.debug("TXC_allottedResourceId: " + TXC_id)
 
 						execution.setVariable(Prefix+"BRG", BRG_found)
 						execution.setVariable("BRG_allottedResourceId", BRG_id)
-						msoLogger.debug("BRG_allottedResourceId: " + BRG_id)
+						logger.debug("BRG_allottedResourceId: " + BRG_id)
 
 					}
 				}
@@ -258,11 +262,11 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}catch(BpmnError e) {
 			throw e;
 		}catch(NotFoundException e) {
-			msoLogger.debug("Service Instance does not exist AAI")
+			logger.debug("Service Instance does not exist AAI")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Service Instance was not found in aai")
 		}catch(Exception ex) {
 			String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
@@ -273,7 +277,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *******************************
 	public void prepareVnfAndModulesDelete (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
-		msoLogger.trace("Inside prepareVnfAndModulesDelete of DeleteVcpeResCustService ")
+		logger.trace("Inside prepareVnfAndModulesDelete of DeleteVcpeResCustService ")
 
 		try {
 			List vnfList = execution.getVariable(Prefix+"relatedVnfIdList")
@@ -285,9 +289,9 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			}
 
 			execution.setVariable("vnfId", vnfId)
-			msoLogger.debug("need to delete vnfId:" + vnfId)
+			logger.debug("need to delete vnfId:" + vnfId)
 
-			msoLogger.trace("Completed prepareVnfAndModulesDelete of DeleteVcpeResCustService ")
+			logger.trace("Completed prepareVnfAndModulesDelete of DeleteVcpeResCustService ")
 		} catch (Exception ex) {
 			// try error in method block
 			String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. Unexpected Error from method prepareVnfAndModulesDelete() - " + ex.getMessage()
@@ -300,7 +304,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *******************************
 	public void validateVnfDelete (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
-		msoLogger.trace("Inside validateVnfDelete of DeleteVcpeResCustService ")
+		logger.trace("Inside validateVnfDelete of DeleteVcpeResCustService ")
 
 		try {
 			int vnfsDeletedCount = execution.getVariable(Prefix+"vnfsDeletedCount")
@@ -308,7 +312,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 
 			execution.setVariable(Prefix+"vnfsDeletedCount", vnfsDeletedCount)
 
-			msoLogger.debug(" ***** Completed validateVnfDelete of DeleteVcpeResCustService ***** "+" vnf # "+vnfsDeletedCount)
+			logger.debug(" ***** Completed validateVnfDelete of DeleteVcpeResCustService ***** "+" vnf # "+vnfsDeletedCount)
 		} catch (Exception ex) {
 			// try error in method block
 			String exceptionMessage = "Bpmn error encountered in DeleteVcpeResCustService flow. Unexpected Error from method validateVnfDelete() - " + ex.getMessage()
@@ -322,7 +326,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 	// *****************************************
 	public void postProcessResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
-		msoLogger.trace("Inside postProcessResponse of DeleteVcpeResCustService ")
+		logger.trace("Inside postProcessResponse of DeleteVcpeResCustService ")
 
 		try {
 			String source = execution.getVariable("source")
@@ -343,10 +347,10 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			// Format Response
 			String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
-			msoLogger.debug(xmlMsoCompletionRequest)
+			logger.debug(xmlMsoCompletionRequest)
 			execution.setVariable(Prefix+"Success", true)
 			execution.setVariable(Prefix+"CompleteMsoProcessRequest", xmlMsoCompletionRequest)
-			msoLogger.debug(" SUCCESS flow, going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+			logger.debug(" SUCCESS flow, going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 		} catch (BpmnError e) {
 		throw e;
 
@@ -359,28 +363,28 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 
 	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable(DebugFlag)
-		msoLogger.trace("STARTED DeleteVcpeResCustService prepareFalloutRequest Process ")
+		logger.trace("STARTED DeleteVcpeResCustService prepareFalloutRequest Process ")
 
 		try {
 			WorkflowException wfex = execution.getVariable("WorkflowException")
-			msoLogger.debug(" Incoming Workflow Exception: " + wfex.toString())
+			logger.debug(" Incoming Workflow Exception: " + wfex.toString())
 			String requestInfo = execution.getVariable(Prefix+"requestInfo")
-			msoLogger.debug(" Incoming Request Info: " + requestInfo)
+			logger.debug(" Incoming Request Info: " + requestInfo)
 
 			String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
 
 			execution.setVariable(Prefix+"falloutRequest", falloutRequest)
 		} catch (Exception ex) {
-			msoLogger.debug("Error Occured in DeleteVcpeResCustService prepareFalloutRequest Process " + ex.getMessage())
+			logger.debug("Error Occured in DeleteVcpeResCustService prepareFalloutRequest Process " + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DeleteVcpeResCustService prepareFalloutRequest Process")
 		}
-		msoLogger.trace("COMPLETED DeleteVcpeResCustService prepareFalloutRequest Process ")
+		logger.trace("COMPLETED DeleteVcpeResCustService prepareFalloutRequest Process ")
 	}
 
 
 	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
-		msoLogger.trace("Inside sendSyncError() of DeleteVcpeResCustService ")
+		logger.trace("Inside sendSyncError() of DeleteVcpeResCustService ")
 
 		try {
 			String errorMessage = ""
@@ -397,10 +401,10 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 					<aetgt:ErrorCode>7000</aetgt:ErrorCode>
 				   </aetgt:WorkflowException>"""
 
-			msoLogger.debug(buildworkflowException)
+			logger.debug(buildworkflowException)
 			sendWorkflowResponse(execution, 500, buildworkflowException)
 		} catch (Exception ex) {
-			msoLogger.debug(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
+			logger.debug(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
 		}
 	}
 
@@ -408,20 +412,22 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable(DebugFlag)
 		execution.setVariable("prefix",Prefix)
 		try{
-			msoLogger.debug("Caught a Java Exception")
-			msoLogger.debug("Started processJavaException Method")
-			msoLogger.debug("Variables List: " + execution.getVariables())
+			logger.debug("Caught a Java Exception")
+			logger.debug("Started processJavaException Method")
+			logger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable(Prefix+"unexpectedError", "Caught a Java Lang Exception")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Caught a Java Lang Exception")
 		}catch(BpmnError b){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Rethrowing MSOWorkflowException", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Rethrowing MSOWorkflowException", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "");
 			throw b
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
+			logger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable(Prefix+"unexpectedError", "Exception in processJavaException method")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Exception in processJavaException method")
 		}
-		msoLogger.debug("Completed processJavaException Method")
+		logger.debug("Completed processJavaException Method")
 	}
 
 

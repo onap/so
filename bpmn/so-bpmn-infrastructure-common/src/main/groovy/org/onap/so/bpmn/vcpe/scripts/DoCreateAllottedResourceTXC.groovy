@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,7 +34,9 @@ import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
+import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.UriBuilder
 import static org.apache.commons.lang3.StringUtils.isBlank
@@ -69,7 +73,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank
  *
  */
 public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateAllottedResourceTXC.class);
+	private static final Logger logger = LoggerFactory.getLogger(DoCreateAllottedResourceTXC.class);
 
 	String Prefix="DCARTXC_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -79,11 +83,11 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 
 
 		String msg = ""
-		msoLogger.trace("start preProcessRequest")
+		logger.trace("start preProcessRequest")
 
 		try {
 			String msoRequestId	 = execution.getVariable("msoRequestId")
-			msoLogger.debug(" msoRequestId  = " + msoRequestId)
+			logger.debug(" msoRequestId  = " + msoRequestId)
 			
 			execution.setVariable("prefix", Prefix)
 
@@ -91,67 +95,67 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			String sdncCallbackUrl = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "mso.workflow.sdncadapter.callback is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			msoLogger.debug("SDNC Callback URL: " + sdncCallbackUrl)
+			logger.debug("SDNC Callback URL: " + sdncCallbackUrl)
 
 			String sdncReplDelay = UrnPropertiesReader.getVariable("mso.workflow.sdnc.replication.delay",execution)
 			if (isBlank(sdncReplDelay)) {
 				msg = "mso.workflow.sdnc.replication.delay is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			execution.setVariable("sdncReplDelay", sdncReplDelay)
-			msoLogger.debug("SDNC replication delay: " + sdncReplDelay)
+			logger.debug("SDNC replication delay: " + sdncReplDelay)
 
 			//Request Inputs
 			if (isBlank(execution.getVariable("serviceInstanceId"))){
 				msg = "Input serviceInstanceId is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			if (isBlank(execution.getVariable("parentServiceInstanceId"))) {
 				msg = "Input parentServiceInstanceId is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			if (isBlank(execution.getVariable("allottedResourceModelInfo"))) {
 				msg = "Input allottedResourceModelInfo is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			if (isBlank(execution.getVariable("brgWanMacAddress"))) {
 				msg = "Input brgWanMacAddress is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			if (isBlank(execution.getVariable("allottedResourceRole"))) {
 				msg = "Input allottedResourceRole is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			if (isBlank(execution.getVariable("allottedResourceType"))) {
 				msg = "Input allottedResourceType is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 		}catch(BpmnError b){
-			msoLogger.debug("Rethrowing MSOWorkflowException")
+			logger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("end preProcessRequest")
+		logger.trace("end preProcessRequest")
 	}
 
 	public void getAaiAR (DelegateExecution execution) {
 
 
-		msoLogger.trace("start getAaiAR")
+		logger.trace("start getAaiAR")
 
 		String arType = execution.getVariable("allottedResourceType")
 		String arRole = execution.getVariable("allottedResourceRole")
@@ -180,16 +184,16 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			}
 		}
 		if (!isBlank(errorMsg)) {
-			msoLogger.debug(errorMsg)
+			logger.debug(errorMsg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, errorMsg)
 		}
-		msoLogger.trace("end getAaiAR")
+		logger.trace("end getAaiAR")
 	}
 
 	public void createAaiAR(DelegateExecution execution) {
 
 
-		msoLogger.trace("start createAaiAR")
+		logger.trace("start createAaiAR")
 
 		String allottedResourceId = execution.getVariable("allottedResourceId")
 		if (isBlank(allottedResourceId))
@@ -208,7 +212,7 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			String arRole = execution.getVariable("allottedResourceRole")
 			String CSI_resourceLink = execution.getVariable("CSI_resourceLink")
 			String arModelInfo = execution.getVariable("allottedResourceModelInfo")
-			msoLogger.debug("arModelInfo is:\n" + arModelInfo)
+			logger.debug("arModelInfo is:\n" + arModelInfo)
 			String modelInvariantId = jsonUtil.getJsonValue(arModelInfo, "modelInvariantUuid")
 			String modelVersionId = jsonUtil.getJsonValue(arModelInfo, "modelUuid")
 
@@ -235,14 +239,14 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		rollbackData.put(Prefix, "serviceInstanceId", execution.getVariable("serviceInstanceId"))
 		rollbackData.put(Prefix, "parentServiceInstanceId", execution.getVariable("parentServiceInstanceId"))
 		execution.setVariable("rollbackData", rollbackData)
-		msoLogger.trace("end createAaiAR")
+		logger.trace("end createAaiAR")
 	}
 
 	public String buildSDNCRequest(DelegateExecution execution, String action, String sdncRequestId) {
 
 
 		String msg = ""
-		msoLogger.trace("start buildSDNCRequest")
+		logger.trace("start buildSDNCRequest")
 		String sdncReq = null
 
 		try {
@@ -327,15 +331,15 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 				</sdncadapterworkflow:SDNCRequestData>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
-			msoLogger.debug("sdncRequest:\n" + sdncReq)
+			logger.debug("sdncRequest:\n" + sdncReq)
 			sdncReq = utils.formatXml(sdncReq)
 
 		} catch(Exception ex) {
 			msg = "Exception in buildSDNCRequest. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("end buildSDNCRequest")
+		logger.trace("end buildSDNCRequest")
 		return sdncReq
 	}
 
@@ -343,110 +347,110 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 
 
 		String msg = ""
-		msoLogger.trace("start preProcessSDNCAssign")
+		logger.trace("start preProcessSDNCAssign")
 
 		try {
 			String sdncRequestId = UUID.randomUUID().toString()
 			String sdncAssignReq = buildSDNCRequest(execution, "assign", sdncRequestId)
 			execution.setVariable("sdncAssignRequest", sdncAssignReq)
-			msoLogger.debug("sdncAssignRequest:  " + sdncAssignReq)
+			logger.debug("sdncAssignRequest:  " + sdncAssignReq)
 			def sdncRequestId2 = UUID.randomUUID().toString()
 			String sdncAssignRollbackReq = sdncAssignReq.replace(">assign<", ">unassign<").replace(">CreateTunnelXConnInstance<", ">DeleteTunnelXConnInstance<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
 			def rollbackData = execution.getVariable("rollbackData")
 			rollbackData.put(Prefix, "sdncAssignRollbackReq", sdncAssignRollbackReq)
 			execution.setVariable("rollbackData", rollbackData)
 
-			msoLogger.debug("sdncAssignRollbackReq:\n" + sdncAssignRollbackReq)
-			msoLogger.debug("rollbackData:\n" + rollbackData.toString())
+			logger.debug("sdncAssignRollbackReq:\n" + sdncAssignRollbackReq)
+			logger.debug("rollbackData:\n" + rollbackData.toString())
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCAssign. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.debug("end preProcessSDNCAssign")
+		logger.debug("end preProcessSDNCAssign")
 	}
 
 	public void preProcessSDNCCreate(DelegateExecution execution) {
 
 
 		String msg = ""
-		msoLogger.trace("start preProcessSDNCCreate")
+		logger.trace("start preProcessSDNCCreate")
 
 		try {
 			String sdncRequestId = UUID.randomUUID().toString()
 			String sdncCreateReq = buildSDNCRequest(execution, "create", sdncRequestId)
 			execution.setVariable("sdncCreateRequest", sdncCreateReq)
-			msoLogger.debug("sdncCreateReq:  " + sdncCreateReq)
+			logger.debug("sdncCreateReq:  " + sdncCreateReq)
 			def sdncRequestId2 = UUID.randomUUID().toString()
 			String sdncCreateRollbackReq = sdncCreateReq.replace(">create<", ">delete<").replace(">CreateTunnelXConnInstance<", ">DeleteTunnelXConnInstance<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
 			def rollbackData = execution.getVariable("rollbackData")
 			rollbackData.put(Prefix, "sdncCreateRollbackReq", sdncCreateRollbackReq)
 			execution.setVariable("rollbackData", rollbackData)
 
-			msoLogger.debug("sdncCreateRollbackReq:\n" + sdncCreateRollbackReq)
-			msoLogger.debug("rollbackData:\n" + rollbackData.toString())
+			logger.debug("sdncCreateRollbackReq:\n" + sdncCreateRollbackReq)
+			logger.debug("rollbackData:\n" + rollbackData.toString())
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCCreate. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("end preProcessSDNCCreate")
+		logger.trace("end preProcessSDNCCreate")
 	}
 
 	public void preProcessSDNCActivate(DelegateExecution execution) {
 
 
 		String msg = ""
-		msoLogger.trace("start preProcessSDNCActivate")
+		logger.trace("start preProcessSDNCActivate")
 
 		try {
 			String sdncRequestId = UUID.randomUUID().toString()
 			String sdncActivateReq = buildSDNCRequest(execution, "activate", sdncRequestId)
 			execution.setVariable("sdncActivateRequest", sdncActivateReq)
-			msoLogger.debug("sdncActivateReq:  " + sdncActivateReq)
+			logger.debug("sdncActivateReq:  " + sdncActivateReq)
 			def sdncRequestId2 = UUID.randomUUID().toString()
 			String sdncActivateRollbackReq = sdncActivateReq.replace(">activate<", ">deactivate<").replace(">CreateTunnelXConnInstance<", ">DeleteTunnelXConnInstance<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
 			def rollbackData = execution.getVariable("rollbackData")
 			rollbackData.put(Prefix, "sdncActivateRollbackReq", sdncActivateRollbackReq)
 			execution.setVariable("rollbackData", rollbackData)
 
-			msoLogger.debug("sdncActivateRollbackReq:\n" + sdncActivateRollbackReq)
-			msoLogger.debug("rollbackData:\n" + rollbackData.toString())
+			logger.debug("sdncActivateRollbackReq:\n" + sdncActivateRollbackReq)
+			logger.debug("rollbackData:\n" + rollbackData.toString())
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCActivate. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("end preProcessSDNCActivate")
+		logger.trace("end preProcessSDNCActivate")
 	}
 
 	public void validateSDNCResp(DelegateExecution execution, String response, String method){
 
 
-		msoLogger.trace("start ValidateSDNCResponse Process")
+		logger.trace("start ValidateSDNCResponse Process")
 		String msg = ""
 
 		try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
-			msoLogger.debug("workflowException: " + workflowException)
+			logger.debug("workflowException: " + workflowException)
 
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			msoLogger.debug("SDNCResponse: " + response)
+			logger.debug("SDNCResponse: " + response)
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-				msoLogger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + response)
+				logger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + response)
 
 				if (!"get".equals(method))
 				{
@@ -456,22 +460,22 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 				}
 
 			}else{
-				msoLogger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
+				logger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
 				throw new BpmnError("MSOWorkflowException")
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in validateSDNCResp. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("end ValidateSDNCResp Process")
+		logger.trace("end ValidateSDNCResp Process")
 	}
 
 	public void preProcessSDNCGet(DelegateExecution execution){
 
-		msoLogger.trace("start preProcessSDNCGet")
+		logger.trace("start preProcessSDNCGet")
 		try{
 
 			def callbackUrl = execution.getVariable("sdncCallbackUrl")
@@ -483,15 +487,15 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			if (execution.getVariable("foundActiveAR")) {
 				def aaiQueryResponse = execution.getVariable("aaiARGetResponse")
 				serviceOperation = utils.getNodeText(aaiQueryResponse, "selflink")
-				msoLogger.debug("AR service operation/aaiARSelfLink: " + serviceOperation)
+				logger.debug("AR service operation/aaiARSelfLink: " + serviceOperation)
 			}
 			else
 			{
 				String response = execution.getVariable("sdncAssignResponse")
 				String data = utils.getNodeXml(response, "response-data")
-				msoLogger.debug("Assign responseData: " + data)
+				logger.debug("Assign responseData: " + data)
 				serviceOperation = utils.getNodeText(data, "object-path")
-				msoLogger.debug("AR service operation:" + serviceOperation)
+				logger.debug("AR service operation:" + serviceOperation)
 			}
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -516,28 +520,30 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			execution.setVariable("sdncGetRequest", SDNCGetRequest)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occurred Processing preProcessSDNCGetRequest.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					     "Exception Occurred Processing preProcessSDNCGetRequest.", "BPMN", MsoLogger.getServiceName(),
+					     MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("end preProcessSDNCGet")
+		logger.trace("end preProcessSDNCGet")
 	}
 	
 	public void updateAaiAROrchStatus(DelegateExecution execution, String status){
 
-		msoLogger.trace("start updateAaiAROrchStatus")
+		logger.trace("start updateAaiAROrchStatus")
 		String aaiARPath = execution.getVariable("aaiARPath") //set during query (existing AR) or create
 		AllottedResourceUtils arUtils = new AllottedResourceUtils(this)
 		String orchStatus = arUtils.updateAROrchStatus(execution, status, aaiARPath)
-		msoLogger.trace("end updateAaiAROrchStatus")
+		logger.trace("end updateAaiAROrchStatus")
 	}
 	
 	public void generateOutputs(DelegateExecution execution)
 	{
 
-		msoLogger.trace("start generateOutputs")
+		logger.trace("start generateOutputs")
 		try {
 			String sdncGetResponse = execution.getVariable("enhancedCallbackRequestData") //unescaped
-			msoLogger.debug("resp:" + sdncGetResponse)
+			logger.debug("resp:" + sdncGetResponse)
 			String arData = utils.getNodeXml(sdncGetResponse, "tunnelxconn-topology")
 			arData = utils.removeXmlNamespaces(arData)
 		
@@ -549,55 +555,55 @@ public class DoCreateAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			String ari = utils.getNodeXml(arData, "allotted-resource-identifiers")
 			execution.setVariable("allotedResourceName", utils.getNodeText(ari, "allotted-resource-name"))
 		} catch (BpmnError e) {
-			msoLogger.debug("BPMN Error in generateOutputs ")
+			logger.debug("BPMN Error in generateOutputs ")
 		} catch(Exception ex) {
 			String msg = "Exception in generateOutputs " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		}
-		msoLogger.trace("end generateOutputs")
+		logger.trace("end generateOutputs")
 		
 	}
 
 	public void preProcessRollback (DelegateExecution execution) {
 
-		msoLogger.trace("start preProcessRollback")
+		logger.trace("start preProcessRollback")
 		try {
 
 			Object workflowException = execution.getVariable("WorkflowException");
 
 			if (workflowException instanceof WorkflowException) {
-				msoLogger.debug("Prev workflowException: " + workflowException.getErrorMessage())
+				logger.debug("Prev workflowException: " + workflowException.getErrorMessage())
 				execution.setVariable("prevWorkflowException", workflowException);
 				//execution.setVariable("WorkflowException", null);
 			}
 		} catch (BpmnError e) {
-			msoLogger.debug("BPMN Error during preProcessRollback")
+			logger.debug("BPMN Error during preProcessRollback")
 		} catch(Exception ex) {
 			String msg = "Exception in preProcessRollback. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		}
-		msoLogger.trace("end preProcessRollback")
+		logger.trace("end preProcessRollback")
 	}
 
 	public void postProcessRollback (DelegateExecution execution) {
 
-		msoLogger.trace("start postProcessRollback")
+		logger.trace("start postProcessRollback")
 		String msg = ""
 		try {
 			Object workflowException = execution.getVariable("prevWorkflowException");
 			if (workflowException instanceof WorkflowException) {
-				msoLogger.debug("Setting prevException to WorkflowException: ")
+				logger.debug("Setting prevException to WorkflowException: ")
 				execution.setVariable("WorkflowException", workflowException);
 			}
 			execution.setVariable("rollbackData", null)
 		} catch (BpmnError b) {
-			msoLogger.debug("BPMN Error during postProcessRollback")
+			logger.debug("BPMN Error during postProcessRollback")
 			throw b;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessRollback. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		}
-		msoLogger.trace("end postProcessRollback")
+		logger.trace("end postProcessRollback")
 	}
 
 }
