@@ -49,11 +49,12 @@ public class DSLNodeKey implements QueryStep {
 	
 	@Override
 	public String build() {
-		
+		StringBuilder result = new StringBuilder(query);
+
 		if (not) {
-			query.append(" !");
+			result.append(" !");
 		}
-		query.append("('").append(keyName).append("', ");
+		result.append("('").append(keyName).append("', ");
 		List<String> temp = new ArrayList<>();
 		for (String item : values) {
 			if (item.equals("null")) {
@@ -64,8 +65,8 @@ public class DSLNodeKey implements QueryStep {
 				temp.add(String.format("'%s'", item));
 			}
 		}
-		query.append(Joiner.on(", ").join(temp)).append(")");
+		result.append(Joiner.on(", ").join(temp)).append(")");
 		
-		return query.toString();
+		return result.toString();
 	}
 }
