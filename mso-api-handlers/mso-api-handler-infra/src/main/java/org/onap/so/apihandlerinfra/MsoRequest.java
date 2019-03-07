@@ -699,7 +699,6 @@ public class MsoRequest {
       	String vfModuleType = null;
       	String vfModuleModelName = null;
 		ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
-	    MsoLogger msoLogger = MsoLogger.getMsoLogger (MsoLogger.Catalog.APIH, MsoRequest.class);
 		RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
 		String serviceModelName = null;
         String vnfModelName = null;
