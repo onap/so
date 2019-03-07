@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,14 +27,15 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CloudSiteCatalogUtils {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CloudSiteCatalogUtils.class);
+	private static final Logger logger = LoggerFactory.getLogger(CloudSiteCatalogUtils.class);
 	@Autowired
 	private ExceptionBuilder exceptionUtil;
 	
@@ -46,17 +49,17 @@ public class CloudSiteCatalogUtils {
 		if (cloudRegionId != null) {
 			Optional<CloudSite> cloudSite = getCloudSite(cloudRegionId);
 			if (!cloudSite.isPresent()) {
-				msoLogger.debug("Cloud Region with cloudRegionId " + cloudRegionId + " not found in Catalog DB");
+				logger.debug("Cloud Region with cloudRegionId {} not found in Catalog DB", cloudRegionId);
 				exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Cloud Region with cloudRegionId " + cloudRegionId + " not found in Catalog DB");
 			}
 			
 			if (cloudSite.get().getIdentityService() == null)	 {
-				msoLogger.debug("No identityService found for Cloud Region with cloudRegionId " + cloudRegionId + " in Catalog DB");
+				logger.debug("No identityService found for Cloud Region with cloudRegionId {} in Catalog DB", cloudRegionId);
 				exceptionUtil.buildAndThrowWorkflowException(execution, 404, "No identityService found for Cloud Region with cloudRegionId " + cloudRegionId + " in Catalog DB");
 			}			
 			String identityUrl = cloudSite.get().getIdentityService().getIdentityUrl();
 			
-			msoLogger.debug("identityUrl from Catalog DB is: " + identityUrl);
+			logger.debug("identityUrl from Catalog DB is: {}", identityUrl);
 			execution.setVariable("identityUrl", identityUrl);
 		}
 	}
