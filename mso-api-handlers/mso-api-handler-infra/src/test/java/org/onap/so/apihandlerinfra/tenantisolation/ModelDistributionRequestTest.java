@@ -24,13 +24,15 @@ import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.doNothing;
 
+import java.io.IOException;
+
 import javax.inject.Provider;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
@@ -38,21 +40,23 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.apihandler.common.ErrorNumbers;
-import org.onap.so.apihandlerinfra.ApiHandlerApplication;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.onap.so.apihandlerinfra.tenantisolationbeans.Distribution;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ModelDistributionRequestTest extends BaseTest{
 
@@ -111,4 +115,22 @@ public class ModelDistributionRequestTest extends BaseTest{
 		assertEquals(200, response.getStatus());
 	}
 
+	@Test
+	public void testSuccess_PATCH() throws ApiException, IOException{
+		String path = "/onap/so/infra/modelDistributions/v1/distributions/ff3514e3-5a33-55df-13ab-12abad84e7fa";
+		ObjectMapper mapper = new ObjectMapper();
+		Distribution distRequest = mapper.readValue(requestJSON, Distribution.class);
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", MediaType.APPLICATION_JSON);
+		headers.set("Content-Type", MediaType.APPLICATION_JSON);
+		HttpEntity<Distribution>  entity = new HttpEntity<Distribution>(distRequest, headers);
+	
+		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path));
+		ResponseEntity<String> response = restTemplate.exchange(
+				builder.toUriString(),
+				HttpMethod.PATCH, entity, String.class);		
+		assertEquals(200, response.getStatusCodeValue());
+		
+	}
+	
 }

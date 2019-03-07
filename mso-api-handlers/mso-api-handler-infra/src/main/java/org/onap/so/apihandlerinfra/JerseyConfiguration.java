@@ -29,6 +29,7 @@ import org.onap.so.apihandler.filters.RequestUriFilter;
 import org.onap.so.apihandlerinfra.exceptions.ApiExceptionMapper;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudResourcesOrchestration;
+import org.onap.so.apihandlerinfra.tenantisolation.ModelDistributionRequest;
 import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;
 import org.onap.so.web.exceptions.RuntimeExceptionMapper;
 import org.springframework.context.annotation.Configuration;
@@ -64,6 +65,7 @@ public class JerseyConfiguration extends ResourceConfig {
 		// this registration seems to be needed to get predictable
 		// execution behavior for the above JSON Exception Mappers
 		register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);
+		register(ModelDistributionRequest.class);
 		property(ServletProperties.FILTER_FORWARD_ON_404, true);
 		BeanConfig beanConfig = new BeanConfig();
 		beanConfig.setVersion("1.0.2");
