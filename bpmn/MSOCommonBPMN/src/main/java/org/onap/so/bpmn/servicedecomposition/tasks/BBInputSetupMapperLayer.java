@@ -496,6 +496,16 @@ public class BBInputSetupMapperLayer {
 		modelInfoConfiguration.setPolicyName(vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName());
 		return modelInfoConfiguration;
 	}
+	
+	protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
+			VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization) {
+		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
+		modelInfoConfiguration.setModelVersionId(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationResource().getModelUUID());
+		modelInfoConfiguration.setModelCustomizationId(vnfVfmoduleCvnfcConfigurationCustomization.getModelCustomizationUUID());
+		modelInfoConfiguration.setModelInvariantId(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationResource().getModelInvariantUUID());
+		modelInfoConfiguration.setPolicyName(vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName());
+		return modelInfoConfiguration;
+	}
 
 	public NetworkResourceCustomization mapCollectionNetworkResourceCustToNetworkResourceCust(
 			CollectionNetworkResourceCustomization collectionNetworkResourceCust) {

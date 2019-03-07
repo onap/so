@@ -907,11 +907,21 @@ public class WorkflowActionTest extends BaseTaskTest {
 		cvnfcCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(custSet);
 		cvnfcCustomizations.add(cvnfcCustomization);
 		
+		CvnfcCustomization cvnfcCustomization2 = new CvnfcCustomization();
+		VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization2 = new VnfVfmoduleCvnfcConfigurationCustomization();
+		ConfigurationResource configurationResource2 = new ConfigurationResource();
+		configurationResource.setToscaNodeType("FabricConfiguration");
+		vnfVfmoduleCvnfcConfigurationCustomization2.setConfigurationResource(configurationResource2);
+		Set<VnfVfmoduleCvnfcConfigurationCustomization> custSet2 = new HashSet<VnfVfmoduleCvnfcConfigurationCustomization>();
+		custSet2.add(vnfVfmoduleCvnfcConfigurationCustomization2);
+		cvnfcCustomization2.setVnfVfmoduleCvnfcConfigurationCustomization(custSet2);
+		cvnfcCustomizations.add(cvnfcCustomization2);
+		
 		when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction,resource,true,"my-custom-cloud-owner")).thenReturn(northBoundRequest);
 		when(catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID("fc25201d-36d6-43a3-8d39-fdae88e526ae", "9a6d01fd-19a7-490a-9800-460830a12e0b")).thenReturn(cvnfcCustomizations);
 		workflowAction.selectExecutionList(execution);
 		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
-		assertEqualsBulkFlowName(ebbs,"AssignVfModuleBB","CreateVfModuleBB","ActivateVfModuleBB","AssignFabricConfigurationBB","ActivateFabricConfigurationBB");
+		assertEqualsBulkFlowName(ebbs,"AssignVfModuleBB","CreateVfModuleBB","ActivateVfModuleBB","AssignFabricConfigurationBB","ActivateFabricConfigurationBB", "AssignFabricConfigurationBB","ActivateFabricConfigurationBB");
 	}
 	
 	/**

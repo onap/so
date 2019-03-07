@@ -50,6 +50,8 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetup;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
+import org.onap.so.bpmn.core.domain.ResourceType;
+import org.onap.so.bpmn.infrastructure.workflow.tasks.Resource;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
@@ -207,12 +209,18 @@ public class WorkflowAction {
 				} else {
 					key = modelInfo.getModelCustomizationId();
 				}
+				boolean isConfiguration = isConfiguration(orchFlows);
 				Resource resourceKey = new Resource(resourceType, key, aLaCarte);
+				List<ExecuteBuildingBlock> configBuildingBlocks = getConfigBuildingBlocks(sIRequest, orchFlows, requestId, resourceKey, apiVersion, resourceId, requestAction, aLaCarte, vnfType,
+						workflowResourceIds, requestDetails, isConfiguration);
 				for (OrchestrationFlow orchFlow : orchFlows) {
-					ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey, apiVersion, resourceId,
-							requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null, false);
-					flowsToExecute.add(ebb);
+					if(!orchFlow.getFlowName().contains("Configuration")) {
+						ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey, apiVersion, resourceId,
+								requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null, false);
+						flowsToExecute.add(ebb);
+					}
 				}
+				flowsToExecute.addAll(configBuildingBlocks);
 			} else {
 				boolean foundRelated = false;
 				boolean containsService = false;
@@ -338,6 +346,53 @@ public class WorkflowAction {
 		} catch (Exception ex) {
 			buildAndThrowException(execution, "Exception in create execution list " + ex.getMessage(), ex);
 		}
+	}
+	
+	protected boolean isConfiguration(List<OrchestrationFlow> orchFlows) {
+		for(OrchestrationFlow flow : orchFlows) {
+			if(flow.getFlowName().contains("Configuration")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ServiceInstancesRequest sIRequest, List<OrchestrationFlow> orchFlows, String requestId, Resource resourceKey,
+			String apiVersion, String resourceId, String requestAction, boolean aLaCarte, String vnfType,
+			WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails, boolean isConfiguration) {
+		List<OrchestrationFlow> result = new ArrayList<>(orchFlows);
+		result = orchFlows.stream().filter(item -> item.getFlowName().contains(FABRIC_CONFIGURATION)).collect(Collectors.toList());
+		String vnfCustomizationUUID = "";
+		String vfModuleCustomizationUUID = sIRequest.getRequestDetails().getModelInfo().getModelCustomizationUuid();
+		RelatedInstanceList[] relatedInstanceList = sIRequest.getRequestDetails().getRelatedInstanceList();
+		if (relatedInstanceList != null) {
+			for (RelatedInstanceList relatedInstList : relatedInstanceList) {
+				RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+				if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
+					vnfCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationUuid();
+				}
+			}
+		}
+		
+		List<String> fabricCustomizations = traverseCatalogDbForConfiguration(vnfCustomizationUUID, vfModuleCustomizationUUID);
+		List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
+		for(String fabricConfig : fabricCustomizations) {
+			
+			if (requestAction.equals(CREATEINSTANCE)) {
+				workflowResourceIds.setConfigurationId(UUID.randomUUID().toString());
+			} else {
+				//TODO AAI lookup for configuration update/delete
+			}
+			for(OrchestrationFlow orchFlow : result) {
+				resourceKey.setVfModuleCustomizationId(vfModuleCustomizationUUID);
+				resourceKey.setCvnfModuleCustomizationId(fabricConfig);
+				resourceKey.setVnfCustomizationId(vnfCustomizationUUID);
+				ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey, apiVersion, resourceId,
+						requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null, true);
+				flowsToExecuteConfigs.add(ebb);
+			}
+		}
+		return flowsToExecuteConfigs;
 	}
 
 	protected List<Resource> sortVfModulesByBaseFirst(List<Resource> vfModuleResources) {
@@ -1048,7 +1103,7 @@ public class WorkflowAction {
 		executeBuildingBlock.setRequestId(requestId);
 		executeBuildingBlock.setBuildingBlock(buildingBlock);
 		executeBuildingBlock.setRequestDetails(requestDetails);
-		if(isConfiguration){
+		if(resource != null && (isConfiguration || resource.getResourceType().equals(WorkflowType.CONFIGURATION))){
 			ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
 			if (resource != null){
 				configurationResourceKeys.setCvnfcCustomizationUUID(resource.getCvnfModuleCustomizationId());
