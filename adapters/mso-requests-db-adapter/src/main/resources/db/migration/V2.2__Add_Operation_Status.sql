@@ -15,7 +15,7 @@ create table if not exists operation_status (
         primary key (SERVICE_ID,OPERATION_ID)
 );
 
-create table resource_operation_status (
+create table if not exists resource_operation_status (
   SERVICE_ID varchar(255) not null,
   OPERATION_ID varchar(255) not null,
   RESOURCE_TEMPLATE_UUID varchar(255) not null,
