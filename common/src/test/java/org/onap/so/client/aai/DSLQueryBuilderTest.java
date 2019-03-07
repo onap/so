@@ -21,6 +21,7 @@
 package org.onap.so.client.aai;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.onap.so.client.graphinventory.entities.DSLNode;
@@ -88,5 +89,24 @@ public class DSLQueryBuilderTest {
 		
 		builder.to(AAIObjectType.P_INTERFACE).to(AAIObjectType.SRIOV_PF, __.key("pf-pci-id", "my-id"));
 		assertEquals("pserver*('hostname', 'my-hostname') > p-interface > sriov-pf('pf-pci-id', 'my-id')", builder.build());
+	}
+	
+	@Test
+	public void limitTest() {
+		DSLQueryBuilder<DSLNode, DSLNode> builder = new DSLQueryBuilder<>(new DSLNode(AAIObjectType.PSERVER,
+				__.key("hostname", "my-hostname")).output());
+		
+		builder.to(AAIObjectType.P_INTERFACE).limit(2).to(AAIObjectType.SRIOV_PF, __.key("pf-pci-id", "my-id"));
+		assertEquals("pserver*('hostname', 'my-hostname') > p-interface > sriov-pf('pf-pci-id', 'my-id') LIMIT 2", builder.build());
+	}
+	
+	@Test
+	public void equalsTest() {
+		DSLQueryBuilder<DSLNode, DSLNode> builder = new DSLQueryBuilder<>(new DSLNode(AAIObjectType.PSERVER,
+				__.key("hostname", "my-hostname")).output());
+		
+		builder.to(AAIObjectType.P_INTERFACE).to(AAIObjectType.SRIOV_PF, __.key("pf-pci-id", "my-id"));
+		assertTrue(builder.equals("pserver*('hostname', 'my-hostname') > p-interface > sriov-pf('pf-pci-id', 'my-id')"));
+		assertTrue(builder.equals(builder));
 	}
 }

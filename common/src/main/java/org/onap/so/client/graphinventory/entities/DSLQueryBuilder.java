@@ -34,7 +34,7 @@ import com.google.common.base.Joiner;
 public class DSLQueryBuilder<S, E> implements QueryStep {
 
 	private List<QueryStep> steps = new ArrayList<>();
-	
+	private String suffix = "";
 	
 	public DSLQueryBuilder() {
 		
@@ -103,8 +103,9 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
 		return to(__.node(name, key));
 	}
 	
-	public String limit(int limit) {
-		return compile() + " LIMIT " + limit;
+	public DSLQueryBuilder<S, E> limit(int limit) {
+		suffix = " LIMIT " + limit;
+		return this;
 	}
 	
 	@Override
@@ -112,8 +113,31 @@ public class DSLQueryBuilder<S, E> implements QueryStep {
 		return compile();
 	}
 	
+	@Override
+	public String toString() {
+		return build();
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (o != null) {
+			if (o instanceof QueryStep) {
+				return ((QueryStep)o).build().equals(this.build());
+			} else if (o instanceof String) {
+				return o.equals(this.build());
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode() {
+		
+		return build().hashCode();
+	}
+	
 	private String compile() {
-		return Joiner.on(" ").join(steps.stream().map(item -> item.build()).collect(Collectors.toList()));
+		return Joiner.on(" ").join(steps.stream().map(item -> item.build()).collect(Collectors.toList())) + suffix;
 	}
 	
 	protected QueryStep getFirst() {

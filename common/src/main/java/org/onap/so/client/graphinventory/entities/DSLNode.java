@@ -64,13 +64,14 @@ public class DSLNode implements QueryStep {
 	
 	@Override
 	public String build() {
+		StringBuilder result = new StringBuilder(query);
 		if (output) {
-			query.append("*");
+			result.append("*");
 		}
 		for (DSLNodeKey key : nodeKeys) {
-			query.append(key.build());
+			result.append(key.build());
 		}
 		
-		return query.toString();
+		return result.toString();
 	}
 }
