@@ -28,7 +28,7 @@ import java.util.List;
 import javax.inject.Provider;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
+import javax.ws.rs.PATCH;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -53,6 +53,7 @@ import org.onap.so.serviceinstancebeans.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -61,7 +62,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-
+@Component
 @Path("/onap/so/infra/modelDistributions")
 @Api(value="/onap/so/infra/modelDistributions",description="API Requests for Model Distributions")
 public class ModelDistributionRequest {
@@ -70,7 +71,7 @@ public class ModelDistributionRequest {
 	@Autowired
 	private Provider<TenantIsolationRunnable> tenantIsolationRunnable;
 	
-	@POST
+	@PATCH
 	@Path("/{version:[vV][1]}/distributions/{distributionId}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
