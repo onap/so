@@ -1,6 +1,7 @@
 package org.onap.so.openstack.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,6 +18,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MsoHeatUtilsUnitTest {
@@ -45,18 +47,28 @@ public class MsoHeatUtilsUnitTest {
 		paramJson.setParamType("json");
 		paramJson.setParamName("my-json");
 		
+		HeatTemplateParam paramJsonEscaped = new HeatTemplateParam();
+		paramJsonEscaped.setParamType("json");
+		paramJsonEscaped.setParamName("my-json-escaped");
+		
 		Map<String, Object> jsonMap = mapper.readValue(getJson("free-form.json"), new TypeReference<Map<String, Object>>(){});
 		input.put("my-json", jsonMap);
+		
+		input.put("my-json-escaped", getJson("free-form.json"));
 		
 		parameters.add(paramNum);
 		parameters.add(paramString);
 		parameters.add(paramJson);
-
+		parameters.add(paramJsonEscaped);
+		
 		Map<String, Object> output = utils.convertInputMap(input, template);
 		
 		assertEquals(3, output.get("my-number"));
 		assertEquals("hello", output.get("my-string"));
-		JSONAssert.assertEquals(getJson("free-form.json"), (String)output.get("my-json"), false);
+		assertTrue("expect no change in type", output.get("my-json") instanceof Map);
+		assertTrue("expect string to become jsonNode", output.get("my-json-escaped") instanceof JsonNode);
+
+		JSONAssert.assertEquals(getJson("free-form.json"), mapper.writeValueAsString(output.get("my-json-escaped")), false);
 	}
 	
 	

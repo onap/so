@@ -1047,7 +1047,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 			}
 		} else if (type.equalsIgnoreCase("json")) {
 			try {
-				return JSON_MAPPER.writeValueAsString(inputValue);
+				if (inputValue instanceof String) {
+					return JSON_MAPPER.readTree(inputValue.toString());
+				}
+				//will already marshal to json without intervention
+				return inputValue;
 			}
 			catch (Exception e) {
           logger.debug("Unable to convert {} to a JsonNode!", inputValue);
