@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,6 +37,8 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
@@ -42,7 +46,7 @@ import groovy.json.JsonSlurper
 
 class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateVfModuleVolumeInfraV1.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateVfModuleVolumeInfraV1.class);
 	public static final String  prefix='CVMVINFRAV1_'
 
 	/**
@@ -68,13 +72,13 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		execution.setVariable(prefix+'syncResponseSent', false)
 
 		String createVolumeIncoming = validateRequest(execution, 'vnfId')
-		msoLogger.debug(createVolumeIncoming)
+		logger.debug(createVolumeIncoming)
 
 		try {
 			def jsonSlurper = new JsonSlurper()
 			Map reqMap = jsonSlurper.parseText(createVolumeIncoming)
 			setupVariables(execution, reqMap, isDebugEnabled)
-			msoLogger.debug("XML request:\n" + createVolumeIncoming)
+			logger.debug("XML request:\n" + createVolumeIncoming)
 		}
 		catch(groovy.json.JsonException je) {
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, 'Request is not a valid JSON document')
@@ -100,7 +104,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		// volumeGroupId - is generated
 		String volumeGroupId = UUID.randomUUID()
 		execution.setVariable('volumeGroupId', volumeGroupId)
-		msoLogger.debug("Generated volumeGroupId: " + volumeGroupId)
+		logger.debug("Generated volumeGroupId: " + volumeGroupId)
 		
 		// volumeGroupName
 		def volGrpName = requestMap.requestDetails.requestInfo?.instanceName ?: ''
@@ -159,7 +163,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		// disableRollback (true or false)
 		def disableRollback = requestMap.requestDetails.requestInfo.suppressRollback
 		execution.setVariable('disableRollback', disableRollback)
-		msoLogger.debug('disableRollback (suppressRollback) from request: ' + disableRollback)
+		logger.debug('disableRollback (suppressRollback) from request: ' + disableRollback)
 		
 	}
 
@@ -172,7 +176,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		String syncResponse = """{"requestReferences":{"instanceId":"${volumeGroupId}","requestId":"${requestId}"}}""".trim()
 
-		msoLogger.debug("Sync Response: " + "\n" + syncResponse)
+		logger.debug("Sync Response: " + "\n" + syncResponse)
 		sendWorkflowResponse(execution, 200, syncResponse)
 
 		execution.setVariable(prefix+'syncResponseSent', true)
@@ -194,7 +198,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 	 * @param isDebugEnabled
 	 */
 	public void buildWorkflowException(DelegateExecution execution, int errorCode, errorMessage, isDebugEnabled) {
-		msoLogger.debug(errorMessage)
+		logger.debug(errorMessage)
 		(new ExceptionUtil()).buildWorkflowException(execution, 2500, errorMessage)
 	}
 
@@ -237,7 +241,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		String buildDBRequestAsString = utils.formatXml(dbRequest)
 		execution.setVariable(prefix+"createDBRequest", buildDBRequestAsString)
-		msoLogger.debug("DB Infra Request: " + buildDBRequestAsString)
+		logger.debug("DB Infra Request: " + buildDBRequestAsString)
 	}
 
 
@@ -251,8 +255,8 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		def dbReturnCode = execution.getVariable(prefix+'dbReturnCode')
 		def createDBResponse =  execution.getVariable(prefix+'createDBResponse')
 
-		msoLogger.debug('DB return code: ' + dbReturnCode)
-		msoLogger.debug('DB response: ' + createDBResponse)
+		logger.debug('DB return code: ' + dbReturnCode)
+		logger.debug('DB response: ' + createDBResponse)
 
 		def requestId = execution.getVariable("mso-request-id")
 		def source = execution.getVariable(prefix+'source')
@@ -273,7 +277,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		execution.setVariable(prefix+'Success', true)
 		execution.setVariable(prefix+'CompleteMsoProcessRequest', xmlMsoCompletionRequest)
-		msoLogger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+		logger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
 	}
 
@@ -306,7 +310,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		String xmlHandlerRequest = utils.formatXml(falloutHandlerRequest)
 
 		execution.setVariable(prefix+'FalloutHandlerRequest', xmlHandlerRequest)
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Overall Error Response going to FalloutHandler", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "\n" + xmlHandlerRequest);
+		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Overall Error Response going to FalloutHandler", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
 	}
 
 
@@ -324,10 +328,10 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 			AAIResourceUri uri = AAIUriFactory.createNodesUri(AAIObjectType.SERVICE_INSTANCE,serviceInstanceId)
 			if(getAAIClient().exists(uri)){
-				msoLogger.debug('Service instance ' + serviceInstanceId + ' found in AAI.')
+				logger.debug('Service instance ' + serviceInstanceId + ' found in AAI.')
 			}else{
 				def message = 'Service instance ' + serviceInstanceId + ' was not found in AAI. Return code: 404.'
-				msoLogger.debug(message)
+				logger.debug(message)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, message)
 			}
 		}catch(BpmnError bpmnError){

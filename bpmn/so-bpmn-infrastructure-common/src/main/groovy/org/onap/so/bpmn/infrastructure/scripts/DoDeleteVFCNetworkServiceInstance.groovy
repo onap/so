@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,7 +32,8 @@ import org.onap.so.client.HttpClientFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
@@ -40,7 +43,7 @@ import javax.ws.rs.core.Response
  * flow for E2E ServiceInstance Delete
  */
 public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVFCNetworkServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoDeleteVFCNetworkServiceInstance.class);
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -55,21 +58,21 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
     public void preProcessRequest (DelegateExecution execution) {
 
         String msg = ""
-        msoLogger.trace("preProcessRequest() ")
+        logger.trace("preProcessRequest() ")
         try {
             //deal with operation key
             String globalSubscriberId = execution.getVariable("globalSubscriberId")
-            msoLogger.info("globalSubscriberId:" + globalSubscriberId)
+            logger.info("globalSubscriberId:" + globalSubscriberId)
             String serviceType = execution.getVariable("serviceType")
-            msoLogger.info("serviceType:" + serviceType)
+            logger.info("serviceType:" + serviceType)
             String serviceId = execution.getVariable("serviceId")
-            msoLogger.info("serviceId:" + serviceId)
+            logger.info("serviceId:" + serviceId)
             String operationId = execution.getVariable("operationId")
-            msoLogger.info("serviceType:" + serviceType)
+            logger.info("serviceType:" + serviceType)
             String nodeTemplateUUID = execution.getVariable("resourceTemplateId")
-            msoLogger.info("nodeTemplateUUID:" + nodeTemplateUUID)
+            logger.info("nodeTemplateUUID:" + nodeTemplateUUID)
             String nsInstanceId = execution.getVariable("resourceInstanceId")
-            msoLogger.info("nsInstanceId:" + nsInstanceId)
+            logger.info("nsInstanceId:" + nsInstanceId)
             execution.setVariable("nsInstanceId",nsInstanceId)
             String nsOperationKey = """{
             "globalSubscriberId":"${globalSubscriberId}",
@@ -79,13 +82,13 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             "nodeTemplateUUID":"${nodeTemplateUUID}"
              }"""
             execution.setVariable("nsOperationKey", nsOperationKey);
-            msoLogger.info("nsOperationKey:" + nsOperationKey)
+            logger.info("nsOperationKey:" + nsOperationKey)
 
             String vfcAdapterUrl = UrnPropertiesReader.getVariable("mso.adapters.vfc.rest.endpoint", execution)
 			
             if (vfcAdapterUrl == null || vfcAdapterUrl.isEmpty()) {
                 msg = getProcessKey(execution) + ': mso:adapters:vfcc:rest:endpoint URN mapping is not defined'
-                msoLogger.debug(msg)
+                logger.debug(msg)
             }
  
             while (vfcAdapterUrl.endsWith('/')) {
@@ -98,10 +101,10 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             throw e;
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            msoLogger.info(msg)
+            logger.info(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.trace("Exit preProcessRequest ")
+        logger.trace("Exit preProcessRequest ")
 	}
 
     /**
@@ -109,10 +112,10 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void deleteNSRelationship(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** deleteNSRelationship *****",  isDebugEnabled)
+        logger.info(" ***** deleteNSRelationship *****")
         String nsInstanceId = execution.getVariable("resourceInstanceId")
         if(nsInstanceId == null || nsInstanceId == ""){
-            utils.log("INFO"," Delete NS failed",  isDebugEnabled)
+            logger.info(" Delete NS failed")
             return
         }
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -125,7 +128,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         }catch(Exception e){
             exceptionUtil.buildAndThrowWorkflowException(execution,25000,"Exception occured while NS disconnect call: " + e.getMessage())
         }
-        utils.log("INFO"," *****Exit deleteNSRelationship *****",  isDebugEnabled)
+        logger.info(" *****Exit deleteNSRelationship *****")
     }
 
     /**
@@ -133,7 +136,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void deleteNetworkService(DelegateExecution execution) {
 
-        msoLogger.trace("deleteNetworkService  start ")
+        logger.trace("deleteNetworkService  start ")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String url = vfcAdapterUrl + "/ns/" + execution.getVariable("nsInstanceId")
@@ -145,7 +148,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         }
         execution.setVariable("operationStatus", operationStatus)
 
-        msoLogger.trace("deleteNetworkService  end ")
+        logger.trace("deleteNetworkService  end ")
     }
 
     /**
@@ -153,7 +156,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void terminateNetworkService(DelegateExecution execution) {
 
-        msoLogger.trace("terminateNetworkService  start ")
+        logger.trace("terminateNetworkService  start ")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey")
         String url =  vfcAdapterUrl + "/ns/" + execution.getVariable("nsInstanceId") + "/terminate"
@@ -165,7 +168,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
         }
         execution.setVariable("jobId", jobId)
-        msoLogger.trace("terminateNetworkService  end ")
+        logger.trace("terminateNetworkService  end ")
     }
 
     /**
@@ -173,7 +176,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void queryNSProgress(DelegateExecution execution) {
 
-        msoLogger.trace("queryNSProgress  start ")
+        logger.trace("queryNSProgress  start ")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
@@ -186,7 +189,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             operationProgress = jsonUtil.getJsonValue(apiResponseAsString, "responseDescriptor.progress")
         }
         execution.setVariable("operationProgress", operationProgress)
-        msoLogger.trace("queryNSProgress  end ")
+        logger.trace("queryNSProgress  end ")
     }
 
     /**
@@ -196,7 +199,7 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
         try {
             Thread.sleep(5000);
         } catch(InterruptedException e) {
-            msoLogger.info("Time Delay exception" + e)
+            logger.info("Time Delay exception" + e)
         }
     }
 
@@ -214,8 +217,8 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     private Response postRequest(DelegateExecution execution, String urlString, String requestBody){
 
-		msoLogger.trace("Started Execute VFC adapter Post Process ")
-		msoLogger.info("url:"+urlString +"\nrequestBody:"+ requestBody)
+		logger.trace("Started Execute VFC adapter Post Process ")
+		logger.info("url:"+urlString +"\nrequestBody:"+ requestBody)
 		Response apiResponse = null
 		try{
 			URL url = new URL(urlString);
@@ -229,11 +232,11 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
 			apiResponse = httpClient.post(requestBody)
 
-			msoLogger.debug("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
+			logger.debug("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
 
-			msoLogger.trace("Completed Execute VF-C adapter Post Process ")
+			logger.trace("Completed Execute VF-C adapter Post Process ")
 		}catch(Exception e){
-            msoLogger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
+            logger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
             throw new BpmnError("MSOWorkflowException")
         }
         return apiResponse
@@ -245,8 +248,8 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     private Response deleteRequest(DelegateExecution execution, String url, String requestBody){
 
-        msoLogger.trace("Started Execute VFC adapter Delete Process ")
-        msoLogger.info("url:"+url +"\nrequestBody:"+ requestBody)
+        logger.trace("Started Execute VFC adapter Delete Process ")
+        logger.info("url:"+url +"\nrequestBody:"+ requestBody)
 	Response r
         try{
 
@@ -260,9 +263,9 @@ public class DoDeleteVFCNetworkServiceInstance extends AbstractServiceTaskProces
             httpClient.addAdditionalHeader("Content-Type", "application/json")
             r = httpClient.delete(requestBody)
 		
-            msoLogger.trace("Completed Execute VF-C adapter Delete Process ")
+            logger.trace("Completed Execute VF-C adapter Delete Process ")
         }catch(Exception e){
-            msoLogger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
+            logger.error("Exception occured while executing VF-C Post Call. Exception is: \n" + e.getMessage());
             throw new BpmnError("MSOWorkflowException")
         }
         return r

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +42,8 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
 
 /**
@@ -47,7 +51,7 @@ import org.onap.so.utils.TargetEntity
  * with the update of a generic vnf and related VF modules.
  */
 class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoUpdateVnfAndModules.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoUpdateVnfAndModules.class);
 
 	String Prefix="DUVAM_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -63,7 +67,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 	public void preProcessRequest(DelegateExecution execution) {
 
 		execution.setVariable("prefix",Prefix)
-		msoLogger.trace("STARTED DoUpdateVnfAndModules PreProcessRequest Process")
+		logger.trace("STARTED DoUpdateVnfAndModules PreProcessRequest Process")
 
 		try{
 			// Get Variables
@@ -71,24 +75,24 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			String requestId = execution.getVariable("msoRequestId")
 			execution.setVariable("requestId", requestId)
 			execution.setVariable("mso-request-id", requestId)
-			msoLogger.debug("Incoming Request Id is: " + requestId)
+			logger.debug("Incoming Request Id is: " + requestId)
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			msoLogger.debug("Incoming Service Instance Id is: " + serviceInstanceId)
+			logger.debug("Incoming Service Instance Id is: " + serviceInstanceId)
 
 			String vnfId = execution.getVariable("vnfId")
-			msoLogger.debug("Incoming Vnf Id is: " + vnfId)
+			logger.debug("Incoming Vnf Id is: " + vnfId)
 
 			String source = "VID"
 			execution.setVariable("DUVAM_source", source)
-			msoLogger.debug("Incoming Source is: " + source)
+			logger.debug("Incoming Source is: " + source)
 
 			String sdncVersion = execution.getVariable("sdncVersion")
 			if (sdncVersion == null) {
 				sdncVersion = "1702"
 			}
 			execution.setVariable("DUVAM_sdncVersion", sdncVersion)
-			msoLogger.debug("Incoming Sdnc Version is: " + sdncVersion)
+			logger.debug("Incoming Sdnc Version is: " + sdncVersion)
 
 			VnfResource vnfResource = (VnfResource) execution.getVariable("vnfResourceDecomposition")
 
@@ -97,44 +101,44 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 
 			String serviceId = execution.getVariable("productFamilyId")
 			execution.setVariable("DUVAM_serviceId", serviceId)
-			msoLogger.debug("Incoming Service Id is: " + serviceId)
+			logger.debug("Incoming Service Id is: " + serviceId)
 
 			String modelUuid = jsonUtil.getJsonValue(vnfModelInfo, "modelUuid")
 			execution.setVariable("DUVAM_modelUuid", modelUuid)
-			msoLogger.debug("Incoming modelUuid is: " + modelUuid)
+			logger.debug("Incoming modelUuid is: " + modelUuid)
 
 			String modelCustomizationUuid = jsonUtil.getJsonValue(vnfModelInfo, "modelCustomizationUuid")
 			execution.setVariable("DUVAM_modelCustomizationUuid", modelCustomizationUuid)
-			msoLogger.debug("Incoming Model Customization Uuid is: " + modelCustomizationUuid)
+			logger.debug("Incoming Model Customization Uuid is: " + modelCustomizationUuid)
 
 			String cloudSiteId = execution.getVariable("lcpCloudRegionId")
 			execution.setVariable("DUVAM_cloudSiteId", cloudSiteId)
-			msoLogger.debug("Incoming Cloud Site Id is: " + cloudSiteId)
+			logger.debug("Incoming Cloud Site Id is: " + cloudSiteId)
 
 			String tenantId = execution.getVariable("tenantId")
 			execution.setVariable("DUVAM_tenantId", tenantId)
-			msoLogger.debug("Incoming Tenant Id is: " + tenantId)
+			logger.debug("Incoming Tenant Id is: " + tenantId)
 
 			String globalSubscriberId = execution.getVariable("globalSubscriberId")
 			if (globalSubscriberId == null) {
 				globalSubscriberId = ""
 			}
 			execution.setVariable("DUVAM_globalSubscriberId", globalSubscriberId)
-			msoLogger.debug("Incoming Global Subscriber Id is: " + globalSubscriberId)
+			logger.debug("Incoming Global Subscriber Id is: " + globalSubscriberId)
 
 			execution.setVariable("DUVAM_moduleCount", 0)
 			execution.setVariable("DUVAM_nextModule", 0)
 
 
 		}catch(BpmnError b){
-			msoLogger.debug("Rethrowing MSOWorkflowException")
+			logger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			msoLogger.debug(" Error Occured in DoUpdateVnfAndModules PreProcessRequest method!" + e.getMessage())
+			logger.debug(" Error Occured in DoUpdateVnfAndModules PreProcessRequest method!" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoUpdateVnfAndModules PreProcessRequest")
 
 		}
-		msoLogger.trace("COMPLETED DoUpdateVnfAndModules PreProcessRequest Process ")
+		logger.trace("COMPLETED DoUpdateVnfAndModules PreProcessRequest Process ")
 	}
 
 	/**
@@ -148,7 +152,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.queryAAIVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('vnfId')
@@ -156,7 +160,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).depth(Depth.ONE)
 			String endPoint = aaiUriUtil.createAaiUri(uri)
-			msoLogger.debug("AAI endPoint: " + endPoint)
+			logger.debug("AAI endPoint: " + endPoint)
 
 			try {
 				HttpClient client = new HttpClientFactory().newXmlClient(new URL(endPoint), TargetEntity.AAI)
@@ -167,33 +171,33 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 
 				def responseData = ''
 
-				msoLogger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
+				logger.debug('sending GET to AAI endpoint \'' + endPoint + '\'')
 				Response response = client.get()
-				msoLogger.debug("createVfModule - invoking httpGet() to AAI")
+				logger.debug("createVfModule - invoking httpGet() to AAI")
 
 				responseData = response.readEntity(String.class)
 				if (responseData != null) {
-					msoLogger.debug("Received generic VNF data: " + responseData)
+					logger.debug("Received generic VNF data: " + responseData)
 
 				}
 
-				msoLogger.debug("createVfModule - queryAAIVfModule Response: " + responseData)
-				msoLogger.debug("createVfModule - queryAAIVfModule ResponseCode: " + response.getStatus())
+				logger.debug("createVfModule - queryAAIVfModule Response: " + responseData)
+				logger.debug("createVfModule - queryAAIVfModule ResponseCode: " + response.getStatus())
 
 				execution.setVariable('DUVAM_queryAAIVfModuleResponseCode', response.getStatus())
 				execution.setVariable('DUVAM_queryAAIVfModuleResponse', responseData)
-				msoLogger.debug('Response code:' + response.getStatus())
-				msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+				logger.debug('Response code:' + response.getStatus())
+				logger.debug('Response:' + System.lineSeparator() + responseData)
 				//Map<String, String>[] vfModules = new HashMap<String,String>[]
 				def vfModulesList = new ArrayList<Map<String,String>>()
 				def vfModules = null
 				def vfModuleBaseEntry = null
 				if (response.getStatus() == 200) {
 					// Parse the VNF record from A&AI to find base module info
-					msoLogger.debug('Parsing the VNF data to find base module info')
+					logger.debug('Parsing the VNF data to find base module info')
 					if (responseData != null) {
 						def vfModulesText = utils.getNodeXml(responseData, "vf-modules")
-						msoLogger.debug("vModulesText: " + vfModulesText)
+						logger.debug("vModulesText: " + vfModulesText)
 						if (vfModulesText != null && !vfModulesText.trim().isEmpty()) {
 							def xmlVfModules= new XmlSlurper().parseText(vfModulesText)
 							vfModules = xmlVfModules.'**'.findAll {it.name() == "vf-module"}
@@ -219,7 +223,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 
 								String volumeGroupId = ''
 
-								msoLogger.debug("Next module!")
+								logger.debug("Next module!")
 								def vfModuleRelationships = vfModules[i].'**'.findAll {it.name() == 'relationship-data'}
 								if (vfModuleRelationships.size() > 0) {
 									for (j in 0..vfModuleRelationships.size()-1) {
@@ -237,7 +241,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 								}
 
 								vfModuleEntry.put("volumeGroupId", volumeGroupId)
-								msoLogger.debug("volumeGroupId is: " + volumeGroupId)
+								logger.debug("volumeGroupId is: " + volumeGroupId)
 
 								// Save base vf module to add it to the start of the list later
 								if (isBaseVfModule == "true") {
@@ -256,20 +260,22 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 					}
 				}
 				else {
-					msoLogger.debug('Response code from AAI GET is: ' + response.getStatusCode())
+					logger.debug('Response code from AAI GET is: ' + response.getStatusCode())
 					exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Response code from AAI GET is: ' + response.getStatusCode())
 				}
 				execution.setVariable("DUVAM_vfModules", vfModulesList)
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())
 		}
 	}
@@ -277,7 +283,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 	public void prepareNextModuleToUpdate(DelegateExecution execution){
 
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED prepareNextModuleToUpdate ")
+		logger.trace("STARTED prepareNextModuleToUpdate ")
 
 		try {
 			int i = execution.getVariable("DUVAM_nextModule")
@@ -294,7 +300,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			execution.setVariable("DUVAM_isBaseVfModule", isBaseVfModule)
 
 			String modelInvariantUuid = vfModule.get("modelInvariantUuid")
-			msoLogger.debug("ModelInvariantUuid: " + modelInvariantUuid)
+			logger.debug("ModelInvariantUuid: " + modelInvariantUuid)
 
 			def volumeGroupId = vfModule.get("volumeGroupId")
 			execution.setVariable("DUVAM_volumeGroupId", volumeGroupId)
@@ -309,13 +315,13 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 				for (j in 0..moduleResources.size()-1) {
 					ModelInfo modelInfo = moduleResources[j].getModelInfo()
 					String modelInvariantUuidFromDecomposition = modelInfo.getModelInvariantUuid()
-					msoLogger.debug("modelInvariantUuidFromDecomposition: " + modelInvariantUuidFromDecomposition)
+					logger.debug("modelInvariantUuidFromDecomposition: " + modelInvariantUuidFromDecomposition)
 
 					if (modelInvariantUuid.equals(modelInvariantUuidFromDecomposition)) {
 						String vfModuleModelInfo = modelInfo.toJsonString()
 						String vfModuleModelInfoValue = jsonUtil.getJsonValue(vfModuleModelInfo, "modelInfo")
 						execution.setVariable("DUVAM_vfModuleModelInfo", vfModuleModelInfoValue)
-						msoLogger.debug("vfModuleModelInfo: " + vfModuleModelInfoValue)
+						logger.debug("vfModuleModelInfo: " + vfModuleModelInfoValue)
 						break
 					}
 
@@ -323,10 +329,12 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			}
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preProcessAddOnModule. Exception is:\n" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preProcessAddOnModule. Exception is:\n" + e, "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during prepareNextModuleToUpdate Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED prepareNextModuleToUpdate ")
+		logger.trace("COMPLETED prepareNextModuleToUpdate ")
 	}
 
 
@@ -340,7 +348,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('vnfId')
@@ -389,15 +397,17 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 				"""
 				updateAAIGenericVnfRequest = utils.formatXml(updateAAIGenericVnfRequest)
 				execution.setVariable('DUVAM_updateAAIGenericVnfRequest', updateAAIGenericVnfRequest)
-				msoLogger.debug("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
-				msoLogger.debug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest)
+				logger.debug("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
+				logger.debug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest)
 
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -412,6 +422,6 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 	}
 }

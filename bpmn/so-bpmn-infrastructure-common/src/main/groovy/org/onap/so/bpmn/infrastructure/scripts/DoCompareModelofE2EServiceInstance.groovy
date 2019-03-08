@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +42,8 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.*
 
@@ -62,6 +66,7 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 
 	String Prefix="DCMPMDSI_"
 	private static final String DebugFlag = "isDebugEnabled"
+	private static final Logger logger = LoggerFactory.getLogger( DeleteNetworkInstance.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -70,50 +75,50 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO","Entered " + method, isDebugEnabled)
+		logger.info("Entered " + method)
 		String msg = ""
-		utils.log("INFO"," ***** Enter DoCompareModelofE2EServiceInstance preProcessRequest *****",  isDebugEnabled)
+		logger.info(" ***** Enter DoCompareModelofE2EServiceInstance preProcessRequest *****")
 
 		execution.setVariable("prefix", Prefix)
 		//Inputs
 
 		//subscriberInfo. for AAI GET
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
-		utils.log("INFO"," ***** globalSubscriberId *****" + globalSubscriberId,  isDebugEnabled)
+		logger.info(" ***** globalSubscriberId *****" + globalSubscriberId)
 
 		String serviceType = execution.getVariable("serviceType")
-		utils.log("INFO"," ***** serviceType *****" + serviceType,  isDebugEnabled)
+		logger.info(" ***** serviceType *****" + serviceType)
 
 		if (isBlank(globalSubscriberId)) {
 			msg = "Input globalSubscriberId is null"
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 		}
 
 		if (isBlank(serviceType)) {
 			msg = "Input serviceType is null"
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 		}
 
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		if (isBlank(serviceInstanceId)){
 			msg = "Input serviceInstanceId is null"
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 		}
 
 		String modelInvariantUuid = execution.getVariable("modelInvariantIdTarget")
 		if (isBlank(modelInvariantUuid)){
 			msg = "Input modelInvariantUuid is null"
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 		}
 
 		String modelUuid = execution.getVariable("modelVersionIdTarget")
 		if (isBlank(modelUuid)){
 			msg = "Input modelUuid is null"
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 		}
 
@@ -122,7 +127,7 @@ public class DoCompareModelofE2EServiceInstance extends AbstractServiceTaskProce
 		execution.setVariable("model-version-id-target", modelUuid)
 
 
-		utils.log("INFO", "Exited " + method, isDebugEnabled)
+		logger.info( "Exited " + method)
 	}
 
 	/**

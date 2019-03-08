@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,13 +46,15 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This class supports the macro VID Flow
  * with the deletion of a generic vnf and related VF modules.
  */
 class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVnfAndModules.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoDeleteVnfAndModules.class);
 
 	String Prefix="DDVAM_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -68,28 +72,28 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 	public void preProcessRequest(DelegateExecution execution) {
 
 		execution.setVariable("prefix",Prefix)
-		msoLogger.trace("STARTED DoDeleteVnfAndModules PreProcessRequest Process")
+		logger.trace("STARTED DoDeleteVnfAndModules PreProcessRequest Process")
 
 		try{
 			// Get Variables				
 			
 			String cloudConfiguration = execution.getVariable("cloudConfiguration")		
-			msoLogger.debug("Cloud Configuration: " + cloudConfiguration)	
+			logger.debug("Cloud Configuration: " + cloudConfiguration)	
 			
 			String requestId = execution.getVariable("msoRequestId")
 			execution.setVariable("requestId", requestId)			
 			execution.setVariable("mso-request-id", requestId)
-			msoLogger.debug("Incoming Request Id is: " + requestId)
+			logger.debug("Incoming Request Id is: " + requestId)
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")			
-			msoLogger.debug("Incoming Service Instance Id is: " + serviceInstanceId)
+			logger.debug("Incoming Service Instance Id is: " + serviceInstanceId)
 
 			String vnfId = execution.getVariable("vnfId")			
-			msoLogger.debug("Incoming Vnf Id is: " + vnfId)			
+			logger.debug("Incoming Vnf Id is: " + vnfId)			
 			
 			String source = "VID"
 			execution.setVariable("DDVAM_source", source)
-			msoLogger.debug("Incoming Source is: " + source)
+			logger.debug("Incoming Source is: " + source)
 			
 			execution.setVariable("DDVAM_isVidRequest", "true")
 			
@@ -98,7 +102,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 				sdncVersion = "1702"
 			}
 			execution.setVariable("DDVAM_sdncVersion", sdncVersion)
-			msoLogger.debug("Incoming Sdnc Version is: " + sdncVersion)
+			logger.debug("Incoming Sdnc Version is: " + sdncVersion)
 			
 			// Set aLaCarte flag to false
 			execution.setVariable("aLaCarte", false)
@@ -106,12 +110,13 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			String sdncCallbackUrl = (String) UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback", execution)
 			if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 				def msg = 'Required variable \'mso.workflow.sdncadapter.callback\' is missing'
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception");
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			msoLogger.debug("SDNC Callback URL: " + sdncCallbackUrl)
-			msoLogger.debug("SDNC Callback URL is: " + sdncCallbackUrl)	
+			logger.debug("SDNC Callback URL: " + sdncCallbackUrl)
+			logger.debug("SDNC Callback URL is: " + sdncCallbackUrl)	
 			
 			
 			if (!sdncVersion.equals("1702")) {
@@ -120,66 +125,66 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 				
 				String serviceId = execution.getVariable("productFamilyId")
 				execution.setVariable("DDVAM_serviceId", serviceId)
-				msoLogger.debug("Incoming Service Id is: " + serviceId)
+				logger.debug("Incoming Service Id is: " + serviceId)
 				
 					
 				//String modelInvariantId = jsonUtil.getJsonValue(vnfModelInfo, "modelInvariantId")
 				//execution.setVariable("DDVAM_modelInvariantId", modelInvariantId)
-				//msoLogger.debug("Incoming Invariant Id is: " + modelInvariantId)
+				//logger.debug("Incoming Invariant Id is: " + modelInvariantId)
 				
 				//String modelVersionId = jsonUtil.getJsonValue(vnfModelInfo, "modelVersionId")
 				//if (modelVersionId == null) {
 				//	modelVersionId = ""
 				//}
 				//execution.setVariable("DDVAM_modelVersionId", modelVersionId)
-				//msoLogger.debug("Incoming Version Id is: " + modelVersionId)
+				//logger.debug("Incoming Version Id is: " + modelVersionId)
 	
 				//String modelVersion = jsonUtil.getJsonValue(vnfModelInfo, "modelVersion")
 				//execution.setVariable("DDVAM_modelVersion", modelVersion)
-				//msoLogger.debug("Incoming Model Version is: " + modelVersion)
+				//logger.debug("Incoming Model Version is: " + modelVersion)
 				
 				//String modelName = jsonUtil.getJsonValue(vnfModelInfo, "modelName")
 				//execution.setVariable("DDVAM_modelName", modelName)
-				//msoLogger.debug("Incoming Model Name is: " + modelName)
+				//logger.debug("Incoming Model Name is: " + modelName)
 				
 				//String modelCustomizationId = jsonUtil.getJsonValue(vnfModelInfo, "modelCustomizationId")
 				//if (modelCustomizationId == null) {
 				//	modelCustomizationId = ""
 				//}
 				//execution.setVariable("DDVAM_modelCustomizationId", modelCustomizationId)
-				//msoLogger.debug("Incoming Model Customization Id is: " + modelCustomizationId)
+				//logger.debug("Incoming Model Customization Id is: " + modelCustomizationId)
 					
 				String cloudSiteId = execution.getVariable("lcpCloudRegionId")
 				execution.setVariable("DDVAM_cloudSiteId", cloudSiteId)
-				msoLogger.debug("Incoming Cloud Site Id is: " + cloudSiteId)
+				logger.debug("Incoming Cloud Site Id is: " + cloudSiteId)
 					
 				String tenantId = execution.getVariable("tenantId")
 				execution.setVariable("DDVAM_tenantId", tenantId)
-				msoLogger.debug("Incoming Tenant Id is: " + tenantId)
+				logger.debug("Incoming Tenant Id is: " + tenantId)
 				
 				String globalSubscriberId = execution.getVariable("globalSubscriberId")
 				if (globalSubscriberId == null) {
 					globalSubscriberId = ""
 				}
 				execution.setVariable("DDVAM_globalSubscriberId", globalSubscriberId)
-				msoLogger.debug("Incoming Global Subscriber Id is: " + globalSubscriberId)		
+				logger.debug("Incoming Global Subscriber Id is: " + globalSubscriberId)		
 				
 			}
 			execution.setVariable("DDVAM_vfModulesFromDecomposition", null)
 			// Retrieve serviceDecomposition if present
 			ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 			if (serviceDecomposition != null) {
-				msoLogger.debug("Getting Catalog DB data from ServiceDecomposition object: " + serviceDecomposition.toJsonString())
+				logger.debug("Getting Catalog DB data from ServiceDecomposition object: " + serviceDecomposition.toJsonString())
 				List<VnfResource> vnfs = serviceDecomposition.getVnfResources()
-				msoLogger.debug("Read vnfs")
+				logger.debug("Read vnfs")
 				if (vnfs == null) {
-					msoLogger.debug("Error - vnfs are empty in serviceDecomposition object")
+					logger.debug("Error - vnfs are empty in serviceDecomposition object")
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in preProcessRequest - vnfs are empty")
 				}
 				VnfResource vnf = vnfs[0]
 				
 				if (vnf == null) {
-					msoLogger.debug("Error - vnf is empty in serviceDecomposition object")
+					logger.debug("Error - vnf is empty in serviceDecomposition object")
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in preProcessRequest - vnf is empty")
 				}
 				
@@ -193,14 +198,14 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			
 			
 		}catch(BpmnError b){
-			msoLogger.debug("Rethrowing MSOWorkflowException")
+			logger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			msoLogger.debug(" Error Occured in DoCreateVnfAndModules PreProcessRequest method!" + e.getMessage())
+			logger.debug(" Error Occured in DoCreateVnfAndModules PreProcessRequest method!" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf PreProcessRequest")
 
 		}
-		msoLogger.trace("COMPLETED DoDeleteVnfAndModules PreProcessRequest Process ")
+		logger.trace("COMPLETED DoDeleteVnfAndModules PreProcessRequest Process ")
 	}	
 
 	
@@ -208,7 +213,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 	public void preProcessAddOnModule(DelegateExecution execution){
 
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessAddOnModule ")
+		logger.trace("STARTED preProcessAddOnModule ")
 		
 		try {			
 			JSONArray addOnModules = (JSONArray) execution.getVariable("addOnModules")
@@ -233,10 +238,12 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 					
 		
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preProcessAddOnModule." + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preProcessAddOnModule." + e, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED preProcessSDNCAssignRequest ")
+		logger.trace("COMPLETED preProcessSDNCAssignRequest ")
 	}
 	
 	/**
@@ -250,7 +257,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.queryAAIVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('vnfId')
@@ -279,16 +286,16 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 								
 								// Find the model for this vf module in decomposition if specified
 								if (vfModulesFromDecomposition != null) {
-									msoLogger.debug("vfModulesFromDecomposition is not null")
+									logger.debug("vfModulesFromDecomposition is not null")
 									def vfModuleUuid = vfModule.getModelVersionId()
 									if (vfModuleUuid == null) {
 										vfModuleUuid = vfModule.getPersonaModelVersion()
 									}
-									msoLogger.debug("vfModule UUID is: " + vfModuleUuid)
+									logger.debug("vfModule UUID is: " + vfModuleUuid)
 									for (j in 0..vfModulesFromDecomposition.size()-1) {
 										ModuleResource mr = vfModulesFromDecomposition[j]
 										if (mr.getModelInfo().getModelUuid() == vfModuleUuid) {
-											msoLogger.debug("Found modelInfo")
+											logger.debug("Found modelInfo")
 											vfModuleModelInfo = mr.getModelInfo()
 											break											
 										}
@@ -325,14 +332,16 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 				execution.setVariable("DDVAM_vfModules", vfModulesList)
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())
 		}
 	}
@@ -340,7 +349,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 	public void prepareNextModuleToDelete(DelegateExecution execution){
 
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED prepareNextModuleToDelete ")
+		logger.trace("STARTED prepareNextModuleToDelete ")
 		
 		try {
 			int i = execution.getVariable("DDVAM_nextModule")
@@ -354,20 +363,22 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			execution.setVariable("DDVAM_vfModuleName", vfModuleName)			
 			
 			def vfModuleModelInfo = vfModule.get("vfModuleModelInfo")
-			msoLogger.debug("vfModuleModelInfo for module delete: " + vfModuleModelInfo)
+			logger.debug("vfModuleModelInfo for module delete: " + vfModuleModelInfo)
 			execution.setVariable("DDVAM_vfModuleModelInfo", vfModuleModelInfo)			
 			
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preProcessAddOnModule." + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preProcessAddOnModule." + e, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during prepareNextModuleToDelete Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED prepareNextModuleToDelete ")
+		logger.trace("COMPLETED prepareNextModuleToDelete ")
 	}
 	
 	public void preProcessSDNCDeactivateRequest(DelegateExecution execution){
 
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessSDNCDeactivateRequest ")
+		logger.trace("STARTED preProcessSDNCDeactivateRequest ")
 		def vnfId = execution.getVariable("vnfId")
 		def serviceInstanceId = execution.getVariable("serviceInstanceId")		
 
@@ -378,14 +389,16 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 
 			deactivateSDNCRequest = utils.formatXml(deactivateSDNCRequest)
 			execution.setVariable("DDVAM_deactivateSDNCRequest", deactivateSDNCRequest)
-			msoLogger.debug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
-			msoLogger.debug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
+			logger.debug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
+			logger.debug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preProcessSDNCDeactivateRequest." + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preProcessSDNCDeactivateRequest." + e, "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCDeactivateRequest Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED preProcessSDNCDeactivateRequest ")
+		logger.trace("COMPLETED preProcessSDNCDeactivateRequest ")
 	}
 	
 	public void preProcessSDNCUnassignRequest(DelegateExecution execution) {
@@ -393,9 +406,9 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessSDNCUnassignRequest Process ")
+		logger.trace("STARTED preProcessSDNCUnassignRequest Process ")
 		try{
 			String vnfId = execution.getVariable("vnfId")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -403,14 +416,14 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 			String unassignSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "unassign")
 
 			execution.setVariable("DDVAM_unassignSDNCRequest", unassignSDNCRequest)
-			msoLogger.debug("Outgoing UnassignSDNCRequest is: \n" + unassignSDNCRequest)
-			msoLogger.debug("Outgoing UnassignSDNCRequest is: \n"  + unassignSDNCRequest)
+			logger.debug("Outgoing UnassignSDNCRequest is: \n" + unassignSDNCRequest)
+			logger.debug("Outgoing UnassignSDNCRequest is: \n"  + unassignSDNCRequest)
 
 		}catch(Exception e){
-			msoLogger.debug("Exception Occured Processing preProcessSDNCUnassignRequest. Exception is:\n" + e)
+			logger.debug("Exception Occured Processing preProcessSDNCUnassignRequest. Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during  preProcessSDNCUnassignRequest Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED  preProcessSDNCUnassignRequest Process ")
+		logger.trace("COMPLETED  preProcessSDNCUnassignRequest Process ")
 	}
 	
 	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
@@ -474,33 +487,33 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 	</sdncadapterworkflow:SDNCRequestData>
 	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 		
-			msoLogger.debug("sdncRequest:  " + sdncRequest)
+			logger.debug("sdncRequest:  " + sdncRequest)
 			return sdncRequest
 	}
 		
 	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 
 		execution.setVariable("prefix",Prefix)
-		msoLogger.trace("STARTED ValidateSDNCResponse Process")
+		logger.trace("STARTED ValidateSDNCResponse Process")
 
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 
-		msoLogger.debug("workflowException: " + workflowException)
+		logger.debug("workflowException: " + workflowException)
 
 		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
-		msoLogger.debug("SDNCResponse: " + response)
+		logger.debug("SDNCResponse: " + response)
 
 		String sdncResponse = response
 		if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-			msoLogger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)			
+			logger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)			
 		}else{
-			msoLogger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
+			logger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
 			throw new BpmnError("MSOWorkflowException")
 		}
-		msoLogger.trace("COMPLETED ValidateSDNCResponse Process")
+		logger.trace("COMPLETED ValidateSDNCResponse Process")
 	}
 	
 	
