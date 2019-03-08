@@ -24,6 +24,7 @@ package org.onap.so.cloudify.utils;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -70,6 +71,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MsoCloudifyUtilsTest {
@@ -305,11 +307,18 @@ public class MsoCloudifyUtilsTest {
 		paramJson.setParamType("json");
 		paramJson.setParamName("my-json");
 		
-		Map<String, Object> jsonMap = mapper.readValue(getJson("free-form.json"), new TypeReference<Map<String, Object>>(){});
+		HeatTemplateParam paramJsonEscaped = new HeatTemplateParam();
+		paramJsonEscaped.setParamType("json");
+		paramJsonEscaped.setParamName("my-json-escaped");
 		
+		Map<String, Object> jsonMap = mapper.readValue(getJson("free-form.json"), new TypeReference<Map<String, Object>>(){});
+
 		assertEquals(3, utils.convertInputValue("3", paramNum));
 		assertEquals("hello", utils.convertInputValue("hello", paramString));
-		JSONAssert.assertEquals(getJson("free-form.json"), utils.convertInputValue(jsonMap, paramJson).toString(), false);
+		assertTrue("expect no change in type", utils.convertInputValue(jsonMap, paramJson) instanceof Map);
+		assertTrue("expect string to become jsonNode", utils.convertInputValue(getJson("free-form.json"), paramJsonEscaped) instanceof JsonNode);
+
+		JSONAssert.assertEquals(getJson("free-form.json"), mapper.writeValueAsString(utils.convertInputValue(getJson("free-form.json"), paramJsonEscaped)), false);
 		
 	}
 

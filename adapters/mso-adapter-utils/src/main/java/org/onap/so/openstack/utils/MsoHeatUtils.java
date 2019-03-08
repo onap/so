@@ -1356,18 +1356,22 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 				}
 			} else if ("json".equalsIgnoreCase(type)) {
 				Object jsonObj = inputs.get(key);
-				String jsonString;
+				Object json;
 				try {
-					jsonString = JSON_MAPPER.writeValueAsString(jsonObj);
-				} catch (JsonProcessingException e) {
+					if (jsonObj instanceof String) {
+						json = JSON_MAPPER.readTree(jsonObj.toString());
+					} else {
+						//will already marshal to json without intervention
+						json = jsonObj;
+					}
+				} catch (IOException e) {
 					logger.error("failed to map to json, directly converting to string instead", e);
-					jsonString = jsonObj.toString();
+					json = jsonObj.toString();
 				}
     			if (alias)
-    				newInputs.put(realName, jsonString);
+    				newInputs.put(realName, json);
     			else
-    				newInputs.put(key, jsonString);
-    			//}
+    				newInputs.put(key, json);
 			} else if ("comma_delimited_list".equalsIgnoreCase(type)) {
 				String commaSeparated = inputs.get(key).toString();
 				try {
