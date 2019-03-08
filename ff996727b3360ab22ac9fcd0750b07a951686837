@@ -33,6 +33,23 @@
       "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a858827_bca5cef7",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/PnfCustomizationRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-08T19:00:46Z",
+      "side": 1,
+      "message": "Are these needed if they are already captured in rest?",
+      "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
