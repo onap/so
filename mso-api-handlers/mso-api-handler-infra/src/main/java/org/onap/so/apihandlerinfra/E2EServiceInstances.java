@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -69,7 +72,8 @@ import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.onap.so.serviceinstancebeans.SubscriberInfo;
-import org.onap.so.utils.UUIDChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -85,8 +89,7 @@ import io.swagger.annotations.ApiOperation;
 public class E2EServiceInstances {
 
 	private HashMap<String, String> instanceIdMap = new HashMap<>();
-	private static final MsoLogger msoLogger = MsoLogger
-			.getMsoLogger(MsoLogger.Catalog.APIH, E2EServiceInstances.class);
+	private static final Logger logger = LoggerFactory.getLogger(E2EServiceInstances.class);
 
 	private static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
@@ -190,7 +193,7 @@ public class E2EServiceInstances {
                                             @PathParam("version") String version,
                                             @PathParam("serviceId") String serviceId) throws ApiException {
 
-		msoLogger.debug("------------------scale begin------------------");
+		logger.debug("------------------scale begin------------------");
 		instanceIdMap.put("serviceId", serviceId);
 		return scaleE2EserviceInstances(request, Action.scaleInstance, instanceIdMap, version);
 	}
@@ -216,9 +219,8 @@ public class E2EServiceInstances {
 	private Response compareModelwithTargetVersion(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) throws ApiException {
 
-		String requestId = UUIDChecker.generateUUID(msoLogger);
+		String requestId = UUID.randomUUID().toString();
 		long startTime = System.currentTimeMillis();
-		msoLogger.debug("requestId is: " + requestId);
 
 		CompareModelsRequest e2eCompareModelReq;
 
@@ -228,15 +230,13 @@ public class E2EServiceInstances {
 
 		} catch (Exception e) {
 
-			msoLogger.debug("Mapping of request to JSON object failed : ", e);
+			logger.debug("Mapping of request to JSON object failed : ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 					MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null, version);
-			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
-					"Mapping of request to JSON object failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity().toString());
+			logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+					MsoLogger.ErrorCode.SchemaError.getValue(), requestJSON, e);
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity().toString());
 
 			return response;
 		}
@@ -264,7 +264,7 @@ public class E2EServiceInstances {
 			String bpmnRequest = jjo.toString();
 
 			// Capture audit event
-			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
+			logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
 			String serviceId = instanceIdMap.get("serviceId");
 			String serviceType = e2eCompareModelReq.getServiceType();
 			RequestClientParameter postParam = new RequestClientParameter.Builder()
@@ -277,32 +277,22 @@ public class E2EServiceInstances {
 					.setRequestDetails(bpmnRequest)
 					.setALaCarte(false).build();
 			response = requestClient.post(postParam);
-
-			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-					"Successfully received response from BPMN engine", "BPMN", workflowUrl, null);
 		} catch (Exception e) {
-			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN",
-					workflowUrl, null);
 			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);		
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
+			logger.error("", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
 					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine",e);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
-					"Exception while communicate with BPMN engine");
-			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity().toString());
+			logger.debug(END_OF_THE_TRANSACTION + resp.getEntity().toString());
 			return resp;
 		}
 
 		if (response == null) {
 			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException, 
 					"bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
-					"Null response from BPMN");
-			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity().toString());
+			logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+			logger.debug(END_OF_THE_TRANSACTION + resp.getEntity().toString());
 			return resp;
 		}
 
@@ -327,24 +317,14 @@ public class E2EServiceInstances {
 			operationStatus = requestsDbClient.getOneByServiceIdAndOperationId(serviceId,
 					operationId);
 		} catch (Exception e) {
-			msoLogger
-					.error(MessageEnum.APIH_DB_ACCESS_EXC,
-							MSO_PROP_APIHANDLER_INFRA,
-							"",
-							"",
-							MsoLogger.ErrorCode.AvailabilityError,
-							"Exception while communciate with Request DB - Infra Request Lookup",
-							e);			
+			logger.error("{} {} {} {}", MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.AvailabilityError.getValue(),
+				"Exception while communciate with Request DB - Infra Request Lookup", e);
 			Response response = msoRequest.buildServiceErrorResponse(
 					HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
 					e.getMessage(),
 					ErrorNumbers.NO_COMMUNICATION_TO_REQUESTS_DB, null, version);
-		
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.DBAccessError,
-					"Exception while communciate with Request DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ response.getEntity());
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 
 		}
@@ -354,15 +334,10 @@ public class E2EServiceInstances {
 					HttpStatus.SC_NO_CONTENT, MsoException.ServiceException,
 					"E2E serviceId " + serviceId + " is not found in DB",
 					ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, null, version);
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-					MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.BusinessProcesssError,
-					"Null response from RequestDB when searching by serviceId");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.DataNotFound,
-					"Null response from RequestDB when searching by serviceId");
-			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ resp.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+				"Null response from RequestDB when searching by serviceId");
+			logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 			return resp;
 
 		}
@@ -375,9 +350,7 @@ public class E2EServiceInstances {
 	private Response deleteE2EserviceInstances(String requestJSON,
 			Action action, HashMap<String, String> instanceIdMap, String version) throws ApiException {
 		// TODO should be a new one or the same service instance Id
-		String requestId = UUIDChecker.generateUUID(msoLogger);
 		long startTime = System.currentTimeMillis();
-		msoLogger.debug("requestId is: " + requestId);
 		E2EServiceInstanceDeleteRequest e2eDelReq;
 
 		ObjectMapper mapper = new ObjectMapper();
@@ -387,63 +360,49 @@ public class E2EServiceInstances {
 
 		} catch (Exception e) {
 
-			msoLogger.debug("Mapping of request to JSON object failed : ", e);
+			logger.debug("Mapping of request to JSON object failed : ", e);
 			Response response = msoRequest.buildServiceErrorResponse(
 					HttpStatus.SC_BAD_REQUEST,
 					MsoException.ServiceException,
 					"Mapping of request to JSON object failed.  "
 							+ e.getMessage(), ErrorNumbers.SVC_BAD_PARAMETER,
 					null, version);
-			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
-					MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.SchemaError,
-					"Mapping of request to JSON object failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ response.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.SchemaError.getValue(), requestJSON, e);
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
+		String requestId = UUID.randomUUID().toString();
 		RecipeLookupResult recipeLookupResult;
 		try {
 			//TODO  Get the service template model version uuid from AAI.
 			recipeLookupResult = getServiceInstanceOrchestrationURI(null, action);
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC,
-					MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError,
-					"Exception while communciate with Catalog DB", e);
+			logger.error(MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communciate with Catalog DB", e);
 			
 			Response response = msoRequest.buildServiceErrorResponse(
 					HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
 					"No communication to catalog DB " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
 	
-			msoRequest.createErrorRequestRecord(Status.FAILED, requestId, "Exception while communciate with Catalog DB", action, ModelType.service.name(), requestJSON);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.DBAccessError,
-					"Exception while communciate with DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ response.getEntity());
+			msoRequest.createErrorRequestRecord(Status.FAILED, requestId, "Exception while communciate with "
+					+ "Catalog DB", action,
+				ModelType.service.name(), requestJSON);
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 		if (recipeLookupResult == null) {
-			msoLogger.error(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
-					MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.DataError, "No recipe found in DB");			
+			logger.error("{} {} {} {}", MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.DataError.getValue(), "No recipe found in DB");
 			Response response = msoRequest.buildServiceErrorResponse(
 					HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
 					"Recipe does not exist in catalog DB",
 					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
 		
 			msoRequest.createErrorRequestRecord(Status.FAILED, requestId,"Recipe does not exist in catalog DB", action, ModelType.service.name(), requestJSON);
-			
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.DataNotFound,
-					"No recipe found in DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION
-					+ response.getEntity());
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
@@ -455,14 +414,12 @@ public class E2EServiceInstances {
 			requestClient = requestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI());
 
 			JSONObject jjo = new JSONObject(requestJSON);
-			jjo.put("operationId", UUIDChecker.generateUUID(msoLogger));
+			jjo.put("operationId", requestId);
 
 			String bpmnRequest = jjo.toString();
 
 			// Capture audit event
-			msoLogger
-					.debug("MSO API Handler Posting call to BPEL engine for url: "
-							+ requestClient.getUrl());
+			logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
 			String serviceId = instanceIdMap.get("serviceId");
 			String serviceInstanceType = e2eDelReq.getServiceType();
 			RequestClientParameter clientParam = new RequestClientParameter.Builder()
@@ -478,29 +435,14 @@ public class E2EServiceInstances {
 					.setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd()).build();
 			response = requestClient.post(clientParam);
 
-			msoLogger.recordMetricEvent(subStartTime,
-					MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-					"Successfully received response from BPMN engine", "BPMN",
-					recipeLookupResult.getOrchestrationURI(), null);
 		} catch (Exception e) {
-			msoLogger.recordMetricEvent(subStartTime,
-					MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.CommunicationError,
-					"Exception while communicate with BPMN engine", "BPMN",
-					recipeLookupResult.getOrchestrationURI(), null);
 			Response resp = msoRequest.buildServiceErrorResponse(
 					HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
 					"Failed calling bpmn " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-						msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-					MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError,
-					"Exception while communicate with BPMN engine");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.CommunicationError,
-					"Exception while communicate with BPMN engine");
-			msoLogger.debug("End of the transaction, the final response is: "
-					+ resp.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communicate with BPMN engine");
+			logger.debug("End of the transaction, the final response is: " + resp.getEntity());
 			return resp;
 		}
 
@@ -509,14 +451,9 @@ public class E2EServiceInstances {
 					HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
 					"bpelResponse is null",
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-					MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.BusinessProcesssError,
-					"Null response from BPEL");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.InternalError,
-					"Null response from BPMN");
-			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+			logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 			return resp;
 		}
 
@@ -531,9 +468,8 @@ public class E2EServiceInstances {
 	private Response updateE2EserviceInstances(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) throws ApiException {
 
-		String requestId = UUIDChecker.generateUUID(msoLogger);
+		String requestId = UUID.randomUUID().toString();
 		long startTime = System.currentTimeMillis();
-		msoLogger.debug("requestId is: " + requestId);
 		E2EServiceInstanceRequest e2eSir;
 		String serviceId = instanceIdMap.get("serviceId");
 
@@ -543,15 +479,13 @@ public class E2EServiceInstances {
 
 		} catch (Exception e) {
           
-			msoLogger.debug("Mapping of request to JSON object failed : ", e);
+			logger.debug("Mapping of request to JSON object failed : ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 					MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null, version);
-			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
-					"Mapping of request to JSON object failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.SchemaError.getValue(), requestJSON, e);
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
@@ -560,18 +494,16 @@ public class E2EServiceInstances {
 		try {
 			parseRequest(sir, instanceIdMap, action, version, requestJSON, false, requestId);
 		} catch (Exception e) {
-			msoLogger.debug("Validation failed: ", e);
+			logger.debug("Validation failed: ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 					MsoException.ServiceException, "Error parsing request.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null, version);
 			if (requestId != null) {
-				msoLogger.debug("Logging failed message to the database");
+				logger.debug("Logging failed message to the database");
 			}
-			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
-					"Validation of the input request failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+					MsoLogger.ErrorCode.SchemaError.getValue(), requestJSON, e);
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 		
@@ -579,30 +511,24 @@ public class E2EServiceInstances {
 		try {
 			recipeLookupResult = getServiceInstanceOrchestrationURI(e2eSir.getService().getServiceUuid(), action);
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);			
+			logger.error("{} {} {} {}", MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+					MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communciate with Catalog DB", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-		
-			
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
-					"Exception while communciate with DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			
 			return response;
 		}
 
 		if (recipeLookupResult == null) {
-			msoLogger.error(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.DataError, "No recipe found in DB");			
+			logger.error("{} {} {} {}", MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.DataError.getValue(), "No recipe found in DB");
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException, "Recipe does not exist in catalog DB",
 					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
-		
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
-					"No recipe found in DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 
 			return response;
 		}
@@ -619,7 +545,7 @@ public class E2EServiceInstances {
 			requestClient = requestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI());
 
 			// Capture audit event
-			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
+			logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
 			RequestClientParameter postParam = new RequestClientParameter.Builder()
 					.setRequestId(requestId)
 					.setBaseVfModule(false)
@@ -632,24 +558,15 @@ public class E2EServiceInstances {
 					.setALaCarte(false)
 					.setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd()).build();
 			response = requestClient.post(postParam);
-
-			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
-					null);
 		} catch (Exception e) {
-			msoLogger.debug("Exception while communicate with BPMN engine", e);
-			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN",
-					recipeLookupResult.getOrchestrationURI(), null);
+			logger.debug("Exception while communicate with BPMN engine", e);
 			Response getBPMNResp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
 		
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
-					"Exception while communicate with BPMN engine");
-			msoLogger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+					MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communicate with BPMN engine");
+			logger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
 
 			return getBPMNResp;
 		}
@@ -657,11 +574,9 @@ public class E2EServiceInstances {
 		if (response == null) {
 			Response getBPMNResp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException, "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
-					"Null response from BPMN");
-			msoLogger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+			logger.debug(END_OF_THE_TRANSACTION + getBPMNResp.getEntity());
 			return getBPMNResp;
 		}
 
@@ -675,9 +590,8 @@ public class E2EServiceInstances {
 	private Response processE2EserviceInstances(String requestJSON, Action action,
 			HashMap<String, String> instanceIdMap, String version) throws ApiException {
 
-		String requestId = UUIDChecker.generateUUID(msoLogger);
+		String requestId = UUID.randomUUID().toString();
 		long startTime = System.currentTimeMillis();
-		msoLogger.debug("requestId is: " + requestId);
 		E2EServiceInstanceRequest e2eSir;
 
 		MsoRequest msoRequest = new MsoRequest();
@@ -687,15 +601,13 @@ public class E2EServiceInstances {
 
 		} catch (Exception e) {
 		  
-			msoLogger.debug("Mapping of request to JSON object failed : ", e);
+			logger.debug("Mapping of request to JSON object failed : ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 					MsoException.ServiceException, "Mapping of request to JSON object failed.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null, version);
-			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
-					"Mapping of request to JSON object failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.SchemaError.getValue(), requestJSON, e);
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
@@ -704,18 +616,16 @@ public class E2EServiceInstances {
 		try {
 			parseRequest(sir, instanceIdMap, action, version, requestJSON, false, requestId);
 		} catch (Exception e) {
-			msoLogger.debug("Validation failed: ", e);
+			logger.debug("Validation failed: ", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_REQUEST,
 					MsoException.ServiceException, "Error parsing request.  " + e.getMessage(),
 					ErrorNumbers.SVC_BAD_PARAMETER, null, version);
 			if (requestId != null) {
-				msoLogger.debug("Logging failed message to the database");
+				logger.debug("Logging failed message to the database");
 			}
-			msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.SchemaError,
-					"Validation of the input request failed");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.SchemaError.getValue(), requestJSON, e);
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 		
@@ -723,28 +633,22 @@ public class E2EServiceInstances {
 		try {
 			recipeLookupResult = getServiceInstanceOrchestrationURI(e2eSir.getService().getServiceUuid(), action);
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError, "Exception while communciate with Catalog DB", e);		
+			logger.error("{} {} {} {}", MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communciate with Catalog DB", e);
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException, "No communication to catalog DB " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-	
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DBAccessError,
-					"Exception while communciate with DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
 		if (recipeLookupResult == null) {
-			msoLogger.error(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.DataError, "No recipe found in DB");		
+			logger.error("{} {} {} {}", MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.DataError.getValue(), "No recipe found in DB");
 			Response response = msoRequest.buildServiceErrorResponse(HttpStatus.SC_NOT_FOUND,
 					MsoException.ServiceException, "Recipe does not exist in catalog DB",
 					ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);
-		
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.DataNotFound,
-					"No recipe found in DB");
-			msoLogger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+			logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
 			return response;
 		}
 
@@ -761,7 +665,7 @@ public class E2EServiceInstances {
 			requestClient = requestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI());
 
 			// Capture audit event
-			msoLogger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
+			logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
 			RequestClientParameter parameter = new RequestClientParameter.Builder()
 					.setRequestId(requestId)
 					.setBaseVfModule(false)
@@ -774,34 +678,23 @@ public class E2EServiceInstances {
 					.setALaCarte(false)
 					.setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd()).build();
 			response = requestClient.post(parameter);
-
-			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-					"Successfully received response from BPMN engine", "BPMN", recipeLookupResult.getOrchestrationURI(),
-					null);
 		} catch (Exception e) {
-			msoLogger.recordMetricEvent(subStartTime, MsoLogger.StatusCode.ERROR,
-					MsoLogger.ResponseCode.CommunicationError, "Exception while communicate with BPMN engine", "BPMN",
-					recipeLookupResult.getOrchestrationURI(), null);
 			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException, "Failed calling bpmn " + e.getMessage(),
 					ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.AvailabilityError, "Exception while communicate with BPMN engine");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.CommunicationError,
-					"Exception while communicate with BPMN engine");
-			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
+
+			logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communicate with BPMN engine");
+			logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 			return resp;
 		}
 
 		if (response == null) {
 			Response resp = msoRequest.buildServiceErrorResponse(HttpStatus.SC_BAD_GATEWAY,
 					MsoException.ServiceException, "bpelResponse is null", ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-			msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MSO_PROP_APIHANDLER_INFRA, "", "",
-					MsoLogger.ErrorCode.BusinessProcesssError, "Null response from BPEL");
-			msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR, MsoLogger.ResponseCode.InternalError,
-					"Null response from BPMN");
-			msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
+			logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+			logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 			return resp;
 		}
 
@@ -815,9 +708,8 @@ public class E2EServiceInstances {
    private Response scaleE2EserviceInstances(String requestJSON,
                                                Action action, HashMap<String, String> instanceIdMap, String version) throws ApiException {
 
-        String requestId = UUIDChecker.generateUUID(msoLogger);
+        String requestId = UUID.randomUUID().toString();
         long startTime = System.currentTimeMillis();
-        msoLogger.debug("requestId is: " + requestId);
 		E2EServiceInstanceScaleRequest e2eScaleReq;
 
         ObjectMapper mapper = new ObjectMapper();
@@ -827,22 +719,17 @@ public class E2EServiceInstances {
 
         } catch (Exception e) {
 
-            msoLogger.debug("Mapping of request to JSON object failed : ", e);
+            logger.debug("Mapping of request to JSON object failed : ", e);
             Response response = msoRequest.buildServiceErrorResponse(
                     HttpStatus.SC_BAD_REQUEST,
                     MsoException.ServiceException,
                     "Mapping of request to JSON object failed.  "
                             + e.getMessage(), ErrorNumbers.SVC_BAD_PARAMETER,
                     null, version);
-            msoLogger.error(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
-                    MSO_PROP_APIHANDLER_INFRA, "", "",
-                    MsoLogger.ErrorCode.SchemaError, requestJSON, e);
-            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-                    MsoLogger.ResponseCode.SchemaError,
-                    "Mapping of request to JSON object failed");
-            msoLogger.debug(END_OF_THE_TRANSACTION
-                    + response.getEntity());
-            return response;
+					logger.error("{} {} {} {}", MessageEnum.APIH_REQUEST_VALIDATION_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+						MsoLogger.ErrorCode.SchemaError.getValue(), requestJSON, e);
+					logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+					return response;
         }
 
         RecipeLookupResult recipeLookupResult;
@@ -850,40 +737,29 @@ public class E2EServiceInstances {
 			//TODO  Get the service template model version uuid from AAI.
 			recipeLookupResult = getServiceInstanceOrchestrationURI(null, action);
         } catch (Exception e) {
-            msoLogger.error(MessageEnum.APIH_DB_ACCESS_EXC,
-                    MSO_PROP_APIHANDLER_INFRA, "", "",
-                    MsoLogger.ErrorCode.AvailabilityError,
-                    "Exception while communciate with Catalog DB", e);
-         
-            Response response = msoRequest.buildServiceErrorResponse(
+					logger.error("{} {} {} {}", MessageEnum.APIH_DB_ACCESS_EXC.toString(), MSO_PROP_APIHANDLER_INFRA,
+						MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communciate with Catalog DB", e);
+
+					Response response = msoRequest.buildServiceErrorResponse(
                     HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
                     "No communication to catalog DB " + e.getMessage(),
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
      
         	msoRequest.createErrorRequestRecord(Status.FAILED, requestId,  "No communication to catalog DB " + e.getMessage(), action, ModelType.service.name(), requestJSON);
-            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-                    MsoLogger.ResponseCode.DBAccessError,
-                    "Exception while communciate with DB");
-            msoLogger.debug(END_OF_THE_TRANSACTION
-                    + response.getEntity());
-            return response;
+					logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+					return response;
         }
         if (recipeLookupResult == null) {
-            msoLogger.error(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
-                    MSO_PROP_APIHANDLER_INFRA, "", "",
-                    MsoLogger.ErrorCode.DataError, "No recipe found in DB");
-         
-            Response response = msoRequest.buildServiceErrorResponse(
+					logger.error("{} {} {} {}", MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND.toString(), MSO_PROP_APIHANDLER_INFRA,
+						MsoLogger.ErrorCode.DataError.getValue(), "No recipe found in DB");
+
+					Response response = msoRequest.buildServiceErrorResponse(
                     HttpStatus.SC_NOT_FOUND, MsoException.ServiceException,
                     "Recipe does not exist in catalog DB",
                     ErrorNumbers.SVC_GENERAL_SERVICE_ERROR, null, version);            
         	msoRequest.createErrorRequestRecord(Status.FAILED, requestId, "No recipe found in DB", action, ModelType.service.name(), requestJSON);
-            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-                    MsoLogger.ResponseCode.DataNotFound,
-                    "No recipe found in DB");
-            msoLogger.debug(END_OF_THE_TRANSACTION
-                    + response.getEntity());
-            return response;
+					logger.debug(END_OF_THE_TRANSACTION + response.getEntity());
+					return response;
         }
 
         RequestClient requestClient;
@@ -894,15 +770,13 @@ public class E2EServiceInstances {
             requestClient = requestClientFactory.getRequestClient(recipeLookupResult.getOrchestrationURI());
 
             JSONObject jjo = new JSONObject(requestJSON);
-            jjo.put("operationId", UUIDChecker.generateUUID(msoLogger));
+            jjo.put("operationId", requestId);
 
             String bpmnRequest = jjo.toString();
 
             // Capture audit event
-            msoLogger
-                    .debug("MSO API Handler Posting call to BPEL engine for url: "
-                            + requestClient.getUrl());
-            String serviceId = instanceIdMap.get("serviceId");
+					logger.debug("MSO API Handler Posting call to BPEL engine for url: " + requestClient.getUrl());
+					String serviceId = instanceIdMap.get("serviceId");
             String serviceInstanceType = e2eScaleReq.getService().getServiceType();
 			RequestClientParameter postParam = new RequestClientParameter.Builder()
 					.setRequestId(requestId)
@@ -916,32 +790,16 @@ public class E2EServiceInstances {
 					.setALaCarte(false)
 					.setRecipeParamXsd(recipeLookupResult.getRecipeParamXsd()).build();
             response = requestClient.post(postParam);
-
-            msoLogger.recordMetricEvent(subStartTime,
-                    MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-                    "Successfully received response from BPMN engine", "BPMN",
-                    recipeLookupResult.getOrchestrationURI(), null);
-        } catch (Exception e) {
-            msoLogger.recordMetricEvent(subStartTime,
-                    MsoLogger.StatusCode.ERROR,
-                    MsoLogger.ResponseCode.CommunicationError,
-                    "Exception while communicate with BPMN engine", "BPMN",
-                    recipeLookupResult.getOrchestrationURI(), null);
+       } catch (Exception e) {
             Response resp = msoRequest.buildServiceErrorResponse(
                     HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                     "Failed calling bpmn " + e.getMessage(),
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-        
-            msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                    MSO_PROP_APIHANDLER_INFRA, "", "",
-                    MsoLogger.ErrorCode.AvailabilityError,
-                    "Exception while communicate with BPMN engine",e);
-            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-                    MsoLogger.ResponseCode.CommunicationError,
-                    "Exception while communicate with BPMN engine");
-            msoLogger.debug(END_OF_THE_TRANSACTION
-                    + resp.getEntity());
-            return resp;
+
+					logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+						MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communicate with BPMN engine", e);
+					logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
+					return resp;
         }
 
         if (response == null) {
@@ -949,15 +807,10 @@ public class E2EServiceInstances {
                     HttpStatus.SC_BAD_GATEWAY, MsoException.ServiceException,
                     "bpelResponse is null",
                     ErrorNumbers.SVC_NO_SERVER_RESOURCES, null, version);
-            msoLogger.error(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR,
-                    MSO_PROP_APIHANDLER_INFRA, "", "",
-                    MsoLogger.ErrorCode.BusinessProcesssError,
-                    "Null response from BPEL");
-            msoLogger.recordAuditEvent(startTime, MsoLogger.StatusCode.ERROR,
-                    MsoLogger.ResponseCode.InternalError,
-                    "Null response from BPMN");
-            msoLogger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
-            return resp;
+					logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_COMMUNICATE_ERROR.toString(), MSO_PROP_APIHANDLER_INFRA,
+						MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Null response from BPEL");
+					logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
+					return resp;
         }
 
         ResponseHandler respHandler = new ResponseHandler(response,
@@ -978,11 +831,8 @@ public class E2EServiceInstances {
 		// BPMN accepted the request, the request is in progress
 		if (bpelStatus == HttpStatus.SC_ACCEPTED) {
 			String camundaJSONResponseBody = respHandler.getResponseBody();
-			msoLogger.debug("Received from Camunda: " + camundaJSONResponseBody);
-			msoLogger.recordAuditEvent(startTime,
-					MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-					"BPMN accepted the request, the request is in progress");
-			msoLogger.debug(END_OF_THE_TRANSACTION + camundaJSONResponseBody);
+			logger.debug("Received from Camunda: " + camundaJSONResponseBody);
+			logger.debug(END_OF_THE_TRANSACTION + camundaJSONResponseBody);
 			return builder.buildResponse(HttpStatus.SC_ACCEPTED, null, camundaJSONResponseBody, apiVersion);
 		} else {
 			List<String> variables = new ArrayList<>();
@@ -995,17 +845,10 @@ public class E2EServiceInstances {
 						"Request Failed due to BPEL error with HTTP Status= %1 "
 								+ '\n' + camundaJSONResponseBody,
 						ErrorNumbers.SVC_DETAILED_SERVICE_ERROR, variables, version);
-				msoLogger.error(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
-						requestClient.getUrl(), "", "",
-						MsoLogger.ErrorCode.BusinessProcesssError,
-						"Response from BPEL engine is failed with HTTP Status="
-								+ bpelStatus);
-				msoLogger.recordAuditEvent(startTime,
-						MsoLogger.StatusCode.ERROR,
-						MsoLogger.ResponseCode.InternalError,
-						"Response from BPMN engine is failed");
-				msoLogger.debug(END_OF_THE_TRANSACTION
-						+ resp.getEntity());
+				logger.error("{} {} {} {}", MessageEnum.APIH_BPEL_RESPONSE_ERROR.toString(), requestClient.getUrl(),
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+					"Response from BPEL engine is failed with HTTP Status=" + bpelStatus);
+				logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 				return resp;
 			} else {
 				Response resp = msoRequest
@@ -1015,16 +858,10 @@ public class E2EServiceInstances {
 								"Request Failed due to BPEL error with HTTP Status= %1",
 								ErrorNumbers.SVC_DETAILED_SERVICE_ERROR,
 								variables, version);
-				msoLogger.error(MessageEnum.APIH_BPEL_RESPONSE_ERROR,
-						requestClient.getUrl(), "", "",
-						MsoLogger.ErrorCode.BusinessProcesssError,
+				logger.error("", MessageEnum.APIH_BPEL_RESPONSE_ERROR.toString(), requestClient.getUrl(),
+					MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
 						"Response from BPEL engine is empty");
-				msoLogger.recordAuditEvent(startTime,
-						MsoLogger.StatusCode.ERROR,
-						MsoLogger.ResponseCode.InternalError,
-						"Response from BPEL engine is empty");
-				msoLogger.debug(END_OF_THE_TRANSACTION
-						+ resp.getEntity());
+				logger.debug(END_OF_THE_TRANSACTION + resp.getEntity());
 				return resp;
 			}
 		}
@@ -1042,12 +879,11 @@ public class E2EServiceInstances {
 		RecipeLookupResult recipeLookupResult = getServiceURI(serviceModelUUID, action);
 
 		if (recipeLookupResult != null) {
-			msoLogger.debug("Orchestration URI is: "
-					+ recipeLookupResult.getOrchestrationURI()
-					+ ", recipe Timeout is: "
-					+ Integer.toString(recipeLookupResult.getRecipeTimeout()));
+			logger.debug(
+				"Orchestration URI is: " + recipeLookupResult.getOrchestrationURI() + ", recipe Timeout is: " + Integer
+					.toString(recipeLookupResult.getRecipeTimeout()));
 		} else {
-			msoLogger.debug("No matching recipe record found");
+			logger.debug("No matching recipe record found");
 		}
 		return recipeLookupResult;
 	}
@@ -1204,9 +1040,7 @@ public class E2EServiceInstances {
 		try {
 			returnString = mapper.writeValueAsString(sir);
 		} catch (IOException e) {
-			msoLogger
-					.debug("Exception while converting ServiceInstancesRequest object to string",
-							e);
+			logger.debug("Exception while converting ServiceInstancesRequest object to string", e);
 		}
 
 		return returnString;
