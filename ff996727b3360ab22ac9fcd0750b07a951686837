@@ -50,6 +50,23 @@
       "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "628fde2d_0af3bf1b",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/PnfResourceRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-08T19:02:42Z",
+      "side": 1,
+      "message": "Aren\u0027t these already covered via spring data REST generated endpoints?",
+      "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
