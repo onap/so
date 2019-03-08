@@ -23,71 +23,48 @@ package org.onap.so.asdc.installer.heat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
-
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
-import javax.transaction.Transactional;
-
-import org.apache.commons.io.IOUtils;
 import org.hibernate.exception.LockAcquisitionException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.onap.sdc.api.notification.IResourceInstance;
-import org.onap.sdc.api.results.IDistributionClientDownloadResult;
+import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
 import org.onap.sdc.tosca.parser.impl.SdcPropertyNames;
-import org.onap.sdc.toscaparser.api.CapabilityAssignment;
-import org.onap.sdc.toscaparser.api.CapabilityAssignments;
 import org.onap.sdc.toscaparser.api.Group;
 import org.onap.sdc.toscaparser.api.NodeTemplate;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
+import org.onap.sdc.toscaparser.api.elements.StatefulEntityType;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.BaseTest;
-import org.onap.so.asdc.client.ASDCConfiguration;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
-import org.onap.so.asdc.installer.VfModuleArtifact;
-import org.onap.so.asdc.installer.VfResourceStructure;
-import org.onap.so.db.catalog.beans.AllottedResource;
-import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
-import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
-import org.onap.so.db.catalog.beans.HeatTemplate;
-import org.onap.so.db.catalog.beans.NetworkResource;
-import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
-import org.onap.so.db.catalog.beans.Service;
-import org.onap.so.db.catalog.beans.VnfResource;
-import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.asdc.installer.ToscaResourceStructure;
+import org.onap.so.db.catalog.beans.ConfigurationResource;
+import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
+import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
-import org.onap.so.db.catalog.data.repository.ExternalServiceToInternalServiceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
-import org.onap.so.db.request.beans.WatchdogDistributionStatus;
-import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -114,6 +91,16 @@ public class ToscaResourceInstallerTest extends BaseTest {
 	private IResourceInstance resourceInstance;
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
+	@Mock
+	private NodeTemplate nodeTemplate;
+	@Mock
+	private ToscaResourceStructure toscaResourceStructure;
+	@Mock 
+	private ServiceProxyResourceCustomization spResourceCustomization;
+	@Mock
+	private ISdcCsarHelper csarHelper;
+	@Mock
+	private StatefulEntityType entityType;
 
 	private NotificationDataImpl notificationData;
 	private JsonStatusData statusData;
@@ -309,5 +296,83 @@ public class ToscaResourceInstallerTest extends BaseTest {
 			}
 		}
 		return actualWatchdogComponentDistributionStatus;
+	}
+	
+	
+	
+	
+	private void prepareConfigurationResource() {
+		doReturn(metadata).when(nodeTemplate).getMetaData();
+		doReturn(MockConstants.TEMPLATE_TYPE).when(nodeTemplate).getType();
+		
+		doReturn(MockConstants.MODEL_NAME).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_NAME);		
+		doReturn(MockConstants.MODEL_INVARIANT_UUID).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID);		
+		doReturn(MockConstants.MODEL_UUID).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_UUID);		
+		doReturn(MockConstants.MODEL_VERSION).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_VERSION);
+		doReturn(MockConstants.MODEL_DESCRIPTION).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION);
+		doReturn(MockConstants.MODEL_NAME).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
+		doReturn(MockConstants.MODEL_NAME).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_NAME);
+	}
+	
+	@Test
+	public void getConfigurationResourceTest() {
+		prepareConfigurationResource();
+		
+		ConfigurationResource configResource=toscaInstaller.getConfigurationResource(nodeTemplate);
+		
+		assertNotNull(configResource);
+		assertEquals(MockConstants.MODEL_NAME, configResource.getModelName());
+		assertEquals(MockConstants.MODEL_INVARIANT_UUID, configResource.getModelInvariantUUID());
+		assertEquals(MockConstants.MODEL_UUID, configResource.getModelUUID());
+		assertEquals(MockConstants.MODEL_VERSION, configResource.getModelVersion());
+		assertEquals(MockConstants.MODEL_DESCRIPTION, configResource.getDescription());
+		assertEquals(MockConstants.TEMPLATE_TYPE, nodeTemplate.getType());
+	}
+	
+	private void prepareConfigurationResourceCustomization() {
+		prepareConfigurationResource();
+		doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(metadata).getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+		doReturn(csarHelper).when(toscaResourceStructure).getSdcCsarHelper();
+		doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION);
+		doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE);
+		doReturn(null).when(csarHelper).getNodeTemplatePropertyLeafValue(nodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE);
+		doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(spResourceCustomization).getModelCustomizationUUID();
+	}
+	
+	
+	@Test
+	public void getConfigurationResourceCustomizationTest() {
+		prepareConfigurationResourceCustomization();		
+		
+		ConfigurationResourceCustomization configurationResourceCustomization = toscaInstaller.getConfigurationResourceCustomization(
+				nodeTemplate, toscaResourceStructure, spResourceCustomization);
+		assertNotNull(configurationResourceCustomization);
+		assertNotNull(configurationResourceCustomization.getConfigurationResource());
+		assertEquals(MockConstants.MODEL_CUSTOMIZATIONUUID, configurationResourceCustomization.getServiceProxyResourceCustomizationUUID());
+	}
+	
+	@Test
+	public void getVnrNodeTemplateTest() {
+		prepareConfigurationResourceCustomization();
+		List<NodeTemplate> nodeTemplateList = new ArrayList<>();
+		doReturn(ToscaResourceInstaller.VLAN_NETWORK_RECEPTOR).when(entityType).getType();
+		doReturn(entityType).when(nodeTemplate).getTypeDefinition();
+		nodeTemplateList.add(nodeTemplate);
+		Optional<ConfigurationResourceCustomization> vnrResourceCustomization= 
+				toscaInstaller.getVnrNodeTemplate(nodeTemplateList, toscaResourceStructure, spResourceCustomization);
+		assertTrue(vnrResourceCustomization.isPresent());
+		assertEquals(ToscaResourceInstaller.VLAN_NETWORK_RECEPTOR, entityType.getType());
+	}
+	
+	class MockConstants{
+		public final static String MODEL_NAME = "VLAN Network Receptor Configuration";
+		public final static String MODEL_INVARIANT_UUID = "1608eef4-de53-4334-a8d2-ba79cab4bde0";
+		public final static String MODEL_UUID = "212ca27b-554c-474c-96b9-ddc2f1b1ddba";
+		public final static String MODEL_VERSION = "30.0";
+		public final static String MODEL_DESCRIPTION = "VLAN network receptor configuration object";
+		public final static String MODEL_CUSTOMIZATIONUUID = "2db953e8-679d-437b-bff7-cb262638a8cd";
+		public final static String TEMPLATE_TYPE = "org.openecomp.nodes.VLANNetworkReceptor";
+		public final static String TEMPLATE_NAME = "VLAN Network Receptor Configuration 0";
+		
 	}
 }
