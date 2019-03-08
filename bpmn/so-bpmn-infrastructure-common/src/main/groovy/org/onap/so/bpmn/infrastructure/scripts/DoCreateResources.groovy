@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +42,8 @@ import org.onap.so.bpmn.core.domain.VnfResource
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
@@ -61,31 +65,31 @@ import org.onap.so.logger.MsoLogger
  * @param - WorkflowException
  */
 public class DoCreateResources extends AbstractServiceTaskProcessor{
-    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateResources.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateResources.class);
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
     CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 
     public void preProcessRequest(DelegateExecution execution) {
-        msoLogger.trace("preProcessRequest ")
+        logger.trace("preProcessRequest ")
         String msg = ""
 
         List addResourceList = execution.getVariable("addResourceList")
         if (addResourceList == null) {
             msg = "Input addResourceList is null"
-            msoLogger.info(msg)
+            logger.info(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
         }
         else if (addResourceList.size() == 0) {
             msg = "No resource in addResourceList"
-            msoLogger.info(msg)
+            logger.info(msg)
         }
-        msoLogger.trace("Exit preProcessRequest ")
+        logger.trace("Exit preProcessRequest ")
     }
 
     public void sequenceResoure(DelegateExecution execution) {
-        msoLogger.trace("Start sequenceResoure Process ")
+        logger.trace("Start sequenceResoure Process ")
         
         String incomingRequest = execution.getVariable("uuiRequest")
         String serviceModelUuid = jsonUtil.getJsonValue(incomingRequest,"service.serviceUuid")
@@ -105,7 +109,7 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         // get Sequence from csar(model)  
         if(resourceSequence == null) {
             resourceSequence = ResourceRequestBuilder.getResourceSequence(serviceModelUuid)
-            msoLogger.info("Get Sequence from csar : " + resourceSequence)
+            logger.info("Get Sequence from csar : " + resourceSequence)
         }
 
         if(resourceSequence != null) {
@@ -151,13 +155,13 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         execution.setVariable("isContainsWanResource", isContainsWanResource)
         execution.setVariable("currentResourceIndex", 0)
         execution.setVariable("sequencedResourceList", sequencedResourceList)
-        msoLogger.info("sequencedResourceList: " + sequencedResourceList)
-        msoLogger.trace("COMPLETED sequenceResoure Process ")
+        logger.info("sequencedResourceList: " + sequencedResourceList)
+        logger.trace("COMPLETED sequenceResoure Process ")
     }
 
     public prepareServiceTopologyRequest(DelegateExecution execution) {
 
-        msoLogger.trace("======== Start prepareServiceTopologyRequest Process ======== ")
+        logger.trace("======== Start prepareServiceTopologyRequest Process ======== ")
 
         String serviceDecompose = execution.getVariable("serviceDecomposition")
 
@@ -172,21 +176,21 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         execution.setVariable("modelUuid", serviceUuid)
         execution.setVariable("serviceModelName", serviceModelName)
 
-        msoLogger.trace("======== End prepareServiceTopologyRequest Process ======== ")
+        logger.trace("======== End prepareServiceTopologyRequest Process ======== ")
     }
 
     public void getCurrentResoure(DelegateExecution execution){
-        msoLogger.trace("Start getCurrentResoure Process ")
+        logger.trace("Start getCurrentResoure Process ")
         def currentIndex = execution.getVariable("currentResourceIndex")
         List<Resource> sequencedResourceList = execution.getVariable("sequencedResourceList")
         Resource currentResource = sequencedResourceList.get(currentIndex)
         execution.setVariable("resourceType", currentResource.getModelInfo().getModelName())
-        msoLogger.info("Now we deal with resouce:" + currentResource.getModelInfo().getModelName())
-        msoLogger.trace("COMPLETED getCurrentResoure Process ")
+        logger.info("Now we deal with resouce:" + currentResource.getModelInfo().getModelName())
+        logger.trace("COMPLETED getCurrentResoure Process ")
     }
 
     public void parseNextResource(DelegateExecution execution){
-        msoLogger.trace("Start parseNextResource Process ")
+        logger.trace("Start parseNextResource Process ")
         def currentIndex = execution.getVariable("currentResourceIndex")
         def nextIndex =  currentIndex + 1
         execution.setVariable("currentResourceIndex", nextIndex)
@@ -196,17 +200,17 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         }else{
             execution.setVariable("allResourceFinished", "false")
         }
-        msoLogger.trace("COMPLETED parseNextResource Process ")
+        logger.trace("COMPLETED parseNextResource Process ")
     }
 
     public void prepareResourceRecipeRequest(DelegateExecution execution){
-        msoLogger.trace("Start prepareResourceRecipeRequest Process ")
+        logger.trace("Start prepareResourceRecipeRequest Process ")
         ResourceInput resourceInput = new ResourceInput()
         String serviceInstanceName = execution.getVariable("serviceInstanceName")
         String resourceType = execution.getVariable("resourceType")
         String resourceInstanceName = resourceType + "_" + serviceInstanceName
         resourceInput.setResourceInstanceName(resourceInstanceName)
-        msoLogger.info("Prepare Resource Request resourceInstanceName:" + resourceInstanceName)
+        logger.info("Prepare Resource Request resourceInstanceName:" + resourceInstanceName)
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
         String serviceType = execution.getVariable("serviceType")
         String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -234,11 +238,11 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
         resourceInput.setRequestsInputs(incomingRequest)
         execution.setVariable("resourceInput", resourceInput.toString())
         execution.setVariable("resourceModelUUID", resourceInput.getResourceModelInfo().getModelUuid())
-        msoLogger.trace("COMPLETED prepareResourceRecipeRequest Process ")
+        logger.trace("COMPLETED prepareResourceRecipeRequest Process ")
     }
 
     public void executeResourceRecipe(DelegateExecution execution){
-        msoLogger.trace("Start executeResourceRecipe Process ")
+        logger.trace("Start executeResourceRecipe Process ")
 
         try {
             String requestId = execution.getVariable("msoRequestId")
@@ -261,16 +265,16 @@ public class DoCreateResources extends AbstractServiceTaskProcessor{
                 HttpResponse resp = bpmnRestClient.post(recipeURL, requestId, recipeTimeOut, requestAction, serviceInstanceId, serviceType, resourceInput, recipeParamXsd)
             } else {
                 String exceptionMessage = "Resource receipe is not found for resource modeluuid: " + resourceModelUUID
-                msoLogger.trace(exceptionMessage)
+                logger.trace(exceptionMessage)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, exceptionMessage)
             }
 
-            msoLogger.trace("======== end executeResourceRecipe Process ======== ")
+            logger.trace("======== end executeResourceRecipe Process ======== ")
         }catch(BpmnError b){
-            msoLogger.debug("Rethrowing MSOWorkflowException")
+            logger.debug("Rethrowing MSOWorkflowException")
             throw b
         }catch(Exception e){
-            msoLogger.debug("Error occured within DoCreateResources executeResourceRecipe method: " + e)
+            logger.debug("Error occured within DoCreateResources executeResourceRecipe method: " + e)
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured during DoCreateResources executeResourceRecipe Catalog")
         }
     }

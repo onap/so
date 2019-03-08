@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +38,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.infrastructure.aai.AAICreateResources;
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.w3c.dom.*
 import javax.xml.parsers.*
 import org.xml.sax.InputSource
@@ -43,7 +47,7 @@ import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateVfModuleInfra.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateVfModuleInfra.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -63,7 +67,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.debug('Started ' + method)
+		logger.debug('Started ' + method)
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		
 		execution.setVariable("CVFMI_sentSyncResponse", false)
@@ -79,8 +83,8 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		execution.setVariable("RollbackData", rollbackData)
 		
 		def incomingRequest = execution.getVariable('bpmnRequest')
-		msoLogger.debug("Incoming Infra Request: " + incomingRequest)
-		msoLogger.debug("CreateVfModule Infra incoming Request: " + incomingRequest)
+		logger.debug("Incoming Infra Request: " + incomingRequest)
+		logger.debug("CreateVfModule Infra incoming Request: " + incomingRequest)
 
 		setBasicDBAuthHeader(execution, isDebugLogEnabled)
 		
@@ -89,7 +93,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			def jsonSlurper = new JsonSlurper()
 			def jsonOutput = new JsonOutput()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
-			msoLogger.debug(" Request is in JSON format.")
+			logger.debug(" Request is in JSON format.")
 
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def vnfId = execution.getVariable('vnfId')
@@ -140,7 +144,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 				}							
 			}		
 						
-			msoLogger.debug('Processed user params: ' + userParamsMap)		
+			logger.debug('Processed user params: ' + userParamsMap)		
 			
 			execution.setVariable(prefix + 'vfModuleInputParams', userParamsMap)
 			
@@ -232,24 +236,24 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			execution.setVariable(prefix + 'controllerType', controllerType)
 			execution.setVariable('healthCheckIndex0', 0)
 
-			msoLogger.debug('RequestInfo: ' + execution.getVariable("CVFMI_requestInfo"))			
+			logger.debug('RequestInfo: ' + execution.getVariable("CVFMI_requestInfo"))			
 			
-			msoLogger.debug('rollbackEnabled: ' + execution.getVariable("CVFMI_rollbackEnabled"))
+			logger.debug('rollbackEnabled: ' + execution.getVariable("CVFMI_rollbackEnabled"))
 
-			msoLogger.trace('Finished ' + method)
+			logger.trace('Finished ' + method)
 		} catch (BpmnError bpmnError) {
 			throw bpmnError
 		}
 		catch(groovy.json.JsonException je) {
-			msoLogger.debug("Request is not in JSON format.")
+			logger.debug("Request is not in JSON format.")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
 			//execution.setVariable("CVFMODVOL2_RESTFault", restFaultMessage)
 			//execution.setVariable("CVFMODVOL2_isDataOk", false)
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
 		}
 
@@ -278,7 +282,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 		
-		msoLogger.trace('Started ' + method)
+		logger.trace('Started ' + method)
 
 		try {
 			def requestInfo = execution.getVariable('CVFMI_requestInfo')
@@ -292,13 +296,13 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			sendWorkflowResponse(execution, 200, synchResponse)
 
 			execution.setVariable("CVFMI_sentSyncResponse", true)
-			msoLogger.debug("CreateVfModule Infra Response: " + synchResponse)
-			msoLogger.trace('Finished ' + method)
+			logger.debug("CreateVfModule Infra Response: " + synchResponse)
+			logger.trace('Finished ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Exception Encountered ", "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Exception Encountered ", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -371,13 +375,13 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 	 * @param execution the execution
 	 */
 	public void postProcessResponse(DelegateExecution execution){
-		msoLogger.trace("STARTED PostProcessResponse Process")
+		logger.trace("STARTED PostProcessResponse Process")
 		try{			
 			def requestInfo = execution.getVariable("CVFMI_requestInfo")
 			def action = utils.getNodeText(requestInfo, "action")
 
-			msoLogger.debug("requestInfo is: " + requestInfo)
-			msoLogger.debug("action is: " + action)
+			logger.debug("requestInfo is: " + requestInfo)
+			logger.debug("action is: " + action)
 
 			String payload =
 					"""  <aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
@@ -393,15 +397,15 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_SuccessFlag", true)
 			execution.setVariable("CVFMI_msoCompletionRequest", payload)
-			msoLogger.debug("CreateVfModuleInfra completion request: " + payload)
-			msoLogger.debug("Outgoing MsoCompletionRequest: \n" + payload)
+			logger.debug("CreateVfModuleInfra completion request: " + payload)
+			logger.debug("Outgoing MsoCompletionRequest: \n" + payload)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Exception Occured Processing PostProcessResponse - " + "\n", "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Exception Occured Processing PostProcessResponse - " + "\n", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occured during PostProcessResponse Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED PostProcessResponse Process")
+		logger.trace("COMPLETED PostProcessResponse Process")
 	}
 
 
@@ -420,7 +424,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 		
-		msoLogger.trace('Started ' + method)
+		logger.trace('Started ' + method)
 
 		String processKey = getProcessKey(execution);
 		def prefix = execution.getVariable("prefix")
@@ -466,20 +470,20 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			utils.logContext(requestId, serviceInstanceId)
 			*/
-			msoLogger.debug("CreateVfModule incoming request: " + request)
-			msoLogger.debug('Incoming message: ' + System.lineSeparator() + request)
-			msoLogger.trace('Finished ' + method)
+			logger.debug("CreateVfModule incoming request: " + request)
+			logger.debug('Incoming message: ' + System.lineSeparator() + request)
+			logger.trace('Finished ' + method)
 			return request
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Caught exception in " + method , "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Caught exception in " + method , "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}
 
 	public void prepareUpdateInfraRequest(DelegateExecution execution){
-		msoLogger.trace("STARTED prepareUpdateInfraRequest Process")
+		logger.trace("STARTED prepareUpdateInfraRequest Process")
 		try{
 			
 			String requestInfo = execution.getVariable("CVFMI_requestInfo")			
@@ -493,7 +497,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint",execution)
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-			msoLogger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
+			logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
 			String payload =
 				"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -516,15 +520,15 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_updateInfraRequest", payload)
-			msoLogger.debug("Outgoing UpdateInfraRequest: \n" + payload)
-			msoLogger.debug("CreateVfModuleInfra Outgoing UpdateInfra Request: " + payload)
+			logger.debug("Outgoing UpdateInfraRequest: \n" + payload)
+			logger.debug("CreateVfModuleInfra Outgoing UpdateInfra Request: " + payload)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing prepareUpdateInfraRequest.", "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured Processing prepareUpdateInfraRequest.", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateInfraRequest Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED prepareUpdateInfraRequest Process")
+		logger.trace("COMPLETED prepareUpdateInfraRequest Process")
 	}
 
 	/**
@@ -539,7 +543,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			', resultVar=' + resultVar +
 			')'
 		
-		msoLogger.trace("Started " + method)
+		logger.trace("Started " + method)
 
 
 		try {
@@ -565,17 +569,17 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 				</aetgt:FalloutHandlerRequest>
 			"""
 
-			msoLogger.debug("CONTENT before translation: " + content)
+			logger.debug("CONTENT before translation: " + content)
 			content = utils.formatXml(content)
-			msoLogger.debug(resultVar + ' = ' + System.lineSeparator() + content)
-			msoLogger.debug("CreateVfModuleInfra FallOutHander Request: " + content)
+			logger.debug(resultVar + ' = ' + System.lineSeparator() + content)
+			logger.debug("CreateVfModuleInfra FallOutHander Request: " + content)
 			execution.setVariable(resultVar, content)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Caught exception in " + method , "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Caught exception in " + method , "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -584,7 +588,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.validateRollbackResponse(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		logWorkflowException(execution, 'CreateVfModuleInfra caught an event')
 		saveWorkflowException(execution, 'CVFMI_originalWorkflowException')
@@ -594,7 +598,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.validateRollbackResponse(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		def originalException = execution.getVariable("CVFMI_originalWorkflowException")
 		execution.setVariable("WorkflowException", originalException)
 
@@ -603,23 +607,23 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 	}
 	
 	public void sendErrorResponse(DelegateExecution execution){
-		msoLogger.trace("STARTED CreateVfModulenfra sendErrorResponse Process")
+		logger.trace("STARTED CreateVfModulenfra sendErrorResponse Process")
 		try {
 			def sentSyncResponse = execution.getVariable("CVFMI_sentSyncResponse")
 			if(sentSyncResponse == false){
 				WorkflowException wfex = execution.getVariable("WorkflowException")
 				String response = exceptionUtil.buildErrorResponseXml(wfex)
-				msoLogger.debug(response)
+				logger.debug(response)
 				sendWorkflowResponse(execution, 500, response)
 			}else{
-				msoLogger.debug("Not Sending Error Response.  Sync Response Already Sent")
+				logger.debug("Not Sending Error Response.  Sync Response Already Sent")
 			}
 
 		} catch (Exception ex) {
-			msoLogger.debug("Error Occured in CreateVfModuleInfra sendErrorResponse Process " + ex.getMessage())
+			logger.debug("Error Occured in CreateVfModuleInfra sendErrorResponse Process " + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in CreateVfModuleInfra sendErrorResponse Process")
 		}
-		msoLogger.trace("COMPLETED CreateVfModuleInfra sendErrorResponse Process")
+		logger.trace("COMPLETED CreateVfModuleInfra sendErrorResponse Process")
 	}
 
 

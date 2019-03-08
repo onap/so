@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,13 +44,15 @@ import org.springframework.web.util.UriUtils
 
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This groovy class supports the <class>DoCreateNetworkInstanceRollback.bpmn</class> process.
  *
  */
 public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteNetworkInstanceRollback.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoDeleteNetworkInstanceRollback.class);
 
 	String Prefix="DELNWKIR_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -96,7 +100,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside preProcessRequest() of " + className + ".groovy ")
+		logger.trace("Inside preProcessRequest() of " + className + ".groovy ")
 
 		try {
 			// initialize flow variables
@@ -126,10 +130,10 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 			execution.setVariable(Prefix + "rollbackNetworkRequest", rollbackNetworkRequest)
 			execution.setVariable(Prefix + "rollbackSDNCRequest", rollbackSDNCRequest)
 			execution.setVariable(Prefix + "rollbackDeactivateSDNCRequest", rollbackDeactivateSDNCRequest)
-			msoLogger.debug("'rollbackData': " + '\n' + execution.getVariable("rollbackData"))
+			logger.debug("'rollbackData': " + '\n' + execution.getVariable("rollbackData"))
 
 			String sdncVersion = execution.getVariable("sdncVersion")
-			msoLogger.debug("sdncVersion? : " + sdncVersion)
+			logger.debug("sdncVersion? : " + sdncVersion)
 
 			// PO Authorization Info / headers Authorization=
 			String basicAuthValuePO = UrnPropertiesReader.getVariable("mso.adapters.po.auth",execution)
@@ -141,7 +145,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 			} catch (IOException ex) {
 				String exceptionMessage = "Exception Encountered in DoCreateNetworkInstance, PreProcessRequest() - "
 				String dataErrorMessage = exceptionMessage + " Unable to encode PO/SDNC user/password string - " + ex.getMessage()
-				msoLogger.debug(dataErrorMessage )
+				logger.debug(dataErrorMessage )
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 			}
 
@@ -150,7 +154,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 			} else {
 				execution.setVariable(Prefix + "WorkflowException", execution.getVariable("WorkflowException"))
 			}
-			msoLogger.debug("*** WorkflowException : " + execution.getVariable(Prefix + "WorkflowException"))
+			logger.debug("*** WorkflowException : " + execution.getVariable(Prefix + "WorkflowException"))
 			if(execution.getVariable(Prefix + "WorkflowException") != null) {
 				// called by: DoCreateNetworkInstance, partial rollback
 				execution.setVariable(Prefix + "fullRollback", false)
@@ -161,7 +165,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 			}
 
-			msoLogger.debug("*** fullRollback? : " + execution.getVariable(Prefix + "fullRollback"))
+			logger.debug("*** fullRollback? : " + execution.getVariable(Prefix + "fullRollback"))
 
 		} catch (BpmnError e) {
 		throw e;
@@ -170,7 +174,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 			sendSyncError(execution)
 			// caught exception
 			String exceptionMessage = "Exception Encountered in PreProcessRequest() of " + className + ".groovy ***** : " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -181,7 +185,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside validateRollbackResponses() of DoDeleteNetworkInstanceRollback ")
+		logger.trace("Inside validateRollbackResponses() of DoDeleteNetworkInstanceRollback ")
 
 		try {
 
@@ -207,8 +211,8 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 				} else {
 					  rollbackDeactivateSDNCMessages = " + SDNC deactivate rollback failed. "
 				}
-				msoLogger.debug(" SDNC deactivate rollback Code - " + rollbackDeactivateSDNCReturnCode)
-				msoLogger.debug(" SDNC deactivate rollback  Response - " + rollbackDeactivateSDNCResponse)
+				logger.debug(" SDNC deactivate rollback Code - " + rollbackDeactivateSDNCReturnCode)
+				logger.debug(" SDNC deactivate rollback  Response - " + rollbackDeactivateSDNCResponse)
 			}
 
 			// validate SDNC rollback response
@@ -234,8 +238,8 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 				 } else {
 					  rollbackSdncErrorMessages = " + SDNC unassign rollback failed. "
 				 }
-				msoLogger.debug(" SDNC assign rollback Code - " + rollbackSDNCReturnCode)
-				msoLogger.debug(" SDNC assign rollback  Response - " + rollbackSDNCResponse)
+				logger.debug(" SDNC assign rollback Code - " + rollbackSDNCReturnCode)
+				logger.debug(" SDNC assign rollback  Response - " + rollbackSDNCResponse)
 			}
 
 			// validate PO network rollback response
@@ -250,13 +254,13 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 					rollbackNetworkErrorMessages = " + PO Network rollback completed."
 				}
 
-				msoLogger.debug(" NetworkRollback Code - " + rollbackNetworkReturnCode)
-				msoLogger.debug(" NetworkRollback Response - " + rollbackNetworkResponse)
+				logger.debug(" NetworkRollback Code - " + rollbackNetworkReturnCode)
+				logger.debug(" NetworkRollback Response - " + rollbackNetworkResponse)
 			}
 
 			String statusMessage = ""
 			int errorCode = 7000
-			msoLogger.debug("*** fullRollback? : " + execution.getVariable(Prefix + "fullRollback"))
+			logger.debug("*** fullRollback? : " + execution.getVariable(Prefix + "fullRollback"))
 			if (execution.getVariable(Prefix + "fullRollback") == false) {
 				WorkflowException wfe = execution.getVariable(Prefix + "WorkflowException") // original WorkflowException
 				if (wfe != null) {
@@ -278,7 +282,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 				}
 
 				statusMessage =  statusMessage + rollbackDeactivateSDNCMessages + rollbackNetworkErrorMessages + rollbackSdncErrorMessages
-				msoLogger.debug("Final DoDeleteNetworkInstanceRollback status message: " + statusMessage)
+				logger.debug("Final DoDeleteNetworkInstanceRollback status message: " + statusMessage)
 				String processKey = getProcessKey(execution);
 				WorkflowException exception = new WorkflowException(processKey, errorCode, statusMessage);
 				execution.setVariable("workflowException", exception);
@@ -290,7 +294,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 				    execution.setVariable("rollbackError", false)
 			    } else {
 				    String exceptionMessage = "Network Delete Rollback was not Successful. "
-                    msoLogger.debug(exceptionMessage)
+                    logger.debug(exceptionMessage)
 					execution.setVariable("rollbackSuccessful", false)
 				    execution.setVariable("rollbackError", true)
 					exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
@@ -301,7 +305,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 		} catch (Exception ex) {
 			String errorMessage = "See Previous Camunda flows for cause of Error: Undetermined Exception."
 			String exceptionMessage = " Bpmn error encountered in DoDeleteNetworkInstanceRollback flow. validateRollbackResponses() - " + errorMessage + ": " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -319,18 +323,18 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 		execution.setVariable("prefix",Prefix)
 
 		try{
-			msoLogger.debug("Caught a Java Exception in " + Prefix)
-			msoLogger.debug("Started processJavaException Method")
-			msoLogger.debug("Variables List: " + execution.getVariables())
+			logger.debug("Caught a Java Exception in " + Prefix)
+			logger.debug("Started processJavaException Method")
+			logger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception")
 
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
+			logger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable("UnexpectedError", "Exception in processJavaException method - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Exception in processJavaException method" + Prefix)
 		}
-		msoLogger.debug("Completed processJavaException Method in " + Prefix)
+		logger.debug("Completed processJavaException Method in " + Prefix)
 	}
 
 }

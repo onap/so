@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,6 +43,8 @@ import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.bpmn.infrastructure.aai.groovyflows.AAICreateResources;
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -50,7 +54,7 @@ import org.onap.so.logger.MsoLogger
  */
 class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateVnfInfra.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateVnfInfra.class);
 	
 
 	String Prefix="CREVI_"
@@ -69,68 +73,68 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
-		msoLogger.trace("STARTED CreateVnfInfra PreProcessRequest Process")
+		logger.trace("STARTED CreateVnfInfra PreProcessRequest Process")
 		
-		setBasicDBAuthHeader(execution, isDebugEnabled)
+		setBasicDBAuthHeader(execution)
 		execution.setVariable("CREVI_sentSyncResponse", false)
 
 		try{
 			// Get Variables
 			String createVnfRequest = execution.getVariable("bpmnRequest")
 			execution.setVariable("CREVI_createVnfRequest", createVnfRequest)
-			msoLogger.debug("Incoming CreateVnfInfra Request is: \n" + createVnfRequest)
+			logger.debug("Incoming CreateVnfInfra Request is: \n" + createVnfRequest)
 
 			if(createVnfRequest != null){
 
 				String requestId = execution.getVariable("mso-request-id")
 				execution.setVariable("CREVI_requestId", requestId)
-				msoLogger.debug("Incoming Request Id is: " + requestId)
+				logger.debug("Incoming Request Id is: " + requestId)
 
 				String serviceInstanceId = execution.getVariable("serviceInstanceId")
 				execution.setVariable("CREVI_serviceInstanceId", serviceInstanceId)
-				msoLogger.debug("Incoming Service Instance Id is: " + serviceInstanceId)
+				logger.debug("Incoming Service Instance Id is: " + serviceInstanceId)
 
 				String vnfType = execution.getVariable("vnfType")
 				execution.setVariable("CREVI_vnfType", vnfType)
-				msoLogger.debug("Incoming Vnf Type is: " + vnfType)
+				logger.debug("Incoming Vnf Type is: " + vnfType)
 
 				String vnfName = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.requestInfo.instanceName")
 				execution.setVariable("CREVI_vnfName", vnfName)
-				msoLogger.debug("Incoming Vnf Name is: " + vnfName)
+				logger.debug("Incoming Vnf Name is: " + vnfName)
 
 				String serviceId = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.requestInfo.productFamilyId")
 				execution.setVariable("CREVI_serviceId", serviceId)
-				msoLogger.debug("Incoming Service Id is: " + serviceId)
+				logger.debug("Incoming Service Id is: " + serviceId)
 
 				String source = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.requestInfo.source")
 				execution.setVariable("CREVI_source", source)
-				msoLogger.debug("Incoming Source is: " + source)
+				logger.debug("Incoming Source is: " + source)
 
 				String suppressRollback = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.requestInfo.suppressRollback")
 				execution.setVariable("CREVI_suppressRollback", suppressRollback)
-				msoLogger.debug("Incoming Suppress Rollback is: " + suppressRollback)
+				logger.debug("Incoming Suppress Rollback is: " + suppressRollback)
 				
 				def vnfModelInfo = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.modelInfo")
 				execution.setVariable("CREVI_vnfModelInfo", vnfModelInfo)
 
 				String modelInvariantId = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.modelInfo.modelInvariantUuid")
 				execution.setVariable("CREVI_modelInvariantId", modelInvariantId)
-				msoLogger.debug("Incoming Invariant Id is: " + modelInvariantId)
+				logger.debug("Incoming Invariant Id is: " + modelInvariantId)
 
 				String modelVersion = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.modelInfo.modelVersion")
 				execution.setVariable("CREVI_modelVersion", modelVersion)
-				msoLogger.debug("Incoming Model Version is: " + modelVersion)
+				logger.debug("Incoming Model Version is: " + modelVersion)
 				
 				def cloudConfiguration = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.cloudConfiguration")
 				execution.setVariable("CREVI_cloudConfiguration", cloudConfiguration)
 				
 				String cloudSiteId = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.cloudConfiguration.lcpCloudRegionId")
 				execution.setVariable("CREVI_cloudSiteId", cloudSiteId)
-				msoLogger.debug("Incoming Cloud Site Id is: " + cloudSiteId)
+				logger.debug("Incoming Cloud Site Id is: " + cloudSiteId)
 				
 				String tenantId = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.cloudConfiguration.tenantId")
 				execution.setVariable("CREVI_tenantId", tenantId)
-				msoLogger.debug("Incoming Tenant Id is: " + tenantId)
+				logger.debug("Incoming Tenant Id is: " + tenantId)
 
 				//For Completion Handler & Fallout Handler
 				String requestInfo =
@@ -153,7 +157,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 				String vnfId = execution.getVariable("testVnfId") // for junits
 				if(isBlank(vnfId)){
 					vnfId = UUID.randomUUID().toString()
-					msoLogger.debug("Generated Vnf Id is: " + vnfId)
+					logger.debug("Generated Vnf Id is: " + vnfId)
 				}
 				execution.setVariable("CREVI_vnfId", vnfId)
 
@@ -164,7 +168,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 				String sdncCallbackUrl = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 				if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 					def msg = 'Required variable \'mso.workflow.sdncadapter.callback\' is missing'
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError);
+					logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue());
 					
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
@@ -175,31 +179,31 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 					vnfInputParameters = jsonUtil.getJsonValue(createVnfRequest, "requestDetails.requestParameters.userParams")
 				}
 				catch (Exception e) {
-					msoLogger.debug("userParams are not present in the request")
+					logger.debug("userParams are not present in the request")
 				}
 				execution.setVariable("CREVI_vnfInputParameters", vnfInputParameters)
 				
 				
-				msoLogger.debug("SDNC Callback URL: " + sdncCallbackUrl)
+				logger.debug("SDNC Callback URL: " + sdncCallbackUrl)
 			}else{
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Incoming Bpmn Request is Null.")
 			}
 
 		}catch(BpmnError b){
-			msoLogger.debug("Rethrowing MSOWorkflowException")
+			logger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error Occurred in CreateVnfInfra PreProcessRequest method", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Error Occurred in CreateVnfInfra PreProcessRequest method", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occurred in CreateVnfInfra PreProcessRequest")
 
 		}
-		msoLogger.trace("COMPLETED CreateVnfInfra PreProcessRequest Process")
+		logger.trace("COMPLETED CreateVnfInfra PreProcessRequest Process")
 	}
 
 	public void sendSyncResponse (DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("STARTED CreateVnfInfra SendSyncResponse Process")
+		logger.trace("STARTED CreateVnfInfra SendSyncResponse Process")
 
 		try {
 			String requestId = execution.getVariable("CREVI_requestId")
@@ -207,28 +211,28 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 
 			String createVnfResponse = """{"requestReferences":{"instanceId":"${vnfId}","requestId":"${requestId}"}}""".trim()
 
-			msoLogger.debug("CreateVnfInfra Sync Response is: \n"  + createVnfResponse)
+			logger.debug("CreateVnfInfra Sync Response is: \n"  + createVnfResponse)
 
 			sendWorkflowResponse(execution, 202, createVnfResponse)
 
 			execution.setVariable("CREVI_sentSyncResponse", true)
 
 		} catch (Exception ex) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Error Occurred in CreateVnfInfra SendSyncResponse Process", "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Error Occurred in CreateVnfInfra SendSyncResponse Process", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in CreateVnfInfra SendSyncResponse Process")
 
 		}
-		msoLogger.trace("COMPLETED CreateVnfInfra SendSyncResponse Process")
+		logger.trace("COMPLETED CreateVnfInfra SendSyncResponse Process")
 	}
 
 	
 	public void preProcessSDNCAssignRequest(DelegateExecution execution){
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessSDNCAssignRequest")
+		logger.trace("STARTED preProcessSDNCAssignRequest")
 		def vnfId = execution.getVariable("CREVI_vnfId")		
 		def serviceInstanceId = execution.getVariable("CREVI_serviceInstanceId")
-		msoLogger.debug("NEW VNF ID: " + vnfId)
+		logger.debug("NEW VNF ID: " + vnfId)
 
 		try{
 			//Build SDNC Request
@@ -237,23 +241,23 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 
 			assignSDNCRequest = utils.formatXml(assignSDNCRequest)
 			execution.setVariable("CREVI_assignSDNCRequest", assignSDNCRequest)
-			msoLogger.debug("Outgoing AssignSDNCRequest is: \n" + assignSDNCRequest)
+			logger.debug("Outgoing AssignSDNCRequest is: \n" + assignSDNCRequest)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occurred Processing preProcessSDNCAssignRequest", "BPMN", MsoLogger.getServiceName(),
-				MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occurred Processing preProcessSDNCAssignRequest", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during prepareProvision Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED preProcessSDNCAssignRequest")
+		logger.trace("COMPLETED preProcessSDNCAssignRequest")
 	}
 	
 	public void preProcessSDNCActivateRequest(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCActivateRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessSDNCActivateRequest Process")
+		logger.trace("STARTED preProcessSDNCActivateRequest Process")
 		try{
 			String vnfId = execution.getVariable("CREVI_vnfId")			
 			String serviceInstanceId = execution.getVariable("CREVI_serviceInstanceId")
@@ -261,13 +265,13 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			String activateSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "activate")
 
 			execution.setVariable("CREVI_activateSDNCRequest", activateSDNCRequest)
-			msoLogger.debug("Outgoing CommitSDNCRequest is: \n" + activateSDNCRequest)
+			logger.debug("Outgoing CommitSDNCRequest is: \n" + activateSDNCRequest)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preProcessSDNCActivateRequest", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured Processing preProcessSDNCActivateRequest", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during  preProcessSDNCActivateRequest Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED  preProcessSDNCActivateRequest Process")
+		logger.trace("COMPLETED  preProcessSDNCActivateRequest Process")
 	}
 	
 	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
@@ -329,39 +333,39 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 	</sdncadapterworkflow:SDNCRequestData>
 	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 		
-			msoLogger.debug("sdncRequest:  " + sdncRequest)
+			logger.debug("sdncRequest:  " + sdncRequest)
 			return sdncRequest		
 	}
 		
 	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 		execution.setVariable("prefix",Prefix)
-		msoLogger.debug("STARTED ValidateSDNCResponse Process")
+		logger.debug("STARTED ValidateSDNCResponse Process")
 
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 
-		msoLogger.debug("workflowException: " + workflowException)
+		logger.debug("workflowException: " + workflowException)
 
 		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
-		msoLogger.debug("SDNCResponse: " + response)
+		logger.debug("SDNCResponse: " + response)
 
 		String sdncResponse = response
 		if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-			msoLogger.trace("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)
+			logger.trace("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)
 			
 		}else{
-			msoLogger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
+			logger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
 			throw new BpmnError("MSOWorkflowException")
 		}
-		msoLogger.trace("COMPLETED ValidateSDNCResponse Process")
+		logger.trace("COMPLETED ValidateSDNCResponse Process")
 	}
 
 	public void prepareCompletionHandlerRequest(DelegateExecution execution){
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("STARTED CreateVnfInfra PrepareCompletionHandlerRequest Process")
+		logger.trace("STARTED CreateVnfInfra PrepareCompletionHandlerRequest Process")
 
 		try {
 			String requestInfo = execution.getVariable("CREVI_requestInfo")
@@ -378,52 +382,52 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 						</aetgt:MsoCompletionRequest>"""
 
 			execution.setVariable("CREVI_completionHandlerRequest", request)
-			msoLogger.debug("Completion Handler Request is: " + request)
+			logger.debug("Completion Handler Request is: " + request)
 
 			execution.setVariable("WorkflowResponse", "Success") // for junits
 
 		} catch (Exception ex) {
-			msoLogger.debug("Error Occured in CreateVnfInfra PrepareCompletionHandlerRequest Process " + ex.getMessage())
+			logger.debug("Error Occured in CreateVnfInfra PrepareCompletionHandlerRequest Process " + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in CreateVnfInfra PrepareCompletionHandlerRequest Process")
 
 		}
-		msoLogger.trace("COMPLETED CreateVnfInfra PrepareCompletionHandlerRequest Process")
+		logger.trace("COMPLETED CreateVnfInfra PrepareCompletionHandlerRequest Process")
 	}
 
 	public void sendErrorResponse(DelegateExecution execution){
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("STARTED CreateVnfInfra sendErrorResponse Process")
+		logger.trace("STARTED CreateVnfInfra sendErrorResponse Process")
 		try {
 			def sentSyncResponse = execution.getVariable("CREVI_sentSyncResponse")
 			if(sentSyncResponse == false){
 				WorkflowException wfex = execution.getVariable("WorkflowException")
 				String response = exceptionUtil.buildErrorResponseXml(wfex)
 
-				msoLogger.debug(response)
+				logger.debug(response)
 				sendWorkflowResponse(execution, 500, response)
 			}else{
-				msoLogger.debug("Not Sending Error Response.  Sync Response Already Sent")
+				logger.debug("Not Sending Error Response.  Sync Response Already Sent")
 			}
 
 		} catch (Exception ex) {
-			msoLogger.debug("Error Occured in CreateVnfInfra sendErrorResponse Process " + ex.getMessage())
+			logger.debug("Error Occured in CreateVnfInfra sendErrorResponse Process " + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in CreateVnfInfra sendErrorResponse Process")
 
 		}
-		msoLogger.trace("COMPLETED CreateVnfInfra sendErrorResponse Process")
+		logger.trace("COMPLETED CreateVnfInfra sendErrorResponse Process")
 	}
 
 	public void prepareFalloutRequest(DelegateExecution execution){
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("STARTED CreateVnfInfra prepareFalloutRequest Process")
+		logger.trace("STARTED CreateVnfInfra prepareFalloutRequest Process")
 
 		try {
 			WorkflowException wfex = execution.getVariable("WorkflowException")
-			msoLogger.debug(" Incoming Workflow Exception: " + wfex.toString())
+			logger.debug(" Incoming Workflow Exception: " + wfex.toString())
 			String requestInfo = execution.getVariable("CREVI_requestInfo")
-			msoLogger.debug(" Incoming Request Info: " + requestInfo)
+			logger.debug(" Incoming Request Info: " + requestInfo)
 
 			String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
 
@@ -431,30 +435,30 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 
 
 		} catch (Exception ex) {
-			msoLogger.debug("Error Occured in CreateVnfInfra prepareFalloutRequest Process " + ex.getMessage())
+			logger.debug("Error Occured in CreateVnfInfra prepareFalloutRequest Process " + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in CreateVnfInfra prepareFalloutRequest Process")
 
 		}
-		msoLogger.trace("COMPLETED CreateVnfInfra prepareFalloutRequest Process")
+		logger.trace("COMPLETED CreateVnfInfra prepareFalloutRequest Process")
 	}
 
 	
 	public void queryCatalogDB (DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("STARTED CreateVnfInfra QueryCatalogDB Process")
+		logger.trace("STARTED CreateVnfInfra QueryCatalogDB Process")
 		try {
 			//Get Vnf Info
 			String vnfModelInfo = execution.getVariable("CREVI_vnfModelInfo")
 			String vnfModelCustomizationUuid = jsonUtil.getJsonValueForKey(vnfModelInfo, "modelCustomizationUuid")
-			msoLogger.debug("querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid)
+			logger.debug("querying Catalog DB by vnfModelCustomizationUuid: " + vnfModelCustomizationUuid)
 						
 			JSONArray vnfs = catalogDbUtils.getAllVnfsByVnfModelCustomizationUuid(execution,
 							vnfModelCustomizationUuid, "v2")
-			msoLogger.debug("obtained VNF list: " + vnfs)
+			logger.debug("obtained VNF list: " + vnfs)
 			
 			if (vnfs == null) {
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "No matching VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "No matching VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "No matching VNFs in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid)
 			}
 			
@@ -462,7 +466,7 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 			JSONObject vnf = vnfs.get(0)
 			
 			if (vnf == null) {
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "No matching VNF in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "No matching VNF in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "No matching VNF in Catalog DB for vnfModelCustomizationUuid=" + vnfModelCustomizationUuid)
 			}			
 			
@@ -481,63 +485,63 @@ class CreateVnfInfra extends AbstractServiceTaskProcessor {
 		}catch(BpmnError e) {
 			throw e;			
 		}catch(Exception ex) {
-			msoLogger.debug("Error Occurred in CreateVnfInfra QueryCatalogDB Process " + ex.getMessage())
+			logger.debug("Error Occurred in CreateVnfInfra QueryCatalogDB Process " + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occurred in CreateVnfInfra QueryCatalogDB Process")
 		}
 		
 		
-		msoLogger.trace("COMPLETED CreateVnfInfra QueryCatalogDb Process")
+		logger.trace("COMPLETED CreateVnfInfra QueryCatalogDb Process")
 	}
 	public void createPlatform (DelegateExecution execution) {
-		msoLogger.trace("START createPlatform")
+		logger.trace("START createPlatform")
 		
 		String request = execution.getVariable("bpmnRequest")
 		String platformName = jsonUtil.getJsonValue(request, "requestDetails.platform.platformName")
 		String vnfId = execution.getVariable("CREVI_vnfId")
 	
-		msoLogger.debug("Platform NAME: " + platformName)
-		msoLogger.debug("VnfID: " + vnfId)
+		logger.debug("Platform NAME: " + platformName)
+		logger.debug("VnfID: " + vnfId)
 		
 		if(platformName == null||platformName.equals("")){
 			String msg = "Exception in createPlatform. platformName was not found in the request.";
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}else{
-			msoLogger.debug("platformName was found.")
+			logger.debug("platformName was found.")
 			try{
 				AAICreateResources aaiCR = new AAICreateResources()
 				aaiCR.createAAIPlatform(platformName, vnfId)
 			}catch(Exception ex){
 				String msg = "Exception in createPlatform. " + ex.getMessage();
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}
 		}
-		msoLogger.trace("Exit createPlatform")
+		logger.trace("Exit createPlatform")
 	}
 	public void createLineOfBusiness (DelegateExecution execution) {
-		msoLogger.trace("START createLineOfBusiness")
+		logger.trace("START createLineOfBusiness")
 		
 		String request = execution.getVariable("bpmnRequest")
 		String lineOfBusiness = jsonUtil.getJsonValue(request, "requestDetails.lineOfBusiness.lineOfBusinessName")
 		String vnfId = execution.getVariable("CREVI_vnfId")
 	
-		msoLogger.debug("LineOfBusiness NAME: " + lineOfBusiness)
-		msoLogger.debug("VnfID: " + vnfId)
+		logger.debug("LineOfBusiness NAME: " + lineOfBusiness)
+		logger.debug("VnfID: " + vnfId)
 		
 		if(lineOfBusiness == null || lineOfBusiness.equals("")){
-			msoLogger.debug("LineOfBusiness was not found. Continuing on with flow...")
+			logger.debug("LineOfBusiness was not found. Continuing on with flow...")
 		}else{
-			msoLogger.debug("LineOfBusiness was found.")
+			logger.debug("LineOfBusiness was found.")
 			try{
 				AAICreateResources aaiCR = new AAICreateResources()
 				aaiCR.createAAILineOfBusiness(lineOfBusiness, vnfId)
 			}catch(Exception ex){
 				String msg = "Exception in LineOfBusiness. " + ex.getMessage();
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + ex)
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}
 		}
-		msoLogger.trace("Exit createLineOfBusiness")
+		logger.trace("Exit createLineOfBusiness")
 	}
 }

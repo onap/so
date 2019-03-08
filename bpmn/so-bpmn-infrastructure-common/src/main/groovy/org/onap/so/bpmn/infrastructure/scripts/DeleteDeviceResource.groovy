@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +42,8 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 
 import java.util.UUID;
@@ -64,20 +68,20 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
 
     JsonUtils jsonUtil = new JsonUtils()
 
-    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DeleteDeviceResource.class)
+    private static final Logger logger = LoggerFactory.getLogger( DeleteDeviceResource.class);
 
     public void preProcessRequest(DelegateExecution execution){
-        msoLogger.info(" ***** Started preProcessRequest *****")
+        logger.info(" ***** Started preProcessRequest *****")
         try {
 
             //get bpmn inputs from resource request.
             String requestId = execution.getVariable("mso-request-id")
             String requestAction = execution.getVariable("requestAction")
-            msoLogger.info("The requestAction is: " + requestAction)
+            logger.info("The requestAction is: " + requestAction)
             String recipeParamsFromRequest = execution.getVariable("recipeParams")
-            msoLogger.info("The recipeParams is: " + recipeParamsFromRequest)
+            logger.info("The recipeParams is: " + recipeParamsFromRequest)
             String resourceInput = execution.getVariable("resourceInput")
-            msoLogger.info("The resourceInput is: " + resourceInput)
+            logger.info("The resourceInput is: " + resourceInput)
             //Get ResourceInput Object
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
             execution.setVariable(Prefix + "ResourceInput", resourceInputObj)
@@ -101,13 +105,13 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
 
         } catch (Exception ex){
             String msg = "Exception in preProcessRequest " + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
 //            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
 	private void getDeviceInAAI(DelegateExecution execution) {
-		msoLogger.info(" ***** Started getDeviceInAAI *****")
+		logger.info(" ***** Started getDeviceInAAI *****")
         try {
 		String deviceId = execution.getVariable(Prefix + "DeviceId")
         
@@ -117,19 +121,19 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
         
         String devClass = dev.getClass ()
         execution.setVariable(Prefix + "DeviceClass", devClass)
-        msoLogger.debug(" DeviceClass is: " + devClass)
+        logger.debug(" DeviceClass is: " + devClass)
 
         } catch (Exception ex){
             String msg = "Exception in getDeviceInAAI " + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
 //            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
 
-		msoLogger.info(" ***** Exit getDeviceInAAI *****")
+		logger.info(" ***** Exit getDeviceInAAI *****")
 	}
 
     public void checkDevType(DelegateExecution execution){
-        msoLogger.info(" ***** Started checkDevType *****")
+        logger.info(" ***** Started checkDevType *****")
         try {
 
             String devType = execution.getVariable(Prefix + "DeviceClass")
@@ -142,7 +146,7 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
 
         } catch (Exception ex){
             String msg = "Exception in checkDevType " + ex.getMessage()
-            msoLogger.debug( msg)
+            logger.debug( msg)
 //            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
@@ -154,7 +158,7 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
 	}
 
 	public void prepareUpdateProgress(DelegateExecution execution) {
-		msoLogger.info(" ***** Started prepareUpdateProgress *****")
+		logger.info(" ***** Started prepareUpdateProgress *****")
 		ResourceInput resourceInputObj = execution.getVariable(Prefix + "ResourceInput")
 		String operType = resourceInputObj.getOperationType()
 		String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
@@ -183,51 +187,51 @@ public class DeleteDeviceResource extends AbstractServiceTaskProcessor {
                 </soapenv:Envelope>"""
 
 		setProgressUpdateVariables(execution, body)
-		msoLogger.info(" ***** Exit prepareUpdateProgress *****")
+		logger.info(" ***** Exit prepareUpdateProgress *****")
 	}
 
     public void getVNFTemplatefromSDC(DelegateExecution execution){
-        msoLogger.info(" ***** Started getVNFTemplatefromSDC *****")
+        logger.info(" ***** Started getVNFTemplatefromSDC *****")
         try {
             // To do
 
 
         } catch (Exception ex){
             String msg = "Exception in getVNFTemplatefromSDC " + ex.getMessage()
-            msoLogger.debug( msg)
+            logger.debug( msg)
 //            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
     public void postVNFInfoProcess(DelegateExecution execution){
-        msoLogger.info(" ***** Started postVNFInfoProcess *****")
+        logger.info(" ***** Started postVNFInfoProcess *****")
         try {
             // To do
 
 
         } catch (Exception ex){
             String msg = "Exception in postVNFInfoProcess " + ex.getMessage()
-            msoLogger.debug( msg)
+            logger.debug( msg)
 //            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
     public void sendSyncResponse (DelegateExecution execution) {
-        msoLogger.debug( " *** sendSyncResponse *** ")
+        logger.debug( " *** sendSyncResponse *** ")
 
         try {
             String operationStatus = "finished"
             // RESTResponse for main flow
             String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
-            msoLogger.debug( " sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
+            logger.debug( " sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-            msoLogger.debug( msg)
+            logger.debug( msg)
 //            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.debug(" ***** Exit sendSyncResopnse *****")
+        logger.debug(" ***** Exit sendSyncResopnse *****")
     }
 }

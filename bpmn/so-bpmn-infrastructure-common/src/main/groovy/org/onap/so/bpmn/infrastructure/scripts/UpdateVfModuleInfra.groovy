@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,12 +30,14 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateVfModuleInfra.class);
+    private static final Logger logger = LoggerFactory.getLogger( UpdateVfModuleInfra.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -69,7 +73,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		'execution=' + execution.getId() +
 		')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		initProcessVariables(execution)
 
@@ -77,12 +81,12 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 		def incomingRequest = execution.getVariable('bpmnRequest')
 
-		msoLogger.debug("Incoming Infra Request: " + incomingRequest)
+		logger.debug("Incoming Infra Request: " + incomingRequest)
 		try {
 			def jsonSlurper = new JsonSlurper()
 			def jsonOutput = new JsonOutput()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
-			msoLogger.debug(" Request is in JSON format.")
+			logger.debug(" Request is in JSON format.")
 
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def vnfId = execution.getVariable('vnfId')
@@ -132,7 +136,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 				}							
 			}		
 						
-			msoLogger.debug('Processed user params: ' + userParamsMap)		
+			logger.debug('Processed user params: ' + userParamsMap)		
 			
 			execution.setVariable(prefix + 'vfModuleInputParams', userParamsMap)
 			
@@ -207,19 +211,19 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			
 			//backoutOnFailure			
 
-			msoLogger.debug('RequestInfo: ' + execution.getVariable(prefix + "requestInfo"))			
+			logger.debug('RequestInfo: ' + execution.getVariable(prefix + "requestInfo"))			
 						
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 
 		}
 		catch(groovy.json.JsonException je) {
-			msoLogger.debug(" Request is not in JSON format.")
+			logger.debug(" Request is not in JSON format.")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Invalid request format")
 
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}	
 	}
@@ -234,7 +238,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 
 		try {
@@ -256,11 +260,11 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			sendWorkflowResponse(execution, 200, synchResponse)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -280,15 +284,15 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepDoUpdateVfModule(): ' + e.getMessage())
 		}
 	}
@@ -303,7 +307,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestId = execution.getVariable('UPDVfModI_requestId')
@@ -335,13 +339,13 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			updateInfraRequest = utils.formatXml(updateInfraRequest)
 			execution.setVariable('UPDVfModI_updateInfraRequest', updateInfraRequest)
-			msoLogger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
+			logger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateInfraRequest(): ' + e.getMessage())
 		}
 	}
@@ -358,7 +362,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			', resultVar=' + resultVar +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestInfo = getVariable(execution, 'UPDVfModI_requestInfo')
@@ -372,14 +376,14 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			"""
 
 			content = utils.formatXml(content)
-			msoLogger.debug(resultVar + ' = ' + System.lineSeparator() + content)
+			logger.debug(resultVar + ' = ' + System.lineSeparator() + content)
 			execution.setVariable(resultVar, content)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -396,7 +400,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			', resultVar=' + resultVar +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def prefix = execution.getVariable('prefix')
@@ -424,14 +428,14 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 				</sdncadapterworkflow:FalloutHandlerRequest>
 			"""
 			content = utils.formatXml(content)
-			msoLogger.debug(resultVar + ' = ' + System.lineSeparator() + content)
+			logger.debug(resultVar + ' = ' + System.lineSeparator() + content)
 			execution.setVariable(resultVar, content)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -448,7 +452,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		String processKey = getProcessKey(execution);
 		def prefix = execution.getVariable("prefix")
@@ -494,13 +498,13 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			utils.logContext(requestId, serviceInstanceId)
 			*/
-			msoLogger.debug('Incoming message: ' + System.lineSeparator() + request)
-			msoLogger.trace('Exited ' + method)
+			logger.debug('Incoming message: ' + System.lineSeparator() + request)
+			logger.trace('Exited ' + method)
 			return request
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}

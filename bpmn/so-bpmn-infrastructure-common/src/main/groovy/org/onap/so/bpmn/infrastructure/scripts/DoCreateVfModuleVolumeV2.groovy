@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,12 +43,14 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.onap.so.db.catalog.beans.OrchestrationStatus
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import javax.ws.rs.NotFoundException
 
 class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVfModuleVolumeV2.class)
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateVfModuleVolumeV2.class);
 	String prefix='DCVFMODVOLV2_'
 	JsonUtils jsonUtil = new JsonUtils()
 	private ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -58,7 +62,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
      */
     public void preProcessRequest(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        preProcessRequest(execution, isDebugEnabled)
+        preProcessRequest(execution)
     }
 
     public void preProcessRequest(DelegateExecution execution, isDebugLogEnabled) {
@@ -94,12 +98,12 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		//modelCustomizationUuid
 		def modelCustomizationUuid = jsonUtil.getJsonValue(vfModuleModelInfo, "modelCustomizationUuid")
 		execution.setVariable("modelCustomizationId", modelCustomizationUuid)
-		msoLogger.debug("modelCustomizationId: " + modelCustomizationUuid)
+		logger.debug("modelCustomizationId: " + modelCustomizationUuid)
 
 		//modelName
 		def modelName = jsonUtil.getJsonValue(vfModuleModelInfo, "modelName")
 		execution.setVariable("modelName", modelName)
-		msoLogger.debug("modelName: " + modelName)
+		logger.debug("modelName: " + modelName)
 
 		// The following is used on the get Generic Service Instance call
 		execution.setVariable('GENGS_type', 'service-instance')
@@ -116,11 +120,11 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 			'vnfId', 'vnfName', 'tenantId', 'volumeGroupId', 'volumeGroupName', 'lcpCloudRegionId', 'vnfType', 'vfModuleModelInfo',  'asdcServiceModelVersion',
 			'test-volume-group-name', 'test-volume-group-id', 'vfModuleInputParams']
 
-		msoLogger.debug('Begin input: ')
+		logger.debug('Begin input: ')
 		input.each {
-			msoLogger.debug(it + ': ' + execution.getVariable(it))
+			logger.debug(it + ': ' + execution.getVariable(it))
 		}
-		msoLogger.debug('End input.')
+		logger.debug('End input.')
 	}
 
 
@@ -129,7 +133,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void setRollbackData(DelegateExecution execution, isDebugEnabled) {
+	public void setRollbackData(DelegateExecution execution) {
 		def rollbackData = execution.getVariable("rollbackData")
 		if (rollbackData == null) {
 			rollbackData = new RollbackData()
@@ -158,7 +162,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 			throw e
 		}catch (Exception ex){
 			String msg = "Exception in getServiceInstance. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, msg)
 		}
 	}
@@ -168,10 +172,10 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAICloudRegion (DelegateExecution execution, isDebugEnabled) {
+	public void callRESTQueryAAICloudRegion (DelegateExecution execution) {
 
 		def cloudRegion = execution.getVariable("lcpCloudRegionId")
-		msoLogger.debug('Request cloud region is: ' + cloudRegion)
+		logger.debug('Request cloud region is: ' + cloudRegion)
 
 		AaiUtil aaiUtil = new AaiUtil(this)
 
@@ -183,20 +187,20 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		def aaiCloudRegion = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "AAI", cloudRegion)
 		if ((aaiCloudRegion != "ERROR")) {
 			execution.setVariable("lcpCloudRegionId", aaiCloudRegion)
-			msoLogger.debug("AIC Cloud Region for AAI: " + aaiCloudRegion)
+			logger.debug("AIC Cloud Region for AAI: " + aaiCloudRegion)
 		} else {
 			String errorMessage = "AAI Query Cloud Region Unsuccessful. Return Code: " + execution.getVariable(prefix+"queryCloudRegionReturnCode")
-			msoLogger.debug(errorMessage)
+			logger.debug(errorMessage)
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, errorMessage)
 		}
 
 		def poCloudRegion = aaiUtil.getAAICloudReqion(execution,  queryCloudRegionRequest, "PO", cloudRegion)
 		if ((poCloudRegion != "ERROR")) {
 			execution.setVariable("poLcpCloudRegionId", poCloudRegion)
-			msoLogger.debug("AIC Cloud Region for PO: " + poCloudRegion)
+			logger.debug("AIC Cloud Region for PO: " + poCloudRegion)
 		} else {
 			String errorMessage = "AAI Query Cloud Region Unsuccessful. Return Code: " + execution.getVariable(prefix+"queryCloudRegionReturnCode")
-			msoLogger.debug(errorMessage)
+			logger.debug(errorMessage)
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, errorMessage)
 		}
 
@@ -210,7 +214,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAIVolGrpName(DelegateExecution execution, isDebugEnabled) {
+	public void callRESTQueryAAIVolGrpName(DelegateExecution execution) {
 
 		def volumeGroupName = execution.getVariable('volumeGroupName')
 		def cloudRegion = execution.getVariable('lcpCloudRegionId')
@@ -222,7 +226,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 				VolumeGroup volumeGroup = volumeGroups.get().getVolumeGroup().get(0);
 				execution.setVariable(prefix+'AaiReturnCode', 200)
 				execution.setVariable("queriedVolumeGroupId",volumeGroup.getVolumeGroupId())
-				msoLogger.debug("Volume Group Name $volumeGroupName exists in AAI.")
+				logger.debug("Volume Group Name $volumeGroupName exists in AAI.")
 			}else{
 				execution.setVariable(prefix+'AaiReturnCode', 404)
 				exceptionUtil.buildAndThrowWorkflowException(execution,25000, "Volume Group Name $volumeGroupName does not exist in AAI.")
@@ -241,8 +245,8 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void buildWorkflowException(DelegateExecution execution, int errorCode, errorMessage, isDebugEnabled) {
-		msoLogger.debug(errorMessage)
+	public void buildWorkflowException(DelegateExecution execution, int errorCode, errorMessage) {
+		logger.debug(errorMessage)
 		(new ExceptionUtil()).buildWorkflowException(execution, 2500, errorMessage)
 	}
 
@@ -252,7 +256,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void handleError(DelegateExecution execution, isDebugEnabled) {
+	public void handleError(DelegateExecution execution) {
 		WorkflowException we = execution.getVariable('WorkflowException')
 		if (we == null) {
 			(new ExceptionUtil()).buildWorkflowException(execution, 2500, "Enexpected error encountered!")
@@ -266,7 +270,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTCreateAAIVolGrpName(DelegateExecution execution, isDebugEnabled) {
+	public void callRESTCreateAAIVolGrpName(DelegateExecution execution) {
 
 		def vnfId = execution.getVariable('vnfId')
 		def volumeGroupId = execution.getVariable('volumeGroupId')
@@ -279,7 +283,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 
 		def testGroupId = execution.getVariable('test-volume-group-id')
 		if (testGroupId != null && testGroupId.trim() != '') {
-			msoLogger.debug("test volumeGroupId is present: " + testGroupId)
+			logger.debug("test volumeGroupId is present: " + testGroupId)
 			volumeGroupId = testGroupId
 			execution.setVariable("test-volume-group-name", "MSOTESTVOL101a-vSAMP12_base_vol_module-0")
 		}
@@ -291,7 +295,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		volumeGroup.setOrchestrationStatus(OrchestrationStatus.PENDING.toString())
 		volumeGroup.setModelCustomizationId(modelCustomizationId)
 
-		msoLogger.debug("volumeGroupId to be used: " + volumeGroupId)
+		logger.debug("volumeGroupId to be used: " + volumeGroupId)
 
 		AAIResourceUri volumeGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwner, cloudRegion, volumeGroupId)
 		AAIResourceUri tenantUri = AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudOwner, cloudRegion, tenantId)
@@ -316,7 +320,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * Prepare VNF adapter create request XML
 	 * @param execution
 	 */
-	public void prepareVnfAdapterCreateRequest(DelegateExecution execution, isDebugEnabled) {
+	public void prepareVnfAdapterCreateRequest(DelegateExecution execution) {
 
 		GenericVnf aaiGenericVnfResponse = execution.getVariable(prefix+'AAIQueryGenericVfnResponse')
 		def vnfId = aaiGenericVnfResponse.getVnfId()
@@ -336,14 +340,14 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		def modelCustomizationId = execution.getVariable("modelCustomizationId")
 
 		// for testing
-		msoLogger.debug("volumeGroupId: " + volumeGroupId)
+		logger.debug("volumeGroupId: " + volumeGroupId)
 		def testGroupId = execution.getVariable('test-volume-group-id')
 		if (testGroupId != null && testGroupId.trim() != '') {
-			msoLogger.debug("test volumeGroupId is present: " + testGroupId)
+			logger.debug("test volumeGroupId is present: " + testGroupId)
 			volumeGroupId = testGroupId
 			execution.setVariable("test-volume-group-name", "MSOTESTVOL101a-vSAMP12_base_vol_module-0")
 		}
-		msoLogger.debug("volumeGroupId to be used: " + volumeGroupId)
+		logger.debug("volumeGroupId to be used: " + volumeGroupId)
 
 		// volume group parameters
 
@@ -364,10 +368,10 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		}
 
 		volumeGroupParams = sbParams.toString()
-		msoLogger.debug("volumeGroupParams: "+ volumeGroupParams)
+		logger.debug("volumeGroupParams: "+ volumeGroupParams)
 
 		def backoutOnFailure = execution.getVariable(prefix+"backoutOnFailure")
-		msoLogger.debug("backoutOnFailure: "+ backoutOnFailure)
+		logger.debug("backoutOnFailure: "+ backoutOnFailure)
 
 		def failIfExists = execution.getVariable("failIfExists")
 		if(failIfExists == null) {
@@ -375,14 +379,14 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		}
 
 		String messageId = UUID.randomUUID()
-		msoLogger.debug("messageId to be used is generated: " + messageId)
+		logger.debug("messageId to be used is generated: " + messageId)
 
 		def notificationUrl = createCallbackURL(execution, "VNFAResponse", messageId)
 		def useQualifiedHostName = UrnPropertiesReader.getVariable("mso.use.qualified.host",execution)
 		if ('true'.equals(useQualifiedHostName)) {
 			notificationUrl = utils.getQualifiedHostNameForCallback(notificationUrl)
 		}
-		msoLogger.debug("CreateVfModuleVolume - notificationUrl: "+ notificationUrl)
+		logger.debug("CreateVfModuleVolume - notificationUrl: "+ notificationUrl)
 
 		// build request
 		String vnfSubCreateWorkflowRequest =
@@ -430,14 +434,14 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 		"""
 
 		String vnfSubCreateWorkflowRequestAsString = utils.formatXml(vnfSubCreateWorkflowRequest)
-		msoLogger.debug(vnfSubCreateWorkflowRequestAsString)
-		msoLogger.debug(vnfSubCreateWorkflowRequestAsString)
+		logger.debug(vnfSubCreateWorkflowRequestAsString)
+		logger.debug(vnfSubCreateWorkflowRequestAsString)
 		execution.setVariable(prefix+"createVnfARequest", vnfSubCreateWorkflowRequestAsString)
 
 		// build rollback request for use later if needed
 		String vnfSubRollbackWorkflowRequest = buildRollbackVolumeGroupRequestXml(volumeGroupId, cloudSiteId, tenantId, requestId, serviceId, messageId, notificationUrl)
 
-		msoLogger.debug("Sub Vnf flow rollback request: vnfSubRollbackWorkflowRequest " + "\n" + vnfSubRollbackWorkflowRequest)
+		logger.debug("Sub Vnf flow rollback request: vnfSubRollbackWorkflowRequest " + "\n" + vnfSubRollbackWorkflowRequest)
 
 		String vnfSubRollbackWorkflowRequestAsString = utils.formatXml(vnfSubRollbackWorkflowRequest)
 		execution.setVariable(prefix+"rollbackVnfARequest", vnfSubRollbackWorkflowRequestAsString)
@@ -476,15 +480,15 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * Validate VNF adapter response
 	 * @param execution
 	 */
-	public void validateVnfResponse(DelegateExecution execution, isDebugEnabled) {
+	public void validateVnfResponse(DelegateExecution execution) {
 		def vnfSuccess = execution.getVariable('VNFREST_SuccessIndicator')
-		msoLogger.debug("vnfAdapterSuccessIndicator: "+ vnfSuccess)
+		logger.debug("vnfAdapterSuccessIndicator: "+ vnfSuccess)
 		if(vnfSuccess==true) {
 			String createVnfAResponse = execution.getVariable(prefix+"createVnfAResponse")
 			String heatStackID = utils.getNodeText(createVnfAResponse, "volumeGroupStackId")
 			String vnfRollbackRequest = execution.getVariable(prefix+"rollbackVnfARequest")
 			String updatedVnfRollbackRequest = updateRollbackVolumeGroupRequestXml(vnfRollbackRequest, heatStackID)
-			msoLogger.debug("vnfAdapter rollback request: "+ updatedVnfRollbackRequest)
+			logger.debug("vnfAdapter rollback request: "+ updatedVnfRollbackRequest)
 			RollbackData rollbackData = execution.getVariable("rollbackData")
 			rollbackData.put("DCVFMODULEVOL", "rollbackVnfARequest", updatedVnfRollbackRequest)
 			rollbackData.put("DCVFMODULEVOL", "isCreateVnfRollbackNeeded", "true")
@@ -498,7 +502,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTUpdateCreatedVolGrpName(DelegateExecution execution, isDebugEnabled) {
+	public void callRESTUpdateCreatedVolGrpName(DelegateExecution execution) {
 		String volumeGroupId = execution.getVariable("queriedVolumeGroupId")
 		String modelCustomizationId = execution.getVariable("modelCustomizationId")
 		String cloudRegion = execution.getVariable("lcpCloudRegionId")
@@ -532,7 +536,7 @@ class DoCreateVfModuleVolumeV2 extends VfModuleBase {
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAIGenericVnf(DelegateExecution execution, isDebugEnabled) {
+	public void callRESTQueryAAIGenericVnf(DelegateExecution execution) {
 
 		def vnfId = execution.getVariable('vnfId')
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)

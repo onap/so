@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +46,8 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This groovy class supports the <class>Delete3rdONAPE2EServiceInstance.bpmn</class> process.
@@ -57,19 +61,19 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 	JsonUtils jsonUtil = new JsonUtils()
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, Delete3rdONAPE2EServiceInstance.class)
+    private static final Logger logger = LoggerFactory.getLogger( Delete3rdONAPE2EServiceInstance.class);
 
 	public void checkSPPartnerInfoFromAAI (DelegateExecution execution) {
-		msoLogger.info(" ***** Started checkSPPartnerInfo *****")
+		logger.info(" ***** Started checkSPPartnerInfo *****")
 		try {
 			//get bpmn inputs from resource request.
 			String requestId = execution.getVariable("mso-request-id")
 			String requestAction = execution.getVariable("requestAction")
-			msoLogger.info("The requestAction is: " + requestAction)
+			logger.info("The requestAction is: " + requestAction)
 			String recipeParamsFromRequest = execution.getVariable("recipeParams")
-			msoLogger.info("The recipeParams is: " + recipeParamsFromRequest)
+			logger.info("The recipeParams is: " + recipeParamsFromRequest)
 			String resourceInput = execution.getVariable("resourceInput")
-			msoLogger.info("The resourceInput is: " + resourceInput)
+			logger.info("The resourceInput is: " + resourceInput)
 			//Get ResourceInput Object
 			ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
 			// set local resourceInput
@@ -101,13 +105,13 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		} catch (Exception ex){
 			String msg = "Exception in checkSPPartnerInfoFromAAI " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 //			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
 
 	public void checkLocallCall (DelegateExecution execution) {
-		msoLogger.info(" ***** Started checkLocallCall *****")
+		logger.info(" ***** Started checkLocallCall *****")
 
 		boolean isLocalCall = true
 		String callSource = execution.getVariable(Prefix + "CallSource")
@@ -118,7 +122,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 	}
 
 	public void preProcessRequest(DelegateExecution execution){
-		msoLogger.info(" ***** Started preProcessRequest *****")
+		logger.info(" ***** Started preProcessRequest *****")
 		String msg = ""
 
 		try {
@@ -127,53 +131,53 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			String globalSubscriberId = resourceInputObj.getGlobalSubscriberId()
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId is null"
-				msoLogger.error( msg)
+				logger.error("{} {} {} {} {} {}",  msg)
 			}
 			//set local variable
 			execution.setVariable("globalSubscriberId", globalSubscriberId)
-			msoLogger.info( "globalSubscriberId:" + globalSubscriberId)
+			logger.info( "globalSubscriberId:" + globalSubscriberId)
 
 			String serviceType = resourceInputObj.getServiceType()
 			if (isBlank(serviceType)) {
 				msg = "Input serviceType is null"
-				msoLogger.error( msg)
+				logger.error("{} {} {} {} {} {}",  msg)
 			}
 			execution.setVariable("serviceType", serviceType)
-			msoLogger.info( "serviceType:" + serviceType)
+			logger.info( "serviceType:" + serviceType)
 
 			String operationId = resourceInputObj.getOperationId()
 			if (isBlank(operationId)) {
 				msg = "Input operationId is null"
-				msoLogger.error( msg)
+				logger.error("{} {} {} {} {} {}",  msg)
 			}
 			execution.setVariable("operationId", operationId)
-			msoLogger.info( "operationId:" + operationId)
+			logger.info( "operationId:" + operationId)
 
 			String resourceName = resourceInputObj.getResourceInstanceName()
 			if (isBlank(resourceName)) {
 				msg = "Input resourceName is null"
-				msoLogger.error( msg)
+				logger.error("{} {} {} {} {} {}",  msg)
 			}
 			execution.setVariable("resourceName", resourceName)
-			msoLogger.info("resourceName:" + resourceName)
+			logger.info("resourceName:" + resourceName)
 
 			String resourceTemplateId = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
 			if (isBlank(resourceTemplateId)) {
 				msg = "Input resourceTemplateId is null"
-				msoLogger.error( msg)
+				logger.error("{} {} {} {} {} {}",  msg)
 			}
 			execution.setVariable("resourceTemplateId", resourceTemplateId)
-			msoLogger.info( "resourceTemplateId:" + resourceTemplateId)
+			logger.info( "resourceTemplateId:" + resourceTemplateId)
 
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 //			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
 
 	public void prepareUpdateProgress(DelegateExecution execution) {
-		msoLogger.info(" ***** Started prepareUpdateProgress *****")
+		logger.info(" ***** Started prepareUpdateProgress *****")
 		ResourceInput resourceInputObj = execution.getVariable(Prefix + "ResourceInput")
 		String operType = resourceInputObj.getOperationType()
 		String resourceCustomizationUuid = resourceInputObj.getResourceModelInfo().getModelCustomizationUuid()
@@ -202,11 +206,11 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
                 </soapenv:Envelope>"""
 
 		setProgressUpdateVariables(execution, body)
-		msoLogger.info(" ***** End prepareUpdateProgress *****")
+		logger.info(" ***** End prepareUpdateProgress *****")
 	}
 
 	public void prepare3rdONAPRequest(DelegateExecution execution) {
-		msoLogger.info(" ***** Started prepare3rdONAPRequest *****")
+		logger.info(" ***** Started prepare3rdONAPRequest *****")
 
 		String sppartnerUrl = execution.getVariable(Prefix + "SppartnerUrl")
 		String extAPIPath = sppartnerUrl + '/serviceOrder'
@@ -257,12 +261,12 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		String payload = externalAPIUtil.setTemplate(ExternalAPIUtil.PostServiceOrderRequestsTemplate, valueMap)
 		execution.setVariable(Prefix + "Payload", payload)
-		msoLogger.info( "Exit " + prepare3rdONAPRequest)
+		logger.info( "Exit " + prepare3rdONAPRequest)
 	}
 
 	private void queryServicefrom3rdONAP(DelegateExecution execution)
 	{
-		msoLogger.info(" ***** Started queryServicefrom3rdONAP *****")
+		logger.info(" ***** Started queryServicefrom3rdONAP *****")
         try {
 
 		String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -271,7 +275,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		//https://{api_url}/nbi/api/v1/service?relatedParty.id=${globalSubscriberId}
 		String sppartnerUrl = execution.getVariable(Prefix + "SppartnerUrl")
 		String extAPIPath = sppartnerUrl + "/service?relatedParty.id=" + globalSubscriberId
-		msoLogger.debug("queryServicefrom3rdONAP externalAPIURL is: " + extAPIPath)
+		logger.debug("queryServicefrom3rdONAP externalAPIURL is: " + extAPIPath)
 
 		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 
@@ -279,17 +283,17 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		int responseCode = response.getStatus()
 		execution.setVariable(Prefix + "GetServiceResponseCode", responseCode)
-		msoLogger.debug("Get Service response code is: " + responseCode)
+		logger.debug("Get Service response code is: " + responseCode)
 
 		String extApiResponse = response.readEntity(String.class)
 
 		execution.setVariable(Prefix + "GetServiceResponse", extApiResponse)
-		msoLogger.debug("queryServicefrom3rdONAP response body is: " + extApiResponse)
+		logger.debug("queryServicefrom3rdONAP response body is: " + extApiResponse)
 
 		//Process Response //200 OK 201 CREATED 202 ACCEPTED
 		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
 		{
-			msoLogger.debug("Get Service Received a Good Response")
+			logger.debug("Get Service Received a Good Response")
 			JSONArray responseList = new JSONArray(extApiResponse)
 			for(JSONObject obj : responseList) {
 				String svcId  = obj.get("id")
@@ -302,22 +306,22 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			}
 		}
 		else{
-			msoLogger.error("Get Service Received a Bad Response Code. Response Code is: " + responseCode)
+			logger.error("{} {} {} {} {} {}", "Get Service Received a Bad Response Code. Response Code is: " + responseCode)
 //			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Get Service Received a bad response from 3rdONAP External API")
 		}
         }catch(Exception e) {
-            msoLogger.error("queryServicefrom3rdONAP exception:" + e.getMessage())
+            logger.error("{} {} {} {} {} {}", "queryServicefrom3rdONAP exception:" + e.getMessage())
         }
-		msoLogger.info( "Exit " + queryServicefrom3rdONAP)
+		logger.info( "Exit " + queryServicefrom3rdONAP)
 	}
 
 	public void doDeleteE2ESIin3rdONAP(DelegateExecution execution) {
-		msoLogger.info(" ***** Started doDeleteE2ESIin3rdONAP *****")
+		logger.info(" ***** Started doDeleteE2ESIin3rdONAP *****")
 		try {
 		String extAPIPath = execution.getVariable("ExternalAPIURL")
 		String payload = execution.getVariable(Prefix + "Payload")
-		msoLogger.debug("doDeleteE2ESIin3rdONAP externalAPIURL is: " + extAPIPath)
-		msoLogger.debug("doDeleteE2ESIin3rdONAP payload is: " + payload)
+		logger.debug("doDeleteE2ESIin3rdONAP externalAPIURL is: " + extAPIPath)
+		logger.debug("doDeleteE2ESIin3rdONAP payload is: " + payload)
 
 		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 		execution.setVariable("ServiceOrderId", "")
@@ -326,42 +330,42 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		int responseCode = response.getStatus()
 		execution.setVariable(Prefix + "PostServiceOrderResponseCode", responseCode)
-		msoLogger.debug("Post ServiceOrder response code is: " + responseCode)
+		logger.debug("Post ServiceOrder response code is: " + responseCode)
 
 		String extApiResponse = response.readEntity(String.class)
 		JSONObject responseObj = new JSONObject(extApiResponse)
 		execution.setVariable(Prefix + "PostServiceOrderResponse", extApiResponse)
 
-		msoLogger.debug("doDeleteE2ESIin3rdONAP response body is: " + extApiResponse)
+		logger.debug("doDeleteE2ESIin3rdONAP response body is: " + extApiResponse)
 
 		//Process Response
 		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
 			//200 OK 201 CREATED 202 ACCEPTED
 		{
-			msoLogger.debug("Post ServiceOrder Received a Good Response")
+			logger.debug("Post ServiceOrder Received a Good Response")
 			String serviceOrderId = responseObj.get("id")
 			execution.setVariable(Prefix + "SuccessIndicator", true)
 			execution.setVariable("ServiceOrderId", serviceOrderId)
-			msoLogger.info("Post ServiceOrderid is: " + serviceOrderId)
+			logger.info("Post ServiceOrderid is: " + serviceOrderId)
 		}
 		else{
-			msoLogger.error("Post ServiceOrder Received a Bad Response Code. Response Code is: " + responseCode)
+			logger.error("{} {} {} {} {} {}", "Post ServiceOrder Received a Bad Response Code. Response Code is: " + responseCode)
 //			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Post ServiceOrder Received a bad response from 3rdONAP External API")
 		}
 		}catch(Exception e) {
-			msoLogger.error("doDeleteE2ESIin3rdONAP exception:" + e.getMessage())
+			logger.error("{} {} {} {} {} {}", "doDeleteE2ESIin3rdONAP exception:" + e.getMessage())
 		}
-		msoLogger.info( "Exit " + doDeleteE2ESIin3rdONAP)
+		logger.info( "Exit " + doDeleteE2ESIin3rdONAP)
 	}
 
 
 	public void getE2ESIProgressin3rdONAP(DelegateExecution execution) {
-		msoLogger.info(" ***** Started getE2ESIProgressin3rdONAP *****")
+		logger.info(" ***** Started getE2ESIProgressin3rdONAP *****")
         try {
 
 		String extAPIPath = execution.getVariable("ExternalAPIURL")
 		extAPIPath += "/" + execution.getVariable("ServiceOrderId")
-		msoLogger.debug("getE2ESIProgressin3rdONAP delete externalAPIURL is: " + extAPIPath)
+		logger.debug("getE2ESIProgressin3rdONAP delete externalAPIURL is: " + extAPIPath)
 
 		ExternalAPIUtil externalAPIUtil = new ExternalAPIUtilFactory().create()
 
@@ -369,18 +373,18 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 
 		int responseCode = response.getStatus()
 		execution.setVariable(Prefix + "GetServiceOrderResponseCode", responseCode)
-		msoLogger.debug("Get ServiceOrder response code is: " + responseCode)
+		logger.debug("Get ServiceOrder response code is: " + responseCode)
 
 		String extApiResponse = response.readEntity(String.class)
 		JSONObject responseObj = new JSONObject(extApiResponse)
 		execution.setVariable(Prefix + "GetServiceOrderResponse", extApiResponse)
 
-		utils.log("DEBUG", "getE2ESIProgressin3rdONAP delete response body is: " + extApiResponse)
+		logger.debug( "getE2ESIProgressin3rdONAP delete response body is: " + extApiResponse)
 
 		//Process Response //200 OK 201 CREATED 202 ACCEPTED
 		if(responseCode == 200 || responseCode == 201 || responseCode == 202 )
 		{
-			msoLogger.debug("Get ServiceOrder Received a Good Response")
+			logger.debug("Get ServiceOrder Received a Good Response")
 
 			String orderState = responseObj.get("state")
 			if("REJECTED".equalsIgnoreCase(orderState)) {
@@ -398,7 +402,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 				execution.setVariable("progress", 100)
 				execution.setVariable("status", "error")
 				execution.setVariable("statusDescription", "Delete Service Order Status get null sppartnerServiceId")
-				msoLogger.error("null sppartnerServiceId while getting progress from externalAPI")
+				logger.error("{} {} {} {} {} {}", "null sppartnerServiceId while getting progress from externalAPI")
 				return
 			}
 			execution.setVariable(Prefix + "SppartnerServiceId", sppartnerServiceId)
@@ -435,7 +439,7 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 			}
 		}
 		else{
-			msoLogger.debug("Get ServiceOrder Received a Bad Response Code. Response Code is: " + responseCode)
+			logger.debug("Get ServiceOrder Received a Bad Response Code. Response Code is: " + responseCode)
 			execution.setVariable("progress", 100)
 			execution.setVariable("status", "error")
 			execution.setVariable("statusDescription", "Get Delete ServiceOrder Received a bad response")
@@ -445,9 +449,9 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
             execution.setVariable("progress", 100)
             execution.setVariable("status", "error")
             execution.setVariable("statusDescription", "Get Delete ServiceOrder Exception")
-            msoLogger.error("getE2ESIProgressin3rdONAP exception:" + e.getMessage())
+            logger.error("{} {} {} {} {} {}", "getE2ESIProgressin3rdONAP exception:" + e.getMessage())
         }
-		msoLogger.info( "Exit " + getE2ESIProgressin3rdONAP)
+		logger.info( "Exit " + getE2ESIProgressin3rdONAP)
 	}
 
 	/**
@@ -457,12 +461,12 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		try {
 			Thread.sleep(5000)
 		} catch(InterruptedException e) {
-			msoLogger.error("Time Delay exception" + e )
+			logger.error("{} {} {} {} {} {}", "Time Delay exception" + e )
 		}
 	}
 
 	private void getSPPartnerInAAI(DelegateExecution execution) {
-		msoLogger.info(" ***** Started getSPPartnerInAAI *****")
+		logger.info(" ***** Started getSPPartnerInAAI *****")
         try {
 		String id = execution.getVariable(Prefix + "SppartnerId")
 
@@ -470,33 +474,33 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SP_PARTNER, id)
 		SpPartner sp = client.get(uri).asBean(SpPartner.class).get()
 
-		msoLogger.debug("GET sppartner Received a Good Response")
+		logger.debug("GET sppartner Received a Good Response")
 		execution.setVariable(Prefix + "SuccessIndicator", true)
 		execution.setVariable(Prefix + "FoundIndicator", true)
 
 //		String sppartnerId = sp.getSpPartnerId()
 //		execution.setVariable(Prefix + "SppartnerId", sppartnerId)
-//		msoLogger.debug(" SppartnerId is: " + sppartnerId)
+//		logger.debug(" SppartnerId is: " + sppartnerId)
 		String sppartnerUrl = sp.getUrl()
 		execution.setVariable(Prefix + "SppartnerUrl", sppartnerUrl)
-		msoLogger.debug(" SppartnerUrl is: " + sppartnerUrl)
+		logger.debug(" SppartnerUrl is: " + sppartnerUrl)
 		String callSource = sp.getCallsource()
 		execution.setVariable(Prefix + "CallSource", callSource)
-		msoLogger.debug(" CallSource is: " + callSource)
+		logger.debug(" CallSource is: " + callSource)
 		String sppartnerVersion = sp.getResourceVersion()
 		execution.setVariable(Prefix + "SppartnerVersion", sppartnerVersion)
-		msoLogger.debug(" Resource Version is: " + sppartnerVersion)
+		logger.debug(" Resource Version is: " + sppartnerVersion)
         } catch (Exception ex) {
             String msg = "Exception in Delete3rdONAPE2EServiceInstance.saveSPPartnerInAAI. " + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
 //            throw new BpmnError("MSOWorkflowException")
         }
 
-		msoLogger.info( "Exit " + getSPPartnerInAAI)
+		logger.info( "Exit " + getSPPartnerInAAI)
 	}
 
 	public void deleteSPPartnerInAAI(DelegateExecution execution) {
-		msoLogger.info(" ***** Started deleteSPPartnerInAAI *****")
+		logger.info(" ***** Started deleteSPPartnerInAAI *****")
         try {
 
 		String sppartnerId = execution.getVariable(Prefix + "SppartnerId")
@@ -504,16 +508,16 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		AAIResourcesClient client = new AAIResourcesClient()
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SP_PARTNER, sppartnerId)
 		client.delete(uri)
-		msoLogger.debug("Delete sppartner Received a Good Response")
+		logger.debug("Delete sppartner Received a Good Response")
 		execution.setVariable(Prefix + "SuccessIndicator", true)
         } catch (Exception ex) {
             String msg = "Exception in Delete3rdONAPE2EServiceInstance.deleteSPPartnerInAAI. " + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
 //            throw new BpmnError("MSOWorkflowException")
         }
 		
 
-		msoLogger.info( "Exit " + deleteSPPartnerInAAI)
+		logger.info( "Exit " + deleteSPPartnerInAAI)
 	}
 
 	private void setProgressUpdateVariables(DelegateExecution execution, String body) {
@@ -523,30 +527,30 @@ public class Delete3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 	}
 
 	public void postProcess(DelegateExecution execution){
-		msoLogger.info(" ***** Started postProcess *****")
+		logger.info(" ***** Started postProcess *****")
 		String responseCode = execution.getVariable(Prefix + "PutSppartnerResponseCode")
 		String responseObj = execution.getVariable(Prefix + "PutSppartnerResponse")
 
-		msoLogger.info("response from AAI for put sppartner, response code :" + responseCode + "  response object :" + responseObj)
-		msoLogger.info(" ***** Exit postProcess *****")
+		logger.info("response from AAI for put sppartner, response code :" + responseCode + "  response object :" + responseObj)
+		logger.info(" ***** Exit postProcess *****")
 	}
 
 	public void sendSyncResponse (DelegateExecution execution) {
-		msoLogger.debug(" *** sendSyncResponse *** ")
+		logger.debug(" *** sendSyncResponse *** ")
 
 		try {
 			String operationStatus = "finished"
 			// RESTResponse for main flow
 			String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
-			msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
+			logger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
 			sendWorkflowResponse(execution, 202, resourceOperationResp)
 			execution.setVariable("sentSyncResponse", true)
 
 		} catch (Exception ex) {
 			String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 //			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.debug(" ***** Exit sendSyncResopnse *****")
+		logger.debug(" ***** Exit sendSyncResopnse *****")
 	}
 }

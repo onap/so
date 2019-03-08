@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,6 +42,8 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import static org.apache.commons.lang3.StringUtils.*
 
@@ -49,7 +53,7 @@ import static org.apache.commons.lang3.StringUtils.*
  */
 public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
-    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateSDNCNetworkResource.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateSDNCNetworkResource.class);
     String Prefix="CRESDNCRES_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -60,17 +64,17 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
     public void preProcessRequest(DelegateExecution execution){
 
-        msoLogger.info(" ***** Started preProcessRequest *****")
+        logger.info(" ***** Started preProcessRequest *****")
         try {
 
             //get bpmn inputs from resource request.
             String requestId = execution.getVariable("mso-request-id")
             String requestAction = execution.getVariable("requestAction")
-            msoLogger.info("The requestAction is: " + requestAction)
+            logger.info("The requestAction is: " + requestAction)
             String recipeParamsFromRequest = execution.getVariable("recipeParams")
-            msoLogger.info("The recipeParams is: " + recipeParamsFromRequest)
+            logger.info("The recipeParams is: " + recipeParamsFromRequest)
             String resourceInput = execution.getVariable("resourceInput")
-            msoLogger.info("The resourceInput is: " + resourceInput)
+            logger.info("The resourceInput is: " + resourceInput)
             //Get ResourceInput Object
             ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(resourceInput, ResourceInput.class)
             execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
@@ -158,7 +162,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             throw e;
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
@@ -238,7 +242,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
      * generate the nsParameters
      */
     public void prepareSDNCRequest (DelegateExecution execution) {
-        msoLogger.info(" ***** Started prepareSDNCRequest *****")
+        logger.info(" ***** Started prepareSDNCRequest *****")
 
         try {
             // get variables
@@ -440,15 +444,15 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             String sndcTopologyCreateRequesAsString = utils.formatXml(sdncTopologyCreateRequest)
             utils.logAudit(sndcTopologyCreateRequesAsString)
             execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyCreateRequesAsString)
-            msoLogger.debug("sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyCreateRequesAsString)
+            logger.debug("sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyCreateRequesAsString)
 
         } catch (Exception ex) {
             String exceptionMessage = " Bpmn error encountered in CreateSDNCCNetworkResource flow. prepareSDNCRequest() - " + ex.getMessage()
-            msoLogger.debug(exceptionMessage)
+            logger.debug(exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
         }
-        msoLogger.info(" ***** Exit prepareSDNCRequest *****")
+        logger.info(" ***** Exit prepareSDNCRequest *****")
     }
 
     private void setProgressUpdateVariables(DelegateExecution execution, String body) {
@@ -523,7 +527,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void afterCreateSDNCCall(DelegateExecution execution){
-        msoLogger.info(" ***** Started prepareSDNCRequest *****")
+        logger.info(" ***** Started prepareSDNCRequest *****")
         String responseCode = execution.getVariable(Prefix + "sdncCreateReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
 
@@ -533,8 +537,8 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             execution.setVariable("networkInstanceId", instnaceId)
         }
 
-        msoLogger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
-        msoLogger.info(" ***** Exit prepareSDNCRequest *****")
+        logger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
+        logger.info(" ***** Exit prepareSDNCRequest *****")
     }
 
     private def getInstnaceId(DelegateExecution execution) {
@@ -566,21 +570,21 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
     }
 
     public void sendSyncResponse (DelegateExecution execution) {
-        msoLogger.debug(" *** sendSyncResponse *** ")
+        logger.debug(" *** sendSyncResponse *** ")
 
         try {
             String operationStatus = "finished"
             // RESTResponse for main flow
             String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
-            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
+            logger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exception in sendSyncResponse:" + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.debug(" ***** Exit sendSyncResponse *****")
+        logger.debug(" ***** Exit sendSyncResponse *****")
     }
 }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -76,7 +78,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** Enter DoUpdateE2EServiceInstance preProcessRequest *****",  isDebugEnabled)
+		logger.info(" ***** Enter DoUpdateE2EServiceInstance preProcessRequest *****")
 
 		String msg = ""
 
@@ -85,24 +87,24 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			//Inputs
 			//for AAI GET & PUT & SDNC assignToplology
 			String globalSubscriberId = execution.getVariable("globalSubscriberId") //globalCustomerId
-			utils.log("INFO"," ***** globalSubscriberId *****" + globalSubscriberId,  isDebugEnabled)
+			logger.info(" ***** globalSubscriberId *****" + globalSubscriberId)
 
 			//for AAI PUT & SDNC assignTopology
 			String serviceType = execution.getVariable("serviceType")
-			utils.log("INFO"," ***** serviceType *****" + serviceType,  isDebugEnabled)
+			logger.info(" ***** serviceType *****" + serviceType)
 
 			//for SDNC assignTopology
 			String productFamilyId = execution.getVariable("productFamilyId") //AAI productFamilyId
 
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 			if (isBlank(serviceType)) {
 				msg = "Input serviceType is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
@@ -110,7 +112,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)){
 				msg = "Input serviceInstanceId is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
@@ -122,29 +124,29 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			// target model Invariant uuid
 			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
 			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
-			utils.log("INFO", "modelInvariantUuid: " + modelInvariantUuid, isDebugEnabled)
+			logger.info( "modelInvariantUuid: " + modelInvariantUuid)
 
 			// target model uuid
 			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
 			execution.setVariable("modelUuid", modelUuid)
 
-			utils.log("INFO","modelUuid: " + modelUuid, isDebugEnabled)
+			logger.info("modelUuid: " + modelUuid)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO", "======== COMPLETED preProcessRequest Process ======== ", isDebugEnabled)
+		logger.info( "======== COMPLETED preProcessRequest Process ======== ")
 	}
 
 
 	public void preInitResourcesOperStatus(DelegateExecution execution){
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
-        utils.log("INFO", " ======== STARTED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
+        logger.info( " ======== STARTED preInitResourcesOperStatus Process ======== ")
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
             String operationId = execution.getVariable("operationId")
@@ -154,7 +156,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
             String progress = "0"
             String reason = ""
             String operationContent = "Prepare service updating"
-            utils.log("INFO", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType, isDebugEnabled)
+            logger.info( "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
@@ -171,7 +173,7 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-			utils.log("INFO", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+			logger.info( "DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
 			String payload =
 				"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -189,20 +191,20 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_initResOperStatusRequest", payload)
-			utils.log("INFO", "Outgoing initResourceOperationStatus: \n" + payload, isDebugEnabled)
+			logger.info( "Outgoing initResourceOperationStatus: \n" + payload)
 			utils.logAudit("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
 
         }catch(Exception e){
-            utils.log("ERROR", "Exception Occured Processing preInitResourcesOperStatus. Exception is:\n" + e, isDebugEnabled)
+            logger.info( "Exception Occured Processing preInitResourcesOperStatus. Exception is:\n" + e)
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
-        utils.log("INFO", "======== COMPLETED preInitResourcesOperStatus Process ======== ", isDebugEnabled)
+        logger.info( "======== COMPLETED preInitResourcesOperStatus Process ======== ")
     }
 
 
     public void preProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** preProcessForAddResource ***** ", isDebugEnabled)
+		logger.info(" ***** preProcessForAddResource ***** ")
 
 	    execution.setVariable("operationType", "create")
 
@@ -212,21 +214,21 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("hasResourcetoAdd", true)
 		}
 
-		utils.log("INFO"," *** Exit preProcessForAddResource *** ", isDebugEnabled)
+		logger.info(" *** Exit preProcessForAddResource *** ")
     }
 
     public void postProcessForAddResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** postProcessForAddResource ***** ", isDebugEnabled)
+		logger.info(" ***** postProcessForAddResource ***** ")
 
 		execution.setVariable("operationType", "update")
 
-		utils.log("INFO"," *** Exit postProcessForAddResource *** ", isDebugEnabled)
+		logger.info(" *** Exit postProcessForAddResource *** ")
     }
 
 	public void preProcessForDeleteResource(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** preProcessForDeleteResource ***** ", isDebugEnabled)
+		logger.info(" ***** preProcessForDeleteResource ***** ")
 
 		execution.setVariable("operationType", "delete")
 
@@ -259,22 +261,22 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("deleteResourceList", delResourceList)
 
-		utils.log("INFO"," *** Exit preProcessForDeleteResource *** ", isDebugEnabled)
+		logger.info(" *** Exit preProcessForDeleteResource *** ")
 	}
 
     public void postProcessForDeleteResource(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** postProcessForDeleteResource ***** ", isDebugEnabled)
+		logger.info(" ***** postProcessForDeleteResource ***** ")
 
 		execution.setVariable("operationType", "update")
 
-		utils.log("INFO"," *** Exit postProcessForDeleteResource *** ", isDebugEnabled)
+		logger.info(" *** Exit postProcessForDeleteResource *** ")
     }
 
 	public void preProcessAAIPUT(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO","Entered " + method, isDebugEnabled)
+		logger.info("Entered " + method)
 		String msg = ""
 
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion")
@@ -299,12 +301,12 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("serviceInstanceData", si)
 
-		utils.log("INFO", "Exited " + method, isDebugEnabled)
+		logger.info( "Exited " + method)
 	}
 
 	public void updateServiceInstance(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** createServiceInstance ***** ", isDebugEnabled)
+		logger.info(" ***** createServiceInstance ***** ")
 		String msg = ""
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		try {
@@ -327,52 +329,52 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("rollbackData", rollbackData)
 
 			msg = "Exception in DoCreateServiceInstance.createServiceInstance. " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO"," *** Exit createServiceInstance *** ", isDebugEnabled)
+		logger.info(" *** Exit createServiceInstance *** ")
 	}
 
 	public void preProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** preProcessRollback ***** ", isDebugEnabled)
+		logger.info(" ***** preProcessRollback ***** ")
 		try {
 
 			Object workflowException = execution.getVariable("WorkflowException");
 
 			if (workflowException instanceof WorkflowException) {
-				utils.log("INFO", "Prev workflowException: " + workflowException.getErrorMessage(), isDebugEnabled)
+				logger.info( "Prev workflowException: " + workflowException.getErrorMessage())
 				execution.setVariable("prevWorkflowException", workflowException);
 				//execution.setVariable("WorkflowException", null);
 			}
 		} catch (BpmnError e) {
-			utils.log("INFO", "BPMN Error during preProcessRollback", isDebugEnabled)
+			logger.info( "BPMN Error during preProcessRollback")
 		} catch(Exception ex) {
 			String msg = "Exception in preProcessRollback. " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 		}
-		utils.log("INFO"," *** Exit preProcessRollback *** ", isDebugEnabled)
+		logger.info(" *** Exit preProcessRollback *** ")
 	}
 
 	public void postProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO"," ***** postProcessRollback ***** ", isDebugEnabled)
+		logger.info(" ***** postProcessRollback ***** ")
 		String msg = ""
 		try {
 			Object workflowException = execution.getVariable("prevWorkflowException");
 			if (workflowException instanceof WorkflowException) {
-				utils.log("INFO", "Setting prevException to WorkflowException: ", isDebugEnabled)
+				logger.info( "Setting prevException to WorkflowException: ")
 				execution.setVariable("WorkflowException", workflowException);
 			}
 			execution.setVariable("rollbackData", null)
 		} catch (BpmnError b) {
-			utils.log("INFO", "BPMN Error during postProcessRollback", isDebugEnabled)
+			logger.info( "BPMN Error during postProcessRollback")
 			throw b;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessRollback. " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 		}
-		utils.log("INFO"," *** Exit postProcessRollback *** ", isDebugEnabled)
+		logger.info(" *** Exit postProcessRollback *** ")
 	}
 
 

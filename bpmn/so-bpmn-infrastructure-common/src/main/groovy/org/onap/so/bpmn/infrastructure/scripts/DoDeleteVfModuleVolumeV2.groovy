@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,10 +42,12 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import javax.ws.rs.NotFoundException
 
 class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVfModuleVolumeV2.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoDeleteVfModuleVolumeV2.class);
 
 	String prefix="DDVMV_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -53,7 +57,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	@Override
 	public void preProcessRequest(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		preProcessRequest(execution, isDebugEnabled)
+		preProcessRequest(execution)
 	}
 
 	/**
@@ -61,7 +65,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	 * @param execution
 	 * @param isDebugLogEnabled
 	 */
-	public void preProcessRequest (DelegateExecution execution, isDebugEnabled) {
+	public void preProcessRequest (DelegateExecution execution) {
 
 		//Input:
 		//  msoRequestId
@@ -89,7 +93,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		// if tenantId or lcpCloudregionId is not passed, get it from cloudRegionConfiguration variable
 		if(!tenantId || !cloudSiteId) {
 			def cloudConfiguration = execution.getVariable("cloudConfiguration")
-			msoLogger.debug("Using cloudConfiguration variable to get tenantId and lcpCloudRegionId - " + cloudConfiguration)
+			logger.debug("Using cloudConfiguration variable to get tenantId and lcpCloudRegionId - " + cloudConfiguration)
 			tenantId = jsonUtil.getJsonValue(cloudConfiguration, "tenantId")
 			execution.setVariable("tenantId", tenantId)
 			cloudSiteId = jsonUtil.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
@@ -116,7 +120,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTQueryAAICloudRegion(DelegateExecution execution, isDebugEnabled) {
+	public void callRESTQueryAAICloudRegion(DelegateExecution execution) {
 
 		String cloudRegion = execution.getVariable('lcpCloudRegionId')
 		AaiUtil aaiUtil = new AaiUtil(this)
@@ -135,7 +139,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 			}
 		}
 		else {
-			msoLogger.debug("AAI Query Cloud Region Unsuccessful.")
+			logger.debug("AAI Query Cloud Region Unsuccessful.")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "AAI Query Cloud Region Unsuccessful. Return Code: " + execution.getVariable(prefix+"queryCloudRegionReturnCode"))
 		}
 	}
@@ -166,14 +170,14 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
                 def heatStackId = volumeGroup.getHeatStackId()==null ? '' : volumeGroup.getHeatStackId()
                 execution.setVariable(prefix+'volumeGroupHeatStackId', heatStackId)
 
-                msoLogger.debug('Heat stack id from AAI response: ' + heatStackId)
+                logger.debug('Heat stack id from AAI response: ' + heatStackId)
 				AAIResultWrapper wrapper = getAAIClient().get(uri);
 				Optional<Relationships> relationships = wrapper.getRelationships()
 				String volumeGroupTenantId = null
 
 				if(relationships.isPresent()){
 					if(relationships.get().getRelatedAAIUris(AAIObjectType.VF_MODULE)){
-						msoLogger.debug('Volume Group ' + volumeGroupId + ' currently in use')
+						logger.debug('Volume Group ' + volumeGroupId + ' currently in use')
 						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} currently in use - found vf-module relationship.")
 					}
 					for(AAIResourceUri aaiResourceUri: relationships.get().getRelatedAAIUris(AAIObjectType.TENANT)){
@@ -181,22 +185,22 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 					}
 				}
 
-                msoLogger.debug('Tenant ID from AAI response: ' + volumeGroupTenantId)
+                logger.debug('Tenant ID from AAI response: ' + volumeGroupTenantId)
 
                 if (volumeGroupTenantId == null) {
-                    msoLogger.debug("Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
+                    logger.debug("Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
                     exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
                 }
 
                 if (volumeGroupTenantId != tenantId) {
                     def String errorMessage = 'TenantId ' + tenantId + ' in incoming request does not match Tenant Id ' + volumeGroupTenantId +	' retrieved from AAI for Volume Group Id ' + volumeGroupId
-                    msoLogger.debug("Error in DeleteVfModuleVolume: " + errorMessage)
+                    logger.debug("Error in DeleteVfModuleVolume: " + errorMessage)
                     exceptionUtil.buildAndThrowWorkflowException(execution, 5000, errorMessage)
                 }
-                msoLogger.debug('Received Tenant Id ' + volumeGroupTenantId + ' from AAI for Volume Group with Volume Group Id ' + volumeGroupId )
+                logger.debug('Received Tenant Id ' + volumeGroupTenantId + ' from AAI for Volume Group with Volume Group Id ' + volumeGroupId )
             }else{
                 execution.setVariable(prefix + "queryAAIVolGrpResponse", "Volume Group ${volumeGroupId} not found in AAI. Response code: 404")
-                msoLogger.debug("Volume Group ${volumeGroupId} not found in AAI")
+                logger.debug("Volume Group ${volumeGroupId} not found in AAI")
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} not found in AAI. Response code: 404")
             }
 		}catch (Exception ex) {
@@ -244,7 +248,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		"""
 		vnfAdapterRestRequest = utils.formatXml(vnfAdapterRestRequest)
 		execution.setVariable(prefix+'deleteVnfARequest', vnfAdapterRestRequest)
-		msoLogger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
+		logger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
 	}
 
 
@@ -253,7 +257,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	 * @param execution
 	 * @param isDebugEnabled
 	 */
-	public void callRESTDeleteAAIVolumeGroup(DelegateExecution execution, isDebugEnabled) {
+	public void callRESTDeleteAAIVolumeGroup(DelegateExecution execution) {
 
 		// get variables
 		VolumeGroup volumeGroupResponse = execution.getVariable(prefix+"queryAAIVolGrpResponse")
@@ -263,7 +267,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
         try {
             AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,Defaults.CLOUD_OWNER.toString(), cloudRegion, volumeGroupId)
             getAAIClient().delete(resourceUri)
-            msoLogger.debug("Volume group $volumeGroupId deleted.")
+            logger.debug("Volume group $volumeGroupId deleted.")
         }catch (NotFoundException ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $volumeGroupId not found for delete in AAI Response code: 404")
         }catch (Exception ex) {

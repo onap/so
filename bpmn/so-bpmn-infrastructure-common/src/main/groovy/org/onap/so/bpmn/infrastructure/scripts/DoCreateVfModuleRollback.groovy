@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +38,8 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import org.springframework.web.util.UriUtils
 
@@ -43,7 +47,7 @@ import javax.ws.rs.NotFoundException
 
 
 public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVfModuleRollback.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateVfModuleRollback.class);
 
 	def Prefix="DCVFMR_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -65,7 +69,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			execution.setVariable("rollbackError", null)
 
 			def rollbackData = execution.getVariable("rollbackData")
-			msoLogger.debug("RollbackData:" + rollbackData)
+			logger.debug("RollbackData:" + rollbackData)
 
 			if (rollbackData != null) {
 			String vnfId = rollbackData.get("VFMODULE", "vnfid")
@@ -104,7 +108,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 					break
 				}
 				createdNetworkPolicyFqdnList.add(fqdn)
-				msoLogger.debug("got fqdn # " + i + ": " + fqdn)
+				logger.debug("got fqdn # " + i + ": " + fqdn)
 				i = i + 1
 
 			}
@@ -131,7 +135,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 									<vf-module-id>${MsoUtils.xmlEscape(vfModuleId)}</vf-module-id>
 									<orchestration-status>pending-delete</orchestration-status>
 								</PrepareUpdateAAIVfModuleRequest>""" as String
-			msoLogger.debug("PrepareUpdateAAIVfModuleRequest :" + request)
+			logger.debug("PrepareUpdateAAIVfModuleRequest :" + request)
 			execution.setVariable("PrepareUpdateAAIVfModuleRequest", request)
 		} else {
 			execution.setVariable("skipRollback", true)
@@ -145,7 +149,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			throw e;
 		} catch (Exception ex){
 			def msg = "Exception in DoCreateVfModuleRollback preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
@@ -238,14 +242,14 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 						      </sdncadapterworkflow:SDNCRequestData>
 						   </sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
-		msoLogger.debug("sdncAdapterWorkflowRequest: " + request)
+		logger.debug("sdncAdapterWorkflowRequest: " + request)
 		execution.setVariable("sdncAdapterWorkflowRequest", request)
 	}
 
 	public void preProcessSDNCDeactivateRequest(DelegateExecution execution){
 
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessSDNCDeactivateRequest")
+		logger.trace("STARTED preProcessSDNCDeactivateRequest")
 
 		def serviceInstanceId = execution.getVariable("DCVFMR_serviceInstanceId")
 
@@ -256,13 +260,13 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 			deactivateSDNCRequest = utils.formatXml(deactivateSDNCRequest)
 			execution.setVariable("DCVFMR_deactivateSDNCRequest", deactivateSDNCRequest)
-			msoLogger.debug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
+			logger.debug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preProcessSDNCDeactivateRequest.", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured Processing preProcessSDNCDeactivateRequest.", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCDeactivateRequest Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED preProcessSDNCDeactivateRequest")
+		logger.trace("COMPLETED preProcessSDNCDeactivateRequest")
 	}
 
 	public void preProcessSDNCUnassignRequest(DelegateExecution execution) {
@@ -270,22 +274,22 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessSDNCUnassignRequest Process")
+		logger.trace("STARTED preProcessSDNCUnassignRequest Process")
 		try{
 			String serviceInstanceId = execution.getVariable("DCVFMR_serviceInstanceId")
 
 			String unassignSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "unassign")
 
 			execution.setVariable("DCVFMR_unassignSDNCRequest", unassignSDNCRequest)
-			msoLogger.debug("Outgoing UnassignSDNCRequest is: \n" + unassignSDNCRequest)
+			logger.debug("Outgoing UnassignSDNCRequest is: \n" + unassignSDNCRequest)
 
 		}catch(Exception e){
-			msoLogger.debug("Exception Occured Processing preProcessSDNCUnassignRequest. Exception is:\n" + e)
+			logger.debug("Exception Occured Processing preProcessSDNCUnassignRequest. Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during  preProcessSDNCUnassignRequest Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED  preProcessSDNCUnassignRequest Process")
+		logger.trace("COMPLETED  preProcessSDNCUnassignRequest Process")
 	}
 
 	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
@@ -342,7 +346,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 	</sdncadapterworkflow:SDNCRequestData>
 	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
-		msoLogger.debug("sdncRequest:  " + sdncRequest)
+		logger.debug("sdncRequest:  " + sdncRequest)
 		return sdncRequest
 	}
 
@@ -383,7 +387,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			</deleteVfModuleRequest>
 			""" as String
 
-		msoLogger.debug("vnfAdapterRestV1Request: " + request)
+		logger.debug("vnfAdapterRestV1Request: " + request)
 		execution.setVariable("vnfAdapterRestV1Request", request)
 	}
 
@@ -400,7 +404,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 								<heat-stack-id>DELETE</heat-stack-id>
 								<orchestration-status>deleted</orchestration-status>
 							</UpdateAAIVfModuleRequest>""" as String
-		msoLogger.debug("UpdateAAIVfModuleRequest :" + request)
+		logger.debug("UpdateAAIVfModuleRequest :" + request)
 		execution.setVariable("UpdateAAIVfModuleRequest", request)
 	}
 
@@ -417,7 +421,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 								<heat-stack-id></heat-stack-id>
 								<orchestration-status>Assigned</orchestration-status>
 							</UpdateAAIVfModuleRequest>""" as String
-		msoLogger.debug("UpdateAAIVfModuleRequest :" + request)
+		logger.debug("UpdateAAIVfModuleRequest :" + request)
 		execution.setVariable("UpdateAAIVfModuleRequest", request)
 	}
 
@@ -432,7 +436,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 								<vnf-id>${MsoUtils.xmlEscape(vnfId)}</vnf-id>
 								<vf-module-id>${MsoUtils.xmlEscape(vfModuleId)}</vf-module-id>
 							</DeleteAAIVfModuleRequest>""" as String
-		msoLogger.debug("DeleteAAIVfModuleRequest :" + request)
+		logger.debug("DeleteAAIVfModuleRequest :" + request)
 		execution.setVariable("DeleteAAIVfModuleRequest", request)
 	}
 
@@ -440,7 +444,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 	//		-
 	public void handleDoDeleteVfModuleFailure(DelegateExecution execution) {
 
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "AAI error occurred deleting the Generic Vnf"+ execution.getVariable("DoDVfMod_deleteGenericVnfResponse"), "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError);
+		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "AAI error occurred deleting the Generic Vnf"+ execution.getVariable("DoDVfMod_deleteGenericVnfResponse"), "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue());
 		String processKey = getProcessKey(execution);
 		exceptionUtil.buildWorkflowException(execution, 5000, "Failure in DoDeleteVfModule")
 
@@ -457,7 +461,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 		if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-			msoLogger.debug("Successfully Validated SDNC Response")
+			logger.debug("Successfully Validated SDNC Response")
 		}else{
 			throw new BpmnError("MSOWorkflowException")
 		}
@@ -468,21 +472,21 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		'execution=' + execution.getId() +
 		')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED deleteNetworkPoliciesFromAAI")
+		logger.trace("STARTED deleteNetworkPoliciesFromAAI")
 
 		try {
 			// get variables
 			List fqdnList = execution.getVariable(Prefix + "createdNetworkPolicyFqdnList")
 			if (fqdnList == null) {
-				msoLogger.debug("No network policies to delete")
+				logger.debug("No network policies to delete")
 				return
 			}
 			int fqdnCount = fqdnList.size()
 
 			execution.setVariable(Prefix + "networkPolicyFqdnCount", fqdnCount)
-			msoLogger.debug("networkPolicyFqdnCount - " + fqdnCount)
+			logger.debug("networkPolicyFqdnCount - " + fqdnCount)
 
 			AaiUtil aaiUriUtil = new AaiUtil(this)
 
@@ -507,24 +511,24 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
                             AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicy.getNetworkPolicyId())
                             getAAIClient().delete(delUri)
                             execution.setVariable(Prefix + "aaiDeleteNetworkPolicyReturnCode", 200)
-                            msoLogger.debug("AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + 200)
-                                msoLogger.debug("The return code from deleting network policy is: " + 200)
+                            logger.debug("AAI delete network policy Response Code, NetworkPolicy #" + counting + " : " + 200)
+                                logger.debug("The return code from deleting network policy is: " + 200)
                                 // This network policy was deleted from AAI successfully
-                                msoLogger.debug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ")
+                                logger.debug(" DelAAINetworkPolicy Success REST Response, , NetworkPolicy #" + counting + " : ")
                             }catch(NotFoundException ne){
                                 // This network policy FQDN is not in AAI. No need to delete.
                                 execution.setVariable(Prefix + "aaiDeleteNetworkPolicyReturnCode", 404)
-                                msoLogger.debug("The return code is: " + 404)
-                                msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
+                                logger.debug("The return code is: " + 404)
+                                logger.debug("This network policy FQDN is not in AAI: " + fqdn)
                             }catch(Exception e){
                                 // aai all errors
                                 String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + e.getMessage()
-                                msoLogger.debug(delErrorMessage)
+                                logger.debug(delErrorMessage)
                                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, delErrorMessage)
                             }
                         } else {
                             // This network policy FQDN is not in AAI. No need to delete.
-                            msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
+                            logger.debug("This network policy FQDN is not in AAI: " + fqdn)
                         }
                     }catch (BpmnError e){
                         throw e
@@ -532,14 +536,14 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
                     catch (Exception e) {
                         // aai all errors
                         String dataErrorMessage = "Unexpected Response from deleteNetworkPoliciesFromAAI - " + e.getMessage()
-                        msoLogger.debug(dataErrorMessage)
+                        logger.debug(dataErrorMessage)
                         exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
                     }
 				} // end loop
 
 
 			} else {
-				   msoLogger.debug("No contrail network policies to query/create")
+				   logger.debug("No contrail network policies to query/create")
 
 			}
 
@@ -548,7 +552,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoCreateVfModuleRollback flow. deleteNetworkPoliciesFromAAI() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 
@@ -565,7 +569,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('DCVFMR_vnfId')
@@ -592,14 +596,14 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 				"""
 				updateAAIGenericVnfRequest = utils.formatXml(updateAAIGenericVnfRequest)
 				execution.setVariable(Prefix + 'updateAAIGenericVnfRequest', updateAAIGenericVnfRequest)
-				msoLogger.debug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest)
+				logger.debug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest)
 
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessUpdateAAIGenericVnf((): ' + e.getMessage())
 		}
 	}
@@ -607,7 +611,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 	public void setSuccessfulRollbackStatus (DelegateExecution execution){
 
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED setSuccessfulRollbackStatus")
+		logger.trace("STARTED setSuccessfulRollbackStatus")
 
 		try{
 			// Set rolledBack to true, rollbackError to null
@@ -615,16 +619,16 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			execution.setVariable("rollbackError", null)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing setSuccessfulRollbackStatus.", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured Processing setSuccessfulRollbackStatus.", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setSuccessfulRollbackStatus Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED setSuccessfulRollbackStatus")
+		logger.trace("COMPLETED setSuccessfulRollbackStatus")
 	}
 
 	public void setFailedRollbackStatus (DelegateExecution execution){
 
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED setFailedRollbackStatus")
+		logger.trace("STARTED setFailedRollbackStatus")
 
 		try{
 			// Set rolledBack to false, rollbackError to actual value, rollbackData to null
@@ -633,9 +637,9 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			execution.setVariable("rollbackData", null)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing setFailedRollbackStatus.", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured Processing setFailedRollbackStatus.", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setFailedRollbackStatus Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED setFailedRollbackStatus")
+		logger.trace("COMPLETED setFailedRollbackStatus")
 	}
 }

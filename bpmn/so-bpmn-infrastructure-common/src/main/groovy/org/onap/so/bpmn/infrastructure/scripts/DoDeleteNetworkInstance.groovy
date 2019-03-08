@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,6 +46,8 @@ import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import org.springframework.web.util.UriUtils
 import org.onap.so.utils.TargetEntity
@@ -52,7 +56,7 @@ import groovy.json.JsonOutput
 import javax.ws.rs.core.Response
 
 public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteNetworkInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoDeleteNetworkInstance.class);
 
 	String Prefix= "DELNWKI_"
 	String groovyClassName = "DoDeleteNetworkInstance"
@@ -116,7 +120,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside preProcessRequest() of " + groovyClassName + " Request ")
+		logger.trace("Inside preProcessRequest() of " + groovyClassName + " Request ")
 
 		// initialize flow variables
 		InitializeProcessVariables(execution)
@@ -130,12 +134,12 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 					// JSON format request is sent, create xml
 					try {
 						def prettyJson = JsonOutput.prettyPrint(deleteNetwork.toString())
-						msoLogger.debug(" Incoming message formatted . . . : " + '\n' + prettyJson)
+						logger.debug(" Incoming message formatted . . . : " + '\n' + prettyJson)
 						deleteNetwork =  vidUtils.createXmlNetworkRequestInfra(execution, deleteNetwork)
 
 					} catch (Exception ex) {
 						String dataErrorMessage = " Invalid json format Request - " + ex.getMessage()
-						msoLogger.debug(dataErrorMessage)
+						logger.debug(dataErrorMessage)
 						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 					}
 				} else {
@@ -148,14 +152,14 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 			deleteNetwork = utils.formatXml(deleteNetwork)
-			msoLogger.debug(deleteNetwork)
+			logger.debug(deleteNetwork)
 			execution.setVariable(Prefix + "networkRequest", deleteNetwork)
-			msoLogger.debug(Prefix + "networkRequest - " + '\n' + deleteNetwork)
+			logger.debug(Prefix + "networkRequest - " + '\n' + deleteNetwork)
 
 			// validate 'backout-on-failure' to override 'mso.rollback'
 			boolean rollbackEnabled = networkUtils.isRollbackEnabled(execution, deleteNetwork)
 			execution.setVariable(Prefix + "rollbackEnabled", rollbackEnabled)
-			msoLogger.debug(Prefix + "rollbackEnabled - " + rollbackEnabled)
+			logger.debug(Prefix + "rollbackEnabled - " + rollbackEnabled)
 
 			String networkInputs = utils.getNodeXml(deleteNetwork, "network-inputs", false).replace("tag0:","").replace(":tag0","")
 			execution.setVariable(Prefix + "networkInputs", networkInputs)
@@ -164,15 +168,15 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String messageId = execution.getVariable("testMessageId")  // for testing
 			if (messageId == null || messageId == "") {
 					messageId = UUID.randomUUID()
-					msoLogger.debug(Prefix + "messageId, random generated: " + messageId)
+					logger.debug(Prefix + "messageId, random generated: " + messageId)
 			} else {
-					msoLogger.debug(Prefix + "messageId, pre-assigned: " + messageId)
+					logger.debug(Prefix + "messageId, pre-assigned: " + messageId)
 			}
 			execution.setVariable(Prefix + "messageId", messageId)
 
 			String source = utils.getNodeText(deleteNetwork, "source")
 			execution.setVariable(Prefix + "source", source)
-			msoLogger.debug(Prefix + "source - " + source)
+			logger.debug(Prefix + "source - " + source)
 
 			String networkId = ""
 			if (utils.nodeExists(networkInputs, "network-id")) {
@@ -181,7 +185,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 					sendSyncError(execution)
 					// missing value of network-id
 					String dataErrorMessage = "network-request has missing 'network-id' element/value."
-					msoLogger.debug(" Invalid Request - " + dataErrorMessage)
+					logger.debug(" Invalid Request - " + dataErrorMessage)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 				}
 			}
@@ -195,7 +199,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 			execution.setVariable(Prefix + "lcpCloudRegion", lcpCloudRegion)
-			msoLogger.debug("lcpCloudRegion : " + lcpCloudRegion)
+			logger.debug("lcpCloudRegion : " + lcpCloudRegion)
 
 			String tenantId = null
 			if (utils.nodeExists(networkInputs, "tenant-id")) {
@@ -206,10 +210,10 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 			}
 			execution.setVariable(Prefix + "tenantId", tenantId)
-			msoLogger.debug("tenantId : " + tenantId)
+			logger.debug("tenantId : " + tenantId)
 
 			String sdncVersion = execution.getVariable("sdncVersion")
-			msoLogger.debug("sdncVersion? : " + sdncVersion)
+			logger.debug("sdncVersion? : " + sdncVersion)
 
 			// PO Authorization Info / headers Authorization=
 			String basicAuthValuePO = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
@@ -221,7 +225,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 			} catch (IOException ex) {
 				String dataErrorMessage = " Unable to encode PO/SDNC user/password string - " + ex.getMessage()
-				msoLogger.debug(dataErrorMessage )
+				logger.debug(dataErrorMessage )
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 			}
 
@@ -231,7 +235,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex){
 			 // caught exception
 			String exceptionMessage = "Exception Encountered in DoDeleteNetworkInstance, PreProcessRequest() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -243,7 +247,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTQueryAAI() of DoDoDeleteNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTQueryAAI() of DoDoDeleteNetworkInstance ***** " )
 
 		// get variables
 		String networkInputs  = execution.getVariable(Prefix + "networkInputs")
@@ -273,7 +277,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 							if(execution.getVariable(Prefix + "tenantId") == null) {
 								String tenantId = tenantURI.getURIKeys().get("tenant-id")
 								execution.setVariable(Prefix + "tenantId", tenantId)
-								msoLogger.debug(" Get AAI getTenantId()  : " + tenantId)
+								logger.debug(" Get AAI getTenantId()  : " + tenantId)
 							}
 						}
 						List<AAIResourceUri> cloudRegionURIList = relationships.get().getRelatedAAIUris(AAIObjectType.CLOUD_REGION)
@@ -281,24 +285,24 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 							if(execution.getVariable(Prefix + "lcpCloudRegion") == null) {
 								String lcpCloudRegion = tenantURI.getURIKeys().get("cloud-region-id")
 								execution.setVariable(Prefix + "lcpCloudRegion", lcpCloudRegion)
-								msoLogger.debug(" Get AAI getCloudRegion()  : " + lcpCloudRegion)
+								logger.debug(" Get AAI getCloudRegion()  : " + lcpCloudRegion)
 							}
 						}
 					}
 				}
-				msoLogger.debug(Prefix + "isVfRelationshipExist - " + isVfRelationshipExist)
+				logger.debug(Prefix + "isVfRelationshipExist - " + isVfRelationshipExist)
 			} else {
 				// not found // empty aai response
 				execution.setVariable(Prefix + "aaiReturnCode", 404)
 				execution.setVariable(Prefix + "isAAIGood", false)
 				execution.setVariable(Prefix + "isSilentSuccess", true)
-				msoLogger.debug(" AAI Query is Silent Success")
+				logger.debug(" AAI Query is Silent Success")
 			}
-			msoLogger.debug(" AAI Query call, isAAIGood? : " + execution.getVariable(Prefix + "isAAIGood"))
+			logger.debug(" AAI Query call, isAAIGood? : " + execution.getVariable(Prefix + "isAAIGood"))
 		} catch (Exception ex) {
 		   // caught exception
 		   String exceptionMessage = "Exception Encountered in DoDeleteNetworkInstance, callRESTQueryAAI() - " + ex.getMessage()
-		   msoLogger.debug(exceptionMessage)
+		   logger.debug(exceptionMessage)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -309,7 +313,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTQueryAAICloudRegion of DoDeleteNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTQueryAAICloudRegion of DoDeleteNetworkInstance ***** " )
 
 		try {
 			String networkInputs  = execution.getVariable(Prefix + "networkInputs")
@@ -332,7 +336,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 			} else {
 				String dataErrorMessage = "QueryAAICloudRegion Unsuccessful. Return Code: " + execution.getVariable(Prefix + "queryCloudRegionReturnCode")
-				msoLogger.debug(dataErrorMessage)
+				logger.debug(dataErrorMessage)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 
 			}
@@ -343,7 +347,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, callRESTQueryAAICloudRegion(). Unexpected Response from AAI - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -354,7 +358,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside prepareNetworkRequest of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareNetworkRequest of DoDeleteNetworkInstance ")
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		try {
 			// get variables
@@ -411,23 +415,23 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 					  </deleteNetworkRequest>
 						""".trim()
 
-			msoLogger.debug(Prefix + "deleteNetworkRequest - " + "\n" +  deleteNetworkRequest)
+			logger.debug(Prefix + "deleteNetworkRequest - " + "\n" +  deleteNetworkRequest)
 			// Format Response
 			String buildDeleteNetworkRequestAsString = utils.formatXml(deleteNetworkRequest)
-			msoLogger.debug(buildDeleteNetworkRequestAsString)
-			msoLogger.debug(Prefix + "deleteNetworkRequestAsString - " + "\n" +  buildDeleteNetworkRequestAsString)
+			logger.debug(buildDeleteNetworkRequestAsString)
+			logger.debug(Prefix + "deleteNetworkRequestAsString - " + "\n" +  buildDeleteNetworkRequestAsString)
 
 			String restURL = UrnPropertiesReader.getVariable("mso.adapters.network.rest.endpoint", execution)
 			execution.setVariable("mso.adapters.network.rest.endpoint", restURL + "/" + networkId)
-			msoLogger.debug("mso.adapters.network.rest.endpoint - " + "\n" +  restURL + "/" + networkId)
+			logger.debug("mso.adapters.network.rest.endpoint - " + "\n" +  restURL + "/" + networkId)
 
 			execution.setVariable(Prefix + "deleteNetworkRequest", buildDeleteNetworkRequestAsString)
-			msoLogger.debug(Prefix + "deleteNetworkRequest - " + "\n" +  buildDeleteNetworkRequestAsString)
+			logger.debug(Prefix + "deleteNetworkRequest - " + "\n" +  buildDeleteNetworkRequestAsString)
 		}
 		catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareNetworkRequest(). Unexpected Response from AAI - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -442,7 +446,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 
@@ -461,8 +465,8 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, sendRequestToVnfAdapter() - " + ex.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, exceptionMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + ex);
-			msoLogger.debug(exceptionMessage)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -473,7 +477,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside prepareSDNCRequest of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareSDNCRequest of DoDeleteNetworkInstance ")
 
 		try {
 			// get variables
@@ -496,7 +500,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			    requestId = execution.getVariable("mso-request-id")
 			}
 			execution.setVariable(Prefix + "requestId", requestId)
-			msoLogger.debug(Prefix + "requestId " + requestId)
+			logger.debug(Prefix + "requestId " + requestId)
 			L3Network queryAAIResponse = execution.getVariable(Prefix + "queryAAIResponse")
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
@@ -504,15 +508,15 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			// 1. prepare delete topology via SDNC Adapter SUBFLOW call
 			String sndcTopologyDeleteRequest = sdncAdapterUtils.sdncTopologyRequestV2(execution, deleteNetworkInput, serviceInstanceId, sdncCallback, "delete", "DisconnectNetworkRequest", cloudRegionId, networkId, queryAAIResponse, null)
 		    String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyDeleteRequest)
-			msoLogger.debug(sndcTopologyDeleteRequesAsString)
+			logger.debug(sndcTopologyDeleteRequesAsString)
 			execution.setVariable(Prefix + "deleteSDNCRequest", sndcTopologyDeleteRequesAsString)
-			msoLogger.debug(Prefix + "deleteSDNCRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
+			logger.debug(Prefix + "deleteSDNCRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
 
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRequest() - " + ex.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, exceptionMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + ex);
-			msoLogger.debug(exceptionMessage)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -523,7 +527,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside prepareRpcSDNCRequest of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareRpcSDNCRequest of DoDeleteNetworkInstance ")
 
 		try {
 			// get variables
@@ -543,15 +547,15 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			// 1. prepare delete topology via SDNC Adapter SUBFLOW call
 			String sndcTopologyRollbackRpcRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, deleteNetworkInput, serviceInstanceId, sdncCallback, "unassign", "DeleteNetworkInstance", cloudRegionId, networkId, null)
 			String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyRollbackRpcRequest)
-			msoLogger.debug(sndcTopologyDeleteRequesAsString)
+			logger.debug(sndcTopologyDeleteRequesAsString)
 			execution.setVariable(Prefix + "deleteSDNCRequest", sndcTopologyDeleteRequesAsString)
-			msoLogger.debug(Prefix + "deleteSDNCRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
+			logger.debug(Prefix + "deleteSDNCRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
 
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRequest() - " + ex.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, exceptionMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + ex);
-			msoLogger.debug(exceptionMessage)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -563,7 +567,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside prepareRpcSDNCDeactivate() of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareRpcSDNCDeactivate() of DoDeleteNetworkInstance ")
 
 		try {
 
@@ -581,12 +585,12 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String sndcTopologyRollbackRpcRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, deleteNetworkInput, serviceInstanceId, sdncCallback, "deactivate", "DeleteNetworkInstance", cloudRegionId, networkId, null)
 			String sndcTopologyRollbackRpcRequestAsString = utils.formatXml(sndcTopologyRollbackRpcRequest)
 			execution.setVariable(Prefix + "deactivateSDNCRequest", sndcTopologyRollbackRpcRequestAsString)
-			msoLogger.debug(" Preparing request for RPC SDNC Topology deactivate - " + "\n" +  sndcTopologyRollbackRpcRequestAsString)
+			logger.debug(" Preparing request for RPC SDNC Topology deactivate - " + "\n" +  sndcTopologyRollbackRpcRequestAsString)
 
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoDeleteNetworkInstance flow. prepareRpcSDNCActivateRollback() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -601,24 +605,24 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside validateNetworkResponse of DoDeleteNetworkInstance ")
+		logger.trace("Inside validateNetworkResponse of DoDeleteNetworkInstance ")
 
 		try {
 			String returnCode = execution.getVariable(Prefix + "networkReturnCode")
 			String networkResponse = execution.getVariable(Prefix + "deleteNetworkResponse")
 
-			msoLogger.debug(" Network Adapter responseCode: " + returnCode)
-			msoLogger.debug("Network Adapter Response - " + "\n" + networkResponse)
-			msoLogger.debug(networkResponse)
+			logger.debug(" Network Adapter responseCode: " + returnCode)
+			logger.debug("Network Adapter Response - " + "\n" + networkResponse)
+			logger.debug(networkResponse)
 
 			String errorMessage = ""
 			if (returnCode == "200") {
-				msoLogger.debug(" Network Adapter Response is successful - " + "\n" + networkResponse)
+				logger.debug(" Network Adapter Response is successful - " + "\n" + networkResponse)
 
 				// prepare rollback data
 				String rollbackData = utils.getNodeXml(networkResponse, "rollback", false).replace("tag0:","").replace(":tag0","")
 				if ((rollbackData == null) || (rollbackData.isEmpty())) {
-					msoLogger.debug(" Network Adapter 'rollback' data is not Sent: " + "\n" + networkResponse)
+					logger.debug(" Network Adapter 'rollback' data is not Sent: " + "\n" + networkResponse)
 					execution.setVariable(Prefix + "rollbackNetworkRequest", "")
 				} else {
 				    String rollbackNetwork =
@@ -627,7 +631,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 						 </NetworkAdapter:rollbackNetwork>"""
 				    String rollbackNetworkXml = utils.formatXml(rollbackNetwork)
 				    execution.setVariable(Prefix + "rollbackNetworkRequest", rollbackNetworkXml)
-				    msoLogger.debug(" Network Adapter rollback data - " + "\n" + rollbackNetworkXml)
+				    logger.debug(" Network Adapter rollback data - " + "\n" + rollbackNetworkXml)
 				}
 
 
@@ -664,7 +668,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, validateNetworkResponse() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -675,7 +679,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside validateSDNCResponse of DoDeleteNetworkInstance ")
+		logger.trace("Inside validateSDNCResponse of DoDeleteNetworkInstance ")
 
 		String response = execution.getVariable(Prefix + "deleteSDNCResponse")
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
@@ -691,9 +695,9 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		if (execution.getVariable(Prefix + "sdncResponseSuccess") == true) {  // from sdnc util, prefix+'sdncResponseSuccess'
 			execution.setVariable(Prefix + "isSdncRollbackNeeded", true)      //
 			execution.setVariable(Prefix + "isPONR", true)
-			msoLogger.debug("Successfully Validated SDNC Response")
+			logger.debug("Successfully Validated SDNC Response")
 		} else {
-			msoLogger.debug("Did NOT Successfully Validated SDNC Response")
+			logger.debug("Did NOT Successfully Validated SDNC Response")
 		 	throw new BpmnError("MSOWorkflowException")
 		}
 
@@ -703,7 +707,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside validateRpcSDNCDeactivateResponse() of DoDeleteNetworkInstance ")
+		logger.trace("Inside validateRpcSDNCDeactivateResponse() of DoDeleteNetworkInstance ")
 
 		String response = execution.getVariable(Prefix + "deactivateSDNCResponse")
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
@@ -718,10 +722,10 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		if (execution.getVariable(Prefix + "sdncResponseSuccess") == true) {  // from sdnc util, Prefix+'sdncResponseSuccess'
 			execution.setVariable(Prefix + "isSdncDeactivateRollbackNeeded", true)
-			msoLogger.debug("Successfully Validated Rpc SDNC Activate Response")
+			logger.debug("Successfully Validated Rpc SDNC Activate Response")
 
 		} else {
-			msoLogger.debug("Did NOT Successfully Validated Rpc SDNC Deactivate Response")
+			logger.debug("Did NOT Successfully Validated Rpc SDNC Deactivate Response")
 			throw new BpmnError("MSOWorkflowException")
 		}
 
@@ -731,7 +735,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside prepareRpcSDNCDeactivateRollback() of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareRpcSDNCDeactivateRollback() of DoDeleteNetworkInstance ")
 
 		try {
 
@@ -748,12 +752,12 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			String sndcTopologyRollbackRpcRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, deleteNetworkInput, serviceInstanceId, sdncCallback, "activate", "CreateNetworkInstance", cloudRegionId, networkId, null)
 			String sndcTopologyRollbackRpcRequestAsString = utils.formatXml(sndcTopologyRollbackRpcRequest)
 			execution.setVariable(Prefix + "rollbackDeactivateSDNCRequest", sndcTopologyRollbackRpcRequestAsString)
-			msoLogger.debug(" Preparing request for RPC SDNC Topology 'activate-CreateNetworkInstance' rollback . . . - " + "\n" +  sndcTopologyRollbackRpcRequestAsString)
+			logger.debug(" Preparing request for RPC SDNC Topology 'activate-CreateNetworkInstance' rollback . . . - " + "\n" +  sndcTopologyRollbackRpcRequestAsString)
 
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoDeleteNetworkInstance flow. prepareRpcSDNCDeactivateRollback() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -764,7 +768,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside prepareRollbackData() of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareRollbackData() of DoDeleteNetworkInstance ")
 
 		try {
 
@@ -782,14 +786,14 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			    }
 			}
 			execution.setVariable("rollbackData", rollbackData)
-			msoLogger.debug("** rollbackData : " + rollbackData)
+			logger.debug("** rollbackData : " + rollbackData)
 
 			execution.setVariable("WorkflowException", execution.getVariable("WorkflowException"))
-			msoLogger.debug("** WorkflowException : " + execution.getVariable("WorkflowException"))
+			logger.debug("** WorkflowException : " + execution.getVariable("WorkflowException"))
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoDeleteNetworkInstance flow. prepareRollbackData() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -800,11 +804,11 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside postProcessResponse of DoDeleteNetworkInstance ")
+		logger.trace("Inside postProcessResponse of DoDeleteNetworkInstance ")
 
 		try {
 
-			msoLogger.debug(" ***** Is Exception Encountered (isException)? : " + execution.getVariable(Prefix + "isException"))
+			logger.debug(" ***** Is Exception Encountered (isException)? : " + execution.getVariable(Prefix + "isException"))
 			if (execution.getVariable(Prefix + "isException") == false) {
 				execution.setVariable(Prefix + "Success", true)
 				execution.setVariable("WorkflowException", null)
@@ -820,7 +824,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 				execution.setVariable("rollbackData", null)
 				String exceptionMessage = " Exception encountered in MSO Bpmn. "
 				if (execution.getVariable("workflowException") != null) {  // Output of Rollback flow.
-				   msoLogger.debug(" ***** workflowException: " + execution.getVariable("workflowException"))
+				   logger.debug(" ***** workflowException: " + execution.getVariable("workflowException"))
 				   WorkflowException wfex = execution.getVariable("workflowException")
 				   exceptionMessage = wfex.getErrorMessage()
    				} else {
@@ -836,20 +840,20 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
    				}
 
 				// going to the Main flow: a-la-carte or macro
-				msoLogger.debug(" ***** postProcessResponse(), BAD !!!")
+				logger.debug(" ***** postProcessResponse(), BAD !!!")
 				exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 				throw new BpmnError("MSOWorkflowException")
 
 			}
 
 		} catch(BpmnError b){
-		    msoLogger.debug("Rethrowing MSOWorkflowException")
+		    logger.debug("Rethrowing MSOWorkflowException")
 		    throw b
 
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, postProcessResponse() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 			throw new BpmnError("MSOWorkflowException")
 
@@ -861,7 +865,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside prepareSuccessRollbackData() of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareSuccessRollbackData() of DoDeleteNetworkInstance ")
 
 		try {
 
@@ -893,13 +897,13 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 			execution.setVariable("rollbackData", rollbackData)
 
-			msoLogger.debug("** rollbackData : " + rollbackData)
+			logger.debug("** rollbackData : " + rollbackData)
 			execution.setVariable("WorkflowException", null)
 
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoDeleteNetworkInstance flow. prepareSuccessRollbackData() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -910,7 +914,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside prepareRpcSDNCUnassignRollbac() of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareRpcSDNCUnassignRollbac() of DoDeleteNetworkInstance ")
 
 		try {
 
@@ -928,15 +932,15 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			// 1. prepare delete topology via SDNC Adapter SUBFLOW call
 			String sndcTopologyRollbackRpcRequest = sdncAdapterUtils.sdncTopologyRequestRsrc(execution, deleteNetworkInput, serviceInstanceId, sdncCallback, "assign", "CreateNetworkInstance", cloudRegionId, networkId, null)
 			String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyRollbackRpcRequest)
-			msoLogger.debug(sndcTopologyDeleteRequesAsString)
+			logger.debug(sndcTopologyDeleteRequesAsString)
 			execution.setVariable(Prefix + "rollbackSDNCRequest", sndcTopologyDeleteRequesAsString)
-			msoLogger.debug(Prefix + "rollbackSDNCRequest" + "\n" +  sndcTopologyDeleteRequesAsString)
-			msoLogger.debug(" Preparing request for RPC SDNC Topology 'assign-CreateNetworkInstance' rollback . . . - " + "\n" +  sndcTopologyDeleteRequesAsString)
+			logger.debug(Prefix + "rollbackSDNCRequest" + "\n" +  sndcTopologyDeleteRequesAsString)
+			logger.debug(" Preparing request for RPC SDNC Topology 'assign-CreateNetworkInstance' rollback . . . - " + "\n" +  sndcTopologyDeleteRequesAsString)
 
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoDeleteNetworkInstance flow. prepareRpcSDNCUnassignRollback() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -947,7 +951,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside prepareSDNCRollback of DoDeleteNetworkInstance ")
+		logger.trace("Inside prepareSDNCRollback of DoDeleteNetworkInstance ")
 
 		try {
 
@@ -979,17 +983,17 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			// 1. prepare delete topology via SDNC Adapter SUBFLOW call
 			String sndcTopologyDeleteRequest = sdncAdapterUtils.sdncTopologyRequestV2(execution, deleteNetworkInput, serviceInstanceId, sdncCallback, "rollback", "DisconnectNetworkRequest", cloudRegionId, networkId, queryAAIResponse, null)
 		    String sndcTopologyDeleteRequesAsString = utils.formatXml(sndcTopologyDeleteRequest)
-			msoLogger.debug(sndcTopologyDeleteRequesAsString)
+			logger.debug(sndcTopologyDeleteRequesAsString)
 			execution.setVariable(Prefix + "rollbackSDNCRequest", sndcTopologyDeleteRequesAsString)
-			msoLogger.debug(Prefix + "rollbackSDNCRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
-			msoLogger.debug(" Preparing request for RPC SDNC Topology 'rollback-DisconnectNetworkRequest' rollback . . . - " + "\n" +  sndcTopologyDeleteRequesAsString)
+			logger.debug(Prefix + "rollbackSDNCRequest - " + "\n" +  sndcTopologyDeleteRequesAsString)
+			logger.debug(" Preparing request for RPC SDNC Topology 'rollback-DisconnectNetworkRequest' rollback . . . - " + "\n" +  sndcTopologyDeleteRequesAsString)
 
 
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRollback() - " + ex.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, exceptionMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + ex);
-			msoLogger.debug(exceptionMessage)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -1000,7 +1004,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside setExceptionFlag() of DoDeleteNetworkInstance ")
+		logger.trace("Inside setExceptionFlag() of DoDeleteNetworkInstance ")
 
 		try {
 
@@ -1011,11 +1015,11 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			} else {
 				execution.setVariable(Prefix + "WorkflowException", execution.getVariable("WorkflowException"))
 			}
-			msoLogger.debug(Prefix + "WorkflowException - " +execution.getVariable(Prefix + "WorkflowException"))
+			logger.debug(Prefix + "WorkflowException - " +execution.getVariable(Prefix + "WorkflowException"))
 
 		} catch(Exception ex){
 			  String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance flow. setExceptionFlag(): " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 		}
 
@@ -1030,18 +1034,18 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 		try{
-			msoLogger.debug("Caught a Java Exception")
-			msoLogger.debug("Started processJavaException Method")
-			msoLogger.debug("Variables List: " + execution.getVariables())
+			logger.debug("Caught a Java Exception")
+			logger.debug("Started processJavaException Method")
+			logger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception")
 
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
+			logger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable("UnexpectedError", "Exception in processJavaException method")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Exception in processJavaException method")
 		}
-		msoLogger.debug("Completed processJavaException Method of " + Prefix)
+		logger.debug("Completed processJavaException Method of " + Prefix)
 	}
 
 }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +33,8 @@ import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.logger.MessageEnum
 
 import java.util.UUID;
@@ -62,7 +66,7 @@ import org.springframework.web.util.UriUtils;
  *
  */
 public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateServiceInstanceRollback.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateServiceInstanceRollback.class);
 
 
 	String Prefix="DCRESIRB_"
@@ -71,13 +75,13 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
-		msoLogger.trace("preProcessRequest")
+		logger.trace("preProcessRequest")
 		execution.setVariable("rollbackAAI",false)
 		execution.setVariable("rollbackSDNC",false)
 
 		try {
 			def rollbackData = execution.getVariable("rollbackData")
-			msoLogger.debug("RollbackData:" + rollbackData)
+			logger.debug("RollbackData:" + rollbackData)
 
 			if (rollbackData != null) {
 				if (rollbackData.hasType("SERVICEINSTANCE")) {
@@ -112,8 +116,8 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 					execution.setVariable("sdncDelete", sdncDelete)
 					def sdncDeactivate = rollbackData.get("SERVICEINSTANCE", "sdncDeactivate")
 					execution.setVariable("sdncDeactivate", sdncDeactivate)
-					msoLogger.debug("sdncDeactivate:\n" + sdncDeactivate)
-					msoLogger.debug("sdncDelete:\n" + sdncDelete)
+					logger.debug("sdncDeactivate:\n" + sdncDeactivate)
+					logger.debug("sdncDelete:\n" + sdncDelete)
 				}
 				else {
 					execution.setVariable("skipRollback", true)
@@ -131,48 +135,48 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in Create ServiceInstance Rollback preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest")
+		logger.trace("Exit preProcessRequest")
 	}
 
 	public void validateSDNCResponse(DelegateExecution execution, String response, String method) {
 
-		msoLogger.trace("validateSDNCResponse")
+		logger.trace("validateSDNCResponse")
 		String msg = ""
 		try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			msoLogger.debug("SDNCResponse: " + response)
-			msoLogger.debug("workflowException: " + workflowException)
+			logger.debug("SDNCResponse: " + response)
+			logger.debug("workflowException: " + workflowException)
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
 				msg = "SDNC Adapter service-instance rollback successful for " + method
-				msoLogger.debug(msg)
+				logger.debug(msg)
 			}else{
 				execution.setVariable("rolledBack", false)
 				msg =  "Error Response from SDNC Adapter service-instance rollback for " + method
 				execution.setVariable("rollbackError", msg)
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				throw new BpmnError("MSOWorkflowException")
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in Create ServiceInstance rollback for "  + method  + " Exception:" + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit validateSDNCResponse")
+		logger.trace("Exit validateSDNCResponse")
 	}
 
 	public void postProcessRequest(DelegateExecution execution) {
 
-		msoLogger.trace("postProcessRequest")
+		logger.trace("postProcessRequest")
 		String msg = ""
 		try {
 			execution.setVariable("rollbackData", null)
@@ -189,51 +193,51 @@ public class DoCreateServiceInstanceRollback extends AbstractServiceTaskProcesso
 				if(!succInAAI){
 					execution.setVariable("rolledBack", false) //both sdnc and aai must be successful to declare rollback Succesful
 					execution.setVariable("rollbackError", "Error deleting service-instance in AAI for rollback")
-					msoLogger.debug("Error deleting service-instance in AAI for rollback", + serviceInstanceId)
+					logger.debug("Error deleting service-instance in AAI for rollback", + serviceInstanceId)
 				}
 			}
-			msoLogger.trace("Exit postProcessRequest")
+			logger.trace("Exit postProcessRequest")
 
 		} catch (BpmnError e) {
 			msg = "Exception in Create ServiceInstance Rollback postProcessRequest. " + e.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		} catch (Exception ex) {
 			msg = "Exception in Create ServiceInstance Rollback postProcessRequest. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		}
 
 	}
 
 	public void processRollbackException(DelegateExecution execution){
 
-		msoLogger.trace("processRollbackException")
+		logger.trace("processRollbackException")
 		try{
-			msoLogger.debug("Caught an Exception in DoCreateServiceInstanceRollback")
+			logger.debug("Caught an Exception in DoCreateServiceInstanceRollback")
 			execution.setVariable("rollbackData", null)
 			execution.setVariable("rollbackError", "Caught exception in ServiceInstance Create Rollback")
 			execution.setVariable("WorkflowException", null)
 
 		}catch(BpmnError b){
-			msoLogger.debug("BPMN Error during processRollbackExceptions Method: ")
+			logger.debug("BPMN Error during processRollbackExceptions Method: ")
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processRollbackExceptions Method: " + e.getMessage())
+			logger.debug("Caught Exception during processRollbackExceptions Method: " + e.getMessage())
 		}
 
-		msoLogger.debug("Exit processRollbackException")
+		logger.debug("Exit processRollbackException")
 	}
 
 	public void processRollbackJavaException(DelegateExecution execution){
 
-		msoLogger.trace("processRollbackJavaException")
+		logger.trace("processRollbackJavaException")
 		try{
 			execution.setVariable("rollbackData", null)
 			execution.setVariable("rollbackError", "Caught Java exception in ServiceInstance Create Rollback")
-			msoLogger.debug("Caught Exception in processRollbackJavaException")
+			logger.debug("Caught Exception in processRollbackJavaException")
 
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception in processRollbackJavaException " + e.getMessage())
+			logger.debug("Caught Exception in processRollbackJavaException " + e.getMessage())
 		}
-		msoLogger.trace("Exit processRollbackJavaException")
+		logger.trace("Exit processRollbackJavaException")
 	}
 
 }

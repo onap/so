@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,6 +45,8 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -71,7 +75,7 @@ import org.xml.sax.InputSource
 *
 */
 public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteVfModule.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoDeleteVfModule.class);
 
 	def Prefix="DoDVfMod_"
 
@@ -138,9 +142,9 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			}
 			else {
 
-				msoLogger.debug("DoDeleteVfModule Request: " + xml)
+				logger.debug("DoDeleteVfModule Request: " + xml)
 
-				msoLogger.debug("input request xml: " + xml)
+				logger.debug("input request xml: " + xml)
 
 				vnfId = utils.getNodeText(xml,"vnf-id")
 				execution.setVariable("vnfId", vnfId)
@@ -183,8 +187,8 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 									<vf-module-id>${MsoUtils.xmlEscape(vfModuleId)}</vf-module-id>
 									<orchestration-status>pending-delete</orchestration-status>
 								</PrepareUpdateAAIVfModuleRequest>""" as String
-			msoLogger.debug("PrepareUpdateAAIVfModuleRequest :" + request)
-			msoLogger.debug("UpdateAAIVfModule Request: " + request)
+			logger.debug("PrepareUpdateAAIVfModuleRequest :" + request)
+			logger.debug("UpdateAAIVfModule Request: " + request)
 			execution.setVariable("PrepareUpdateAAIVfModuleRequest", request)
 			execution.setVariable("vfModuleFromAAI", null)
 		}catch(BpmnError b){
@@ -267,8 +271,8 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 						      </sdncadapterworkflow:SDNCRequestData>
 						   </sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
-		msoLogger.debug("sdncAdapterWorkflowRequest: " + request)
-		msoLogger.debug("DoDeleteVfModule - SDNCAdapterWorkflowRequest: " + request)
+		logger.debug("sdncAdapterWorkflowRequest: " + request)
+		logger.debug("DoDeleteVfModule - SDNCAdapterWorkflowRequest: " + request)
 		execution.setVariable("sdncAdapterWorkflowRequest", request)
 	}
 
@@ -309,8 +313,8 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			</deleteVfModuleRequest>
 			""" as String
 
-		msoLogger.debug("vnfAdapterRestV1Request: " + request)
-		msoLogger.debug("deleteVfModuleRequest: " + request)
+		logger.debug("vnfAdapterRestV1Request: " + request)
+		logger.debug("deleteVfModuleRequest: " + request)
 		execution.setVariable("vnfAdapterRestV1Request", request)
 	}
 
@@ -327,8 +331,8 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 								<heat-stack-id>DELETE</heat-stack-id>
 								<orchestration-status>deleted</orchestration-status>
 							</UpdateAAIVfModuleRequest>""" as String
-		msoLogger.debug("UpdateAAIVfModuleRequest :" + request)
-		msoLogger.debug("UpdateAAIVfModuleRequest: " + request)
+		logger.debug("UpdateAAIVfModuleRequest :" + request)
+		logger.debug("UpdateAAIVfModuleRequest: " + request)
 		execution.setVariable("UpdateAAIVfModuleRequest", request)
 	}
 
@@ -344,15 +348,15 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 								<vnf-id>${MsoUtils.xmlEscape(vnfId)}</vnf-id>
 								<vf-module-id>${MsoUtils.xmlEscape(vfModuleId)}</vf-module-id>
 							</DeleteAAIVfModuleRequest>""" as String
-		msoLogger.debug("DeleteAAIVfModuleRequest :" + request)
-		msoLogger.debug("DeleteAAIVfModuleRequest: " + request)
+		logger.debug("DeleteAAIVfModuleRequest :" + request)
+		logger.debug("DeleteAAIVfModuleRequest: " + request)
 		execution.setVariable("DeleteAAIVfModuleRequest", request)
 	}
 
 	// generates a WorkflowException if
 	//		-
 	public void handleDoDeleteVfModuleFailure(DelegateExecution execution) {
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "AAI error occurred deleting the Generic Vnf: " + execution.getVariable("DoDVfMod_deleteGenericVnfResponse"), "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception");
+		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "AAI error occurred deleting the Generic Vnf: " + execution.getVariable("DoDVfMod_deleteGenericVnfResponse"), "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception");
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable("DoDVfMod_deleteGenericVnfResponse"))
@@ -370,7 +374,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 		if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-			msoLogger.debug("Successfully Validated SDNC Response")
+			logger.debug("Successfully Validated SDNC Response")
 		}else{
 			throw new BpmnError("MSOWorkflowException")
 		}
@@ -381,19 +385,19 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("prefix",Prefix)
 		try{
-		msoLogger.trace("STARTED postProcessVNFAdapterRequest Process")
+		logger.trace("STARTED postProcessVNFAdapterRequest Process")
 
 		String vnfResponse = execution.getVariable("DoDVfMod_doDeleteVfModuleResponse")
-		msoLogger.debug("VNF Adapter Response is: " + vnfResponse)
-		msoLogger.debug("deleteVnfAResponse is: \n"  + vnfResponse)
+		logger.debug("VNF Adapter Response is: " + vnfResponse)
+		logger.debug("deleteVnfAResponse is: \n"  + vnfResponse)
 
 		if(vnfResponse != null){
 
 			if(vnfResponse.contains("deleteVfModuleResponse")){
-				msoLogger.debug("Received a Good Response from VNF Adapter for DELETE_VF_MODULE Call.")
+				logger.debug("Received a Good Response from VNF Adapter for DELETE_VF_MODULE Call.")
 				execution.setVariable("DoDVfMod_vnfVfModuleDeleteCompleted", true)
 
 				// Parse vnfOutputs for contrail network polcy FQDNs
@@ -414,43 +418,43 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 							String key = element.getElementsByTagNameNS("*", "key").item(0).getTextContent()
 							if (key.endsWith("contrail_network_policy_fqdn")) {
 								String contrailNetworkPolicyFqdn = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
-								msoLogger.debug("Obtained contrailNetworkPolicyFqdn: " + contrailNetworkPolicyFqdn)
+								logger.debug("Obtained contrailNetworkPolicyFqdn: " + contrailNetworkPolicyFqdn)
 								contrailNetworkPolicyFqdnList.add(contrailNetworkPolicyFqdn)
 							}
 							else if (key.equals("oam_management_v4_address")) {
 								String oamManagementV4Address = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
-								msoLogger.debug("Obtained oamManagementV4Address: " + oamManagementV4Address)
+								logger.debug("Obtained oamManagementV4Address: " + oamManagementV4Address)
 								execution.setVariable(Prefix + "oamManagementV4Address", oamManagementV4Address)
 							}
 							else if (key.equals("oam_management_v6_address")) {
 								String oamManagementV6Address = element.getElementsByTagNameNS("*", "value").item(0).getTextContent()
-								msoLogger.debug("Obtained oamManagementV6Address: " + oamManagementV6Address)
+								logger.debug("Obtained oamManagementV6Address: " + oamManagementV6Address)
 								execution.setVariable(Prefix + "oamManagementV6Address", oamManagementV6Address)
 							}
 
 						}
 					}
 					if (!contrailNetworkPolicyFqdnList.isEmpty()) {
-						msoLogger.debug("Setting the fqdn list")
+						logger.debug("Setting the fqdn list")
 						execution.setVariable("DoDVfMod_contrailNetworkPolicyFqdnList", contrailNetworkPolicyFqdnList)
 					}
 				}
 			}else{
-				msoLogger.debug("Received a BAD Response from VNF Adapter for DELETE_VF_MODULE Call.")
+				logger.debug("Received a BAD Response from VNF Adapter for DELETE_VF_MODULE Call.")
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "VNF Adapter Error")
 			}
 		}else{
-			msoLogger.debug("Response from VNF Adapter is Null for DELETE_VF_MODULE Call.")
+			logger.debug("Response from VNF Adapter is Null for DELETE_VF_MODULE Call.")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Empty response from VNF Adapter")
 		}
 
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			msoLogger.debug("Internal Error Occured in PostProcess Method")
+			logger.debug("Internal Error Occured in PostProcess Method")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Internal Error Occured in PostProcess Method")
 		}
-		msoLogger.trace("COMPLETED postProcessVnfAdapterResponse Process")
+		logger.trace("COMPLETED postProcessVnfAdapterResponse Process")
 	}
 
 	public void deleteNetworkPoliciesFromAAI(DelegateExecution execution) {
@@ -458,21 +462,21 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		'execution=' + execution.getId() +
 		')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED deleteNetworkPoliciesFromAAI ")
+		logger.trace("STARTED deleteNetworkPoliciesFromAAI ")
 
 		try {
 			// get variables
 			List fqdnList = execution.getVariable("DoDVfMod_contrailNetworkPolicyFqdnList")
 			if (fqdnList == null) {
-				msoLogger.debug("No network policies to delete")
+				logger.debug("No network policies to delete")
 				return
 			}
 			int fqdnCount = fqdnList.size()
 
 			execution.setVariable("DoDVfMod_networkPolicyFqdnCount", fqdnCount)
-			msoLogger.debug("DoDVfMod_networkPolicyFqdnCount - " + fqdnCount)
+			logger.debug("DoDVfMod_networkPolicyFqdnCount - " + fqdnCount)
 
 			if (fqdnCount > 0) {
 				// AII loop call over contrail network policy fqdn list
@@ -489,7 +493,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 							execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", 200)
 							// Retrieve the network policy id for this FQDN
 							def networkPolicyId = networkPolicy.getNetworkPolicyId()
-							msoLogger.debug("Deleting network-policy with network-policy-id " + networkPolicyId)
+							logger.debug("Deleting network-policy with network-policy-id " + networkPolicyId)
 							try {
 								AAIResourceUri delUri = AAIUriFactory.createResourceUri(AAIObjectType.NETWORK_POLICY, networkPolicyId)
 								getAAIClient().delete(delUri)
@@ -497,30 +501,30 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 							} catch (Exception e) {
 								execution.setVariable("DoDVfMod_aaiDeleteNetworkPolicyReturnCode", 500)
 								String delErrorMessage = "Unable to delete network-policy to AAI deleteNetworkPoliciesFromAAI - " + e.getMessage()
-								msoLogger.debug(delErrorMessage)
+								logger.debug(delErrorMessage)
 								exceptionUtil.buildAndThrowWorkflowException(execution, 2500, delErrorMessage)
 							}
 						} else {
 							execution.setVariable("DCVFM_aaiQueryNetworkPolicyByFqdnReturnCode", 404)
 							// This network policy FQDN is not in AAI. No need to delete.
-							msoLogger.debug("The return code is: " + 404)
-							msoLogger.debug("This network policy FQDN is not in AAI: " + fqdn)
-							msoLogger.debug("Network policy FQDN is not in AAI")
+							logger.debug("The return code is: " + 404)
+							logger.debug("This network policy FQDN is not in AAI: " + fqdn)
+							logger.debug("Network policy FQDN is not in AAI")
 						}
 					}catch(Exception e ) {
 								// aai all errors
 								String dataErrorMessage = "Unexpected Response from deleteNetworkPoliciesFromAAI - " + e.getMessage()
-								msoLogger.debug(dataErrorMessage)
+								logger.debug(dataErrorMessage)
 					}
 				} // end loop
 			} else {
-				   msoLogger.debug("No contrail network policies to query/create")
+				   logger.debug("No contrail network policies to query/create")
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoDeletVfModule flow. deleteNetworkPoliciesFromAAI() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 
@@ -536,7 +540,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('vnfId')
@@ -563,15 +567,15 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				"""
 				updateAAIGenericVnfRequest = utils.formatXml(updateAAIGenericVnfRequest)
 				execution.setVariable(Prefix + 'updateAAIGenericVnfRequest', updateAAIGenericVnfRequest)
-				msoLogger.debug("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
-				msoLogger.debug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest)
+				logger.debug("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
+				logger.debug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest)
 
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -589,7 +593,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		def method = getClass().getSimpleName() + '.queryAAIVfModuleForStatus(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		execution.setVariable(Prefix + 'orchestrationStatus', '')
 
@@ -607,18 +611,18 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
                     execution.setVariable(Prefix + 'queryAAIVfModuleForStatusResponse', vfModule.get())
                     def orchestrationStatus = vfModule.get().getOrchestrationStatus()
                     execution.setVariable(Prefix + "orchestrationStatus", orchestrationStatus)
-                    msoLogger.debug("Received orchestration status from A&AI: " + orchestrationStatus)
+                    logger.debug("Received orchestration status from A&AI: " + orchestrationStatus)
                 }
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModuleForStatus(): ' + e.getMessage())
 		}
 	}

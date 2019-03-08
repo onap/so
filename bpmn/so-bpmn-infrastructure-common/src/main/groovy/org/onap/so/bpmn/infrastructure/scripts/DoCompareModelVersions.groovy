@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,7 +54,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		utils.log("INFO"," ***** preProcessRequest *****",  isDebugEnabled)
+		logger.info(" ***** preProcessRequest *****")
 
 		try {
 			execution.setVariable("prefix", Prefix)
@@ -61,58 +63,58 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 			String modelInvariantUuid_target = execution.getVariable("model-invariant-id-target")
 			if (isBlank(modelInvariantUuid_target)) {
 				msg = "Input model-invariant-id-target is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
             String modelUuid_target = execution.getVariable("model-version-id-target")
             if (isBlank(modelUuid_target)) {
 				msg = "Input model-version-id-target is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
             String modelInvariantUuid_original = execution.getVariable("model-invariant-id-original")
             if (isBlank(modelInvariantUuid_original)) {
 				msg = "Input model-invariant-id-original is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
             String modelUuid_original = execution.getVariable("model-version-id-original")
             if (isBlank(modelUuid_original)) {
 				msg = "Input model-version-id-original is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 			// Target and original modelInvariantUuid must to be the same
 			if(modelInvariantUuid_target != modelInvariantUuid_original){
 				msg = "Input model-invariant-id-target and model-invariant-id-original must to be the same"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 			// Target and original modelUuid must not to be the same
 			if(modelUuid_target == modelUuid_original){
 				msg = "Input model-version-id-target and model-version-id-original must not to be the same"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+		logger.info(" ***** Exit preProcessRequest *****")
 	}
 
    public void prepareDecomposeService_Target(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
         try {
-            utils.log("DEBUG", " ***** Inside prepareDecomposeService_Target of update generic e2e service ***** ", isDebugEnabled)
+            logger.debug( " ***** Inside prepareDecomposeService_Target of update generic e2e service ***** ")
             String modelInvariantUuid = execution.getVariable("model-invariant-id-target")
             String modelUuid = execution.getVariable("model-version-id-target")
             //here modelVersion is not set, we use modelUuid to decompose the service.
@@ -124,7 +126,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 
             execution.setVariable("serviceModelInfo_Target", serviceModelInfo)
 
-            utils.log("DEBUG", " ***** Completed prepareDecomposeService_Target of update generic e2e service ***** ", isDebugEnabled)
+            logger.debug( " ***** Completed prepareDecomposeService_Target of update generic e2e service ***** ")
         } catch (Exception ex) {
             // try error in method block
             String exceptionMessage = "Bpmn error encountered in update generic e2e service flow. Unexpected Error from method prepareDecomposeService_Target() - " + ex.getMessage()
@@ -135,13 +137,13 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
     public void processDecomposition_Target(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
-        utils.log("DEBUG", " ***** Inside processDecomposition_Target() of update generic e2e service flow ***** ", isDebugEnabled)
+        logger.debug( " ***** Inside processDecomposition_Target() of update generic e2e service flow ***** ")
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             execution.setVariable("serviceDecomposition_Target", serviceDecomposition)
         } catch (Exception ex) {
             String exceptionMessage = "Bpmn error encountered in update generic e2e service flow. Unexpected Error from method processDecomposition_Target() - " + ex.getMessage()
-            utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+            logger.debug( exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
     }
@@ -150,7 +152,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
         try {
-            utils.log("DEBUG", " ***** Inside prepareDecomposeService_Original of update generic e2e service ***** ", isDebugEnabled)
+            logger.debug( " ***** Inside prepareDecomposeService_Original of update generic e2e service ***** ")
             String modelInvariantUuid = execution.getVariable("model-invariant-id-original")
             String modelUuid = execution.getVariable("model-version-id-original")
             //here modelVersion is not set, we use modelUuid to decompose the service.
@@ -162,7 +164,7 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 
             execution.setVariable("serviceModelInfo_Original", serviceModelInfo)
 
-            utils.log("DEBUG", " ***** Completed prepareDecomposeService_Original of update generic e2e service ***** ", isDebugEnabled)
+            logger.debug( " ***** Completed prepareDecomposeService_Original of update generic e2e service ***** ")
         } catch (Exception ex) {
             // try error in method block
             String exceptionMessage = "Bpmn error encountered in update generic e2e service flow. Unexpected Error from method prepareDecomposeService_Original() - " + ex.getMessage()
@@ -173,20 +175,20 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
     public void processDecomposition_Original(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
-        utils.log("DEBUG", " ***** Inside processDecomposition_Original() of update generic e2e service flow ***** ", isDebugEnabled)
+        logger.debug( " ***** Inside processDecomposition_Original() of update generic e2e service flow ***** ")
         try {
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
             execution.setVariable("serviceDecomposition_Original", serviceDecomposition)
         } catch (Exception ex) {
             String exceptionMessage = "Bpmn error encountered in update generic e2e service flow. processDecomposition_Original() - " + ex.getMessage()
-            utils.log("DEBUG", exceptionMessage, isDebugEnabled)
+            logger.debug( exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
     }
 
 	public void doCompareModelVersions(DelegateExecution execution){
 	    def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO", "======== Start doCompareModelVersions Process ======== ", isDebugEnabled)
+        logger.info( "======== Start doCompareModelVersions Process ======== ")
 
         ServiceDecomposition serviceDecomposition_Target = execution.getVariable("serviceDecomposition_Target")
         ServiceDecomposition serviceDecomposition_Original = execution.getVariable("serviceDecomposition_Original")
@@ -217,10 +219,10 @@ public class DoCompareModelVersions extends AbstractServiceTaskProcessor {
 
         execution.setVariable("addResourceList", addResourceList)
         execution.setVariable("delResourceList", delResourceList)
-        utils.log("INFO", "addResourceList: " + addResourceList, isDebugEnabled)
-        utils.log("INFO", "delResourceList: " + delResourceList, isDebugEnabled)
+        logger.info( "addResourceList: " + addResourceList)
+        logger.info( "delResourceList: " + delResourceList)
 
-        utils.log("INFO", "======== COMPLETED doCompareModelVersions Process ======== ", isDebugEnabled)
+        logger.info( "======== COMPLETED doCompareModelVersions Process ======== ")
 	}
 
 }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +31,8 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.*
 
@@ -37,7 +41,7 @@ import groovy.json.*
  *
  */
 public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateNetworkInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( UpdateNetworkInstance.class);
 	
 	String Prefix="UPDNI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -70,7 +74,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside preProcessRequest() of UpdateNetworkInstance Request")
+		logger.trace("Inside preProcessRequest() of UpdateNetworkInstance Request")
 
 		try {
 			// initialize flow variables
@@ -85,20 +89,20 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					String disableRollback = jsonUtil.getJsonValue(bpmnRequest, "requestDetails.requestInfo.suppressRollback")
 					if (disableRollback != null) {
 					   execution.setVariable("disableRollback", disableRollback)
-					   msoLogger.debug("Received 'suppressRollback': " + disableRollback )
+					   logger.debug("Received 'suppressRollback': " + disableRollback )
 					} else {
 					   execution.setVariable("disableRollback", false)
 					}   
-					msoLogger.debug(" Set 'disableRollback' : " + execution.getVariable("disableRollback") )
+					logger.debug(" Set 'disableRollback' : " + execution.getVariable("disableRollback") )
 				} else {
 					String dataErrorMessage = " Invalid 'bpmnRequest' request."
-					msoLogger.debug(dataErrorMessage)
+					logger.debug(dataErrorMessage)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 				}
 
 			} else {
 			    // 'macro' TEST ONLY, sdncVersion = '1702'
-			    msoLogger.debug(" \'disableRollback\' : " + execution.getVariable("disableRollback") )
+			    logger.debug(" \'disableRollback\' : " + execution.getVariable("disableRollback") )
 			}
 
 			String requestId = execution.getVariable("msoRequestId")
@@ -143,7 +147,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			sendSyncError(execution)
 			 // caught exception
 			String exceptionMessage = "Exception Encountered in UpdateNetworkInstance, PreProcessRequest() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -153,7 +157,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside sendSyncResponse() of UpdateNetworkInstance")
+		logger.trace("Inside sendSyncResponse() of UpdateNetworkInstance")
 
 		try {
 			String requestId = execution.getVariable("mso-request-id")
@@ -162,12 +166,12 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			// RESTResponse (for API Handler (APIH) Reply Task)
 			String updateNetworkRestRequest = """{"requestReferences":{"instanceId":"${serviceInstanceId}","requestId":"${requestId}"}}""".trim()
 
-			msoLogger.debug(" sendSyncResponse to APIH - " + "\n" + updateNetworkRestRequest)
+			logger.debug(" sendSyncResponse to APIH - " + "\n" + updateNetworkRestRequest)
 			sendWorkflowResponse(execution, 202, updateNetworkRestRequest)
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in UpdateNetworkInstance flow. sendSyncResponse() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 
@@ -178,7 +182,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside getNetworkModelInfo() of UpdateNetworkInstance")
+		logger.trace("Inside getNetworkModelInfo() of UpdateNetworkInstance")
 
 		try {
 
@@ -191,7 +195,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			sendSyncError(execution)
 		   String exceptionMessage = "Bpmn error encountered in UpdateNetworkInstance flow. getNetworkModelInfo() - " + ex.getMessage()
-		   msoLogger.debug(exceptionMessage)
+		   logger.debug(exceptionMessage)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -203,7 +207,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside sendSyncError() of UpdateNetworkInstance")
+		logger.trace("Inside sendSyncError() of UpdateNetworkInstance")
 
 		try {
 
@@ -216,7 +220,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			sendWorkflowResponse(execution, 500, syncError)
 
 		} catch (Exception ex) {
-			msoLogger.debug(" Bpmn error encountered in UpdateNetworkInstance flow. sendSyncError() - " + ex.getMessage())
+			logger.debug(" Bpmn error encountered in UpdateNetworkInstance flow. sendSyncError() - " + ex.getMessage())
 		}
 
 	}
@@ -225,7 +229,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside prepareCompletion() of UpdateNetworkInstance")
+		logger.trace("Inside prepareCompletion() of UpdateNetworkInstance")
 
 		try {
 
@@ -250,11 +254,11 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			// normal path
 			execution.setVariable(Prefix + "Success", true)
 			execution.setVariable(Prefix + "CompleteMsoProcessRequest", xmlMsoCompletionRequest)
-			msoLogger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+			logger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in UpdateNetworkInstance flow. prepareCompletion() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -273,25 +277,25 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside postProcessResponse() of UpdateNetworkInstance")
+		logger.trace("Inside postProcessResponse() of UpdateNetworkInstance")
 
 		try {
 
 			if (execution.getVariable("CMSO_ResponseCode") == "200") {
 				execution.setVariable(Prefix + "Success", true)
-				msoLogger.trace("UpdateNetworkInstance Success ")
+				logger.trace("UpdateNetworkInstance Success ")
 				//   Place holder for additional code.
 
 			 } else {
 				execution.setVariable(Prefix + "Success", false)
-				msoLogger.trace("UpdateNetworkInstance Failed in CompletionMsoProces flow!. ")
+				logger.trace("UpdateNetworkInstance Failed in CompletionMsoProces flow!. ")
 
 			 }
 
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in UpdateNetworkInstance flow. postProcessResponse() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 	    }
@@ -307,7 +311,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside processRollbackData() of UpdateNetworkInstance")
+		logger.trace("Inside processRollbackData() of UpdateNetworkInstance")
 
 		try {
 			//execution.getVariable("orchestrationStatus")
@@ -318,7 +322,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			//rolledBack
 
 		} catch (Exception ex) {
-			msoLogger.debug(" Bpmn error encountered in UpdateNetworkInstance flow. callDBCatalog() - " + ex.getMessage())
+			logger.debug(" Bpmn error encountered in UpdateNetworkInstance flow. callDBCatalog() - " + ex.getMessage())
 		}
 
 	}
@@ -328,7 +332,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 		
-		msoLogger.trace("Prepare for FalloutHandler. FAILURE - prepare request for sub-process FalloutHandler. ")
+		logger.trace("Prepare for FalloutHandler. FAILURE - prepare request for sub-process FalloutHandler. ")
 		
 		String falloutHandlerRequest = ""
 		String requestId = execution.getVariable("mso-request-id")
@@ -353,13 +357,13 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
 
-			msoLogger.debug(falloutHandlerRequest)
+			logger.debug(falloutHandlerRequest)
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			msoLogger.debug("  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest)
+			logger.debug("  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest)
 
 		} catch (Exception ex) {
 			String errorException = "  Bpmn error encountered in UpdateNetworkInstance flow. FalloutHandlerRequest,  buildErrorResponse() - "
-			msoLogger.debug("Exception error in UpdateNetworkInstance flow,  buildErrorResponse(): " +  ex.getMessage())
+			logger.debug("Exception error in UpdateNetworkInstance flow,  buildErrorResponse(): " +  ex.getMessage())
 			falloutHandlerRequest =
 			"""<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
 					                             xmlns:ns="http://org.onap/so/request/types/v1"
@@ -376,7 +380,7 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					</aetgt:FalloutHandlerRequest>"""
 
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			msoLogger.debug("  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest)
+			logger.debug("  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest)
 
 		}
 
@@ -386,18 +390,18 @@ public class UpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 		try{
-			msoLogger.debug("Caught a Java Exception in " + Prefix)
-			msoLogger.debug("Started processJavaException Method")
-			msoLogger.debug("Variables List: " + execution.getVariables())
+			logger.debug("Caught a Java Exception in " + Prefix)
+			logger.debug("Started processJavaException Method")
+			logger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception")
 
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
+			logger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable("UnexpectedError", "Exception in processJavaException method - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Exception in processJavaException method" + Prefix)
 		}
-		msoLogger.debug("Completed processJavaException Method in " + Prefix)
+		logger.debug("Completed processJavaException Method in " + Prefix)
 	}
 
 }

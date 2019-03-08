@@ -5,6 +5,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,7 +38,7 @@ public class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
 
     public void preProcessRequest (DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** start preProcessRequest *****",  isDebugEnabled)
+        logger.info(" ***** start preProcessRequest *****")
 
         String resourceInputStr = execution.getVariable("resourceInput")
         ResourceInput resourceInput = new ObjectMapper().readValue(resourceInputStr, ResourceInput.class)
@@ -54,34 +56,34 @@ public class DeleteVFCNSResource extends AbstractServiceTaskProcessor {
         execution.setVariable("resourceTemplateId", resourceModeluuid)
         execution.setVariable("resourceInstanceId", resourceInstanceId)
 
-        utils.log("INFO"," ***** end preProcessRequest *****",  isDebugEnabled)
+        logger.info(" ***** end preProcessRequest *****")
     }
 
     public void postProcessRequest (DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("INFO"," ***** start postProcessRequest *****",  isDebugEnabled)
+        logger.info(" ***** start postProcessRequest *****")
 
-        utils.log("INFO"," ***** end postProcessRequest *****",  isDebugEnabled)
+        logger.info(" ***** end postProcessRequest *****")
     }
 
     public void sendSyncResponse (DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        utils.log("DEBUG", " *** sendSyncResponse *** ", isDebugEnabled)
+        logger.debug( " *** sendSyncResponse *** ")
 
         try {
             String nsInstanceId = execution.getVariable("nsInstanceId")
             String operationStatus = execution.getVariable("operationStatus")
             // RESTResponse for main flow
             String createVFCResourceRestRsp = """{"nsInstanceId":"${nsInstanceId}","operationStatus":"${operationStatus}"}""".trim()
-            utils.log("DEBUG", " sendSyncResponse to APIH:" + "\n" + createVFCResourceRestRsp, isDebugEnabled)
+            logger.debug( " sendSyncResponse to APIH:" + "\n" + createVFCResourceRestRsp)
             sendWorkflowResponse(execution, 202, createVFCResourceRestRsp)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-            utils.log("DEBUG", msg, isDebugEnabled)
+            logger.debug( msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        utils.log("DEBUG"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
+        logger.debug(" ***** Exit sendSyncResopnse *****")
     }
 }
