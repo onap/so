@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 CMCC. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,6 +48,8 @@ import org.onap.so.bpmn.infrastructure.vfcmodel.NsParameters
 import org.onap.so.bpmn.infrastructure.vfcmodel.LocationConstraint
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
 
 
@@ -56,7 +60,7 @@ import org.onap.so.utils.TargetEntity
  * flow for VFC Network Service Scale
  */
 public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoScaleVFCNetworkServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoScaleVFCNetworkServiceInstance.class);
 
 
     String host = "http://mso.mso.testlab.openecomp.org:8080"
@@ -76,7 +80,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * generate the nsParameters
      */
     public void preProcessRequest(DelegateExecution execution) {
-        msoLogger.trace("preProcessRequest() ")
+        logger.trace("preProcessRequest() ")
 
         List<NSResourceInputParameter> nsRIPList = convertScaleNsReq2NSResInputParamList(execution)
         String requestJsonStr = ""
@@ -93,7 +97,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
 
         execution.setVariable("reqBody", requestJsonStr)
 
-        msoLogger.trace("Exit preProcessRequest ")
+        logger.trace("Exit preProcessRequest ")
     }
 
     /**
@@ -122,7 +126,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
             if (returnCode == "200" || returnCode == "202") {
                 jobId = jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
             }
-            utils.log("INFO", "scaleNetworkService get a ns scale job Id:" + jobId, isDebugEnabled)
+            logger.info( "scaleNetworkService get a ns scale job Id:" + jobId)
             execution.setVariable("jobId", jobId)
             execution.setVariable("nodeTemplateUUID", nodeTemplateUUID)
 
@@ -178,7 +182,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         try {
             Thread.sleep(5000)
         } catch (InterruptedException e) {
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Time Delay exception" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+            logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Time Delay exception" + e, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
         }
     }
 
@@ -196,8 +200,8 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
      * requestBody: the body of the request
      */
     private Response postRequest(DelegateExecution execution, String urlString, String requestBody){
-        msoLogger.trace("Started Execute VFC adapter Post Process ")
-        msoLogger.info("url:"+urlString +"\nrequestBody:"+ requestBody)
+        logger.trace("Started Execute VFC adapter Post Process ")
+        logger.info("url:"+urlString +"\nrequestBody:"+ requestBody)
         Response apiResponse = null
         try{
 			URL url = new URL(urlString);
@@ -207,10 +211,10 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
 
 			apiResponse = httpClient.post(requestBody)
 
-            msoLogger.info("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
-            msoLogger.trace("Completed Execute VF-C adapter Post Process ")
+            logger.info("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
+            logger.trace("Completed Execute VF-C adapter Post Process ")
         }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing VFC Post Call.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
+            logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception occured while executing VFC Post Call.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), e);
             throw new BpmnError("MSOWorkflowException")
         }
         return apiResponse

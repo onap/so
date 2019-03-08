@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,6 +38,8 @@ import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import groovy.json.*
 import org.onap.so.bpmn.common.scripts.AaiUtil;
@@ -61,7 +65,7 @@ import org.onap.so.bpmn.common.scripts.AaiUtil;
  *
  */
 public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoUpdateE2EServiceInstanceRollback.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoUpdateE2EServiceInstanceRollback.class);
 
 
 	String Prefix="DUPDSIRB_"
@@ -70,7 +74,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 	public void preProcessRequest(DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
-		msoLogger.trace("preProcessRequest ")
+		logger.trace("preProcessRequest ")
 		execution.setVariable("rollbackAAI",false)
 		execution.setVariable("rollbackAdded",false)
 		execution.setVariable("rollbackDeleted",false)
@@ -85,7 +89,7 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 
 		try {
 			def rollbackData = execution.getVariable("rollbackData")
-			msoLogger.debug("RollbackData:" + rollbackData)
+			logger.debug("RollbackData:" + rollbackData)
 
 			if (rollbackData != null) {
 				if (rollbackData.hasType("SERVICEINSTANCE")) {
@@ -140,14 +144,14 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in Update ServiceInstance Rollback preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest ")
+		logger.trace("Exit preProcessRequest ")
 	}
 
 	public void postProcessRequest(DelegateExecution execution) {
-		msoLogger.trace("postProcessRequest ")
+		logger.trace("postProcessRequest ")
 		String msg = ""
 		try {
 			execution.setVariable("rollbackData", null)
@@ -171,17 +175,17 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 				if(!succInAAI){
 					execution.setVariable("rolledBack", false) //both sdnc and aai must be successful to declare rollback Succesful
 					execution.setVariable("rollbackError", "Error deleting service-instance in AAI for rollback")
-					msoLogger.debug("Error deleting service-instance in AAI for rollback", + serviceInstanceId)
+					logger.debug("Error deleting service-instance in AAI for rollback", + serviceInstanceId)
 				}
 			}
-			msoLogger.trace("Exit postProcessRequest ")
+			logger.trace("Exit postProcessRequest ")
 
 		} catch (BpmnError e) {
 			msg = "Exception in Create ServiceInstance Rollback postProcessRequest. " + e.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		} catch (Exception ex) {
 			msg = "Exception in Create ServiceInstance Rollback postProcessRequest. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		}
 	}
 
@@ -200,9 +204,9 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 
 	public void preProcessAAIPUT(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 		String msg = ""
-		msoLogger.trace("preProcessAAIPUT ")
+		logger.trace("preProcessAAIPUT ")
 
 		String serviceInstanceVersion = execution.getVariable("serviceInstanceVersion_n")
 //		execution.setVariable("GENPS_serviceResourceVersion", serviceInstanceVersion)
@@ -227,11 +231,11 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 
 		execution.setVariable("serviceInstanceData", si)
 
-		msoLogger.info("Exited " + method)
+		logger.info("Exited " + method)
 	}
 
 	public void updateServiceInstance(DelegateExecution execution) {
-		msoLogger.trace("updateServiceInstance ")
+		logger.trace("updateServiceInstance ")
 		String msg = ""
 		try {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -245,40 +249,40 @@ public class DoUpdateE2EServiceInstanceRollback extends AbstractServiceTaskProce
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.updateServiceInstance. " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit updateServiceInstance ")
+		logger.trace("Exit updateServiceInstance ")
 	}
 
 	public void processRollbackException(DelegateExecution execution){
-		msoLogger.trace("processRollbackException ")
+		logger.trace("processRollbackException ")
 		try{
-			msoLogger.debug("Caught an Exception in DoUpdateE2EServiceInstanceRollback")
+			logger.debug("Caught an Exception in DoUpdateE2EServiceInstanceRollback")
 			execution.setVariable("rollbackData", null)
 			execution.setVariable("rollbackError", "Caught exception in ServiceInstance Update Rollback")
 			execution.setVariable("WorkflowException", null)
 
 		}catch(BpmnError b){
-			msoLogger.debug("BPMN Error during processRollbackExceptions Method: ")
+			logger.debug("BPMN Error during processRollbackExceptions Method: ")
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processRollbackExceptions Method: " + e.getMessage())
+			logger.debug("Caught Exception during processRollbackExceptions Method: " + e.getMessage())
 		}
 
-		msoLogger.debug(" Exit processRollbackException")
+		logger.debug(" Exit processRollbackException")
 	}
 
 	public void processRollbackJavaException(DelegateExecution execution){
-		msoLogger.trace("processRollbackJavaException ")
+		logger.trace("processRollbackJavaException ")
 		try{
 			execution.setVariable("rollbackData", null)
 			execution.setVariable("rollbackError", "Caught Java exception in ServiceInstance Update Rollback")
-			msoLogger.debug("Caught Exception in processRollbackJavaException")
+			logger.debug("Caught Exception in processRollbackJavaException")
 
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception in processRollbackJavaException " + e.getMessage())
+			logger.debug("Caught Exception in processRollbackJavaException " + e.getMessage())
 		}
-		msoLogger.trace("Exit processRollbackJavaException ")
+		logger.trace("Exit processRollbackJavaException ")
 	}
 
 }

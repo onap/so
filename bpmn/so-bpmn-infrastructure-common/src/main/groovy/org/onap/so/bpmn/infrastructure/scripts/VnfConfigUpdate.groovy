@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,12 +33,14 @@ import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 public class VnfConfigUpdate extends VnfCmBase {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfConfigUpdate.class);
+    private static final Logger logger = LoggerFactory.getLogger( VnfConfigUpdate.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtils = new JsonUtils()	
@@ -83,18 +87,18 @@ public class VnfConfigUpdate extends VnfCmBase {
 		')'
 		initProcessVariables(execution)
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		initProcessVariables(execution)		
 
 		def incomingRequest = execution.getVariable('bpmnRequest')
 
-		msoLogger.debug("Incoming Infra Request: " + incomingRequest)
+		logger.debug("Incoming Infra Request: " + incomingRequest)
 		try {
 			def jsonSlurper = new JsonSlurper()
 			def jsonOutput = new JsonOutput()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
-			msoLogger.debug(" Request is in JSON format.")
+			logger.debug(" Request is in JSON format.")
 
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def vnfId = execution.getVariable('vnfId')
@@ -110,12 +114,12 @@ public class VnfConfigUpdate extends VnfCmBase {
 			def controllerType = reqMap.requestDetails?.requestParameters?.controllerType
 			execution.setVariable('controllerType', controllerType)
 			
-			msoLogger.debug('Controller Type: ' + controllerType)			
+			logger.debug('Controller Type: ' + controllerType)			
 			
 			def payload = reqMap.requestDetails?.requestParameters?.payload
 			execution.setVariable('payload', payload)
 			
-			msoLogger.debug('Processed payload: ' + payload)
+			logger.debug('Processed payload: ' + payload)
 			
 			def requestId = execution.getVariable("mso-request-id")
 			execution.setVariable('requestId', requestId)
@@ -143,19 +147,19 @@ public class VnfConfigUpdate extends VnfCmBase {
 			
 			execution.setVariable("requestInfo", requestInfo)			
 			
-			msoLogger.debug('RequestInfo: ' + execution.getVariable("requestInfo"))		
+			logger.debug('RequestInfo: ' + execution.getVariable("requestInfo"))		
 			
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 
 		}
 		catch(groovy.json.JsonException je) {
-			msoLogger.debug(" Request is not in JSON format.")
+			logger.debug(" Request is not in JSON format.")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Invalid request format")
 
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}	
 	}
@@ -170,7 +174,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 
 		try {
@@ -192,11 +196,11 @@ public class VnfConfigUpdate extends VnfCmBase {
 
 			sendWorkflowResponse(execution, 200, synchResponse)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}	
@@ -216,7 +220,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 		execution.setVariable('errorCode', "0")
 		execution.setVariable("workStep", "checkIfVnfInMaintInAAI")
 		execution.setVariable("failedActivity", "AAI")
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			AAIRestClientImpl client = new AAIRestClientImpl()
@@ -224,7 +228,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			aaiValidator.setClient(client)
 			def vnfId = execution.getVariable("vnfId")
 			boolean isInMaint = aaiValidator.isVNFLocked(vnfId)
-			msoLogger.debug("isInMaint result: " + isInMaint)
+			logger.debug("isInMaint result: " + isInMaint)
 			execution.setVariable('isVnfInMaintenance', isInMaint)
 			
 			if (isInMaint) {
@@ -232,11 +236,11 @@ public class VnfConfigUpdate extends VnfCmBase {
 				execution.setVariable("errorText", "VNF is in maintenance in A&AI")
 			}
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);			
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);			
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfVnfInMaintInAAI(): ' + e.getMessage())
@@ -256,7 +260,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			')'
 
 		execution.setVariable('errorCode', "0")
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("workStep", "checkIfPserversInMaintInAAI")
 		execution.setVariable("failedActivity", "AAI")
 
@@ -266,7 +270,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			aaiValidator.setClient(client)
 			def vnfId = execution.getVariable("vnfId")			
 			boolean areLocked = aaiValidator.isPhysicalServerLocked(vnfId)
-			msoLogger.debug("areLocked result: " + areLocked)
+			logger.debug("areLocked result: " + areLocked)
 			execution.setVariable('arePserversLocked', areLocked)
 			
 			if (areLocked) {
@@ -275,11 +279,11 @@ public class VnfConfigUpdate extends VnfCmBase {
 			}
 
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfPserversInMaintInAAI(): ' + e.getMessage())
@@ -299,7 +303,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			')'
 
 		execution.setVariable('errorCode', "0")
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		if (inMaint) {
 			execution.setVariable("workStep", "setVnfInMaintFlagInAAI")
 			execution.setVariable("rollbackSetVnfInMaintenanceFlag", true)
@@ -322,11 +326,11 @@ public class VnfConfigUpdate extends VnfCmBase {
 				aaiUpdator.updateVnfToUnLocked(vnfId)
 			}
 							
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}
@@ -346,19 +350,19 @@ public class VnfConfigUpdate extends VnfCmBase {
 		execution.setVariable('errorCode', "0")
 		execution.setVariable("workStep", "checkClosedLoopDisabledFlagInAAI")
 		execution.setVariable("failedActivity", "AAI")
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def transactionLoggingUuid = UUID.randomUUID().toString()
 			def vnfId = execution.getVariable("vnfId")
-			msoLogger.debug("vnfId is: " + vnfId)
+			logger.debug("vnfId is: " + vnfId)
 			AAIResourcesClient client = new AAIResourcesClient()			
 			AAIUri genericVnfUri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
 			AAIResultWrapper aaiRW = client.get(genericVnfUri)
 			Map<String, Object> result = aaiRW.asMap()
 			boolean isClosedLoopDisabled = result.getOrDefault("is-closed-loop-disabled", false)
 		
-			msoLogger.debug("isClosedLoopDisabled result: " + isClosedLoopDisabled)
+			logger.debug("isClosedLoopDisabled result: " + isClosedLoopDisabled)
 			execution.setVariable('isClosedLoopDisabled', isClosedLoopDisabled)
 			
 			if (isClosedLoopDisabled) {
@@ -366,11 +370,11 @@ public class VnfConfigUpdate extends VnfCmBase {
 				execution.setVariable("errorText", "closedLoop is disabled in A&AI")
 			}
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfVnfInMaintInAAI(): ' + e.getMessage())
@@ -398,7 +402,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 		}
 		
 		execution.setVariable("failedActivity", "AAI")
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def transactionLoggingUuid = UUID.randomUUID().toString()
@@ -409,14 +413,14 @@ public class VnfConfigUpdate extends VnfCmBase {
 			Map<String, Boolean> request = new HashMap<>()
 			request.put("is-closed-loop-disabled", setDisabled)
 			client.update(genericVnfUri, request)
-			msoLogger.debug("set isClosedLoop to: " + setDisabled)		
+			logger.debug("set isClosedLoop to: " + setDisabled)		
 
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfVnfInMaintInAAI(): ' + e.getMessage())
@@ -434,7 +438,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		
 		def errorText = execution.getVariable("errorText")
 		def errorCode = execution.getVariable("errorCode")
@@ -452,7 +456,7 @@ public class VnfConfigUpdate extends VnfCmBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		
 		String retryCountVariableName = execution.getVariable("workStep") + "RetryCount"
 		execution.setVariable("retryCountVariableName", retryCountVariableName)
@@ -468,8 +472,8 @@ public class VnfConfigUpdate extends VnfCmBase {
 		
 		execution.setVariable(retryCountVariableName, retryCount)
 		
-		msoLogger.debug("value of " + retryCountVariableName + " is " + retryCount)
-		msoLogger.trace('Exited ' + method)
+		logger.debug("value of " + retryCountVariableName + " is " + retryCount)
+		logger.trace('Exited ' + method)
 			
 		
 	}

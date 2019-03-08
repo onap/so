@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,10 +39,12 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import static  org.apache.commons.lang.StringUtils.isEmpty
 
 class UpdateVfModuleVolume extends VfModuleBase {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateVfModuleVolume.class)
+    private static final Logger logger = LoggerFactory.getLogger( UpdateVfModuleVolume.class);
 	
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 
@@ -78,7 +82,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			initProcessVariables(execution)
@@ -100,12 +104,12 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			def volumeParams = utils.getNodeXml(request, 'volume-params')
 			execution.setVariable('UPDVfModVol_volumeParams', volumeParams)
 
-			msoLogger.trace('Exited ' + method)
-			msoLogger.debug("UpdateVfModuleVolume request: " + request)
+			logger.trace('Exited ' + method)
+			logger.debug("UpdateVfModuleVolume request: " + request)
 		} catch (BpmnError bpmnError) {
 			throw bpmnError
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -120,7 +124,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestInfo = execution.getVariable('UPDVfModVol_requestInfo')
@@ -152,11 +156,11 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 			synchResponse = utils.formatXml(synchResponse)
 			sendWorkflowResponse(execution, 200, synchResponse)
-			msoLogger.debug("UpdateVfModuleVolume Synch Response: " + synchResponse)
+			logger.debug("UpdateVfModuleVolume Synch Response: " + synchResponse)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendSynchResponse(): ' + e.getMessage())
 		}
 	}
@@ -172,7 +176,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
@@ -193,7 +197,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 							exceptionUtil.buildAndThrowWorkflowException(execution,2500,"Could not find Tenant Id element in Volume Group with Volume Group Id" + volumeGroupId + ", AIC Cloud Region" + aicCloudRegion)
 						}
 						execution.setVariable('UPDVfModVol_volumeGroupTenantId', volumeGroupTenantId)
-						msoLogger.debug("Received Tenant Id: " + volumeGroupTenantId + "from AAI for Volume Group with Volume Group Id: " + volumeGroupId + ", AIC Cloud Region" + aicCloudRegion)
+						logger.debug("Received Tenant Id: " + volumeGroupTenantId + "from AAI for Volume Group with Volume Group Id: " + volumeGroupId + ", AIC Cloud Region" + aicCloudRegion)
 					}else{
 						exceptionUtil.buildAndThrowWorkflowException(execution,2500,"Could not find Tenant Id element in Volume Group with Volume Group Id" + volumeGroupId + ", AIC Cloud Region" + aicCloudRegion)
 					}
@@ -201,11 +205,11 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			}else{
 				exceptionUtil.buildAndThrowWorkflowException(execution,2500,"Volume Group" + volumeGroupId + " not found at AAI")
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVolumeGroup(): ' + e.getMessage())
 		}
 	}
@@ -221,7 +225,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
@@ -266,14 +270,14 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			"""
 			vnfAdapterRestRequest = utils.formatXml(vnfAdapterRestRequest)
 			execution.setVariable('UPDVfModVol_vnfAdapterRestRequest', vnfAdapterRestRequest)
-			msoLogger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
+			logger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
 
-			msoLogger.debug("UpdateVfModuleVolume Request for VNFAdapter Rest: " + vnfAdapterRestRequest)
-			msoLogger.trace('Exited ' + method)
+			logger.debug("UpdateVfModuleVolume Request for VNFAdapter Rest: " + vnfAdapterRestRequest)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepVnfAdapterRest(): ' + e.getMessage())
 		}
 	}
@@ -288,7 +292,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestId = execution.getVariable('UPDVfMod_requestId')
@@ -310,14 +314,14 @@ class UpdateVfModuleVolume extends VfModuleBase {
 
 			updateInfraRequest = utils.formatXml(updateInfraRequest)
 			execution.setVariable('UPDVfModVol_updateInfraRequest', updateInfraRequest)
-			msoLogger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
+			logger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
 
-			msoLogger.debug("UpdateVfModuleVolume Request for Updating DB for Infra: " + updateInfraRequest)
-			msoLogger.trace('Exited ' + method)
+			logger.debug("UpdateVfModuleVolume Request for Updating DB for Infra: " + updateInfraRequest)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepDbInfraDbRequest(): ' + e.getMessage())
 		}
 	}
@@ -332,7 +336,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestInfo = execution.getVariable('UPDVfModVol_requestInfo')
@@ -346,15 +350,15 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			"""
 
 			content = utils.formatXml(content)
-			msoLogger.debug('Request for Completion Handler:\n' + content)
-			msoLogger.debug("UpdateVfModuleVolume Completion Handler request: " + content)
+			logger.debug('Request for Completion Handler:\n' + content)
+			logger.debug("UpdateVfModuleVolume Completion Handler request: " + content)
 			execution.setVariable('UPDVfModVol_CompletionHandlerRequest', content)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepCompletionHandlerRequest(): ' + e.getMessage())
 		}
 	}
@@ -369,7 +373,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestInfo = execution.getVariable('UPDVfModVol_requestInfo')
@@ -395,15 +399,15 @@ class UpdateVfModuleVolume extends VfModuleBase {
 				</sdncadapterworkflow:FalloutHandlerRequest>
 			"""
 			content = utils.formatXml(content)
-			msoLogger.debug('Request for Fallout Handler:\n' + content)
-			msoLogger.debug("UpdateVfModuleVolume Fallout request: " + content)
+			logger.debug('Request for Fallout Handler:\n' + content)
+			logger.debug("UpdateVfModuleVolume Fallout request: " + content)
 			execution.setVariable('UPDVfModVol_FalloutHandlerRequest', content)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e)
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepFalloutHandler(): ' + e.getMessage())
 		}
 	}
@@ -419,7 +423,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		String processKey = getProcessKey(execution)
 		def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
@@ -430,12 +434,12 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		def String errorMessage = 'TenantId \'' + tenantId + '\' in incoming request does not match Tenant Id \'' + volumeGroupTenantId +
 			'\' retrieved from AAI for Volume Group Id \'' + volumeGroupId + '\', AIC Cloud Region \'' + aicCloudRegion + '\''
 
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Error in UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception")
+		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
 
 		WorkflowException exception = new WorkflowException(processKey, 5000, errorMessage)
 		execution.setVariable("WorkflowException", exception)
 
-		msoLogger.trace('Exited ' + method)
-		msoLogger.debug("UpdateVfModuleVolume workflowException in Tenant Mismatch: " + errorMessage)
+		logger.trace('Exited ' + method)
+		logger.debug("UpdateVfModuleVolume workflowException in Tenant Mismatch: " + errorMessage)
 	}
 }

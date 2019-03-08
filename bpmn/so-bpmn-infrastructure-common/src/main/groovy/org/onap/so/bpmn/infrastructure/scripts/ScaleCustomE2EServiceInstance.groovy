@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 CMCC. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +34,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.utils.UUIDChecker
 import org.springframework.web.util.UriUtils
 
@@ -41,7 +45,7 @@ import org.springframework.web.util.UriUtils
  *
  */
 public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ScaleCustomE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( ScaleCustomE2EServiceInstance.class);
 
     String Prefix = "CRESI_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -50,22 +54,22 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
     public void preProcessRequest(DelegateExecution execution) {
         execution.setVariable("prefix", Prefix)
         String msg = ""
-        msoLogger.trace("preProcessRequest() ")
+        logger.trace("preProcessRequest() ")
 
         try {
 
             String siRequest = execution.getVariable("bpmnRequest")
-            msoLogger.debug(siRequest)
+            logger.debug(siRequest)
 
             String requestId = execution.getVariable("mso-request-id")
             execution.setVariable("msoRequestId", requestId)
-            msoLogger.debug("Input Request:" + siRequest + " reqId:" + requestId)
+            logger.debug("Input Request:" + siRequest + " reqId:" + requestId)
 
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             if (isBlank(serviceInstanceId)) {
                 serviceInstanceId = "NULL".toString()
             }
-            msoLogger.debug("Generated new Service Instance:" + serviceInstanceId)
+            logger.debug("Generated new Service Instance:" + serviceInstanceId)
             serviceInstanceId = UriUtils.encode(serviceInstanceId, "UTF-8")
             execution.setVariable("serviceInstanceId", serviceInstanceId)
 
@@ -83,7 +87,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
             //String operationKey = UUIDChecker.generateUUID(msoLogger)
             String operationId = jsonUtil.getJsonValue(siRequest, "operationId")
             execution.setVariable("operationId", operationId)
-            msoLogger.debug("Input Request:" + siRequest + " operationId:" + operationId)
+            logger.debug("Input Request:" + siRequest + " operationId:" + operationId)
 
 
             String resources = jsonUtil.getJsonValue(siRequest, "service.resources")
@@ -110,35 +114,35 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
             throw e;
         } catch (Exception ex) {
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.trace("Exit preProcessRequest ")
+        logger.trace("Exit preProcessRequest ")
     }
 
     public void sendSyncResponse(DelegateExecution execution) {
-        msoLogger.trace("sendSyncResponse ")
+        logger.trace("sendSyncResponse ")
 
         try {
             String operationId = execution.getVariable("operationId")
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             // RESTResponse for API Handler (APIH) Reply Task
 			String scaleServiceRestRequest = """{"operationId":"${operationId}"}""".trim()
-            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + scaleServiceRestRequest)
+            logger.debug(" sendSyncResponse to APIH:" + "\n" + scaleServiceRestRequest)
             sendWorkflowResponse(execution, 202, scaleServiceRestRequest)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.trace("Exit sendSyncResopnse ")
+        logger.trace("Exit sendSyncResopnse ")
     }
 
 
     public void sendSyncError(DelegateExecution execution) {
-        msoLogger.trace("sendSyncError ")
+        logger.trace("sendSyncError ")
 
         try {
             String errorMessage = ""
@@ -155,17 +159,17 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
 					<aetgt:ErrorCode>7000</aetgt:ErrorCode>
 				   </aetgt:WorkflowException>"""
 
-            msoLogger.debug(buildworkflowException)
+            logger.debug(buildworkflowException)
             sendWorkflowResponse(execution, 500, buildworkflowException)
 
         } catch (Exception ex) {
-            msoLogger.debug(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
+            logger.debug(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
         }
 
     }
 
     public void prepareCompletionRequest(DelegateExecution execution) {
-        msoLogger.trace("prepareCompletion ")
+        logger.trace("prepareCompletion ")
 
         try {
             String requestId = execution.getVariable("msoRequestId")
@@ -189,22 +193,22 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
             String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
             execution.setVariable("CompleteMsoProcessRequest", xmlMsoCompletionRequest)
-            msoLogger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+            logger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
         } catch (Exception ex) {
             String msg = " Exception in prepareCompletion:" + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.trace("Exit prepareCompletionRequest ")
+        logger.trace("Exit prepareCompletionRequest ")
     }
 
     public void prepareFalloutRequest(DelegateExecution execution) {
-        msoLogger.trace("prepareFalloutRequest ")
+        logger.trace("prepareFalloutRequest ")
 
         try {
             WorkflowException wfex = execution.getVariable("WorkflowException")
-            msoLogger.debug(" Input Workflow Exception: " + wfex.toString())
+            logger.debug(" Input Workflow Exception: " + wfex.toString())
             String requestId = execution.getVariable("msoRequestId")
             String source = execution.getVariable("source")
             String requestInfo =
@@ -217,7 +221,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
             String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
             execution.setVariable("falloutRequest", falloutRequest)
         } catch (Exception ex) {
-            msoLogger.debug("Exception prepareFalloutRequest:" + ex.getMessage())
+            logger.debug("Exception prepareFalloutRequest:" + ex.getMessage())
             String errorException = "  Bpmn error encountered in ScaleGenericALaCarteServiceInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
             String requestId = execution.getVariable("msoRequestId")
             String falloutRequest =
@@ -237,7 +241,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
 
             execution.setVariable("falloutRequest", falloutRequest)
         }
-        msoLogger.trace("Exit prepareFalloutRequest ")
+        logger.trace("Exit prepareFalloutRequest ")
     }
 
 
@@ -245,7 +249,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
      * Init the service Operation Status
      */
     public void prepareInitServiceOperationStatus(DelegateExecution execution){
-        msoLogger.trace("STARTED prepareInitServiceOperationStatus Process ")
+        logger.trace("STARTED prepareInitServiceOperationStatus Process ")
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
             //String serviceName = execution.getVariable("serviceInstanceName")
@@ -262,7 +266,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
 
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-            msoLogger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
+            logger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
             String payload =
                     """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -285,13 +289,13 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
 
             payload = utils.formatXml(payload)
             execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
-            msoLogger.info("Outgoing updateServiceOperStatusRequest: \n" + payload)
-            msoLogger.debug("Scale network service updateServiceOperStatusRequest Request: " + payload)
+            logger.info("Outgoing updateServiceOperStatusRequest: \n" + payload)
+            logger.debug("Scale network service updateServiceOperStatusRequest Request: " + payload)
 
         }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
+            logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
         }
-        msoLogger.trace("COMPLETED prepareInitServiceOperationStatus Process ")
+        logger.trace("COMPLETED prepareInitServiceOperationStatus Process ")
     }
 }

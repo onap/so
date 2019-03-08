@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -61,7 +63,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
-		utils.log("INFO", " *** preProcessRequest() *** ", isDebugEnabled)
+		logger.info( " *** preProcessRequest() *** ")
 
 		try {
 
@@ -70,7 +72,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			String requestId = execution.getVariable("mso-request-id")
 			execution.setVariable("msoRequestId", requestId)
-			utils.log("INFO", "Input Request:" + siRequest + " reqId:" + requestId, isDebugEnabled)
+			logger.info( "Input Request:" + siRequest + " reqId:" + requestId)
 
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)) {
@@ -95,32 +97,32 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			if (isBlank(productFamilyId))
 			{
 				msg = "Input productFamilyId is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 			} else {
 				execution.setVariable("productFamilyId", productFamilyId)
 			}
 
 			 //user params
 	         String userParams = jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.userParams")
-             utils.log("INFO", "userParams:" + userParams, isDebugEnabled)
+             logger.info( "userParams:" + userParams)
 	         List<String> paramList = jsonUtil.StringArrayToList(execution, userParams)
 	         String uuiRequest = jsonUtil.getJsonValue(paramList.get(0), "UUIRequest")
 			if (isBlank(uuiRequest)) {
 				msg = "Input uuiRequest is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			} else
 			{
 				execution.setVariable("uuiRequest", uuiRequest)
 			}
 
-			utils.log("INFO", "uuiRequest:\n" + uuiRequest,  isDebugEnabled)
+			logger.info( "uuiRequest:\n" + uuiRequest)
 
 			//serviceType for aai
 			String serviceType = jsonUtil.getJsonValue(uuiRequest, "service.serviceType")
 			if (isBlank(serviceType)) {
 				msg = "Input serviceType is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			} else {
 				execution.setVariable("serviceType", serviceType)
@@ -128,17 +130,17 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			// target model info
 			String modelInvariantUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceInvariantUuid")
-			utils.log("INFO","modelInvariantUuid: " + modelInvariantUuid, isDebugEnabled)
+			logger.info("modelInvariantUuid: " + modelInvariantUuid)
 			execution.setVariable("modelInvariantUuid", modelInvariantUuid)
 			execution.setVariable("model-invariant-id-target", modelInvariantUuid)
 
 			String modelUuid = jsonUtil.getJsonValue(uuiRequest, "service.serviceUuid")
-			utils.log("INFO","modelUuid: " + modelUuid, isDebugEnabled)
+			logger.info("modelUuid: " + modelUuid)
 			execution.setVariable("modelUuid", modelUuid)
 			execution.setVariable("model-version-id-target", modelUuid)
 
 			String serviceModelName = jsonUtil.getJsonValue(uuiRequest, "service.parameters.templateName")
-			utils.log("INFO","serviceModelName: " + serviceModelName, isDebugEnabled)
+			logger.info("serviceModelName: " + serviceModelName)
 			if(serviceModelName == null) {
 				serviceModelName = ""
 			}
@@ -157,10 +159,10 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO"," ***** Exit preProcessRequest *****",  isDebugEnabled)
+		logger.info(" ***** Exit preProcessRequest *****")
 	}
 
 	/**
@@ -203,7 +205,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 	public void postCompareModelVersions(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " ======== STARTED postCompareModelVersions Process ======== ", isDebugEnabled)
+		logger.debug( " ======== STARTED postCompareModelVersions Process ======== ")
 
 		def hasResourcetoUpdate = false
 		def hasResourcetoAdd = false
@@ -222,7 +224,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		hasResourcetoUpdate = hasResourcetoAdd || hasResourcetoDelete
 		execution.setVariable("hasResourcetoUpdate", hasResourcetoUpdate)
 
-		utils.log("DEBUG", "======== COMPLETED postCompareModelVersions Process ======== ", isDebugEnabled)
+		logger.debug( "======== COMPLETED postCompareModelVersions Process ======== ")
 	}
 
 	/**
@@ -230,7 +232,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	 */
 	public void prepareInitServiceOperationStatus(DelegateExecution execution){
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("DEBUG", " ======== STARTED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)
+		logger.debug( " ======== STARTED prepareInitServiceOperationStatus Process ======== ")
 		try{
 			String serviceId = execution.getVariable("serviceInstanceId")
 			String operationId = execution.getVariable("operationId")
@@ -240,7 +242,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String progress = "0"
 			String reason = ""
 			String operationContent = "Prepare service updating"
-			utils.log("DEBUG", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId, isDebugEnabled)
+			logger.debug( "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
 			serviceId = UriUtils.encode(serviceId,"UTF-8")
 			execution.setVariable("serviceInstanceId", serviceId)
 			execution.setVariable("operationId", operationId)
@@ -248,7 +250,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-			utils.log("DEBUG", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+			logger.debug( "DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
 			String payload =
 				"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -270,14 +272,14 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
-			utils.log("DEBUG", "Outgoing updateServiceOperStatusRequest: \n" + payload, isDebugEnabled)
+			logger.debug( "Outgoing updateServiceOperStatusRequest: \n" + payload)
 			utils.logAudit("CreateVfModuleInfra Outgoing updateServiceOperStatusRequest Request: " + payload)
 
 		}catch(Exception e){
-			utils.log("ERROR", "Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e, isDebugEnabled)
+			logger.debug( "Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e)
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
 		}
-		utils.log("DEBUG", "======== COMPLETED prepareInitServiceOperationStatus Process ======== ", isDebugEnabled)
+		logger.debug( "======== COMPLETED prepareInitServiceOperationStatus Process ======== ")
 	}
 
 	/**
@@ -286,7 +288,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	public void preUpdateServiceOperationStatus(DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.preUpdateServiceOperationStatus(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO","Entered " + method, isDebugEnabled)
+		logger.info("Entered " + method)
 
 		try{
 			String serviceId = execution.getVariable("serviceInstanceId")
@@ -297,11 +299,11 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String progress = execution.getVariable("progress")
 			String reason = execution.getVariable("operationReason")
 			String userId = ""
-			utils.log("INFO", "progress: " + progress , isDebugEnabled)
+			logger.info( "progress: " + progress )
 
 			String operationContent = "Prepare service : " + execution.getVariable("operationStatus")
 
-			utils.log("INFO", "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId, isDebugEnabled)
+			logger.info( "Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
 			serviceId = UriUtils.encode(serviceId,"UTF-8")
 			execution.setVariable("serviceInstanceId", serviceId)
 			execution.setVariable("operationId", operationId)
@@ -309,7 +311,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-			utils.log("INFO", "DB Adapter Endpoint is: " + dbAdapterEndpoint, isDebugEnabled)
+			logger.info( "DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
 			String payload =
 				"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -331,20 +333,20 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
-			utils.log("INFO", "Outgoing preUpdateServiceOperationStatus: \n" + payload, isDebugEnabled)
+			logger.info( "Outgoing preUpdateServiceOperationStatus: \n" + payload)
 
 
 		}catch(Exception e){
-			utils.log("ERROR", "Exception Occured Processing preUpdateServiceOperationStatus. Exception is:\n" + e, isDebugEnabled)
+			logger.info( "Exception Occured Processing preUpdateServiceOperationStatus. Exception is:\n" + e)
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preUpdateServiceOperationStatus Method:\n" + e.getMessage())
 		}
-		utils.log("INFO", "======== COMPLETED preUpdateServiceOperationStatus Process ======== ", isDebugEnabled)
-		utils.log("INFO", "Exited " + method, isDebugEnabled)
+		logger.info( "======== COMPLETED preUpdateServiceOperationStatus Process ======== ")
+		logger.info( "Exited " + method)
 	}
 
 	public void sendSyncResponse (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO", " *** sendSyncResponse *** ", isDebugEnabled)
+		logger.info( " *** sendSyncResponse *** ")
 
 		try {
 			String operationId = execution.getVariable("operationId")
@@ -359,21 +361,21 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 				updateServiceResp =  """{"OperationResult":"No Resource to Add or Delete or Service Instance not found in AAI."}"""
 			}
 
-			utils.log("INFO", " sendSyncResponse to APIH:" + "\n" + updateServiceResp, isDebugEnabled)
+			logger.info( " sendSyncResponse to APIH:" + "\n" + updateServiceResp)
 			sendWorkflowResponse(execution, 202, updateServiceResp)
 			execution.setVariable("sentSyncResponse", true)
 
 		} catch (Exception ex) {
 			String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO"," ***** Exit sendSyncResopnse *****",  isDebugEnabled)
+		logger.info(" ***** Exit sendSyncResopnse *****")
 	}
 
 	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO", " *** sendSyncError *** ", isDebugEnabled)
+		logger.info( " *** sendSyncError *** ")
 
 		try {
 			String errorMessage = ""
@@ -396,14 +398,14 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			sendWorkflowResponse(execution, 500, buildworkflowException)
 
 		} catch (Exception ex) {
-			utils.log("INFO", " Sending Sync Error Activity Failed. " + "\n" + ex.getMessage(), isDebugEnabled)
+			logger.info( " Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
 		}
 
 	}
 
 	public void prepareCompletionRequest (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO", " *** prepareCompletion *** ", isDebugEnabled)
+		logger.info( " *** prepareCompletion *** ")
 
 		try {
 			String requestId = execution.getVariable("msoRequestId")
@@ -427,23 +429,23 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
 			execution.setVariable("completionRequest", xmlMsoCompletionRequest)
-			utils.log("INFO", " Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest, isDebugEnabled)
+			logger.info( " Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
 		} catch (Exception ex) {
 			String msg = " Exception in prepareCompletion:" + ex.getMessage()
-			utils.log("INFO", msg, isDebugEnabled)
+			logger.info( msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		utils.log("INFO", "*** Exit prepareCompletionRequest ***", isDebugEnabled)
+		logger.info( "*** Exit prepareCompletionRequest ***")
 	}
 
 	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		utils.log("INFO", " *** prepareFalloutRequest *** ", isDebugEnabled)
+		logger.info( " *** prepareFalloutRequest *** ")
 
 		try {
 			WorkflowException wfex = execution.getVariable("WorkflowException")
-			utils.log("INFO", " Input Workflow Exception: " + wfex.toString(), isDebugEnabled)
+			logger.info( " Input Workflow Exception: " + wfex.toString())
 			String requestId = execution.getVariable("msoRequestId")
 			String source = execution.getVariable("source")
 			String requestInfo =
@@ -456,7 +458,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
 			execution.setVariable("falloutRequest", falloutRequest)
 		} catch (Exception ex) {
-			utils.log("INFO", "Exception prepareFalloutRequest:" + ex.getMessage(), isDebugEnabled)
+			logger.info( "Exception prepareFalloutRequest:" + ex.getMessage())
 			String errorException = "  Bpmn error encountered in UpdateCustomE2EServiceInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
 			String requestId = execution.getVariable("msoRequestId")
 			String falloutRequest =
@@ -476,6 +478,6 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			execution.setVariable("falloutRequest", falloutRequest)
 		}
-		utils.log("INFO", "*** Exit prepareFalloutRequest ***", isDebugEnabled)
+		logger.info( "*** Exit prepareFalloutRequest ***")
 	}
 }

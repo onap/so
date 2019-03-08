@@ -6,6 +6,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved. 
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,7 +36,8 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils;
 
 import groovy.json.*
@@ -49,23 +52,23 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils()
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DeleteCustomE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DeleteCustomE2EServiceInstance.class);
 	
 	public void preProcessRequest (DelegateExecution execution) {
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
 		
-		msoLogger.info("Starting preProcessRequest")
+		logger.info("Starting preProcessRequest")
 
 		try {
 			// check for incoming json message/input
 			String siRequest = execution.getVariable("bpmnRequest")
-			msoLogger.debug(siRequest)
+			logger.debug(siRequest)
 			
 			
 			String requestId = execution.getVariable("mso-request-id")
 			execution.setVariable("msoRequestId", requestId)
-			msoLogger.info("Input Request:" + siRequest + " reqId:" + requestId)
+			logger.info("Input Request:" + siRequest + " reqId:" + requestId)
 			
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)) {
@@ -79,7 +82,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 //			if (isBlank(productFamilyId))
 //			{
 //				msg = "Input productFamilyId is null"
-//				utils.log("INFO", msg, isDebugEnabled)
+//				logger.info( msg)
 //				//exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 //			} else {
 //				execution.setVariable("productFamilyId", productFamilyId)
@@ -91,7 +94,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "globalSubscriberId")
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId' is null"
-				msoLogger.info(msg)
+				logger.info(msg)
 			} else {
 				execution.setVariable("globalSubscriberId", globalSubscriberId)
 			}
@@ -100,7 +103,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "serviceType")
 			if (isBlank(subscriptionServiceType)) {
 				msg = "Input subscriptionServiceType is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				//exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			} else {
 				execution.setVariable("subscriptionServiceType", subscriptionServiceType)
@@ -113,31 +116,31 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			throw e
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest")
+		logger.trace("Exit preProcessRequest")
 	}
 
 	public void sendSyncResponse (DelegateExecution execution) {
-		msoLogger.trace("Staring sendSyncResponse")
+		logger.trace("Staring sendSyncResponse")
 
 		try {
 			String operationId = execution.getVariable("operationId")
 			String syncResponse = """{"operationId":"${operationId}"}""".trim()
-			msoLogger.info("sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse)
+			logger.info("sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse)
 			sendWorkflowResponse(execution, 202, syncResponse)
 
 		} catch (Exception ex) {
 			String msg  = "Exception in sendSyncResponse: " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
-		msoLogger.trace("Exit sendSyncResopnse")
+		logger.trace("Exit sendSyncResopnse")
 	}
 	
 	public void sendSyncError (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.info("Starting sendSyncError")
+		logger.info("Starting sendSyncError")
 
 		try {
 			String errorMessage = ""
@@ -154,17 +157,17 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 					<aetgt:ErrorCode>7000</aetgt:ErrorCode>
 				   </aetgt:WorkflowException>"""
 
-			msoLogger.info(buildworkflowException)
+			logger.info(buildworkflowException)
 			sendWorkflowResponse(execution, 500, buildworkflowException)
 
 		} catch (Exception ex) {
-			msoLogger.info("Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
+			logger.info("Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
 		}
 
 	}
 	
 	public void prepareCompletionRequest (DelegateExecution execution) {
-		msoLogger.trace("Starting prepareCompletion")
+		logger.trace("Starting prepareCompletion")
 
 		try {
 			String requestId = execution.getVariable("msoRequestId")
@@ -185,23 +188,23 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
 			execution.setVariable("completionRequest", xmlMsoCompletionRequest)
-			msoLogger.info(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+			logger.info(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
 		} catch (Exception ex) {
 			String msg = " Exception in prepareCompletion:" + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit prepareCompletionRequest")
+		logger.trace("Exit prepareCompletionRequest")
 	}
 	
 	public void prepareFalloutRequest(DelegateExecution execution){
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("Starting prepareFalloutRequest ")
+		logger.trace("Starting prepareFalloutRequest ")
 
 		try {
 			WorkflowException wfex = execution.getVariable("WorkflowException")
-			msoLogger.info(" Input Workflow Exception: " + wfex.toString())
+			logger.info(" Input Workflow Exception: " + wfex.toString())
 			String requestId = execution.getVariable("msoRequestId")
 			String source = execution.getVariable("source")
 			String requestInfo =
@@ -214,7 +217,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
 			execution.setVariable("falloutRequest", falloutRequest)
 		} catch (Exception ex) {
-			msoLogger.info("Exception prepareFalloutRequest:" + ex.getMessage())
+			logger.info("Exception prepareFalloutRequest:" + ex.getMessage())
 			String errorException = "  Bpmn error encountered in CreateServiceInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
 			String requestId = execution.getVariable("msoRequestId")
 			String falloutRequest =
@@ -234,7 +237,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			execution.setVariable("falloutRequest", falloutRequest)
 		}
-		msoLogger.trace("Exit prepareFalloutRequest")
+		logger.trace("Exit prepareFalloutRequest")
 	}
 	
 
@@ -246,7 +249,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		execution.setVariable("prefix", Prefix)
 
 		try {
-			msoLogger.info("Starting prepareDBRequest")
+			logger.info("Starting prepareDBRequest")
 
 			String requestId = execution.getVariable("DELSI_requestId")
 			String statusMessage = "E2E Service Instance successfully deleted."
@@ -269,7 +272,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 		   String buildDeleteDBRequestAsString = utils.formatXml(dbRequest)
 		   execution.setVariable("DELSI_createDBRequest", buildDeleteDBRequestAsString)
-		  msoLogger.info(buildDeleteDBRequestAsString)
+		  logger.info(buildDeleteDBRequestAsString)
 
 		} catch (Exception ex) {
 			// try error in method block
@@ -287,7 +290,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Start prepareDBRequestError")
+		logger.trace("Start prepareDBRequestError")
 
 		try {
 			String requestId = execution.getVariable("DELSI_requestId")
@@ -317,7 +320,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 		   String buildDBRequestAsString = utils.formatXml(dbRequest)
 		   execution.setVariable("DELSI_createDBInfraErrorRequest", buildDBRequestAsString)
-		   msoLogger.info(buildDBRequestAsString)
+		   logger.info(buildDBRequestAsString)
 
 		} catch (Exception ex) {
 			// try error in method block
@@ -336,7 +339,7 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 	 * Init the service Operation Status
 	 */
 	public void prepareInitServiceOperationStatus(DelegateExecution execution){
-		msoLogger.debug("======== STARTED prepareInitServiceOperationStatus Process ======== ")
+		logger.debug("======== STARTED prepareInitServiceOperationStatus Process ======== ")
 		try{
 			String serviceId = execution.getVariable("serviceInstanceId")
 			String operationId = execution.getVariable("operationId")
@@ -345,12 +348,12 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			String progress = "0"
 			String reason = ""
 			String operationContent = "Prepare service creation"
-			msoLogger.debug("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
+			logger.debug("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
 			serviceId = UriUtils.encode(serviceId,"UTF-8")
 
 			def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
 			execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-			msoLogger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
+			logger.debug("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
 			String payload =
 					"""<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -372,12 +375,12 @@ public class DeleteCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
-			msoLogger.debug("Outgoing updateServiceOperStatusRequest: \n" + payload)
+			logger.debug("Outgoing updateServiceOperStatusRequest: \n" + payload)
 
 		}catch(Exception e){
-			msoLogger.error("Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e)
+			logger.error("Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e)
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
 		}
-		msoLogger.debug("======== COMPLETED prepareInitServiceOperationStatus Process ======== ")
+		logger.debug("======== COMPLETED prepareInitServiceOperationStatus Process ======== ")
 	}
 }

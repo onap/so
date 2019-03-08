@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +35,8 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This class supports the macro VID Flow
@@ -40,7 +44,7 @@ import org.onap.so.logger.MsoLogger
  */
 class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVnfAndModulesRollback.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateVnfAndModulesRollback.class);
 	String Prefix="DCVAMR_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -56,13 +60,13 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 	public void preProcessRequest(DelegateExecution execution) {
 		
 		execution.setVariable("prefix",Prefix)
-		msoLogger.debug("STARTED DoCreateVnfAndModulesRollback PreProcessRequest Process")
+		logger.debug("STARTED DoCreateVnfAndModulesRollback PreProcessRequest Process")
 
 		try{
 			// Get Rollback Variables
 			
 			def rollbackData = execution.getVariable("rollbackData")
-			msoLogger.debug("Incoming RollbackData is: " + rollbackData.toString())
+			logger.debug("Incoming RollbackData is: " + rollbackData.toString())
 			execution.setVariable("rolledBack", null)
 			execution.setVariable("rollbackError", null)
 			
@@ -72,7 +76,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			}
 
 			String vnfId = rollbackData.get("VNF", "vnfId")
-			msoLogger.debug("Rollback vnfId is: " + vnfId)
+			logger.debug("Rollback vnfId is: " + vnfId)
 			execution.setVariable("DCVAMR_vnfId", vnfId)
 			
 			execution.setVariable("mso-request-id", execution.getVariable("msoRequestId"))
@@ -82,23 +86,23 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			execution.setVariable("DCVAMR_rollbackVnfCreate", rollbackData.get("VNF", "rollbackVnfCreate"))
 			
 			String sdncCallbackUrl = rollbackData.get("VNF", "sdncCallbackUrl")
-			msoLogger.debug("Rollback sdncCallbackUrl is: " + sdncCallbackUrl)
+			logger.debug("Rollback sdncCallbackUrl is: " + sdncCallbackUrl)
 			execution.setVariable("DCVAMR_sdncCallbackUrl", sdncCallbackUrl)
 			
 			String tenantId= rollbackData.get("VNF", "tenantId")
-			msoLogger.debug("Rollback tenantId is: " + tenantId)
+			logger.debug("Rollback tenantId is: " + tenantId)
 			execution.setVariable("DCVAMR_tenantId", tenantId)
 			
 			String source= rollbackData.get("VNF", "source")
-			msoLogger.debug("Rollback source is: " + source)
+			logger.debug("Rollback source is: " + source)
 			execution.setVariable("DCVAMR_source", source)
 			
 			String serviceInstanceId = rollbackData.get("VNF", "serviceInstanceId")
-			msoLogger.debug("Rollback serviceInstanceId is: " + serviceInstanceId)
+			logger.debug("Rollback serviceInstanceId is: " + serviceInstanceId)
 			execution.setVariable("DCVAMR_serviceInstanceId", serviceInstanceId)
 			
 			String cloudSiteId = rollbackData.get("VNF", "cloudSiteId")
-			msoLogger.debug("Rollback cloudSiteId is: " + cloudSiteId)
+			logger.debug("Rollback cloudSiteId is: " + cloudSiteId)
 			execution.setVariable("DCVAMR_cloudSiteId", cloudSiteId)
 			
 			def numOfAddOnModulesString = rollbackData.get("VNFANDMODULES", "numOfCreatedAddOnModules")
@@ -121,14 +125,14 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			execution.setVariable("DCVAMR_aLaCarte", false)			
 			
 		}catch(BpmnError b){
-			msoLogger.debug("Rethrowing MSOWorkflowException")
+			logger.debug("Rethrowing MSOWorkflowException")
 			throw b
 		}catch(Exception e){
-			msoLogger.debug(" Error Occured in DoCreateVnfAndModulesRollback PreProcessRequest method!" + e.getMessage())
+			logger.debug(" Error Occured in DoCreateVnfAndModulesRollback PreProcessRequest method!" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnfAndModulesRollback PreProcessRequest")
 
 		}
-		msoLogger.trace("COMPLETED DoCreateVnfAndModulesRollback PreProcessRequest Process")
+		logger.trace("COMPLETED DoCreateVnfAndModulesRollback PreProcessRequest Process")
 	}
 
 	
@@ -136,7 +140,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 	public void preProcessCreateVfModuleRollback(DelegateExecution execution){
 		
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessCreateVfModuleRollback")
+		logger.trace("STARTED preProcessCreateVfModuleRollback")
 		
 		try {
 			
@@ -145,33 +149,35 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			def vfModuleRollbackData = new RollbackData()
 			
 			def numOfModulesToDelete = execution.getVariable("DCVAMR_numOfModulesToDelete")
-			msoLogger.debug("numOfModulesToDelete: " + numOfModulesToDelete)
+			logger.debug("numOfModulesToDelete: " + numOfModulesToDelete)
 			def moduleMap = null
 			
 			if (numOfModulesToDelete > 1) {
 				int addOnModuleIndex = numOfModulesToDelete - 1
 				moduleMap = rollbackData.get("VFMODULE_ADDON_" + addOnModuleIndex)
-				msoLogger.debug("Removing ADDON VF module # " + addOnModuleIndex)
+				logger.debug("Removing ADDON VF module # " + addOnModuleIndex)
 			}
 			else {
 				moduleMap = rollbackData.get("VFMODULE_BASE")
-				msoLogger.debug("Removing BASE VF module")
+				logger.debug("Removing BASE VF module")
 			}
 			moduleMap.each{ k, v -> vfModuleRollbackData.put("VFMODULE", "${k}","${v}") }
 			execution.setVariable("DCVAMR_RollbackData", vfModuleRollbackData)								
 			
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preProcessCreateVfModuleRollback ", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preProcessCreateVfModuleRollback ", "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessCreateVfModuleRollback Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED preProcessCreateVfModuleRollback")
+		logger.trace("COMPLETED preProcessCreateVfModuleRollback")
 	}
 	
 	
 	public void postProcessCreateVfModuleRollback(DelegateExecution execution){
 		
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED postProcessCreateVfModuleRollback")
+		logger.trace("STARTED postProcessCreateVfModuleRollback")
 		def rolledBack = false
 		
 		try {
@@ -179,22 +185,26 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			def numOfModulesToDelete = execution.getVariable("DCVAMR_numOfModulesToDelete")
 			execution.setVariable("DCVAMR_numOfModulesToDelete", numOfModulesToDelete - 1)		
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing postProcessCreateVfModuleRollback ", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);			
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing postProcessCreateVfModuleRollback ", "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during postProcessCreateVfModuleRollback Method:\n" + e.getMessage())
 		}
 		if (rolledBack == false) {
-			msoLogger.debug("Failure on DoCreateVfModuleRollback")
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Unsuccessful rollback of DoCreateVfModule ", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError);
+			logger.debug("Failure on DoCreateVfModuleRollback")
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Unsuccessful rollback of DoCreateVfModule ", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during rollback of DoCreateVfModule")
 		}
-		msoLogger.trace("COMPLETED postProcessCreateVfModuleRollback")
+		logger.trace("COMPLETED postProcessCreateVfModuleRollback")
 	}
 	
 	
 	public void preProcessSDNCDeactivateRequest(DelegateExecution execution){
 		
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessSDNCDeactivateRequest")
+		logger.trace("STARTED preProcessSDNCDeactivateRequest")
 		def vnfId = execution.getVariable("vnfId")
 		def serviceInstanceId = execution.getVariable("serviceInstanceId")
 
@@ -205,13 +215,15 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 
 			deactivateSDNCRequest = utils.formatXml(deactivateSDNCRequest)
 			execution.setVariable(Prefix + "deactivateSDNCRequest", deactivateSDNCRequest)
-			msoLogger.debug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
+			logger.debug("Outgoing DeactivateSDNCRequest is: \n" + deactivateSDNCRequest)
 
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preProcessSDNCDeactivateRequest ", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);			
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preProcessSDNCDeactivateRequest ", "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCDeactivateRequest Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED preProcessSDNCDeactivateRequest")
+		logger.trace("COMPLETED preProcessSDNCDeactivateRequest")
 	}
 	
 	public void preProcessSDNCUnassignRequest(DelegateExecution execution) {
@@ -219,9 +231,9 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED preProcessSDNCUnassignRequest Process")
+		logger.trace("STARTED preProcessSDNCUnassignRequest Process")
 		try{
 			String vnfId = execution.getVariable("vnfId")
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -229,13 +241,13 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			String unassignSDNCRequest = buildSDNCRequest(execution, serviceInstanceId, "unassign")
 
 			execution.setVariable(Prefix + "unassignSDNCRequest", unassignSDNCRequest)
-			msoLogger.debug("Outgoing UnassignSDNCRequest is: \n" + unassignSDNCRequest)
+			logger.debug("Outgoing UnassignSDNCRequest is: \n" + unassignSDNCRequest)
 
 		}catch(Exception e){
-			msoLogger.debug("Exception Occured Processing preProcessSDNCUnassignRequest. Exception is:\n" + e)
+			logger.debug("Exception Occured Processing preProcessSDNCUnassignRequest. Exception is:\n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during  preProcessSDNCUnassignRequest Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED  preProcessSDNCUnassignRequest Process")
+		logger.trace("COMPLETED  preProcessSDNCUnassignRequest Process")
 	}
 	
 	public String buildSDNCRequest(DelegateExecution execution, String svcInstId, String action){
@@ -291,37 +303,37 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 	</sdncadapterworkflow:SDNCRequestData>
 	</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 		
-			msoLogger.debug("sdncRequest:  " + sdncRequest)
+			logger.debug("sdncRequest:  " + sdncRequest)
 			return sdncRequest
 	}
 		
 	public void validateSDNCResponse(DelegateExecution execution, String response, String method){
 		
 		execution.setVariable("prefix",Prefix)
-		msoLogger.debug("STARTED ValidateSDNCResponse Process")
+		logger.debug("STARTED ValidateSDNCResponse Process")
 
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 
-		msoLogger.debug("workflowException: " + workflowException)
+		logger.debug("workflowException: " + workflowException)
 
 		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 		String sdncResponse = response
 		if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-			msoLogger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)
+			logger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)
 		}else{
-			msoLogger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
+			logger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
 			throw new BpmnError("MSOWorkflowException")
 		}
-		msoLogger.debug("COMPLETED ValidateSDNCResponse Process")
+		logger.debug("COMPLETED ValidateSDNCResponse Process")
 	}
 	
 	public void setSuccessfulRollbackStatus (DelegateExecution execution){
 		
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED setSuccessfulRollbackStatus")
+		logger.trace("STARTED setSuccessfulRollbackStatus")
 	
 		try{
 			// Set rolledBack to true, rollbackError to null
@@ -329,16 +341,16 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			execution.setVariable("rollbackError", null)
 	
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing setSuccessfulRollbackStatus ", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured Processing setSuccessfulRollbackStatus ", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setSuccessfulRollbackStatus Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED setSuccessfulRollbackStatus")
+		logger.trace("COMPLETED setSuccessfulRollbackStatus")
 	}
 	
 	public void setFailedRollbackStatus (DelegateExecution execution){
 		
 		execution.setVariable("prefix", Prefix)
-		msoLogger.trace("STARTED setFailedRollbackStatus")
+		logger.trace("STARTED setFailedRollbackStatus")
 	
 		try{
 			// Set rolledBack to false, rollbackError to actual value, rollbackData to null
@@ -350,10 +362,10 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 			execution.setVariable("rollbackData", null)
 	
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing setFailedRollbackStatus. ", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured Processing setFailedRollbackStatus. ", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setFailedRollbackStatus Method:\n" + e.getMessage())
 		}
-		msoLogger.trace("COMPLETED setFailedRollbackStatus")
+		logger.trace("COMPLETED setFailedRollbackStatus")
 	}
 	
 	
