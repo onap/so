@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "54f95667_1245ee59",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.4__AddPnfResourceAndCustomization.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-08T18:38:45Z",
+      "side": 1,
+      "message": "Based on default value \u0027HEAT\u0027 it appears this attribute is not applicable for PNFs. PNFs are discovered, not created.",
+      "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "63b160c4_3b8decbf",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.4__AddPnfResourceAndCustomization.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-08T18:38:45Z",
+      "side": 1,
+      "message": "The proposal also included the new table pnf_resource_customization_to_service. Is it missing?",
+      "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
