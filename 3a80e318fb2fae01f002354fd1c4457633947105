@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0ac478b4_0028f7f2",
+        "filename": "asdc-controller/src/test/java/org/onap/so/asdc/util/CreateVFModuleResourceBuilderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-08T13:24:09Z",
+      "side": 1,
+      "message": "I am just confused by this assertion.  What is it testing at this point?",
+      "revId": "3a80e318fb2fae01f002354fd1c4457633947105",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
