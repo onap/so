@@ -384,6 +384,8 @@ create table `vnf_resource_customization` (
   `vnf_resource_model_uuid` varchar(200) not null,
   `multi_stage_design` varchar(20) default null,
   `resource_input` varchar(20000) default null,
+  `cds_blueprint_name` varchar(200),
+  `cds_blueprint_version` varchar(200),
   primary key (`model_customization_uuid`),
   key `fk_vnf_resource_customization__vnf_resource1_idx` (`vnf_resource_model_uuid`),
   constraint `fk_vnf_resource_customization__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade

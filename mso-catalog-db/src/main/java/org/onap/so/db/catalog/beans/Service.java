@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -53,294 +53,316 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 @Table(name = "service")
 public class Service implements Serializable {
 
-	private static final long serialVersionUID = 768026109321305392L;
+    private static final long serialVersionUID = 768026109321305392L;
 
-	@Column(name = "MODEL_NAME")
-	private String modelName;
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	@Column(name = "DESCRIPTION", length = 1200)
-	private String description;
+    @Column(name = "DESCRIPTION", length = 1200)
+    private String description;
 
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_UUID")
-	private String modelUUID;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_UUID")
+    private String modelUUID;
 
-	@Column(name = "MODEL_INVARIANT_UUID")
-	private String modelInvariantUUID;
+    @Column(name = "MODEL_INVARIANT_UUID")
+    private String modelInvariantUUID;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@Column(name = "MODEL_VERSION")
-	private String modelVersion;
+    @Column(name = "MODEL_VERSION")
+    private String modelVersion;
 
-	@Column(name = "SERVICE_TYPE")
-	private String serviceType;
+    @Column(name = "SERVICE_TYPE")
+    private String serviceType;
 
-	@Column(name = "SERVICE_ROLE")
-	private String serviceRole;
+    @Column(name = "SERVICE_ROLE")
+    private String serviceRole;
 
-	@Column(name = "ENVIRONMENT_CONTEXT")
-	private String environmentContext;
+    @Column(name = "ENVIRONMENT_CONTEXT")
+    private String environmentContext;
 
-	@Column(name = "WORKLOAD_CONTEXT")
-	private String workloadContext;
+    @Column(name = "WORKLOAD_CONTEXT")
+    private String workloadContext;
 
-	@Column(name = "SERVICE_CATEGORY")
-	private String category;
+    @Column(name = "SERVICE_CATEGORY")
+    private String category;
 
-	@Column(name = "RESOURCE_ORDER")
-	private String resourceOrder;
+    @Column(name = "RESOURCE_ORDER")
+    private String resourceOrder;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "network_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
-	private List<NetworkResourceCustomization> networkCustomizations;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "network_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    private List<NetworkResourceCustomization> networkCustomizations;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "vnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
-	private List<VnfResourceCustomization> vnfCustomizations;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "vnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    private List<VnfResourceCustomization> vnfCustomizations;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "allotted_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
-	private List<AllottedResourceCustomization> allottedCustomizations;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "allotted_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    private List<AllottedResourceCustomization> allottedCustomizations;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "collection_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
-	private List<CollectionResourceCustomization> collectionResourceCustomizations;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "collection_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    private List<CollectionResourceCustomization> collectionResourceCustomizations;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "service_proxy_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
-	private List<ServiceProxyResourceCustomization> serviceProxyCustomizations;
-	
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "configuration_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
-	private List<ConfigurationResourceCustomization> configurationCustomizations;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "service_proxy_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    private List<ServiceProxyResourceCustomization> serviceProxyCustomizations;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@MapKey(name = "action")
-	@JoinColumn(name = "SERVICE_MODEL_UUID")
-	private Map<String, ServiceRecipe> recipes;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "configuration_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    private List<ConfigurationResourceCustomization> configurationCustomizations;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
-	private ToscaCsar csar;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "pnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    private List<PnfResourceCustomization> pnfCustomizations;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelName", modelName).append("description", description)
-				.append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-				.append("created", created).append("modelVersion", modelVersion).append("serviceType", serviceType)
-				.append("serviceRole", serviceRole).append("environmentContext", environmentContext)
-				.append("workloadContext", workloadContext).append("category", category)
-				.append("networkCustomizations", networkCustomizations).append("vnfCustomizations", vnfCustomizations)
-				.append("allottedCustomizations", allottedCustomizations)
-				.append("collectionResourceCustomizations", collectionResourceCustomizations)
-				.append("serviceProxyCustomizations", serviceProxyCustomizations)
-				.append("configurationCustomizations", configurationCustomizations).append("recipes", recipes)
-				.append("csar", csar).toString();
-	}
+    @OneToMany(cascade = CascadeType.ALL)
+    @MapKey(name = "action")
+    @JoinColumn(name = "SERVICE_MODEL_UUID")
+    private Map<String, ServiceRecipe> recipes;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
+    private ToscaCsar csar;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof Service)) {
-			return false;
-		}
-		Service castOther = (Service) other;
-		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelName", modelName).append("description", description)
+            .append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+            .append("created", created).append("modelVersion", modelVersion).append("serviceType", serviceType)
+            .append("serviceRole", serviceRole).append("environmentContext", environmentContext)
+            .append("workloadContext", workloadContext).append("category", category)
+            .append("networkCustomizations", networkCustomizations).append("vnfCustomizations", vnfCustomizations)
+            .append("allottedCustomizations", allottedCustomizations)
+            .append("collectionResourceCustomizations", collectionResourceCustomizations)
+            .append("serviceProxyCustomizations", serviceProxyCustomizations)
+            .append("configurationCustomizations", configurationCustomizations)
+            .append("pnfCustomizations", pnfCustomizations)
+            .append("recipes", recipes)
+            .append("csar", csar).toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelUUID).toHashCode();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	@LinkedResource
-	public List<ServiceProxyResourceCustomization> getServiceProxyCustomizations() {
-		return serviceProxyCustomizations;
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof Service)) {
+            return false;
+        }
+        Service castOther = (Service) other;
+        return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
+    }
 
-	public void setServiceProxyCustomizations(List<ServiceProxyResourceCustomization> serviceProxyCustomizations) {
-		this.serviceProxyCustomizations = serviceProxyCustomizations;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelUUID).toHashCode();
+    }
 
-	@LinkedResource
-	public List<NetworkResourceCustomization> getNetworkCustomizations() {
-		if (networkCustomizations == null)
-			networkCustomizations = new ArrayList<>();
-		return networkCustomizations;
-	}
+    @LinkedResource
+    public List<ServiceProxyResourceCustomization> getServiceProxyCustomizations() {
+        return serviceProxyCustomizations;
+    }
 
-	public void setNetworkCustomizations(List<NetworkResourceCustomization> networkCustomizations) {
-		this.networkCustomizations = networkCustomizations;
-	}
+    public void setServiceProxyCustomizations(List<ServiceProxyResourceCustomization> serviceProxyCustomizations) {
+        this.serviceProxyCustomizations = serviceProxyCustomizations;
+    }
 
-	@LinkedResource
-	public List<VnfResourceCustomization> getVnfCustomizations() {
-		if (vnfCustomizations == null)
-			vnfCustomizations = new ArrayList<>();
-		return vnfCustomizations;
-	}
+    @LinkedResource
+    public List<NetworkResourceCustomization> getNetworkCustomizations() {
+        if (networkCustomizations == null) {
+            networkCustomizations = new ArrayList<>();
+        }
+        return networkCustomizations;
+    }
 
-	public void setVnfCustomizations(List<VnfResourceCustomization> vnfCustomizations) {
-		this.vnfCustomizations = vnfCustomizations;
-	}
+    public void setNetworkCustomizations(List<NetworkResourceCustomization> networkCustomizations) {
+        this.networkCustomizations = networkCustomizations;
+    }
 
-	@LinkedResource
-	public List<AllottedResourceCustomization> getAllottedCustomizations() {
-		if (allottedCustomizations == null)
-			allottedCustomizations = new ArrayList<>();
-		return allottedCustomizations;
-	}
+    @LinkedResource
+    public List<VnfResourceCustomization> getVnfCustomizations() {
+        if (vnfCustomizations == null) {
+            vnfCustomizations = new ArrayList<>();
+        }
+        return vnfCustomizations;
+    }
 
-	public void setAllottedCustomizations(List<AllottedResourceCustomization> allotedCustomizations) {
-		this.allottedCustomizations = allotedCustomizations;
-	}
+    public void setVnfCustomizations(List<VnfResourceCustomization> vnfCustomizations) {
+        this.vnfCustomizations = vnfCustomizations;
+    }
 
-	@LinkedResource
-	public List<CollectionResourceCustomization> getCollectionResourceCustomizations() {
-		if (collectionResourceCustomizations == null)
-			collectionResourceCustomizations = new ArrayList<>();
-		return collectionResourceCustomizations;
-	}
+    @LinkedResource
+    public List<AllottedResourceCustomization> getAllottedCustomizations() {
+        if (allottedCustomizations == null) {
+            allottedCustomizations = new ArrayList<>();
+        }
+        return allottedCustomizations;
+    }
 
-	public void setCollectionResourceCustomizations(
-			List<CollectionResourceCustomization> collectionResourceCustomizations) {
-		this.collectionResourceCustomizations = collectionResourceCustomizations;
-	}
+    public void setAllottedCustomizations(List<AllottedResourceCustomization> allotedCustomizations) {
+        this.allottedCustomizations = allotedCustomizations;
+    }
 
-	@LinkedResource
-	public List<ConfigurationResourceCustomization> getConfigurationCustomizations() {
-		if(configurationCustomizations == null)
-			configurationCustomizations = new ArrayList<>();
-		return configurationCustomizations;
-	}
+    @LinkedResource
+    public List<CollectionResourceCustomization> getCollectionResourceCustomizations() {
+        if (collectionResourceCustomizations == null) {
+            collectionResourceCustomizations = new ArrayList<>();
+        }
+        return collectionResourceCustomizations;
+    }
 
-	public void setConfigurationCustomizations(List<ConfigurationResourceCustomization> configurationCustomizations) {
-		this.configurationCustomizations = configurationCustomizations;
-	}
+    public void setCollectionResourceCustomizations(
+        List<CollectionResourceCustomization> collectionResourceCustomizations) {
+        this.collectionResourceCustomizations = collectionResourceCustomizations;
+    }
 
-	public String getModelName() {
-		return modelName;
-	}
+    @LinkedResource
+    public List<ConfigurationResourceCustomization> getConfigurationCustomizations() {
+        if (configurationCustomizations == null) {
+            configurationCustomizations = new ArrayList<>();
+        }
+        return configurationCustomizations;
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    public void setConfigurationCustomizations(List<ConfigurationResourceCustomization> configurationCustomizations) {
+        this.configurationCustomizations = configurationCustomizations;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    @LinkedResource
+    public List<PnfResourceCustomization> getPnfCustomizations() {
+        if (pnfCustomizations == null) {
+            pnfCustomizations = new ArrayList<>();
+        }
+        return pnfCustomizations;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setPnfCustomizations(List<PnfResourceCustomization> pnfCustomizations) {
+        this.pnfCustomizations = pnfCustomizations;
+    }
 
-	@LinkedResource
-	public Map<String, ServiceRecipe> getRecipes() {
-		return recipes;
-	}
+    public String getModelName() {
+        return modelName;
+    }
 
-	public void setRecipes(Map<String, ServiceRecipe> recipes) {
-		this.recipes = recipes;
-	}
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getModelUUID() {
-		return modelUUID;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    @LinkedResource
+    public Map<String, ServiceRecipe> getRecipes() {
+        return recipes;
+    }
 
-	public String getModelInvariantUUID() {
-		return modelInvariantUUID;
-	}
+    public void setRecipes(Map<String, ServiceRecipe> recipes) {
+        this.recipes = recipes;
+    }
 
-	public void setModelInvariantUUID(String modelInvariantUUID) {
-		this.modelInvariantUUID = modelInvariantUUID;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public String getModelVersion() {
-		return modelVersion;
-	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
 
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	/**
-	 * @return Returns the category.
-	 */
-	public String getCategory() {
-		return category;
-	}
+    public String getModelInvariantUUID() {
+        return modelInvariantUUID;
+    }
 
-	/**
-	 * @param category
-	 *            The category to set.
-	 */
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public String getModelVersion() {
+        return modelVersion;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
+    }
 
-	public String getServiceRole() {
-		return serviceRole;
-	}
+    /**
+     * @return Returns the category.
+     */
+    public String getCategory() {
+        return category;
+    }
 
-	public void setServiceRole(String serviceRole) {
-		this.serviceRole = serviceRole;
-	}
+    /**
+     * @param category The category to set.
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	public String getEnvironmentContext() {
-		return this.environmentContext;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public void setEnvironmentContext(String environmentContext) {
-		this.environmentContext = environmentContext;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	@LinkedResource
-	public ToscaCsar getCsar() {
-		return csar;
-	}
+    public String getServiceRole() {
+        return serviceRole;
+    }
 
-	public void setCsar(ToscaCsar csar) {
-		this.csar = csar;
-	}
+    public void setServiceRole(String serviceRole) {
+        this.serviceRole = serviceRole;
+    }
 
-	public String getWorkloadContext() {
-		return this.workloadContext;
-	}
+    public String getEnvironmentContext() {
+        return this.environmentContext;
+    }
 
-	public void setWorkloadContext(String workloadContext) {
-		this.workloadContext = workloadContext;
-	}
+    public void setEnvironmentContext(String environmentContext) {
+        this.environmentContext = environmentContext;
+    }
 
-	public String getResourceOrder() {
-		return resourceOrder;
-	}
+    @LinkedResource
+    public ToscaCsar getCsar() {
+        return csar;
+    }
 
-	public void setResourceOrder(String resourceOrder) {
-		this.resourceOrder = resourceOrder;
-	}
+    public void setCsar(ToscaCsar csar) {
+        this.csar = csar;
+    }
+
+    public String getWorkloadContext() {
+        return this.workloadContext;
+    }
+
+    public void setWorkloadContext(String workloadContext) {
+        this.workloadContext = workloadContext;
+    }
+
+    public String getResourceOrder() {
+        return resourceOrder;
+    }
+
+    public void setResourceOrder(String resourceOrder) {
+        this.resourceOrder = resourceOrder;
+    }
 }

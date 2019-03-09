@@ -293,3 +293,15 @@ VALUES      ( '1',
               '68dc9a92-214c-11e7-93ae-92361f002671',
               'cb82ffd8-252a-11e7-93ae-92361f002671',
               '9bcce658-9b37-11e8-98d0-529269fb1459');
+
+insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
+('5df8b6de-2083-11e7-93ae-92361f002676', 'PNF_routing_service', '9647dfc4-2083-11e7-93ae-92361f002676', '1.0', 'PNF service', '2019-03-08 12:00:29', null, 'NA', 'NA', 'Luna', 'Oxygen');
+
+insert into pnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, model_invariant_uuid, model_version, model_name, tosca_node_type) values
+('', 'PNF routing', '2019-03-08 12:00:28', 'ff2ae348-214a-11e7-93ae-92361f002680', '2fff5b20-214b-11e7-93ae-92361f002680', '1.0', 'PNF resource', null);
+
+insert into pnf_resource_customization(model_customization_uuid, model_instance_name, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, pnf_resource_model_uuid, multi_stage_design, cds_blueprint_name, cds_blueprint_version) values
+('68dc9a92-214c-11e7-93ae-92361f002680', 'PNF routing', 'routing', 'routing', 'routing', 'routing', '2019-03-08 12:00:29', 'ff2ae348-214a-11e7-93ae-92361f002680', null, "test_configuration_restconf", "1.0.0");
+
+insert into pnf_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
+('5df8b6de-2083-11e7-93ae-92361f002676', '68dc9a92-214c-11e7-93ae-92361f002680');
