@@ -551,6 +551,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
         }
         try {
             final CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+
             final CriteriaQuery<InfraActiveRequests> criteriaQuery =
                     criteriaBuilder.createQuery(InfraActiveRequests.class);
             final Root<InfraActiveRequests> tableRoot = criteriaQuery.from(InfraActiveRequests.class);
@@ -558,17 +559,12 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
 
             final Timestamp minTime = new Timestamp(startTime);
             final Timestamp maxTime = new Timestamp(endTime);
-            predicates.add(criteriaBuilder.greaterThanOrEqualTo(tableRoot.get(START_TIME), minTime));
-            predicates.add(criteriaBuilder.lessThanOrEqualTo(tableRoot.get(END_TIME), maxTime));
-
             final Predicate basePredicate = criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-            
-            final Predicate additionalPredicate = criteriaBuilder.and(tableRoot.get(END_TIME).isNull(),
-                    criteriaBuilder.greaterThanOrEqualTo(tableRoot.get(START_TIME), minTime),
-                    criteriaBuilder.lessThanOrEqualTo(tableRoot.get(START_TIME), maxTime));
+            final Predicate additionalPredicate = criteriaBuilder.and(
+            		criteriaBuilder.greaterThanOrEqualTo(tableRoot.get(START_TIME), minTime),
+                    criteriaBuilder.or(tableRoot.get(END_TIME).isNull(), criteriaBuilder.lessThanOrEqualTo(tableRoot.get(END_TIME), maxTime)));
 
-            criteriaQuery.where(criteriaBuilder.or(basePredicate, additionalPredicate));
-
+            criteriaQuery.where(criteriaBuilder.and(basePredicate, additionalPredicate));
             if (maxResult != null) {
                 return entityManager.createQuery(criteriaQuery).setMaxResults(maxResult).getResultList();
             }
@@ -579,7 +575,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
         }
     }
 
-    private List<Predicate> getPredicates(final Map<String, String[]> filters, final CriteriaBuilder criteriaBuilder,
+    protected List<Predicate> getPredicates(final Map<String, String[]> filters, final CriteriaBuilder criteriaBuilder,
             final Root<InfraActiveRequests> tableRoot) {
         final List<Predicate> predicates = new LinkedList<>();
         for (final Entry<String, String[]> entry : filters.entrySet()) {

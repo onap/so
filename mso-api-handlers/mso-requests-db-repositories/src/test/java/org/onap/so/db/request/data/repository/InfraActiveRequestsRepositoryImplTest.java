@@ -19,11 +19,15 @@
  */
 package org.onap.so.db.request.data.repository;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.ACTION;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.REQUEST_ID;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.SERVICE_INSTANCE_ID;
@@ -33,6 +37,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,7 +51,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -73,7 +81,7 @@ public class InfraActiveRequestsRepositoryImplTest {
     private static final String SERVICE_INSTANCE_ID_VALUE = "e3b5744d-2ad1-4cdd-8390-c999a38829bc";
 
     @Autowired
-    private InfraActiveRequestsRepository objUnderTest;
+    private InfraActiveRequestsRepositoryImpl objUnderTest;
 
     @Test
     public void test_GetInfraActiveRequests_emptyFiltersMap() {
@@ -86,11 +94,9 @@ public class InfraActiveRequestsRepositoryImplTest {
     public void test_GetInfraActiveRequests_invalidFiltersMap() {
         final Map<String, String[]> filters = new HashMap<>();
         filters.put("OverTheMoon", new String[] {"Humpty Dumpty Sat On The Wall"});
-        final long startTime = START_TIME_IN_MILISEC - TimeUnit.DAYS.toMillis(20);
-        final long endTime = END_TIME_IN_MILISEC - TimeUnit.DAYS.toMillis(20);
-        final List<InfraActiveRequests> actualRequests =
-                objUnderTest.getInfraActiveRequests(filters, startTime, endTime, null);
-        assertTrue(actualRequests.isEmpty());
+        final List<Predicate> predicates =
+                objUnderTest.getPredicates(filters, mock(CriteriaBuilder.class), (Root<InfraActiveRequests>)mock(Root.class));
+        assertTrue(predicates.isEmpty());
     }
 
     @Test
@@ -218,14 +224,8 @@ public class InfraActiveRequestsRepositoryImplTest {
         assertFalse(actualRequests.isEmpty());
 
         assertEquals(3, actualRequests.size());
-        final Map<String, InfraActiveRequests> result = new HashMap<>();
-        for (final InfraActiveRequests actualActiveRequests : actualRequests) {
-            result.put(actualActiveRequests.getRequestId(), actualActiveRequests);
-
-        }
-        final InfraActiveRequests actualInfraActiveRequests = result.get("9383dc81-7a6c-4673-8082-650d50a82a1a");
-        assertNull(actualInfraActiveRequests.getEndTime());
-        assertEquals("IN_PROGRESS", actualInfraActiveRequests.getRequestStatus());
+        assertEquals("ShouldReturnInSearchQuery_1,ShouldReturnInSearchQuery_2,ShouldReturnInSearchQuery_3", 
+        		actualRequests.stream().map(item -> item.getServiceInstanceName()).collect(Collectors.joining(",")));
     }
 
 }
