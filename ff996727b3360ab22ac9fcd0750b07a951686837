@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3d7d0d4f_52d889a6",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.4__AddPnfResourceAndCustomization.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-03-09T01:07:24Z",
+      "side": 1,
+      "message": "set the column to default null. keep the column here to be aligned with vnf_resource.",
+      "parentUuid": "54f95667_1245ee59",
+      "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "63b160c4_3b8decbf",
         "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.4__AddPnfResourceAndCustomization.sql",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-08T18:38:45Z",
       "side": 1,
       "message": "The proposal also included the new table pnf_resource_customization_to_service. Is it missing?",
+      "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d11f259e_c676e7ee",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.4__AddPnfResourceAndCustomization.sql",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-03-09T01:07:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "63b160c4_3b8decbf",
       "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "cf63692c_3d042e37",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/PnfCustomizationRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-03-09T01:07:24Z",
+      "side": 1,
+      "message": "Removed all the operations and when required we can add them. Leave the repository interface so it can be used in testing, and further for the pnf ingestion.",
+      "parentUuid": "6a858827_bca5cef7",
+      "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "628fde2d_0af3bf1b",
         "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/PnfResourceRepository.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2019-03-08T19:02:42Z",
       "side": 1,
       "message": "Aren\u0027t these already covered via spring data REST generated endpoints?",
+      "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d44a1e34_5d4e4f41",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/PnfResourceRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-03-09T01:07:24Z",
+      "side": 1,
+      "message": "Removed all the operations and when required we can add them. Leave the repository interface so it can be used in testing, and further for the pnf ingestion.",
+      "parentUuid": "628fde2d_0af3bf1b",
       "revId": "ff996727b3360ab22ac9fcd0750b07a951686837",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
