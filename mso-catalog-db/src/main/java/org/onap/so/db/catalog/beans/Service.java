@@ -25,10 +25,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -118,12 +120,11 @@ public class Service implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "configuration_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
 	private List<ConfigurationResourceCustomization> configurationCustomizations;
-
-	@OneToMany(cascade = CascadeType.ALL)
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
 	@MapKey(name = "action")
-	@JoinColumn(name = "SERVICE_MODEL_UUID")
 	private Map<String, ServiceRecipe> recipes;
-
+	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
 	private ToscaCsar csar;
