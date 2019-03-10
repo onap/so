@@ -27,6 +27,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -123,6 +124,20 @@ public class AAIConfigurationResources {
         AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
                 serviceInstanceId);
         injectionHelper.getAaiClient().connect(configurationURI, serviceInstanceURI);
+    }
+    
+    /**
+     * A&AI call to add configuration relationship with service instance
+     *
+     * @param configurationId
+     * @param serviceInstanceId
+     * @param aaiLabel
+     */
+    public void connectConfigurationToServiceInstance(String configurationId, String serviceInstanceId, AAIEdgeLabel aaiLabel) {
+        AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
+        AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+                serviceInstanceId);
+        injectionHelper.getAaiClient().connect(configurationURI, serviceInstanceURI, aaiLabel);
     }
 
     /**

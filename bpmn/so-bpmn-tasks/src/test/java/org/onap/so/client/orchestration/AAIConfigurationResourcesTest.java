@@ -48,6 +48,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -115,6 +116,13 @@ public class AAIConfigurationResourcesTest extends TestDataSetup{
         doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
         aaiConfigurationResources.connectConfigurationToServiceInstance(configuration.getConfigurationId(), serviceInstance.getServiceInstanceId());
         verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
+    
+    @Test
+    public void connectConfigurationToServiceInstanceWithEdgeTest() {
+        doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class), any(AAIEdgeLabel.class));
+        aaiConfigurationResources.connectConfigurationToServiceInstance(configuration.getConfigurationId(), serviceInstance.getServiceInstanceId(), AAIEdgeLabel.USES);
+        verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class), any(AAIEdgeLabel.class));
     }
     
     @Test
