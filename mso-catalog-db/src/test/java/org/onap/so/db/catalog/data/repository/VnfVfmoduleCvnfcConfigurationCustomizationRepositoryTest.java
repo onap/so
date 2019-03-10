@@ -81,7 +81,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomizationRepositoryTest extends Ba
     	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(configurationResource);
     	
     	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
-    	cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+    	cvnfcCustomization.setModelCustomizationUUID("0c3a8b76-3f5b-11e9-b210-d663bd873d93");
 
     	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
     	vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
@@ -122,5 +122,12 @@ public class VnfVfmoduleCvnfcConfigurationCustomizationRepositoryTest extends Ba
         
     	if(foundVnfVfmoduleCvnfcConfigurationCustomization == null)
     		fail("should not be null");
+    	
+    	VnfVfmoduleCvnfcConfigurationCustomization foundOneVnfVfmoduleCvnfcConfigurationCustomization = 
+    			vnfVfmoduleCvnfcConfigurationCustomizationRepository.findOneByVnfResourceCustomizationAndVfModuleCustomizationAndCvnfcCustomization("cf9f6efc-9f14-11e8-98d0-529269fb1459", "cf9f6efc-9f14-11e8-98d0-529269fb1459", "0c3a8b76-3f5b-11e9-b210-d663bd873d93");
+
+    	if(foundOneVnfVfmoduleCvnfcConfigurationCustomization == null)
+    		fail("should not be null");
+    	Assert.assertTrue(foundOneVnfVfmoduleCvnfcConfigurationCustomization.getConfigurationFunction().equalsIgnoreCase("testConfigurationFunction"));
     }
 }

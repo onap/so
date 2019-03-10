@@ -1186,6 +1186,43 @@ public class BBInputSetupTest {
 
 		assertEquals(modelInfoNetwork, network.getModelInfoNetwork());
 	}
+	
+	@Test
+	public void testPopulateFabricConfiguration() throws JsonParseException, JsonMappingException, IOException {
+		String instanceName = "configurationName";
+		ModelInfo modelInfo = new ModelInfo();
+		modelInfo.setModelCustomizationUuid("72d9d1cd-f46d-447a-abdb-451d6fb05fa9");
+
+		ServiceInstance serviceInstance = new ServiceInstance();
+		Configuration configuration = new Configuration();
+		configuration.setConfigurationId("configurationId");
+		configuration.setConfigurationName("configurationName");
+		serviceInstance.getConfigurations().add(configuration);
+		String resourceId = "configurationId";
+		// Mock service
+		Service service = mapper.readValue(
+				new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
+		Map<ResourceKey, String> lookupKeyMap = new HashMap<>();
+		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "configurationId");
+		String bbName = AssignFlows.FABRIC_CONFIGURATION.toString();
+		ConfigurationResourceKeys configResourceKeys = new ConfigurationResourceKeys();
+		configResourceKeys.setCvnfcCustomizationUUID("cvnfcCustomizationUUID");
+		configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
+		configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
+		
+		VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new VnfVfmoduleCvnfcConfigurationCustomization();
+		ConfigurationResource configurationResource = new ConfigurationResource();
+		configurationResource.setModelUUID("modelUUID");
+		configurationResource.setModelInvariantUUID("modelInvariantUUID");
+		vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(configurationResource);
+
+		doReturn(null).when(SPY_bbInputSetup).findConfigurationResourceCustomization(modelInfo, service);
+		doReturn(vnfVfmoduleCvnfcConfigurationCustomization).when(SPY_bbInputSetup).findVnfVfmoduleCvnfcConfigurationCustomization("vfModuleCustomizationUUID","vnfResourceCustomizationUUID","cvnfcCustomizationUUID");
+		
+		SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
+				instanceName, configResourceKeys);
+		verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service, configResourceKeys);
+	}
 
 	@Test
 	public void testPopulateGenericVnf() throws JsonParseException, JsonMappingException, IOException {

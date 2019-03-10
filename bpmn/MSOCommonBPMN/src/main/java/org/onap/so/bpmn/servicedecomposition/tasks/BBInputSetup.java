@@ -344,6 +344,13 @@ public class BBInputSetup implements JavaDelegate {
 		if (configurationResourceCustomization != null && vnfVfmoduleCvnfcConfigurationCustomization != null) {
 			configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(configurationResourceCustomization
 					, vnfVfmoduleCvnfcConfigurationCustomization));
+		} else {
+			logger.debug("for Fabric configuration mapping by VF MODULE CUST UUID: " + configurationResourceKeys.getVfModuleCustomizationUUID());
+			vnfVfmoduleCvnfcConfigurationCustomization = findVnfVfmoduleCvnfcConfigurationCustomization(configurationResourceKeys.getVfModuleCustomizationUUID(),
+					configurationResourceKeys.getVnfResourceCustomizationUUID(), configurationResourceKeys.getCvnfcCustomizationUUID());
+			if (vnfVfmoduleCvnfcConfigurationCustomization != null){
+				configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(vnfVfmoduleCvnfcConfigurationCustomization));
+			}
 		}
 	}
 
@@ -369,6 +376,13 @@ public class BBInputSetup implements JavaDelegate {
 			}
 		}
 		return null;
+	}
+	
+	protected VnfVfmoduleCvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String vnfResourceCustomizationUUID,
+			String vfModuleCustomizationUUID, String cvnfcCustomizationUUID) {
+		return bbInputSetupUtils.getVnfVfmoduleCvnfcConfigurationCustomizationByActionAndIsALaCarteAndRequestScopeAndCloudOwner(vnfResourceCustomizationUUID,
+				vfModuleCustomizationUUID, cvnfcCustomizationUUID);
+
 	}
 
 	protected void populateVfModule(ModelInfo modelInfo, Service service, String bbName,

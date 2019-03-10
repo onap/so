@@ -339,6 +339,53 @@ public class WorkflowAction {
 			buildAndThrowException(execution, "Exception in create execution list " + ex.getMessage(), ex);
 		}
 	}
+	
+	protected boolean isConfiguration(List<OrchestrationFlow> orchFlows) {
+		for(OrchestrationFlow flow : orchFlows) {
+			if(flow.getFlowName().contains("Configuration")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	protected List<ExecuteBuildingBlock> getConfigBuildingBlocks(ServiceInstancesRequest sIRequest, List<OrchestrationFlow> orchFlows, String requestId, Resource resourceKey,
+			String apiVersion, String resourceId, String requestAction, boolean aLaCarte, String vnfType,
+			WorkflowResourceIds workflowResourceIds, RequestDetails requestDetails, boolean isConfiguration) {
+		List<OrchestrationFlow> result = new ArrayList<>(orchFlows);
+		result = orchFlows.stream().filter(item -> item.getFlowName().contains(FABRIC_CONFIGURATION)).collect(Collectors.toList());
+		String vnfCustomizationUUID = "";
+		String vfModuleCustomizationUUID = sIRequest.getRequestDetails().getModelInfo().getModelCustomizationUuid();
+		RelatedInstanceList[] relatedInstanceList = sIRequest.getRequestDetails().getRelatedInstanceList();
+		if (relatedInstanceList != null) {
+			for (RelatedInstanceList relatedInstList : relatedInstanceList) {
+				RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+				if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
+					vnfCustomizationUUID = relatedInstance.getModelInfo().getModelCustomizationUuid();
+				}
+			}
+		}
+		
+		List<VnfVfmoduleCvnfcConfigurationCustomization> fabricCustomizations = traverseCatalogDbForConfiguration(vnfCustomizationUUID, vfModuleCustomizationUUID);
+		List<ExecuteBuildingBlock> flowsToExecuteConfigs = new ArrayList<>();
+		for(VnfVfmoduleCvnfcConfigurationCustomization fabricConfig : fabricCustomizations) {
+			
+			if (requestAction.equals(CREATEINSTANCE)) {
+				workflowResourceIds.setConfigurationId(UUID.randomUUID().toString());
+			} else {
+				//TODO AAI lookup for configuration update/delete
+			}
+			for(OrchestrationFlow orchFlow : result) {
+				resourceKey.setVfModuleCustomizationId(vfModuleCustomizationUUID);
+				resourceKey.setCvnfModuleCustomizationId(fabricConfig.getCvnfcCustomization().getModelCustomizationUUID());
+				resourceKey.setVnfCustomizationId(vnfCustomizationUUID);
+				ExecuteBuildingBlock ebb = buildExecuteBuildingBlock(orchFlow, requestId, resourceKey, apiVersion, resourceId,
+						requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails, false, null, true);
+				flowsToExecuteConfigs.add(ebb);
+			}
+		}
+		return flowsToExecuteConfigs;
+	}
 
 	protected List<Resource> sortVfModulesByBaseFirst(List<Resource> vfModuleResources) {
 		int count = 0;
@@ -698,9 +745,9 @@ public class WorkflowAction {
 												vfModuleCustomizationUUID = vfModule.getModelInfo().getModelCustomizationUuid();
 											}
 											if(!vnfCustomizationUUID.equals("")&&!vfModuleCustomizationUUID.equals("")){
-												List<String> configs = traverseCatalogDbForConfiguration(vnfCustomizationUUID,vfModuleCustomizationUUID);
-												for(String config : configs){
-													Resource configResource = new Resource(WorkflowType.CONFIGURATION,config,false);
+												List<VnfVfmoduleCvnfcConfigurationCustomization> configs = traverseCatalogDbForConfiguration(vnfCustomizationUUID,vfModuleCustomizationUUID);
+												for(VnfVfmoduleCvnfcConfigurationCustomization config : configs){
+													Resource configResource = new Resource(WorkflowType.CONFIGURATION,config.getConfigurationResource().getModelUUID(),false);
 													resource.setVnfCustomizationId(vnf.getModelInfo().getModelCustomizationId());
 													resource.setVfModuleCustomizationId(vfModule.getModelInfo().getModelCustomizationId());
 													resourceCounter.add(configResource);
@@ -734,20 +781,19 @@ public class WorkflowAction {
 		}
 		return foundRelated;
 	}
-	
 
-	protected List<String> traverseCatalogDbForConfiguration(String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
-		List<String> configurations = new ArrayList<>();
+	protected List<VnfVfmoduleCvnfcConfigurationCustomization> traverseCatalogDbForConfiguration(String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
+		List<VnfVfmoduleCvnfcConfigurationCustomization> configurations = new ArrayList<>();
 		try{
 			List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(vnfCustomizationUUID, vfModuleCustomizationUUID);
 			for(CvnfcCustomization cvnfc : cvnfcCustomizations){
 				for(VnfVfmoduleCvnfcConfigurationCustomization customization : cvnfc.getVnfVfmoduleCvnfcConfigurationCustomization()){
 					if(customization.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)){
-						configurations.add(customization.getConfigurationResource().getModelUUID());
+						configurations.add(customization);
 					}
 				}
 			}
-			logger.debug("found {} configurations" , configurations.size() );
+			logger.debug("found {} configuration(s)" , configurations.size() );
 			return configurations;
 		} catch (Exception ex){
 			logger.error("Error in finding configurations", ex);
@@ -1120,7 +1166,7 @@ public class WorkflowAction {
 		}
 		
 		if (resourceType.equals(WorkflowType.VFMODULE)) {
-			List<String> fabricCustomizations = traverseCatalogDbForConfiguration(vnfCustomizationUUID, vfModuleCustomizationUUID);
+			List<VnfVfmoduleCvnfcConfigurationCustomization> fabricCustomizations = traverseCatalogDbForConfiguration(vnfCustomizationUUID, vfModuleCustomizationUUID);
 			if (fabricCustomizations.isEmpty()) {
 				result = orchFlows.stream().filter(item -> !item.getFlowName().contains(FABRIC_CONFIGURATION)).collect(Collectors.toList());
 			}

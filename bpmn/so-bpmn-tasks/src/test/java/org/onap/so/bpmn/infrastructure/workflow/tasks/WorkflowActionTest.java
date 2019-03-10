@@ -902,10 +902,26 @@ public class WorkflowActionTest extends BaseTaskTest {
 		ConfigurationResource configurationResource = new ConfigurationResource();
 		configurationResource.setToscaNodeType("FabricConfiguration");
 		vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(configurationResource);
+		vnfVfmoduleCvnfcConfigurationCustomization.setModelInstanceName("modelInstanceName1");
+		vnfVfmoduleCvnfcConfigurationCustomization.setCvnfcCustomization(cvnfcCustomization);
 		Set<VnfVfmoduleCvnfcConfigurationCustomization> custSet = new HashSet<VnfVfmoduleCvnfcConfigurationCustomization>();
 		custSet.add(vnfVfmoduleCvnfcConfigurationCustomization);
 		cvnfcCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(custSet);
+		cvnfcCustomization.setDescription("description");
 		cvnfcCustomizations.add(cvnfcCustomization);
+		
+		CvnfcCustomization cvnfcCustomization2 = new CvnfcCustomization();
+		VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization2 = new VnfVfmoduleCvnfcConfigurationCustomization();
+		ConfigurationResource configurationResource2 = new ConfigurationResource();
+		configurationResource2.setToscaNodeType("FabricConfiguration");
+		vnfVfmoduleCvnfcConfigurationCustomization2.setConfigurationResource(configurationResource2);
+		vnfVfmoduleCvnfcConfigurationCustomization2.setModelInstanceName("modelInstanceName2");
+		vnfVfmoduleCvnfcConfigurationCustomization2.setCvnfcCustomization(cvnfcCustomization2);
+		Set<VnfVfmoduleCvnfcConfigurationCustomization> custSet2 = new HashSet<VnfVfmoduleCvnfcConfigurationCustomization>();
+		custSet2.add(vnfVfmoduleCvnfcConfigurationCustomization2);
+		cvnfcCustomization2.setVnfVfmoduleCvnfcConfigurationCustomization(custSet2);
+		cvnfcCustomization2.setDescription("description2");
+		cvnfcCustomizations.add(cvnfcCustomization2);
 		
 		when(catalogDbClient.getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(gAction,resource,true,"my-custom-cloud-owner")).thenReturn(northBoundRequest);
 		when(catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID("fc25201d-36d6-43a3-8d39-fdae88e526ae", "9a6d01fd-19a7-490a-9800-460830a12e0b")).thenReturn(cvnfcCustomizations);
