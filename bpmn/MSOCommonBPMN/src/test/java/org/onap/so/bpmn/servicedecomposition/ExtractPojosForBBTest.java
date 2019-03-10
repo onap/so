@@ -105,12 +105,18 @@ public class ExtractPojosForBBTest extends BaseTest{
 		allotedResourcePend.setId("abc");
 		allotedResourcesPend.add(allotedResourcePend);
 		lookupKeyMap.put(ResourceKey.ALLOTTED_RESOURCE_ID, allotedResourcePend.getId());
-
+		
 		Configuration configurationPend = new Configuration();
 		configurationPend.setConfigurationId("abc");
 		serviceInstancePend.getConfigurations().add(configurationPend);
 		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, configurationPend.getConfigurationId());
 
+		List<InstanceGroup> instanceGroupsPend = serviceInstancePend.getInstanceGroups();
+		InstanceGroup instanceGroupPend = new InstanceGroup();
+		instanceGroupPend.setId("test-instance-group-1");
+		instanceGroupsPend.add(instanceGroupPend);
+		lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, instanceGroupPend.getId());
+				
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstancePend);
 		gBBInput.setCustomer(customer);
 
@@ -136,6 +142,9 @@ public class ExtractPojosForBBTest extends BaseTest{
 
 		VpnBondingLink extractVpnBondingLinkPend = extractPojos.extractByKey(execution, ResourceKey.VPN_BONDING_LINK_ID, "testVpnBondingLink");
 		assertEquals(extractVpnBondingLinkPend.getVpnBondingLinkId(), vpnBondingLinkPend.getVpnBondingLinkId());
+		
+		InstanceGroup extractInstanceGroupPend = extractPojos.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, "test-instance-group-1");
+		assertEquals(instanceGroupPend.getId(), extractInstanceGroupPend.getId());
 	}
 
 	@Test

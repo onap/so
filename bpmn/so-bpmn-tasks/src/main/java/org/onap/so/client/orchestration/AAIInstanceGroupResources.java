@@ -25,6 +25,7 @@ import java.util.Optional;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -68,5 +69,12 @@ public class AAIInstanceGroupResources {
 		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
 		return injectionHelper.getAaiClient().exists(instanceGroupUri);
 	}
-
+	
+	public void createInstanceGroupandConnectServiceInstance(InstanceGroup instanceGroup, ServiceInstance serviceInstance) {
+		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+		org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup = aaiObjectMapper.mapInstanceGroup(instanceGroup);
+		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
+				serviceInstance.getServiceInstanceId());
+		injectionHelper.getAaiClient().createIfNotExists(instanceGroupUri, Optional.of(aaiInstanceGroup)).connect(instanceGroupUri, serviceInstanceURI);		
+	}
 }

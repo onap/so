@@ -137,26 +137,6 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	}
 	
 	@Test
-	public void updateRequestStatusToFailedFlowStatusTest() {
-		String reqId = "reqId123";
-		execution.setVariable("mso-request-id", reqId);
-		execution.setVariable("isRollbackComplete", false);
-		execution.setVariable("isRollback", false);
-		ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
-		BuildingBlock buildingBlock = new BuildingBlock();
-		buildingBlock.setBpmnFlowName("CreateNetworkBB");
-		ebb.setBuildingBlock(buildingBlock);
-		execution.setVariable("buildingBlock", ebb);
-		WorkflowException wfe = new WorkflowException("failure", 1, "failure");
-		execution.setVariable("WorkflowException", wfe);
-		InfraActiveRequests req = new InfraActiveRequests();
-		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
-		doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
-		workflowActionBBTasks.updateRequestStatusToFailed(execution);
-		assertEquals("CreateNetworkBB has failed.",execution.getVariable("flowStatus"));
-	}
-	
-	@Test
 	public void rollbackExecutionPathTest(){
 		execution.setVariable("handlingCode", "Rollback");
 		execution.setVariable("isRollback", false);
@@ -336,5 +316,18 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 		doReturn(req).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
 		workflowActionBBTasks.checkRetryStatus(execution);
 		assertEquals(0,execution.getVariable("retryCount"));
+	}
+	
+	@Test
+	public void updateInstanceId(){
+		String reqId = "req123";
+		String instanceId = "123123123";
+		execution.setVariable("mso-request-id", reqId);
+		execution.setVariable("resourceId", instanceId);
+		execution.setVariable("resourceType", WorkflowType.SERVICE);
+		doReturn(reqMock).when(requestsDbClient).getInfraActiveRequestbyRequestId(reqId);
+		doNothing().when(requestsDbClient).updateInfraActiveRequests(isA(InfraActiveRequests.class));
+		workflowActionBBTasks.updateInstanceId(execution);
+		Mockito.verify( reqMock, Mockito.times(1)).setServiceInstanceId(instanceId);
 	}
 }

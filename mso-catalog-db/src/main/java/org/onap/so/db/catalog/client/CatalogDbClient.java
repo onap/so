@@ -53,6 +53,7 @@ import org.onap.so.db.catalog.beans.VnfComponentsRecipe;
 import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
@@ -231,6 +232,8 @@ public class CatalogDbClient {
 
     private final Client<ControllerSelectionReference> controllerSelectionReferenceClient;
 
+    private final Client<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomizationClient;
+
     private final Client<PnfResource> pnfResourceClient;
 
     private final Client<PnfResourceCustomization> pnfResourceCustomizationClient;
@@ -359,6 +362,7 @@ public class CatalogDbClient {
         cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
         controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
+        vnfVfmoduleCvnfcConfigurationCustomizationClient = clientFactory.create(VnfVfmoduleCvnfcConfigurationCustomization.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
     }
@@ -408,6 +412,7 @@ public class CatalogDbClient {
         cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
         controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
+        vnfVfmoduleCvnfcConfigurationCustomizationClient = clientFactory.create(VnfVfmoduleCvnfcConfigurationCustomization.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
     }
@@ -784,4 +789,12 @@ public class CatalogDbClient {
             .queryParam("VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUUID).build().toString()));
     }
 
+    public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(String vnfCustomizationUuid,
+            String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
+        return this.getSingleResource(vnfVfmoduleCvnfcConfigurationCustomizationClient, getUri(UriBuilder
+                .fromUri(endpoint + "/vnfVfmoduleCvnfcConfigurationCustomization/search/findOneByVnfResourceCustomizationAndVfModuleCustomizationAndCvnfcCustomization")
+                .queryParam("VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID", vnfCustomizationUuid)
+                .queryParam("VF_MODULE_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUuid)
+                .queryParam("CVNFC_MODEL_CUSTOMIZATION_UUID", cvnfcCustomizationUuid).build().toString()));
+    }
 }

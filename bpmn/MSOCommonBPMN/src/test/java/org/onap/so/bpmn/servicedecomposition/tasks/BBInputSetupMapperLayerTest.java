@@ -659,6 +659,34 @@ public class BBInputSetupMapperLayerTest {
 	}
 	
 	@Test
+	public void testmapCatalogConfigurationToFabricConfiguration() {
+		String modelCustUUID = "modelCustomizationUUID";
+		String modelInvariantUUID = "modelInvariantUUID";
+		String modelVersionUUID = "modelUUID";
+		String policyName = "policyName";
+		ModelInfoConfiguration expected = new ModelInfoConfiguration();
+		expected.setModelCustomizationId(modelCustUUID);
+		expected.setModelInvariantId(modelInvariantUUID);
+		expected.setModelVersionId(modelVersionUUID);
+		expected.setPolicyName(policyName);
+
+		VnfVfmoduleCvnfcConfigurationCustomization fabricCustomization = new VnfVfmoduleCvnfcConfigurationCustomization();
+		fabricCustomization.setCvnfcCustomization(new CvnfcCustomization());
+		fabricCustomization.getCvnfcCustomization().setVnfcCustomization(new VnfcCustomization());
+		fabricCustomization.setPolicyName(policyName);
+		fabricCustomization.setModelCustomizationUUID(modelCustUUID);
+
+		ConfigurationResource configurationResource = new ConfigurationResource();
+		configurationResource.setModelUUID(modelVersionUUID);
+		configurationResource.setModelInvariantUUID(modelInvariantUUID);
+		fabricCustomization.setConfigurationResource(configurationResource);
+		
+		ModelInfoConfiguration actual = bbInputSetupMapperLayer.mapCatalogConfigurationToConfiguration(fabricCustomization);
+
+		assertThat(actual, sameBeanAs(expected));
+	}
+	
+	@Test
 	public void testMapNameValueUserParams() throws IOException {		
 		RequestDetails requestDetails = mapper.readValue(new File(RESOURCE_PATH + "RequestDetailsInput_mapReqContext.json"), RequestDetails.class);
 		Map<String,Object> actual = bbInputSetupMapperLayer.mapNameValueUserParams(requestDetails.getRequestParameters());		

@@ -430,12 +430,12 @@ public class MsoRequestTest extends BaseTest {
 	@Test
 	public void instanceGroupIdHashMapFailureTest() throws JsonParseException, JsonMappingException, IOException, ValidationException{
 		this.sir = mapper.readValue(inputStream("/SuccessfulValidation/InstanceIdHashMap.json"), ServiceInstancesRequest.class);
-		this.instanceIdMapTest.put("instanceGroupId", "test");
+		this.instanceIdMapTest.put("instanceGroupInstanceId", "test");
 		this.action = Action.createInstance;
 		thrown.expect(ValidationException.class);
 		this.reqVersion = 7;
 		this.version = "v" + reqVersion;
-		thrown.expectMessage("No valid instanceGroupId is specified");
+		thrown.expectMessage("No valid instanceGroupInstanceId is specified");
 		this.msoRequest = new MsoRequest();
 		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
 	}

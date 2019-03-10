@@ -42,6 +42,8 @@ import org.onap.aai.domain.yang.VolumeGroup;
 import org.onap.aai.domain.yang.VolumeGroups;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFoundException;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -53,6 +55,8 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
+import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -137,6 +141,16 @@ public class BBInputSetupUtils {
 		return catalogDbClient.getNetworkCollectionResourceCustomizationByID(collectionCustomizationId);
 	}
 
+	public VfModuleCustomization getVfModuleCustomizationByModelCuztomizationUUID(String modelCustomizationUUID) {
+		return catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(modelCustomizationUUID);
+	}
+	
+	public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByActionAndIsALaCarteAndRequestScopeAndCloudOwner(String vnfCustomizationUuid,
+			String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
+		return catalogDbClient.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(vnfCustomizationUuid,
+				vfModuleCustomizationUuid, cvnfcCustomizationUuid);
+	}
+	
 	public List<VnfcInstanceGroupCustomization> getVnfcInstanceGroups(String modelCustomizationUUID) {
 		return catalogDbClient.getVnfcInstanceGroupsByVnfResourceCust(modelCustomizationUUID);
 	}
@@ -344,6 +358,26 @@ public class BBInputSetupUtils {
 					return null;
 				});
 		
+	}
+	
+	public Optional<ServiceInstance> getRelatedServiceInstanceFromInstanceGroup(String instanceGroupId) throws Exception {
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroupId);
+		uri.relatedTo(AAIObjectPlurals.SERVICE_INSTANCE);
+		Optional<ServiceInstances> serviceInstances = injectionHelper.getAaiClient().get(ServiceInstances.class, uri);
+		ServiceInstance serviceInstance = null;
+		if (!serviceInstances.isPresent()) {
+			logger.debug("No ServiceInstances were found");
+			return Optional.empty();
+		} else {
+			if (serviceInstances.get().getServiceInstance().isEmpty()) {
+				throw new NoServiceInstanceFoundException("No ServiceInstances Returned");
+			} else if (serviceInstances.get().getServiceInstance().size() > 1) {
+				throw new MultipleObjectsFoundException("Multiple ServiceInstances Returned");
+			} else {
+				serviceInstance = serviceInstances.get().getServiceInstance().get(0);
+			}
+			return Optional.of(serviceInstance);
+		}
 	}
 	
 	public Optional<L3Network> getRelatedNetworkByNameFromServiceInstance(String serviceInstanceId, String networkName) throws Exception{

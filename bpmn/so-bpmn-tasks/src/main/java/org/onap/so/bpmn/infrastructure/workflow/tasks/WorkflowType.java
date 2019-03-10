@@ -29,7 +29,8 @@ public enum WorkflowType {
 	NETWORK("Network"),
 	VIRTUAL_LINK("VirtualLink"),
 	NETWORKCOLLECTION("NetworkCollection"),
-	CONFIGURATION("Configuration");
+	CONFIGURATION("Configuration"),
+	INSTANCE_GROUP("InstanceGroup");
 	
 	private final String type;
 	

@@ -28,6 +28,7 @@ public enum ResourceType {
 	NETWORK("Network"),
 	NETWORK_COLLECTION("NetworkCollection"),
 	CONFIGURATION("Configuration"),
+	INSTANCE_GROUP("InstanceGroup"),
 	NO_VALIDATE("NoValidate");
 	
 	private final String name;
