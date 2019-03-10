@@ -21,7 +21,10 @@
 package org.onap.so.client.orchestration;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,11 +41,14 @@ import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
+import org.onap.so.db.catalog.beans.OrchestrationStatus;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class AAIInstanceGroupResourcesTest extends TestDataSetup{
 	
@@ -51,6 +57,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup{
 	
 	private InstanceGroup instanceGroup;
 	private GenericVnf vnf;
+	private ServiceInstance serviceInstance;
 	
 	@Mock
 	protected AAIResourcesClient MOCK_aaiResourcesClient;
@@ -65,6 +72,7 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup{
 	public void before() {
 		instanceGroup = buildInstanceGroup();
 		vnf = buildGenericVnf();
+		serviceInstance = buildServiceInstance();
 		 doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
 	}
 	
@@ -97,6 +105,19 @@ public class AAIInstanceGroupResourcesTest extends TestDataSetup{
 	public void existsTest() throws Exception {
 		aaiInstanceGroupResources.exists(instanceGroup);
 		verify(MOCK_aaiResourcesClient, times(1)).exists(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())));
+	}
+	
+	@Test
+	public void createInstanceGroupandConnectServiceInstanceTest() {
+		doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper).mapInstanceGroup(instanceGroup);
+		doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class), any(Optional.class));
+		doNothing().when(MOCK_aaiResourcesClient).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+		
+		aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
+
+		verify(MOCK_aaiObjectMapper, times(1)).mapInstanceGroup(instanceGroup);
+		verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
+		verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
 	}
 	
 }

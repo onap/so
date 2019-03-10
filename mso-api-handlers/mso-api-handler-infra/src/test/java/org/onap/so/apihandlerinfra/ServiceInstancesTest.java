@@ -31,6 +31,7 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -79,8 +80,10 @@ import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.http.Fault;
 
@@ -114,9 +117,12 @@ public class ServiceInstancesTest extends BaseTest{
         // set headers
 		headers = new HttpHeaders();
         headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "test_name");        
-        headers.set(ONAPLogConstants.Headers.REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");       
-        headers.set(MsoLogger.REQUESTOR_ID, "xxxxxx");
-        try {  // generate one-time port number to avoid RANDOM port number later.
+		headers.set(MsoLogger.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");	
+        headers.set(ONAPLogConstants.MDCs.REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(MsoLogger.CLIENT_ID, "VID");
+        headers.set(MsoLogger.REQUESTOR_ID, "xxxxxx");        
+		try {  // generate one-time port number to avoid RANDOM port number later.
 			initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH));
 			initialPort = initialUrl.getPort();
 		} catch (MalformedURLException e) {
@@ -391,6 +397,7 @@ public class ServiceInstancesTest extends BaseTest{
     }
     @Test
     public void activateServiceInstanceNoRecipeALaCarte() throws IOException{
+    	TestAppender.events.clear();
         uri = servInstanceuri + "v5" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/activate";
         HttpHeaders requestIDheaders = new HttpHeaders();        
         requestIDheaders.set("X-ECOMP-RequestID", "32807a28-1a14-4b88-b7b3-2950918aa76d");        
@@ -410,6 +417,15 @@ public class ServiceInstancesTest extends BaseTest{
                         .withStatus(HttpStatus.SC_NOT_FOUND)));
 
         assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
+        
+        for(ILoggingEvent logEvent : TestAppender.events){
+            if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging") &&
+            		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")){
+                Map<String,String> mdc = logEvent.getMDCPropertyMap();
+                assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));             
+                assertEquals("UNKNOWN" ,mdc.get(MsoLogger.PARTNERNAME));
+            }
+        }
     }
     @Test
     public void activateServiceInstanceNoRecipe() throws IOException{
@@ -2368,7 +2384,8 @@ public class ServiceInstancesTest extends BaseTest{
             if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging") &&
             		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
-                assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
+                assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));             
+                assertEquals("VID",mdc.get(MsoLogger.PARTNERNAME));
             }
         }
     }
@@ -2425,6 +2442,7 @@ public class ServiceInstancesTest extends BaseTest{
     public void deleteInstanceGroupNoPartnerNameHeader() throws IOException{
     	HttpHeaders noPartnerHeaders = new HttpHeaders();
     	noPartnerHeaders.set(ONAPLogConstants.Headers.REQUEST_ID, "eca3a1b1-43ab-457e-ab1c-367263d148b4");
+    	noPartnerHeaders.set(MsoLogger.REQUESTOR_ID, "xxxxxx");
         uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
         ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, noPartnerHeaders);
         //then		
@@ -2619,6 +2637,61 @@ public class ServiceInstancesTest extends BaseTest{
     	
     	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
     	assertEquals(serviceType, "networkModelName");
+    }
+    @Test
+    public void setServiceInstanceIdInstanceGroupTest() throws JsonParseException, JsonMappingException, IOException{
+    	String requestScope = "instanceGroup";
+    	ServiceInstancesRequest sir = mapper.readValue(inputStream("/CreateInstanceGroup.json"), ServiceInstancesRequest.class);
+    	assertEquals("ddcbbf3d-f2c1-4ca0-8852-76a807285efc", servInstances.setServiceInstanceId(requestScope, sir));
+    }
+    @Test
+    public void setServiceInstanceIdTest(){
+    	String requestScope = "vnf";
+    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
+    	sir.setServiceInstanceId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
+    	assertEquals("f0a35706-efc4-4e27-80ea-a995d7a2a40f", servInstances.setServiceInstanceId(requestScope, sir));
+    }
+    @Test
+    public void setServiceInstanceIdReturnNullTest(){
+    	String requestScope = "vnf";
+    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
+    	assertNull(servInstances.setServiceInstanceId(requestScope, sir));
+    }
+    @Test
+    public void camundaHistoryCheckTest() throws ContactCamundaException, RequestDbFailureException{
+    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/HistoryCheckResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+    	
+    	InfraActiveRequests duplicateRecord = new InfraActiveRequests();
+    	duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
+    	boolean inProgress = false;
+    	inProgress = servInstances.camundaHistoryCheck(duplicateRecord, null);
+    	assertTrue(inProgress);
+    }
+    @Test
+    public void camundaHistoryCheckNoneFoundTest() throws ContactCamundaException, RequestDbFailureException{
+    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody("[]").withStatus(org.apache.http.HttpStatus.SC_OK)));
+    	
+    	InfraActiveRequests duplicateRecord = new InfraActiveRequests();
+    	duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
+    	boolean inProgress = false;
+    	inProgress = servInstances.camundaHistoryCheck(duplicateRecord, null);
+    	assertFalse(inProgress);
+    }
+    @Test
+    public void camundaHistoryCheckNotInProgressTest()throws ContactCamundaException, RequestDbFailureException{
+    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/HistoryCheckResponseCompleted.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+    	
+    	InfraActiveRequests duplicateRecord = new InfraActiveRequests();
+    	duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
+    	boolean inProgress = false;
+    	inProgress = servInstances.camundaHistoryCheck(duplicateRecord, null);
+    	assertFalse(inProgress);
     }
     @Test
     public void setCamundaHeadersTest()throws ContactCamundaException, RequestDbFailureException{

@@ -1,0 +1,27 @@
+{
+   "requestInfo": {
+      "source": "VID",
+      "requestorId": "az2016"
+   },
+   "relatedInstanceList": [
+      {
+         "relatedInstance": {
+            "instanceId": "vnf-001",
+            "modelInfo": {
+               "modelType": "vnf"
+            }
+         }
+      },
+      {
+         "relatedInstance": {
+            "instanceId": "vnf-002",
+            "modelInfo": {
+               "modelType": "vnf"
+            }
+         }
+      }
+   ],
+   "requestParameters": {
+      "userParams": []
+   }
+}

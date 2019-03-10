@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2017 - 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,30 +18,30 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.db.catalog.beans;
+package org.onap.so.bpmn.servicedecomposition.tasks.exceptions;
 
-//TODO find this file a new location?
-public enum OrchestrationAction {
-	ASSIGN("Assign"),
-	UNASSIGN("Unassign"),
-	ACTIVATE("Activate"),
-	DEACTIVATE("Deactivate"),
-	CHANGE_MODEL("ChangeModel"),
-	CREATE("Create"),
-	DELETE("Delete"),
-	UPDATE("Update"),
-	ADD_MEMBERS("AddMembers"),
-	REMOVE_MEMBERS("RemoveMembers"),
-	CUSTOM("Custom");
-	
-	private final String name;
-	
-	private OrchestrationAction(String name) {
-		this.name = name;
+public class NoServiceInstanceFoundException extends Exception {
+
+	private static final long serialVersionUID = 3270499954054029908L;
+
+	public NoServiceInstanceFoundException() {
+		super();
+	}
+
+	public NoServiceInstanceFoundException(String message) {
+		super(message);
 	}
 	
-	@Override
-	public String toString() {
-		return name;
+	public NoServiceInstanceFoundException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public NoServiceInstanceFoundException(Throwable cause) {
+		super(cause);
+	}
+
+	public NoServiceInstanceFoundException(String message, Throwable cause, boolean enableSuppression,
+			boolean writableStackTrace) {
+		super(message, cause, enableSuppression, writableStackTrace);
 	}
 }

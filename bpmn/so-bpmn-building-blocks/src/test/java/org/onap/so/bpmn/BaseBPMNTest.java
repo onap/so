@@ -61,6 +61,8 @@ import org.onap.so.bpmn.infrastructure.flowspecific.tasks.CreateNetworkCollectio
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.GenericVnfHealthCheck;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.UnassignNetworkBB;
 import org.onap.so.bpmn.infrastructure.flowspecific.tasks.UnassignVnf;
+import org.onap.so.bpmn.infrastructure.namingservice.tasks.NamingServiceCreateTasks;
+import org.onap.so.bpmn.infrastructure.namingservice.tasks.NamingServiceDeleteTasks;
 import org.onap.so.bpmn.infrastructure.sdnc.tasks.SDNCActivateTasks;
 import org.onap.so.bpmn.infrastructure.sdnc.tasks.SDNCAssignTasks;
 import org.onap.so.bpmn.infrastructure.sdnc.tasks.SDNCChangeAssignTasks;
@@ -228,6 +230,12 @@ public abstract class BaseBPMNTest {
 
 	@MockBean
 	protected SniroHomingV2 sniroHoming;
+	
+	@MockBean
+	protected NamingServiceDeleteTasks namingServiceDeleteTasks;
+	
+	@MockBean
+	protected NamingServiceCreateTasks namingServiceCreateTasks;
 	
 	@MockBean
 	protected WorkflowActionBBFailure workflowActionBBFailure;

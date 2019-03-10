@@ -170,6 +170,14 @@ public class CvnfcCatalogDbQueryTest {
         } else {
         	Assert.fail("No linked VnfVfmoduleCvnfcConfigurationCustomization found for CvnfcCustomization");
         }
+        
+        VnfVfmoduleCvnfcConfigurationCustomization  vnfVfmoduleCvnfcConfigurationCustomizationFound = client.
+        		getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(
+        							"6912dd02-2b16-11e9-b210-d663bd873d93", 
+        							"bdbf984a-2b16-11e9-b210-d663bd873d93", 
+        							"0c042562-2bac-11e9-b210-d663bd873d93");
+        assertNotNull(vnfVfmoduleCvnfcConfigurationCustomizationFound);
+        System.out.println(vnfVfmoduleCvnfcConfigurationCustomizationFound.getModelCustomizationUUID());
 	}
 	
     protected CvnfcCustomization setUpCvnfcCustomization(String id){

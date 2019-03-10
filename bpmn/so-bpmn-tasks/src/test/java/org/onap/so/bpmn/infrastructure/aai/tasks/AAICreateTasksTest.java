@@ -49,6 +49,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -75,6 +76,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	private VfModule vfModule;
 	private Customer customer;
 	private Configuration configuration;
+	private InstanceGroup instanceGroup;
 	
 	@Captor
 	ArgumentCaptor<NetworkPolicy> networkPolicyCaptor;
@@ -92,6 +94,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		cloudRegion = setCloudRegion();
 		vfModule = setVfModule();
 		configuration = setConfiguration();
+		instanceGroup = setInstanceGroupVnf();
 		
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
@@ -99,6 +102,7 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID), any())).thenReturn(configuration);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID), any())).thenReturn(instanceGroup);
 		
 
 		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
@@ -441,6 +445,20 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	}
 	
 	@Test
+	public void createInstanceGroupVnfTest() throws Exception {		
+		doNothing().when(aaiInstanceGroupResources).createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
+		aaiCreateTasks.createInstanceGroupVnf(execution);
+		verify(aaiInstanceGroupResources, times(1)).createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
+	}
+	
+	@Test
+	public void createInstanceGroupVnfExceptionTest() throws Exception {
+		expectedException.expect(BpmnError.class);		
+		doThrow(RuntimeException.class).when(aaiInstanceGroupResources).createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);	
+		aaiCreateTasks.createInstanceGroupVnf(execution);
+	}
+	
+	@Test
 	public void connectVnfToCloudRegionTest() throws Exception {
 		gBBInput = execution.getGeneralBuildingBlock();
 		doNothing().when(aaiVnfResources).connectVnfToCloudRegion(genericVnf, gBBInput.getCloudRegion());
@@ -467,6 +485,21 @@ public class AAICreateTasksTest extends BaseTaskTest{
 		aaiCreateTasks.connectVnfToTenant(execution);
 		verify(aaiVnfResources, times(1)).connectVnfToTenant(genericVnf, gBBInput.getCloudRegion());
 	}
+
+	@Test
+	public void createInstanceGroupVnfTest() throws Exception {		
+		doNothing().when(aaiInstanceGroupResources).createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
+		aaiCreateTasks.createInstanceGroupVnf(execution);
+		verify(aaiInstanceGroupResources, times(1)).createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
+	}
+	
+	@Test
+	public void createInstanceGroupVnfExceptionTest() throws Exception {
+		expectedException.expect(BpmnError.class);		
+		doThrow(RuntimeException.class).when(aaiInstanceGroupResources).createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);	
+		aaiCreateTasks.createInstanceGroupVnf(execution);
+	}
+	
 	@Test
 	public void createNetworkPolicyNeedToCreateAllTest() throws Exception {	
 		execution.setVariable("heatStackId", "testHeatStackId");

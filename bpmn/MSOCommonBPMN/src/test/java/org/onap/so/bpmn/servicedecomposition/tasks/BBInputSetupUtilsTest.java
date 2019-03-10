@@ -44,6 +44,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.CloudRegion;
 import org.onap.aai.domain.yang.Configuration;
@@ -58,6 +59,8 @@ import org.onap.aai.domain.yang.VolumeGroups;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.MultipleObjectsFoundException;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -633,6 +636,41 @@ public class BBInputSetupUtilsTest {
 		Optional<L3Network> actualNetwork = bbInputSetupUtils.getRelatedNetworkByNameFromServiceInstance(serviceInstanceId, networkName);
 		
 		assertEquals(Optional.empty(), actualNetwork);
+	}
+	
+	@Test
+	public void getRelatedServiceInstanceFromInstanceGroupTest() throws Exception {
+		Optional<ServiceInstances> expected = Optional.of(new ServiceInstances());
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+		serviceInstance.setServiceInstanceName("serviceInstanceName");
+		expected.get().getServiceInstance().add(serviceInstance);
+		
+		doReturn(expected).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class), any(AAIResourceUri.class));
+		Optional<ServiceInstance> actual = this.bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup("ig-001");
+		assertEquals(actual.get().getServiceInstanceId(), expected.get().getServiceInstance().get(0).getServiceInstanceId());
+	}
+	
+	@Test
+	public void getRelatedServiceInstanceFromInstanceGroupMultipleTest() throws Exception {
+		expectedException.expect(MultipleObjectsFoundException.class);
+		Optional<ServiceInstances> serviceInstances = Optional.of(new ServiceInstances());
+		ServiceInstance si1 = Mockito.mock(ServiceInstance.class);
+		ServiceInstance si2 = Mockito.mock(ServiceInstance.class);
+		serviceInstances.get().getServiceInstance().add(si1);
+		serviceInstances.get().getServiceInstance().add(si2);
+		
+		doReturn(serviceInstances).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class), any(AAIResourceUri.class));
+		this.bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup("ig-001");
+	}
+	
+	@Test
+	public void getRelatedServiceInstanceFromInstanceGroupNotFoundTest() throws Exception {
+		expectedException.expect(NoServiceInstanceFoundException.class);
+		Optional<ServiceInstances> serviceInstances = Optional.of(new ServiceInstances());
+		
+		doReturn(serviceInstances).when(MOCK_aaiResourcesClient).get(eq(ServiceInstances.class), any(AAIResourceUri.class));
+		this.bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup("ig-001");
 	}
 	
 	@Test
