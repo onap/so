@@ -123,9 +123,8 @@ public class Service implements Serializable {
     @JoinTable(name = "pnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<PnfResourceCustomization> pnfCustomizations;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     @MapKey(name = "action")
-    @JoinColumn(name = "SERVICE_MODEL_UUID")
     private Map<String, ServiceRecipe> recipes;
 
     @ManyToOne(cascade = CascadeType.ALL)

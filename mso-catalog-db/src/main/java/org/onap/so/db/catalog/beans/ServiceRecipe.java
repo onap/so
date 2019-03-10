@@ -23,9 +23,13 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -74,6 +78,11 @@ public class ServiceRecipe implements Serializable, Recipe {
 	@Column(name = "CREATION_TIMESTAMP", updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created;
+	
+	@BusinessKey
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "SERVICE_MODEL_UUID", referencedColumnName = "MODEL_UUID",insertable = false, updatable = false)
+	private Service service;
 
 	@PrePersist
 	protected void onCreate() {
@@ -176,6 +185,14 @@ public class ServiceRecipe implements Serializable, Recipe {
 
 	public void setServiceTimeoutInterim(Integer serviceTimeoutInterim) {
 		this.serviceTimeoutInterim = serviceTimeoutInterim;
+	}
+	
+	public Service getService() {
+		return service;
+	}
+
+	public void setService(Service service) {
+		this.service = service;
 	}
 
 	public Date getCreated() {
