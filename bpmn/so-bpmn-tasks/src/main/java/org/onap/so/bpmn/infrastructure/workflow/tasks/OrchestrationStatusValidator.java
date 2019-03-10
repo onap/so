@@ -108,6 +108,10 @@ public class OrchestrationStatusValidator {
 				org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
 				orchestrationStatus = configuration.getOrchestrationStatus();
 				break;
+			case INSTANCE_GROUP:
+				org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, execution.getLookupMap().get(ResourceKey.INSTANCE_GROUP_ID));
+				orchestrationStatus = instanceGroup.getOrchestrationStatus();
+				break;				
 			case NO_VALIDATE:
 				//short circuit and exit method
 				execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, OrchestrationStatusValidationDirective.VALIDATION_SKIPPED);

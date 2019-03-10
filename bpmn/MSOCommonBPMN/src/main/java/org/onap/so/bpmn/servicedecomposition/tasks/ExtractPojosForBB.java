@@ -90,6 +90,10 @@ public class ExtractPojosForBB {
 					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
                     result = lookupObjectInList(serviceInstance.getVpnBondingLinks(),value);
 					break;
+				case INSTANCE_GROUP_ID:
+					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+					result = lookupObjectInList(serviceInstance.getInstanceGroups(), value);
+					break;	
 				default:
 					throw new BBObjectNotFoundException(key, value);
 			}

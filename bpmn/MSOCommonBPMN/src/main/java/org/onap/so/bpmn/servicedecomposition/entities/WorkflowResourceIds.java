@@ -36,6 +36,7 @@ public class WorkflowResourceIds implements Serializable {
 	private String vfModuleId;
 	private String networkCollectionId;
 	private String configurationId;
+	private String instanceGroupId;
 
 	@Override
 	public String toString() {
@@ -99,5 +100,13 @@ public class WorkflowResourceIds implements Serializable {
 
 	public void setConfigurationId(String configurationId) {
 		this.configurationId = configurationId;
+	}
+
+	public String getInstanceGroupId() {
+		return instanceGroupId;
+	}
+
+	public void setInstanceGroupId(String instanceGroupId) {
+		this.instanceGroupId = instanceGroupId;
 	}
 }

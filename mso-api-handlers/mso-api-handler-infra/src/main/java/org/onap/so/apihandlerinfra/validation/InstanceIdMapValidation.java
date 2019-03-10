@@ -77,11 +77,11 @@ public class InstanceIdMapValidation implements ValidationRule{
         		sir.setConfigurationId(instanceIdMap.get("configurationInstanceId"));
         	}
         	
-        	if(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_ID) != null){
-        		if (!UUIDChecker.isValidUUID (instanceIdMap.get (CommonConstants.INSTANCE_GROUP_ID))) {
-        			throw new ValidationException (CommonConstants.INSTANCE_GROUP_ID, true);
+        	if(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID) != null){
+        		if (!UUIDChecker.isValidUUID (instanceIdMap.get (CommonConstants.INSTANCE_GROUP_INSTANCE_ID))) {
+        			throw new ValidationException (CommonConstants.INSTANCE_GROUP_INSTANCE_ID, true);
         		}
-        		sir.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_ID));
+        		sir.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID));
         	}
         }
         return info;

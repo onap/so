@@ -48,6 +48,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
@@ -71,6 +72,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 	private VolumeGroup volumeGroup;
 	private CloudRegion cloudRegion;
 	private Configuration configuration;
+	private InstanceGroup instanceGroup;
 	
 	@Captor
 	ArgumentCaptor<String> stringCaptor;	
@@ -84,6 +86,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 		volumeGroup = setVolumeGroup();
 		cloudRegion = setCloudRegion();
 		configuration = setConfiguration();
+		instanceGroup = setInstanceGroupVnf();
 		
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
@@ -91,6 +94,7 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
 		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID), any())).thenReturn(configuration);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID), any())).thenReturn(instanceGroup);
 		
 
 		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
@@ -191,6 +195,13 @@ public class AAIDeleteTasksTest extends BaseTaskTest {
 		doNothing().when(aaiConfigurationResources).deleteConfiguration(configuration);
 		aaiDeleteTasks.deleteConfiguration(execution);
 		verify(aaiConfigurationResources, times(1)).deleteConfiguration(configuration);
+	}
+	
+	@Test
+	public void deleteInstanceGroupVnfTest() throws Exception {		
+		doNothing().when(aaiInstanceGroupResources).deleteInstanceGroup(instanceGroup);
+		aaiDeleteTasks.deleteInstanceGroupVnf(execution);
+		verify(aaiInstanceGroupResources, times(1)).deleteInstanceGroup(instanceGroup);
 	}
 	
 	@Test

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+  <bpmn:process id="DeleteInstanceGroupBB" name="DeleteInstanceGroupBB" isExecutable="true">
+    <bpmn:startEvent id="DeleteInstanceGroupBB_Start">
+      <bpmn:outgoing>SequenceFlow_0wlfmtw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="DeleteInstanceGroupBB_End">
+      <bpmn:incoming>SequenceFlow_068apyw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0wlfmtw" sourceRef="DeleteInstanceGroupBB_Start" targetRef="DeleteInstanceGroupNaming" />
+    <bpmn:sequenceFlow id="SequenceFlow_18azuvq" sourceRef="DeleteInstanceGroupNaming" targetRef="DeleteInstanceGroupAAI" />
+    <bpmn:sequenceFlow id="SequenceFlow_068apyw" sourceRef="DeleteInstanceGroupAAI" targetRef="DeleteInstanceGroupBB_End" />
+    <bpmn:serviceTask id="DeleteInstanceGroupNaming" name="Delete Instance Group from Naming mS" camunda:expression="${NamingServiceDeleteTasks.deleteInstanceGroupName(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0wlfmtw</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_18azuvq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="DeleteInstanceGroupAAI" name="Delete Instance Group from A&#38;AI" camunda:expression="${AAIDeleteTasks.deleteInstanceGroup(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_18azuvq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_068apyw</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="DeleteInstanceGroupBB">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="DeleteInstanceGroupBB_Start">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1fy6x5e_di" bpmnElement="DeleteInstanceGroupBB_End">
+        <dc:Bounds x="645" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="663" y="138" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0wlfmtw_di" bpmnElement="SequenceFlow_0wlfmtw">
+        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="280" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="245" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_18azuvq_di" bpmnElement="SequenceFlow_18azuvq">
+        <di:waypoint xsi:type="dc:Point" x="380" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="460" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="420" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_068apyw_di" bpmnElement="SequenceFlow_068apyw">
+        <di:waypoint xsi:type="dc:Point" x="560" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="645" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="603" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0nh16a5_di" bpmnElement="DeleteInstanceGroupNaming">
+        <dc:Bounds x="280" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0ybtwi8_di" bpmnElement="DeleteInstanceGroupAAI">
+        <dc:Bounds x="460" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

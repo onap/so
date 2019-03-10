@@ -59,6 +59,7 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
+import org.onap.so.bpmn.servicedecomposition.tasks.exceptions.NoServiceInstanceFoundException;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -225,6 +226,7 @@ public class BBInputSetup implements JavaDelegate {
 		lookupKeyMap.put(ResourceKey.VF_MODULE_ID, workflowResourceIds.getVfModuleId());
 		lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, workflowResourceIds.getVolumeGroupId());
 		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, workflowResourceIds.getConfigurationId());
+		lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, workflowResourceIds.getInstanceGroupId());
 	}
 
 	protected GeneralBuildingBlock getGBBALaCarteNonService(ExecuteBuildingBlock executeBB,
@@ -244,7 +246,7 @@ public class BBInputSetup implements JavaDelegate {
 			ServiceInstance serviceInstance = this.getExistingServiceInstance(aaiServiceInstance);
 			serviceInstance.setModelInfoServiceInstance(this.mapperLayer.mapCatalogServiceIntoServiceInstance(service));
 			this.populateObjectsOnAssignAndCreateFlows(requestDetails, service, bbName, serviceInstance, lookupKeyMap,
-					resourceId, vnfType);
+					resourceId, vnfType, executeBB.getBuildingBlock().getKey(), executeBB.getConfigurationResourceKeys());
 			return this.populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, null);
 		} else {
 			logger.debug("Related Service Instance from AAI: {}", aaiServiceInstance);
@@ -255,25 +257,59 @@ public class BBInputSetup implements JavaDelegate {
 	
 	protected GeneralBuildingBlock getGBBCM(ExecuteBuildingBlock executeBB,
 			RequestDetails requestDetails, Map<ResourceKey, String> lookupKeyMap, String requestAction,
-			String resourceId) throws Exception {		
+			String resourceId) throws Exception {
 		ServiceInstance serviceInstance = new ServiceInstance();
 		String serviceInstanceId = lookupKeyMap.get(ResourceKey.SERVICE_INSTANCE_ID);
-		serviceInstance.setServiceInstanceId(serviceInstanceId);
-		
+		serviceInstance.setServiceInstanceId(serviceInstanceId); 
+		Customer customer = new Customer();
 		List<GenericVnf> genericVnfs = serviceInstance.getVnfs();
 		
 		String vnfId = lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID);
-		org.onap.aai.domain.yang.GenericVnf aaiGenericVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
+		if(vnfId != null) {
+			org.onap.aai.domain.yang.GenericVnf aaiGenericVnf = bbInputSetupUtils.getAAIGenericVnf(vnfId);
+			GenericVnf genericVnf = this.mapperLayer.mapAAIGenericVnfIntoGenericVnf(aaiGenericVnf);
+			genericVnfs.add(genericVnf);
+		}
 		
-		GenericVnf genericVnf = this.mapperLayer.mapAAIGenericVnfIntoGenericVnf(aaiGenericVnf);
-		genericVnfs.add(genericVnf);		
-		
-		return this.populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, new Customer());
-		
+		String instanceGroupId = lookupKeyMap.get(ResourceKey.INSTANCE_GROUP_ID); 
+		if(instanceGroupId != null) {
+			org.onap.aai.domain.yang.InstanceGroup aaiInstancegroup = bbInputSetupUtils.getAAIInstanceGroup(instanceGroupId);
+			InstanceGroup instanceGroup = this.mapperLayer.mapAAIInstanceGroupIntoInstanceGroup(aaiInstancegroup);
+			instanceGroup.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
+			
+			if(serviceInstanceId == null) {
+				Optional<org.onap.aai.domain.yang.ServiceInstance> aaiServiceInstanceOpt = bbInputSetupUtils.getRelatedServiceInstanceFromInstanceGroup(instanceGroupId);
+				if(aaiServiceInstanceOpt.isPresent()) {
+					org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance = aaiServiceInstanceOpt.get(); 
+					serviceInstance = this.mapperLayer.mapAAIServiceInstanceIntoServiceInstance(aaiServiceInstance);
+					WorkflowResourceIds workflowResourceIds = executeBB.getWorkflowResourceIds();
+					workflowResourceIds.setServiceInstanceId(serviceInstance.getServiceInstanceId());
+					lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, workflowResourceIds.getServiceInstanceId());
+				} else {
+					throw new NoServiceInstanceFoundException("Related ServiceInstance not found in A&AI.");
+				}
+			}
+			RelatedInstanceList[] relatedInstanceList = requestDetails.getRelatedInstanceList();
+			if (relatedInstanceList != null) {
+				for (RelatedInstanceList relatedInstList : relatedInstanceList) {
+					RelatedInstance relatedInstance = relatedInstList.getRelatedInstance();
+					if (relatedInstance.getModelInfo().getModelType().equals(ModelType.vnf)) {
+						org.onap.aai.domain.yang.GenericVnf aaiVnf = bbInputSetupUtils.getAAIGenericVnf(relatedInstance.getInstanceId());
+						GenericVnf vnf = this.mapperLayer.mapAAIGenericVnfIntoGenericVnf(aaiVnf);
+						instanceGroup.getVnfs().add(vnf);
+					}
+				}
+			}
+			
+			serviceInstance.getInstanceGroups().add(instanceGroup);
+			customer.setServiceSubscription(new ServiceSubscription());
+		}
+		return this.populateGBBWithSIAndAdditionalInfo(requestDetails, serviceInstance, executeBB, requestAction, customer);
 	}
 
 	protected void populateObjectsOnAssignAndCreateFlows(RequestDetails requestDetails, Service service, String bbName,
-			ServiceInstance serviceInstance, Map<ResourceKey, String> lookupKeyMap, String resourceId, String vnfType)
+			ServiceInstance serviceInstance, Map<ResourceKey, String> lookupKeyMap, String resourceId, String vnfType, 
+			String configurationKey, ConfigurationResourceKeys configurationResourceKeys)
 			throws Exception {
 		ModelInfo modelInfo = requestDetails.getModelInfo();
 		String instanceName = requestDetails.getRequestInfo().getInstanceName();
@@ -296,12 +332,35 @@ public class BBInputSetup implements JavaDelegate {
 			this.populateVolumeGroup(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
 					relatedInstanceList, instanceName, vnfType, null);
 		} else if (modelType.equals(ModelType.vfModule)) {
-			lookupKeyMap.put(ResourceKey.VF_MODULE_ID, resourceId);
-			this.populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
-					relatedInstanceList, instanceName, null, requestDetails.getCloudConfiguration());
+			if(bbName.contains("Configuration")) {
+				ModelInfo configurationModelInfo = new ModelInfo();
+				configurationModelInfo.setModelCustomizationUuid(configurationKey);
+				populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, 
+						lookupKeyMap, resourceId, instanceName, configurationResourceKeys);
+			} else {
+				lookupKeyMap.put(ResourceKey.VF_MODULE_ID, resourceId);
+				this.populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
+						relatedInstanceList, instanceName, null, requestDetails.getCloudConfiguration());
+			}
+		} else if (modelType.equals(ModelType.instanceGroup)) {
+			lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, resourceId);
+			this.populateInstanceGroup(modelInfo, service, serviceInstance, resourceId, instanceName);
 		} else {
 			return;
 		}
+	}
+	
+	protected void populateInstanceGroup(ModelInfo modelInfo, Service service, ServiceInstance serviceInstance, String instanceGroupId, String instanceName) {
+		InstanceGroup instanceGroup = new InstanceGroup();
+		instanceGroup.setId(instanceGroupId);
+		instanceGroup.setInstanceGroupName(instanceName);
+		mapCatalogInstanceGroup(instanceGroup, modelInfo, service);
+		serviceInstance.getInstanceGroups().add(instanceGroup);
+	}
+
+	protected void mapCatalogInstanceGroup(InstanceGroup instanceGroup, ModelInfo modelInfo, Service service) {
+		// @TODO: this will populate the instanceGroup model info. 
+		// Dependent on MSO-5821 653458 US - MSO - Enhance Catalog DB Schema & Adapter to support VNF Groups 
 	}
 
 	protected void populateConfiguration(ModelInfo modelInfo, Service service, String bbName,
@@ -344,13 +403,19 @@ public class BBInputSetup implements JavaDelegate {
 		if (configurationResourceCustomization != null && vnfVfmoduleCvnfcConfigurationCustomization != null) {
 			configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(configurationResourceCustomization
 					, vnfVfmoduleCvnfcConfigurationCustomization));
+		} else {
+			logger.debug("for Fabric configuration mapping by VF MODULE CUST UUID: " + configurationResourceKeys.getVfModuleCustomizationUUID());
+			vnfVfmoduleCvnfcConfigurationCustomization = findVnfVfmoduleCvnfcConfigurationCustomization(configurationResourceKeys.getVfModuleCustomizationUUID(),
+					configurationResourceKeys.getVnfResourceCustomizationUUID(), configurationResourceKeys.getCvnfcCustomizationUUID());
+			if (vnfVfmoduleCvnfcConfigurationCustomization != null){
+				configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(vnfVfmoduleCvnfcConfigurationCustomization));
+			}
 		}
 	}
 
 	protected VnfVfmoduleCvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String vfModuleCustomizationUUID, 
 			String vnfResourceCustomizationUUID, String cvnfcCustomizationUUID, ConfigurationResourceCustomization configurationResourceCustomization) {
-
-		if(configurationResourceCustomization.getConfigurationResource() != null)
+		if(configurationResourceCustomization != null && configurationResourceCustomization.getConfigurationResource() != null)
 			for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization : 
 				configurationResourceCustomization.getConfigurationResource().getVnfVfmoduleCvnfcConfigurationCustomization()) {
 				if(vnfVfmoduleCvnfcConfigurationCustomization.getVfModuleCustomization().getModelCustomizationUUID().equalsIgnoreCase(vfModuleCustomizationUUID)
@@ -369,6 +434,13 @@ public class BBInputSetup implements JavaDelegate {
 			}
 		}
 		return null;
+	}
+	
+	protected VnfVfmoduleCvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String vnfResourceCustomizationUUID,
+			String vfModuleCustomizationUUID, String cvnfcCustomizationUUID) {
+		return bbInputSetupUtils.getVnfVfmoduleCvnfcConfigurationCustomizationByActionAndIsALaCarteAndRequestScopeAndCloudOwner(vnfResourceCustomizationUUID,
+				vfModuleCustomizationUUID, cvnfcCustomizationUUID);
+
 	}
 
 	protected void populateVfModule(ModelInfo modelInfo, Service service, String bbName,

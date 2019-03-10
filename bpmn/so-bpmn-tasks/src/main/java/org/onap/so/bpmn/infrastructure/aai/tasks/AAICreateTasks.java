@@ -55,6 +55,7 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.orchestration.AAIConfigurationResources;
+import org.onap.so.client.orchestration.AAIInstanceGroupResources;
 import org.onap.so.client.orchestration.AAINetworkResources;
 import org.onap.so.client.orchestration.AAIServiceInstanceResources;
 import org.onap.so.client.orchestration.AAIVfModuleResources;
@@ -96,6 +97,8 @@ public class AAICreateTasks {
 	private AAIVpnBindingResources aaiVpnBindingResources;
 	@Autowired
 	private AAIConfigurationResources aaiConfigurationResources;
+	@Autowired
+	private AAIInstanceGroupResources aaiInstanceGroupResources;
 	@Autowired
 	private Environment env;
 
@@ -445,6 +448,16 @@ public class AAICreateTasks {
 		try{
 			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
 			aaiConfigurationResources.createConfiguration(configuration);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
+	
+	public void createInstanceGroupVnf(BuildingBlockExecution execution){
+		try{
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, execution.getLookupMap().get(ResourceKey.INSTANCE_GROUP_ID));
+			aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
