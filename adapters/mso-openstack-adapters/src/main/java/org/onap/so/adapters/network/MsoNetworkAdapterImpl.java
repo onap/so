@@ -267,8 +267,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                Holder <Map <String, String>> subnetIdMap,
                                Holder <NetworkRollback> rollback) throws NetworkException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName (CREATE_NETWORK_CONTEXT);
-
         logger.debug("*** CREATE Network: {} of type {} in {}/{}", networkName, networkType, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
@@ -715,7 +713,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                Holder <Map <String, String>> subnetIdMap,
                                Holder <NetworkRollback> rollback) throws NetworkException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName (UPDATE_NETWORK_CONTEXT);
         logger.debug("***UPDATE Network adapter with Network: {} of type {} in {}/{}", networkName, networkType,
             cloudSiteId, tenantId);
 
@@ -1151,7 +1148,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                               Holder <List <RouteTarget>> routeTargets,
                               Holder <Map <String, String>> subnetIdMap) throws NetworkException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName ("QueryNetwork");
         logger.debug("*** QUERY Network with Network: {} in {}/{}", networkNameOrId, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
@@ -1290,7 +1286,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                MsoRequest msoRequest,
                                Holder <Boolean> networkDeleted) throws NetworkException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName ("DeleteNetwork");
         logger.debug("*** DELETE Network adapter with Network: {} in {}/{}", networkId, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
@@ -1382,7 +1377,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      */
     @Override
     public void rollbackNetwork (NetworkRollback rollback) throws NetworkException {
-        MsoLogger.setServiceName ("RollbackNetwork");
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
 

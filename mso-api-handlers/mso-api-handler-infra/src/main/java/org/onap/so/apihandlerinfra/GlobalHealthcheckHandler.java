@@ -114,8 +114,6 @@ public class GlobalHealthcheckHandler {
         HealthcheckResponse rsp = new HealthcheckResponse();
     	
     	try{
-            long startTime = System.currentTimeMillis ();
-            MsoLogger.setServiceName ("GlobalHealthcheck");
             // Generated RequestId
             String requestId = requestContext.getProperty("requestId").toString();
             MsoLogger.setLogContext(requestId, null);

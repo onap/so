@@ -207,7 +207,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         throws VnfException
     {
         MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("QueryVnfCloudify");
         logger.debug ("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
 
         // Will capture execution time for metrics
@@ -266,7 +265,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            MsoRequest msoRequest) throws VnfException {
         MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("DeleteVnf");
 
     	// This operation is no longer supported at the VNF level.  The adapter is only called to deploy modules.
         logger.debug("DeleteVNF command attempted but not supported");
@@ -285,7 +283,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     @Override
     public void rollbackVnf (VnfRollback rollback) throws VnfException {
         long startTime = System.currentTimeMillis ();
-        MsoLogger.setServiceName ("RollbackVnf");
     	// rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.info ("{} {} {} {}", MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf", MsoLogger
@@ -580,7 +577,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         long startTime = System.currentTimeMillis ();
 
     	MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("CreateVfModule");
 
         // Require a model customization ID.  Every VF Module definition must have one.
         if (modelCustomizationUuid == null || modelCustomizationUuid.isEmpty()) {
@@ -1184,7 +1180,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs) throws VnfException {
         MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("DeleteVf");
         logger.debug ("Deleting VF " + vnfName + " in " + cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();

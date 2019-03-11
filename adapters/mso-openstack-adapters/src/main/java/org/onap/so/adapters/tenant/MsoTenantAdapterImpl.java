@@ -89,7 +89,6 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                               Holder <String> tenantId,
                               Holder <TenantRollback> rollback) throws TenantException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName (CREATE_TENANT);
 
         logger.debug("Call to MSO createTenant adapter. Creating Tenant: {} in {}", tenantName, cloudSiteId);
 
@@ -154,7 +153,6 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                              Holder <String> tenantName,
                              Holder <Map <String, String>> metadata) throws TenantException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName (QUERY_TENANT);
         logger.debug ("Querying Tenant {} in {}", tenantNameOrId, cloudSiteId);
 
         MsoTenantUtils tUtils;
@@ -199,7 +197,6 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                               MsoRequest msoRequest,
                               Holder <Boolean> tenantDeleted) throws TenantException {
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName (DELETE_TENANT);
 
         logger.debug ("Deleting Tenant {} in {}", tenantId, cloudSiteId);
 
@@ -230,7 +227,6 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
      */
     @Override
     public void rollbackTenant (TenantRollback rollback) throws TenantException {
-        MsoLogger.setServiceName (ROLLBACK_TENANT);
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.warn("{} {} rollbackTenant, rollback is null", MessageEnum.RA_ROLLBACK_NULL,

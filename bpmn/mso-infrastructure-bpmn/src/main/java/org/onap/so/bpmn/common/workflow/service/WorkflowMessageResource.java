@@ -79,7 +79,6 @@ public class WorkflowMessageResource{
 			String message) {
 
 		String method = "receiveWorkflowMessage";
-		MsoLogger.setServiceName("MSO." + method);
 		MsoLogger.setLogContext(correlator, "N/A");
 
 		logger.debug(LOGMARKER + " Received workflow message"

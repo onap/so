@@ -189,7 +189,6 @@ public class ASDCController {
      */
     public void initASDC () throws ASDCControllerException {
         String event = "Initialize the ASDC Controller";
-        MsoLogger.setServiceName ("InitASDC");
         logger.debug(event);
         if (this.getControllerStatus () != ASDCControllerStatus.STOPPED) {
             String endEvent = "The controller is already initialized, call the closeASDC method first";
@@ -237,7 +236,6 @@ public class ASDCController {
      */
     public void closeASDC () throws ASDCControllerException {
 
-        MsoLogger.setServiceName ("CloseController");
         if (this.getControllerStatus () == ASDCControllerStatus.BUSY) {
             throw new ASDCControllerException ("Cannot close the ASDC controller as it's currently in BUSY state");
         }

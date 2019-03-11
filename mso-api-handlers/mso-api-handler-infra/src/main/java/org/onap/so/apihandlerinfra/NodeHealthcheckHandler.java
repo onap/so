@@ -34,7 +34,6 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -60,8 +59,6 @@ public class NodeHealthcheckHandler {
 	@ApiOperation(value="Performing node health check",response=Response.class)
     @Transactional
     public Response nodeHealthcheck (@Context ContainerRequestContext requestContext) throws UnknownHostException {
-        long startTime = System.currentTimeMillis ();
-        MsoLogger.setServiceName ("NodeHealthcheck");
         // Generated RequestId
         String requestId = requestContext.getProperty("requestId").toString();
         logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
