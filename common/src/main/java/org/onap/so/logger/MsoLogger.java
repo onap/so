@@ -96,12 +96,6 @@ public class MsoLogger {
 
     public static final String PARTNER_NAME                 = "PartnerName";
 
-    
-
-
-    
-
-    
     // Audit/Metric log specific
     public static final String BEGINTIME                   = "BeginTimestamp";
     public static final String STARTTIME                   = "StartTimeMilis";
@@ -184,18 +178,13 @@ public class MsoLogger {
             this.value = value;
         }
     }
-    
-    public static final Marker ENTRY = MarkerFactory.getMarker("ENTRY");
-    public static final Marker EXIT = MarkerFactory.getMarker("EXIT");
+
 
     private Logger logger;
     private Logger metricsLogger;
     private Logger auditLogger;
     private static String       instanceUUID, serverIP, serverName;
     private MessageEnum         exceptionArg, defaultException, defaultWarning, defaultAudit, defaultMetrics;
-
-    // For internal logging of the initialization of MSO logs
-    private static final Logger initLOGGER      = LoggerFactory.getLogger(MsoLogger.class.getName());
 
     private MsoLogger() {
         this(MsoLogger.Catalog.GENERAL);
@@ -236,12 +225,6 @@ public class MsoLogger {
      * @param targetVEntity
      *            Target VNF or VM acted opon by the component, if available
      */
-    public void recordMetricEvent() {
-        metricsLogger.info("");
-        MDC.remove(TIMER);
-        MDC.remove(TARGETENTITY);
-        MDC.remove(TARGETSERVICENAME);
-    }
 
     public void recordMetricEvent(Long startTime, StatusCode statusCode, ResponseCode responseCode, String responseDesc,
             String targetEntity, String targetServiceName, String targetVEntity) {
@@ -266,10 +249,7 @@ public class MsoLogger {
      * @param responseDesc
      *            Human redable description of the application response code
      */
-    public void recordAuditEvent(){    	
-         auditLogger.info("");
-    }
-    
+
     public void recordAuditEvent(Long startTime, StatusCode statusCode, ResponseCode responseCode,
             String responseDesc) {
     	if (StringUtils.isEmpty(MDC.get(MsoLogger.PARTNERNAME))) {
@@ -1060,15 +1040,6 @@ public class MsoLogger {
         return classArr[0].getMethodName();
     }
 
-    // Based on the discussion with Adrian, instanceUUID is used to identifiy
-    // the mso instance,
-    // it is generated during mso instance initialization period
-    // The same mso instnace will use the same instanceUUID value, even after
-    // restart
-    private static String getInstanceUUID() {       
-       return System.getProperty("mso-instance-id");
-    }
-
     /**
      * Set the requestId and serviceInstanceId
      * 
@@ -1088,49 +1059,12 @@ public class MsoLogger {
     }
 
     /**
-     * Set the remoteIp and the basic HTTP Authentication user
-     * 
-     * @param remoteIpp
-     *            The remote ip address
-     * @param userp
-     *            The basic http authencitation user
-     */
-    public static void setLoggerParameters(String remoteIpp, String userp) {
-        if (null != remoteIpp) {
-            MDC.put(REMOTE_HOST, remoteIpp);
-        }
-        if (null != userp) {
-            MDC.put(USER, userp);
-        }
-    }
-
-    /**
-     * Set the serviceName
-     * 
-     * @param serviceNamep
-     *            The service name
-     */
-    public static void setServiceName(String serviceNamep) {
-        if (null != serviceNamep) {
-            MDC.put(SERVICE_NAME, serviceNamep);
-            MDC.remove(SERVICE_NAME_IS_METHOD_NAME);
-        }
-    }
-
-    /**
      * Get the serviceName
      * 
      * @return The service name
      */
     public static String getServiceName() {
         return MDC.get(SERVICE_NAME);
-    }
-
-    /**
-     * Reset the serviceName
-     */
-    public static void resetServiceName() {
-        MDC.remove(SERVICE_NAME);
     }
 
     /**
@@ -1191,14 +1125,4 @@ public class MsoLogger {
             defaultMetrics = MessageEnum.GENERAL_METRICS;
         }
     }
-
-	public void warnSimple(String message, Exception e) {
-		logger.warn(message,e);       
-		
-	}
-
-
-
-
-
 }

@@ -226,7 +226,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         throws VnfException
     {
         MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("QueryVnf");
         logger.debug("Querying VNF " + vnfNameOrId + " in " + cloudSiteId + "/" + tenantId);
 
         // Will capture execution time for metrics
@@ -283,7 +282,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            MsoRequest msoRequest) throws VnfException {
         MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("DeleteVnf");
 
     	// This operation is no longer supported at the VNF level.  The adapter is only called to deploy modules.
     	logger.debug("DeleteVNF command attempted but not supported");
@@ -302,7 +300,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     @Override
     public void rollbackVnf (VnfRollback rollback) throws VnfException {
         long startTime = System.currentTimeMillis ();
-        MsoLogger.setServiceName ("RollbackVnf");
     	// rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.info("{} {} {} {}", MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf",
@@ -622,7 +619,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         long startTime = System.currentTimeMillis ();
 
     	MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("CreateVfModule");
 
         // Require a model customization ID.  Every VF Module definition must have one.
         if (modelCustomizationUuid == null  ||  modelCustomizationUuid.isEmpty()) {
@@ -1170,7 +1166,6 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                            Holder <Map <String, String>> outputs) throws VnfException
     {
         MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("DeleteVfModule");
 
         logger.debug("Deleting VF Module " + vfModuleId + " in " + cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics

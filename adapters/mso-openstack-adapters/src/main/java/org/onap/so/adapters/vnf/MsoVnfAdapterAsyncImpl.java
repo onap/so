@@ -132,10 +132,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                             String messageId,
                             MsoRequest msoRequest,
                             String notificationUrl) {
-        String error;
-        String serviceName = "CreateVnfA";
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName (serviceName);
         logger.info("{} createVnfA", MessageEnum.RA_ASYNC_CREATE_VNF);
         // Use the synchronous method to perform the actual Create
         MsoVnfAdapter vnfAdapter = vnfImpl;
@@ -160,9 +157,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                   vnfId,
                                   outputs,
                                   vnfRollback);
-            MsoLogger.setServiceName (serviceName);
         } catch (VnfException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.error("{} {} VnfException in createVnfA ", MessageEnum.RA_CREATE_VNF_ERR,
                 MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
@@ -218,9 +213,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                             String messageId,
                             MsoRequest msoRequest,
                             String notificationUrl) {
-        String error;
-        String serviceName = "UpdateVnfA";
-        MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
         logger.info("{} UpdateVnfA", MessageEnum.RA_ASYNC_UPDATE_VNF);
 
@@ -234,9 +226,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
         try {
             vnfAdapter.updateVnf (cloudSiteId, tenantId, vnfType,vnfVersion, vnfName, requestType, volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
-            MsoLogger.setServiceName (serviceName);
         } catch (VnfException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_UPDATE_VNF_ERR,
                 MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
@@ -301,7 +291,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                            String notificationUrl) {
         String error;
         String serviceName = "QueryVnfA";
-        MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
         logger.info("{}", MessageEnum.RA_ASYNC_QUERY_VNF);
 
@@ -316,9 +305,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
         try {
             vnfAdapter.queryVnf (cloudSiteId, tenantId, vnfName, msoRequest, vnfExists, vnfId, status, outputs);
-            MsoLogger.setServiceName (serviceName);
         } catch (VnfException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.error("{} {} Exception sending queryVnfA notification ", MessageEnum.RA_QUERY_VNF_ERR,
                 MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
@@ -391,7 +378,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                             String notificationUrl) {
         String error;
         String serviceName = "DeleteVnfA";
-        MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
         logger.info("{}", MessageEnum.RA_ASYNC_DELETE_VNF);
 
@@ -400,9 +386,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
         try {
             vnfAdapter.deleteVnf (cloudSiteId, tenantId, vnfName, msoRequest);
-            MsoLogger.setServiceName (serviceName);
         } catch (VnfException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.error("{} {} Exception sending deleteVnfA notification ", MessageEnum.RA_DELETE_VNF_ERR,
                 MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
@@ -451,9 +435,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
      */
     @Override
     public void rollbackVnfA (VnfRollback rollback, String messageId, String notificationUrl) {
-        String serviceName = "RollbackVnfA";
-        MsoLogger.setServiceName (serviceName);
-        String error;
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.info("{} rollbackVnfA: Empty Rollback: No action to perform", MessageEnum.RA_ROLLBACK_NULL);
@@ -468,9 +449,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
         try {
             vnfAdapter.rollbackVnf (rollback);
-            MsoLogger.setServiceName (serviceName);
         } catch (VnfException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.error("{} {} Exception sending rollbackVnfA notification ", MessageEnum.RA_ROLLBACK_VNF_ERR,
                 MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;

@@ -275,7 +275,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            Holder <VnfRollback> rollback) throws VnfException {
     	// As of 1707 - this method should no longer be called
     	MsoLogger.setLogContext (msoRequest.getRequestId (), msoRequest.getServiceInstanceId ());
-    	MsoLogger.setServiceName ("UpdateVnf");
       logger.debug("UpdateVnf called?? This should not be called any longer - update vfModule");
     }
 
@@ -304,7 +303,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                           Holder <VnfStatus> status,
                           Holder <Map <String, String>> outputs) throws VnfException {
         MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("QueryVnf");
         logger.debug("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
 
         // Will capture execution time for metrics
@@ -364,7 +362,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            MsoRequest msoRequest) throws VnfException {
         MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("DeleteVnf");
         logger.debug("Deleting VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
@@ -401,7 +398,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     @Override
     public void rollbackVnf (VnfRollback rollback) throws VnfException {
         long startTime = System.currentTimeMillis ();
-        MsoLogger.setServiceName ("RollbackVnf");
     	// rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.info(MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf");
@@ -605,7 +601,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
         }
     	MsoLogger.setLogContext (msoRequest);
-    	MsoLogger.setServiceName ("CreateVfModule");
     	String requestTypeString = "";
         if (requestType != null && !"".equals(requestType)) {
         	requestTypeString = requestType;
@@ -1377,7 +1372,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	String methodName = "updateVfModule";
     	MsoLogger.setLogContext (msoRequest.getRequestId (), msoRequest.getServiceInstanceId ());
     	String serviceName = VNF_ADAPTER_SERVICE_NAME + methodName;
-    	MsoLogger.setServiceName (serviceName);
 
     	StringBuilder sbInit = new StringBuilder();
     	sbInit.append("updateVfModule: \n");
@@ -1505,7 +1499,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
               throw new VnfException (me);
         	}
         	if (nestedHeatStack == null || nestedHeatStack.getStatus() == HeatStatus.NOTFOUND) {
-        		MsoLogger.setServiceName (serviceName);
         	    String error = "Update VFModule: Attached volume heatStack ID DOES NOT EXIST " + nestedStackId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
               logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudSiteId,
                   tenantId, error, "OpenStack", "QueryStack", MsoLogger.ErrorCode.DataError.getValue(), error);
@@ -1538,7 +1531,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	    throw new VnfException (me);
         	}
         	if (nestedBaseHeatStack == null || nestedBaseHeatStack.getStatus() == HeatStatus.NOTFOUND) {
-        		MsoLogger.setServiceName (serviceName);
         	    String error = "Update VFModule: Attached base heatStack ID DOES NOT EXIST " + nestedBaseStackId + " in " + cloudSiteId + "/" + tenantId + " USER ERROR"  ;
         	    logger.error ("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName,
                   cloudSiteId, tenantId, error, "OpenStack",

@@ -129,7 +129,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         String error;
 
         MsoLogger.setLogContext (msoRequest);
-        MsoLogger.setServiceName ("CreateNetworkA");
         logger.debug("Async Create Network: {} of type {} in {}/{}", networkName, networkType, cloudSiteId, tenantId);
 
         // Use the synchronous method to perform the actual Create
@@ -252,10 +251,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 String messageId,
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
-        String error;
 
-        String serviceName = "UpdateNetworkA";
-        MsoLogger.setServiceName (serviceName);
         MsoLogger.setLogContext (msoRequest);
         logger.debug("Async Update Network: {} of type {} in {}/{}", networkId, networkType, cloudSiteId, tenantId);
 
@@ -292,9 +288,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                           msoRequest,
                                           subnetIdMap,
                                           networkRollback);
-            MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.debug ("Got a NetworkException on updateNetwork: ", e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
@@ -351,8 +345,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         String error;
 
         MsoLogger.setLogContext (msoRequest);
-        String serviceName = "QueryNetworkA";
-        MsoLogger.setServiceName (serviceName);
         logger.debug("Async Query Network {} in {}/{}", networkNameOrId, cloudSiteId, tenantId);
         String errorCreateNetworkMessage = "{} {} Error sending createNetwork notification {} ";
 
@@ -378,9 +370,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                          status,
                                          vlans,
                                          subnetIdMap);
-            MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.debug (NETWORK_EXCEPTION_MSG, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
@@ -453,7 +443,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         String error;
         MsoLogger.setLogContext (msoRequest);
         String serviceName = "DeleteNetworkA";
-        MsoLogger.setServiceName (serviceName);
         logger.debug("Async Delete Network {} in {}/{}", networkId, cloudSiteId, tenantId);
 
         // Use the synchronous method to perform the actual Create
@@ -464,9 +453,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         try {
             networkAdapter.deleteNetwork (cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkId, msoRequest, networkDeleted);
-            MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.debug (NETWORK_EXCEPTION_MSG, e);
             MsoExceptionCategory exCat = null;
             String eMsg = null;
@@ -513,9 +500,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
      */
     @Override
     public void rollbackNetworkA (NetworkRollback rollback, String messageId, String notificationUrl) {
-        String error;
-        String serviceName = "RollbackNetworkA";
-        MsoLogger.setServiceName (serviceName);
         // rollback may be null (e.g. if network already existed when Create was called)
         if (rollback == null) {
             logger.warn("{} {} Rollback is null", MessageEnum.RA_ROLLBACK_NULL,
@@ -530,9 +514,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         try {
             networkAdapter.rollbackNetwork (rollback);
-            MsoLogger.setServiceName (serviceName);
         } catch (NetworkException e) {
-        	MsoLogger.setServiceName (serviceName);
             logger.debug ("Got a NetworkException on rollbackNetwork: ", e);
             // Build and send Asynchronous error response
             MsoExceptionCategory exCat = null;

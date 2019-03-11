@@ -158,7 +158,6 @@ public class CloudResourcesOrchestration {
 	@ApiOperation(value="Get status of an Operational Environment based on filter criteria",response=Response.class)
 	@Transactional
 	public Response getOperationEnvironmentStatusFilter(@Context UriInfo ui, @PathParam("version") String version ) throws ApiException{
-		MsoLogger.setServiceName ("getOperationEnvironmentStatusFilter");
 
 		MultivaluedMap<String, String> queryParams = ui.getQueryParameters();
 		List<String> requestIdKey = queryParams.get("requestId");
