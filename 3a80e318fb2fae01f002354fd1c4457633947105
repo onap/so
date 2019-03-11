@@ -2,6 +2,52 @@
   "comments": [
     {
       "key": {
+        "uuid": "a2d35ed4_e46a5df3",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/util/CreateVFModuleResourceBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 4313
+      },
+      "writtenOn": "2019-03-11T13:28:22Z",
+      "side": 1,
+      "message": "Why do you call it builder? its a simple DTO for parameters.\nIf you\u0027d like to create a builder, you should move the whole method ToscaResourceInstaller.createVFModuleResource here and return new VfModuleCustomization object in method build() here.\nOtherwise, I suggest calling it DTO/InputParams etc., as there is no building logic here",
+      "range": {
+        "startLine": 33,
+        "startChar": 13,
+        "endLine": 33,
+        "endChar": 42
+      },
+      "revId": "3a80e318fb2fae01f002354fd1c4457633947105",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "eb0dbd58_08f13342",
+        "filename": "asdc-controller/src/test/java/org/onap/so/asdc/util/CreateVFModuleResourceBuilderTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4313
+      },
+      "writtenOn": "2019-03-11T13:28:22Z",
+      "side": 1,
+      "message": "Could you please format the code (unnecessary spaces here)?\nYou can find how to configure it here: stackoverflow.com/questions/15655126/how-to-auto-format-code-in-eclipse",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 8
+      },
+      "revId": "3a80e318fb2fae01f002354fd1c4457633947105",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "0ac478b4_0028f7f2",
         "filename": "asdc-controller/src/test/java/org/onap/so/asdc/util/CreateVFModuleResourceBuilderTest.java",
         "patchSetId": 3
