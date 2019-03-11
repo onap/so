@@ -86,5 +86,4 @@ public class AAICreateResources extends AAIResource {
 			return Optional.empty();
 		}
 	}
-	
 }
