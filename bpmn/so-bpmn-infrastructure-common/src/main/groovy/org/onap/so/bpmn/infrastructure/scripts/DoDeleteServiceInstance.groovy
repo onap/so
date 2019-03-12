@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +40,8 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils;
 
 import groovy.json.*
@@ -65,7 +68,7 @@ import groovy.json.*
  * Rollback - Deferred
  */
 public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoDeleteServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoDeleteServiceInstance.class);
 
 	String Prefix="DDELSI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -73,7 +76,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 
 	public void preProcessRequest (DelegateExecution execution) {
 
-		msoLogger.trace("preProcessRequest ")
+		logger.trace("preProcessRequest ")
 		String msg = ""
 
 		try {
@@ -99,18 +102,18 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)){
 				msg = "Input serviceInstanceId is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 			String sdncCallbackUrl = UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback',execution)
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "mso.workflow.sdncadapter.callback is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			msoLogger.debug("SDNC Callback URL: " + sdncCallbackUrl)
+			logger.debug("SDNC Callback URL: " + sdncCallbackUrl)
 
 			StringBuilder sbParams = new StringBuilder()
 			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
@@ -140,15 +143,15 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest ")
+		logger.trace("Exit preProcessRequest ")
 	}
 
 	public void preProcessSDNCDelete (DelegateExecution execution) {
 
-		msoLogger.trace("preProcessSDNCDelete ")
+		logger.trace("preProcessSDNCDelete ")
 		String msg = ""
 
 		try {
@@ -230,57 +233,57 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
 			execution.setVariable("sdncDelete", sdncDelete)
 			execution.setVariable("sdncDeactivate", sdncDeactivate)
-			msoLogger.debug("sdncDeactivate:\n" + sdncDeactivate)
-			msoLogger.debug("sdncDelete:\n" + sdncDelete)
+			logger.debug("sdncDeactivate:\n" + sdncDeactivate)
+			logger.debug("sdncDelete:\n" + sdncDelete)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception Occured in preProcessSDNCDelete.\n" + ex.getMessage())
 		}
-		msoLogger.debug(" *****Exit preProcessSDNCDelete *****")
+		logger.debug(" *****Exit preProcessSDNCDelete *****")
 	}
 
 	public void postProcessSDNCDelete(DelegateExecution execution, String response, String method) {
 
 
-		msoLogger.trace("postProcessSDNC " + method + " ")
+		logger.trace("postProcessSDNC " + method + " ")
 		String msg = ""
 
 		try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			msoLogger.debug("SDNCResponse: " + response)
-			msoLogger.debug("workflowException: " + workflowException)
+			logger.debug("SDNCResponse: " + response)
+			logger.debug("workflowException: " + workflowException)
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-				msoLogger.debug("Good response from SDNC Adapter for service-instance " + method + "response:\n" + response)
+				logger.debug("Good response from SDNC Adapter for service-instance " + method + "response:\n" + response)
 
 			}else{
 				msg = "Bad Response from SDNC Adapter for service-instance " + method
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 3500, msg)
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessSDNC " + method + " Exception:" + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessSDNC " + method + " ")
+		logger.trace("Exit postProcessSDNC " + method + " ")
 	}
 
 	/**
 	 * Gets the service instance uri from aai
 	 */
 	public void getServiceInstance(DelegateExecution execution) {
-		msoLogger.trace("getServiceInstance ")
+		logger.trace("getServiceInstance ")
 		try {
 			String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
@@ -343,7 +346,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 
 					}else{
 						execution.setVariable("siInUse", true)
-						msoLogger.debug("Stopped deleting Service Instance, it has dependencies")
+						logger.debug("Stopped deleting Service Instance, it has dependencies")
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Stopped deleting Service Instance, it has dependencies")
 					}
 				}
@@ -355,7 +358,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		}catch (Exception ex){
 			String msg = "Exception in getServiceInstance. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
@@ -364,7 +367,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 	 * Deletes the service instance in aai
 	 */
 	public void deleteServiceInstance(DelegateExecution execution) {
-		msoLogger.trace("Entered deleteServiceInstance")
+		logger.trace("Entered deleteServiceInstance")
 		try {
 			String globalCustId = execution.getVariable("globalSubscriberId")
 			String serviceType = execution.getVariable("subscriptionServiceType")
@@ -374,9 +377,9 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
 			resourceClient.delete(serviceInstanceUri)
 
-			msoLogger.trace("Exited deleteServiceInstance")
+			logger.trace("Exited deleteServiceInstance")
 		}catch(Exception e){
-			msoLogger.debug("Error occured within deleteServiceInstance method: " + e)
+			logger.debug("Error occured within deleteServiceInstance method: " + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during deleteServiceInstance from aai")
 		}
 	}

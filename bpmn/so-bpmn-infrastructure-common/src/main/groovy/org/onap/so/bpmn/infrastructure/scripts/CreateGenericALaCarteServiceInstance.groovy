@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +37,8 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
 
 import groovy.json.*
@@ -49,7 +52,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
     String Prefix="CRESI_"
     ExceptionUtil exceptionUtil = new ExceptionUtil()
     JsonUtils jsonUtil = new JsonUtils()
-    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateGenericALaCarteServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateGenericALaCarteServiceInstance.class);
 
     public void preProcessRequest (DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
@@ -59,18 +62,18 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
         try {
 
             String siRequest = execution.getVariable("bpmnRequest")
-            msoLogger.debug(siRequest)
+            logger.debug(siRequest)
 
             String requestId = execution.getVariable("mso-request-id")
             execution.setVariable("msoRequestId", requestId)
-            msoLogger.debug("Input Request:" + siRequest + " reqId:" + requestId)
+            logger.debug("Input Request:" + siRequest + " reqId:" + requestId)
 
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             if (isBlank(serviceInstanceId)) {
                 serviceInstanceId = UUID.randomUUID().toString()
-                msoLogger.debug("Generated new Service Instance ID:" + serviceInstanceId)
+                logger.debug("Generated new Service Instance ID:" + serviceInstanceId)
             } else {
-                msoLogger.debug("Using provided Service Instance ID:" + serviceInstanceId)
+                logger.debug("Using provided Service Instance ID:" + serviceInstanceId)
             }
 
             serviceInstanceId = UriUtils.encode(serviceInstanceId,"UTF-8")
@@ -98,7 +101,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
             if (isBlank(productFamilyId))
             {
                 msg = "Input productFamilyId is null"
-                msoLogger.debug(msg)
+                logger.debug(msg)
                 //exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             } else {
                 execution.setVariable("productFamilyId", productFamilyId)
@@ -108,20 +111,20 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
             String serviceModelInfo = jsonUtil.getJsonValue(siRequest, "requestDetails.modelInfo")
             if (isBlank(serviceModelInfo)) {
                 msg = "Input serviceModelInfo is null"
-                msoLogger.debug(msg)
+                logger.debug(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             } else
             {
                 execution.setVariable("serviceModelInfo", serviceModelInfo)
             }
 
-            msoLogger.debug("modelInfo" + serviceModelInfo)
+            logger.debug("modelInfo" + serviceModelInfo)
 
             //requestParameters
             String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "requestDetails.requestParameters.subscriptionServiceType")
             if (isBlank(subscriptionServiceType)) {
                 msg = "Input subscriptionServiceType is null"
-                msoLogger.debug(msg)
+                logger.debug(msg)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
             } else {
                 execution.setVariable("subscriptionServiceType", subscriptionServiceType)
@@ -144,7 +147,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                 userParams.each {
                     userParam ->
                         if ("Customer_Location".equals(userParam?.name)) {
-                            msoLogger.debug("User Input customerLocation: " + userParam.value.toString())
+                            logger.debug("User Input customerLocation: " + userParam.value.toString())
                             Map<String, String> customerMap = [:]
                             userParam.value.each {
                                 param ->
@@ -155,14 +158,14 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                             execution.setVariable("customerLocation", customerMap)
                         }
                         if ("Homing_Solution".equals(userParam?.name)) {
-                            msoLogger.debug("User Input Homing_Solution: " + userParam.value.toString())
+                            logger.debug("User Input Homing_Solution: " + userParam.value.toString())
                             execution.setVariable("homingService", userParam.value)
                             execution.setVariable("callHoming", true)
                             inputMap.put("Homing_Solution", userParam.value)
                         }
                         if (!"Homing_Solution".equals(userParam?.name) && !"Customer_Location".equals(userParam?.name))
                         {
-                            msoLogger.debug("User Input Parameter " + userParam.name + ": " + userParam.value.toString())
+                            logger.debug("User Input Parameter " + userParam.name + ": " + userParam.value.toString())
                             inputMap.put(userParam.name, userParam.value)
                         }
                         if ("Orchestrator".equalsIgnoreCase(userParam?.name)) {
@@ -172,8 +175,8 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                 }
             }
 
-            msoLogger.debug("User Input Parameters map: " + userParams.toString())
-            msoLogger.debug("User Input Map: " + inputMap.toString())
+            logger.debug("User Input Parameters map: " + userParams.toString())
+            logger.debug("User Input Map: " + inputMap.toString())
             if (inputMap.toString() != "[:]") {
                 execution.setVariable("serviceInputParams", inputMap)
             }
@@ -185,37 +188,37 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
             throw e;
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.trace("Exit preProcessRequest")
+        logger.trace("Exit preProcessRequest")
     }
 
     public void sendSyncResponse (DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        msoLogger.trace("Start sendSyncResponse")
+        logger.trace("Start sendSyncResponse")
 
         try {
             String requestId = execution.getVariable("msoRequestId")
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
             // RESTResponse for API Handler (APIH) Reply Task
             String createServiceRestRequest = """{"requestReferences":{"instanceId":"${serviceInstanceId}","requestId":"${requestId}"}}""".trim()
-            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + createServiceRestRequest)
+            logger.debug(" sendSyncResponse to APIH:" + "\n" + createServiceRestRequest)
             sendWorkflowResponse(execution, 202, createServiceRestRequest)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exceptuion in sendSyncResponse:" + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.trace("Exit sendSyncResopnse")
+        logger.trace("Exit sendSyncResopnse")
     }
 
 
     public void sendSyncError (DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        msoLogger.trace("Start sendSyncError")
+        logger.trace("Start sendSyncError")
 
         try {
             String errorMessage = ""
@@ -232,11 +235,11 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                     <aetgt:ErrorCode>7000</aetgt:ErrorCode>
                    </aetgt:WorkflowException>"""
 
-            msoLogger.debug(buildworkflowException)
+            logger.debug(buildworkflowException)
             sendWorkflowResponse(execution, 500, buildworkflowException)
 
         } catch (Exception ex) {
-            msoLogger.debug(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
+            logger.debug(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
         }
 
     }
@@ -246,7 +249,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
     // *******************************
     public void prepareDecomposeService(DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        msoLogger.trace("Inside prepareDecomposeService of CreateGenericALaCarteServiceInstance ")
+        logger.trace("Inside prepareDecomposeService of CreateGenericALaCarteServiceInstance ")
         try {
             String siRequest = execution.getVariable("bpmnRequest")
             String serviceModelInfo = jsonUtil.getJsonValue(siRequest, "requestDetails.modelInfo")
@@ -256,13 +259,13 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
             String exceptionMessage = "Bpmn error encountered in CreateGenericALaCarteServiceInstance flow. Unexpected Error from method prepareDecomposeService() - " + ex.getMessage()
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-        msoLogger.trace("Completed prepareDecomposeService of CreateGenericALaCarteServiceInstance")
+        logger.trace("Completed prepareDecomposeService of CreateGenericALaCarteServiceInstance")
      }
 
     public void processDecomposition(DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 
-        msoLogger.trace("Inside processDecomposition() of CreateGenericALaCarteServiceInstance  ")
+        logger.trace("Inside processDecomposition() of CreateGenericALaCarteServiceInstance  ")
 
         try {
 
@@ -278,7 +281,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
             String vnfModelInfoString = ""
             if (vnfList != null && vnfList.size() > 0) {
                 execution.setVariable(Prefix + "VNFsCount", vnfList.size())
-                msoLogger.debug("vnfs to create: " + vnfList.size())
+                logger.debug("vnfs to create: " + vnfList.size())
                 ModelInfo vnfModelInfo = vnfList[0].getModelInfo()
 
                 vnfModelInfoString = vnfModelInfo.toString()
@@ -286,18 +289,18 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                 vnfModelInfoString = jsonUtil.getJsonValue(vnfModelInfoWithRoot, "modelInfo")
             } else {
                 execution.setVariable(Prefix + "VNFsCount", 0)
-                msoLogger.debug("no vnfs to create based upon serviceDecomposition content")
+                logger.debug("no vnfs to create based upon serviceDecomposition content")
             }
 
             execution.setVariable("vnfModelInfo", vnfModelInfoString)
             execution.setVariable("vnfModelInfoString", vnfModelInfoString)
-            msoLogger.debug(" vnfModelInfoString :" + vnfModelInfoString)
+            logger.debug(" vnfModelInfoString :" + vnfModelInfoString)
 
-            msoLogger.trace("Completed processDecomposition() of CreateGenericALaCarteServiceInstance ")
+            logger.trace("Completed processDecomposition() of CreateGenericALaCarteServiceInstance ")
         } catch (Exception ex) {
             sendSyncError(execution)
             String exceptionMessage = "Bpmn error encountered in CreateGenericALaCarteServiceInstance flow. processDecomposition() - " + ex.getMessage()
-            msoLogger.debug(exceptionMessage)
+            logger.debug(exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
     }
@@ -309,7 +312,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
          def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
  
          try {
-             msoLogger.trace("Inside prepareCreateServiceInstance of CreateGenericALaCarteServiceInstance")
+             logger.trace("Inside prepareCreateServiceInstance of CreateGenericALaCarteServiceInstance")
  
              /*
               * Extracting User Parameters from incoming Request and converting into a Map
@@ -327,7 +330,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                  userParams.each {
                      userParam ->
                          if ("Customer_Location".equals(userParam?.name)) {
-                             msoLogger.debug("User Input customerLocation: " + userParam.value.toString())
+                             logger.debug("User Input customerLocation: " + userParam.value.toString())
                              Map<String, String> customerMap = [:]
                              userParam.value.each {
                                  param ->
@@ -338,14 +341,14 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                              execution.setVariable("customerLocation", customerMap)
                          }
                          if ("Homing_Solution".equals(userParam?.name)) {
-                             msoLogger.debug("User Input Homing_Solution: " + userParam.value.toString())
+                             logger.debug("User Input Homing_Solution: " + userParam.value.toString())
                              execution.setVariable("homingService", userParam.value)
                              execution.setVariable("callHoming", true)
                              inputMap.put("Homing_Solution", userParam.value)
                          }
                          if (!"Homing_Solution".equals(userParam?.name) && !"Customer_Location".equals(userParam?.name))
                          {
-                             msoLogger.debug("User Input Parameter " + userParam.name + ": " + userParam.value.toString())
+                             logger.debug("User Input Parameter " + userParam.name + ": " + userParam.value.toString())
                              inputMap.put(userParam.name, userParam.value)
                          }
                          if ("Orchestrator".equalsIgnoreCase(userParam?.name)) {
@@ -355,8 +358,8 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
                  }
              }
 
-             msoLogger.debug("User Input Parameters map: " + userParams.toString())
-             msoLogger.debug("User Input Map: " + inputMap.toString())
+             logger.debug("User Input Parameters map: " + userParams.toString())
+             logger.debug("User Input Map: " + inputMap.toString())
              if (inputMap.toString() != "[:]") {
                  execution.setVariable("serviceInputParams", inputMap)
              }
@@ -370,9 +373,9 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
              execution.setVariable("serviceInstanceName", serviceInstanceName)
              execution.setVariable("serviceDecomposition", serviceDecomposition)
              execution.setVariable("serviceDecompositionString", serviceDecomposition.toJsonString())
-             msoLogger.debug("serviceDecomposition.serviceInstanceName: " + serviceDecomposition.getServiceInstance().getInstanceName())
+             logger.debug("serviceDecomposition.serviceInstanceName: " + serviceDecomposition.getServiceInstance().getInstanceName())
 
-             msoLogger.trace("Completed prepareCreateServiceInstance of CreateGenericALaCarteServiceInstance ***** ")
+             logger.trace("Completed prepareCreateServiceInstance of CreateGenericALaCarteServiceInstance ***** ")
          } catch (Exception ex) {
              // try error in method block
              String exceptionMessage = "Bpmn error encountered in CreateGenericALaCarteServiceInstance flow. Unexpected Error from method prepareCreateServiceInstance() - " + ex.getMessage()
@@ -383,7 +386,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 
     public void prepareCompletionRequest (DelegateExecution execution) {
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        msoLogger.trace("prepareCompletion *** ")
+        logger.trace("prepareCompletion *** ")
 
         try {
             String requestId = execution.getVariable("msoRequestId")
@@ -407,23 +410,23 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
             String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
             execution.setVariable("completionRequest", xmlMsoCompletionRequest)
-            msoLogger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+            logger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
         } catch (Exception ex) {
             String msg = " Exception in prepareCompletion:" + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.trace("Exit prepareCompletionRequest")
+        logger.trace("Exit prepareCompletionRequest")
     }
 
     public void prepareFalloutRequest(DelegateExecution execution){
         def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-        msoLogger.trace("prepareFalloutRequest")
+        logger.trace("prepareFalloutRequest")
 
         try {
             WorkflowException wfex = execution.getVariable("WorkflowException")
-            msoLogger.debug(" Input Workflow Exception: " + wfex.toString())
+            logger.debug(" Input Workflow Exception: " + wfex.toString())
             String requestId = execution.getVariable("msoRequestId")
             String source = execution.getVariable("source")
             String requestInfo =
@@ -436,7 +439,7 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
             String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
             execution.setVariable("falloutRequest", falloutRequest)
         } catch (Exception ex) {
-            msoLogger.debug("Exception prepareFalloutRequest:" + ex.getMessage())
+            logger.debug("Exception prepareFalloutRequest:" + ex.getMessage())
             String errorException = "  Bpmn error encountered in CreateGenericALaCarteServiceInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
             String requestId = execution.getVariable("msoRequestId")
             String falloutRequest =
@@ -456,6 +459,6 @@ public class CreateGenericALaCarteServiceInstance extends AbstractServiceTaskPro
 
             execution.setVariable("falloutRequest", falloutRequest)
         }
-        msoLogger.trace("Exit prepareFalloutRequest")
+        logger.trace("Exit prepareFalloutRequest")
     }
 }
