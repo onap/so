@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,8 +48,8 @@ import static org.onap.so.bpmn.common.scripts.GenericUtils.*;
 import java.net.URL
 
 import javax.ws.rs.core.Response
-import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -61,7 +63,7 @@ import org.onap.so.logger.MsoLogger
  */
 class SniroHomingV1 extends AbstractServiceTaskProcessor{
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SniroHomingV1.class);
+    private static final Logger logger = LoggerFactory.getLogger( SniroHomingV1.class);
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	SniroUtils sniroUtils = new SniroUtils(this)
@@ -77,19 +79,19 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 	 */
 	public void callSniro(DelegateExecution execution){
 		execution.setVariable("prefix","HOME_")
-		msoLogger.trace("Started Sniro Homing Call Sniro ")
+		logger.trace("Started Sniro Homing Call Sniro ")
 		try{
 			execution.setVariable("rollbackData", null)
 			execution.setVariable("rolledBack", false)
 
 			String requestId = execution.getVariable("msoRequestId")
-			msoLogger.debug("Incoming Request Id is: "  + requestId)
+			logger.debug("Incoming Request Id is: "  + requestId)
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
-			msoLogger.debug("Incoming Service Instance Id is: "  + serviceInstanceId)
+			logger.debug("Incoming Service Instance Id is: "  + serviceInstanceId)
 			ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-			msoLogger.debug("Incoming Service Decomposition is: "  + serviceDecomposition)
+			logger.debug("Incoming Service Decomposition is: "  + serviceDecomposition)
 			String subscriberInfo = execution.getVariable("subscriberInfo")
-			msoLogger.debug("Incoming Subscriber Information is: "  + subscriberInfo)
+			logger.debug("Incoming Subscriber Information is: "  + subscriberInfo)
 
 			if(isBlank(requestId) || isBlank(serviceInstanceId) || isBlank(serviceDecomposition.toString()) || isBlank(subscriberInfo)){
 				exceptionUtil.buildAndThrowWorkflowException(execution, 4000, "A required input variable is missing or null")
@@ -117,7 +119,7 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 						timeout = "PT30M";
 					}
 				}
-				msoLogger.debug("Async Callback Timeout will be: " + timeout)
+				logger.debug("Async Callback Timeout will be: " + timeout)
 
 				execution.setVariable("timeout", timeout);
 				execution.setVariable("correlator", requestId);
@@ -126,12 +128,12 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 				//Build Request & Call Sniro
 				String sniroRequest = sniroUtils.buildRequest(execution, requestId, serviceDecomposition, subscriber, homingParameters)
 				execution.setVariable("sniroRequest", sniroRequest)
-				msoLogger.debug("SNIRO Request is: " + sniroRequest)
+				logger.debug("SNIRO Request is: " + sniroRequest)
 
 				String endpoint = UrnPropertiesReader.getVariable("sniro.manager.uri.v1", execution)
 				String host = UrnPropertiesReader.getVariable("sniro.manager.host", execution)
 				String urlString = host + endpoint
-				msoLogger.debug("Sniro Url is: " + urlString)
+				logger.debug("Sniro Url is: " + urlString)
 
 				URL url = new URL(urlString);
 				HttpClient httpClient = new HttpClientFactory().newJsonClient(url, TargetEntity.SNIRO)
@@ -140,21 +142,21 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 
 				int responseCode = httpResponse.getStatus()
 
-				msoLogger.debug("Sniro sync response code is: " + responseCode)
+				logger.debug("Sniro sync response code is: " + responseCode)
 				if(httpResponse.hasEntity()){
-					msoLogger.debug("Sniro sync response is: " + httpResponse.readEntity(String.class))
+					logger.debug("Sniro sync response is: " + httpResponse.readEntity(String.class))
 				}
 
 				if(responseCode != 202){
 					exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from Sniro.")
 				}
 
-				msoLogger.trace("Completed Sniro Homing Call Sniro")
+				logger.trace("Completed Sniro Homing Call Sniro")
 			}
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			msoLogger.debug("Error encountered within Homing CallSniro method: " + e)
+			logger.debug("Error encountered within Homing CallSniro method: " + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in Homing CallSniro: " + e.getMessage())
 		}
 	}
@@ -170,10 +172,10 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 	 * @author cb645j
 	 */
 	public void processHomingSolution(DelegateExecution execution){
-		msoLogger.trace("Started Sniro Homing Process Homing Solution")
+		logger.trace("Started Sniro Homing Process Homing Solution")
 		try{
 			String response = execution.getVariable("asyncCallbackResponse")
-			msoLogger.debug("Sniro Async Callback Response is: " + response)
+			logger.debug("Sniro Async Callback Response is: " + response)
 
 			sniroUtils.validateCallbackResponse(execution, response)
 
@@ -233,11 +235,11 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 			}
 			execution.setVariable("serviceDecomposition", decomposition)
 
-			msoLogger.trace("Completed Sniro Homing Process Homing Solution")
+			logger.trace("Completed Sniro Homing Process Homing Solution")
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			msoLogger.debug("Error encountered within Homing ProcessHomingSolution method: " + e)
+			logger.debug("Error encountered within Homing ProcessHomingSolution method: " + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in Sniro Homing Process Solution")
 		}
 	}
@@ -255,9 +257,9 @@ class SniroHomingV1 extends AbstractServiceTaskProcessor{
 			requestId = execution.getVariable("msoRequestId")
 		}
 		execution.setVariable("DHVCS_requestId", requestId)
-		msoLogger.trace("STARTED Homing Subflow for request: "  + requestId + " ")
-		msoLogger.debug("****** Homing Subflow Global Debug Enabled: " + execution.getVariable("isDebugLogEnabled")  + " *****")
-		msoLogger.trace("STARTED Homing Subflow for request: "  + requestId + " ")
+		logger.trace("STARTED Homing Subflow for request: "  + requestId + " ")
+		logger.debug("****** Homing Subflow Global Debug Enabled: " + execution.getVariable("isDebugLogEnabled")  + " *****")
+		logger.trace("STARTED Homing Subflow for request: "  + requestId + " ")
 	}
 
 

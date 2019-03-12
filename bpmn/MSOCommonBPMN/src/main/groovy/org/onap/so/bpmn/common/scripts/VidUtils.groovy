@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,20 +28,20 @@ import groovy.json.JsonSlurper
 import org.json.JSONObject
 import org.json.XML
 import org.onap.so.bpmn.core.xml.XmlTool
-import org.onap.so.logger.MsoLogger
-import org.onap.so.logger.MessageEnum
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 class VidUtils {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VidUtils.class);
-	
+    private static final Logger logger = LoggerFactory.getLogger( VidUtils.class);
+
 	public MsoUtils utils = new MsoUtils()
 	private AbstractServiceTaskProcessor taskProcessor
 
 	public VidUtils(AbstractServiceTaskProcessor taskProcessor) {
 		this.taskProcessor = taskProcessor
 	}
-	
+
 	/**
 	 * Create a volume-request XML using a JSON string
 	 * @param jsonReq - JSON request from VID
@@ -259,7 +261,7 @@ class VidUtils {
 			 	<source>VID</source> 
 			 	<service-instance-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
 			 </request-info> 
-			 <network-inputs> 
+			 <network-inputs>
 			 	<network-id>${MsoUtils.xmlEscape(networkId)}</network-id> 
 			 	<network-name>${MsoUtils.xmlEscape(instanceName)}</network-name> 
 			 	<network-type>${MsoUtils.xmlEscape(modelName)}</network-type>
@@ -269,25 +271,25 @@ class VidUtils {
 			 	<service-id>${MsoUtils.xmlEscape(serviceId)}</service-id> 
 			 	<backout-on-failure>${MsoUtils.xmlEscape(backoutOnFailure)}</backout-on-failure>
                 <sdncVersion>${MsoUtils.xmlEscape(sdncVersion)}</sdncVersion>
-			 </network-inputs> 
+			 </network-inputs>
 			 <network-params>
 				${userParamsNode}
-			 </network-params> 
+			 </network-params>
 			</network-request>
 			"""
 			// return a pretty-print of the volume-request xml without the preamble
 			return groovy.xml.XmlUtil.serialize(xmlReq.normalize().replaceAll("\t", "").replaceAll("\n", "")).replaceAll("(<\\?[^<]*\\?>\\s*[\\r\\n]*)?", "")
-			
+
 		} catch(Exception e) {
-			msoLogger.debug("Error in Vid Utils",e.getCause())
+			logger.debug("{} {}", "Error in Vid Utils", e.getCause())
 			e.printStackTrace();
 			throw e
 		}
 	}
-	
+
 	/**
-	 * Create a network-request XML using a map, 
- 	 * @param execution 
+	 * Create a network-request XML using a map,
+ 	 * @param execution
 	 * @return
 	 */
 	public String createXmlNetworkRequestInstance(execution) {
