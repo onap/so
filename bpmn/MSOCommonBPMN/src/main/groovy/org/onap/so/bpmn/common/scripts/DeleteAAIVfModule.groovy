@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,9 +29,11 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DeleteAAIVfModule.class);
+    private static final Logger logger = LoggerFactory.getLogger( DeleteAAIVfModule.class);
 
 	def Prefix="DAAIVfMod_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -55,20 +59,20 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("DAAIVfMod_deleteVfModuleResponse","")
 
 	}
-	
+
 	// parse the incoming DELETE_VF_MODULE request and store the Generic Vnf
 	// and Vf Module Ids in the flow DelegateExecution
 	public void preProcessRequest(DelegateExecution execution) {
 		def xml = execution.getVariable("DeleteAAIVfModuleRequest")
-		msoLogger.debug("DeleteAAIVfModule Request: " + xml)
-		msoLogger.debug("input request xml:" + xml)
+		logger.debug("DeleteAAIVfModule Request: " + xml)
+		logger.debug("input request xml:" + xml)
 		initProcessVariables(execution)
 		def vnfId = utils.getNodeText(xml,"vnf-id")
 		def vfModuleId = utils.getNodeText(xml,"vf-module-id")
 		execution.setVariable("DAAIVfMod_vnfId", vnfId)
 		execution.setVariable("DAAIVfMod_vfModuleId", vfModuleId)
 	}
-	
+
 	// send a GET request to AA&I to retrieve the Generic Vnf/Vf Module information based on a Vnf Id
 	// expect a 200 response with the information in the response body or a 404 if the Generic Vnf does not exist
 	public void queryAAIForGenericVnf(DelegateExecution execution) {
@@ -91,12 +95,12 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
             }
 
 		} catch (Exception ex) {
-			msoLogger.debug("Exception occurred while executing AAI GET:" + ex.getMessage())
+			logger.debug("Exception occurred while executing AAI GET:" + ex.getMessage())
 			execution.setVariable("DAAIVfMod_queryGenericVnfResponse", "AAI GET Failed:" + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during queryAAIForGenericVnf")
 		}
 	}
-	
+
 	// construct and send a DELETE request to A&AI to delete a Generic Vnf
 	// note: to get here, all the modules associated with the Generic Vnf must already be deleted
 	public void deleteGenericVnf(DelegateExecution execution) {
@@ -109,7 +113,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("DAAIVfMod_deleteGenericVnfResponse", "Vnf Deleted")
 		} catch (Exception ex) {
 			ex.printStackTrace()
-			msoLogger.debug("Exception occurred while executing AAI DELETE:" + ex.getMessage())
+			logger.debug("Exception occurred while executing AAI DELETE:" + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during deleteGenericVnf")
 		}
 	}
@@ -120,7 +124,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		try {
 			String vnfId = execution.getVariable("DAAIVfMod_vnfId")
 			String vfModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
-			
+
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId)
 
             getAAIClient().delete(uri)
@@ -128,19 +132,19 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("DAAIVfMod_deleteVfModuleResponse", "Vf Module Deleted")
 		} catch (Exception ex) {
 			ex.printStackTrace()
-			msoLogger.debug("Exception occurred while executing AAI PUT:" + ex.getMessage())
+			logger.debug("Exception occurred while executing AAI PUT:" + ex.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during deleteVfModule")
 		}
 	}
-	
+
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the Vf Module
 	// to be deleted exists for the specified Generic Vnf and if it is the Base Module,
 	// there are no Add-on Modules present
 	public void parseForVfModule(DelegateExecution execution) {
         GenericVnf genericVnf = execution.getVariable("DAAIVfMod_queryGenericVnfResponse")
-		
+
 		def delModuleId = execution.getVariable("DAAIVfMod_vfModuleId")
-		msoLogger.debug("Vf Module to be deleted: " + delModuleId)
+		logger.debug("Vf Module to be deleted: " + delModuleId)
 
         execution.setVariable("DAAIVfMod_genVnfRsrcVer", genericVnf.getResourceVersion())
 
@@ -179,30 +183,32 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
                         }
                     }
                 }
-                msoLogger.debug(execution.getVariable("DAAIVfMod_parseModuleResponse"))
+                logger.debug(execution.getVariable("DAAIVfMod_parseModuleResponse"))
             }
         }
         if (execution.getVariable("DAAIVfMod_moduleExists") == false) { // (execution.getVariable("DAAIVfMod_moduleExists") == false)
-            msoLogger.debug("Vf Module Id " + delModuleId + " does not exist for Generic Vnf Id " + execution.getVariable("DAAIVfMod_vnfId"))
+            logger.debug("Vf Module Id " + delModuleId + " does not exist for Generic Vnf Id " + execution.getVariable("DAAIVfMod_vnfId"))
             execution.setVariable("DAAIVfMod_parseModuleResponse",
                     "Vf Module Id " + delModuleId + " does not exist for Generic Vnf Id " +
                             execution.getVariable("DAAIVfMod_vnfName"))
         }
 	}
-	
+
 	// parses the output from the result from queryAAIForGenericVnf() to determine if the Vf Module
 	// to be deleted exists for the specified Generic Vnf and if it is the Base Module,
 	// there are no Add-on Modules present
 	public void parseForResourceVersion(DelegateExecution execution) {
         GenericVnf genericVnf =  execution.getVariable("DAAIVfMod_queryGenericVnfResponse")
 		execution.setVariable("DAAIVfMod_genVnfRsrcVer", genericVnf.getResourceVersion())
-		msoLogger.debug("Latest Generic VNF Resource Version: " + genericVnf.getResourceVersion())
+		logger.debug("Latest Generic VNF Resource Version: " + genericVnf.getResourceVersion())
 	}
-	
-	
+
+
 	// generates a WorkflowException if the A&AI query returns a response code other than 200
 	public void handleAAIQueryFailure(DelegateExecution execution) {
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Error occurred attempting to query AAI, Response Code " + execution.getVariable("DAAIVfMod_queryGenericVnfResponseCode") + ", Error Response " + execution.getVariable("DAAIVfMod_queryGenericVnfResponse"), "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Error occurred attempting to query AAI, Response Code " + execution.getVariable("DAAIVfMod_queryGenericVnfResponseCode") + ", Error Response " + execution.getVariable("DAAIVfMod_queryGenericVnfResponse"),
+				"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 		def errorCode = 5000
 		// set the errorCode to distinguish between a A&AI failure
 		// and the Generic Vnf Id not found
@@ -211,7 +217,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		}
 		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, execution.getVariable("DAAIVfMod_queryGenericVnfResponse"))
 	}
-	
+
 	// generates a WorkflowException if
 	//		- the A&AI Vf Module DELETE returns a response code other than 200
 	// 		- the Vf Module is a Base Module that is not the last Vf Module
@@ -221,24 +227,24 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 		def errorResponse = ""
 		if (execution.getVariable("DAAIVfMod_deleteVfModuleResponseCode") != null &&
 			execution.getVariable("DAAIVfMod_deleteVfModuleResponseCode") != 200) {
-			msoLogger.debug("AAI failure deleting a Vf Module: " + execution.getVariable("DAAIVfMod_deleteVfModuleResponse"))
+			logger.debug("AAI failure deleting a Vf Module: " + execution.getVariable("DAAIVfMod_deleteVfModuleResponse"))
 			errorResponse = execution.getVariable("DAAIVfMod_deleteVfModuleResponse")
-			msoLogger.debug("DeleteAAIVfModule - deleteVfModuleResponse" + errorResponse)
+			logger.debug("DeleteAAIVfModule - deleteVfModuleResponse" + errorResponse)
 			errorCode = 5000
 		} else {
 			if (execution.getVariable("DAAIVfMod_isBaseModule", true) == true &&
 					execution.getVariable("DAAIVfMod_isLastModule") == false) {
 				// attempt to delete a Base Module that is not the last Vf Module
-				msoLogger.debug(execution.getVariable("DAAIVfMod_parseModuleResponse"))
+				logger.debug(execution.getVariable("DAAIVfMod_parseModuleResponse"))
 				errorResponse = execution.getVariable("DAAIVfMod_parseModuleResponse")
-				msoLogger.debug("DeleteAAIVfModule - parseModuleResponse" + errorResponse)
+				logger.debug("DeleteAAIVfModule - parseModuleResponse" + errorResponse)
 				errorCode = 1002
 			} else {
 				// attempt to delete a non-existant Vf Module
 				if (execution.getVariable("DAAIVfMod_moduleExists") == false) {
-					msoLogger.debug(execution.getVariable("DAAIVfMod_parseModuleResponse"))
+					logger.debug(execution.getVariable("DAAIVfMod_parseModuleResponse"))
 					errorResponse = execution.getVariable("DAAIVfMod_parseModuleResponse")
-					msoLogger.debug("DeleteAAIVfModule - parseModuleResponse" + errorResponse)
+					logger.debug("DeleteAAIVfModule - parseModuleResponse" + errorResponse)
 					errorCode = 1002
 				} else {
 					// if the responses get populated corerctly, we should never get here
@@ -247,7 +253,9 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			}
 		}
 
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Error occurred during DeleteAAIVfModule flow", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, errorResponse);
+		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Error occurred during DeleteAAIVfModule flow", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), errorResponse);
 		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, errorResponse)
 
 	}
@@ -255,7 +263,10 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	// generates a WorkflowException if
 	//		- the A&AI Generic Vnf DELETE returns a response code other than 200
 	public void handleDeleteGenericVnfFailure(DelegateExecution execution) {
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "AAI error occurred deleting the Generic Vnf", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"));
+		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"AAI error occurred deleting the Generic Vnf", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(),
+				execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"));
 		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"))
 	}
 }

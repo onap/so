@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,20 +30,22 @@ import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 public class FalloutHandler extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, FalloutHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger( FalloutHandler.class);
 
 	String Prefix="FH_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
-	
+
 	public initializeProcessVariables(DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.initializeProcessVariables(' +'execution=' + execution.getId() +')'
-		msoLogger.trace('Entered ' + method)
-	
+		logger.trace('Entered ' + method)
+
 		try {
 			execution.setVariable("prefix",Prefix)
-	
+
 			//These variables are form the input Message to the BPMN
 			execution.setVariable("FH_request_id","")
 			execution.setVariable("FH_request_action","")
@@ -83,42 +87,44 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 	
 			//Auth variables
 			execution.setVariable("BasicAuthHeaderValue","")
-	
+
 			//Parameter list
 			execution.setVariable("FH_parameterList",  "")
-	
+
 			//Response variables
 			execution.setVariable("FalloutHandlerResponse","")
 			execution.setVariable("FH_ErrorResponse", null)
 			execution.setVariable("FH_ResponseCode", "")
-	
+
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
-	
+
 	public void preProcessRequest (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +'execution=' + execution.getId() +')'
-		msoLogger.trace('Entered ' + method)
-	
+		logger.trace('Entered ' + method)
+
 		// Initialize flow variables
 		initializeProcessVariables(execution)
 		setSuccessIndicator(execution, false)
-	
+
 		setBasicDBAuthHeader(execution, execution.getVariable('isDebugLogEnabled'))
-		
+
 		try {
 			def xml = execution.getVariable("FalloutHandlerRequest")
-			msoLogger.debug(" XML --> " + xml)
-			msoLogger.debug("FalloutHandler request: " + xml)
-	
+			logger.debug(" XML --> " + xml)
+			logger.debug("FalloutHandler request: " + xml)
+
 			//Check the incoming request type
 			//Incoming request can be ACTIVE_REQUESTS (request-information node) or  INFRA_ACTIVE_REQUESTS (request-info node)
 			if (utils.nodeExists(xml, "request-information")) {
 				execution.setVariable("FH_request_id-Ok", true) // Incoming request is for ACTIVE_REQUESTS
 			}
-	
+
 			//Check notification-url for the incoming request type
 			//ACTIVE_REQUESTS may have notificationurl node
 			//INFRA_ACTIVE_REQUESTS notificationurl node does not exist
@@ -126,7 +132,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			if (utils.nodeExists(xml, "notification-url")) {
 				notificationurl = utils.getNodeText(xml,"notification-url")
 				if(notificationurl != null && !notificationurl.isEmpty()) {
-					msoLogger.debug("********** Incoming notification Url is: " + notificationurl);
+					logger.debug("********** Incoming notification Url is: " + notificationurl);
 					execution.setVariable("FH_notification-url-Ok", true)
 					execution.setVariable("FH_notification-url",notificationurl)
 				}
@@ -139,8 +145,8 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			if (utils.nodeExists(xml, "request-id")) {
 				execution.setVariable("FH_request_id",utils.getNodeText(xml,"request-id"))
 			}
-			msoLogger.debug("FH_request_id: " + execution.getVariable("FH_request_id"))
-	
+			logger.debug("FH_request_id: " + execution.getVariable("FH_request_id"))
+
 			// INFRA_ACTIVE_REQUESTS	 have "action" element ... mandatory
 			// ACTIVE_REQUEST have "request-action" ... mandatory
 			if (utils.nodeExists(xml, "request-action")) {
@@ -148,8 +154,8 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			} else if (utils.nodeExists(xml, "action")) {
 				execution.setVariable("FH_request_action",utils.getNodeText(xml,"action"))
 			}
-	
-	
+
+
 			//Check source for the incoming request type
 			//For INFRA_ACTIVE_REQUESTS payload source IS optional
 			//For ACTIVE_REQUESTS payload source is NOT optional
@@ -157,7 +163,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			if (utils.nodeExists(xml, "source")) {
 				execution.setVariable("FH_source",utils.getNodeText(xml,"source"))
 			}
-	
+
 			//Check if ErrorCode node exists. If yes, initialize it from request xml, if no, it will stay with defaulf value already set in initializeProcessVariables() method above.
 			def errorCode = ""
 			if (utils.nodeExists(xml, "ErrorCode")) {
@@ -166,8 +172,8 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 					execution.setVariable("FH_ErrorCode", errorCode)
 				}
 			}
-			msoLogger.debug("FH_ErrorCode: " + errorCode)
-	
+			logger.debug("FH_ErrorCode: " + errorCode)
+
 			//Check if ErrorMessage node exists. If yes, initialize it from request xml, if no, it will stay with defaulf value already set in initializeProcessVariables() method above.
 			def errorMessage = ""
 			if (utils.nodeExists(xml, "ErrorMessage")) {
@@ -177,25 +183,25 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 					execution.setVariable("FH_ErrorMessage", errorCode)
 				}
 			}
-	
+
 			//Check for Parameter List
 			if (utils.nodeExists(xml, "parameter-list")) {
 				def parameterList = utils.getNodeXml(xml, "parameter-list", false)
 				execution.setVariable("FH_parameterList", parameterList)
 			}
-	
-			msoLogger.trace("--> " + execution.getVariable(""))
-			msoLogger.debug("FH_request_id-OK --> " + execution.getVariable("FH_request_id-Ok"))
-	
+
+			logger.trace("--> " + execution.getVariable(""))
+			logger.debug("FH_request_id-OK --> " + execution.getVariable("FH_request_id-Ok"))
+
 			// set the DHV/Service Instantiation values if specified in the request
 			execution.setVariable("FH_is_srv_inst_req", String.valueOf("true".equals(utils.getNodeText(xml, "is-srv-inst-req"))))
-			msoLogger.trace("--> " + execution.getVariable(""))
+			logger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("FH_is_json_content", String.valueOf("JSON".equals(utils.getNodeText(xml, "resp-content-type"))))
-			msoLogger.trace("--> " + execution.getVariable(""))
+			logger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("FH_service_inst_id", utils.getNodeText(xml, "service-instance-id"))
-			msoLogger.trace("--> " + execution.getVariable(""))
+			logger.trace("--> " + execution.getVariable(""))
 			execution.setVariable("FH_start_time", utils.getNodeText(xml, "start-time"))
-			msoLogger.trace("--> " + execution.getVariable(""))
+			logger.trace("--> " + execution.getVariable(""))
 			// this variable is used by the camunda flow to set the Content-Type for the async response
 			if (execution.getVariable("FH_is_srv_inst_req").equals("true") &&
 				execution.getVariable("FH_is_json_content").equals("true")) {
@@ -204,17 +210,19 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				execution.setVariable("FH_content_type", "text/xml")
 			}
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
-	
-		msoLogger.debug("OUTOF --> Initialize Variables Fallout Handler #########");
+
+		logger.debug("OUTOF --> Initialize Variables Fallout Handler #########");
 	}
-	
+
 	public String updateRequestPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestPayload(' +'execution=' + execution.getId() +')'
-		msoLogger.trace('Entered ' + method)
-	
+		logger.trace('Entered ' + method)
+
 		try {
 			String payload = """
 					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://org.onap.so/requestsdb">
@@ -231,19 +239,21 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 					</soapenv:Body>
 					</soapenv:Envelope>
 				"""
-	
-			msoLogger.debug("updateRequestPayload: " + payload)
+
+			logger.debug("updateRequestPayload: " + payload)
 			execution.setVariable("FH_updateRequestPayload", payload)
 			return execution.getVariable("FH_updateRequestPayload")
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
-	
+
 	public String updateRequestInfraPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestInfraPayload(' +'execution=' + execution.getId() +')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 	
 		try {
 			String payload = """
@@ -262,18 +272,20 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 				"""
 	
 			execution.setVariable("FH_updateRequestInfraPayload", payload)
-			msoLogger.debug("updateRequestInfraPayload: " + payload)
+			logger.debug("updateRequestInfraPayload: " + payload)
 			return execution.getVariable("FH_updateRequestInfraPayload")
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
-	
+
 	public String updateRequestGammaPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateRequestGammaPayload(' +'execution=' + execution.getId() +')'
-		msoLogger.trace('Entered ' + method)
-	
+		logger.trace('Entered ' + method)
+
 		try {
 			String payload = """
 					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="${UrnPropertiesReader.getVariable("mso.default.adapter.namespace", execution)}/requestsdb">
@@ -289,20 +301,22 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 					</soapenv:Body>
 					</soapenv:Envelope>
 				"""
-	
+
 			execution.setVariable("FH_updateRequestGammaPayload", payload)
-			msoLogger.debug("updateRequestGammaPayload: " + payload)
+			logger.debug("updateRequestGammaPayload: " + payload)
 			return execution.getVariable("FH_updateRequestGammaPayload")
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
-	
+
 	public String updateResponseStatusPayload (DelegateExecution execution){
 		def method = getClass().getSimpleName() + '.updateResponseStatusPayload(' +'execution=' + execution.getId() +')'
-		msoLogger.trace('Entered ' + method)
-	
+		logger.trace('Entered ' + method)
+
 		try {
 			String payload = """
 					<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:req="http://org.onap.so/requestsdb">
@@ -316,22 +330,24 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 					</soapenv:Body>
 					</soapenv:Envelope>
 				"""
-	
+
 			execution.setVariable("FH_updateResponseStatusPayload", payload)
-			msoLogger.debug("updateResponseStatusPayload: " + payload)
+			logger.debug("updateResponseStatusPayload: " + payload)
 			return execution.getVariable("FH_updateResponseStatusPayload")
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
-	
+
 	public void buildDBWorkflowException(DelegateExecution execution, String responseCodeVariable) {
 		def method = getClass().getSimpleName() + '.buildDBWorkflowException(' +
 			'execution=' + execution.getId() +
 			', responseCodeVariable=' + responseCodeVariable + ')'
-		msoLogger.trace('Entered ' + method)
-	
+		logger.trace('Entered ' + method)
+
 		try {
 			def responseCode = execution.getVariable(responseCodeVariable)
 			// If the HTTP response code was null, it means a connection fault occurred (a java exception)
@@ -339,40 +355,44 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			def errorCode = responseCode == null ? 7000 : 7020
 		//	exceptionUtil.buildWorkflowException(execution, errorCode, errorMessage)
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
-	
+
 	/**
 	 * Used to create a workflow response in success and failure cases.
 	 */
 	public void postProcessResponse (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.postProcessResponse(' +'execution=' + execution.getId() +')'
-		msoLogger.trace('Entered ' + method)
-	
+		logger.trace('Entered ' + method)
+
 		try {
 			Boolean success = (Boolean) execution.getVariable("FH_success")
 			String out = success ? "Fallout Handler Succeeded" : "Fallout Handler Failed";
-	
+
 			String falloutHandlerResponse = """
 					<workflow:FalloutHandlerResponse xmlns:workflow="http://org.onap/so/workflow/schema/v1">
 					   <workflow:out>${MsoUtils.xmlEscape(out)}</workflow:out>
 					</workflow:FalloutHandlerResponse>
 				"""
-	
+
 			falloutHandlerResponse = utils.formatXml(falloutHandlerResponse)
-			msoLogger.debug("FalloutHandler Response: " + falloutHandlerResponse);
-	
+			logger.debug("FalloutHandler Response: " + falloutHandlerResponse);
+
 			execution.setVariable("FalloutHandlerResponse", falloutHandlerResponse)
 			execution.setVariable("WorkflowResponse", falloutHandlerResponse)
 			execution.setVariable("FH_ResponseCode", success ? "200" : "500")
 			setSuccessIndicator(execution, success)
-	
-			msoLogger.debug("FalloutHandlerResponse =\n" + falloutHandlerResponse)
+
+			logger.debug("FalloutHandlerResponse =\n" + falloutHandlerResponse)
 		} catch (Exception e) {
 			// Do NOT throw WorkflowException!
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		}
 	}
 }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,11 +27,13 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
 class VnfAdapterUtils {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger( VnfAdapterUtils.class);
 
 
 	private AbstractServiceTaskProcessor taskProcessor
@@ -47,7 +51,7 @@ class VnfAdapterUtils {
 			', responseCodeVar=' + responseCodeVar +
 			', errorResponseVar=' + errorResponseVar +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def prefix = execution.getVariable('prefix')
@@ -62,27 +66,29 @@ class VnfAdapterUtils {
 			if (response.contains("WorkflowException")) {
 				execution.setVariable(prefix + "ErrorResponse", response)
 				//execution.setVariable(prefix + "ResponseCode", responseCode)
-				msoLogger.debug(" Sub Vnf flow Error WorkflowException Response - " + "\n" + response)
+				logger.debug(" Sub Vnf flow Error WorkflowException Response - " + "\n" + response)
 				throw new BpmnError("MSOWorkflowException")
 			} else if (errorResponse != null && errorResponse instanceof WorkflowException) {
 				// Not sure the variables with the associated prefix are still used
 				execution.setVariable(prefix + "ErrorResponse", errorResponse.getErrorMessage())
 				execution.setVariable(prefix + "ResponseCode", errorResponse.getErrorCode())
-				msoLogger.debug("Sub Vnf flow Error WorkflowException " + prefix + "ErrorResponse" + " - " + errorResponse.getErrorMessage())
+				logger.debug("Sub Vnf flow Error WorkflowException " + prefix + "ErrorResponse" + " - " + errorResponse.getErrorMessage())
 				// this is the important part to ensure we hit the Fallout Handler
 				throw new BpmnError("MSOWorkflowException")
 			} else if (errorResponse != null && errorResponse instanceof WorkflowException) {
 				// Not sure the variables with the associated prefix are still used
 				execution.setVariable(prefix + "ErrorResponse", errorResponse.getErrorMessage())
 				execution.setVariable(prefix + "ResponseCode", errorResponse.getErrorCode())
-				msoLogger.debug("Sub Vnf flow Error WorkflowException " + prefix + "ErrorResponse" + " - " + errorResponse.getErrorMessage())
+				logger.debug("Sub Vnf flow Error WorkflowException " + prefix + "ErrorResponse" + " - " + errorResponse.getErrorMessage())
 				// this is the important part to ensure we hit the Fallout Handler
 				throw new BpmnError("MSOWorkflowException")
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, 'Internal Error- Unable to validate VNF Response ' + e.getMessage())
 		}
 	}

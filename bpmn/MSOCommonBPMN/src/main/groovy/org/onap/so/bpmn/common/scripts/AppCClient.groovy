@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +29,8 @@ import org.onap.appc.client.lcm.model.Action
 import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This groovy class supports the <class>AppCClient.bpmn</class> process.
@@ -49,22 +53,22 @@ import org.onap.so.logger.MsoLogger
  */
 
 public class AppCClient extends AbstractServiceTaskProcessor{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AppCClient.class);
+    private static final Logger logger = LoggerFactory.getLogger( AppCClient.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtils = new JsonUtils()
 	def prefix = "UPDVnfI_"
-	
+
     public void preProcessRequest(DelegateExecution execution){
 
 	}
-	
+
 	public void runAppcCommand(DelegateExecution execution) {
-		msoLogger.trace("Start runCommand ")
+		logger.trace("Start runCommand ")
 		def method = getClass().getSimpleName() + '.runAppcCommand(' +
 		'execution=' + execution.getId() +
 		')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("rollbackVnfStop", false)
 		execution.setVariable("rollbackVnfLock", false)
 		execution.setVariable("rollbackQuiesceTraffic", false)
@@ -83,7 +87,7 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 			String vserverIdList = execution.getVariable("vserverIdList")
 			String identityUrl = execution.getVariable("identityUrl")
 			String controllerType = execution.getVariable("controllerType")			
-			String vfModuleId = execution.getVariable("vfModuleId")		
+			String vfModuleId = execution.getVariable("vfModuleId")
 			HashMap<String, String> payloadInfo = new HashMap<String, String>();
 			payloadInfo.put("vnfName", vnfName)
 			payloadInfo.put("aicIdentity", aicIdentity)
@@ -93,8 +97,8 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 			payloadInfo.put("identityUrl", identityUrl)
 			payloadInfo.put("vfModuleId",vfModuleId)
 			Optional<String> payload
-			msoLogger.debug("Running APP-C action: " + action.toString())
-			msoLogger.debug("VNFID: " + vnfId)
+			logger.debug("Running APP-C action: " + action.toString())
+			logger.debug("VNFID: " + vnfId)
 			execution.setVariable('msoRequestId', msoRequestId)
 			execution.setVariable("failedActivity", "APP-C")
 			execution.setVariable('workStep', action.toString())
@@ -108,17 +112,19 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 				execution.setVariable('healthCheckIndex', healthCheckIndex + 1)
 			}
 			ApplicationControllerAction client = new ApplicationControllerAction()
-			msoLogger.debug("Created Application Controller Action Object")
+			logger.debug("Created Application Controller Action Object")
 			//PayloadInfo contains extra information that adds on to payload before making request to appc
 			client.runAppCCommand(action, msoRequestId, vnfId, payload, payloadInfo, controllerType)
-			msoLogger.debug("ran through the main method for Application Contoller")
+			logger.debug("ran through the main method for Application Contoller")
 			appcCode = client.getErrorCode()
 			appcMessage = client.getErrorMessage()
 		}
 		catch (BpmnError e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			appcMessage = e.getMessage()
-		} 
+		}
 		execution.setVariable("errorCode", appcCode)
 		if (appcCode == '0' && action != null) {
 			if (action.equals(Action.Lock)) {
@@ -142,8 +148,8 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 		}
 		execution.setVariable("errorText", appcMessage)
 		execution.setVariable("responsePayload", responsePayload)
-		msoLogger.debug("Error Message: " + appcMessage)
-		msoLogger.debug("ERROR CODE: " + execution.getVariable("errorCode"))
-		msoLogger.trace("End of runCommand ")
+		logger.debug("Error Message: " + appcMessage)
+		logger.debug("ERROR CODE: " + execution.getVariable("errorCode"))
+		logger.trace("End of runCommand ")
 	}    
 }

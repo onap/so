@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,16 +32,18 @@ import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VfModuleBase.class);
+    private static final Logger logger = LoggerFactory.getLogger( VfModuleBase.class);
 
-	
+
 	protected XmlParser xmlParser = new XmlParser()
-	
+
 	/**
 	 * Get the XmlParser.
-	 * 
+	 *
 	 * @return the XmlParser.
 	 */
 	protected XmlParser getXmlParser() {
@@ -105,11 +109,13 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (Exception e) {
-			msoLogger.warn(MessageEnum.BPMN_GENERAL_WARNING, 'Exception transforming network params to vnfNetworks', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 'Exception is: \n' + e);
+			logger.warn("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
+					'Exception transforming network params to vnfNetworks', "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception is: \n' + e);
 		}
 		return vnfNetworks
 	}
-	
+
 	/**
 	 * Transform the parameter specifications from the incoming '*-params' root element to
 	 * a corresponding list of 'entry's (typically used when invoking the VNF Rest Adpater).
@@ -142,7 +148,9 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				entries = entries + entry
 			}
 		} catch (Exception e) {
-			msoLogger.warn(MessageEnum.BPMN_GENERAL_WARNING, 'Exception transforming params to entries', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 'Exception transforming params to entries', e);
+			logger.warn("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
+					'Exception transforming params to entries', "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception transforming params to entries' + e);
 		}
 		return entries
 	}
@@ -181,7 +189,9 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (Exception e) {
-			msoLogger.warn(MessageEnum.BPMN_GENERAL_WARNING, 'Exception transforming params to entries', "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, 'Exception transforming params to entries', e);
+			logger.warn("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
+					'Exception transforming params to entries', "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception transforming params to entries' + e);
 		}
 		return entries
 	}
@@ -877,15 +887,15 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				<key>vf_module_name</key>
 				<value>${MsoUtils.xmlEscape(vfModuleName)}</value>
 			</entry>"""
-	
-		msoLogger.debug("vnfInfo: " + vnfInfo)
+
+		logger.debug("vnfInfo: " + vnfInfo)
 		InputSource source = new InputSource(new StringReader(data));
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		docFactory.setNamespaceAware(true)
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
 		Document responseXml = docBuilder.parse(source)
-	
-	
+
+
 		// Availability Zones Data
 		String aZones = ""
 		StringBuilder sbAZone = new StringBuilder()
@@ -1235,9 +1245,9 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 		${interfaceRoutePrefixes}
 		${vnfParams}
 		${sdncResponseParams}"""
-			
+
 		return vfModuleParams
-			
+
 	}
-	
+
 }

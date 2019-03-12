@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,12 +31,14 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
 
 class ReceiveWorkflowMessage extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ReceiveWorkflowMessage.class);
+    private static final Logger logger = LoggerFactory.getLogger( ReceiveWorkflowMessage.class);
 
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -48,7 +52,7 @@ public void preProcessRequest (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		def prefix="RCVWFMSG_"
 		execution.setVariable("prefix", prefix)
@@ -58,42 +62,46 @@ public void preProcessRequest (DelegateExecution execution) {
 
 			// Confirm that timeout value has been provided in 'RCVWFMSG_timeout'.
 			def timeout = execution.getVariable('RCVWFMSG_timeout')
-			msoLogger.debug('Timeout value is \'' + timeout + '\'')
+			logger.debug('Timeout value is \'' + timeout + '\'')
 			if ((timeout == null) || (timeout.isEmpty())) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_timeout\''
-				msoLogger.debug(msg)
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.debug(msg)
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
 			// Confirm that message type has been provided in 'RCVWFMSG_messageType'
 			def messageType = execution.getVariable('RCVWFMSG_messageType')
-			msoLogger.debug('Message type is \'' + messageType + '\'')
+			logger.debug('Message type is \'' + messageType + '\'')
 			if ((messageType == null) || (messageType.isEmpty())) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_messageType\''
-				msoLogger.debug(msg)
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.debug(msg)
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
 			// Confirm that correlator value has been provided in 'RCVWFMSG_correlator'
 			def correlator = execution.getVariable('RCVWFMSG_correlator')
-			msoLogger.debug('Correlator value is \'' + correlator + '\'')
+			logger.debug('Correlator value is \'' + correlator + '\'')
 			if ((correlator == null) || (correlator.isEmpty())) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_correlator\''
-				msoLogger.debug(msg)
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.debug(msg)
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 			execution.setVariable(messageType + '_CORRELATOR', correlator)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			msoLogger.debug(msg)
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+			logger.debug(msg)
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -107,7 +115,7 @@ public void preProcessRequest (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.processReceivedMessage(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		String messageType = null;
 		String receivedMessage = null;
@@ -115,18 +123,18 @@ public void preProcessRequest (DelegateExecution execution) {
 		try {
 			messageType = execution.getVariable('RCVWFMSG_messageType')
 			receivedMessage = execution.getVariable(messageType + '_MESSAGE')
-			msoLogger.debug(getProcessKey(execution) + ": received message:\n" + receivedMessage)
+			logger.debug(getProcessKey(execution) + ": received message:\n" + receivedMessage)
 
 			// The received message is made available to the calling flow in WorkflowResponse
 			execution.setVariable("WorkflowResponse", receivedMessage)
 
 			setSuccessIndicator(execution, true)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (Exception e) {
 			receivedMessage = receivedMessage == null || String.valueOf(receivedMessage).isEmpty() ? "NONE" : receivedMessage
 			String msg = "Error processing received workflow message: " + receivedMessage
-			msoLogger.debug(getProcessKey(execution) + ': ' + msg)
+			logger.debug(getProcessKey(execution) + ': ' + msg)
 			exceptionUtil.buildWorkflowException(execution, 7020, msg)
 		}
 	}
