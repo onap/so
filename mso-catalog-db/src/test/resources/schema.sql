@@ -437,6 +437,8 @@ create table `vnf_resource_customization` (
   `vnf_resource_model_uuid` varchar(200) not null,
   `multi_stage_design` varchar(20) default null,
   `resource_input` varchar(20000) default null,
+  `cds_blueprint_name` varchar(200) default null,
+  `cds_blueprint_version` varchar(20) default null,
   primary key (`model_customization_uuid`),
   key `fk_vnf_resource_customization__vnf_resource1_idx` (`vnf_resource_model_uuid`),
   constraint `fk_vnf_resource_customization__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade
@@ -946,3 +948,41 @@ CREATE TABLE IF NOT EXISTS vnf_vfmodule_cvnfc_configuration_customization (
         REFERENCES `vnf_resource_customization` (`MODEL_CUSTOMIZATION_UUID`)
         ON DELETE CASCADE ON UPDATE CASCADE
 )  ENGINE=INNODB AUTO_INCREMENT=20654 DEFAULT CHARACTER SET=LATIN1;
+
+CREATE TABLE IF NOT EXISTS `pnf_resource` (
+  `ORCHESTRATION_MODE` varchar(20) NOT NULL DEFAULT 'HEAT',
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) DEFAULT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `MODEL_NAME` varchar(200) DEFAULT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) DEFAULT NULL,
+  `RESOURCE_CATEGORY` varchar(200) DEFAULT NULL,
+  `RESOURCE_SUB_CATEGORY` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`MODEL_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `pnf_resource_customization` (
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `NF_TYPE` varchar(200) DEFAULT NULL,
+  `NF_ROLE` varchar(200) DEFAULT NULL,
+  `NF_FUNCTION` varchar(200) DEFAULT NULL,
+  `NF_NAMING_CODE` varchar(200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `PNF_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
+  `MULTI_STAGE_DESIGN` varchar(20) DEFAULT NULL,
+  `RESOURCE_INPUT` varchar(2000) DEFAULT NULL,
+  `CDS_BLUEPRINT_NAME` varchar(200) DEFAULT NULL,
+  `CDS_BLUEPRINT_VERSION` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
+  KEY `fk_pnf_resource_customization__pnf_resource1_idx` (`PNF_RESOURCE_MODEL_UUID`),
+  CONSTRAINT `fk_pnf_resource_customization__pnf_resource1` FOREIGN KEY (`PNF_RESOURCE_MODEL_UUID`) REFERENCES `pnf_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `pnf_resource_customization_to_service` (
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
