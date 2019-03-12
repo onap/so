@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,13 +29,15 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import static org.apache.commons.lang3.StringUtils.*
 
 
 // SDNC Adapter Request/Response processing
 public class SDNCAdapter extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCAdapter.class);
+    private static final Logger logger = LoggerFactory.getLogger( SDNCAdapter.class);
 
 
 	def Prefix="SDNCA_"
@@ -46,8 +50,8 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 	public void preProcessRequest (DelegateExecution execution) {
 		try{
 
-			msoLogger.trace("Begin PreProcess SDNCAdapterRequestScript  ")
-			msoLogger.debug("Incoming sdncAdapterWorkflowRequest:\n" + execution.getVariable("sdncAdapterWorkflowRequest"))
+			logger.trace("Begin PreProcess SDNCAdapterRequestScript  ")
+			logger.debug("Incoming sdncAdapterWorkflowRequest:\n" + execution.getVariable("sdncAdapterWorkflowRequest"))
 
 			// Initialize some variables used throughout the flow
 			execution.setVariable("prefix", Prefix)
@@ -69,7 +73,9 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 				def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 				execution.setVariable("BasicAuthHeaderValue",encodedString)
 			} catch (IOException ex) {
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Unable to encode username password string", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+						"Unable to encode username password string", "BPMN", MsoLogger.getServiceName(),
+						MsoLogger.ErrorCode.UnknownError.getValue());
 			}
 
 			// TODO Use variables instead of passing xml request - Huh?
@@ -87,27 +93,27 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			if((useQualifiedHostName!=null) && (useQualifiedHostName.equals("true"))){
 				callbackUrlToUse = msoUtil.getQualifiedHostNameForCallback(callbackUrlToUse)
 			}
-			msoLogger.debug("Callback URL to use:\n" + callbackUrlToUse)
+			logger.debug("Callback URL to use:\n" + callbackUrlToUse)
 			requestHeader = requestHeader.replace(origCallbackUrl, callbackUrlToUse)
 
 			// Get parameters from request header
 			def sdnca_svcInstanceId = utils.getNodeText(requestHeader, "SvcInstanceId") // optional
-			msoLogger.debug("SvcInstanceId: " + sdnca_svcInstanceId)
+			logger.debug("SvcInstanceId: " + sdnca_svcInstanceId)
 			def sdnca_msoAction = utils.getNodeText(requestHeader, "MsoAction") // optional
-			msoLogger.debug("MsoAction: " + sdnca_msoAction)
+			logger.debug("MsoAction: " + sdnca_msoAction)
 			def sdnca_svcAction = utils.getNodeText(requestHeader, "SvcAction")
-			msoLogger.debug("SvcAction: " + sdnca_svcAction)
+			logger.debug("SvcAction: " + sdnca_svcAction)
 			def sdnca_svcOperation = utils.getNodeText(requestHeader, "SvcOperation")
-			msoLogger.debug("SvcOperation: " + sdnca_svcOperation)
+			logger.debug("SvcOperation: " + sdnca_svcOperation)
 			def sdncRequestData = utils.getChildNodes(sdncwfreq, "SDNCRequestData")
 			sdncRequestData = sdncRequestData.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
 			sdncRequestData = sdncRequestData.replaceAll('tag0:', '').replaceAll(':tag0', '')
-			msoLogger.debug("SDNCRequestData:\n" + sdncRequestData)
+			logger.debug("SDNCRequestData:\n" + sdncRequestData)
 			def sdnca_serviceType = ""
 			if (utils.nodeExists(sdncwfreq, "service-type")) {
 				sdnca_serviceType = utils.getNodeText(sdncwfreq, "service-type")
 			}
-			msoLogger.debug("service-type: " + sdnca_serviceType)
+			logger.debug("service-type: " + sdnca_serviceType)
 			def serviceConfigActivate = false
 			def source = ''
 			if ((sdnca_svcAction == 'activate') && (sdnca_svcOperation == 'service-configuration-operation') && (sdnca_serviceType == 'uCPE-VMS')) {
@@ -117,9 +123,9 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 				}
 			}
 			execution.setVariable("serviceConfigActivate", serviceConfigActivate)
-			msoLogger.debug("serviceConfigActivate: " + serviceConfigActivate)
+			logger.debug("serviceConfigActivate: " + serviceConfigActivate)
 			execution.setVariable("source", source)
-			msoLogger.debug("source: " + source)
+			logger.debug("source: " + source)
 
 			//calling process should pass a generated uuid if sending multiple sdnc requests
 			def sdncRequestId = utils.getNodeText(requestHeader, "RequestId")
@@ -155,22 +161,22 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 				${sdncRequestData}
 			</sdncadaptersc:RequestData></aetgt:SDNCAdapterRequest></SOAP-ENV:Body></SOAP-ENV:Envelope>"""
 
-			msoLogger.debug("Outgoing SDNCAdapterRequest:\n" + sdncAdapterRequest)
+			logger.debug("Outgoing SDNCAdapterRequest:\n" + sdncAdapterRequest)
 			execution.setVariable("sdncAdapterRequest", sdncAdapterRequest)
 
-			msoLogger.debug(UrnPropertiesReader.getVariable("mso.adapters.sdnc.endpoint", execution))
+			logger.debug(UrnPropertiesReader.getVariable("mso.adapters.sdnc.endpoint", execution))
 		}catch(Exception e){
-			msoLogger.debug('Internal Error occured during PreProcess Method: ', e)
+			logger.debug('Internal Error occured during PreProcess Method: ', e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, 'Internal Error occured during PreProcess Method') // TODO: what message and error code?
 		}
-		msoLogger.trace("End pre Process SDNCRequestScript ")
+		logger.trace("End pre Process SDNCRequestScript ")
 	}
 
 	public void postProcessResponse (DelegateExecution execution) {
 
 		try{
-			msoLogger.trace("Begin POSTProcess SDNCAdapter ")
-			msoLogger.trace("Incoming sdncAdapterCallbackRequest:\n" + execution.getVariable("sdncAdapterCallbackRequest"))
+			logger.trace("Begin POSTProcess SDNCAdapter ")
+			logger.trace("Incoming sdncAdapterCallbackRequest:\n" + execution.getVariable("sdncAdapterCallbackRequest"))
 
 			// Check the sdnccallback request and get the responsecode
 			def sdnccallbackreq = execution.getVariable("sdncAdapterCallbackRequest")
@@ -185,7 +191,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 
 				callbackRequestData = callbackRequestData.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n", "")
 
-				msoLogger.trace("EnhancedCallbackRequestData:\n" + callbackRequestData)
+				logger.trace("EnhancedCallbackRequestData:\n" + callbackRequestData)
 				execution.setVariable("enhancedCallbackRequestData", callbackRequestData)
 
 				String sdncAdapterWorkflowResponse ="""
@@ -210,25 +216,25 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 					}
 				}
 				execution.setVariable("continueListening", continueListening)
-				msoLogger.debug("Continue Listening: " + continueListening)
+				logger.debug("Continue Listening: " + continueListening)
 				execution.setVariable("asynchronousResponseTimeout", false)
 			}else{
 				// Timed out waiting for asynchronous message, build error response
 				exceptionUtil.buildWorkflowException(execution, 500, "SDNC Callback Timeout Error")
 				execution.setVariable("asynchronousResponseTimeout", true)
-				msoLogger.debug("Timed out waiting for asynchronous message")
+				logger.debug("Timed out waiting for asynchronous message")
 			}
 		}catch(Exception e){
-			msoLogger.debug('Internal Error occured during PostProcess Method: ' + e)
+			logger.debug('Internal Error occured during PostProcess Method: ' + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, 'Internal Error occured during PostProcess Method') // TODO: what message and error code?
 		}
-		msoLogger.trace("End POSTProcess SDNCAdapter ")
+		logger.trace("End POSTProcess SDNCAdapter ")
 	}
 
 	public void callbackResponsecheck(DelegateExecution execution){
 
 		def sdnccallbackreq=execution.getVariable("sdncAdapterCallbackRequest")
-		msoLogger.debug("sdncAdapterCallbackRequest :" + sdnccallbackreq)
+		logger.debug("sdncAdapterCallbackRequest :" + sdnccallbackreq)
 		if (sdnccallbackreq==null){
 			execution.setVariable("callbackResponseReceived",false);
 		}else{
@@ -238,14 +244,14 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 
 	public void resetCallbackRequest(DelegateExecution execution) {
 
-		msoLogger.trace("Begin Reset Callback Info SDNCAdapter ")
+		logger.trace("Begin Reset Callback Info SDNCAdapter ")
 
 		// Clear sdncAdapterCallbackRequest variable
 		execution.removeVariable("sdncAdapterCallbackRequest")
 
 		// Determine and set SDNC Timeout Value
 		def enhancedCallbackRequestData = execution.getVariable("enhancedCallbackRequestData")
-		msoLogger.debug("sdncAdapter - enhancedCallbackRequestData :" + enhancedCallbackRequestData)
+		logger.debug("sdncAdapter - enhancedCallbackRequestData :" + enhancedCallbackRequestData)
 		def interim = false
 		if (enhancedCallbackRequestData != null) {
 			if (utils.nodeExists(enhancedCallbackRequestData, "ack-final-indicator")) {
@@ -264,15 +270,15 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			timeoutValue = "PT" + utils.getNodeText(sdncAdapterWorkflowRequest, "SDNCTimeOutValueInMinutes") + "M"
 		}
 		execution.setVariable("sdncTimeoutValue", timeoutValue)
-		msoLogger.debug("Setting SDNC Timeout Value to " + timeoutValue)
+		logger.debug("Setting SDNC Timeout Value to " + timeoutValue)
 
-		msoLogger.trace("End Reset Callback Info SDNCAdapter ")
+		logger.trace("End Reset Callback Info SDNCAdapter ")
 	}
 
 
 	public void prepareDBMessage(DelegateExecution execution) {
 
-		msoLogger.trace("Begin Prepare DB Message SDNCAdapter ")
+		logger.trace("Begin Prepare DB Message SDNCAdapter ")
 
 		// Create DB Message
 		def dbRequestId = execution.getVariable("mso-request-id")
@@ -289,9 +295,9 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			"""
 
 		execution.setVariable("dbUpdateInterimStageCompletion", dbUpdateInterimStageCompletion)
-		msoLogger.debug("sdncAdapter - dbUpdateInterimStageCompletion :" + dbUpdateInterimStageCompletion)
-		msoLogger.debug("DB UpdateInterimStageCompletion:\n" + dbUpdateInterimStageCompletion)
-		msoLogger.trace("End Prepare DB Message SDNCAdapter ")
+		logger.debug("sdncAdapter - dbUpdateInterimStageCompletion :" + dbUpdateInterimStageCompletion)
+		logger.debug("DB UpdateInterimStageCompletion:\n" + dbUpdateInterimStageCompletion)
+		logger.trace("End Prepare DB Message SDNCAdapter ")
 	}
 
 	public String generateCurrentTimeInUtc(){
@@ -303,11 +309,11 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 
 	public void toggleSuccessIndicator(DelegateExecution execution){
 		execution.setVariable("SDNCA_SuccessIndicator", true)
-		msoLogger.debug("Setting SDNCA Success Indicator to True")
+		logger.debug("Setting SDNCA Success Indicator to True")
 	}
 
 	public void assignError(DelegateExecution execution){
-		msoLogger.trace("Started Assign Error ")
+		logger.trace("Started Assign Error ")
 		WorkflowException wf = execution.getVariable("WorkflowException")
 		if(wf == null){
 			exceptionUtil.buildWorkflowException(execution, 5000, "SDNCAdapter Encountered an Internal Error") // TODO: Not sure what message and error code we want here.....
@@ -315,17 +321,17 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			execution.setVariable("WorkflowException", wf)
 		}
 
-		msoLogger.debug("Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
-		msoLogger.trace("End Assign Error ")
+		logger.debug("Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
+		logger.trace("End Assign Error ")
 	}
 
 	public void setTimeout(DelegateExecution execution){
-		msoLogger.trace("Started SetTimeout ")
-		msoLogger.debug("Timer expired, telling correlation service to stop listening")
+		logger.trace("Started SetTimeout ")
+		logger.debug("Timer expired, telling correlation service to stop listening")
 		execution.setVariable("asynchronousResponseTimeout", true)
 
-		msoLogger.debug("Timed out branch sleeping for one second to give success branch a chance to complete if running")
+		logger.debug("Timed out branch sleeping for one second to give success branch a chance to complete if running")
 		Thread.sleep(1000)
-		msoLogger.trace("End SetTimeout ")
+		logger.trace("End SetTimeout ")
 	}
 }
