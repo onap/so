@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import groovy.json.JsonException
+import groovy.json.JsonSlurper
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.GenericVnf
@@ -40,14 +43,15 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
-import static org.apache.cxf.common.util.CollectionUtils.isEmpty
-
-import groovy.json.JsonSlurper
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import javax.ws.rs.core.UriBuilder
 
+import static org.apache.cxf.common.util.CollectionUtils.isEmpty
+
 class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
-    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateVfModuleVolumeInfraV1.class)
+    private static final Logger logger = LoggerFactory.getLogger(UpdateVfModuleVolumeInfraV1.class)
     private ExceptionUtil exceptionUtil = new ExceptionUtil()
 
     /**
@@ -108,11 +112,11 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
             def modelInvariantId = reqMap.requestDetails.modelInfo.modelInvariantUuid ?: ''
             execution.setVariable('UPDVfModVol_modelInvariantId', modelInvariantId)
 
-            msoLogger.debug("modelInvariantId from request: " + modelInvariantId)
-            msoLogger.debug("XML request:\n" + request)
+            logger.debug("modelInvariantId from request: {}", modelInvariantId)
+            logger.debug("XML request:\n{}", request)
         }
         catch (JsonException je) {
-            msoLogger.debug(" Request is in XML format.")
+            logger.debug(" Request is in XML format.")
             // assume request is in XML format - proceed as usual to process XML request
         }
 
@@ -186,7 +190,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
             syncResponse = utils.formatXml(xmlSyncResponse)
         }
 
-        msoLogger.debug('Sync response: ' + syncResponse)
+        logger.debug('Sync response: {}', syncResponse)
         execution.setVariable('UPDVfModVol_syncResponseSent', true)
         sendWorkflowResponse(execution, 200, syncResponse)
     }
@@ -213,7 +217,8 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
                     if (!isEmpty(tenantURIList)) {
                         String volumeGroupTenantId = tenantURIList.get(0).getURIKeys().get("tenant-id")
                         execution.setVariable('UPDVfModVol_volumeGroupTenantId', volumeGroupTenantId)
-                        msoLogger.debug("Received Tenant Id " + volumeGroupTenantId + " from AAI for Volume Group with Volume Group Id " + volumeGroupId + ", AIC Cloud Region " + aicCloudRegion)
+                        logger.debug("Received Tenant Id {} from AAI for Volume Group with Volume Group Id {}, AIC Cloud Region ",
+                                volumeGroupTenantId, volumeGroupId, aicCloudRegion)
                     } else {
                         exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Could not find Tenant Id element in Volume Group with Volume Group Id " + volumeGroupId
                                 + ", AIC Cloud Region " + aicCloudRegion)
@@ -363,7 +368,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 		"""
         vnfAdapterRestRequest = utils.formatXml(vnfAdapterRestRequest)
         execution.setVariable('UPDVfModVol_vnfAdapterRestRequest', vnfAdapterRestRequest)
-        msoLogger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
+        logger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
     }
 
     /**
@@ -392,7 +397,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 
         updateInfraRequest = utils.formatXml(updateInfraRequest)
         execution.setVariable('UPDVfModVol_updateInfraRequest', updateInfraRequest)
-        msoLogger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
+        logger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
     }
 
     /**
@@ -414,7 +419,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 		"""
 
         content = utils.formatXml(content)
-        msoLogger.debug('Request for Completion Handler:\n' + content)
+        logger.debug('Request for Completion Handler:\n' + content)
         execution.setVariable('UPDVfModVol_CompletionHandlerRequest', content)
     }
 
@@ -454,7 +459,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 			</sdncadapterworkflow:FalloutHandlerRequest>
 		"""
         content = utils.formatXml(content)
-        msoLogger.debug('Request for Fallout Handler:\n' + content)
+        logger.debug('Request for Fallout Handler:\n' + content)
         execution.setVariable('UPDVfModVol_FalloutHandlerRequest', content)
     }
 
@@ -474,7 +479,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
                 " retrieved from AAI for Volume Group Id " + volumeGroupId + ", AIC Cloud Region " + aicCloudRegion
 
         ExceptionUtil exceptionUtil = new ExceptionUtil()
-        msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Error in UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception")
+        logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
         exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
     }
 
@@ -492,7 +497,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
                 " retrieved from AAI for Volume Group Id "
 
         ExceptionUtil exceptionUtil = new ExceptionUtil()
-        msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Error in UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception")
+        logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
         exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
     }
 

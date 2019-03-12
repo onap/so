@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +40,8 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils;
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -73,7 +77,7 @@ import groovy.json.*
  * Rollback - Deferred
  */
 public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCustomDeleteE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCustomDeleteE2EServiceInstance.class);
 
 
 	String Prefix="DDELSI_"
@@ -81,7 +85,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	JsonUtils jsonUtil = new JsonUtils()
 
 	public void preProcessRequest (DelegateExecution execution) {
-		msoLogger.trace("preProcessRequest ")
+		logger.trace("preProcessRequest ")
 		String msg = ""
 
 		try {
@@ -107,18 +111,18 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)){
 				msg = "Input serviceInstanceId is null"
-				msoLogger.info(msg)
+				logger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 			String sdncCallbackUrl = UrnPropertiesReader.getVariable('mso.workflow.sdncadapter.callback',execution)
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "URN_mso_workflow_sdncadapter_callback is null"
-				msoLogger.info(msg)
+				logger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			msoLogger.info("SDNC Callback URL: " + sdncCallbackUrl)
+			logger.info("SDNC Callback URL: " + sdncCallbackUrl)
 
 			StringBuilder sbParams = new StringBuilder()
 			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
@@ -148,10 +152,10 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest ")
+		logger.trace("Exit preProcessRequest ")
 	}
 
 
@@ -162,7 +166,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	}
 
 	public void preProcessSDNCDelete (DelegateExecution execution) {
-		msoLogger.trace("preProcessSDNCDelete ")
+		logger.trace("preProcessSDNCDelete ")
 		String msg = ""
 
 		try {
@@ -261,52 +265,52 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
 			execution.setVariable("sdncDelete", sdncDelete)
 			execution.setVariable("sdncDeactivate", sdncDeactivate)
-			msoLogger.info("sdncDeactivate:\n" + sdncDeactivate)
-			msoLogger.info("sdncDelete:\n" + sdncDelete)
+			logger.info("sdncDeactivate:\n" + sdncDeactivate)
+			logger.info("sdncDelete:\n" + sdncDelete)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception Occured in preProcessSDNCDelete.\n" + ex.getMessage())
 		}
-		msoLogger.info(" *****Exit preProcessSDNCDelete *****")
+		logger.info(" *****Exit preProcessSDNCDelete *****")
 	}
 
 	public void postProcessSDNCDelete(DelegateExecution execution, String response, String method) {
 
-		msoLogger.trace("postProcessSDNC " + method + " ")
+		logger.trace("postProcessSDNC " + method + " ")
 		String msg = ""
 
 		/*try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			msoLogger.info("SDNCResponse: " + response)
-			msoLogger.info("workflowException: " + workflowException)
+			logger.info("SDNCResponse: " + response)
+			logger.info("workflowException: " + workflowException)
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == "true"){
-				msoLogger.info("Good response from SDNC Adapter for service-instance " + method + "response:\n" + response)
+				logger.info("Good response from SDNC Adapter for service-instance " + method + "response:\n" + response)
 
 			}else{
 				msg = "Bad Response from SDNC Adapter for service-instance " + method
-				msoLogger.info(msg)
+				logger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 3500, msg)
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessSDNC " + method + " Exception:" + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}*/
-		msoLogger.trace("Exit postProcessSDNC " + method + " ")
+		logger.trace("Exit postProcessSDNC " + method + " ")
 	}
 
 	public void postProcessAAIGET(DelegateExecution execution) {
-		msoLogger.trace("postProcessAAIGET ")
+		logger.trace("postProcessAAIGET ")
 		String msg = ""
 
 		try {
@@ -315,22 +319,22 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			String serviceType = ""
 
 			if(foundInAAI){
-				msoLogger.info("Found Service-instance in AAI")
+				logger.info("Found Service-instance in AAI")
 
 				String siData = execution.getVariable("GENGS_service")
-				msoLogger.info("SI Data")
+				logger.info("SI Data")
 				if (isBlank(siData))
 				{
 					msg = "Could not retrive ServiceInstance data from AAI to delete id:" + serviceInstanceId
-					msoLogger.info(msg)
+					logger.info(msg)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 				}
 				else
 				{
-					msoLogger.info("SI Data" + siData)
+					logger.info("SI Data" + siData)
 					//Confirm there are no related service instances (vnf/network or volume)
 					if (utils.nodeExists(siData, "relationship-list")) {
-						msoLogger.info("SI Data relationship-list exists:")
+						logger.info("SI Data relationship-list exists:")
 						InputSource source = new InputSource(new StringReader(siData));
 						DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 						DocumentBuilder docBuilder = docFactory.newDocumentBuilder()
@@ -346,7 +350,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 								def e = eElement.getElementsByTagName("related-to").item(0).getTextContent()    								//for ns
 								if(e.equals("service-instance")){
 								    def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
-									msoLogger.info("ServiceInstance Related NS :" + relatedObject)
+									logger.info("ServiceInstance Related NS :" + relatedObject)
                                     NodeList dataList = node.getChildNodes()
                                     if(null != dataList) {
                                         JSONObject jObj = new JSONObject()
@@ -369,13 +373,13 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
                                                     }
                                             }
                                         }
-                                        msoLogger.info("Relationship related to Resource:" + jObj.toString())
+                                        logger.info("Relationship related to Resource:" + jObj.toString())
                                         jArray.put(jObj)
                                     }
 						        //for overlay/underlay
 								}else if (e.equals("configuration")){
                                     def relatedObject = eElement.getElementsByTagName("related-link").item(0).getTextContent()
-                                    msoLogger.info("ServiceInstance Related Configuration :" + relatedObject)
+                                    logger.info("ServiceInstance Related Configuration :" + relatedObject)
 									NodeList dataList = node.getChildNodes()
 									if(null != dataList) {
 										JSONObject jObj = new JSONObject()
@@ -398,7 +402,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 	                                                }
 											}
 										}
-										msoLogger.info("Relationship related to Resource:" + jObj.toString())
+										logger.info("Relationship related to Resource:" + jObj.toString())
                                         jArray.put(jObj)
 									}
 								}
@@ -410,37 +414,37 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			}else{
 				boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
 				if(!succInAAI){
-					msoLogger.info("Error getting Service-instance from AAI", + serviceInstanceId)
+					logger.info("Error getting Service-instance from AAI", + serviceInstanceId)
 					WorkflowException workflowException = execution.getVariable("WorkflowException")
-					msoLogger.debug("workflowException: " + workflowException)
+					logger.debug("workflowException: " + workflowException)
 					if(workflowException != null){
 						exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
 					}
 					else
 					{
 						msg = "Failure in postProcessAAIGET GENGS_SuccessIndicator:" + succInAAI
-						msoLogger.info(msg)
+						logger.info(msg)
 						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 					}
 				}
 
-				msoLogger.info("Service-instance NOT found in AAI. Silent Success")
+				logger.info("Service-instance NOT found in AAI. Silent Success")
 			}
 		}catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessAAIGET. " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessAAIGET ")
+		logger.trace("Exit postProcessAAIGET ")
 	}
 
 	/**
 	 * Deletes the service instance in aai
 	 */
 	public void deleteServiceInstance(DelegateExecution execution) {
-		msoLogger.trace("Entered deleteServiceInstance")
+		logger.trace("Entered deleteServiceInstance")
 		try {
 			String globalCustId = execution.getVariable("globalSubscriberId")
 			String serviceType = execution.getVariable("serviceType")
@@ -450,15 +454,15 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 			AAIResourceUri serviceInstanceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, globalCustId, serviceType, serviceInstanceId)
 			resourceClient.delete(serviceInstanceUri)
 
-			msoLogger.trace("Exited deleteServiceInstance")
+			logger.trace("Exited deleteServiceInstance")
 		}catch(Exception e){
-			msoLogger.debug("Error occured within deleteServiceInstance method: " + e)
+			logger.debug("Error occured within deleteServiceInstance method: " + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Error occured during deleteServiceInstance from aai")
 		}
 	}
 
    public void preInitResourcesOperStatus(DelegateExecution execution){
-        msoLogger.trace("STARTED preInitResourcesOperStatus Process ")
+        logger.trace("STARTED preInitResourcesOperStatus Process ")
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
             String operationId = execution.getVariable("operationId")
@@ -468,7 +472,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
             String progress = "0"
             String reason = ""
             String operationContent = "Prepare service creation"
-            msoLogger.info("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
+            logger.info("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
@@ -523,14 +527,16 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 
             payload = utils.formatXml(payload)
             execution.setVariable("CVFMI_initResOperStatusRequest", payload)
-            msoLogger.info("Outgoing initResourceOperationStatus: \n" + payload)
-            msoLogger.debug("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
+            logger.info("Outgoing initResourceOperationStatus: \n" + payload)
+            logger.debug("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
 
         }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preInitResourcesOperStatus.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preInitResourcesOperStatus.", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
-        msoLogger.trace("COMPLETED preInitResourcesOperStatus Process ")
+        logger.trace("COMPLETED preInitResourcesOperStatus Process ")
     }
 
    /**
@@ -556,7 +562,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
             "resourceType":"underlay"
         }
     ]*/
-       msoLogger.trace("STARTED preResourceDelete Process ")
+       logger.trace("STARTED preResourceDelete Process ")
        String serviceRelationShip = execution.getVariable("serviceRelationShip")
        def jsonSlurper = new JsonSlurper()
        def jsonOutput = new JsonOutput()
@@ -570,15 +576,15 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
 				   execution.setVariable("resourceTemplateId", resourceTemplateUUID)
 				   execution.setVariable("resourceInstanceId", resourceInstanceUUID)
 				   execution.setVariable("resourceType", resourceName)
-			       msoLogger.info("Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: " + resourceInstanceUUID + " resourceType: " + resourceName)
+			       logger.info("Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: " + resourceInstanceUUID + " resourceType: " + resourceName)
 			   }
            }
        }
-       msoLogger.trace("END preResourceDelete Process ")
+       logger.trace("END preResourceDelete Process ")
    }
 
    public void sequenceResource(execution){
-       msoLogger.trace("STARTED sequenceResource Process ")
+       logger.trace("STARTED sequenceResource Process ")
        List<String> nsResources = new ArrayList<String>()
        List<String> wanResources = new ArrayList<String>()
        List<String> resourceSequence = new  ArrayList<String>()
@@ -605,13 +611,13 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
        execution.setVariable("isContainsWanResource", isContainsWanResource)
        execution.setVariable("currentResourceIndex", 0)
        execution.setVariable("resourceSequence", resourceSequence)
-       msoLogger.info("resourceSequence: " + resourceSequence)
+       logger.info("resourceSequence: " + resourceSequence)
        execution.setVariable("wanResources", wanResources)
-       msoLogger.trace("END sequenceResource Process ")
+       logger.trace("END sequenceResource Process ")
    }
 
    public void getCurrentResource(execution){
-       msoLogger.trace("Start getCurrentResoure Process ")
+       logger.trace("Start getCurrentResoure Process ")
        def currentIndex = execution.getVariable("currentResourceIndex")
        List<String> resourceSequence = execution.getVariable("resourceSequence")
        List<String> wanResources = execution.getVariable("wanResources")
@@ -622,11 +628,11 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
        }else{
            execution.setVariable("controllerInfo", "VF-C")
        }
-       msoLogger.trace("COMPLETED getCurrentResoure Process ")
+       logger.trace("COMPLETED getCurrentResoure Process ")
    }
 
    public void parseNextResource(execution){
-       msoLogger.trace("Start parseNextResource Process ")
+       logger.trace("Start parseNextResource Process ")
        def currentIndex = execution.getVariable("currentResourceIndex")
        def nextIndex =  currentIndex + 1
        execution.setVariable("currentResourceIndex", nextIndex)
@@ -636,7 +642,7 @@ public class DoCustomDeleteE2EServiceInstance extends AbstractServiceTaskProcess
        }else{
            execution.setVariable("allResourceFinished", "false")
        }
-       msoLogger.trace("COMPLETED parseNextResource Process ")
+       logger.trace("COMPLETED parseNextResource Process ")
    }
 
 }

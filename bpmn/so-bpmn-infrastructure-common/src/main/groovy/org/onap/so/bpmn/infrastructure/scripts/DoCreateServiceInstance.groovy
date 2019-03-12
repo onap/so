@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +46,8 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This groovy class supports the <class>DoCreateServiceInstance.bpmn</class> process.
@@ -74,7 +77,7 @@ import org.onap.so.logger.MsoLogger
  */
 public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateServiceInstance.class);
 	String Prefix="DCRESI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -83,7 +86,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 	public void preProcessRequest (DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		msoLogger.trace("preProcessRequest")
+		logger.trace("preProcessRequest")
 
 		try {
 			String requestId = execution.getVariable("msoRequestId")
@@ -108,13 +111,13 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 			if (isBlank(subscriptionServiceType)) {
 				msg = "Input subscriptionServiceType is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
@@ -125,11 +128,11 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String sdncCallbackUrl = UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "mso.workflow.sdncadapter.callback is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			msoLogger.debug("SDNC Callback URL: " + sdncCallbackUrl)
+			logger.debug("SDNC Callback URL: " + sdncCallbackUrl)
 
 			//requestDetails.modelInfo.for AAI PUT servieInstanceData & SDNC assignTopology
 			String modelInvariantUuid = ""
@@ -146,7 +149,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			if (serviceDecomp != null)
 			{
 				serviceType = serviceDecomp.getServiceType() ?: ""
-				msoLogger.debug("serviceType:" + serviceType)
+				logger.debug("serviceType:" + serviceType)
 				serviceRole = serviceDecomp.getServiceRole() ?: ""
 
 				ServiceInstance serviceInstance = serviceDecomp.getServiceInstance()
@@ -169,7 +172,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				else
 				{
 					msg = "Input serviceModelInfo is null"
-					msoLogger.debug(msg)
+					logger.debug(msg)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 				}
 			}
@@ -182,7 +185,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				String serviceModelInfo = execution.getVariable("serviceModelInfo")
 				if (isBlank(serviceModelInfo)) {
 					msg = "Input serviceModelInfo is null"
-					msoLogger.debug(msg)
+					logger.debug(msg)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 				}
 				modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid") ?: ""
@@ -204,7 +207,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 			//alacarte SIs are NOT sent to sdnc. exceptions are listed in config variable
 			String svcTypes = UrnPropertiesReader.getVariable("sdnc.si.svc.types",execution) ?: ""
-			msoLogger.debug("SDNC SI serviceTypes:" + svcTypes)
+			logger.debug("SDNC SI serviceTypes:" + svcTypes)
 			List<String> svcList = Arrays.asList(svcTypes.split("\\s*,\\s*"));
 			boolean isSdncService= false
 			for (String listEntry : svcList){
@@ -225,15 +228,15 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 					if (isBlank(execution.getVariable("serviceInstanceName" )))
 					{
 						msg = "Input serviceInstanceName must be provided for alacarte"
-						msoLogger.debug(msg)
+						logger.debug(msg)
 						exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 					}
 				}
 			}
 
-			msoLogger.debug("isSdncService: " + isSdncService)
-			msoLogger.debug("Send To SDNC: " + execution.getVariable("sendToSDNC"))
-			msoLogger.debug("Service Type: " + execution.getVariable("serviceType"))
+			logger.debug("isSdncService: " + isSdncService)
+			logger.debug("Send To SDNC: " + execution.getVariable("sendToSDNC"))
+			logger.debug("Service Type: " + execution.getVariable("serviceType"))
 
 			//macro may provide name and alacarte-portm may provide name
 			execution.setVariable("checkAAI", false)
@@ -244,7 +247,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 
 			if (isBlank(serviceInstanceId)){
 				msg = "Input serviceInstanceId is null"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
@@ -277,10 +280,10 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest")
+		logger.trace("Exit preProcessRequest")
 	}
 
 	public void getAAICustomerById (DelegateExecution execution) {
@@ -288,7 +291,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		try {
 
 			String globalCustomerId = execution.getVariable("globalSubscriberId") //VID to AAI name map
-			msoLogger.debug(" ***** getAAICustomerById ***** globalCustomerId:" + globalCustomerId)
+			logger.debug(" ***** getAAICustomerById ***** globalCustomerId:" + globalCustomerId)
 
 			AAIUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CUSTOMER, globalCustomerId)
 			if(!getAAIClient().exists(uri)){
@@ -299,13 +302,13 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception in getAAICustomerById. " + ex.getMessage())
 		}
-		msoLogger.trace("Exit getAAICustomerById")
+		logger.trace("Exit getAAICustomerById")
 
 	}
 
 	public void putServiceInstance(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("putServiceInstance")
+		logger.trace("putServiceInstance")
 		String msg = ""
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		try {
@@ -326,17 +329,17 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			try{
 				 String json = catalogDbUtils.getServiceResourcesByServiceModelInvariantUuidString(execution,modelInvariantUuid )
 
-				 msoLogger.debug("JSON IS: "+json)
+				 logger.debug("JSON IS: "+json)
 
 				 environmentContext = jsonUtil.getJsonValue(json, "serviceResources.environmentContext") ?: ""
 				 workloadContext = jsonUtil.getJsonValue(json, "serviceResources.workloadContext") ?: ""
-				 msoLogger.debug("Env Context is: "+ environmentContext)
-				 msoLogger.debug("Workload Context is: "+ workloadContext)
+				 logger.debug("Env Context is: "+ environmentContext)
+				 logger.debug("Workload Context is: "+ workloadContext)
 			}catch(BpmnError e){
 				throw e
 			} catch (Exception ex){
 				msg = "Exception in preProcessRequest " + ex.getMessage()
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}
 
@@ -371,16 +374,16 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable("rollbackData", rollbackData)
 
 			msg = "Exception in DoCreateServiceInstance.putServiceInstance. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit putServiceInstance")
+		logger.trace("Exit putServiceInstance")
 	}
 
 	public void preProcessSDNCAssignRequest(DelegateExecution execution) {
 		def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
 		String msg = ""
-		msoLogger.trace("preProcessSDNCAssignRequest")
+		logger.trace("preProcessSDNCAssignRequest")
 
 		try {
 			def serviceInstanceId = execution.getVariable("serviceInstanceId")
@@ -448,10 +451,10 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				</sdncadapterworkflow:SDNCRequestData>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>"""
 
-			msoLogger.debug("sdncAssignRequest:\n" + sdncAssignRequest)
+			logger.debug("sdncAssignRequest:\n" + sdncAssignRequest)
 			sdncAssignRequest = utils.formatXml(sdncAssignRequest)
 			execution.setVariable("sdncAssignRequest", sdncAssignRequest)
-			msoLogger.debug("sdncAssignRequest:  " + sdncAssignRequest)
+			logger.debug("sdncAssignRequest:  " + sdncAssignRequest)
 
 			def sdncRequestId2 = UUID.randomUUID().toString()
 			String sdncDelete = sdncAssignRequest.replace(">assign<", ">delete<").replace(">CreateServiceInstance<", ">DeleteServiceInstance<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
@@ -463,36 +466,36 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				rollbackData.put("SERVICEINSTANCE", "sdncDelete", sdncDelete)
 				execution.setVariable("rollbackData", rollbackData)		
 
-				msoLogger.debug("rollbackData:\n" + rollbackData.toString())
+				logger.debug("rollbackData:\n" + rollbackData.toString())
 			}
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCAssignRequest. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessSDNCAssignRequest")
+		logger.trace("Exit preProcessSDNCAssignRequest")
 	}
 
 	public void postProcessSDNCAssign (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("postProcessSDNCAssign")
+		logger.trace("postProcessSDNCAssign")
 		try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
-			msoLogger.debug("workflowException: " + workflowException)
+			logger.debug("workflowException: " + workflowException)
 
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 
 			String response = execution.getVariable("sdncAdapterResponse")
-			msoLogger.debug("SDNCResponse: " + response)
+			logger.debug("SDNCResponse: " + response)
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
-				msoLogger.debug("Good response from SDNC Adapter for service-instance  topology assign: \n" + response)
+				logger.debug("Good response from SDNC Adapter for service-instance  topology assign: \n" + response)
 
 				def rollbackData = execution.getVariable("rollbackData")
 				if (rollbackData != null) {
@@ -501,7 +504,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				}
 
 			}else{
-				msoLogger.debug("Bad Response from SDNC Adapter for service-instance assign")
+				logger.debug("Bad Response from SDNC Adapter for service-instance assign")
 				throw new BpmnError("MSOWorkflowException")
 			}
 
@@ -509,31 +512,31 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessSDNCAssign. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessSDNCAssign")
+		logger.trace("Exit postProcessSDNCAssign")
 	}
 
 	public void postProcessAAIGET2(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("postProcessAAIGET2")
+		logger.trace("postProcessAAIGET2")
 		String msg = ""
 
 		try {
 			String serviceInstanceName = execution.getVariable("serviceInstanceName")
 			boolean succInAAI = execution.getVariable("GENGS_SuccessIndicator")
 			if(!succInAAI){
-				msoLogger.debug("Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName)
+				logger.debug("Error getting Service-instance from AAI in postProcessAAIGET2", + serviceInstanceName)
 				WorkflowException workflowException = execution.getVariable("WorkflowException")
-				msoLogger.debug("workflowException: " + workflowException)
+				logger.debug("workflowException: " + workflowException)
 				if(workflowException != null){
 					exceptionUtil.buildAndThrowWorkflowException(execution, workflowException.getErrorCode(), workflowException.getErrorMessage())
 				}
 				else
 				{
 					msg = "Failure in postProcessAAIGET2 GENGS_SuccessIndicator:" + succInAAI
-					msoLogger.debug(msg)
+					logger.debug(msg)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, msg)
 				}
 			}
@@ -544,7 +547,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 					String aaiService = execution.getVariable("GENGS_service")
 					if (!isBlank(aaiService) && (utils.nodeExists(aaiService, "service-instance-name"))) {
 						execution.setVariable("serviceInstanceName",  utils.getNodeText(aaiService, "service-instance-name"))
-						msoLogger.debug("Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"))
+						logger.debug("Found Service-instance in AAI.serviceInstanceName:" + execution.getVariable("serviceInstanceName"))
 					}
 				}
 			}
@@ -552,94 +555,94 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoCreateServiceInstance.postProcessAAIGET2 " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit postProcessAAIGET2")
+		logger.trace("Exit postProcessAAIGET2")
 	}
 
 	public void preProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("preProcessRollback")
+		logger.trace("preProcessRollback")
 		try {
 
 			Object workflowException = execution.getVariable("WorkflowException");
 
 			if (workflowException instanceof WorkflowException) {
-				msoLogger.debug("Prev workflowException: " + workflowException.getErrorMessage())
+				logger.debug("Prev workflowException: " + workflowException.getErrorMessage())
 				execution.setVariable("prevWorkflowException", workflowException);
 				//execution.setVariable("WorkflowException", null);
 			}
 		} catch (BpmnError e) {
-			msoLogger.debug("BPMN Error during preProcessRollback")
+			logger.debug("BPMN Error during preProcessRollback")
 		} catch(Exception ex) {
 			String msg = "Exception in preProcessRollback. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		}
-		msoLogger.trace("Exit preProcessRollback")
+		logger.trace("Exit preProcessRollback")
 	}
 
 	public void postProcessRollback (DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("postProcessRollback")
+		logger.trace("postProcessRollback")
 		String msg = ""
 		try {
 			Object workflowException = execution.getVariable("prevWorkflowException");
 			if (workflowException instanceof WorkflowException) {
-				msoLogger.debug("Setting prevException to WorkflowException: ")
+				logger.debug("Setting prevException to WorkflowException: ")
 				execution.setVariable("WorkflowException", workflowException);
 			}
 			execution.setVariable("rollbackData", null)
 		} catch (BpmnError b) {
-			msoLogger.debug("BPMN Error during postProcessRollback")
+			logger.debug("BPMN Error during postProcessRollback")
 			throw b;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessRollback. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 		}
-		msoLogger.trace("Exit postProcessRollback")
+		logger.trace("Exit postProcessRollback")
 	}
 
 	public void createProject(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("createProject")
+		logger.trace("createProject")
 
 		String bpmnRequest = execution.getVariable("requestJson")
 		String projectName = jsonUtil.getJsonValue(bpmnRequest, "requestDetails.project.projectName")
 		String serviceInstance = execution.getVariable("serviceInstanceId")
 
-		msoLogger.debug("BPMN REQUEST IS: "+ bpmnRequest)
-		msoLogger.debug("PROJECT NAME: " + projectName)
-		msoLogger.debug("Service Instance: " + serviceInstance)
+		logger.debug("BPMN REQUEST IS: "+ bpmnRequest)
+		logger.debug("PROJECT NAME: " + projectName)
+		logger.debug("Service Instance: " + serviceInstance)
 
 		if(projectName == null||projectName.equals("")){
-			msoLogger.debug("Project Name was not found in input. Skipping task...")
+			logger.debug("Project Name was not found in input. Skipping task...")
 		}else{
 			try{
 				AAICreateResources aaiCR = new AAICreateResources()
 				aaiCR.createAAIProject(projectName, serviceInstance)
 			}catch(Exception ex){
 				String msg = "Exception in createProject. " + ex.getMessage();
-				msoLogger.debug(msg)
-				msoLogger.error(ex);
+				logger.debug(msg)
+				logger.error(ex);
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}
 		}
-		msoLogger.trace("Exit createProject")
+		logger.trace("Exit createProject")
 	}
 
 	public void createOwningEntity(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
-		msoLogger.trace("createOwningEntity")
+		logger.trace("createOwningEntity")
 		String msg = "";
 		String bpmnRequest = execution.getVariable("requestJson")
 		String owningEntityId = jsonUtil.getJsonValue(bpmnRequest, "requestDetails.owningEntity.owningEntityId")
 		String owningEntityName = jsonUtil.getJsonValue(bpmnRequest,"requestDetails.owningEntity.owningEntityName");
 		String serviceInstance = execution.getVariable("serviceInstanceId")
 
-		msoLogger.debug("owningEntity: " + owningEntityId)
-		msoLogger.debug("OwningEntityName: "+ owningEntityName)
-		msoLogger.debug("Service Instance: " + serviceInstance)
+		logger.debug("owningEntity: " + owningEntityId)
+		logger.debug("OwningEntityName: "+ owningEntityName)
+		logger.debug("Service Instance: " + serviceInstance)
 
 		try{
 			AAICreateResources aaiCR = new AAICreateResources()
@@ -665,11 +668,11 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 		}catch(Exception ex){
-			msoLogger.debug(msg)
-			msoLogger.error(ex);
+			logger.debug(msg)
+			logger.error(ex);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit createOwningEntity")
+		logger.trace("Exit createOwningEntity")
 	}
 
 	// *******************************
@@ -680,18 +683,18 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 
 		try{
-			msoLogger.debug("Caught a Java Exception in DoCreateServiceInstance")
-			msoLogger.debug("Started processJavaException Method")
-			msoLogger.debug("Variables List: " + execution.getVariables())
+			logger.debug("Caught a Java Exception in DoCreateServiceInstance")
+			logger.debug("Started processJavaException Method")
+			logger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception in DoCreateServiceInstance")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception in DoCreateServiceInstance")
 
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
+			logger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable("UnexpectedError", "Exception in processJavaException")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Exception in processJavaException method")
 		}
-		msoLogger.trace("Completed processJavaException Method in DoCreateServiceInstance")
+		logger.trace("Completed processJavaException Method in DoCreateServiceInstance")
 	}
 
 }

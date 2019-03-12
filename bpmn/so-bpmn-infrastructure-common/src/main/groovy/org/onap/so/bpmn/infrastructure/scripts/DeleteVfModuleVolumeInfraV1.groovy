@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,6 +41,8 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils
 
 
@@ -50,7 +54,7 @@ import javax.ws.rs.NotFoundException
  * This groovy class supports the <class>DeleteVfModuleVolume.bpmn</class> process.
  */
 public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DeleteVfModuleVolumeInfraV1.class);
+    private static final Logger logger = LoggerFactory.getLogger( DeleteVfModuleVolumeInfraV1.class);
 
 	private XmlParser xmlParser = new XmlParser()
 	/**
@@ -107,7 +111,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		try {
 			def jsonSlurper = new JsonSlurper()
 			Map reqMap = jsonSlurper.parseText(createVolumeIncoming)
-			msoLogger.debug(" Request is in JSON format.")
+			logger.debug(" Request is in JSON format.")
 
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def volumeGroupId = execution.getVariable('volumeGroupId')
@@ -116,7 +120,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 			execution.setVariable("DELVfModVol_isVidRequest", true)
 		}
 		catch(groovy.json.JsonException je) {
-			msoLogger.debug(" Request is in XML format.")
+			logger.debug(" Request is in XML format.")
 			// assume request is in XML format - proceed as usual to process XML request
 		}
 
@@ -145,13 +149,13 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		setBasicDBAuthHeader(execution, isDebugLogEnabled)
 
-		msoLogger.debug('Request: ' + createVolumeIncoming)
+		logger.debug('Request: ' + createVolumeIncoming)
 	}
 
 	public void sendSyncResponse (DelegateExecution execution, isDebugEnabled) {
 
 		String volumeRequest = execution.getVariable("DELVfModVol_volumeRequest")
-		msoLogger.debug(" DELVfModVol_volumeRequest - " + "\n" + volumeRequest)
+		logger.debug(" DELVfModVol_volumeRequest - " + "\n" + volumeRequest)
 		// RESTResponse (for API Handler (APIH) Reply Task)
 		String deleteVolumeRequest =
 				"""<rest:RESTResponse xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd" statusCode="200">
@@ -214,12 +218,12 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 			execution.setVariable("DELVfModVol_isCloudRegionGood", true)
 
 		} else {
-			msoLogger.debug("AAI Query Cloud Region Unsuccessful.")
+			logger.debug("AAI Query Cloud Region Unsuccessful.")
 			execution.setVariable("DELVfModVol_isCloudRegionGood", false)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "AAI Query Cloud Region Unsuccessful. Return Code: " + execution.getVariable("DELVfModVol_queryCloudRegionReturnCode"))
 		}
 
-		msoLogger.debug(" is Cloud Region Good: " + execution.getVariable("DELVfModVol_isCloudRegionGood"))
+		logger.debug(" is Cloud Region Good: " + execution.getVariable("DELVfModVol_isCloudRegionGood"))
 	}
 
 	/**
@@ -248,20 +252,20 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
                 execution.setVariable('DELVfModVol_volumeGroupHeatStackId', heatStackId)
 
                 if ( volumeGroupWrapper.getRelationships().isPresent() && !volumeGroupWrapper.getRelationships().get().getRelatedAAIUris(AAIObjectType.VF_MODULE).isEmpty()) {
-                    msoLogger.debug('Volume Group ' + volumeGroupId + ' currently in use')
+                    logger.debug('Volume Group ' + volumeGroupId + ' currently in use')
                     exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} currently in use - found vf-module relationship.")
                 }
 
                 def volumeGroupTenantId = getTenantIdFromVolumeGroup(volumeGroupWrapper)
                 if (volumeGroupTenantId == null) {
-                    msoLogger.debug("Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
+                    logger.debug("Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
                     exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Could not find Tenant Id element in Volume Group with Volume Group Id ${volumeGroupId}")
                 }
 
                 execution.setVariable('DELVfModVol_volumeGroupTenantId', volumeGroupTenantId)
-                msoLogger.debug('Received Tenant Id ' + volumeGroupTenantId + ' from AAI for Volume Group with Volume Group Id ' + volumeGroupId)
+                logger.debug('Received Tenant Id ' + volumeGroupTenantId + ' from AAI for Volume Group with Volume Group Id ' + volumeGroupId)
             } else {
-                msoLogger.debug("Volume Group ${volumeGroupId} not found in AAI")
+                logger.debug("Volume Group ${volumeGroupId} not found in AAI")
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume Group ${volumeGroupId} not found in AAI. Response code: 404")
             }
         }catch (BpmnError e){
@@ -339,7 +343,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		"""
 		vnfAdapterRestRequest = utils.formatXml(vnfAdapterRestRequest)
 		execution.setVariable('DELVfModVol_deleteVnfARequest', vnfAdapterRestRequest)
-		msoLogger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
+		logger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
 	}
 
 
@@ -354,7 +358,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
         try {
             AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, Defaults.CLOUD_OWNER.toString(), cloudRegion, groupId)
             getAAIClient().delete(uri)
-            msoLogger.debug("Volume group $groupId deleted.")
+            logger.debug("Volume group $groupId deleted.")
         }catch(NotFoundException e){
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Volume group $groupId not found for delete in AAI Response code: 404")
         }catch(Exception e1){
@@ -401,7 +405,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		updateInfraRequest = utils.formatXml(updateInfraRequest)
 		execution.setVariable('DELVfModVol_updateInfraRequest', updateInfraRequest)
-		msoLogger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
+		logger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
 
 	}
 
@@ -424,13 +428,13 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 		execution.setVariable('DELVfModVol_CompleteMsoProcessRequest', xmlMsoCompletionRequest)
-		msoLogger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+		logger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
 	}
 
 
 
-	public void prepareFalloutHandler (DelegateExecution execution, isDebugEnabled) {
+	public void prepareFalloutHandler (DelegateExecution execution) {
 
 		execution.setVariable("DELVfModVol_Success", false)
 		String requestId = execution.getVariable("DELVfModVol_requestId")
@@ -457,11 +461,12 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		// Format Response
 		String xmlHandlerRequest = utils.formatXml(falloutHandlerRequest)
-		msoLogger.debug(xmlHandlerRequest)
+		logger.debug(xmlHandlerRequest)
 
 		execution.setVariable("DELVfModVol_FalloutHandlerRequest", xmlHandlerRequest)
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "  Overall Error Response going to FalloutHandler", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "\n" + xmlHandlerRequest);
-
+		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Overall Error Response going to FalloutHandler", "BPMN", MsoLogger.getServiceName(),
+				MsoLogger.ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
 	}
 
 
@@ -480,7 +485,9 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		def String errorMessage = 'TenantId ' + tenantId + ' in incoming request does not match Tenant Id ' + volumeGroupTenantId +
 			' retrieved from AAI for Volume Group Id ' + volumeGroupId
-		msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Error in DeleteVfModuleVolume: " + "\n" + errorMessage, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError);
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Error in DeleteVfModuleVolume: " + "\n" + errorMessage, "BPMN",
+				MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		exceptionUtil.buildWorkflowException(execution, 5000, errorMessage)

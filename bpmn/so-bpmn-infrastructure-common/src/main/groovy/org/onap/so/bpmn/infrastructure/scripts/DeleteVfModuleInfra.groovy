@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +32,8 @@ import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.JsonSlurper
 
@@ -37,7 +41,7 @@ import groovy.json.JsonSlurper
 
 public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DeleteVfModuleInfra.class);
+    private static final Logger logger = LoggerFactory.getLogger( DeleteVfModuleInfra.class);
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	/**
@@ -70,7 +74,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("isVidRequest", "false")
 		initProcessVariables(execution)
 
@@ -79,25 +83,25 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 		def incomingRequest = execution.getVariable('bpmnRequest')
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		
-		msoLogger.debug("Incoming Infra Request: " + incomingRequest)
+		logger.debug("Incoming Infra Request: " + incomingRequest)
 
 		// check if request is xml or json
 		try {
 			def jsonSlurper = new JsonSlurper()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
-			msoLogger.debug(" Request is in JSON format.")
+			logger.debug(" Request is in JSON format.")
 
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
-			msoLogger.debug("serviceInstanceId is: " + serviceInstanceId)
+			logger.debug("serviceInstanceId is: " + serviceInstanceId)
 			def vnfId = execution.getVariable('vnfId')
-			msoLogger.debug("vnfId is: " + vnfId)
+			logger.debug("vnfId is: " + vnfId)
 			def cloudConfiguration = jsonUtil.getJsonValue(incomingRequest, "requestDetails.cloudConfiguration")
 			execution.setVariable("cloudConfiguration", cloudConfiguration)
-			msoLogger.debug("CloudConfiguration is: " + cloudConfiguration)
+			logger.debug("CloudConfiguration is: " + cloudConfiguration)
 			def vfModuleModelInfo = jsonUtil.getJsonValue(incomingRequest, "requestDetails.modelInfo")
 
 			execution.setVariable("vfModuleModelInfo", vfModuleModelInfo)
-			msoLogger.debug("VfModuleModelInfo is: " + vfModuleModelInfo)
+			logger.debug("VfModuleModelInfo is: " + vfModuleModelInfo)
 			
 			// This is aLaCarte flow, so aLaCarte flag is always on
 			execution.setVariable('aLaCarte', true)
@@ -106,7 +110,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			String requestInXmlFormat = vidUtils.createXmlVfModuleRequest(execution, reqMap, 'DELETE_VF_MODULE', serviceInstanceId)
 
-			msoLogger.debug(" Request in XML format: " + requestInXmlFormat)
+			logger.debug(" Request in XML format: " + requestInXmlFormat)
 
 			setBasicDBAuthHeader(execution, isDebugLogEnabled)
 			
@@ -116,13 +120,15 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 
 		}
 		catch(groovy.json.JsonException je) {
-			msoLogger.debug(" Request is not in JSON format.")
+			logger.debug(" Request is not in JSON format.")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
 
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG,"Caught exception", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Caught exception",
+					"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+					"Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
 		}
 
@@ -131,7 +137,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			String request = validateRequest(execution)
 			execution.setVariable('DeleteVfModuleRequest', request)
-			msoLogger.debug("DeleteVfModuleInfra Request: " + request)
+			logger.debug("DeleteVfModuleInfra Request: " + request)
 
 			def requestInfo = getRequiredNodeXml(execution, request, 'request-info')
 			execution.setVariable('DELVfModI_requestInfo', requestInfo)
@@ -149,11 +155,13 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			def vnfParams = utils.getNodeXml(request, 'vnf-params')
 			execution.setVariable('DELVfModI_vnfParams', vnfParams)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG,"Caught exception in "+method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Caught exception in " + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -168,7 +176,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestInfo = execution.getVariable('DELVfModI_requestInfo')
@@ -187,14 +195,16 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			def vfModuleId = execution.getVariable('DELVfModI_vfModuleId')
 			String synchResponse = """{"requestReferences":{"instanceId":"${vfModuleId}","requestId":"${requestId}"}}""".trim()
 
-			msoLogger.debug("DeleteVfModuleInfra Synch Response: " + synchResponse)
+			logger.debug("DeleteVfModuleInfra Synch Response: " + synchResponse)
 			sendWorkflowResponse(execution, 200, synchResponse)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG,"Caught exception in "+method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Caught exception in " + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -211,15 +221,15 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepDoDeleteVfModule(): ' + e.getMessage())
 		}
 	}
@@ -234,7 +244,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			'execution=' + execution.getId() +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestId = execution.getVariable('DELVfModI_requestId')
@@ -260,13 +270,15 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 
 			updateInfraRequest = utils.formatXml(updateInfraRequest)
 			execution.setVariable('DELVfModI_updateInfraRequest', updateInfraRequest)
-			msoLogger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
+			logger.debug('Request for Update Infra Request:\n' + updateInfraRequest)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepInfraRequest(): ' + e.getMessage())
 		}
 	}
@@ -283,7 +295,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			', resultVar=' + resultVar +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def request = execution.getVariable("DeleteVfModuleRequest")
@@ -302,14 +314,16 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			</aetgt:MsoCompletionRequest>"""
 
 			content = utils.formatXml(content)
-			msoLogger.debug(resultVar + ' = ' + System.lineSeparator() + content)
+			logger.debug(resultVar + ' = ' + System.lineSeparator() + content)
 			execution.setVariable(resultVar, content)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -326,7 +340,7 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 			', resultVar=' + resultVar +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def prefix = execution.getVariable('prefix')
@@ -353,14 +367,16 @@ public class DeleteVfModuleInfra extends AbstractServiceTaskProcessor {
 				</sdncadapterworkflow:FalloutHandlerRequest>
 			"""
 			content = utils.formatXml(content)
-			msoLogger.debug(resultVar + ' = ' + System.lineSeparator() + content)
+			logger.debug(resultVar + ' = ' + System.lineSeparator() + content)
 			execution.setVariable(resultVar, content)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}

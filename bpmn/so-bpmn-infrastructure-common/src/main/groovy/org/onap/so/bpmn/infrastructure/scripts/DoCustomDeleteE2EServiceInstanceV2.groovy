@@ -5,6 +5,8 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,6 +40,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import org.springframework.web.util.UriUtils;
 import org.onap.so.client.aai.AAIResourcesClient
@@ -71,7 +75,7 @@ import groovy.json.*
  * Rollback - Deferred
  */
 public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCustomDeleteE2EServiceInstanceV2.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCustomDeleteE2EServiceInstanceV2.class);
 
 
 	String Prefix="DDELSI_"
@@ -82,8 +86,8 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	public void preProcessRequest (DelegateExecution execution) {
 
 		def method = getClass().getSimpleName() + '.buildAPPCRequest(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
-		msoLogger.trace("preProcessRequest ")
+		logger.info("Entered " + method)
+		logger.trace("preProcessRequest ")
 		String msg = ""
 
 		try {
@@ -109,18 +113,18 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)){
 				msg = "Input serviceInstanceId is null"
-				msoLogger.info(msg)
+				logger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 
 			String sdncCallbackUrl = execution.getVariable('URN_mso_workflow_sdncadapter_callback')
 			if (isBlank(sdncCallbackUrl)) {
 				msg = "URN_mso_workflow_sdncadapter_callback is null"
-				msoLogger.info(msg)
+				logger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			}
 			execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
-			msoLogger.info("SDNC Callback URL: " + sdncCallbackUrl)
+			logger.info("SDNC Callback URL: " + sdncCallbackUrl)
 
 			StringBuilder sbParams = new StringBuilder()
 			Map<String, String> paramsMap = execution.getVariable("serviceInputParams")
@@ -152,10 +156,10 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.info("Exited " + method)
+		logger.info("Exited " + method)
 	}
 
 	/**
@@ -179,7 +183,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		}catch(BpmnError e) {
 			throw e;
 		}catch(NotFoundException e) {
-			msoLogger.info("SI not found in aai. Silent Success ")
+			logger.info("SI not found in aai. Silent Success ")
 		}catch(Exception ex) {
 			String msg = "Internal Error in getServiceInstance: " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
@@ -189,41 +193,41 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	private void loadResourcesProperties(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.loadResourcesProperties(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugEnabled")
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 		String loadFilePath = "/etc/mso/config.d/reources.json"
 		try{
 			def jsonPayload = new File(loadFilePath).text
-			msoLogger.info("jsonPayload: " + jsonPayload)
+			logger.info("jsonPayload: " + jsonPayload)
 
 			String resourcesProperties = jsonUtil.prettyJson(jsonPayload.toString())
-			msoLogger.info("resourcesProperties: " + resourcesProperties)
+			logger.info("resourcesProperties: " + resourcesProperties)
 
 			String createResourceSort = jsonUtil.getJsonValue(resourcesProperties, "CreateResourceSort")
-			msoLogger.info("createResourceSort: " + createResourceSort)
+			logger.info("createResourceSort: " + createResourceSort)
 			execution.setVariable("createResourceSort", createResourceSort)
 
 			String deleteResourceSort = jsonUtil.getJsonValue(resourcesProperties, "DeleteResourceSort")
-			msoLogger.info("deleteResourceSort: " + deleteResourceSort)
+			logger.info("deleteResourceSort: " + deleteResourceSort)
 			execution.setVariable("deleteResourceSort", deleteResourceSort)
 
 
 			String resourceControllerType = jsonUtil.getJsonValue(resourcesProperties, "ResourceControllerType")
-			msoLogger.info("resourceControllerType: " + resourceControllerType)
+			logger.info("resourceControllerType: " + resourceControllerType)
 			execution.setVariable("resourceControllerType", resourceControllerType)
 
 
 		}catch(Exception ex){
             // try error in method block
 			String exceptionMessage = "Bpmn error encountered in " + method + " - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-	    msoLogger.info("Exited " + method)
+	    logger.info("Exited " + method)
 	}
 	private void sortDeleteResource(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.sortDeleteResource(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugEnabled")
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 		String deleteResourceSortDef = """[
                 {
                     "resourceType":"GRE_SAR"
@@ -267,7 +271,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			}
 
 			List<String> sortResourceList = jsonUtil.StringArrayToList(execution, deleteResourceSort)
-	        msoLogger.info("sortResourceList : " + sortResourceList)
+	        logger.info("sortResourceList : " + sortResourceList)
 
 			JSONArray newResourceList      = new JSONArray()
 			int resSortCount = sortResourceList.size()
@@ -278,14 +282,14 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 				List<String> resourceList = execution.getVariable(Prefix+"resourceList")
 
 				for (String resource : resourceList) {
-					msoLogger.info("resource : " + resource)
+					logger.info("resource : " + resource)
 					String resourceType = jsonUtil.getJsonValue(resource, "resourceType")
 
 					if (StringUtils.containsIgnoreCase(resourceType, sortResourceType)) {
 						JSONObject jsonObj = new JSONObject(resource)
 						newResourceList.put(jsonObj)
 					}
-					msoLogger.info("Get next sort type " )
+					logger.info("Get next sort type " )
 				}
 			}
 
@@ -293,20 +297,20 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
             List<String> newResourceListStr = jsonUtil.StringArrayToList(execution, newResourceStr)
 
 			execution.setVariable(Prefix+"resourceList", newResourceListStr)
-			msoLogger.info("newResourceList : " + newResourceListStr)
+			logger.info("newResourceList : " + newResourceListStr)
 
 		}catch(Exception ex){
             // try error in method block
 			String exceptionMessage = "Bpmn error encountered in " + method + " - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-	    msoLogger.info("Exited " + method)
+	    logger.info("Exited " + method)
 
 	}
 	public void prepareServiceDeleteResource(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.prepareServiceDeleteResource(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 
 		try {
 
@@ -319,9 +323,9 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			execution.setVariable(Prefix+"resourceFinish", true)
 
 			String aaiJsonRecord = execution.getVariable("serviceInstance");
-			msoLogger.info("serviceInstanceAaiRecord: " +aaiJsonRecord)
+			logger.info("serviceInstanceAaiRecord: " +aaiJsonRecord)
 
-			msoLogger.info("aaiJsonRecord: " +aaiJsonRecord)
+			logger.info("aaiJsonRecord: " +aaiJsonRecord)
 			def serviceInstanceName = jsonUtil.getJsonValue(aaiJsonRecord, "service-instance.service-instance-name")
 			execution.setVariable("serviceInstanceName",serviceInstanceName)
 
@@ -330,11 +334,11 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
 
 			String relationshipList = jsonUtil.getJsonValue(aaiJsonRecord, "service-instance.relationship-list")
-			msoLogger.info("relationship-list:" + relationshipList)
+			logger.info("relationship-list:" + relationshipList)
 			if (! isBlank(relationshipList)){
-				msoLogger.info("relationship-list exists" )
+				logger.info("relationship-list exists" )
 				String relationShip = jsonUtil.getJsonValue(relationshipList, "relationship")
-				msoLogger.info("relationship: " + relationShip)
+				logger.info("relationship: " + relationShip)
 				JSONArray allResources      = new JSONArray()
 				JSONArray serviceResources  = new JSONArray()
 				JSONArray networkResources  = new JSONArray()
@@ -349,32 +353,32 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 					} else if (relationShip.startsWith("[") && relationShip.endsWith("]")) {
 						jsonArray = new JSONArray(relationShip);
 					} else {
-						msoLogger.info("The relationShip fomart is error" )
+						logger.info("The relationShip fomart is error" )
 					}
 
 					List<String> relationList = jsonUtil.StringArrayToList(execution, jsonArray.toString())
 
-					msoLogger.info("relationList: " + relationList)
+					logger.info("relationList: " + relationList)
 
 					int relationNum =relationList.size()
-					msoLogger.info("**************relationList size: " + relationNum)
+					logger.info("**************relationList size: " + relationNum)
 
 					for ( int currentRelation = 0 ; currentRelation < relationNum ; currentRelation++ ) {
-						msoLogger.info("current Relation num: " + currentRelation)
+						logger.info("current Relation num: " + currentRelation)
 						String relation = relationList[currentRelation]
-						msoLogger.info("relation: " + relation)
+						logger.info("relation: " + relation)
 
 						String relatedTo = jsonUtil.getJsonValue(relation, "related-to")
-            			msoLogger.info("relatedTo: " + relatedTo)
+            			logger.info("relatedTo: " + relatedTo)
 
 						String relatedLink = jsonUtil.getJsonValue(relation, "related-link")
-						msoLogger.info("relatedLink: " + relatedLink)
+						logger.info("relatedLink: " + relatedLink)
 
             			if (StringUtils.equalsIgnoreCase(relatedTo, "allotted-resource")) {
-                			msoLogger.info("allotted-resource exists ")
+                			logger.info("allotted-resource exists ")
 
                             Optional<AllottedResource>  aaiArRsp = getAaiAr(execution, relatedLink)
-							msoLogger.info("aaiArRsp: " + aaiArRsp)
+							logger.info("aaiArRsp: " + aaiArRsp)
 							if (aaiArRsp.isPresent()) {
 
 								JSONObject jObject = new JSONObject()
@@ -384,22 +388,22 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 								jObject.put("resourceVersion", aaiArRsp.get().getResourceVersion())
 
 								allResources.put(jObject)
-								msoLogger.info("allResources: " + allResources)
+								logger.info("allResources: " + allResources)
 								allottedResources.put(jObject)
-								msoLogger.info("allottedResources: " + allottedResources)
+								logger.info("allottedResources: " + allottedResources)
 							}
 						}
 						else if (StringUtils.equalsIgnoreCase(relatedTo, "service-instance")){
-                			msoLogger.info("service-instance exists ")
+                			logger.info("service-instance exists ")
 							JSONObject jObject = new JSONObject()
 
 							//relationship-data
 							String rsDataStr  = jsonUtil.getJsonValue(relation, "relationship-data")
-							msoLogger.info("rsDataStr: " + rsDataStr)
+							logger.info("rsDataStr: " + rsDataStr)
 							List<String> rsDataList = jsonUtil.StringArrayToList(execution, rsDataStr)
-							msoLogger.info("rsDataList: " + rsDataList)
+							logger.info("rsDataList: " + rsDataList)
 							for(String rsData : rsDataList){
-								msoLogger.info("rsData: " + rsData)
+								logger.info("rsData: " + rsData)
 								def eKey =  jsonUtil.getJsonValue(rsData, "relationship-key")
  								def eValue = jsonUtil.getJsonValue(rsData, "relationship-value")
 								if(eKey.equals("service-instance.service-instance-id")){
@@ -412,11 +416,11 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
 							//related-to-property
 							String rPropertyStr  = jsonUtil.getJsonValue(relation, "related-to-property")
-							msoLogger.info("related-to-property: " + rPropertyStr)
+							logger.info("related-to-property: " + rPropertyStr)
 							if (rPropertyStr instanceof JSONArray){
 								List<String> rPropertyList = jsonUtil.StringArrayToList(execution, rPropertyStr)
 								for (String rProperty : rPropertyList) {
-									msoLogger.info("rProperty: " + rProperty)
+									logger.info("rProperty: " + rProperty)
 									def eKey =  jsonUtil.getJsonValue(rProperty, "property-key")
  									def eValue = jsonUtil.getJsonValue(rProperty, "property-value")
 									if(eKey.equals("service-instance.service-instance-name")){
@@ -426,7 +430,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 							}
 							else {
 								String rProperty = rPropertyStr
-								msoLogger.info("rProperty: " + rProperty)
+								logger.info("rProperty: " + rProperty)
 								def eKey =  jsonUtil.getJsonValue(rProperty, "property-key")
  								def eValue = jsonUtil.getJsonValue(rProperty, "property-value")
 								if (eKey.equals("service-instance.service-instance-name")) {
@@ -435,22 +439,22 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 							}
 
 							allResources.put(jObject)
-							msoLogger.info("allResources: " + allResources)
+							logger.info("allResources: " + allResources)
 
 							serviceResources.put(jObject)
-							msoLogger.info("serviceResources: " + serviceResources)
+							logger.info("serviceResources: " + serviceResources)
 						}
 						else if (StringUtils.equalsIgnoreCase(relatedTo, "configuration")) {
-                			msoLogger.info("configuration ")
+                			logger.info("configuration ")
 							JSONObject jObject = new JSONObject()
 
 							//relationship-data
 							String rsDataStr  = jsonUtil.getJsonValue(relation, "relationship-data")
-							msoLogger.info("rsDataStr: " + rsDataStr)
+							logger.info("rsDataStr: " + rsDataStr)
 							List<String> rsDataList = jsonUtil.StringArrayToList(execution, rsDataStr)
-							msoLogger.info("rsDataList: " + rsDataList)
+							logger.info("rsDataList: " + rsDataList)
 							for (String rsData : rsDataList) {
-								msoLogger.info("rsData: " + rsData)
+								logger.info("rsData: " + rsData)
 								def eKey =  jsonUtil.getJsonValue(rsData, "relationship-key")
  								def eValue = jsonUtil.getJsonValue(rsData, "relationship-value")
 								if(eKey.equals("configuration.configuration-id")){
@@ -461,11 +465,11 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
 							//related-to-property
 							String rPropertyStr  = jsonUtil.getJsonValue(relation, "related-to-property")
-							msoLogger.info("related-to-property: " + rPropertyStr)
+							logger.info("related-to-property: " + rPropertyStr)
 							if (rPropertyStr instanceof JSONArray){
 								List<String> rPropertyList = jsonUtil.StringArrayToList(execution, rPropertyStr)
 								for(String rProperty : rPropertyList){
-									msoLogger.info("rProperty: " + rProperty)
+									logger.info("rProperty: " + rProperty)
 									def eKey =  jsonUtil.getJsonValue(rProperty, "property-key")
  									def eValue = jsonUtil.getJsonValue(rProperty, "property-value")
 									if(eKey.equals("configuration.configuration-type")){
@@ -475,7 +479,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 							}
 							else {
 								String rProperty = rPropertyStr
-								msoLogger.info("rProperty: " + rProperty)
+								logger.info("rProperty: " + rProperty)
 								def eKey =  jsonUtil.getJsonValue(rProperty, "property-key")
  								def eValue = jsonUtil.getJsonValue(rProperty, "property-value")
 								if(eKey.equals("configuration.configuration-type")){
@@ -483,34 +487,34 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 								}
 							}
 							allResources.put(jObject)
-							msoLogger.info("allResources: " + allResources)
+							logger.info("allResources: " + allResources)
 
 							networkResources.put(jObject)
-							msoLogger.info("networkResources: " + networkResources)
+							logger.info("networkResources: " + networkResources)
 						}
-						msoLogger.info("Get Next releation resource " )
+						logger.info("Get Next releation resource " )
 
 					}
-					msoLogger.info("Get releation finished. " )
+					logger.info("Get releation finished. " )
 				}
 
 				execution.setVariable("serviceRelationShip", allResources.toString())
-			    msoLogger.info("allResources: " + allResources.toString())
+			    logger.info("allResources: " + allResources.toString())
 				String serviceRelationShip = execution.getVariable("serviceRelationShip")
-				msoLogger.info("serviceRelationShip: " + serviceRelationShip)
+				logger.info("serviceRelationShip: " + serviceRelationShip)
 				if ((! isBlank(serviceRelationShip)) && (! serviceRelationShip.isEmpty())) {
 
 					List<String> relationShipList = jsonUtil.StringArrayToList(execution, serviceRelationShip)
-					msoLogger.info("relationShipList: " + relationShipList)
+					logger.info("relationShipList: " + relationShipList)
 					execution.setVariable(Prefix+"resourceList", relationShipList)
 
 					int resourceCount = relationShipList.size()
-					msoLogger.info("resourceCount: " + resourceCount)
+					logger.info("resourceCount: " + resourceCount)
 					execution.setVariable(Prefix+"resourceCount",resourceCount )
 
 					int resourceNum = 0
 					execution.setVariable(Prefix+"nextResource", resourceNum)
-					msoLogger.info("start sort delete resource: ")
+					logger.info("start sort delete resource: ")
 					sortDeleteResource(execution)
 
 
@@ -520,48 +524,48 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 					else {
 			    		execution.setVariable(Prefix+"resourceFinish", true)
 					}
-					msoLogger.info("Resource  list set end : " + resourceCount)
+					logger.info("Resource  list set end : " + resourceCount)
                 }
 
 				execution.setVariable("serviceResources", serviceResources.toString())
-				msoLogger.info("serviceResources: " + serviceResources)
+				logger.info("serviceResources: " + serviceResources)
 				String serviceResourcesShip = execution.getVariable("serviceResources")
-				msoLogger.info("serviceResourcesShip: " + serviceResourcesShip)
+				logger.info("serviceResourcesShip: " + serviceResourcesShip)
 
 				if ((! isBlank(serviceResourcesShip)) && (! serviceResourcesShip.isEmpty())) {
                     List<String> serviceResourcesList = jsonUtil.StringArrayToList(execution, serviceResourcesShip)
-					msoLogger.info("serviceResourcesList: " + serviceResourcesList)
+					logger.info("serviceResourcesList: " + serviceResourcesList)
 					execution.setVariable(Prefix+"serviceResourceList", serviceResourcesList)
 			    	execution.setVariable(Prefix+"serviceResourceCount", serviceResourcesList.size())
 			    	execution.setVariable(Prefix+"nextServiceResource", 0)
-			    	msoLogger.info("Service Resource  list set end : " + serviceResourcesList.size())
+			    	logger.info("Service Resource  list set end : " + serviceResourcesList.size())
 
                 }
 
 				execution.setVariable("allottedResources", allottedResources.toString())
-				msoLogger.info("allottedResources: " + allottedResources)
+				logger.info("allottedResources: " + allottedResources)
 				String allottedResourcesShip = execution.getVariable("allottedResources")
-				msoLogger.info("allottedResourcesShip: " + allottedResourcesShip)
+				logger.info("allottedResourcesShip: " + allottedResourcesShip)
 				if ((! isBlank(allottedResourcesShip)) && (! allottedResourcesShip.isEmpty())) {
                     List<String> allottedResourcesList = jsonUtil.StringArrayToList(execution, allottedResourcesShip)
-					msoLogger.info("allottedResourcesList: " + allottedResourcesList)
+					logger.info("allottedResourcesList: " + allottedResourcesList)
 					execution.setVariable(Prefix+"allottedResourcesList", allottedResourcesList)
 			    	execution.setVariable(Prefix+"allottedResourcesListCount", allottedResourcesList.size())
 			    	execution.setVariable(Prefix+"nextAllottedResourcesList", 0)
-			    	msoLogger.info("Allotted Resource  list set end : " + allottedResourcesList.size())
+			    	logger.info("Allotted Resource  list set end : " + allottedResourcesList.size())
 
                 }
 				execution.setVariable("networkResources", networkResources.toString())
-				msoLogger.info("networkResources: " + networkResources)
+				logger.info("networkResources: " + networkResources)
 				String networkResourcesShip = execution.getVariable("networkResources")
-				msoLogger.info("networkResourcesShip: " + networkResourcesShip)
+				logger.info("networkResourcesShip: " + networkResourcesShip)
 				if ((! isBlank(networkResourcesShip)) && (! networkResourcesShip.isEmpty())) {
                     List<String> networkResourcesList = jsonUtil.StringArrayToList(execution, networkResourcesShip)
-					msoLogger.info("networkResourcesList: " + networkResourcesList)
+					logger.info("networkResourcesList: " + networkResourcesList)
 					execution.setVariable(Prefix+"networkResourcesList", networkResourcesList)
 			    	execution.setVariable(Prefix+"networkResourcesListCount", networkResourcesList.size())
 			    	execution.setVariable(Prefix+"nextNetworkResourcesList", 0)
-			    	msoLogger.info("Network Resource  list set end : " + networkResourcesList.size())
+			    	logger.info("Network Resource  list set end : " + networkResourcesList.size())
 
                 }
 			}
@@ -569,15 +573,15 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			throw e;
 		} catch (Exception ex) {
 		    String exceptionMessage = "Bpmn error encountered in DeleteMobileAPNCustService flow. prepareServiceDeleteResource() - " + ex.getMessage()
-		    msoLogger.debug(exceptionMessage)
+		    logger.debug(exceptionMessage)
 		    exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
-		msoLogger.info("Exited " + method)
+		logger.info("Exited " + method)
 	}
 
 	private Optional<AllottedResource>  getAaiAr(DelegateExecution execution, String relink) {
 		def method = getClass().getSimpleName() + '.getAaiAr(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 		AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(relink).build())
         return getAAIClient().get(AllottedResource.class,uri)
 	}
@@ -586,39 +590,39 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	 */
 	public void preProcessDecomposeNextResource(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.getAaiAr(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
-        msoLogger.trace("STARTED preProcessDecomposeNextResource Process ")
+		logger.info("Entered " + method)
+        logger.trace("STARTED preProcessDecomposeNextResource Process ")
         try{
             int resourceNum = execution.getVariable(Prefix+"nextServiceResource")
 			List<String> serviceResourceList = execution.getVariable(Prefix+"serviceResourceList")
-			msoLogger.info("Service Resource List : " + serviceResourceList)
+			logger.info("Service Resource List : " + serviceResourceList)
 
 			String serviceResource = serviceResourceList[resourceNum]
             execution.setVariable(Prefix+"serviceResource", serviceResource)
-			msoLogger.info("Current Service Resource : " + serviceResource)
+			logger.info("Current Service Resource : " + serviceResource)
 
 			String resourceType  = jsonUtil.getJsonValue(serviceResource, "resourceType")
 			execution.setVariable("resourceType", resourceType)
-			msoLogger.info("resourceType : " + resourceType)
+			logger.info("resourceType : " + resourceType)
 
 			String resourceInstanceId  = jsonUtil.getJsonValue(serviceResource, "resourceInstanceId")
 			execution.setVariable("resourceInstanceId", resourceInstanceId)
-			msoLogger.info("resourceInstanceId : " + resourceInstanceId)
+			logger.info("resourceInstanceId : " + resourceInstanceId)
 
 			String resourceRole  = jsonUtil.getJsonValue(serviceResource, "resourceRole")
 			execution.setVariable("resourceRole", resourceRole)
-			msoLogger.info("resourceRole : " + resourceRole)
+			logger.info("resourceRole : " + resourceRole)
 
 			String resourceVersion  = jsonUtil.getJsonValue(serviceResource, "resourceVersion")
 			execution.setVariable("resourceVersion", resourceVersion)
-			msoLogger.info("resourceVersion : " + resourceVersion)
+			logger.info("resourceVersion : " + resourceVersion)
 
 			String resourceName = jsonUtil.getJsonValue(serviceResource, "resourceName")
 			if (isBlank(resourceName)){
 				resourceName = resourceInstanceId
 			}
 			execution.setVariable(Prefix+"resourceName", resourceName)
-			msoLogger.info("resource Name : " + resourceName)
+			logger.info("resource Name : " + resourceName)
 
 
 			execution.setVariable(Prefix+"nextServiceResource", resourceNum + 1)
@@ -633,25 +637,25 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
         }catch(Exception e){
             // try error in method block
 			String exceptionMessage = "Bpmn error encountered in CreateMobileAPNCustService flow. Unexpected Error from method preProcessDecomposeNextResource() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-	    msoLogger.info("Exited " + method)
+	    logger.info("Exited " + method)
 	}
 	/**
 	 * post Decompose next resource to create request
 	 */
 	public void postProcessDecomposeNextResource(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.postProcessDecomposeNextResource(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
-        msoLogger.trace("STARTED postProcessDecomposeNextResource Process ")
+		logger.info("Entered " + method)
+        logger.trace("STARTED postProcessDecomposeNextResource Process ")
         try{
             String resourceName = execution.getVariable(Prefix+"resourceName")
 			int resourceNum = execution.getVariable(Prefix+"nextServiceResource")
-			msoLogger.debug("Current Resource count:"+ execution.getVariable(Prefix+"nextServiceResource"))
+			logger.debug("Current Resource count:"+ execution.getVariable(Prefix+"nextServiceResource"))
 
 			int resourceCount = execution.getVariable(Prefix+"serviceResourceCount")
-			msoLogger.debug("Total Resource count:"+ execution.getVariable(Prefix+"serviceResourceCount"))
+			logger.debug("Total Resource count:"+ execution.getVariable(Prefix+"serviceResourceCount"))
 
             if (resourceNum < resourceCount) {
 				execution.setVariable(Prefix+"resourceFinish", false)
@@ -660,13 +664,13 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			    execution.setVariable(Prefix+"resourceFinish", true)
 			}
 
-			msoLogger.debug("Resource Finished:"+ execution.getVariable(Prefix+"resourceFinish"))
+			logger.debug("Resource Finished:"+ execution.getVariable(Prefix+"resourceFinish"))
 
 			if (resourceCount >0 ){
 			    int progress = (resourceNum*100) / resourceCount
 
 				execution.setVariable("progress", progress.toString() )
-				msoLogger.trace(":"+ execution.getVariable(""))
+				logger.trace(":"+ execution.getVariable(""))
 			}
 			execution.setVariable("operationStatus", resourceName )
 
@@ -674,10 +678,10 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
         }catch(Exception e){
             // try error in method block
 			String exceptionMessage = "Bpmn error encountered in CreateMobileAPNCustService flow. Unexpected Error from method postProcessDecomposeNextResource() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-	    msoLogger.info("Exited " + method)
+	    logger.info("Exited " + method)
 	}
 	/**
 	* prepare post Unkown Resource Type
@@ -685,7 +689,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	public void postOtherControllerType(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.postOtherControllerType(' +'execution=' + execution.getId() +')'
 		def isDebugEnabled = execution.getVariable("isDebugEnabled")
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 
         try{
 
@@ -694,15 +698,15 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			String controllerType = execution.getVariable("controllerType")
 
 		    String msg = "Resource name: "+ resourceName + " resource Type: " + resourceType+ " controller Type: " + controllerType + " can not be processed  n the workflow"
-			msoLogger.debug(msg)
+			logger.debug(msg)
 
         }catch(Exception e){
             // try error in method block
 			String exceptionMessage = "Bpmn error encountered in DoCreateMobileAPNServiceInstance flow. Unexpected Error from method postOtherControllerType() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
         }
-	    msoLogger.info("Exited " + method)
+	    logger.info("Exited " + method)
 	}
 
 	/**
@@ -712,9 +716,9 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
         // we use resource instance ids for delete flow as resourceTemplateUUIDs
 
         def method = getClass().getSimpleName() + '.preSDNCResourceDelete(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 
-        msoLogger.trace("STARTED preSDNCResourceDelete Process ")
+        logger.trace("STARTED preSDNCResourceDelete Process ")
         String networkResources = execution.getVariable("networkResources")
 
 
@@ -730,16 +734,16 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 				    execution.setVariable("resourceInstanceId", resourceInstanceUUID)
 				    execution.setVariable("resourceType", resourceName)
 					execution.setVariable("foundResource", true)
-			        msoLogger.info("Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: " + resourceInstanceUUID + " resourceType: " + resourceName)
+			        logger.info("Delete Resource Info resourceTemplate Id :" + resourceTemplateUUID + "  resourceInstanceId: " + resourceInstanceUUID + " resourceType: " + resourceName)
 				}
             }
         }
-        msoLogger.info("Exited " + method)
+        logger.info("Exited " + method)
     }
 	public void preProcessSDNCDelete (DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.preProcessSDNCDelete(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
-		msoLogger.trace("preProcessSDNCDelete ")
+		logger.info("Entered " + method)
+		logger.trace("preProcessSDNCDelete ")
 		String msg = ""
 
 		try {
@@ -838,50 +842,50 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 			String sdncDeactivate = sdncDelete.replace(">delete<", ">deactivate<").replace(">${sdncRequestId}<", ">${sdncRequestId2}<")
 			execution.setVariable("sdncDelete", sdncDelete)
 			execution.setVariable("sdncDeactivate", sdncDeactivate)
-			msoLogger.info("sdncDeactivate:\n" + sdncDeactivate)
-			msoLogger.info("sdncDelete:\n" + sdncDelete)
+			logger.info("sdncDeactivate:\n" + sdncDeactivate)
+			logger.info("sdncDelete:\n" + sdncDelete)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in preProcessSDNCDelete. " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "Exception Occured in preProcessSDNCDelete.\n" + ex.getMessage())
 		}
-		msoLogger.info("Exited " + method)
+		logger.info("Exited " + method)
 	}
 
 	public void postProcessSDNCDelete(DelegateExecution execution, String response, String action) {
 
 		def method = getClass().getSimpleName() + '.postProcessSDNCDelete(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
-		msoLogger.trace("postProcessSDNC " + action + " ")
+		logger.info("Entered " + method)
+		logger.trace("postProcessSDNC " + action + " ")
 		String msg = ""
 
 		/*try {
 			WorkflowException workflowException = execution.getVariable("WorkflowException")
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
-			msoLogger.info("SDNCResponse: " + response)
-			msoLogger.info("workflowException: " + workflowException)
+			logger.info("SDNCResponse: " + response)
+			logger.info("workflowException: " + workflowException)
 
 			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == "true"){
-				msoLogger.info("Good response from SDNC Adapter for service-instance " + action + "response:\n" + response)
+				logger.info("Good response from SDNC Adapter for service-instance " + action + "response:\n" + response)
 
 			}else{
 				msg = "Bad Response from SDNC Adapter for service-instance " + action
-				msoLogger.info(msg)
+				logger.info(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 3500, msg)
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch(Exception ex) {
 			msg = "Exception in postProcessSDNC " + action + " Exception:" + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}*/
-		msoLogger.info("Exited " + method)
+		logger.info("Exited " + method)
 	}
 
 	/**
@@ -889,7 +893,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 	 */
 	public void preUpdateServiceOperationStatus(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preUpdateServiceOperationStatus(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
@@ -899,14 +903,14 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
             String userId = ""
             String result = "processing"
             String progress = execution.getVariable("progress")
-			msoLogger.info("progress: " + progress )
+			logger.info("progress: " + progress )
 			if ("100".equalsIgnoreCase(progress))
 			{
 				result = "finished"
 			}
             String reason = ""
             String operationContent = "Prepare service delete: " + execution.getVariable("operationStatus")
-            msoLogger.info("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
+            logger.info("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
@@ -914,7 +918,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-            msoLogger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
+            logger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
 			String payload =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -937,22 +941,24 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
             payload = utils.formatXml(payload)
             execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
-            msoLogger.info("Outgoing preUpdateServiceOperationStatus: \n" + payload)
+            logger.info("Outgoing preUpdateServiceOperationStatus: \n" + payload)
 
 
         }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception Occured Processing preUpdateServiceOperationStatus.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preUpdateServiceOperationStatus.", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preUpdateServiceOperationStatus Method:\n" + e.getMessage())
         }
-        msoLogger.trace("COMPLETED preUpdateServiceOperationStatus Process ")
-        msoLogger.info("Exited " + method)
+        logger.trace("COMPLETED preUpdateServiceOperationStatus Process ")
+        logger.info("Exited " + method)
 	}
 
 	public void preInitResourcesOperStatus(DelegateExecution execution){
         def method = getClass().getSimpleName() + '.preInitResourcesOperStatus(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 
-        msoLogger.trace("STARTED preInitResourcesOperStatus Process ")
+        logger.trace("STARTED preInitResourcesOperStatus Process ")
 		String msg=""
         try{
             String serviceId = execution.getVariable("serviceInstanceId")
@@ -963,14 +969,14 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
             String progress = "0"
             String reason = ""
             String operationContent = "Prepare service delete"
-            msoLogger.info("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
+            logger.info("Generated new operation for Service Instance serviceId:" + serviceId + " operationId:" + operationId + " operationType:" + operationType)
             serviceId = UriUtils.encode(serviceId,"UTF-8")
             execution.setVariable("serviceInstanceId", serviceId)
             execution.setVariable("operationId", operationId)
             execution.setVariable("operationType", operationType)
 
             String serviceRelationShip = execution.getVariable("serviceRelationShip")
-            msoLogger.info("serviceRelationShip: " + serviceRelationShip)
+            logger.info("serviceRelationShip: " + serviceRelationShip)
 			if (! isBlank(serviceRelationShip)) {
                 def jsonSlurper = new JsonSlurper()
                 def jsonOutput = new JsonOutput()
@@ -985,7 +991,7 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
             def dbAdapterEndpoint = UrnPropertiesReader.getVariable("mso.adapters.openecomp.db.endpoint", execution)
             execution.setVariable("CVFMI_dbAdapterEndpoint", dbAdapterEndpoint)
-            msoLogger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
+            logger.info("DB Adapter Endpoint is: " + dbAdapterEndpoint)
 
             String payload =
                 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
@@ -1003,17 +1009,17 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
             payload = utils.formatXml(payload)
             execution.setVariable("CVFMI_initResOperStatusRequest", payload)
-            msoLogger.info("Outgoing initResourceOperationStatus: \n" + payload)
-            msoLogger.debug("DoCustomDeleteE2EServiceInstanceV2 Outgoing initResourceOperationStatus Request: " + payload)
+            logger.info("Outgoing initResourceOperationStatus: \n" + payload)
+            logger.debug("DoCustomDeleteE2EServiceInstanceV2 Outgoing initResourceOperationStatus Request: " + payload)
 
 		}catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoCustomDeleteE2EServiceInstanceV2.preInitResourcesOperStatus. " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-        msoLogger.info("Exited " + method)
+        logger.info("Exited " + method)
     }
 
 
@@ -1025,21 +1031,21 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 		// we use resource instance ids for delete flow as resourceTemplateUUIDs
 
 		def method = getClass().getSimpleName() + '.preProcessVFCResourceDelete(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 
-		msoLogger.trace("STARTED preProcessVFCResourceDelete Process ")
+		logger.trace("STARTED preProcessVFCResourceDelete Process ")
 		try{
 			String serviceResource = execution.getVariable("serviceResource")
-			msoLogger.info("serviceResource : " + serviceResource)
+			logger.info("serviceResource : " + serviceResource)
 
 			String resourceInstanceId  =  execution.getVariable("resourceInstanceId")
-			msoLogger.info("resourceInstanceId : " + resourceInstanceId)
+			logger.info("resourceInstanceId : " + resourceInstanceId)
 
 			execution.setVariable("resourceTemplateId", resourceInstanceId)
-			msoLogger.info("resourceTemplateId : " + resourceInstanceId)
+			logger.info("resourceTemplateId : " + resourceInstanceId)
 
 			String resourceType = execution.getVariable("resourceType")
-			msoLogger.info("resourceType : " + resourceType)
+			logger.info("resourceType : " + resourceType)
 
 
 			String resourceName = execution.getVariable(Prefix+"resourceName")
@@ -1047,34 +1053,34 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 				resourceName = resourceInstanceId
 			}
 			execution.setVariable("resourceName", resourceName)
-			msoLogger.info("resource Name : " + resourceName)
+			logger.info("resource Name : " + resourceName)
 
-			msoLogger.info("Delete Resource Info: resourceInstanceId :" + resourceInstanceId + "  resourceTemplateId: " + resourceInstanceId + " resourceType: " + resourceType)
+			logger.info("Delete Resource Info: resourceInstanceId :" + resourceInstanceId + "  resourceTemplateId: " + resourceInstanceId + " resourceType: " + resourceType)
 		}catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.preProcessVFCResourceDelete. " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.info("Exited " + method)
+		logger.info("Exited " + method)
 	}
 
 	public void postProcessVFCDelete(DelegateExecution execution, String response, String action) {
 		def method = getClass().getSimpleName() + '.postProcessVFCDelete(' +'execution=' + execution.getId() +')'
-		msoLogger.info("Entered " + method)
+		logger.info("Entered " + method)
 
-		msoLogger.trace("STARTED postProcessVFCDelete Process ")
+		logger.trace("STARTED postProcessVFCDelete Process ")
 		try{
 
 		}catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex) {
 			msg = "Exception in DoDeleteE2EServiceInstance.postProcessVFCDelete. " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.info("Exited " + method)
+		logger.info("Exited " + method)
 	}
 }
 
