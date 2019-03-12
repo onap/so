@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,6 +34,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.bpmn.core.UrnPropertiesReader
 
 import org.onap.so.utils.TargetEntity
@@ -43,7 +47,7 @@ import javax.ws.rs.core.Response
  * flow for VFC Network Service Create
  */
 public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoCreateVFCNetworkServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoCreateVFCNetworkServiceInstance.class);
 
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -58,23 +62,23 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      */
     public void preProcessRequest (DelegateExecution execution) {
        String msg = ""
-       msoLogger.trace("preProcessRequest()")
+       logger.trace("preProcessRequest()")
        try {
            //deal with nsName and Description
            String nsServiceName = execution.getVariable("nsServiceName")
            String nsServiceDescription = execution.getVariable("nsServiceDescription")
-           msoLogger.debug("nsServiceName:" + nsServiceName + " nsServiceDescription:" + nsServiceDescription)
+           logger.debug("nsServiceName:" + nsServiceName + " nsServiceDescription:" + nsServiceDescription)
            //deal with operation key
            String globalSubscriberId = execution.getVariable("globalSubscriberId")
-           msoLogger.debug("globalSubscriberId:" + globalSubscriberId)
+           logger.debug("globalSubscriberId:" + globalSubscriberId)
            String serviceType = execution.getVariable("serviceType")
-           msoLogger.debug("serviceType:" + serviceType)
+           logger.debug("serviceType:" + serviceType)
            String serviceId = execution.getVariable("serviceId")
-           msoLogger.debug("serviceId:" + serviceId)
+           logger.debug("serviceId:" + serviceId)
            String operationId = execution.getVariable("operationId")
-           msoLogger.debug("serviceType:" + serviceType)
+           logger.debug("serviceType:" + serviceType)
            String nodeTemplateUUID = execution.getVariable("resourceUUID")
-           msoLogger.debug("nodeTemplateUUID:" + nodeTemplateUUID)
+           logger.debug("nodeTemplateUUID:" + nodeTemplateUUID)
            /*
             * segmentInformation needed as a object of segment
             * {
@@ -87,7 +91,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
             * }
             */
            String nsParameters = execution.getVariable("resourceParameters")
-           msoLogger.debug("nsParameters:" + nsParameters)
+           logger.debug("nsParameters:" + nsParameters)
            String nsOperationKey = """{
                    "globalSubscriberId":"${globalSubscriberId}",
                    "serviceType":"${serviceType}",
@@ -102,7 +106,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
 		   
            if (vfcAdapterUrl == null || vfcAdapterUrl.isEmpty()) {
                msg = getProcessKey(execution) + ': mso:adapters:vfcc:rest:endpoint URN mapping is not defined'
-               msoLogger.debug(msg)
+               logger.debug(msg)
            }
 
            while (vfcAdapterUrl.endsWith('/')) {
@@ -116,17 +120,17 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
            throw e;
        } catch (Exception ex){
            msg = "Exception in preProcessRequest " + ex.getMessage()
-           msoLogger.debug(msg)
+           logger.debug(msg)
            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
        }
-       msoLogger.trace("Exit preProcessRequest")
+       logger.trace("Exit preProcessRequest")
 	}
 
     /**
      * create NS task
      */
     public void createNetworkService(DelegateExecution execution) {
-        msoLogger.trace("createNetworkService")
+        logger.trace("createNetworkService")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String nsParameters = execution.getVariable("nsParameters");
@@ -146,14 +150,14 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
             nsInstanceId =  jsonUtil.getJsonValue(aaiResponseAsString, "nsInstanceId")
         }
         execution.setVariable("nsInstanceId", nsInstanceId)
-        msoLogger.trace("Exit  createNetworkService")
+        logger.trace("Exit  createNetworkService")
     }
 
     /**
      * instantiate NS task
      */
     public void instantiateNetworkService(DelegateExecution execution) {
-        msoLogger.trace("instantiateNetworkService")
+        logger.trace("instantiateNetworkService")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String nsOperationKey = execution.getVariable("nsOperationKey");
         String nsParameters = execution.getVariable("nsParameters");
@@ -175,14 +179,14 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
             jobId =  jsonUtil.getJsonValue(aaiResponseAsString, "jobId")
         }
         execution.setVariable("jobId", jobId)
-        msoLogger.trace("Exit  instantiateNetworkService")
+        logger.trace("Exit  instantiateNetworkService")
     }
 
     /**
      * query NS task
      */
     public void queryNSProgress(DelegateExecution execution) {
-        msoLogger.trace("queryNSProgress")
+        logger.trace("queryNSProgress")
         String vfcAdapterUrl = execution.getVariable("vfcAdapterUrl")
         String jobId = execution.getVariable("jobId")
         String nsOperationKey = execution.getVariable("nsOperationKey");
@@ -195,7 +199,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
             operationStatus = jsonUtil.getJsonValue(aaiResponseAsString, "responseDescriptor.status")
         }
         execution.setVariable("operationStatus", operationStatus)
-        msoLogger.trace("Exit  queryNSProgress")
+        logger.trace("Exit  queryNSProgress")
     }
 
     /**
@@ -205,7 +209,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         try {
             Thread.sleep(5000);
         } catch(InterruptedException e) {
-           msoLogger.debug("Time Delay exception" + e )
+           logger.debug("Time Delay exception" + e )
         }
     }
 
@@ -213,10 +217,10 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * finish NS task
      */
     public void addNSRelationship(DelegateExecution execution) {
-        msoLogger.trace("addNSRelationship")
+        logger.trace("addNSRelationship")
         String nsInstanceId = execution.getVariable("nsInstanceId")
         if(nsInstanceId == null || nsInstanceId == ""){
-            msoLogger.debug(" create NS failed, so do not need to add relationship")
+            logger.debug(" create NS failed, so do not need to add relationship")
             return
         }
         String globalSubscriberId = execution.getVariable("globalSubscriberId")
@@ -228,9 +232,11 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
         try{
             getAAIClient().connect(nsUri,relatedServiceUri)
-            msoLogger.info("NS relationship to Service added successfully")
+            logger.info("NS relationship to Service added successfully")
         }catch(Exception e){
-            msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while executing AAI Put Call", "BPMN", MsoLogger.getServiceName(),MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+            logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    "Exception occured while executing AAI Put Call", "BPMN", MsoLogger.getServiceName(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
             throw new BpmnError("MSOWorkflowException")
         }
     }
@@ -241,8 +247,8 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
      * requestBody: the body of the request
      */
     private Response postRequest(DelegateExecution execution, String urlString, String requestBody){
-        msoLogger.trace("Started Execute VFC adapter Post Process")
-        msoLogger.debug("url:"+urlString +"\nrequestBody:"+ requestBody)
+        logger.trace("Started Execute VFC adapter Post Process")
+        logger.debug("url:"+urlString +"\nrequestBody:"+ requestBody)
         Response apiResponse = null
         try{
 
@@ -257,10 +263,10 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
 
             apiResponse = httpClient.post(requestBody)
 
-            msoLogger.debug("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
-            msoLogger.trace("Completed Execute VF-C adapter Post Process")
+            logger.debug("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
+            logger.trace("Completed Execute VF-C adapter Post Process")
         }catch(Exception e){
-			msoLogger.error("Exception occured while executing VFC Adapter Post Call"  + e.getMessage ());
+			logger.error("Exception occured while executing VFC Adapter Post Call"  + e.getMessage ());
             throw new BpmnError("MSOWorkflowException")
         }
         return apiResponse

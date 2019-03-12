@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +45,8 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
@@ -68,7 +71,7 @@ import groovy.xml.XmlUtil
  *
  */
 public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoUpdateNetworkInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoUpdateNetworkInstance.class);
 
 	String Prefix="UPDNETI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -176,7 +179,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside preProcessRequest DoUpdateNetworkInstance Request ")
+		logger.trace("Inside preProcessRequest DoUpdateNetworkInstance Request ")
 
 		try {
 			// initialize flow variables
@@ -190,12 +193,12 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					// JSON format request is sent, create xml
 					try {
 						def prettyJson = JsonOutput.prettyPrint(networkRequest.toString())
-						msoLogger.debug(" Incoming message formatted . . . : " + '\n' + prettyJson)
+						logger.debug(" Incoming message formatted . . . : " + '\n' + prettyJson)
 						networkRequest =  vidUtils.createXmlNetworkRequestInfra(execution, networkRequest)
 
 					} catch (Exception ex) {
 						String dataErrorMessage = " Invalid json format Request - " + ex.getMessage()
-						msoLogger.debug(dataErrorMessage)
+						logger.debug(dataErrorMessage)
 						exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 					}
 				} else {
@@ -208,32 +211,32 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 
 			networkRequest = utils.formatXml(networkRequest)
-			msoLogger.debug(networkRequest)
+			logger.debug(networkRequest)
 			execution.setVariable(Prefix + "networkRequest", networkRequest)
-			msoLogger.debug(" network-request - " + '\n' + networkRequest)
+			logger.debug(" network-request - " + '\n' + networkRequest)
 
 			// validate 'disableRollback'  (aka, 'suppressRollback')
 			boolean rollbackEnabled = networkUtils.isRollbackEnabled(execution, networkRequest)
 			execution.setVariable(Prefix + "rollbackEnabled", rollbackEnabled)
-			msoLogger.debug(Prefix + "rollbackEnabled - " + rollbackEnabled)
+			logger.debug(Prefix + "rollbackEnabled - " + rollbackEnabled)
 
 			String networkInputs = utils.getNodeXml(networkRequest, "network-inputs", false).replace("tag0:","").replace(":tag0","")
 			execution.setVariable(Prefix + "networkInputs", networkInputs)
-			msoLogger.debug(Prefix + "networkInputs - " + '\n' + networkInputs)
+			logger.debug(Prefix + "networkInputs - " + '\n' + networkInputs)
 
 			// prepare messageId
 			String messageId = execution.getVariable(Prefix + "messageId")  // for testing
 			if (messageId == null || messageId == "") {
 				messageId = UUID.randomUUID()
-				msoLogger.debug(" UPDNETI_messageId, random generated: " + messageId)
+				logger.debug(" UPDNETI_messageId, random generated: " + messageId)
 			} else {
-				msoLogger.debug(" UPDNETI_messageId, pre-assigned: " + messageId)
+				logger.debug(" UPDNETI_messageId, pre-assigned: " + messageId)
 			}
 			execution.setVariable(Prefix + "messageId", messageId)
 
 			String source = utils.getNodeText(networkRequest, "source")
 			execution.setVariable(Prefix + "source", source)
-			msoLogger.debug(Prefix + "source - " + source)
+			logger.debug(Prefix + "source - " + source)
 
 			String networkId = ""
 			if (utils.nodeExists(networkRequest, "network-id")) {
@@ -242,7 +245,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					sendSyncError(execution)
 					// missing value of networkId
 					String dataErrorMessage = "Variable 'network-id' value/element is missing."
-					msoLogger.debug(" Invalid Request - " + dataErrorMessage)
+					logger.debug(" Invalid Request - " + dataErrorMessage)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 
 				}
@@ -254,7 +257,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				if ((lcpCloudRegion == 'null') || (lcpCloudRegion == "")) {
 					sendSyncError(execution)
 					String dataErrorMessage = "requestDetails has missing 'aic-cloud-region' value/element."
-					msoLogger.debug(" Invalid Request - " + dataErrorMessage)
+					logger.debug(" Invalid Request - " + dataErrorMessage)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 				}
 			}
@@ -265,7 +268,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				if ((serviceInstanceId == 'null') || (lcpCloudRegion == "")) {
 					sendSyncError(execution)
 					String dataErrorMessage = "Variable 'serviceInstanceId' value/element is missing."
-					msoLogger.debug(" Invalid Request - " + dataErrorMessage)
+					logger.debug(" Invalid Request - " + dataErrorMessage)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 				}
 			}
@@ -282,18 +285,18 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			} catch (IOException ex) {
 				String exceptionMessage = "Exception Encountered in DoUpdateNetworkInstance, PreProcessRequest() - "
 				String dataErrorMessage = exceptionMessage + " Unable to encode PO/SDNC user/password string - " + ex.getMessage()
-				msoLogger.debug(dataErrorMessage)
+				logger.debug(dataErrorMessage)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 			}
 
 			// Set variables for Generic Get Sub Flow use
 			execution.setVariable(Prefix + "serviceInstanceId", serviceInstanceId)
-			msoLogger.debug(Prefix + "serviceInstanceId - " + serviceInstanceId)
+			logger.debug(Prefix + "serviceInstanceId - " + serviceInstanceId)
 
-			msoLogger.debug(" Url for SDNC adapter: " + UrnPropertiesReader.getVariable("mso.adapters.sdnc.endpoint",execution))
+			logger.debug(" Url for SDNC adapter: " + UrnPropertiesReader.getVariable("mso.adapters.sdnc.endpoint",execution))
 
 			String sdncVersion = execution.getVariable("sdncVersion")
-			msoLogger.debug("sdncVersion? : " + sdncVersion)
+			logger.debug("sdncVersion? : " + sdncVersion)
 
 			// build 'networkOutputs'
 			networkId = utils.getNodeText(networkRequest, "network-id")
@@ -310,7 +313,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 	                   <network-name>${MsoUtils.xmlEscape(networkName)}</network-name>
 	                 </network-outputs>"""
 			execution.setVariable(Prefix + "networkOutputs", networkOutputs)
-			msoLogger.debug(Prefix + "networkOutputs - " + '\n' + networkOutputs)
+			logger.debug(Prefix + "networkOutputs - " + '\n' + networkOutputs)
 			execution.setVariable(Prefix + "networkId", networkId)
 			execution.setVariable(Prefix + "networkName", networkName)
 
@@ -322,7 +325,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			sendSyncError(execution)
 			 // caught exception
 			String exceptionMessage = "Exception Encountered in DoUpdateNetworkInstance, PreProcessRequest() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -333,7 +336,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 	 *
 	 */
 	public void getServiceInstance(DelegateExecution execution) {
-		msoLogger.trace("getServiceInstance ")
+		logger.trace("getServiceInstance ")
 		try {
 			String serviceInstanceId = execution.getVariable('serviceInstanceId')
 
@@ -352,7 +355,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		}catch (Exception ex){
 			String msg = "Exception in getServiceInstance. " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
 	}
@@ -361,7 +364,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTQueryAAICloudRegion of DoUpdateNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTQueryAAICloudRegion of DoUpdateNetworkInstance ***** " )
 
 		try {
 			String networkInputs  = execution.getVariable(Prefix + "networkInputs")
@@ -386,12 +389,12 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 			} else {
 			    String dataErrorMessage = "QueryAAICloudRegion Unsuccessful. Return Code: " + execution.getVariable(Prefix + "queryCloudRegionReturnCode")
-			    msoLogger.debug(dataErrorMessage)
+			    logger.debug(dataErrorMessage)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 
 			}
 
-			msoLogger.debug(" is Cloud Region Good: " + execution.getVariable(Prefix + "isCloudRegionGood"))
+			logger.debug(" is Cloud Region Good: " + execution.getVariable(Prefix + "isCloudRegionGood"))
 
 		} catch (BpmnError e) {
 			throw e;
@@ -399,7 +402,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// try error
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow - callRESTQueryAAICloudRegion() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -410,7 +413,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkId of DoUpdateNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTQueryAAINetworkId of DoUpdateNetworkInstance ***** " )
 
 		try {
 			// get variables
@@ -429,11 +432,11 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		} catch (NotFoundException e) {
 			String dataErrorMessage = "Response Error from QueryAAINetworkId is 404 (Not Found)."
-			msoLogger.debug(" AAI Query Failed. " + dataErrorMessage)
+			logger.debug(" AAI Query Failed. " + dataErrorMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTQueryAAINetworkId() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -444,7 +447,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTReQueryAAINetworkId of DoUpdateNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTReQueryAAINetworkId of DoUpdateNetworkInstance ***** " )
 
 		try {
 			// get variables
@@ -467,15 +470,15 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
                    <network-name>${MsoUtils.xmlEscape(netName)}</network-name>
                  </network-outputs>"""
 			execution.setVariable(Prefix + "networkOutputs", networkOutputs)
-			msoLogger.debug(" networkOutputs - " + '\n' + networkOutputs)
+			logger.debug(" networkOutputs - " + '\n' + networkOutputs)
 
 		} catch (NotFoundException e) {
 			String dataErrorMessage = "Response Error from ReQueryAAINetworkId is 404 (Not Found)."
-			msoLogger.debug(" AAI ReQuery Failed. - " + dataErrorMessage)
+			logger.debug(" AAI ReQuery Failed. - " + dataErrorMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTReQueryAAINetworkId() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -486,7 +489,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkVpnBinding of DoUpdateNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTQueryAAINetworkVpnBinding of DoUpdateNetworkInstance ***** " )
 
 		try {
 
@@ -495,7 +498,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			if(queryIdAAIResponse.getRelationships().isPresent()){
 				List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.VPN_BINDING)
 
-				msoLogger.debug(Prefix + "vpnCount - " + uris.size())
+				logger.debug(Prefix + "vpnCount - " + uris.size())
 
 				if (uris.size() > 0) {
 					String routeTargets = ""
@@ -522,7 +525,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					} // end loop
 
 					execution.setVariable(Prefix + "routeCollection", routeTargets)
-					msoLogger.debug(" UPDNETI_routeCollection - " + '\n' + routeTargets)
+					logger.debug(" UPDNETI_routeCollection - " + '\n' + routeTargets)
 
 				} else {
 					// reset return code to success
@@ -538,17 +541,17 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
 					execution.setVariable(Prefix + "queryVpnBindingAAIResponse", aaiStubResponseAsXml)
 					execution.setVariable(Prefix + "routeCollection", "<routeTargets/>")
-					msoLogger.debug(" No vpnBinding, using this stub as response - " + '\n' + aaiStubResponseAsXml)
+					logger.debug(" No vpnBinding, using this stub as response - " + '\n' + aaiStubResponseAsXml)
 
 				}
 			}
 
 		} catch (NotFoundException e) {
-			msoLogger.debug("Response Error from AAINetworkVpnBinding is 404 (Not Found).")
+			logger.debug("Response Error from AAINetworkVpnBinding is 404 (Not Found).")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Response Error from AAINetworkVpnBinding is 404 (Not Found).")
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTQueryAAINetworkVpnBinding() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -559,7 +562,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkPolicy of DoUpdateNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTQueryAAINetworkPolicy of DoUpdateNetworkInstance ***** " )
 
 		try {
 			// get variables
@@ -568,7 +571,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.NETWORK_POLICY)
 
 				execution.setVariable(Prefix + "networkPolicyCount", uris.size())
-				msoLogger.debug(Prefix + "networkPolicyCount - " + uris.size())
+				logger.debug(Prefix + "networkPolicyCount - " + uris.size())
 
 				if (uris.size() > 0) {
 
@@ -587,7 +590,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					} // end loop
 
 					execution.setVariable(Prefix + "networkCollection", networkPolicies)
-					msoLogger.debug(" UPDNETI_networkCollection - " + '\n' + networkPolicies)
+					logger.debug(" UPDNETI_networkCollection - " + '\n' + networkPolicies)
 
 				} else {
 					// reset return code to success
@@ -603,18 +606,18 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
 					execution.setVariable(Prefix + "queryNetworkPolicyAAIResponse", aaiStubResponseAsXml)
 					execution.setVariable(Prefix + "networkCollection", "<policyFqdns/>")
-					msoLogger.debug(" No net policies, using this stub as response - " + '\n' + aaiStubResponseAsXml)
+					logger.debug(" No net policies, using this stub as response - " + '\n' + aaiStubResponseAsXml)
 
 				}
 			}
 
 		} catch (NotFoundException e) {
 			String dataErrorMessage = "Response Error from QueryAAINetworkPolicy is 404 (Not Found)."
-			msoLogger.debug(dataErrorMessage)
+			logger.debug(dataErrorMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTQueryAAINetworkPolicy() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -625,7 +628,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.debug(" ***** Inside callRESTQueryAAINetworkTableRef of DoUpdateNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTQueryAAINetworkTableRef of DoUpdateNetworkInstance ***** " )
 
 		try {
 			AAIResultWrapper queryIdAAIResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
@@ -633,9 +636,9 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				List<AAIResourceUri> uris = queryIdAAIResponse.getRelationships().get().getRelatedAAIUris(AAIObjectType.ROUTE_TABLE_REFERENCE)
 
 				execution.setVariable(Prefix + "networkTableRefCount", uris.size())
-				msoLogger.debug(Prefix + "networkTableRefCount - " + uris.size())
+				logger.debug(Prefix + "networkTableRefCount - " + uris.size())
 
-				msoLogger.debug(" UPDNETI_networkTableRefCount - " + uris.size())
+				logger.debug(" UPDNETI_networkTableRefCount - " + uris.size())
 				if (uris.size() > 0) {
 
 					execution.setVariable(Prefix + "aaiQqueryNetworkTableRefReturnCode", "200")
@@ -653,7 +656,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					} // end loop
 
 					execution.setVariable(Prefix + "tableRefCollection", networkTableRefs)
-					msoLogger.debug(" UPDNETI_tableRefCollection - " + '\n' + networkTableRefs)
+					logger.debug(" UPDNETI_tableRefCollection - " + '\n' + networkTableRefs)
 
 				} else {
 					// reset return code to success
@@ -669,19 +672,19 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 					String aaiStubResponseAsXml = utils.formatXml(aaiStubResponse)
 					execution.setVariable(Prefix + "queryNetworkTableRefAAIResponse", aaiStubResponseAsXml)
 					execution.setVariable(Prefix + "tableRefCollection", "<routeTableFqdns/>")
-					msoLogger.debug(" No net table references, using this stub as response - " + '\n' + aaiStubResponseAsXml)
+					logger.debug(" No net table references, using this stub as response - " + '\n' + aaiStubResponseAsXml)
 
 				}
 			}
 
 		} catch (NotFoundException e) {
 			String dataErrorMessage = "Response Error from QueryAAINetworkTableRef is 404 (Not Found)."
-			msoLogger.debug(dataErrorMessage)
+			logger.debug(dataErrorMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTQueryAAINetworkTableRef() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -690,7 +693,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 	public void callRESTUpdateContrailAAINetwork(DelegateExecution execution) {
 		execution.setVariable("prefix", Prefix)
-		msoLogger.debug(" ***** Inside callRESTUpdateContrailAAINetwork of DoUpdateNetworkInstance ***** " )
+		logger.debug(" ***** Inside callRESTUpdateContrailAAINetwork of DoUpdateNetworkInstance ***** " )
 		try {
 			// get variables
 			String networkRequest = execution.getVariable(Prefix + "networkRequest")
@@ -754,11 +757,11 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (NotFoundException e) {
 			String dataErrorMessage = " Response Error from UpdateContrailAAINetwork is 404 (Not Found)."
-			msoLogger.debug(dataErrorMessage)
+			logger.debug(dataErrorMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. callRESTUpdateContrailAAINetwork() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -769,7 +772,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside prepareUpdateNetworkRequest of DoUpdateNetworkInstance ")
+		logger.trace("Inside prepareUpdateNetworkRequest of DoUpdateNetworkInstance ")
 
 		try {
 
@@ -791,14 +794,14 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			// Format Response
 			String buildUpdateNetworkRequestAsString = utils.formatXml(updateNetworkRequest)
 			buildUpdateNetworkRequestAsString = buildUpdateNetworkRequestAsString.replace(":w1aac13n0", "").replace("w1aac13n0:", "")
-			msoLogger.debug(buildUpdateNetworkRequestAsString)
+			logger.debug(buildUpdateNetworkRequestAsString)
 
 			execution.setVariable(Prefix + "updateNetworkRequest", buildUpdateNetworkRequestAsString)
-			msoLogger.debug(" UPDNETI_updateNetworkRequest - " + "\n" +  buildUpdateNetworkRequestAsString)
+			logger.debug(" UPDNETI_updateNetworkRequest - " + "\n" +  buildUpdateNetworkRequestAsString)
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoUpdateNetworkInstance flow. prepareUpdateNetworkRequest() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -809,7 +812,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside prepareSDNCRequest of DoUpdateNetworkInstance ")
+		logger.trace("Inside prepareSDNCRequest of DoUpdateNetworkInstance ")
 
 		try {
 			// get variables
@@ -832,14 +835,14 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
  		   	String sndcTopologyCreateRequest = sdncAdapterUtils.sdncTopologyRequestV2(execution, updateNetworkInput, serviceInstanceId, sdncCallback, "changeassign", "NetworkActivateRequest", cloudRegionId, networkId, queryAAIResponse, null)
 
 			String sndcTopologyUpdateRequesAsString = utils.formatXml(sndcTopologyCreateRequest)
-			msoLogger.debug(sndcTopologyUpdateRequesAsString)
+			logger.debug(sndcTopologyUpdateRequesAsString)
 			execution.setVariable(Prefix + "changeAssignSDNCRequest", sndcTopologyUpdateRequesAsString)
-			msoLogger.debug(" UPDNETI_changeAssignSDNCRequest - " + "\n" +  sndcTopologyUpdateRequesAsString)
+			logger.debug(" UPDNETI_changeAssignSDNCRequest - " + "\n" +  sndcTopologyUpdateRequesAsString)
 
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoUpdateNetworkInstance flow. prepareSDNCRequest() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -857,7 +860,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside validateUpdateNetworkResponse of DoUpdateNetworkInstance ")
+		logger.trace("Inside validateUpdateNetworkResponse of DoUpdateNetworkInstance ")
 
 		try {
 			String returnCode = execution.getVariable(Prefix + "networkReturnCode")
@@ -866,14 +869,14 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				networkResponse="" // reset
 			}
 
-			msoLogger.debug(" Network Adapter update responseCode: " + returnCode)
+			logger.debug(" Network Adapter update responseCode: " + returnCode)
 
 			String errorMessage = ""
 			if (returnCode == "200") {
 				execution.setVariable(Prefix + "isNetworkRollbackNeeded", true)
-				msoLogger.debug(networkResponse)
+				logger.debug(networkResponse)
 				execution.setVariable(Prefix + "updateNetworkResponse", networkResponse)
-				msoLogger.debug(" Network Adapter update Success Response - " + "\n" + networkResponse)
+				logger.debug(" Network Adapter update Success Response - " + "\n" + networkResponse)
 
 				// prepare rollback data
 				String rollbackData = utils.getNodeXml(networkResponse, "rollback", false).replace("tag0:","").replace(":tag0","")
@@ -884,7 +887,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 						</rollbackNetworkRequest>"""
 				String rollbackNetworkXml = utils.formatXml(rollbackNetwork)
 				execution.setVariable(Prefix + "rollbackNetworkRequest", rollbackNetworkXml)
-				msoLogger.debug(" Network Adapter rollback data - " + "\n" + rollbackNetworkXml)
+				logger.debug(" Network Adapter rollback data - " + "\n" + rollbackNetworkXml)
 
 			} else { // network error
 			   if (returnCode.toInteger() > 399 && returnCode.toInteger() < 600) {   //4xx, 5xx
@@ -918,7 +921,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoUpdateNetworkInstance flow. validateUpdateNetworkResponse() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -930,7 +933,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside validateSDNCResponse of DoUpdateNetworkInstance ")
+		logger.trace("Inside validateSDNCResponse of DoUpdateNetworkInstance ")
 
 		String response = execution.getVariable(Prefix + "changeAssignSDNCResponse")
 		WorkflowException workflowException = null
@@ -938,7 +941,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			workflowException = execution.getVariable(Prefix + "WorkflowException")
 			//execution.setVariable("WorkflowException", workflowException)
 		} catch (Exception ex) {
-			msoLogger.debug(" Sdnc 'WorkflowException' object is empty or null. ")
+			logger.debug(" Sdnc 'WorkflowException' object is empty or null. ")
 		}
 
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
@@ -952,10 +955,10 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		if (execution.getVariable(Prefix + "sdncResponseSuccess") == true) {  // from sdnc util, prefix+'sdncResponseSuccess'
 			execution.setVariable(Prefix + "isSdncRollbackNeeded", true)
-			msoLogger.debug("Successfully Validated SDNC Response")
+			logger.debug("Successfully Validated SDNC Response")
 
 		} else {
-			msoLogger.debug("Did NOT Successfully Validated SDNC Response")
+			logger.debug("Did NOT Successfully Validated SDNC Response")
 			throw new BpmnError("MSOWorkflowException")
 		}
 
@@ -966,10 +969,10 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside postProcessResponse of DoUpdateNetworkInstance ")
+		logger.trace("Inside postProcessResponse of DoUpdateNetworkInstance ")
 
 		try {
-			msoLogger.debug(" ***** Is Exception Encountered (isException)? : " + execution.getVariable(Prefix + "isException"))
+			logger.debug(" ***** Is Exception Encountered (isException)? : " + execution.getVariable(Prefix + "isException"))
 			if (execution.getVariable(Prefix + "isException") == false) {
 				// set rollback data
 				execution.setVariable("orchestrationStatus", "")
@@ -978,13 +981,13 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				prepareSuccessRollbackData(execution) // populate rollbackData
 				execution.setVariable("WorkflowException", null)
 				execution.setVariable(Prefix + "Success", true)
-				msoLogger.debug(" ***** postProcessResponse(), GOOD !!!")
+				logger.debug(" ***** postProcessResponse(), GOOD !!!")
 			} else {
 				execution.setVariable(Prefix + "Success", false)
 				execution.setVariable("rollbackData", null)
 				String exceptionMessage = " Exception encountered in MSO Bpmn. "
 				if (execution.getVariable("workflowException") != null) {  // Output of Rollback flow.
-				   msoLogger.debug(" ***** workflowException: " + execution.getVariable("workflowException"))
+				   logger.debug(" ***** workflowException: " + execution.getVariable("workflowException"))
 				   WorkflowException wfex = execution.getVariable("workflowException")
 				   exceptionMessage = wfex.getErrorMessage()
    				} else {
@@ -994,19 +997,19 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			       }
    				}
 			    // going to the Main flow: a-la-carte or macro
-			    msoLogger.debug(" ***** postProcessResponse(), BAD !!!")
+			    logger.debug(" ***** postProcessResponse(), BAD !!!")
 			    exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 				throw new BpmnError("MSOWorkflowException")
 			}
 
 		} catch(BpmnError b){
-		     msoLogger.debug("Rethrowing MSOWorkflowException")
+		     logger.debug("Rethrowing MSOWorkflowException")
 		     throw b
 
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoUpdateNetworkInstance flow. postProcessResponse() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
         }
@@ -1018,7 +1021,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Inside prepareSDNCRollbackRequest of DoUpdateNetworkInstance ")
+		logger.trace("Inside prepareSDNCRollbackRequest of DoUpdateNetworkInstance ")
 
 		try {
 			// for some reason the WorkflowException object is null after the sdnc rollback call task, need to save WorkflowException.
@@ -1036,11 +1039,11 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			String sndcTopologyRollbackRequest = sdncAdapterUtils.sdncTopologyRequestV2(execution, updateNetworkInput, serviceInstanceId, sdncCallback, "rollback", "NetworkActivateRequest", cloudRegionId, networkId, null, null)
 			String sndcTopologyRollbackRequestAsString = utils.formatXml(sndcTopologyRollbackRequest)
 			execution.setVariable(Prefix + "rollbackSDNCRequest", sndcTopologyRollbackRequestAsString)
-			msoLogger.debug(" Preparing request for SDNC Topology assign's rollback/compensation . . . - " + "\n" +  sndcTopologyRollbackRequestAsString)
+			logger.debug(" Preparing request for SDNC Topology assign's rollback/compensation . . . - " + "\n" +  sndcTopologyRollbackRequestAsString)
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoUpdateNetworkInstance flow. prepareSDNCRollbackRequest() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -1051,7 +1054,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside prepareRollbackData() of DoUpdateNetworkInstance ")
+		logger.trace("Inside prepareRollbackData() of DoUpdateNetworkInstance ")
 
 		try {
 
@@ -1069,14 +1072,14 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 				}
 			}
 			execution.setVariable("rollbackData", rollbackData)
-			msoLogger.debug("** rollbackData : " + rollbackData)
+			logger.debug("** rollbackData : " + rollbackData)
 
 			execution.setVariable("WorkflowException", execution.getVariable(Prefix + "WorkflowException"))
-			msoLogger.debug("** WorkflowException : " + execution.getVariable("WorkflowException"))
+			logger.debug("** WorkflowException : " + execution.getVariable("WorkflowException"))
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoUpdateNetworkInstance flow. prepareRollbackData() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -1087,7 +1090,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside prepareSuccessRollbackData() of DoUpdateNetworkInstance ")
+		logger.trace("Inside prepareSuccessRollbackData() of DoUpdateNetworkInstance ")
 
 		try {
 
@@ -1112,13 +1115,13 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			}
 			execution.setVariable("rollbackData", rollbackData)
 
-			msoLogger.debug("** 'rollbackData' for Full Rollback : " + rollbackData)
+			logger.debug("** 'rollbackData' for Full Rollback : " + rollbackData)
 			execution.setVariable("WorkflowException", null)
 
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in DoUpdateNetworkInstance flow. prepareSuccessRollbackData() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -1129,7 +1132,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Inside setExceptionFlag() of DoUpdateNetworkInstance ")
+		logger.trace("Inside setExceptionFlag() of DoUpdateNetworkInstance ")
 
 		try {
 
@@ -1140,11 +1143,11 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			} else {
 				execution.setVariable(Prefix + "WorkflowException", execution.getVariable("WorkflowException"))
 			}
-			msoLogger.debug(Prefix + "WorkflowException - " +execution.getVariable(Prefix + "WorkflowException"))
+			logger.debug(Prefix + "WorkflowException - " +execution.getVariable(Prefix + "WorkflowException"))
 
 		} catch(Exception ex){
 			  String exceptionMessage = "Bpmn error encountered in DoUpdateNetworkInstance flow. setExceptionFlag(): " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 		}
 
@@ -1159,18 +1162,18 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		execution.setVariable("prefix",Prefix)
 		try{
-			msoLogger.debug("Caught a Java Exception")
-			msoLogger.debug("Started processJavaException Method")
-			msoLogger.debug("Variables List: " + execution.getVariables())
+			logger.debug("Caught a Java Exception")
+			logger.debug("Started processJavaException Method")
+			logger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception - "  + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception")
 
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
+			logger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable("UnexpectedError", "Exception in processJavaException method")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Exception in processJavaException method")
 		}
-		msoLogger.debug("Completed processJavaException Method")
+		logger.debug("Completed processJavaException Method")
 	}
 
 }

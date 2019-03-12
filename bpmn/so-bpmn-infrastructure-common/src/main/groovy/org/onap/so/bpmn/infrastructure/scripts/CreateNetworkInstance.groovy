@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,6 +31,8 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.*
 
@@ -37,7 +41,7 @@ import groovy.json.*
  *
  */
 public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateNetworkInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateNetworkInstance.class);
 
 	String Prefix="CRENI_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -71,7 +75,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Start preProcessRequest")
+		logger.trace("Start preProcessRequest")
 	
 		try {
 			// initialize flow variables
@@ -87,20 +91,20 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 					String disableRollback = jsonUtil.getJsonValue(bpmnRequest, "requestDetails.requestInfo.suppressRollback")
 					if (disableRollback != null) {
 					   execution.setVariable("disableRollback", disableRollback)
-					   msoLogger.debug("Received 'suppressRollback': " + disableRollback )
+					   logger.debug("Received 'suppressRollback': " + disableRollback )
 					} else {
 					   execution.setVariable("disableRollback", false)
 					}   
-					msoLogger.debug(" Set 'disableRollback' : " + execution.getVariable("disableRollback") )
+					logger.debug(" Set 'disableRollback' : " + execution.getVariable("disableRollback") )
 				} else {
 					String dataErrorMessage = " Invalid 'bpmnRequest' request."
-					msoLogger.debug(dataErrorMessage)
+					logger.debug(dataErrorMessage)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 				}
 				
 			} else {
 			    // 'macro' TEST ONLY, sdncVersion = '1702'
-			    msoLogger.debug(" 'disableRollback' : " + execution.getVariable("disableRollback") )
+			    logger.debug(" 'disableRollback' : " + execution.getVariable("disableRollback") )
 			}	
 			
 			// get/set 'msoRequestId' and 'mso-request-id'
@@ -146,7 +150,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 			sendSyncError(execution)
 			 // caught exception
 			String exceptionMessage = "Exception Encountered in CreateNetworkInstance, PreProcessRequest() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -156,7 +160,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Start sendSyncResponse")
+		logger.trace("Start sendSyncResponse")
 
 		try {
 			String requestId = execution.getVariable("mso-request-id")
@@ -164,12 +168,12 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 			// RESTResponse (for API Handler (APIH) Reply Task)
 			String createNetworkRestRequest = """{"requestReferences":{"instanceId":"","requestId":"${requestId}"}}""".trim()
 
-			msoLogger.debug(" sendSyncResponse to APIH - " + "\n" + createNetworkRestRequest)
+			logger.debug(" sendSyncResponse to APIH - " + "\n" + createNetworkRestRequest)
 			sendWorkflowResponse(execution, 202, createNetworkRestRequest)
 
 		} catch (Exception ex) {
 			String exceptionMessage = "Bpmn error encountered in CreateNetworkInstance flow. sendSyncResponse() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 		}
 
@@ -180,7 +184,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Start getNetworkModelInfo")
+		logger.trace("Start getNetworkModelInfo")
 		
 		try {
 			
@@ -193,7 +197,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			sendSyncError(execution)
 		   String exceptionMessage = "Bpmn error encountered in CreateNetworkInstance flow. getNetworkModelInfo() - " + ex.getMessage()
-		   msoLogger.debug(exceptionMessage)
+		   logger.debug(exceptionMessage)
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 			
 		}
@@ -205,7 +209,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Start sendSyncError")
+		logger.trace("Start sendSyncError")
 		
 		try {
 
@@ -217,7 +221,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 			sendWorkflowResponse(execution, 500, syncError)
 
 		} catch (Exception ex) {
-			msoLogger.debug(" Bpmn error encountered in CreateNetworkInstance flow. sendSyncError() - " + ex.getMessage())
+			logger.debug(" Bpmn error encountered in CreateNetworkInstance flow. sendSyncError() - " + ex.getMessage())
 		}
 
 	}
@@ -227,7 +231,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		execution.setVariable("prefix",Prefix)
 
 		try {
-			msoLogger.trace("Start prepareDBRequestError")
+			logger.trace("Start prepareDBRequestError")
 
 			// set DB Header Authorization
 			setBasicDBAuthHeader(execution, isDebugEnabled)
@@ -258,12 +262,12 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 					   </soapenv:Envelope>"""
 
 		   execution.setVariable(Prefix + "createDBRequest", dbRequest)
-		   msoLogger.debug(" DB Adapter Request - " + "\n" + dbRequest)
-		   msoLogger.debug(dbRequest)
+		   logger.debug(" DB Adapter Request - " + "\n" + dbRequest)
+		   logger.debug(dbRequest)
 
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in CreateNetworkInstance flow. prepareDBRequestError() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -274,7 +278,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 
-		msoLogger.trace("Start prepareCompletion")
+		logger.trace("Start prepareCompletion")
 
 		try {
 
@@ -301,11 +305,11 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 			// normal path
 			execution.setVariable(Prefix + "Success", true)
 			execution.setVariable(Prefix + "CompleteMsoProcessRequest", xmlMsoCompletionRequest)
-			msoLogger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+			logger.debug(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 		
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in CreateNetworkInstance flow. prepareCompletion() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
 		}
@@ -324,25 +328,25 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 	
-		msoLogger.trace("Start postProcessResponse")
+		logger.trace("Start postProcessResponse")
 		
 		try {
 			
 			if (execution.getVariable("CMSO_ResponseCode") == "200") {
 				execution.setVariable(Prefix + "Success", true)
-				msoLogger.trace("CreateNetworkInstance Success ****")
+				logger.trace("CreateNetworkInstance Success ****")
 				//   Place holder for additional code.
 				
 			 } else {
 				execution.setVariable(Prefix + "Success", false)
-				msoLogger.trace("CreateNetworkInstance Failed in CompletionMsoProces flow!. ****")
+				logger.trace("CreateNetworkInstance Failed in CompletionMsoProces flow!. ****")
 			 
 			 }
 				
 	
 		} catch (Exception ex) {
 			String exceptionMessage = " Bpmn error encountered in CreateNetworkInstance flow. postProcessResponse() - " + ex.getMessage()
-			msoLogger.debug(exceptionMessage)
+			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 	
 	    }
@@ -358,7 +362,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.trace("Start processRollbackData")
+		logger.trace("Start processRollbackData")
 	
 		try {
 			//execution.getVariable("orchestrationStatus")
@@ -369,7 +373,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 			//rolledBack
 
 		} catch (Exception ex) {
-			msoLogger.debug(" Bpmn error encountered in CreateNetworkInstance flow. callDBCatalog() - " + ex.getMessage())
+			logger.debug(" Bpmn error encountered in CreateNetworkInstance flow. callDBCatalog() - " + ex.getMessage())
 		}
 		
 	}
@@ -379,10 +383,10 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix", Prefix)
 
-		msoLogger.debug("DB updateInfraRequest ResponseCode: " + execution.getVariable(Prefix + "dbReturnCode"))
-		msoLogger.debug("DB updateInfraRequest Response: " + execution.getVariable(Prefix + "createDBResponse"))
+		logger.debug("DB updateInfraRequest ResponseCode: " + execution.getVariable(Prefix + "dbReturnCode"))
+		logger.debug("DB updateInfraRequest Response: " + execution.getVariable(Prefix + "createDBResponse"))
 		
-		msoLogger.trace("Prepare for FalloutHandler. FAILURE - prepare request for sub-process FalloutHandler.")
+		logger.trace("Prepare for FalloutHandler. FAILURE - prepare request for sub-process FalloutHandler.")
 
 		String falloutHandlerRequest = ""
 		String requestId = execution.getVariable("mso-request-id")
@@ -407,13 +411,13 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
 
-			msoLogger.debug(falloutHandlerRequest)
+			logger.debug(falloutHandlerRequest)
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			msoLogger.debug("  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest)
+			logger.debug("  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest)
 
 		} catch (Exception ex) {
 			String errorException = "  Bpmn error encountered in CreateNetworkInstance flow. FalloutHandlerRequest,  buildErrorResponse()"
-			msoLogger.debug("Exception error in CreateNetworkInstance flow,  buildErrorResponse(): "  + ex.getMessage())
+			logger.debug("Exception error in CreateNetworkInstance flow,  buildErrorResponse(): "  + ex.getMessage())
 			falloutHandlerRequest =
 			"""<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
 					                             xmlns:ns="http://org.onap/so/request/types/v1"
@@ -430,7 +434,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 					</aetgt:FalloutHandlerRequest>"""
 
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			msoLogger.debug("  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest)
+			logger.debug("  Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest)
 
 		}
 
@@ -440,18 +444,18 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		execution.setVariable("prefix",Prefix)
 		try{
-			msoLogger.debug("Caught a Java Exception in " + Prefix)
-			msoLogger.debug("Started processJavaException Method")
-			msoLogger.debug("Variables List: " + execution.getVariables())
+			logger.debug("Caught a Java Exception in " + Prefix)
+			logger.debug("Started processJavaException Method")
+			logger.debug("Variables List: " + execution.getVariables())
 			execution.setVariable("UnexpectedError", "Caught a Java Lang Exception - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Caught a Java Lang Exception")
 			
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
+			logger.debug("Caught Exception during processJavaException Method: " + e)
 			execution.setVariable("UnexpectedError", "Exception in processJavaException method - " + Prefix)  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildWorkflowException(execution, 500, "Exception in processJavaException method" + Prefix)
 		}
-		msoLogger.debug("Completed processJavaException Method in " + Prefix)
+		logger.debug("Completed processJavaException Method in " + Prefix)
 	}
 
 }

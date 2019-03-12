@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,9 +56,11 @@ import org.onap.appc.client.lcm.model.Action;
 
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 public class RollbackVnf extends VnfCmBase {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, RollbackVnf.class);
+    private static final Logger logger = LoggerFactory.getLogger( RollbackVnf.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtils = new JsonUtils()
@@ -92,7 +96,7 @@ public class RollbackVnf extends VnfCmBase {
 		')'
 		initProcessVariables(execution)
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		initProcessVariables(execution)
 
@@ -101,16 +105,18 @@ public class RollbackVnf extends VnfCmBase {
 			execution.setVariable("rollbackErrorCode", "0")
 
 			if (execution.getVariable("rollbackSetClosedLoopDisabledFlag") == true) {
-				msoLogger.debug("Will call setClosedLoopDisabledFlag")
+				logger.debug("Will call setClosedLoopDisabledFlag")
 			}
 
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("rollbackErrorCode", "1")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}
@@ -127,19 +133,19 @@ public class RollbackVnf extends VnfCmBase {
 		')'
 		initProcessVariables(execution)
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		def rollbackErrorCode = execution.getVariable('rollbackErrorCode')
 		if (rollbackErrorCode == "0") {
 			execution.setVariable('rollbackSuccessful', true)
-			msoLogger.debug("rollback successful")
+			logger.debug("rollback successful")
 		}
 		else {
 			execution.setVariable('rollbackSuccessful', false)
-			msoLogger.debug("rollback unsuccessful")
+			logger.debug("rollback unsuccessful")
 		}
 
-		msoLogger.trace('Exited ' + method)
+		logger.trace('Exited ' + method)
 
 	}
 

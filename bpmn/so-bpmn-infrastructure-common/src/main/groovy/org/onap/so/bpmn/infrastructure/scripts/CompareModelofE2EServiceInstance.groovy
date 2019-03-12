@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved. 
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,7 +33,8 @@ import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.domain.CompareModelsResult
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.*
 
@@ -52,7 +55,7 @@ import groovy.json.*
  * @param - WorkflowException
  */
 public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CompareModelofE2EServiceInstance.class);
+    private static final Logger logger = LoggerFactory.getLogger( CompareModelofE2EServiceInstance.class);
 
 	String Prefix="CMPMDSI_"
 	private static final String DebugFlag = "isDebugEnabled"
@@ -65,17 +68,17 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 		execution.setVariable("prefix",Prefix)
 		String msg = ""
 		
-		msoLogger.trace("preProcessRequest Request ")
+		logger.trace("preProcessRequest Request ")
 	
 		try {
 			// check for incoming json message/input
 			String siRequest = execution.getVariable("bpmnRequest")
-			msoLogger.debug(siRequest)
+			logger.debug(siRequest)
 			
 	
 			String requestId = execution.getVariable("mso-request-id")
 			execution.setVariable("msoRequestId", requestId)
-			msoLogger.info("Input Request:" + siRequest + " reqId:" + requestId)
+			logger.info("Input Request:" + siRequest + " reqId:" + requestId)
 			
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			if (isBlank(serviceInstanceId)) {
@@ -87,7 +90,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			String globalSubscriberId = jsonUtil.getJsonValue(siRequest, "globalSubscriberId")
 			if (isBlank(globalSubscriberId)) {
 				msg = "Input globalSubscriberId' is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 			} else {
 				execution.setVariable("globalSubscriberId", globalSubscriberId)
 			}
@@ -96,7 +99,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			String subscriptionServiceType = jsonUtil.getJsonValue(siRequest, "serviceType")
 			if (isBlank(subscriptionServiceType)) {
 				msg = "Input subscriptionServiceType is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				logger.debug( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			} else {
 				execution.setVariable("serviceType", subscriptionServiceType)
@@ -106,7 +109,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			String modelInvariantIdTarget = jsonUtil.getJsonValue(siRequest, "modelInvariantIdTarget")
 			if (isBlank(modelInvariantIdTarget)) {
 				msg = "Input modelInvariantIdTarget' is null"
-				utils.log("INFO", msg, isDebugEnabled)
+				logger.info( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			} else {
 				execution.setVariable("modelInvariantIdTarget", modelInvariantIdTarget)
@@ -116,7 +119,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			String modelVersionIdTarget = jsonUtil.getJsonValue(siRequest, "modelVersionIdTarget")
 			if (isBlank(modelVersionIdTarget)) {
 				msg = "Input modelVersionIdTarget is null"
-				utils.log("DEBUG", msg, isDebugEnabled)
+				logger.debug( msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, msg)
 			} else {
 				execution.setVariable("modelVersionIdTarget", modelVersionIdTarget)
@@ -128,32 +131,32 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest ")
+		logger.trace("Exit preProcessRequest ")
 	}
 
 	public void sendSyncResponse (DelegateExecution execution) {
-		msoLogger.trace("sendSyncResponse  ")
+		logger.trace("sendSyncResponse  ")
 
 		try {
 			CompareModelsResult compareModelsResult = execution.getVariable("compareModelsResult")
 			
 			// RESTResponse (for API Handler(APIH) Reply Task)
 			String syncResponse = compareModelsResult.toJsonStringNoRootName()
-			msoLogger.info(" sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse)
+			logger.info(" sendSynchResponse: xmlSyncResponse - " + "\n" + syncResponse)
 			sendWorkflowResponse(execution, 202, syncResponse)
 
 		} catch (Exception ex) {
 			String msg  = "Exception in sendSyncResponse: " + ex.getMessage()
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit sendSyncResopnse ")
+		logger.trace("Exit sendSyncResopnse ")
 	}
 	
 	public void sendSyncError (DelegateExecution execution) {
-		msoLogger.trace("sendSyncError ")
+		logger.trace("sendSyncError ")
 
 		try {
 			String errorMessage = ""
@@ -170,17 +173,17 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 					<aetgt:ErrorCode>7000</aetgt:ErrorCode>
 				   </aetgt:WorkflowException>"""
 
-			msoLogger.debug(buildworkflowException)
+			logger.debug(buildworkflowException)
 			sendWorkflowResponse(execution, 500, buildworkflowException)
 
 		} catch (Exception ex) {
-			msoLogger.info(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
+			logger.info(" Sending Sync Error Activity Failed. " + "\n" + ex.getMessage())
 		}
 
 	}
 	
 	public void prepareCompletionRequest (DelegateExecution execution) {
-		msoLogger.trace("prepareCompletion ")
+		logger.trace("prepareCompletion ")
 
 		try {
 			String requestId = execution.getVariable("msoRequestId")
@@ -201,22 +204,22 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			String xmlMsoCompletionRequest = utils.formatXml(msoCompletionRequest)
 
 			execution.setVariable("completionRequest", xmlMsoCompletionRequest)
-			msoLogger.info(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
+			logger.info(" Overall SUCCESS Response going to CompleteMsoProcess - " + "\n" + xmlMsoCompletionRequest)
 
 		} catch (Exception ex) {
 			String msg = " Exception in prepareCompletion:" + ex.getMessage()
-			msoLogger.info(msg)
+			logger.info(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit prepareCompletionRequest ")
+		logger.trace("Exit prepareCompletionRequest ")
 	}
 	
 	public void prepareFalloutRequest(DelegateExecution execution){
-		msoLogger.trace("prepareFalloutRequest ")
+		logger.trace("prepareFalloutRequest ")
 
 		try {
 			WorkflowException wfex = execution.getVariable("WorkflowException")
-			msoLogger.info(" Input Workflow Exception: " + wfex.toString())
+			logger.info(" Input Workflow Exception: " + wfex.toString())
 			String requestId = execution.getVariable("msoRequestId")
 			String source = execution.getVariable("source")
 			String requestInfo =
@@ -229,7 +232,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 			String falloutRequest = exceptionUtil.processMainflowsBPMNException(execution, requestInfo)
 			execution.setVariable("falloutRequest", falloutRequest)
 		} catch (Exception ex) {
-			msoLogger.info("Exception prepareFalloutRequest:" + ex.getMessage())
+			logger.info("Exception prepareFalloutRequest:" + ex.getMessage())
 			String errorException = "  Bpmn error encountered in CompareModelofE2EServiceInstance flow. FalloutHandlerRequest,  buildErrorResponse() - " + ex.getMessage()
 			String requestId = execution.getVariable("msoRequestId")
 			String falloutRequest =
@@ -249,7 +252,7 @@ public class CompareModelofE2EServiceInstance extends AbstractServiceTaskProcess
 
 			execution.setVariable("falloutRequest", falloutRequest)
 		}
-		msoLogger.trace("Exit prepareFalloutRequest ")
+		logger.trace("Exit prepareFalloutRequest ")
 	}
 
 }
