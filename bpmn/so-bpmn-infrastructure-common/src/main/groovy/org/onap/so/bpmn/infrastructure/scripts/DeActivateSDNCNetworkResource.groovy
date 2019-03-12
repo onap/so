@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,14 +33,15 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
-import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This groovy class supports the <class>ActivateSDNCCNetworkResource.bpmn</class> process.
  * flow for SDNC Network Resource Activate
  */
 public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor {
-    private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DeActivateSDNCNetworkResource.class);
+    private static final Logger logger = LoggerFactory.getLogger( DeActivateSDNCNetworkResource.class);
     String Prefix = "DEACTSDNCRES_"
 
     ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -51,7 +54,7 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
 
     public void preProcessRequest(DelegateExecution execution) {
 
-        msoLogger.info(" ***** Started preProcessRequest *****")
+        logger.info(" ***** Started preProcessRequest *****")
 
         try {
 
@@ -126,13 +129,13 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             throw e;
         } catch (Exception ex){
             msg = "Exception in preProcessRequest " + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
     }
 
     public void prepareSDNCRequest(DelegateExecution execution) {
-        msoLogger.info(" ***** Started prepareSDNCRequest *****")
+        logger.info(" ***** Started prepareSDNCRequest *****")
 
         try {
             // get variables
@@ -327,15 +330,15 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             String sdncTopologyDeleteRequesAsString = utils.formatXml(sdncTopologyDeleteRequest)
             utils.logAudit(sdncTopologyDeleteRequesAsString)
             execution.setVariable("sdncAdapterWorkflowRequest", sdncTopologyDeleteRequesAsString)
-            msoLogger.info("sdncAdapterWorkflowRequest - " + "\n" +  sdncTopologyDeleteRequesAsString)
+            logger.info("sdncAdapterWorkflowRequest - " + "\n" +  sdncTopologyDeleteRequesAsString)
 
         } catch (Exception ex) {
             String exceptionMessage = " Bpmn error encountered in DeleteSDNCCNetworkResource flow. prepareSDNCRequest() - " + ex.getMessage()
-            msoLogger.debug(exceptionMessage)
+            logger.debug(exceptionMessage)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
 
         }
-        msoLogger.info(" ***** Exit prepareSDNCRequest *****")
+        logger.info(" ***** Exit prepareSDNCRequest *****")
     }
 
     public void prepareUpdateAfterDeActivateSDNCResource(DelegateExecution execution) {
@@ -377,31 +380,31 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
     }
 
     public void postDeactivateSDNCCall(DelegateExecution execution) {
-        msoLogger.info(" ***** Started prepareSDNCRequest *****")        
+        logger.info(" ***** Started prepareSDNCRequest *****")        
         String responseCode = execution.getVariable(Prefix + "sdncDeleteReturnCode")
         String responseObj = execution.getVariable(Prefix + "SuccessIndicator")
 
-        msoLogger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
-        msoLogger.info(" ***** Exit prepareSDNCRequest *****")
+        logger.info("response from sdnc, response code :" + responseCode + "  response object :" + responseObj)
+        logger.info(" ***** Exit prepareSDNCRequest *****")
     }
 
     public void sendSyncResponse(DelegateExecution execution) {
-        msoLogger.debug(" *** sendSyncResponse *** ")
+        logger.debug(" *** sendSyncResponse *** ")
 
         try {
             String operationStatus = "finished"
             // RESTResponse for main flow
             String resourceOperationResp = """{"operationStatus":"${operationStatus}"}""".trim()
-            msoLogger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
+            logger.debug(" sendSyncResponse to APIH:" + "\n" + resourceOperationResp)
             sendWorkflowResponse(execution, 202, resourceOperationResp)
             execution.setVariable("sentSyncResponse", true)
 
         } catch (Exception ex) {
             String msg = "Exception in sendSyncResponse:" + ex.getMessage()
-            msoLogger.debug(msg)
+            logger.debug(msg)
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
         }
-        msoLogger.debug(" ***** Exit sendSyncResponse *****")
+        logger.debug(" ***** Exit sendSyncResponse *****")
     }
 
 }

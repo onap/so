@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,9 +46,11 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 public class DoUpdateVfModule extends VfModuleBase {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DoUpdateVfModule.class);
+    private static final Logger logger = LoggerFactory.getLogger( DoUpdateVfModule.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -106,13 +110,13 @@ public class DoUpdateVfModule extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			initProcessVariables(execution)
 			def xml = getVariable(execution, 'DoUpdateVfModuleRequest')
-			msoLogger.debug("DoUpdateVfModule request: " + xml)
-			msoLogger.debug('Received request xml:\n' + xml)
+			logger.debug("DoUpdateVfModule request: " + xml)
+			logger.debug('Received request xml:\n' + xml)
 
 			if (xml == null || xml.isEmpty()) {
 				// Building Block-type request
@@ -121,9 +125,9 @@ public class DoUpdateVfModule extends VfModuleBase {
 				String vfModuleModelInfo = execution.getVariable("vfModuleModelInfo")
 
 				def serviceModelInfo = execution.getVariable("serviceModelInfo")
-				msoLogger.debug("serviceModelInfo: " + serviceModelInfo)
+				logger.debug("serviceModelInfo: " + serviceModelInfo)
 				String modelInvariantUuid = jsonUtil.getJsonValue(serviceModelInfo, "modelInvariantUuid")
-				msoLogger.debug("modelInvariantUuid: " + modelInvariantUuid)
+				logger.debug("modelInvariantUuid: " + modelInvariantUuid)
 				def vnfModelInfo = execution.getVariable("vnfModelInfo")
 
 				//tenantId
@@ -138,32 +142,32 @@ public class DoUpdateVfModule extends VfModuleBase {
 				def cloudSiteId = execution.getVariable("lcpCloudRegionId")
 				execution.setVariable("DOUPVfMod_aicCloudRegion", cloudSiteId)
 
-				msoLogger.debug("cloudSiteId: " + cloudSiteId)
+				logger.debug("cloudSiteId: " + cloudSiteId)
 				//vnfType
 				def vnfType = execution.getVariable("vnfType")
 				execution.setVariable("DOUPVfMod_vnfType", vnfType)
 
-				msoLogger.debug("vnfType: " + vnfType)
+				logger.debug("vnfType: " + vnfType)
 				//vnfName
 				def vnfName = execution.getVariable("vnfName")
 				execution.setVariable("DOUPVfMod_vnfName", vnfName)
 
-				msoLogger.debug("vnfName: " + vnfName)
+				logger.debug("vnfName: " + vnfName)
 				//vnfId
 				def vnfId = execution.getVariable("vnfId")
 				execution.setVariable("DOUPVfMod_vnfId", vnfId)
 
-				msoLogger.debug("vnfId: " + vnfId)
+				logger.debug("vnfId: " + vnfId)
 				//vfModuleName
 				def vfModuleName = execution.getVariable("vfModuleName")
 				execution.setVariable("DOUPVfMod_vfModuleName", vfModuleName)
 
-				msoLogger.debug("vfModuleName: " + vfModuleName)
+				logger.debug("vfModuleName: " + vfModuleName)
 				//vfModuleModelName
 				def vfModuleModelName = jsonUtil.getJsonValue(vfModuleModelInfo, "modelName")
 				execution.setVariable("DOUPVfMod_vfModuleModelName", vfModuleModelName)
 
-				msoLogger.debug("vfModuleModelName: " + vfModuleModelName)
+				logger.debug("vfModuleModelName: " + vfModuleModelName)
 				//modelCustomizationUuid
 				def modelCustomizationUuid = jsonUtil.getJsonValue(vfModuleModelInfo, "modelCustomizationUuid")
 				if (modelCustomizationUuid == null) {
@@ -171,30 +175,30 @@ public class DoUpdateVfModule extends VfModuleBase {
 				}
 				execution.setVariable("DOUPVfMod_modelCustomizationUuid", modelCustomizationUuid)
 
-				msoLogger.debug("modelCustomizationUuid: " + modelCustomizationUuid)
+				logger.debug("modelCustomizationUuid: " + modelCustomizationUuid)
 				//vfModuleId
 				def vfModuleId = execution.getVariable("vfModuleId")
 				execution.setVariable("DOUPVfMod_vfModuleId", vfModuleId)
-				msoLogger.debug("vfModuleId: " + vfModuleId)
+				logger.debug("vfModuleId: " + vfModuleId)
 				def requestId = execution.getVariable("msoRequestId")
 				execution.setVariable("DOUPVfMod_requestId", requestId)
-				msoLogger.debug("requestId: " + requestId)
+				logger.debug("requestId: " + requestId)
 				// Set mso-request-id to request-id for VNF Adapter interface
 				execution.setVariable("mso-request-id", requestId)
 				//serviceId
 				def serviceId = execution.getVariable("serviceId")
 				execution.setVariable("DOUPVfMod_serviceId", serviceId)
-				msoLogger.debug("serviceId: " + serviceId)
+				logger.debug("serviceId: " + serviceId)
 				//serviceInstanceId
 				def serviceInstanceId = execution.getVariable("serviceInstanceId")
 				execution.setVariable("DOUPVfMod_serviceInstanceId", serviceInstanceId)
 
-				msoLogger.debug("serviceInstanceId: " + serviceInstanceId)
+				logger.debug("serviceInstanceId: " + serviceInstanceId)
 				//source - HARDCODED
 				def source = "VID"
 				execution.setVariable("DOUPVfMod_source", source)
 
-				msoLogger.debug("source: " + source)
+				logger.debug("source: " + source)
 				//backoutOnFailure
 				def disableRollback = execution.getVariable("disableRollback")
 				def backoutOnFailure = true
@@ -202,15 +206,15 @@ public class DoUpdateVfModule extends VfModuleBase {
 					backoutOnFailure = false
 				}
 				execution.setVariable("DOUPVfMod_backoutOnFailure", backoutOnFailure)
-				msoLogger.debug("backoutOnFailure: " + backoutOnFailure)
+				logger.debug("backoutOnFailure: " + backoutOnFailure)
 				//isBaseVfModule
 				def isBaseVfModule = execution.getVariable("isBaseVfModule")
 				execution.setVariable("DOUPVfMod_isBaseVfModule", isBaseVfModule)
-				msoLogger.debug("isBaseVfModule: " + isBaseVfModule)
+				logger.debug("isBaseVfModule: " + isBaseVfModule)
 				//asdcServiceModelVersion
 				def asdcServiceModelVersion = execution.getVariable("asdcServiceModelVersion")
 				execution.setVariable("DOUPVfMod_asdcServiceModelVersion", asdcServiceModelVersion)
-				msoLogger.debug("asdcServiceModelVersion: " + asdcServiceModelVersion)
+				logger.debug("asdcServiceModelVersion: " + asdcServiceModelVersion)
 				//personaModelId
 				execution.setVariable("DOUPVfMod_personaModelId", jsonUtil.getJsonValue(vfModuleModelInfo, "modelInvariantUuid"))
 				//personaModelVersion
@@ -219,9 +223,9 @@ public class DoUpdateVfModule extends VfModuleBase {
 				String uuid = execution.getVariable("DOUPVfMod_uuid")
 				if(uuid == null){
 					uuid = UUID.randomUUID()
-					msoLogger.debug("Generated messageId (UUID) is: " + uuid)
+					logger.debug("Generated messageId (UUID) is: " + uuid)
 				}else{
-					msoLogger.debug("Found messageId (UUID) is: " + uuid)
+					logger.debug("Found messageId (UUID) is: " + uuid)
 				}
 				//isVidRequest
 				String isVidRequest = execution.getVariable("isVidRequest")
@@ -232,15 +236,15 @@ public class DoUpdateVfModule extends VfModuleBase {
 				//usePreload
 				def usePreload = execution.getVariable("usePreload")
 				execution.setVariable("DOUPVfMod_usePreload", usePreload)
-				msoLogger.debug("usePreload: " + usePreload)
+				logger.debug("usePreload: " + usePreload)
 				//globalSubscriberId
 				String globalSubscriberId = execution.getVariable("globalSubscriberId")
 				execution.setVariable("DOUPVfMod_globalSubscriberId", globalSubscriberId)
-				msoLogger.debug("globalSubsrciberId: " + globalSubscriberId)
+				logger.debug("globalSubsrciberId: " + globalSubscriberId)
 				//vnfQueryPath
 				String vnfQueryPath = execution.getVariable("vnfQueryPath")
 				execution.setVariable("DOUPVfMod_vnfQueryPath", vnfQueryPath)
-				msoLogger.debug("vnfQueryPath: " + vnfQueryPath)
+				logger.debug("vnfQueryPath: " + vnfQueryPath)
 
 				Map<String,String> vfModuleInputParams = execution.getVariable("vfModuleInputParams")
 				if (vfModuleInputParams != null) {
@@ -258,7 +262,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 					throw e
 				} catch (Exception ex){
 					String msg = "Exception in preProcessRequest " + ex.getMessage()
-					msoLogger.debug(msg)
+					logger.debug(msg)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 				}
 
@@ -271,7 +275,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 					workloadContext = aaiJson.getOrDefault("workload-context","")
 
 				}catch (Exception ex) {
-					msoLogger.debug("Error retreiving parent service instance information")
+					logger.debug("Error retreiving parent service instance information")
 				}
 
 				execution.setVariable("DCVFM_environmentContext",environmentContext)
@@ -307,7 +311,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 					isBaseVfModule = utils.getNodeText(xml, "is-base-vf-module")
 					execution.setVariable("DOUPVfMod_isBaseVfModule", isBaseVfModule)
 				}
-				msoLogger.debug("isBaseVfModule: " + isBaseVfModule)
+				logger.debug("isBaseVfModule: " + isBaseVfModule)
 
 				NetworkUtils networkUtils = new NetworkUtils()
 				def backoutOnFailure = networkUtils.isRollbackEnabled(execution, xml)
@@ -322,15 +326,15 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def sdncCallbackUrl = (String) UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 			if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 				def msg = 'Required variable \'mso.workflow.sdncadapter.callback\' is missing'
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -346,7 +350,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('DOUPVfMod_vnfId')
@@ -362,14 +366,14 @@ public class DoUpdateVfModule extends VfModuleBase {
 			"""
 			prepareUpdateAAIVfModuleRequest = utils.formatXml(prepareUpdateAAIVfModuleRequest)
 			execution.setVariable('DOUPVfMod_prepareUpdateAAIVfModuleRequest', prepareUpdateAAIVfModuleRequest)
-			msoLogger.debug("DoUpdateAAIVfModule request: " + prepareUpdateAAIVfModuleRequest)
-			msoLogger.debug('Request for PrepareUpdateAAIVfModule:\n' + prepareUpdateAAIVfModuleRequest)
+			logger.debug("DoUpdateAAIVfModule request: " + prepareUpdateAAIVfModuleRequest)
+			logger.debug('Request for PrepareUpdateAAIVfModule:\n' + prepareUpdateAAIVfModuleRequest)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preparePrepareUpdateAAIVfModule(): ' + e.getMessage())
 		}
 	}
@@ -387,7 +391,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 
 		def prefix = execution.getVariable("prefix")
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			String cloudRegion = execution.getVariable(prefix + "aicCloudRegion")
@@ -411,22 +415,22 @@ public class DoUpdateVfModule extends VfModuleBase {
 				execution.setVariable(prefix + "isCloudRegionGood", true)
 			} else {
 				String errorMessage = "AAI Query Cloud Region Unsuccessful. AAI Response Code: " + execution.getVariable(prefix + "queryCloudRegionReturnCode")
-				msoLogger.debug(errorMessage)
+				logger.debug(errorMessage)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
 				execution.setVariable(prefix + "isCloudRegionGood", false)
 			}
-			msoLogger.debug(" is Cloud Region Good: " + execution.getVariable(prefix + "isCloudRegionGood"))
+			logger.debug(" is Cloud Region Good: " + execution.getVariable(prefix + "isCloudRegionGood"))
 
 		} catch(BpmnError b){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Rethrowing MSOWorkflowException", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + b);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Rethrowing MSOWorkflowException", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + b);
 			throw b
 		}catch (Exception e) {
 			// try error
 			String errorMessage = "Bpmn error encountered in CreateVfModule flow. Unexpected Response from AAI - " + e.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " AAI Query Cloud Region Failed.  Exception - " + "\n" + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " AAI Query Cloud Region Failed.  Exception - " + "\n" + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Exception occured during prepConfirmVolumeGroupTenant(): " + e.getMessage())
 		}
-		msoLogger.trace('Exited ' + method)
+		logger.trace('Exited ' + method)
 
 	}
 
@@ -441,7 +445,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestId = execution.getVariable('DOUPVfMod_requestId')
@@ -521,14 +525,14 @@ public class DoUpdateVfModule extends VfModuleBase {
 			"""
 			sdncTopologyRequest = utils.formatXml(sdncTopologyRequest)
 			execution.setVariable('DOUPVfMod_sdncChangeAssignRequest', sdncTopologyRequest)
-			msoLogger.debug("sdncChangeAssignRequest : " + sdncTopologyRequest)
-			msoLogger.debug('Request for SDNCAdapter topology/changeassign:\n' + sdncTopologyRequest)
+			logger.debug("sdncChangeAssignRequest : " + sdncTopologyRequest)
+			logger.debug('Request for SDNCAdapter topology/changeassign:\n' + sdncTopologyRequest)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepSDNCTopologyChg(): ' + e.getMessage())
 		}
 	}
@@ -544,7 +548,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			String uuid = execution.getVariable('testReqId') // for junits
@@ -583,14 +587,14 @@ public class DoUpdateVfModule extends VfModuleBase {
 			"""
 			sdncTopologyRequest = utils.formatXml(sdncTopologyRequest)
 			execution.setVariable('DOUPVfMod_sdncTopologyRequest', sdncTopologyRequest)
-			msoLogger.debug("sdncTopologyRequest : " + sdncTopologyRequest)
-			msoLogger.debug('Request for SDNCAdapter query:\n' + sdncTopologyRequest)
+			logger.debug("sdncTopologyRequest : " + sdncTopologyRequest)
+			logger.debug('Request for SDNCAdapter query:\n' + sdncTopologyRequest)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepSDNCTopologyQuery(): ' + e.getMessage())
 		}
 	}
@@ -605,7 +609,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def requestId = execution.getVariable('DOUPVfMod_requestId')
@@ -641,8 +645,8 @@ public class DoUpdateVfModule extends VfModuleBase {
 
 			String environmentContext = execution.getVariable("DOUPVEnvironment_context")
 			String workloadContext = execution.getVariable("DOUPVWorkload_context")
-			msoLogger.debug("workloadContext: " + workloadContext)
-			msoLogger.debug("environmentContext: " + environmentContext)
+			logger.debug("workloadContext: " + workloadContext)
+			logger.debug("environmentContext: " + environmentContext)
 
 			Map<String, String> vnfParamsMap = execution.getVariable("DOUPVfMod_vnfParamsMap")
 
@@ -683,14 +687,14 @@ public class DoUpdateVfModule extends VfModuleBase {
 			"""
 			vnfAdapterRestRequest = utils.formatXml(vnfAdapterRestRequest)
 			execution.setVariable('DOUPVfMod_vnfAdapterRestRequest', vnfAdapterRestRequest)
-			msoLogger.debug("vnfAdapterRestRequest : " + vnfAdapterRestRequest)
-			msoLogger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
+			logger.debug("vnfAdapterRestRequest : " + vnfAdapterRestRequest)
+			logger.debug('Request for VNFAdapter Rest:\n' + vnfAdapterRestRequest)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepVnfAdapterRest(): ' + e.getMessage())
 		}
 	}
@@ -704,7 +708,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.prepUpdateAAIGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('DOUPVfMod_vnfId')
@@ -713,7 +717,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			def personaModelId = utils.getNodeText(vnfInputs, 'vnf-persona-model-id')
 			def personaModelVersion = utils.getNodeText(vnfInputs, 'vnf-persona-model-version')
 			if ((personaModelId == null) || (personaModelVersion == null)) {
-				msoLogger.debug("Skipping update for Generic VNF ' + vnfId + ' because either \'vnf-persona-model-id\' or \'vnf-persona-model-version\' is absent")
+				logger.debug("Skipping update for Generic VNF ' + vnfId + ' because either \'vnf-persona-model-id\' or \'vnf-persona-model-version\' is absent")
 				execution.setVariable('DOUPVfMod_skipUpdateGenericVnf', true)
 			} else {
 				def personaModelIdElement = '<model-invariant-id>' + personaModelId + '</model-invariant-id>'
@@ -728,15 +732,15 @@ public class DoUpdateVfModule extends VfModuleBase {
 				"""
 				updateAAIGenericVnfRequest = utils.formatXml(updateAAIGenericVnfRequest)
 				execution.setVariable('DOUPVfMod_updateAAIGenericVnfRequest', updateAAIGenericVnfRequest)
-				msoLogger.debug("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
-				msoLogger.debug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest)
+				logger.debug("updateAAIGenericVnfRequest : " + updateAAIGenericVnfRequest)
+				logger.debug('Request for UpdateAAIGenericVnf:\n' + updateAAIGenericVnfRequest)
 			}
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -751,7 +755,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('DOUPVfMod_vnfId')
@@ -798,17 +802,17 @@ public class DoUpdateVfModule extends VfModuleBase {
 				</UpdateAAIVfModuleRequest>
 			"""
 
-			msoLogger.debug('Unformatted updateAAIVfModuleRequest: ' + updateAAIVfModuleRequest)
+			logger.debug('Unformatted updateAAIVfModuleRequest: ' + updateAAIVfModuleRequest)
 			updateAAIVfModuleRequest = utils.formatXml(updateAAIVfModuleRequest)
 			execution.setVariable('DOUPVfMod_updateAAIVfModuleRequest', updateAAIVfModuleRequest)
-			msoLogger.debug("updateAAIVfModuleRequest : " + updateAAIVfModuleRequest)
-			msoLogger.debug('Request for UpdateAAIVfModule:\n' + updateAAIVfModuleRequest)
+			logger.debug("updateAAIVfModuleRequest : " + updateAAIVfModuleRequest)
+			logger.debug('Request for UpdateAAIVfModule:\n' + updateAAIVfModuleRequest)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIVfModule(): ' + e.getMessage())
 		}
 	}
@@ -824,7 +828,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			String uuid = execution.getVariable('testReqId') // for junits
@@ -901,15 +905,15 @@ public class DoUpdateVfModule extends VfModuleBase {
 			"""
 			sdncTopologyRequest = utils.formatXml(sdncTopologyRequest)
 			execution.setVariable('DOUPVfMod_sdncActivateRequest', sdncTopologyRequest)
-			msoLogger.debug("sdncActivateRequest : " + sdncTopologyRequest)
-			msoLogger.debug('Request for SDNCAdapter topology/activate:\n' + sdncTopologyRequest)
+			logger.debug("sdncActivateRequest : " + sdncTopologyRequest)
+			logger.debug('Request for SDNCAdapter topology/activate:\n' + sdncTopologyRequest)
 
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepSDNCTopologyAct(): ' + e.getMessage())
 		}
 	}
@@ -924,17 +928,17 @@ public class DoUpdateVfModule extends VfModuleBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def WorkflowException workflowException = (WorkflowException) execution.getVariable('WorkflowException')
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, method + ' caught WorkflowException: ' + workflowException.getErrorMessage(), "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), method + ' caught WorkflowException: ' + workflowException.getErrorMessage(), "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in handleWorkflowException(): ' + e.getMessage())
 		}
 	}
@@ -943,26 +947,26 @@ public class DoUpdateVfModule extends VfModuleBase {
 
 		def prefix = execution.getVariable("prefix")
 
-		msoLogger.trace("STARTED ValidateSDNCResponse Process")
+		logger.trace("STARTED ValidateSDNCResponse Process")
 
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 
-		msoLogger.debug("workflowException: " + workflowException)
+		logger.debug("workflowException: " + workflowException)
 
 		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
-		msoLogger.debug("SDNCResponse: " + response)
+		logger.debug("SDNCResponse: " + response)
 
 		String sdncResponse = response
 		if(execution.getVariable(prefix + 'sdncResponseSuccess') == true){
-			msoLogger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)
+			logger.debug("Received a Good Response from SDNC Adapter for " + method + " SDNC Call.  Response is: \n" + sdncResponse)
 		}else{
-			msoLogger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
+			logger.debug("Received a BAD Response from SDNC Adapter for " + method + " SDNC Call.")
 			throw new BpmnError("MSOWorkflowException")
 		}
-		msoLogger.trace("COMPLETED ValidateSDNCResponse Process")
+		logger.trace("COMPLETED ValidateSDNCResponse Process")
 	}
 
 	/**
@@ -976,7 +980,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.getVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('DOUPVfMod_vnfId')
@@ -988,30 +992,30 @@ public class DoUpdateVfModule extends VfModuleBase {
                     execution.setVariable('DOUPVfMod_queryAAIVfModuleResponseCode', 200)
                     execution.setVariable('DOUPVfMod_queryAAIVfModuleResponse', genericVnf.get())
                     // Parse the VNF record from A&AI to find base module info
-					msoLogger.debug('Parsing the VNF data to find base module info')
+					logger.debug('Parsing the VNF data to find base module info')
 					if (genericVnf.get().getVfModules()!=null && !genericVnf.get().getVfModules().getVfModule().isEmpty()) {
                         Optional<org.onap.aai.domain.yang.VfModule> vfmodule =  genericVnf.get().getVfModules().getVfModule().stream().
                                 filter{v-> v.isIsBaseVfModule()}.findFirst()
 							if (vfmodule.isPresent()) {
 							    String baseModuleId = vfmodule.get().getVfModuleId()
 							    execution.setVariable("DOUPVfMod_baseVfModuleId", baseModuleId)
-							    msoLogger.debug('Received baseVfModuleId: ' + baseModuleId)
+							    logger.debug('Received baseVfModuleId: ' + baseModuleId)
 							    String baseModuleHeatStackId = vfmodule.get().getHeatStackId()
 							    execution.setVariable("DOUPVfMod_baseVfModuleHeatStackId", baseModuleHeatStackId)
-							    msoLogger.debug('Received baseVfModuleHeatStackId: ' + baseModuleHeatStackId)
+							    logger.debug('Received baseVfModuleHeatStackId: ' + baseModuleHeatStackId)
 							}
 					}
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())
 		}
 	}

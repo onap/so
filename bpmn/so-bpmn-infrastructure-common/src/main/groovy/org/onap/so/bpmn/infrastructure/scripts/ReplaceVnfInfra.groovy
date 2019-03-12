@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,12 +36,14 @@ import org.onap.so.client.appc.ApplicationControllerOrchestrator
 import org.onap.so.client.appc.ApplicationControllerSupport
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 
 public class ReplaceVnfInfra extends VnfCmBase {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ReplaceVnfInfra.class);
+    private static final Logger logger = LoggerFactory.getLogger( ReplaceVnfInfra.class);
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtils = new JsonUtils()		
@@ -93,18 +97,18 @@ public class ReplaceVnfInfra extends VnfCmBase {
 		')'
 		initProcessVariables(execution)
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		initProcessVariables(execution)		
 
 		def incomingRequest = execution.getVariable('bpmnRequest')
 
-		msoLogger.debug("Incoming Infra Request: " + incomingRequest)
+		logger.debug("Incoming Infra Request: " + incomingRequest)
 		try {
 			def jsonSlurper = new JsonSlurper()
 			def jsonOutput = new JsonOutput()
 			Map reqMap = jsonSlurper.parseText(incomingRequest)
-			msoLogger.debug(" Request is in JSON format.")
+			logger.debug(" Request is in JSON format.")
 
 			def serviceInstanceId = execution.getVariable('serviceInstanceId')
 			def vnfId = execution.getVariable('vnfId')
@@ -129,12 +133,12 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			if (relatedInstanceList != null) {
 				relatedInstanceList.each {
 					if (it.relatedInstance.modelInfo?.modelType == 'service') {
-						msoLogger.debug("PROCESSING SERVICE INFO")
+						logger.debug("PROCESSING SERVICE INFO")
 						asdcServiceModelVersion = it.relatedInstance.modelInfo?.modelVersion
 						serviceModelInfo = jsonOutput.toJson(it.relatedInstance.modelInfo)
-						msoLogger.debug("ServiceModelInfo: " + serviceModelInfo)
+						logger.debug("ServiceModelInfo: " + serviceModelInfo)
 						def modelInvariant = jsonUtils.getJsonValue(serviceModelInfo, "modelInvariantUuid")
-						msoLogger.debug("modelInvariant: " + modelInvariant)
+						logger.debug("modelInvariant: " + modelInvariant)
 					}
 					
 				}
@@ -146,7 +150,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			execution.setVariable('vnfModelInfo', vnfModelInfo)
 			def vnfModelInvariantUuid = jsonUtils.getJsonValue(vnfModelInfo, "modelInvariantUuid")
 			execution.setVariable('vnfModelInvariantUuid', vnfModelInvariantUuid)	
-			msoLogger.debug("vnfModelInvariantUuid: " + vnfModelInvariantUuid)	
+			logger.debug("vnfModelInvariantUuid: " + vnfModelInvariantUuid)	
 			
 			def vnfType = execution.getVariable('vnfType')
 			execution.setVariable('vnfType', vnfType)	
@@ -155,7 +159,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			def controllerType = reqMap.requestDetails?.requestParameters?.controllerType
 			execution.setVariable('controllerType', controllerType)
 			
-			msoLogger.debug('Controller Type: ' + controllerType)	
+			logger.debug('Controller Type: ' + controllerType)	
 			
 			def userParams = reqMap.requestDetails?.requestParameters?.userParams					
 			
@@ -166,13 +170,13 @@ public class ReplaceVnfInfra extends VnfCmBase {
 				}							
 			}		
 						
-			msoLogger.debug('Processed user params: ' + userParamsMap)		
+			logger.debug('Processed user params: ' + userParamsMap)		
 			
 			execution.setVariable('vfModuleInputParams', userParamsMap)			
 						
 			def requestId = execution.getVariable("requestId")		
 			execution.setVariable('msoRequestId', requestId)
-			msoLogger.debug("requestId is: " + requestId)
+			logger.debug("requestId is: " + requestId)
 			
 			def vnfName = reqMap.requestDetails?.requestInfo?.instanceName ?: null
 			execution.setVariable('vnfName', vnfName)
@@ -217,19 +221,19 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			
 			execution.setVariable("requestInfo", requestInfo)			
 			
-			msoLogger.debug('RequestInfo: ' + execution.getVariable("requestInfo"))		
+			logger.debug('RequestInfo: ' + execution.getVariable("requestInfo"))		
 			
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 
 		}
 		catch(groovy.json.JsonException je) {
-			msoLogger.debug(" Request is not in JSON format.")
+			logger.debug(" Request is not in JSON format.")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Invalid request format")
 
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), " Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}	
 	}
@@ -244,7 +248,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 
 		try {
@@ -266,11 +270,11 @@ public class ReplaceVnfInfra extends VnfCmBase {
 
 			sendWorkflowResponse(execution, 200, synchResponse)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -288,25 +292,25 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
 			String vnfModelInvariantUuid = execution.getVariable('vnfModelInvariantUuid')
-			msoLogger.debug("vnfModelInvariantUuid: " + vnfModelInvariantUuid)
+			logger.debug("vnfModelInvariantUuid: " + vnfModelInvariantUuid)
 			List<VnfResource> vnfResources = serviceDecomposition.getVnfResources()
 			
 			for (i in 0..vnfResources.size()-1) {
 				ModelInfo modelInfo = vnfResources[i].getModelInfo()
 				String modelInvariantUuidFromDecomposition = modelInfo.getModelInvariantUuid()
-				msoLogger.debug("modelInvariantUuidFromDecomposition: " + modelInvariantUuidFromDecomposition)
+				logger.debug("modelInvariantUuidFromDecomposition: " + modelInvariantUuidFromDecomposition)
 				
 				if (vnfModelInvariantUuid.equals(modelInvariantUuidFromDecomposition)) {
 					VnfResource vnfResourceDecomposition = vnfResources[i]
 					execution.setVariable('vnfResourceDecomposition', vnfResourceDecomposition)
 					def nfRole = vnfResourceDecomposition.getNfRole()					
 					execution.setVariable('nfRole', nfRole)
-					msoLogger.debug("vnfResourceDecomposition: " + vnfResourceDecomposition.toJsonString())					
+					logger.debug("vnfResourceDecomposition: " + vnfResourceDecomposition.toJsonString())					
 					break
 				}
 				else {
@@ -315,11 +319,11 @@ public class ReplaceVnfInfra extends VnfCmBase {
 				
 			}
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVnfResourceDecomposition(): ' + e.getMessage())
 		}
 	}
@@ -338,7 +342,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 		execution.setVariable('errorCode', "0")
 		execution.setVariable("workStep", "checkIfVnfInMaintInAAI")
 		execution.setVariable("failedActivity", "AAI")
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			AAIRestClientImpl client = new AAIRestClientImpl()
@@ -346,7 +350,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			aaiValidator.setClient(client)
 			def vnfId = execution.getVariable("vnfId")
 			boolean isInMaint = aaiValidator.isVNFLocked(vnfId)
-			msoLogger.debug("isInMaint result: " + isInMaint)
+			logger.debug("isInMaint result: " + isInMaint)
 			execution.setVariable('isVnfInMaintenance', isInMaint)
 			
 			if (isInMaint) {
@@ -355,11 +359,11 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			}
 
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfVnfInMaintInAAI(): ' + e.getMessage())
@@ -379,7 +383,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			')'
 
 		execution.setVariable('errorCode', "0")
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		execution.setVariable("workStep", "checkIfPserversInMaintInAAI")
 		execution.setVariable("failedActivity", "AAI")
 
@@ -389,7 +393,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			aaiValidator.setClient(client)
 			def vnfId = execution.getVariable("vnfId")			
 			boolean areLocked = aaiValidator.isPhysicalServerLocked(vnfId)
-			msoLogger.debug("areLocked result: " + areLocked)
+			logger.debug("areLocked result: " + areLocked)
 			execution.setVariable('arePserversLocked', areLocked)
 			
 			if (areLocked) {
@@ -397,11 +401,11 @@ public class ReplaceVnfInfra extends VnfCmBase {
 				execution.setVariable("errorText", "pServers are locked in A&AI")
 			}
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfPserversInMaintInAAI(): ' + e.getMessage())
@@ -421,7 +425,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			')'
 
 		execution.setVariable('errorCode', "0")
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		if (inMaint) {
 			execution.setVariable("workStep", "setVnfInMaintFlagInAAI")
 		}
@@ -443,11 +447,11 @@ public class ReplaceVnfInfra extends VnfCmBase {
 				aaiUpdator.updateVnfToUnLocked(vnfId)
 			}
 							
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}
@@ -466,10 +470,10 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			')'
 
 		execution.setVariable('errorCode', "0")
-		msoLogger.trace('Entered ' + method)		
+		logger.trace('Entered ' + method)		
 		
 		try {
-			msoLogger.debug("Running APP-C action: " + action.toString())
+			logger.debug("Running APP-C action: " + action.toString())
 			String vnfId = execution.getVariable('vnfId')
 			String msoRequestId = execution.getVariable('requestId')
 			execution.setVariable('msoRequestId', msoRequestId)
@@ -504,26 +508,26 @@ public class ReplaceVnfInfra extends VnfCmBase {
 				default:
 					break
 			}
-			msoLogger.debug("Completed AppC request")
+			logger.debug("Completed AppC request")
 			int appcCode = appcStatus.getCode()
-			msoLogger.debug("AppC status code is: " + appcCode)
-			msoLogger.debug("AppC status message is: " + appcStatus.getMessage())
+			logger.debug("AppC status code is: " + appcCode)
+			logger.debug("AppC status message is: " + appcStatus.getMessage())
 			if (support.getCategoryOf(appcStatus) == ApplicationControllerSupport.StatusCategory.ERROR) {
 				execution.setVariable("errorCode", Integer.toString(appcCode))
 				execution.setVariable("errorText", appcStatus.getMessage())
 			}
 			
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())			
 		} catch (java.lang.NoSuchMethodError e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())				
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "Exception is:\n" + e);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())			
 		}
@@ -543,10 +547,10 @@ public class ReplaceVnfInfra extends VnfCmBase {
 		   ')'
 
 	   execution.setVariable('errorCode', "0")
-	   msoLogger.trace('Entered ' + method)
+	   logger.trace('Entered ' + method)
 	   execution.setVariable("workStep", "doDeleteVnfAndModules")
 	   execution.setVariable("failedActivity", "MSO Delete VNF")
-	   msoLogger.trace('Exited ' + method)
+	   logger.trace('Exited ' + method)
 	   
    }
    
@@ -562,10 +566,10 @@ public class ReplaceVnfInfra extends VnfCmBase {
 		   ')'
 
 	   execution.setVariable('errorCode', "0")
-	   msoLogger.trace('Entered ' + method)
+	   logger.trace('Entered ' + method)
 	   execution.setVariable("workStep", "doCreateVnfAndModules")
 	   execution.setVariable("failedActivity", "MSO Create VNF")
-	   msoLogger.trace('Exited ' + method)
+	   logger.trace('Exited ' + method)
 	   
    }
 	
@@ -580,7 +584,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		
 		def errorText = execution.getVariable("errorText")
 		def errorCode = execution.getVariable("errorCode")
@@ -598,7 +602,7 @@ public class ReplaceVnfInfra extends VnfCmBase {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		
 		def taskId = execution.getVariable("taskId")
 		
