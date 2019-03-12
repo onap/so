@@ -30,17 +30,12 @@ import org.springframework.web.filter.CorsFilter;
  * @author waqas.ikram@ericsson, eoin.hanan@ericsson.com
  */
 @Configuration
-public class CorsConfigurer  {
+public class CorsConfigurer {
 
     @Bean
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
+        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
         return new CorsFilter(source);
     }
 }
