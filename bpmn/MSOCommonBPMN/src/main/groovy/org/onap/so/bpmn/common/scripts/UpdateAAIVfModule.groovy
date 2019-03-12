@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,10 +31,12 @@ import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateAAIVfModule.class);
+    private static final Logger logger = LoggerFactory.getLogger( UpdateAAIVfModule.class);
 
 
 	private XmlParser xmlParser = new XmlParser()
@@ -65,11 +69,11 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def xml = execution.getVariable('UpdateAAIVfModuleRequest')
-			msoLogger.debug('Received request xml:\n' + xml)
+			logger.debug('Received request xml:\n' + xml)
 			initProcessVariables(execution)
 
 			def vnfId = getRequiredNodeText(execution, xml,'vnf-id')
@@ -78,11 +82,11 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			def vfModuleId = getRequiredNodeText(execution, xml,'vf-module-id')
 			execution.setVariable('UAAIVfMod_vfModuleId', vfModuleId)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e);
+			logger.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -97,7 +101,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.getVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('UAAIVfMod_vnfId')
@@ -113,14 +117,14 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 					execution.setVariable('UAAIVfMod_getVfModuleResponse', "VF Module not found in AAI")
 				}
 			} catch (Exception ex) {
-				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('UAAIVfMod_getVfModuleResponseCode', 500)
 				execution.setVariable('UAAIVfMod_getVfModuleResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e);
+			logger.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVfModule(): ' + e.getMessage())
 		}
 	}
@@ -134,7 +138,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.updateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('UAAIVfMod_vnfId')
@@ -142,7 +146,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 			org.onap.aai.domain.yang.VfModule vfModule = execution.getVariable('UAAIVfMod_getVfModuleResponse')
 			def origRequest = execution.getVariable('UpdateAAIVfModuleRequest')
 
-			msoLogger.debug("UpdateAAIVfModule request: " + origRequest)
+			logger.debug("UpdateAAIVfModule request: " + origRequest)
 			// Handle persona-model-id/persona-model-version
 			def boolean doPersonaModelVersion = true
 			def String newPersonaModelId = utils.getNodeText(origRequest, 'persona-model-id')
@@ -161,11 +165,11 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 				}
 				if (!newPersonaModelId.equals(currPersonaModelId)) {
 					def msg = 'Can\'t update VF Module ' + vfModuleId + ' since there is \'persona-model-id\' mismatch between the current and new values'
-					msoLogger.error(msg)
+					logger.error(msg)
 					throw new Exception(msg)
 				}
 			}
-			
+
 			// Construct payload
 			String orchestrationStatusEntry = updateVfModuleNode(origRequest , 'orchestration-status')
 			String heatStackIdEntry = updateVfModuleNode(origRequest,  'heat-stack-id')
@@ -187,7 +191,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', 200)
 				execution.setVariable('UAAIVfMod_updateVfModuleResponse', "Success")
             }catch(NotFoundException ignored){
-                msoLogger.debug("VF-Module not found!!")
+                logger.debug("VF-Module not found!!")
 				execution.setVariable('UAAIVfMod_updateVfModuleResponseCode', 404)
                 execution.setVariable('UAAIVfMod_updateVfModuleResponse', ignored.getMessage())
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "vf-module " + vfModuleId + " not found for under vnf " + vnfId + " in A&AI!")
@@ -200,7 +204,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e);
+			logger.error(e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
 		}
 	}
@@ -210,7 +214,7 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 	 *
 	 * @param origRequest Incoming update request with VF Module elements to be updated.
 	 * @param element Name of element to be inserted.
-	 */	
+	 */
 	private String updateVfModuleNode(String origRequest, String elementName) {
 
 		if (!utils.nodeExists(origRequest, elementName)) {
@@ -236,14 +240,14 @@ public class UpdateAAIVfModule extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.handleAAIQueryFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
-		msoLogger.error( 'Error occurred attempting to query AAI, Response Code ' + execution.getVariable('UAAIVfMod_getVfModuleResponseCode'));
+		logger.error('Error occurred attempting to query AAI, Response Code ' + execution.getVariable('UAAIVfMod_getVfModuleResponseCode'))
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIVfMod_getVfModuleResponse'))
 		execution.setVariable('WorkflowException', exception)
-		msoLogger.debug("UpdateAAIVfModule query failure: " + exception.getErrorMessage())
-		msoLogger.trace('Exited ' + method)
+		logger.debug("UpdateAAIVfModule query failure: " + exception.getErrorMessage())
+		logger.trace('Exited ' + method)
 	}
 }

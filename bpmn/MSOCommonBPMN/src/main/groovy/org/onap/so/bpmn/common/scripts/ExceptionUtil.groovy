@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +32,8 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
@@ -37,7 +41,7 @@ import org.onap.so.logger.MsoLogger
  * @version 1.0
  */
 class ExceptionUtil extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExceptionUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger( ExceptionUtil.class);
 
 
 
@@ -57,12 +61,12 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 		def utils=new MsoUtils()
 		def prefix=execution.getVariable("prefix")
 		def errorMsg = execution.getVariable(prefix+"ErrorResponse")
-		msoLogger.trace("Begin MapAAIExceptionToWorkflowException ")
+		logger.trace("Begin MapAAIExceptionToWorkflowException ")
 		String text = null
 		def variables
 		String errorCode = '5000'
 		WorkflowException wfex
-		msoLogger.debug("response: " + response)
+		logger.debug("response: " + response)
 		try{
 		try {
 			//String msg = utils.getNodeXml(response, "Fault")
@@ -70,7 +74,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			text = utils.getNodeText(response, "text")
 		} catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
-			msoLogger.debug("error mapping error, ignoring: " + ex)
+			logger.debug("error mapping error, ignoring: " + ex)
 		}
 
 		if(text != null) {
@@ -81,12 +85,13 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				text = text.replaceFirst("%4", variables[3])
 			}
 			String modifiedErrorMessage = 'Received error from A&amp;AI (' + text +')'
-			msoLogger.debug("ModifiedErrorMessage " + modifiedErrorMessage)
+			logger.debug("ModifiedErrorMessage " + modifiedErrorMessage)
 			// let $ModifiedErrorMessage := concat( 'Received error from A',$exceptionaai:ampersand,'AI (' ,functx:replace-multi($ErrorMessage,$from,$Variables ),')')
 			buildWorkflowException(execution, 5000, modifiedErrorMessage)
 
 			wfex = execution.getVariable("WorkflowException")
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, wfex.errorMessage);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), wfex.errorMessage);
 			return wfex
 		} else {
 			try {
@@ -96,18 +101,19 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				int errorCodeInt = Integer.parseInt(errorCode)
 				buildWorkflowException(execution, errorCodeInt, mappedErrorMessage)
 
-				msoLogger.debug("mappedErrorMessage " + mappedErrorMessage)
+				logger.debug("mappedErrorMessage " + mappedErrorMessage)
 				wfex = execution.getVariable("WorkflowException")
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, wfex.errorMessage);
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), wfex.errorMessage);
 				return wfex
 			} catch(Exception ex) {
-				msoLogger.debug("error mapping error, return null: " + ex)
+				logger.debug("error mapping error, return null: " + ex)
 				return null
 
 			}
 		}
 		}catch(Exception e){
-			msoLogger.debug("Exception occured during MapAAIExceptionToWorkflowException: " + e)
+			logger.debug("Exception occured during MapAAIExceptionToWorkflowException: " + e)
 			buildWorkflowException(execution, 5000, "Error mapping AAI Response to WorkflowException")
 		}
 	}
@@ -125,7 +131,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 */
 	WorkflowException MapAAIExceptionToWorkflowExceptionGeneric(DelegateExecution execution, String response, int resCode){
 		def utils=new MsoUtils()
-		msoLogger.debug("Start MapAAIExceptionToWorkflowExceptionGeneric Process")
+		logger.debug("Start MapAAIExceptionToWorkflowExceptionGeneric Process")
 
 		WorkflowException wfex
 		try {
@@ -142,12 +148,12 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				buildWorkflowException(execution, resCode, "Received a bad response from AAI")
 			}
 		} catch (Exception ex) {
-			msoLogger.debug("Exception Occured during MapAAIExceptionToWorkflowExceptionGeneric: " + ex)
+			logger.debug("Exception Occured during MapAAIExceptionToWorkflowExceptionGeneric: " + ex)
 			buildWorkflowException(execution, resCode, "Internal Error - Occured in MapAAIExceptionToWorkflowExceptionGeneric")
 
 		}
-		msoLogger.debug("Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
-		msoLogger.debug("Completed MapAAIExceptionToWorkflowExceptionGeneric Process")
+		logger.debug("Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
+		logger.debug("Completed MapAAIExceptionToWorkflowExceptionGeneric Process")
 	}
 
 	/**
@@ -269,11 +275,11 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	public void buildWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
 		MsoUtils utils = new MsoUtils()
 		String processKey = getProcessKey(execution);
-		msoLogger.debug("Building a WorkflowException for " + processKey)
+		logger.debug("Building a WorkflowException for " + processKey)
 
 		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
 		execution.setVariable("WorkflowException", exception);
-		msoLogger.debug("Outgoing WorkflowException is " + exception)
+		logger.debug("Outgoing WorkflowException is " + exception)
 	}
 
 	/**
@@ -287,12 +293,12 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	 */
 	public void buildAndThrowWorkflowException(DelegateExecution execution, int errorCode, String errorMessage) {
 		String processKey = getProcessKey(execution);
-		msoLogger.debug("Building a WorkflowException for Subflow " + processKey)
+		logger.debug("Building a WorkflowException for Subflow " + processKey)
 
 		WorkflowException exception = new WorkflowException(processKey, errorCode, errorMessage);
 		execution.setVariable("WorkflowException", exception);
-		msoLogger.debug("Outgoing WorkflowException is " + exception)
-		msoLogger.debug("Throwing MSOWorkflowException")
+		logger.debug("Outgoing WorkflowException is " + exception)
+		logger.debug("Throwing MSOWorkflowException")
 		throw new BpmnError(errorCode.toString(), String.format("MSOWorkflowException: %s", errorMessage))
 	}
 
@@ -308,16 +314,16 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	public void processSubflowsBPMNException(DelegateExecution execution){
 		String processKey = getProcessKey(execution)
 		try{
-			msoLogger.debug("Started ProcessSubflowsBPMNException Method")
+			logger.debug("Started ProcessSubflowsBPMNException Method")
 			if(execution.getVariable("WorkflowException") == null){
 				buildWorkflowException(execution, 2500, "Internal Error - Occured During " + processKey)
 			}
 
-			msoLogger.debug(processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
+			logger.debug(processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during ProcessSubflowsBPMNException Method: " + e)
+			logger.debug("Caught Exception during ProcessSubflowsBPMNException Method: " + e)
 		}
-		msoLogger.debug("Completed ProcessSubflowsBPMNException Method")
+		logger.debug("Completed ProcessSubflowsBPMNException Method")
 	}
 
 	/**
@@ -334,7 +340,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	public String processMainflowsBPMNException(DelegateExecution execution, String requestInfo){
 		String processKey = getProcessKey(execution)
 		try{
-			msoLogger.debug("Started ProcessMainflowBPMNException Method")
+			logger.debug("Started ProcessMainflowBPMNException Method")
 			if(execution.getVariable("WorkflowException") == null || isBlank(requestInfo)){
 				buildWorkflowException(execution, 2500, "Internal Error - WorkflowException Object and/or RequestInfo is null! " + processKey)
 			}
@@ -354,16 +360,16 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
 
-			msoLogger.debug(processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
-			msoLogger.debug(processKey + " Outgoing FalloutHandler Request is: " + falloutHandlerRequest)
+			logger.debug(processKey + " Outgoing WorkflowException is: " + execution.getVariable("WorkflowException"))
+			logger.debug(processKey + " Outgoing FalloutHandler Request is: " + falloutHandlerRequest)
 
 			return falloutHandlerRequest
 
 		}catch(Exception e){
-			msoLogger.debug("Caught Exception during ProcessMainflowBPMNException Method: " + e)
+			logger.debug("Caught Exception during ProcessMainflowBPMNException Method: " + e)
 			return null
 		}
-		msoLogger.debug("Completed ProcessMainflowBPMNException Method")
+		logger.debug("Completed ProcessMainflowBPMNException Method")
 	}
 
 	/**
@@ -377,8 +383,8 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 	public void processJavaException(DelegateExecution execution){
 		String processKey = getProcessKey(execution)
 		try{
-			msoLogger.debug("Caught a Java Exception in " + processKey)
-			msoLogger.debug("Started processJavaException Method")
+			logger.debug("Caught a Java Exception in " + processKey)
+			logger.debug("Started processJavaException Method")
 			// if the BPMN flow java error handler sets "BPMN_javaExpMsg", append it to the WFE
 			String javaExpMsg = execution.getVariable("BPMN_javaExpMsg")
             String errorMessage = execution.getVariable("gUnknownError")
@@ -387,20 +393,20 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				wfeExpMsg = wfeExpMsg + ": " + javaExpMsg
 			}
             if (errorMessage != null && !errorMessage.empty) {
-                msoLogger.error("Unknown Error: " + errorMessage);
+                logger.error("Unknown Error: " + errorMessage);
             }
-            msoLogger.error("Java Error: " + wfeExpMsg);
+            logger.error("Java Error: " + wfeExpMsg);
 			buildWorkflowException(execution, 2500, wfeExpMsg)
 
 		}catch(BpmnError b){
-            msoLogger.error(b);
+            logger.error(b);
 			throw b
 		}catch(Exception e){
-            msoLogger.error(e);
-			msoLogger.debug("Caught Exception during processJavaException Method: " + e)
+            logger.error(e);
+			logger.debug("Caught Exception during processJavaException Method: " + e)
 			buildWorkflowException(execution, 2500, "Internal Error - During Process Java Exception")
 		}
-		msoLogger.debug("Completed processJavaException Method")
+		logger.debug("Completed processJavaException Method")
 	}
 
 
