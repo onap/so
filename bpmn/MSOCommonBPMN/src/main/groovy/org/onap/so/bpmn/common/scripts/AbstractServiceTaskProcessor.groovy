@@ -387,7 +387,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	/**
 	 * Returns the process definition key (i.e. the process name) of the
 	 * current process.
-	 * 
+	 *
 	 * @param execution the execution
 	 */
 	public String getProcessKey(DelegateExecution execution) {
@@ -718,19 +718,19 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			'/' + UriUtils.encodePathSegment(messageType, 'UTF-8') +
 			'/' + UriUtils.encodePathSegment(correlator, 'UTF-8')
 	}
-	
+
 	public void setRollbackEnabled(DelegateExecution execution, isDebugLogEnabled) {
-		
+
 		// Rollback settings
 		def prefix = execution.getVariable('prefix')
 		def disableRollback = execution.getVariable("disableRollback")
 		def defaultRollback = UrnPropertiesReader.getVariable("mso.rollback", execution).toBoolean()
-		
+
 		logDebug('disableRollback: ' + disableRollback, isDebugLogEnabled)
 		logDebug('defaultRollback: ' + defaultRollback, isDebugLogEnabled)
-		
+
 		def rollbackEnabled
-		
+
 		if(disableRollback == null || disableRollback == '' ) {
 			// get from default urn settings for mso_rollback
 			disableRollback = !defaultRollback
@@ -752,7 +752,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		execution.setVariable(prefix+"backoutOnFailure", rollbackEnabled)
 		logDebug('rollbackEnabled (aka backoutOnFailure): ' + rollbackEnabled, isDebugLogEnabled)
 	}
-	
+
 	public void setBasicDBAuthHeader(DelegateExecution execution, isDebugLogEnabled) {
 		try {
 			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)

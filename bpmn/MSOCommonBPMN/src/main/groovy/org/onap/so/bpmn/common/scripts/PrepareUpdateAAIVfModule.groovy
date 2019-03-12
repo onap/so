@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,11 +39,13 @@ import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.springframework.web.util.UriUtils
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
 public class PrepareUpdateAAIVfModule extends VfModuleBase {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, PrepareUpdateAAIVfModule.class);
+    private static final Logger logger = LoggerFactory.getLogger( PrepareUpdateAAIVfModule.class);
 
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -76,12 +80,12 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def xml = execution.getVariable('PrepareUpdateAAIVfModuleRequest')
-			msoLogger.debug('Received request xml:\n' + xml)
-			msoLogger.debug("PrepareUpdateAAIVfModule Request  : " + xml)
+			logger.debug('Received request xml:\n' + xml)
+			logger.debug("PrepareUpdateAAIVfModule Request  : " + xml)
 
 			initProcessVariables(execution)
 
@@ -94,11 +98,11 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			def orchestrationStatus = getRequiredNodeText(execution, xml,'orchestration-status')
 			execution.setVariable('PUAAIVfMod_orchestrationStatus', orchestrationStatus)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e)
+			logger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -113,7 +117,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.getGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('PUAAIVfMod_vnfId')
@@ -129,16 +133,16 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				execution.setVariable('PUAAIVfMod_getVnfResponseCode', 200)
 
 			} catch (Exception ex) {
-				msoLogger.error(ex);
-				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.error(ex);
+				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('PUAAIVfMod_getVnfResponseCode', 500)
 				execution.setVariable('PUAAIVfMod_getVnfResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e)
+			logger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -155,7 +159,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.validateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			GenericVnf genericVnf = execution.getVariable('PUAAIVfMod_getVnfResponse')
@@ -190,11 +194,11 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 				}
 			}
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e)
+			logger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in validateVfModule(): ' + e.getMessage())
 		}
 	}
@@ -208,7 +212,7 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.updateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('PUAAIVfMod_vnfId')
@@ -228,20 +232,20 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 			// backward compatibilty, the heat-stack-id is an output
 			execution.setVariable('PUAAIVfMod_outVfModule', vfModule)
 			def vnfName = execution.getVariable('PUAAIVfMod_vnfName')
-			msoLogger.debug('Output PUAAIVfMod_vnfName set to ' + vnfName)
+			logger.debug('Output PUAAIVfMod_vnfName set to ' + vnfName)
 			// TODO: Should deprecate use of processKey+Response variable for the response. Will use "WorkflowResponse" instead
 			execution.setVariable('WorkflowResponse', vfModule)
 
 			def heatStackId = vfModule.getHeatStackId()
 			execution.setVariable('PUAAIVfMod_heatStackId', heatStackId)
-			msoLogger.debug('Output PUAAIVfMod_heatStackId set to \'' + heatStackId + '\'')
+			logger.debug('Output PUAAIVfMod_heatStackId set to \'' + heatStackId + '\'')
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 500)
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e)
+			logger.error(e)
 			execution.setVariable('PUAAIVfMod_updateVfModuleResponseCode', 500)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
 		}
@@ -256,15 +260,15 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.handleVnfNotFound(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
-		msoLogger.error('Error occurred attempting to query AAI, Response Code ' + execution.getVariable('PUAAIVfMod_getVnfResponseCode'));
+		logger.error('Error occurred attempting to query AAI, Response Code ' + execution.getVariable('PUAAIVfMod_getVnfResponseCode'));
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('PUAAIVfMod_getVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
 
-		msoLogger.trace('Exited ' + method)
+		logger.trace('Exited ' + method)
 	}
 
 	/**
@@ -276,17 +280,17 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.handleVfModuleValidationError(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		def String errorMsg = 'VF Module validation error: ' + execution.getVariable('PUAAIVfMod_vfModuleValidationError')
-		msoLogger.error(errorMsg);
-		msoLogger.debug("PrepareUpdateAAIVfModule: Error Message : " + errorMsg)
+		logger.error(errorMsg);
+		logger.debug("PrepareUpdateAAIVfModule: Error Message : " + errorMsg)
 
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000, errorMsg)
 		execution.setVariable('WorkflowException', exception)
 
-		msoLogger.trace('Exited ' + method)
+		logger.trace('Exited ' + method)
 	}
 
 	/**
@@ -298,14 +302,14 @@ public class PrepareUpdateAAIVfModule extends VfModuleBase {
 		def method = getClass().getSimpleName() + '.handleUpdateVfModuleFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
-		msoLogger.error('Error occurred attempting to update VF Module in AAI, Response Code ' + execution.getVariable('PUAAIVfMod_updateVfModuleResponseCode'));
+		logger.error('Error occurred attempting to update VF Module in AAI, Response Code ' + execution.getVariable('PUAAIVfMod_updateVfModuleResponseCode'));
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('PUAAIVfMod_updateVfModuleResponse'))
 		execution.setVariable('WorkflowException', exception)
 
-		msoLogger.trace('Exited ' + method)
+		logger.trace('Exited ' + method)
 	}
 }
