@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +35,8 @@ import org.onap.so.client.policy.entities.DictionaryData
 import org.onap.so.client.policy.entities.PolicyDecision
 import org.onap.so.client.policy.entities.Treatments
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -58,7 +62,7 @@ import org.onap.so.logger.MsoLogger
  *
  */
 public class RainyDayHandler extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, RainyDayHandler.class);
+    private static final Logger logger = LoggerFactory.getLogger( RainyDayHandler.class);
 
 
 	String Prefix="RDH_"
@@ -68,44 +72,44 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 
 	public void preProcessRequest (DelegateExecution execution) {
 		String msg = ""
-		msoLogger.trace("preProcessRequest of RainyDayHandler ")
+		logger.trace("preProcessRequest of RainyDayHandler ")
 
 		try {
 			execution.setVariable("prefix", Prefix)
 			// check for required input
 			String requestId = execution.getVariable("msoRequestId")
-			msoLogger.debug("msoRequestId is: " + requestId)		
+			logger.debug("msoRequestId is: " + requestId)		
 			def serviceType = execution.getVariable("serviceType")
-			msoLogger.debug("serviceType is: " + serviceType)
+			logger.debug("serviceType is: " + serviceType)
 			def vnfType = execution.getVariable("vnfType")
-			msoLogger.debug("vnftype is: " + vnfType)
+			logger.debug("vnftype is: " + vnfType)
 			def currentActivity = execution.getVariable("currentActivity")
-			msoLogger.debug("currentActivity is: " + currentActivity)
+			logger.debug("currentActivity is: " + currentActivity)
 			def workStep = execution.getVariable("workStep")
-			msoLogger.debug("workStep is: " + workStep)
+			logger.debug("workStep is: " + workStep)
 			def failedActivity = execution.getVariable("failedActivity")
-			msoLogger.debug("failedActivity is: " + failedActivity)
+			logger.debug("failedActivity is: " + failedActivity)
 			def errorCode = execution.getVariable("errorCode")
-			msoLogger.debug("errorCode is: " + errorCode)
+			logger.debug("errorCode is: " + errorCode)
 			def errorText = execution.getVariable("errorText")
-			msoLogger.debug("errorText is: " + errorText)
+			logger.debug("errorText is: " + errorText)
 			String defaultPolicyDisposition = (String) UrnPropertiesReader.getVariable("policy.default.disposition",execution)
-			msoLogger.debug("defaultPolicyDisposition is: " + defaultPolicyDisposition)
+			logger.debug("defaultPolicyDisposition is: " + defaultPolicyDisposition)
 			execution.setVariable('defaultPolicyDisposition', defaultPolicyDisposition)
 			
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest of RainyDayHandler ")
+		logger.trace("Exit preProcessRequest of RainyDayHandler ")
 	}
 
 	public void queryPolicy (DelegateExecution execution) {
 		String msg = ""
-		msoLogger.trace("queryPolicy of RainyDayHandler ")
+		logger.trace("queryPolicy of RainyDayHandler ")
 
 		try {
 
@@ -113,14 +117,14 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			String serviceType = execution.getVariable("serviceType")
 			String vnfType = execution.getVariable("vnfType")
 			
-			msoLogger.debug("serviceType: " + serviceType)
-			msoLogger.debug("vnfType: " + vnfType)
+			logger.debug("serviceType: " + serviceType)
+			logger.debug("vnfType: " + vnfType)
 			
 			def errorCode = execution.getVariable("errorCode")
 			def bbId = execution.getVariable("currentActivity")
 			def workStep = execution.getVariable("workStep")
 			
-			msoLogger.debug("Before querying policy")
+			logger.debug("Before querying policy")
 			
 			String decision = 'DENY'
 			String disposition = "Abort"
@@ -128,9 +132,9 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			
 			String defaultPolicyDisposition = (String) execution.getVariable('defaultPolicyDisposition')
 			if (defaultPolicyDisposition != null && !defaultPolicyDisposition.isEmpty()) {
-				msoLogger.debug("Setting disposition to the configured default instead of querying Policy: " + defaultPolicyDisposition)
+				logger.debug("Setting disposition to the configured default instead of querying Policy: " + defaultPolicyDisposition)
 				disposition = defaultPolicyDisposition
-				msoLogger.debug("Setting default allowed treatments: " + defaultAllowedTreatments)
+				logger.debug("Setting default allowed treatments: " + defaultAllowedTreatments)
 				execution.setVariable("validResponses", defaultAllowedTreatments)
 			}
 			else {
@@ -139,28 +143,28 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			
 				try {			
 					PolicyClient policyClient = new PolicyClientImpl()
-					msoLogger.debug("Created policy client")
+					logger.debug("Created policy client")
 					decisionObject = policyClient.getDecision(serviceType, vnfType, bbId, workStep, errorCode)
-					msoLogger.debug("Obtained decision object")
+					logger.debug("Obtained decision object")
 					DictionaryData dictClient = policyClient.getAllowedTreatments(bbId, workStep)					
 					Treatments treatments = dictClient.getTreatments()
 					String validResponses = treatments.getString()
 					if (validResponses != null) {
 						validResponses = validResponses.toLowerCase()
 					}
-					msoLogger.debug("Obtained validResponses: " + validResponses)
+					logger.debug("Obtained validResponses: " + validResponses)
 					execution.setVariable("validResponses", validResponses)
 				
 				} catch(Exception e) {
 					msg = "Exception in queryPolicy " + e.getMessage()
-					msoLogger.debug(msg)				
+					logger.debug(msg)				
 				}
 			
 						
 				if (decisionObject != null) {
 					decision = decisionObject.getDecision()
 					disposition = decisionObject.getDetails()
-					msoLogger.debug("Obtained disposition from policy engine: " + disposition)
+					logger.debug("Obtained disposition from policy engine: " + disposition)
 				}
 				else {
 					disposition = "Abort"
@@ -171,17 +175,17 @@ public class RainyDayHandler extends AbstractServiceTaskProcessor {
 			}			
 			execution.setVariable("handlingCode", disposition)			
 			
-			msoLogger.debug("Disposition: "+ disposition)
+			logger.debug("Disposition: "+ disposition)
 
 		} catch (BpmnError e) {
-			msoLogger.debug("BPMN exception: " + e.errorMessage)
+			logger.debug("BPMN exception: " + e.errorMessage)
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in queryPolicy " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit queryPolicy of RainyDayHandler ")
+		logger.trace("Exit queryPolicy of RainyDayHandler ")
 	}
 
 

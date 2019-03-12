@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,9 +28,11 @@ import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CreateAAIVfModuleVolumeGroup.class);
+    private static final Logger logger = LoggerFactory.getLogger( CreateAAIVfModuleVolumeGroup.class);
 
 	private XmlParser xmlParser = new XmlParser()
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -59,12 +63,12 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def xml = execution.getVariable('CreateAAIVfModuleVolumeGroupRequest')
-			msoLogger.debug('Received request xml:\n' + xml)
-			msoLogger.debug("CreateAAIVfModuleVolume Received Request XML: " + xml)
+			logger.debug('Received request xml:\n' + xml)
+			logger.debug("CreateAAIVfModuleVolume Received Request XML: " + xml)
 			initProcessVariables(execution)
 
 			def vnfId = getRequiredNodeText(execution, xml,'vnf-id')
@@ -82,11 +86,11 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			def volumeGroupId = getRequiredNodeText(execution, xml,'volume-group-id')
 			execution.setVariable('CAAIVfModVG_volumeGroupId', volumeGroupId)
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e);
+			logger.error("{} {} {} {} {} {}", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 
 		}
@@ -102,7 +106,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.getVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('CAAIVfModVG_vnfId')
@@ -119,15 +123,15 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 				}
 			}catch (Exception ex) {
 				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('CAAIVfModVG_getVfModuleResponseCode', 500)
 				execution.setVariable('CAAIVfModVG_getVfModuleResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e);
+			logger.error("{} {} {} {} {} {}", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVfModule(): ' + e.getMessage())
 		}
 	}
@@ -142,7 +146,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.updateVfModule(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('CAAIVfModVG_vnfId')
@@ -152,7 +156,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			// Confirm resource-version is in retrieved VF Module
 			if (vfModule.getResourceVersion() == null) {
 				def msg = 'Can\'t update VF Module ' + vfModuleId + ' since \'resource-version\' is missing'
-				msoLogger.error( msg);
+				logger.error("{} {} {} {} {} {}",  msg);
 				throw new Exception(msg)
 			}
 						
@@ -164,23 +168,23 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 			try {
 				AAIResourceUri vfModuleUri = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId,vfModuleId);
 				AAIResourceUri volumeGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudOwner, aicCloudRegion,volumeGroupId);
-				msoLogger.debug("Creating relationship between Vf Module: " + vfModuleUri.build().toString() + " and Volume Group: " + volumeGroupUri.build().toString())
+				logger.debug("Creating relationship between Vf Module: " + vfModuleUri.build().toString() + " and Volume Group: " + volumeGroupUri.build().toString())
 				getAAIClient().connect(vfModuleUri,volumeGroupUri)
 				execution.setVariable('CAAIVfModVG_updateVfModuleResponseCode', 200)
 				execution.setVariable('CAAIVfModVG_updateVfModuleResponse', "Success")
-				msoLogger.debug("CreateAAIVfModule Response code: " + 200)
-				msoLogger.debug("CreateAAIVfModule Response: " + "Success")
+				logger.debug("CreateAAIVfModule Response code: " + 200)
+				logger.debug("CreateAAIVfModule Response: " + "Success")
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI PUT:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI PUT:' + ex.getMessage())
 				execution.setVariable('CAAIVfModVG_updateVfModuleResponseCode', 500)
 				execution.setVariable('CAAIVfModVG_updateVfModuleResponse', 'AAI PUT Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			msoLogger.error(e);
+			logger.error("{} {} {} {} {} {}", e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateVfModule(): ' + e.getMessage())
 		}
 	}
@@ -214,12 +218,12 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.handleAAIQueryFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
-		msoLogger.error( 'Error occurred attempting to query AAI, Response Code ' + execution.getVariable('CAAIVfModVG_getVfModuleResponseCode'));		
+		logger.trace('Entered ' + method)
+		logger.error("{} {} {} {} {} {}",  'Error occurred attempting to query AAI, Response Code ' + execution.getVariable('CAAIVfModVG_getVfModuleResponseCode'));		
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		exceptionUtil.buildWorkflowException(execution, 5000, execution.getVariable('CAAIVfModVG_getVfModuleResponse'))
 
-		msoLogger.trace('Exited ' + method)
+		logger.trace('Exited ' + method)
 	}
 
 	/**
@@ -231,12 +235,12 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.handleUpdateVfModuleFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
-		msoLogger.error('Error occurred attempting to update VF Module in AAI, Response Code ' + execution.getVariable('CAAIVfModVG_updateVfModuleResponseCode'));
+		logger.error("{} {} {} {} {} {}", 'Error occurred attempting to update VF Module in AAI, Response Code ' + execution.getVariable('CAAIVfModVG_updateVfModuleResponseCode'));
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		exceptionUtil.buildWorkflowException(execution, 5000, execution.getVariable('CAAIVfModVG_updateVfModuleResponse'))
 
-		msoLogger.trace('Exited ' + method)
+		logger.trace('Exited ' + method)
 	}
 }

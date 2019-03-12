@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +39,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
@@ -45,7 +49,7 @@ import org.onap.so.logger.MsoLogger
  * any non-final response received from SDNC.
  */
 class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SDNCAdapterRestV2.class);
+    private static final Logger logger = LoggerFactory.getLogger( SDNCAdapterRestV2.class);
 
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -58,7 +62,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		def prefix="SDNCREST_"
 		execution.setVariable("prefix", prefix)
@@ -70,8 +74,8 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			String request = validateRequest(execution, "mso-request-id")
 			String requestType = jsonUtil.getJsonRootProperty(request)
 			execution.setVariable(prefix + 'requestType', requestType)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'requestType = ' + requestType)
-			msoLogger.debug('SDNCAdapterRestV2, request: ' + request)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'requestType = ' + requestType)
+			logger.debug('SDNCAdapterRestV2, request: ' + request)
 
 			// Determine the SDNCAdapter endpoint
 
@@ -79,8 +83,8 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 
 			if (sdncAdapterEndpoint == null || sdncAdapterEndpoint.isEmpty()) {
 				String msg = getProcessKey(execution) + ': mso:adapters:sdnc:rest:endpoint URN mapping is not defined'
-				msoLogger.debug(msg)
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.debug(msg)
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -99,13 +103,13 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 
 				if (sdncRequestId == null || sdncRequestId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no sdncRequestId in ' + requestType
-					msoLogger.debug(msg)
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.debug(msg)
+					logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
 				execution.setVariable('SDNCAResponse_CORRELATOR', sdncRequestId)
-				msoLogger.debug(getProcessKey(execution) + ': SDNCAResponse_CORRELATOR = ' + sdncRequestId)
+				logger.debug(getProcessKey(execution) + ': SDNCAResponse_CORRELATOR = ' + sdncRequestId)
 
 				// Get the bpNotificationUrl from the request (just to make sure it's there)
 
@@ -113,8 +117,8 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 
 				if (bpNotificationUrl == null || bpNotificationUrl.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no bpNotificationUrl in ' + requestType
-					msoLogger.debug(msg)
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.debug(msg)
+					logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -123,32 +127,32 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 
 			} else {
 				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
-				msoLogger.debug(msg)
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.debug(msg)
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
 			execution.setVariable(prefix + 'sdncAdapterMethod', sdncAdapterMethod)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterMethod = ' + sdncAdapterMethod)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterMethod = ' + sdncAdapterMethod)
 			execution.setVariable(prefix + 'sdncAdapterUrl', sdncAdapterUrl)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterUrl = ' + sdncAdapterUrl)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterUrl = ' + sdncAdapterUrl)
 			execution.setVariable(prefix + 'sdncAdapterRequest', sdncAdapterRequest)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterRequest = \n' + sdncAdapterRequest)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'sdncAdapterRequest = \n' + sdncAdapterRequest)
 
 			// Get the Basic Auth credentials for the SDNCAdapter (yes... we ARE using the PO adapters credentials)
 
 			String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth",execution)
 
 			if (basicAuthValue == null || basicAuthValue.isEmpty()) {
-				msoLogger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.debug(getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined")
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 			} else {
 				try {
 					def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 					execution.setVariable(prefix + 'basicAuthHeaderValue', encodedString)
 				} catch (IOException ex) {
-					msoLogger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
+					logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 				}
 			}
 
@@ -160,7 +164,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			// in addition to null/empty, also need to verify that the timer value is a valid duration "P[n]T[n]H|M|S"
 			String timerRegex = "PT[0-9]+[HMS]";
 			if (timeout == null || timeout.isEmpty() || !timeout.matches(timerRegex)) {
-				msoLogger.debug(getProcessKey(execution) + ': preProcessRequest(): null/empty/invalid bpTimeout value. Using "mso.adapters.sdnc.timeout"')
+				logger.debug(getProcessKey(execution) + ': preProcessRequest(): null/empty/invalid bpTimeout value. Using "mso.adapters.sdnc.timeout"')
 				timeout = UrnPropertiesReader.getVariable("mso.adapters.sdnc.timeout", execution)
 			}
 
@@ -172,13 +176,13 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			}
 
 			execution.setVariable(prefix + 'timeout', timeout)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'timeout = ' + timeout)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'timeout = ' + timeout)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			msoLogger.debug(msg)
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+			logger.debug(msg)
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -190,14 +194,14 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 		def method = getClass().getSimpleName() + '.processCallback(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		String prefix = execution.getVariable('prefix')
 		String callback = execution.getVariable('SDNCAResponse_MESSAGE')
-		msoLogger.debug("Incoming SDNC Rest Callback is: " + callback)
+		logger.debug("Incoming SDNC Rest Callback is: " + callback)
 
 		try {
-			msoLogger.debug(getProcessKey(execution) + ": received callback:\n" + callback)
+			logger.debug(getProcessKey(execution) + ": received callback:\n" + callback)
 
 			int callbackNumber = 1
 			while (execution.getVariable(prefix + 'callback' + callbackNumber) != null) {
@@ -236,7 +240,7 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 		} catch (Exception e) {
 			callback = callback == null || String.valueOf(callback).isEmpty() ? "NONE" : callback
 			String msg = "Received error from SDNCAdapter: " + callback
-			msoLogger.debug(getProcessKey(execution) + ': ' + msg)
+			logger.debug(getProcessKey(execution) + ': ' + msg)
 			exceptionUtil.buildWorkflowException(execution, 5300, msg)
 		}
 	}
@@ -250,14 +254,14 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 		def method = getClass().getSimpleName() + '.prepareInterimNotification(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		String prefix = execution.getVariable('prefix')
-		msoLogger.debug("Preparing Interim Notification")
+		logger.debug("Preparing Interim Notification")
 
 		try {
 			def interimNotification = execution.getVariable(prefix + "interimNotification")
-			msoLogger.debug("Preparing Interim Notification:\n" + JsonUtils.prettyJson(interimNotification))
+			logger.debug("Preparing Interim Notification:\n" + JsonUtils.prettyJson(interimNotification))
 
 			for (int i = 0; ; i++) {
 				def variable = JsonUtils.getJsonParamValue(interimNotification, 'variableList', 'variable', i)
@@ -270,13 +274,13 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 				if ((variableName != null) && !variableName.isEmpty()) {
 					def variableValue = JsonUtils.getJsonValue(variable, "value")
 					execution.setVariable(variableName, variableValue)
-					msoLogger.debug("Setting "+ variableName + "=" + variableValue)
+					logger.debug("Setting "+ variableName + "=" + variableValue)
 				}
 			}
 
 		} catch (Exception e) {
 			String msg = "Error preparing interim notification"
-			msoLogger.debug(getProcessKey(execution) + ': ' + msg)
+			logger.debug(getProcessKey(execution) + ': ' + msg)
 			exceptionUtil.buildWorkflowException(execution, 5300, msg)
 		}
 	}

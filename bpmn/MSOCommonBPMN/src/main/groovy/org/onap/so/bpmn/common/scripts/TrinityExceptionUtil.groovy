@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,11 +26,13 @@ import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
 class TrinityExceptionUtil {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, TrinityExceptionUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger( TrinityExceptionUtil.class);
 
 	
 	
@@ -73,7 +77,7 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		
 		def errorCode
@@ -83,12 +87,12 @@ class TrinityExceptionUtil {
 			  errorCode = MapCategoryToErrorCode(utils.getNodeText(response, "category")) 
 			  execution.setVariable(prefix+"err",errorCode)
 			  String message = buildException(response, execution)
-			  msoLogger.trace("End MapAdapterExecptionToWorkflowException ")
+			  logger.trace("End MapAdapterExecptionToWorkflowException ")
 			  return message
 		}catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
-			msoLogger.debug("error mapping error, ignoring: " + ex)
-			msoLogger.trace("End MapAdapterExecptionToWorkflowException ")
+			logger.debug("error mapping error, ignoring: " + ex)
+			logger.trace("End MapAdapterExecptionToWorkflowException ")
 			return buildException(response, execution)
 		} 
 	}
@@ -107,7 +111,7 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		
 		
 		try {
@@ -122,12 +126,12 @@ class TrinityExceptionUtil {
 			  }
 			  execution.setVariable(prefix+"err",mappedErr)
 			  def message = buildException("Received error from AOTS: " + descr, execution)
-			  msoLogger.trace("End MapAOTSExecptionToCommonException ")
+			  logger.trace("End MapAOTSExecptionToCommonException ")
 			  return message
 		}catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
-			msoLogger.debug("error mapping error, ignoring: " + ex)
-			msoLogger.trace("End MapAOTSExecptionToCommonException ")
+			logger.debug("error mapping error, ignoring: " + ex)
+			logger.trace("End MapAOTSExecptionToCommonException ")
 			return buildException(response, execution)
 		}
 	}
@@ -139,11 +143,11 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		
 		def sdncResponseCode
 		String responseCode = execution.getVariable(prefix+"ResponseCode")
-		msoLogger.debug('responseCode to map: ' + responseCode)
+		logger.debug('responseCode to map: ' + responseCode)
 		def errorMessage
 		
 		try {
@@ -169,12 +173,12 @@ class TrinityExceptionUtil {
 			def message = buildException(modifiedErrorMessage, execution)
 
 			
-			msoLogger.trace("End MapSDNCAdapterException ")
+			logger.trace("End MapSDNCAdapterException ")
 		    return message
 		}catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
-			msoLogger.debug("error mapping sdnc error, ignoring: " + ex)
-			msoLogger.trace("End MapSDNCAdapterException ")
+			logger.debug("error mapping sdnc error, ignoring: " + ex)
+			logger.trace("End MapSDNCAdapterException ")
 			return null
 		} 
 		
@@ -193,11 +197,11 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		def variables
 		def message
 		String errorCode = 'SVC0001'
-		msoLogger.debug("response: " + response)
+		logger.debug("response: " + response)
 		//they use the same format we do, pass their error along
 		//TODO add Received error from A&AI at beg of text
 		try {
@@ -206,12 +210,12 @@ class TrinityExceptionUtil {
 		} catch (Exception ex) {
 			//Ignore the exception - cases include non xml payload
 				message = buildException("Received error from A&AI, unable to parse",execution)
-			msoLogger.debug("error mapping error, ignoring: " + ex)
+			logger.debug("error mapping error, ignoring: " + ex)
 		}
 		
 		if(message != null) { 
 			 execution.setVariable(prefix+"ErrorResponse",message)
-			 msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, execution.getVariable(prefix+"ErrorResponse"));
+			 logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), execution.getVariable(prefix+"ErrorResponse"));
 			 return message
 		} else {
 			
@@ -239,21 +243,21 @@ class TrinityExceptionUtil {
 			'execution=' + execution.getId() +
 			')'
 
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 		def prefix=execution.getVariable("prefix")
 		def responseCode = String.valueOf(execution.getVariable(prefix+"ResponseCode"))
 		def variables
-		msoLogger.debug("response: " + response)
+		logger.debug("response: " + response)
 		
 			try {
-				msoLogger.debug("formatting error message" )
+				logger.debug("formatting error message" )
 				def msgVars = execution.getVariable(prefix+"errVariables")
 				def myErr = execution.getVariable(prefix+"err")
 				def messageTxt = execution.getVariable(prefix+"errTxt")
 				def messageId = null
 				
 				if(myErr == null){
-					msoLogger.debug("mapping response code: " + responseCode)
+					logger.debug("mapping response code: " + responseCode)
 					myErr = mapErrorCodetoError(responseCode, response)
 					if(myErr == null){
 						//not a service or policy error, just return error code
@@ -302,15 +306,15 @@ class TrinityExceptionUtil {
 	</tns:policyException>
 </tns:requestError>""" 
 				}
-				 msoLogger.debug("message " + message)
+				 logger.debug("message " + message)
 				 execution.setVariable(prefix+"ErrorResponse",message)
 				 execution.setVariable(prefix+"err", myErr)
 				 execution.setVariable(prefix+"errTxt", messageTxt)
 				 execution.setVariable(prefix+"errVariables", msgVars)
-				 msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, execution.getVariable(prefix+"ErrorResponse"));
+				 logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), execution.getVariable(prefix+"ErrorResponse"));
 				 return message
 			}catch(Exception ex) {
-				msoLogger.debug("error mapping error, return null: " + ex)
+				logger.debug("error mapping error, return null: " + ex)
 				return null
 			}
 
@@ -321,7 +325,7 @@ class TrinityExceptionUtil {
 		def prefix=execution.getVariable("prefix")
 		def text = execution.getVariable(prefix+"errTxt")
 		def msgVars = execution.getVariable(prefix+"errVariables")
-		msoLogger.debug('parsing message: ' + text)
+		logger.debug('parsing message: ' + text)
 		if(text == null){
 			return 'failed'
 		}
@@ -330,7 +334,7 @@ class TrinityExceptionUtil {
 				text = text.replaceFirst("%"+(i+1), msgVars[i])
 			}
 		}
-		msoLogger.debug('parsed message is: ' + text)
+		logger.debug('parsed message is: ' + text)
 		return text
 	}
 	

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Intel Corp. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -33,6 +35,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.db.catalog.beans.CloudIdentity
 import org.onap.so.db.catalog.beans.CloudSite
 import org.onap.so.db.catalog.beans.HomingInstance
@@ -69,27 +73,27 @@ class OofHoming extends AbstractServiceTaskProcessor {
     public void callOof(DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
         execution.setVariable("prefix", "HOME_")
-        utils.log("DEBUG", "*** Started Homing Call OOF ***", isDebugEnabled)
+        logger.debug( "*** Started Homing Call OOF ***")
         try {
             execution.setVariable("rollbackData", null)
             execution.setVariable("rolledBack", false)
 
             String requestId = execution.getVariable("msoRequestId")
-            utils.log("DEBUG", "Incoming Request Id is: " + requestId, isDebugEnabled)
+            logger.debug( "Incoming Request Id is: " + requestId)
             String serviceInstanceId = execution.getVariable("serviceInstanceId")
-            utils.log("DEBUG", "Incoming Service Instance Id is: " + serviceInstanceId, isDebugEnabled)
+            logger.debug( "Incoming Service Instance Id is: " + serviceInstanceId)
             String serviceInstanceName = execution.getVariable("serviceInstanceName")
-            utils.log("DEBUG", "Incoming Service Instance Name is: " + serviceInstanceName, isDebugEnabled)
+            logger.debug( "Incoming Service Instance Name is: " + serviceInstanceName)
             ServiceDecomposition serviceDecomposition = execution.getVariable("serviceDecomposition")
-            utils.log("DEBUG", "Incoming Service Decomposition is: " + serviceDecomposition, isDebugEnabled)
+            logger.debug( "Incoming Service Decomposition is: " + serviceDecomposition)
             String subscriberInfo = execution.getVariable("subscriberInfo")
-            utils.log("DEBUG", "Incoming Subscriber Information is: " + subscriberInfo, isDebugEnabled)
+            logger.debug( "Incoming Subscriber Information is: " + subscriberInfo)
             Map customerLocation = execution.getVariable("customerLocation")
-            utils.log("DEBUG", "Incoming Customer Location is: " + customerLocation.toString(), isDebugEnabled)
+            logger.debug( "Incoming Customer Location is: " + customerLocation.toString())
             String cloudOwner = execution.getVariable("cloudOwner")
-            utils.log("DEBUG", "Incoming cloudOwner is: " + cloudOwner, isDebugEnabled)
+            logger.debug( "Incoming cloudOwner is: " + cloudOwner)
             String cloudRegionId = execution.getVariable("cloudRegionId")
-            utils.log("DEBUG", "Incoming cloudRegionId is: " + cloudRegionId, isDebugEnabled)
+            logger.debug( "Incoming cloudRegionId is: " + cloudRegionId)
 
             if (isBlank(requestId) ||
                     isBlank(serviceInstanceId) ||
@@ -119,18 +123,18 @@ class OofHoming extends AbstractServiceTaskProcessor {
 
                 String basicAuthValue = utils.encrypt(basicAuth, msokey)
                 if (basicAuthValue != null) {
-                    utils.log("DEBUG", "Obtained BasicAuth username and password for OOF Adapter: " + basicAuthValue,
+                    logger.debug( "Obtained BasicAuth username and password for OOF Adapter: " + basicAuthValue,
                             isDebugEnabled)
                     try {
                         authHeader = utils.getBasicAuth(basicAuthValue, msokey)
                         execution.setVariable("BasicAuthHeaderValue", authHeader)
                     } catch (Exception ex) {
-                        utils.log("DEBUG", "Unable to encode username and password string: " + ex, isDebugEnabled)
+                        logger.debug( "Unable to encode username and password string: " + ex)
                         exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - Unable to " +
                                 "encode username and password string")
                     }
                 } else {
-                    utils.log("DEBUG", "Unable to obtain BasicAuth - BasicAuth value null", isDebugEnabled)
+                    logger.debug( "Unable to obtain BasicAuth - BasicAuth value null")
                     exceptionUtil.buildAndThrowWorkflowException(execution, 401, "Internal Error - BasicAuth " +
                             "value null")
                 }
@@ -143,7 +147,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
                         timeout = "PT30M"
                     }
                 }
-                utils.log("DEBUG", "Async Callback Timeout will be: " + timeout, isDebugEnabled)
+                logger.debug( "Async Callback Timeout will be: " + timeout)
 
                 execution.setVariable("timeout", timeout)
                 execution.setVariable("correlator", requestId)
@@ -153,10 +157,10 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 String oofRequest = oofUtils.buildRequest(execution, requestId, serviceDecomposition,
                         subscriber, customerLocation)
                 execution.setVariable("oofRequest", oofRequest)
-                utils.log("DEBUG", "OOF Request is: " + oofRequest, isDebugEnabled)
+                logger.debug( "OOF Request is: " + oofRequest)
 
                 String urlString = UrnPropertiesReader.getVariable("mso.oof.endpoint", execution)
-                utils.log("DEBUG", "Posting to OOF Url: " + urlString, isDebugEnabled)
+                logger.debug( "Posting to OOF Url: " + urlString)
 
 
 				URL url = new URL(urlString);
@@ -165,15 +169,15 @@ class OofHoming extends AbstractServiceTaskProcessor {
 				Response httpResponse = httpClient.post(oofRequest)
 
 				int responseCode = httpResponse.getStatus()
-				logDebug("OOF sync response code is: " + responseCode, isDebugEnabled)
+				logDebug("OOF sync response code is: " + responseCode)
 
 
-                utils.log("DEBUG", "*** Completed Homing Call OOF ***", isDebugEnabled)
+                logger.debug( "*** Completed Homing Call OOF ***")
             }
         } catch (BpmnError b) {
             throw b
         } catch (Exception e) {
-			msoLogger.error(e);
+			logger.error("{} {} {} {} {} {}", e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500,
                     "Internal Error - Occured in Homing callOof: " + e.getMessage())
         }
@@ -189,18 +193,18 @@ class OofHoming extends AbstractServiceTaskProcessor {
      */
     public void processHomingSolution(DelegateExecution execution) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("DEBUG", "*** Started Homing Process Homing Solution ***", isDebugEnabled)
+        logger.debug( "*** Started Homing Process Homing Solution ***")
         try {
             String response = execution.getVariable("asyncCallbackResponse")
-            utils.log("DEBUG", "OOF Async Callback Response is: " + response, isDebugEnabled)
+            logger.debug( "OOF Async Callback Response is: " + response)
             utils.logAudit("OOF Async Callback Response is: " + response)
 
             oofUtils.validateCallbackResponse(execution, response)
             String placements = jsonUtil.getJsonValue(response, "solutions.placementSolutions")
-            utils.log("DEBUG", "****** Solution Placements: " + placements + " *****", isDebugEnabled)
+            logger.debug( "****** Solution Placements: " + placements + " *****")
 
             ServiceDecomposition decomposition = execution.getVariable("serviceDecomposition")
-            utils.log("DEBUG", "Service Decomposition: " + decomposition, isDebugEnabled)
+            logger.debug( "Service Decomposition: " + decomposition)
 
             List<Resource> resourceList = decomposition.getServiceResources()
             JSONArray arr = new JSONArray(placements)
@@ -208,12 +212,12 @@ class OofHoming extends AbstractServiceTaskProcessor {
                 JSONArray arrSol = arr.getJSONArray(i)
                 for (int j = 0; j < arrSol.length(); j++) {
                     JSONObject placement = arrSol.getJSONObject(j)
-                    utils.log("DEBUG", "****** Placement Solution is: " + placement + " *****", "true")
+                    logger.debug( "****** Placement Solution is: " + placement + " *****", "true")
                     String jsonServiceResourceId = jsonUtil.getJsonValue( placement.toString(), "serviceResourceId")
-                    utils.log("DEBUG", "****** homing serviceResourceId is: " + jsonServiceResourceId + " *****", "true")
+                    logger.debug( "****** homing serviceResourceId is: " + jsonServiceResourceId + " *****", "true")
                     for (Resource resource : resourceList) {
                         String serviceResourceId = resource.getResourceId()
-                        utils.log("DEBUG", "****** decomp serviceResourceId is: " + serviceResourceId + " *****", "true")
+                        logger.debug( "****** decomp serviceResourceId is: " + serviceResourceId + " *****", "true")
                         if (serviceResourceId.equalsIgnoreCase(jsonServiceResourceId)) {
                             JSONObject solution = placement.getJSONObject("solution")
                             String solutionType = solution.getString("identifierType")
@@ -223,26 +227,26 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             } else {
                                 inventoryType = "cloud"
                             }
-                            utils.log("DEBUG", "****** homing inventoryType is: " + inventoryType + " *****", "true")
+                            logger.debug( "****** homing inventoryType is: " + inventoryType + " *****", "true")
                             resource.getHomingSolution().setInventoryType(InventoryType.valueOf(inventoryType))
 
                             JSONArray assignmentArr = placement.getJSONArray("assignmentInfo")
-                            utils.log("DEBUG", "****** assignmentInfo is: " + assignmentArr.toString() + " *****", "true")
+                            logger.debug( "****** assignmentInfo is: " + assignmentArr.toString() + " *****", "true")
 
                             Map<String, String> assignmentMap = jsonUtil.entryArrayToMap(execution,
                                     assignmentArr.toString(), "key", "value")
                             String oofDirectives = null
                             assignmentMap.each { key, value ->
-                                utils.log("DEBUG", "****** element: " + key + " *****", "true")
+                                logger.debug( "****** element: " + key + " *****", "true")
                                 if (key == "oof_directives") {
                                     oofDirectives = value
-                                    utils.log("DEBUG", "****** homing oofDirectives: " + oofDirectives + " *****", "true")
+                                    logger.debug( "****** homing oofDirectives: " + oofDirectives + " *****", "true")
                                 }
                             }
                             String cloudOwner = assignmentMap.get("cloudOwner")
-                            utils.log("DEBUG", "****** homing cloudOwner: " + cloudOwner + " *****", "true")
+                            logger.debug( "****** homing cloudOwner: " + cloudOwner + " *****", "true")
                             String cloudRegionId = assignmentMap.get("locationId")
-                            utils.log("DEBUG", "****** homing cloudRegionId: " + cloudRegionId + " *****", "true")
+                            logger.debug( "****** homing cloudRegionId: " + cloudRegionId + " *****", "true")
                             resource.getHomingSolution().setCloudOwner(cloudOwner)
                             resource.getHomingSolution().setCloudRegionId(cloudRegionId)
 
@@ -252,7 +256,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             String orchestrator = execution.getVariable("orchestrator")
                             if ((orchestrator != null) && (orchestrator != "")) {
                                 cloudSite.setOrchestrator(orchestrator)
-                                utils.log("DEBUG", "****** orchestrator: " + orchestrator + " *****", "true")
+                                logger.debug( "****** orchestrator: " + orchestrator + " *****", "true")
                             } else {
                                 cloudSite.setOrchestrator("multicloud")
                             }
@@ -278,14 +282,14 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             cloudIdentity.setIdentityUrl(msbHost + multicloudApiEndpoint
                                     + "/" + cloudOwner + "/" +
                                     cloudRegionId + "/infra_workload")
-                            utils.log("DEBUG", "****** Cloud IdentityUrl: " + msbHost + multicloudApiEndpoint
+                            logger.debug( "****** Cloud IdentityUrl: " + msbHost + multicloudApiEndpoint
                                     + "/" + cloudOwner + "/" +
                                     cloudRegionId + "/infra_workload"
                                     + " *****", "true")
-                            utils.log("DEBUG", "****** CloudIdentity: " + cloudIdentity.toString()
+                            logger.debug( "****** CloudIdentity: " + cloudIdentity.toString()
                                     + " *****", "true")
                             cloudSite.setIdentityService(cloudIdentity)
-                            utils.log("DEBUG", "****** CloudSite: " + cloudSite.toString()
+                            logger.debug( "****** CloudSite: " + cloudSite.toString()
                                     + " *****", "true")
 
                             // Set cloudsite in catalog DB here
@@ -294,7 +298,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
                             if (oofDirectives != null && oofDirectives != "") {
                                 resource.getHomingSolution().setOofDirectives(oofDirectives)
                                 execution.setVariable("oofDirectives", oofDirectives)
-                                utils.log("DEBUG", "***** OofDirectives set to: " + oofDirectives +
+                                logger.debug( "***** OofDirectives set to: " + oofDirectives +
                                         " *****", "true")
                             }
 
@@ -319,8 +323,8 @@ class OofHoming extends AbstractServiceTaskProcessor {
                                 resource.getHomingSolution().setServiceInstanceId(solution.getJSONArray("identifiers")[0].toString())
                             }
                         } else {
-                            utils.log("DEBUG", "ProcessHomingSolution Exception: no matching serviceResourceIds returned in " +
-                                    "homing solution", isDebugEnabled)
+                            logger.debug( "ProcessHomingSolution Exception: no matching serviceResourceIds returned in " +
+                                    "homing solution")
                             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - " +
                                     "Occurred in Homing ProcessHomingSolution: no matching serviceResourceIds returned")
 
@@ -351,13 +355,13 @@ class OofHoming extends AbstractServiceTaskProcessor {
             execution.setVariable("serviceDecomposition", decomposition)
             execution.setVariable("homingSolution", placements) //TODO - can be removed as output variable
 
-            utils.log("DEBUG", "*** Completed Homing Process Homing Solution ***", isDebugEnabled)
+            logger.debug( "*** Completed Homing Process Homing Solution ***")
         } catch (BpmnError b) {
-            utils.log("DEBUG", "ProcessHomingSolution Error: " + b, isDebugEnabled)
+            logger.debug( "ProcessHomingSolution Error: " + b)
             throw b
         } catch (Exception e) {
-            utils.log("DEBUG", "ProcessHomingSolution Exception: " + e, isDebugEnabled)
-			msoLogger.error(e);
+            logger.debug( "ProcessHomingSolution Exception: " + e)
+			logger.error("{} {} {} {} {} {}", e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occurred in Homing ProcessHomingSolution")
         }
     }
@@ -375,8 +379,8 @@ class OofHoming extends AbstractServiceTaskProcessor {
             requestId = execution.getVariable("msoRequestId")
         }
         execution.setVariable("DHVCS_requestId", requestId)
-        utils.log("DEBUG", "***** STARTED Homing Subflow for request: " + requestId + " *****", "true")
-        utils.log("DEBUG", "****** Homing Subflow Global Debug Enabled: " + isDebugEnabled + " *****", "true")
+        logger.debug( "***** STARTED Homing Subflow for request: " + requestId + " *****", "true")
+        logger.debug( "****** Homing Subflow Global Debug Enabled: " + isDebugEnabled + " *****", "true")
         utils.logAudit("***** STARTED Homing Subflow for request: " + requestId + " *****")
     }
 
@@ -404,18 +408,18 @@ class OofHoming extends AbstractServiceTaskProcessor {
                         'mso:workflow:message:endpoint was not passed in')
             }
 
-            utils.log("DEBUG", "passed in endpoint: " + endpoint + " *****", "true")
+            logger.debug( "passed in endpoint: " + endpoint + " *****", "true")
 
             while (endpoint.endsWith('/')) {
                 endpoint = endpoint.substring(0, endpoint.length() - 1)
             }
-            utils.log("DEBUG", "processed endpoint: " + endpoint + " *****", "true")
+            logger.debug( "processed endpoint: " + endpoint + " *****", "true")
 
             return endpoint +
                     '/' + UriUtils.encodePathSegment(messageType, 'UTF-8') +
                     '/' + UriUtils.encodePathSegment(correlator, 'UTF-8')
         } catch (Exception ex) {
-            utils.log("DEBUG", "createCallbackURL Exception: " + ex + " *****", "true")
+            logger.debug( "createCallbackURL Exception: " + ex + " *****", "true")
         }
     }
 }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -36,11 +38,13 @@ import java.time.Duration
 
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
 class SniroUtils{
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, SniroUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger( SniroUtils.class);
 
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -70,14 +74,14 @@ class SniroUtils{
 	 * @author cb645j
 	 */
 	public String buildRequest(DelegateExecution execution, String requestId, ServiceDecomposition decomposition, Subscriber subscriber, String homingParams){
-		msoLogger.debug("Started Building Sniro Request")
+		logger.debug("Started Building Sniro Request")
 		def callbackUrl = utils.createWorkflowMessageAdapterCallbackURL(execution, "SNIROResponse", requestId)
 		def transactionId = requestId
 		//ServiceInstance Info
 		ServiceInstance serviceInstance = decomposition.getServiceInstance()
 		def serviceInstanceId
 		if(serviceInstance == null){
-			msoLogger.debug("Unable to obtain Service Instance Id, ServiceInstance Object is null" )
+			logger.debug("Unable to obtain Service Instance Id, ServiceInstance Object is null" )
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to obtain Service Instance Id, ServiceInstance Object is null")
 		}else{
 			serviceInstanceId = serviceInstance.getInstanceId()
@@ -142,7 +146,7 @@ class SniroUtils{
 		}
 
 		if(resourceList.isEmpty() || resourceList == null){
-			msoLogger.debug("Resources List is Empty")
+			logger.debug("Resources List is Empty")
 		}else{
 			for(Resource resource:resourceList){
 				ModelInfo resourceModelInfo = resource.getModelInfo()
@@ -197,7 +201,7 @@ class SniroUtils{
 		String licenseDemands = ""
 		sb = new StringBuilder()
 		if(vnfResourceList.isEmpty() || vnfResourceList == null){
-			msoLogger.debug("Vnf Resources List is Empty")
+			logger.debug("Vnf Resources List is Empty")
 		}else{
 			for(VnfResource vnfResource:vnfResourceList){
 				ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
@@ -291,7 +295,7 @@ class SniroUtils{
 		}
 	  }"""
 
-		msoLogger.debug("Completed Building Sniro Request")
+		logger.debug("Completed Building Sniro Request")
 		return request
 	}
 
@@ -321,7 +325,7 @@ class SniroUtils{
 						licenses = jsonUtil.getJsonValue(response, "solutionInfo.licenseInfo")
 					}
 					if((isBlank(placements) || placements.equalsIgnoreCase("[]")) && (isBlank(licenses) || licenses.equalsIgnoreCase("[]"))){
-						msoLogger.debug("Sniro Async Response does not contain: licenses or placements")
+						logger.debug("Sniro Async Response does not contain: licenses or placements")
 					}else{
 						return
 					}
@@ -336,18 +340,18 @@ class SniroUtils{
 					}else{
 						errorMessage = "Sniro Async Response contains an error: not provided"
 					}
-					msoLogger.debug("Sniro Async Response contains an error: " + errorMessage)
+					logger.debug("Sniro Async Response contains an error: " + errorMessage)
 					exceptionUtil.buildAndThrowWorkflowException(execution, 400, errorMessage)
 
 				}else{
-					msoLogger.debug("Sniro Async Response contains an error: not provided")
+					logger.debug("Sniro Async Response contains an error: not provided")
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Sniro Async Response contains an error: not provided")
 				}
 			}
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			msoLogger.debug("Error encountered within Homing validateCallbackResponse method: " + e)
+			logger.debug("Error encountered within Homing validateCallbackResponse method: " + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in Sniro Homing Validate Async Response")
 		}
 	}

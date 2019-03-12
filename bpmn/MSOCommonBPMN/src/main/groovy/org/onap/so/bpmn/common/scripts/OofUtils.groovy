@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Intel Corp. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -87,39 +89,39 @@ class OofUtils {
                         ArrayList excludedCandidates = null,
                         ArrayList requiredCandidates = null) {
         def isDebugEnabled = execution.getVariable("isDebugLogEnabled")
-        utils.log("DEBUG", "Started Building OOF Request", isDebugEnabled)
+        logger.debug( "Started Building OOF Request")
         String callbackEndpoint = UrnPropertiesReader.getVariable("mso.oof.callbackEndpoint", execution)
-        utils.log("DEBUG", "mso.oof.callbackEndpoint is: " + callbackEndpoint, isDebugEnabled)
+        logger.debug( "mso.oof.callbackEndpoint is: " + callbackEndpoint)
         try {
             def callbackUrl = utils.createHomingCallbackURL(callbackEndpoint, "oofResponse", requestId)
-            utils.log("DEBUG", "callbackUrl is: " + callbackUrl, isDebugEnabled)
+            logger.debug( "callbackUrl is: " + callbackUrl)
 
 
             def transactionId = requestId
-            utils.log("DEBUG", "transactionId is: " + transactionId, isDebugEnabled)
+            logger.debug( "transactionId is: " + transactionId)
             //ServiceInstance Info
             ServiceInstance serviceInstance = decomposition.getServiceInstance()
             def serviceInstanceId = ""
             def serviceName = ""
 
             serviceInstanceId = execution.getVariable("serviceInstanceId")
-            utils.log("DEBUG", "serviceInstanceId is: " + serviceInstanceId, isDebugEnabled)
+            logger.debug( "serviceInstanceId is: " + serviceInstanceId)
             serviceName = execution.getVariable("subscriptionServiceType")
-            utils.log("DEBUG", "serviceName is: " + serviceName, isDebugEnabled)
+            logger.debug( "serviceName is: " + serviceName)
 
             if (serviceInstanceId == null || serviceInstanceId == "null") {
-                utils.log("DEBUG", "Unable to obtain Service Instance Id", isDebugEnabled)
+                logger.debug( "Unable to obtain Service Instance Id")
                 exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
                         "obtain Service Instance Id, execution.getVariable(\"serviceInstanceId\") is null")
             }
             if (serviceName == null || serviceName == "null") {
-                utils.log("DEBUG", "Unable to obtain Service Name", isDebugEnabled)
+                logger.debug( "Unable to obtain Service Name")
                 exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - Unable to " +
                         "obtain Service Name, execution.getVariable(\"subscriptionServiceType\") is null")
             }
             //Model Info
             ModelInfo model = decomposition.getModelInfo()
-            utils.log("DEBUG", "ModelInfo: " + model.toString(), isDebugEnabled)
+            logger.debug( "ModelInfo: " + model.toString())
             String modelType = model.getModelType()
             String modelInvariantId = model.getModelInvariantUuid()
             String modelVersionId = model.getModelUuid()
@@ -153,11 +155,11 @@ class OofUtils {
             List<VnfResource> vnfResourceList = decomposition.getVnfResources()
 
             if (allottedResourceList == null || allottedResourceList.isEmpty()) {
-                utils.log("DEBUG", "Allotted Resources List is empty - will try to get service VNFs instead.",
+                logger.debug( "Allotted Resources List is empty - will try to get service VNFs instead.",
                         isDebugEnabled)
             } else {
                 for (AllottedResource resource : allottedResourceList) {
-                    utils.log("DEBUG", "Allotted Resource: " + resource.toString(),
+                    logger.debug( "Allotted Resource: " + resource.toString(),
                             isDebugEnabled)
                     def serviceResourceId = resource.getResourceId()
                     def toscaNodeType = resource.getToscaNodeType()
@@ -195,12 +197,12 @@ class OofUtils {
             }
 
             if (vnfResourceList == null || vnfResourceList.isEmpty()) {
-                utils.log("DEBUG", "VNF Resources List is empty",
+                logger.debug( "VNF Resources List is empty",
                         isDebugEnabled)
             } else {
 
                 for (VnfResource vnfResource : vnfResourceList) {
-                    utils.log("DEBUG", "VNF Resource: " + vnfResource.toString(),
+                    logger.debug( "VNF Resource: " + vnfResource.toString(),
                             isDebugEnabled)
                     ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
                     def toscaNodeType = vnfResource.getToscaNodeType()
@@ -239,7 +241,7 @@ class OofUtils {
         String licenseDemands = ""
         sb = new StringBuilder()
         if (vnfResourceList.isEmpty() || vnfResourceList == null) {
-            utils.log("DEBUG", "Vnf Resources List is Empty", isDebugEnabled)
+            logger.debug( "Vnf Resources List is Empty")
         } else {
             for (VnfResource vnfResource : vnfResourceList) {
                 ModelInfo vnfResourceModelInfo = vnfResource.getModelInfo()
@@ -322,10 +324,10 @@ class OofUtils {
                             "}"
 
 
-            utils.log("DEBUG", "Completed Building OOF Request", isDebugEnabled)
+            logger.debug( "Completed Building OOF Request")
             return request
         } catch (Exception ex) {
-             utils.log("DEBUG", "buildRequest Exception: " + ex, isDebugEnabled)
+             logger.debug( "buildRequest Exception: " + ex)
         }
     }
 
@@ -349,12 +351,12 @@ class OofUtils {
                 if (isBlank(placements) || placements.equalsIgnoreCase("[]")) {
                     String statusMessage = jsonUtil.getJsonValue(response, "statusMessage")
                     if (isBlank(statusMessage)) {
-                        utils.log("DEBUG", "Error Occurred in Homing: OOF Async Callback Response does " +
-                                "not contain placement solution.", isDebugEnabled)
+                        logger.debug( "Error Occurred in Homing: OOF Async Callback Response does " +
+                                "not contain placement solution.")
                         exceptionUtil.buildAndThrowWorkflowException(execution, 400,
                                 "OOF Async Callback Response does not contain placement solution.")
                     } else {
-                        utils.log("DEBUG", "Error Occurred in Homing: " + statusMessage, isDebugEnabled)
+                        logger.debug( "Error Occurred in Homing: " + statusMessage)
                         exceptionUtil.buildAndThrowWorkflowException(execution, 400, statusMessage)
                     }
                 } else {
@@ -374,11 +376,11 @@ class OofUtils {
                 } else {
                     errorMessage = "OOF Async Callback Response contains a Request Error. Unable to determine the Request Error Exception."
                 }
-                utils.log("DEBUG", "Error Occurred in Homing: " + errorMessage, isDebugEnabled)
+                logger.debug( "Error Occurred in Homing: " + errorMessage)
                 exceptionUtil.buildAndThrowWorkflowException(execution, 400, errorMessage)
 
             } else {
-                utils.log("DEBUG", "Error Occurred in Homing: Received an Unknown Async Callback Response from OOF.", isDebugEnabled)
+                logger.debug( "Error Occurred in Homing: Received an Unknown Async Callback Response from OOF.")
                 exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Received an Unknown Async Callback Response from OOF.")
             }
         }
@@ -518,9 +520,9 @@ class OofUtils {
         Response response = client.post(request.getBody().toString())
 
         int responseCode = response.getStatus()
-        logDebug("CatalogDB response code is: " + responseCode, isDebugEnabled)
+        logDebug("CatalogDB response code is: " + responseCode)
         String syncResponse = response.readEntity(String.class)
-        logDebug("CatalogDB response is: " + syncResponse, isDebugEnabled)
+        logDebug("CatalogDB response is: " + syncResponse)
 
         if(responseCode != 202){
             exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from CatalogDB.")

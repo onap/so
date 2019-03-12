@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,6 +30,8 @@ import org.onap.so.bpmn.core.BPMNLogger
 import org.onap.so.bpmn.core.xml.XmlTool
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.utils.CryptoUtils
 import org.slf4j.MDC
 import org.w3c.dom.Element
@@ -36,7 +40,7 @@ import groovy.util.slurpersupport.NodeChild
 import groovy.xml.XmlUtil
 
 class MsoUtils {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, MsoUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger( MsoUtils.class);
 	
 	def initializeEndPoints(execution){
 		// use this placeholder to initialize end points, if called independently, this need to be set
@@ -290,13 +294,13 @@ class MsoUtils {
 	
 	def log(logmode,logtxt,isDebugLogEnabled="false"){
 		if ("INFO"==logmode) {
-			msoLogger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName());
-		} else if ("WARN"==logmode) {
+			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName());
+			msoLogger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN", MsoLogger.getServiceName());
 			// to see the warning text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger warn() method
-			msoLogger.warn (MessageEnum.BPMN_GENERAL_WARNING, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
+			msoLogger.warn (MessageEnum.BPMN_GENERAL_WARNING.toString(), logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), logtxt);
 		} else if ("ERROR"==logmode) {
 			// to see the error text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger error() method
-		    msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, logtxt);
+		    logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), logtxt);
 
 		} else {
 			BPMNLogger.debug(isDebugLogEnabled, logtxt);

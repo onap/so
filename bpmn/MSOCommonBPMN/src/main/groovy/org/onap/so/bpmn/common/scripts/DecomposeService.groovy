@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +29,8 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.DecomposeJsonUtil;
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 /**
  * This groovy class supports the <class>DecomposeService.bpmn</class> process.
@@ -48,7 +52,7 @@ import org.onap.so.logger.MsoLogger
  *
  */
 public class DecomposeService extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, DecomposeService.class);
+    private static final Logger logger = LoggerFactory.getLogger( DecomposeService.class);
 
 
 	String Prefix="DDS_"
@@ -58,7 +62,7 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 
 	public void preProcessRequest (DelegateExecution execution) {
 		String msg = ""
-		msoLogger.trace("preProcessRequest of DecomposeService ")
+		logger.trace("preProcessRequest of DecomposeService ")
 		setBasicDBAuthHeader(execution, execution.getVariable('isDebugLogEnabled'))
 
 		try {
@@ -80,15 +84,15 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in preProcessRequest " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit preProcessRequest of DecomposeService ")
+		logger.trace("Exit preProcessRequest of DecomposeService ")
 	}
 
 	public void queryCatalogDb (DelegateExecution execution) {
 		String msg = ""
-		msoLogger.trace("queryCatalogDB of DecomposeService ")
+		logger.trace("queryCatalogDB of DecomposeService ")
 
 		try {
 
@@ -97,8 +101,8 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			String serviceModelUuid = execution.getVariable("DDS_serviceModelUuid")
 			String modelVersion = execution.getVariable("DDS_modelVersion")
 
-			msoLogger.debug("serviceModelInvariantId: " + serviceModelInvariantId)
-			msoLogger.debug("modelVersion: " + modelVersion)
+			logger.debug("serviceModelInvariantId: " + serviceModelInvariantId)
+			logger.debug("modelVersion: " + modelVersion)
 
 			JSONObject catalogDbResponse = null
             if(serviceModelUuid != null && serviceModelUuid.length() > 0)
@@ -110,30 +114,30 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 
 			if (catalogDbResponse == null || catalogDbResponse.toString().equalsIgnoreCase("null")) {
 				msg = "No data found in Catalog DB"
-				msoLogger.debug(msg)
+				logger.debug(msg)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 			}
 
 			String catalogDbResponseString = catalogDbResponse.toString()
 
 			execution.setVariable("DDS_catalogDbResponse", catalogDbResponseString)
-			msoLogger.debug("catalog DB response string: "+ catalogDbResponseString)
+			logger.debug("catalog DB response string: "+ catalogDbResponseString)
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in queryCatalogDb " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit queryCatalogDb of DecomposeService ")
+		logger.trace("Exit queryCatalogDb of DecomposeService ")
 	}
 
 
 
 	public void actuallyDecomposeService (DelegateExecution execution) {
 		String msg = ""
-		msoLogger.trace("actuallyDecomposeService of DecomposeService ")
+		logger.trace("actuallyDecomposeService of DecomposeService ")
 
 		try {
 
@@ -142,9 +146,9 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			String serviceInstanceId = execution.getVariable("serviceInstanceId")
 			String serviceModelInvariantId = execution.getVariable("DDS_serviceModelInvariantId")
 
-			msoLogger.debug("serviceModelInvariantId: " + serviceModelInvariantId)
+			logger.debug("serviceModelInvariantId: " + serviceModelInvariantId)
 
-			msoLogger.debug("getting service decomposition")
+			logger.debug("getting service decomposition")
 
 			String catalogDbResponse = execution.getVariable("DDS_catalogDbResponse")
 			ServiceDecomposition serviceDecomposition = DecomposeJsonUtil.jsonToServiceDecomposition(catalogDbResponse, serviceInstanceId)
@@ -152,16 +156,16 @@ public class DecomposeService extends AbstractServiceTaskProcessor {
 			execution.setVariable("serviceDecomposition", serviceDecomposition)
 			execution.setVariable("serviceDecompositionString", serviceDecomposition.toJsonString())
 
-			msoLogger.debug("service decomposition: "+ serviceDecomposition.toJsonString())
+			logger.debug("service decomposition: "+ serviceDecomposition.toJsonString())
 
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception ex){
 			msg = "Exception in actuallyDecomposeService " + ex.getMessage()
-			msoLogger.debug(msg)
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg)
 		}
-		msoLogger.trace("Exit actuallyDecomposeService of DecomposeService ")
+		logger.trace("Exit actuallyDecomposeService of DecomposeService ")
 	}
 
 }

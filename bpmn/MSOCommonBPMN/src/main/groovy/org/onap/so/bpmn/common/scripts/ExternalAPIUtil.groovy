@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +28,8 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
 
 import javax.ws.rs.core.MediaType
@@ -37,7 +41,7 @@ class ExternalAPIUtil {
 
 	String Prefix="EXTAPI_"
 
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ExternalAPIUtil.class)
+    private static final Logger logger = LoggerFactory.getLogger( ExternalAPIUtil.class);
 
 	private final HttpClientFactory httpClientFactory;
 	private final MsoUtils utils;
@@ -96,7 +100,7 @@ class ExternalAPIUtil {
 //
 //		def uri = execution.getVariable("ExternalAPIURi")
 //		if(uri) {
-//			msoLogger.debug("ExternalAPIUtil.getUri: " + uri)
+//			logger.debug("ExternalAPIUtil.getUri: " + uri)
 //			return uri
 //		}
 //
@@ -104,21 +108,21 @@ class ExternalAPIUtil {
 //	}
 
 	public String setTemplate(String template, Map<String, String> valueMap) {
-		msoLogger.debug("ExternalAPIUtil setTemplate", true);
+		logger.debug("ExternalAPIUtil setTemplate", true);
 		StringBuffer result = new StringBuffer();
 
 		String pattern = "<.*>";
 		Pattern r = Pattern.compile(pattern);
 		Matcher m = r.matcher(template);
 
-		msoLogger.debug("ExternalAPIUtil template:" + template, true);
+		logger.debug("ExternalAPIUtil template:" + template, true);
 		while (m.find()) {
 			String key = template.substring(m.start() + 1, m.end() - 1);
-			msoLogger.debug("ExternalAPIUtil key:" + key + " contains key? " + valueMap.containsKey(key), true);
+			logger.debug("ExternalAPIUtil key:" + key + " contains key? " + valueMap.containsKey(key), true);
 			m.appendReplacement(result, valueMap.getOrDefault(key, "\"TBD\""));
 		}
 		m.appendTail(result);
-		msoLogger.debug("ExternalAPIUtil return:" + result.toString(), true);
+		logger.debug("ExternalAPIUtil return:" + result.toString(), true);
 		return result.toString();
 	}
 
@@ -134,12 +138,12 @@ class ExternalAPIUtil {
 	 *
 	 */
 	public Response executeExternalAPIGetCall(DelegateExecution execution, String url){
-		msoLogger.debug(" ======== STARTED Execute ExternalAPI Get Process ======== ")
+		logger.debug(" ======== STARTED Execute ExternalAPI Get Process ======== ")
 		Response apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
-			msoLogger.debug( "Generated uuid is: " + uuid)
-			msoLogger.debug( "URL to be used is: " + url)
+			logger.debug( "Generated uuid is: " + uuid)
+			logger.debug( "URL to be used is: " + url)
 
 			HttpClient client = httpClientFactory.newJsonClient(new URL(url), TargetEntity.EXTERNAL)
 			client.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
@@ -149,9 +153,9 @@ class ExternalAPIUtil {
 
 			apiResponse = client.get()
 
-			msoLogger.debug( "======== COMPLETED Execute ExternalAPI Get Process ======== ")
+			logger.debug( "======== COMPLETED Execute ExternalAPI Get Process ======== ")
 		}catch(Exception e){
-			msoLogger.debug("Exception occured while executing ExternalAPI Get Call. Exception is: \n" + e)
+			logger.debug("Exception occured while executing ExternalAPI Get Call. Exception is: \n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse
@@ -170,12 +174,12 @@ class ExternalAPIUtil {
 	 *
 	 */
 	public Response executeExternalAPIPostCall(DelegateExecution execution, String url, String payload){
-		msoLogger.debug( " ======== Started Execute ExternalAPI Post Process ======== ")
+		logger.debug( " ======== Started Execute ExternalAPI Post Process ======== ")
 		Response apiResponse = null
 		try{
 			String uuid = utils.getRequestID()
-			msoLogger.debug( "Generated uuid is: " + uuid)
-			msoLogger.debug( "URL to be used is: " + url)
+			logger.debug( "Generated uuid is: " + uuid)
+			logger.debug( "URL to be used is: " + url)
 
 			HttpClient httpClient = httpClientFactory.newJsonClient(new URL(url), TargetEntity.AAI)
 			httpClient.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
@@ -184,9 +188,9 @@ class ExternalAPIUtil {
 
 			apiResponse = httpClient.post(payload)
 
-			msoLogger.debug( "======== Completed Execute ExternalAPI Post Process ======== ")
+			logger.debug( "======== Completed Execute ExternalAPI Post Process ======== ")
 		}catch(Exception e){
-			msoLogger.error("Exception occured while executing ExternalAPI Post Call. Exception is: \n" + e)
+			logger.error("{} {} {} {} {} {}", "Exception occured while executing ExternalAPI Post Call. Exception is: \n" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return apiResponse

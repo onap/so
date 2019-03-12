@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,11 +29,13 @@ import org.json.JSONObject
 import org.json.XML
 import org.onap.so.bpmn.core.xml.XmlTool
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.logger.MessageEnum
 
 
 class VidUtils {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VidUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger( VidUtils.class);
 	
 	public MsoUtils utils = new MsoUtils()
 	private AbstractServiceTaskProcessor taskProcessor
@@ -279,7 +283,7 @@ class VidUtils {
 			return groovy.xml.XmlUtil.serialize(xmlReq.normalize().replaceAll("\t", "").replaceAll("\n", "")).replaceAll("(<\\?[^<]*\\?>\\s*[\\r\\n]*)?", "")
 			
 		} catch(Exception e) {
-			msoLogger.debug("Error in Vid Utils",e.getCause())
+			logger.debug("Error in Vid Utils",e.getCause())
 			e.printStackTrace();
 			throw e
 		}

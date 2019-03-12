@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -113,13 +115,13 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 */
 	public void log(String level, String message, Throwable cause, String isLevelEnabled) {
 		if (cause == null) {
-			utils.log(level, message, isLevelEnabled);
+			 message, isLevelEnabled);
 		} else {
 			StringWriter stringWriter = new StringWriter();
 			PrintWriter printWriter = new PrintWriter(stringWriter);
 			printWriter.println(message);
 			cause.printStackTrace(printWriter);
-			utils.log(level, stringWriter.toString(), isLevelEnabled);
+			 stringWriter.toString(), isLevelEnabled);
 			printWriter.close();
 		}
 	}
@@ -589,12 +591,12 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	public void sendSyncError(DelegateExecution execution) {
 		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
 		String requestId = execution.getVariable("mso-request-id")
-		logDebug('sendSyncError, requestId: ' + requestId, isDebugEnabled)
+		logDebug('sendSyncError, requestId: ' + requestId)
 		WorkflowException workflowExceptionObj = execution.getVariable("WorkflowException")
 		if (workflowExceptionObj != null) {
 			String errorMessage = workflowExceptionObj.getErrorMessage()
 			def errorCode = workflowExceptionObj.getErrorCode()
-			logDebug('sendSyncError, requestId: '  + requestId + ' | errorMessage: ' + errorMessage + ' | errorCode: ' + errorCode, isDebugEnabled)
+			logDebug('sendSyncError, requestId: '  + requestId + ' | errorMessage: ' + errorMessage + ' | errorCode: ' + errorCode)
 			sendWorkflowResponse(execution, errorCode, errorMessage)
 		}
 	}
@@ -612,25 +614,25 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			def classAndMethod = getClass().getSimpleName() + '.' + methodName + '(execution=' + execution.getId() + ')'
 			def isDebugEnabled =  execution.getVariable('isDebugLogEnabled')
 
-			logDebug('Entered ' + classAndMethod, isDebugEnabled)
-			logDebug('Received parameters: ' + args, isDebugEnabled)
+			logDebug('Entered ' + classAndMethod)
+			logDebug('Received parameters: ' + args)
 
 			try{
 				def methodToCall = this.metaClass.getMetaMethod(methodName, args)
-				logDebug('Method to call: ' + methodToCall, isDebugEnabled)
+				logDebug('Method to call: ' + methodToCall)
 				methodToCall?.invoke(this, args)
 			}
 			catch(BpmnError bpmnError) {
-				logDebug('Rethrowing BpmnError ' + bpmnError.getMessage(), isDebugEnabled)
+				logDebug('Rethrowing BpmnError ' + bpmnError.getMessage())
 				throw bpmnError
 			}
 			catch(Exception e) {
 				e.printStackTrace()
-				logDebug('Unexpected error encountered - ' + e.getMessage(), isDebugEnabled)
+				logDebug('Unexpected error encountered - ' + e.getMessage())
 				(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 			}
 			finally {
-				logDebug('Exited ' + classAndMethod, isDebugEnabled)
+				logDebug('Exited ' + classAndMethod)
 			}
 		}
 	}
@@ -760,7 +762,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
 		} catch (IOException ex) {
 			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
+			logger.debug( dataErrorMessage, isDebugLogEnabled)
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		}
 	}

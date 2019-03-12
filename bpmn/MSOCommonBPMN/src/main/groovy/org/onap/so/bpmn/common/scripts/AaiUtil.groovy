@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,12 +40,14 @@ import org.onap.so.client.aai.AAIVersion
 import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.openpojo.rules.HasToStringRule
 import org.onap.so.utils.TargetEntity
 
 @Deprecated
 class AaiUtil {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AaiUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger( AaiUtil.class);
 
 
 	public MsoUtils utils = new MsoUtils()
@@ -101,14 +105,14 @@ class AaiUtil {
 
 			String returnCode = apiResponse.getStatus()
 			String aaiResponseAsString = apiResponse.readEntity(String.class)
-			msoLogger.debug("Call AAI Cloud Region Return code: " + returnCode)
+			logger.debug("Call AAI Cloud Region Return code: " + returnCode)
 			execution.setVariable(execution.getVariable("prefix")+"queryCloudRegionReturnCode", returnCode)
 
 			if(returnCode == "200"){
-				msoLogger.debug("Call AAI Cloud Region is Successful.")
+				logger.debug("Call AAI Cloud Region is Successful.")
 
 				String regionVersion = taskProcessor.utils.getNodeText(aaiResponseAsString, "cloud-region-version")
-				msoLogger.debug("Cloud Region Version from AAI for " + backend + " is: " + regionVersion)
+				logger.debug("Cloud Region Version from AAI for " + backend + " is: " + regionVersion)
 				if (backend == "PO") {
 					regionId = taskProcessor.utils.getNodeText(aaiResponseAsString, "cloud-region-id")
 				} else { // backend not "PO"
@@ -121,20 +125,20 @@ class AaiUtil {
 				if(regionId == null){
 					throw new BpmnError("MSOWorkflowException")
 				}
-				msoLogger.debug("Cloud Region Id from AAI " + backend + " is: " + regionId)
+				logger.debug("Cloud Region Id from AAI " + backend + " is: " + regionId)
 			}else if (returnCode == "404"){ // not 200
 				if (backend == "PO") {
 					regionId = inputCloudRegion
 				}else{  // backend not "PO"
 					regionId = "AAIAIC25"
 				}
-				msoLogger.debug("Cloud Region value for code='404' of " + backend + " is: " + regionId)
+				logger.debug("Cloud Region value for code='404' of " + backend + " is: " + regionId)
 			}else{
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Call AAI Cloud Region is NOT Successful.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Call AAI Cloud Region is NOT Successful.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "");
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception occured while getting the Cloud Reqion.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.getMessage());
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception occured while getting the Cloud Reqion.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return regionId
@@ -157,7 +161,7 @@ class AaiUtil {
 		if (aaiVnfResponse != null) {
 			String vfModulesText = taskProcessor.utils.getNodeXml(aaiVnfResponse, "vf-modules")
 			if (aaiVnfResponse.getVfModules() == null || aaiVnfResponse.getVfModules().getVfModule().isEmpty()) {
-				msoLogger.debug("There are no VF modules in this VNF yet")
+				logger.debug("There are no VF modules in this VNF yet")
 				return 0
 			}
 			else {
@@ -176,7 +180,7 @@ class AaiUtil {
 					}
 				}
 				matchingVfModules = matchingVfModules + "</vfModules>"
-				msoLogger.debug("Matching VF Modules: " + matchingVfModules)
+				logger.debug("Matching VF Modules: " + matchingVfModules)
 				String lowestUnusedIndex = taskProcessor.utils.getLowestUnusedIndex(matchingVfModules)
 				return Integer.parseInt(lowestUnusedIndex)
 			}
