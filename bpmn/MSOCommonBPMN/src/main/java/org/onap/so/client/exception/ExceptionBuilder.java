@@ -54,8 +54,8 @@ public class ExceptionBuilder {
 				}
 			}
 
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-				MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), msg.toString());
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				MsoLogger.ErrorCode.UnknownError.getValue(), msg.toString());
 			execution.setVariable(errorVariable, exception.getMessage());
 		} catch (Exception ex){
 			//log trace, allow process to complete gracefully
@@ -83,8 +83,8 @@ public class ExceptionBuilder {
 					break;
 				}
 			}
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-				MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), msg.toString());
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+				MsoLogger.ErrorCode.UnknownError.getValue(), msg.toString());
 			execution.setVariable(errorVariable, exception.getMessage());
 		} catch (Exception ex){
 			//log trace, allow process to complete gracefully

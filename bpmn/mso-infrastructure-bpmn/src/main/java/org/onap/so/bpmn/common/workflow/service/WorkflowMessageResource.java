@@ -90,7 +90,7 @@ public class WorkflowMessageResource{
 		if (messageType == null || messageType.isEmpty()) {
 			String msg = "Missing message type";
 			logger.debug(LOGMARKER + " " + msg);
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
 				MsoLogger.ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
 			return Response.status(400).entity(msg).build();
 		}
@@ -98,7 +98,7 @@ public class WorkflowMessageResource{
 		if (correlator == null || correlator.isEmpty()) {
 			String msg = "Missing correlator";
 			logger.debug(LOGMARKER + " " + msg);
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
 				MsoLogger.ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
 			return Response.status(400).entity(msg).build();
 		}

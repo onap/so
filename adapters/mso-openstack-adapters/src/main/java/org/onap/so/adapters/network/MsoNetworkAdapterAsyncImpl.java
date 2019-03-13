@@ -126,9 +126,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 String messageId,
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
-        String error;
 
-        MsoLogger.setLogContext (msoRequest);
         logger.debug("Async Create Network: {} of type {} in {}/{}", networkName, networkType, cloudSiteId, tenantId);
 
         // Use the synchronous method to perform the actual Create
@@ -252,7 +250,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
 
-        MsoLogger.setLogContext (msoRequest);
         logger.debug("Async Update Network: {} of type {} in {}/{}", networkId, networkType, cloudSiteId, tenantId);
 
         // Use the synchronous method to perform the actual Create
@@ -342,9 +339,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                String messageId,
                                MsoRequest msoRequest,
                                String notificationUrl) {
-        String error;
 
-        MsoLogger.setLogContext (msoRequest);
         logger.debug("Async Query Network {} in {}/{}", networkNameOrId, cloudSiteId, tenantId);
         String errorCreateNetworkMessage = "{} {} Error sending createNetwork notification {} ";
 
@@ -440,8 +435,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                 String messageId,
                                 MsoRequest msoRequest,
                                 String notificationUrl) {
-        String error;
-        MsoLogger.setLogContext (msoRequest);
+
         String serviceName = "DeleteNetworkA";
         logger.debug("Async Delete Network {} in {}/{}", networkId, cloudSiteId, tenantId);
 
@@ -507,7 +501,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             return;
         }
 
-        MsoLogger.setLogContext (rollback.getMsoRequest ());
         logger.info("{} {}", MessageEnum.RA_ASYNC_ROLLBACK, rollback.getNetworkStackId());
         // Use the synchronous method to perform the actual Create
         

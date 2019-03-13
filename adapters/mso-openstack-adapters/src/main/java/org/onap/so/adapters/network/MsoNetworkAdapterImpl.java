@@ -266,7 +266,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                Holder <String> networkFqdn,
                                Holder <Map <String, String>> subnetIdMap,
                                Holder <NetworkRollback> rollback) throws NetworkException {
-        MsoLogger.setLogContext (msoRequest);
         logger.debug("*** CREATE Network: {} of type {} in {}/{}", networkName, networkType, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
@@ -712,7 +711,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                MsoRequest msoRequest,
                                Holder <Map <String, String>> subnetIdMap,
                                Holder <NetworkRollback> rollback) throws NetworkException {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.debug("***UPDATE Network adapter with Network: {} of type {} in {}/{}", networkName, networkType,
             cloudSiteId, tenantId);
 
@@ -1147,7 +1146,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                               Holder <List <Integer>> vlans,
                               Holder <List <RouteTarget>> routeTargets,
                               Holder <Map <String, String>> subnetIdMap) throws NetworkException {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.debug("*** QUERY Network with Network: {} in {}/{}", networkNameOrId, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
@@ -1285,7 +1284,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                String networkId,
                                MsoRequest msoRequest,
                                Holder <Boolean> networkDeleted) throws NetworkException {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.debug("*** DELETE Network adapter with Network: {} in {}/{}", networkId, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
@@ -1385,8 +1384,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 .error("{} {} rollback is null", MessageEnum.RA_ROLLBACK_NULL, MsoLogger.ErrorCode.DataError.getValue());
             return;
         }
-
-        MsoLogger.setLogContext (rollback.getMsoRequest());
 
         // Get the elements of the VnfRollback object for easier access
         String cloudSiteId = rollback.getCloudId ();

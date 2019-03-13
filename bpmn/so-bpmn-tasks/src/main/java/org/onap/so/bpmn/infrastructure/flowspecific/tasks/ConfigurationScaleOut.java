@@ -153,9 +153,9 @@ public class ConfigurationScaleOut {
 			appcMessage = appCClient.getErrorMessage();
 		
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
 				"Caught exception in runAppcCommand in ConfigurationScaleOut", "BPMN",
-				MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
+				MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
 			appcMessage = e.getMessage();
 		}
 		logger.error("Error Message: " + appcMessage);

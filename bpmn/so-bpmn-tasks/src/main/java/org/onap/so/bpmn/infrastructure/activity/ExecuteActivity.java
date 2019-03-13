@@ -135,8 +135,8 @@ public class ExecuteActivity implements JavaDelegate {
 	}
 	
 	protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
-		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-			MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), msg, ex);
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+			MsoLogger.ErrorCode.UnknownError.getValue(), msg, ex);
 		execution.setVariable("ExecuteActivityErrorMessage", msg);
 		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
 	}

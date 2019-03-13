@@ -131,7 +131,7 @@ public class WorkflowContextHolder {
 					Thread.currentThread().interrupt();
 				} catch (Exception e) {
 					logger.debug("WorkflowContextHolder timeout thread caught exception: ", e);
-					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN", MsoLogger.getServiceName(),
+					logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
 							MsoLogger.ErrorCode.UnknownError.getValue(), "Error in WorkflowContextHolder timeout thread");
 				}
 			}
