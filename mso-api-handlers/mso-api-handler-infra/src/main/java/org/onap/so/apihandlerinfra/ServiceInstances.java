@@ -1125,12 +1125,16 @@ public class ServiceInstances {
     	mapper.setSerializationInclusion(Include.NON_NULL);    	
     	if(msoRawRequest != null){
 	    	ServiceInstancesRequest sir = mapper.readValue(msoRawRequest, ServiceInstancesRequest.class);    	
-	    	if(	!isAlaCarte && Action.createInstance.equals(action) && serviceInstRequest != null && 
+	    	if(	serviceInstRequest != null && 
 	    		serviceInstRequest.getRequestDetails() != null && 
 	    		serviceInstRequest.getRequestDetails().getRequestParameters() != null) {
-		    	sir.getRequestDetails().setCloudConfiguration(serviceInstRequest.getRequestDetails().getCloudConfiguration());
-		    	sir.getRequestDetails().getRequestParameters().setUserParams(serviceInstRequest.getRequestDetails().getRequestParameters().getUserParams());
+	    		if(	!isAlaCarte && Action.createInstance.equals(action)) {
+	    			sir.getRequestDetails().setCloudConfiguration(serviceInstRequest.getRequestDetails().getCloudConfiguration());
+	    			sir.getRequestDetails().getRequestParameters().setUserParams(serviceInstRequest.getRequestDetails().getRequestParameters().getUserParams());
+	    		}
+	    		sir.getRequestDetails().getRequestParameters().setUsePreload(serviceInstRequest.getRequestDetails().getRequestParameters().getUsePreload());
 	    	}
+	    	
 	    	logger.debug("Value as string: {}", mapper.writeValueAsString(sir));
 	    	return mapper.writeValueAsString(sir);
     	}
