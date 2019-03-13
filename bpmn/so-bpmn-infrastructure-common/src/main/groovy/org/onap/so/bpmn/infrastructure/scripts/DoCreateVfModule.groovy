@@ -982,6 +982,8 @@ public class DoCreateVfModule extends VfModuleBase {
 		//Get variables
 		//cloudSiteId
 		def cloudSiteId = execution.getVariable("DCVFM_cloudSiteId")
+		//cloudOwner
+		def cloudOwner = execution.getVariable("DCVFM_cloudOwner")
 		//tenantId
 		def tenantId = execution.getVariable("DCVFM_tenantId")
 		//vnfType
@@ -1070,6 +1072,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		String createVnfARequest = """
 		<createVfModuleRequest>
 		<cloudSiteId>${MsoUtils.xmlEscape(cloudSiteId)}</cloudSiteId>
+		<cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 		<tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 		<vnfId>${MsoUtils.xmlEscape(vnfId)}</vnfId>
 		<vnfName>${MsoUtils.xmlEscape(vnfName)}</vnfName>
@@ -1233,6 +1236,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		def vfModuleModelName = execution.getVariable("DCVFM_vfModuleModelName")
 		def vnfId = execution.getVariable("DCVFM_vnfId")
 		def cloudSiteId = execution.getVariable("DCVFM_cloudSiteId")
+		def cloudOwner = execution.getVariable("DCVFM_cloudOwner")
 		def sdncVersion = execution.getVariable("DCVFM_sdncVersion")
 		def serviceModelInfo = execution.getVariable("serviceModelInfo")
 		def vnfModelInfo = execution.getVariable("vnfModelInfo")

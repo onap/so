@@ -92,6 +92,8 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 			execution.setVariable("DCVFMR_vfModuleModelName", vfModuleModelName)
 			String cloudSiteId = rollbackData.get("VFMODULE", "aiccloudregion")
 			execution.setVariable("DCVFMR_cloudSiteId", cloudSiteId)
+			String cloudOwner = rollbackData.get("VFMODULE", "cloudowner")
+			execution.setVariable("DCVFMR_cloudOwner", cloudOwner)
 			String heatStackId = rollbackData.get("VFMODULE", "heatstackid")
 			execution.setVariable("DCVFMR_heatStackId", heatStackId)
 			String requestId = rollbackData.get("VFMODULE", "msorequestid")
@@ -358,6 +360,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		String origRequestId = execution.getVariable("DCVFMR_requestId")
 		String srvInstId = execution.getVariable("DCVFMR_serviceInstanceId")
 		String aicCloudRegion = execution.getVariable("DCVFMR_cloudSiteId")
+		String cloudOwner = execution.getVariable("DCVFMR_cloudOwner")
 		String vnfId = execution.getVariable("DCVFMR_vnfId")
 		String vfModuleId = execution.getVariable("DCVFMR_vfModuleId")
 		String vfModuleStackId = execution.getVariable("DCVFMR_heatStackId")
@@ -373,6 +376,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		String request = """
 			<deleteVfModuleRequest>
 			    <cloudSiteId>${MsoUtils.xmlEscape(aicCloudRegion)}</cloudSiteId>
+			    <cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 			    <tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 			    <vnfId>${MsoUtils.xmlEscape(vnfId)}</vnfId>
 			    <vfModuleId>${MsoUtils.xmlEscape(vfModuleId)}</vfModuleId>

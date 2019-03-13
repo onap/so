@@ -67,6 +67,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 	@InjectMocks
 	private MsoHeatUtilsWithUpdate heatUtils;
 	
+    private String cloudOwner;
 	private String cloudSiteId;
 	private String tenantId;
 	private String stackName;
@@ -79,6 +80,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 	public void before() {
 		MockitoAnnotations.initMocks(this);
 		
+        cloudOwner = "cloudOwner";
 		cloudSiteId = "cloudSiteId";
 		tenantId = "tenantId";
 		stackName = "stackName";
@@ -104,7 +106,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 		doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
 		doReturn(updateStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
 		
-		StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, tenantId, stackName, 
+		StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, 
 				heatTemplate, stackInputs, pollForCompletion, timeoutMinutes);
 		
 		assertThat(actualStackInfo, sameBeanAs(expectedStackInfo));
@@ -129,7 +131,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 		doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
 		doReturn(updateStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
 		
-		StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, tenantId, stackName, 
+		StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, 
 				heatTemplate, stackInputs, pollForCompletion, timeoutMinutes, environmentString);
 		
 		assertThat(actualStackInfo, sameBeanAs(expectedStackInfo));
@@ -155,7 +157,7 @@ public class MsoHeatUtilsWithUpdateTest extends TestDataSetup {
 		doReturn("0").when(environment).getProperty(isA(String.class), isA(String.class));
 		doReturn(updateStack).when(heatUtils).queryHeatStack(isA(Heat.class), isA(String.class));
 		
-		StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, tenantId, stackName, 
+		StackInfo actualStackInfo = heatUtils.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, 
 				heatTemplate, stackInputs, pollForCompletion, timeoutMinutes , environmentString, files);
 		
 		assertThat(actualStackInfo, sameBeanAs(expectedStackInfo));

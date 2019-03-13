@@ -59,6 +59,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	private final String CREATE_VF_MODULE_REQUEST =
 		"<createVfModuleRequest>" + EOL +
 		"  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
+		"  <cloudOwner>cloudOwner</cloudOwner>" + EOL +
 		"  <tenantId>tenantId</tenantId>" + EOL +
 		"  <vnfId>vnfId</vnfId>" + EOL +
 		"  <vfModuleName>vfModuleName</vfModuleName>" + EOL +
@@ -94,6 +95,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	private final String UPDATE_VF_MODULE_REQUEST =
 		"<updateVfModuleRequest>" + EOL +
 		"  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
+		"  <cloudOwner>cloudOwner</cloudOwner>" + EOL +
 		"  <tenantId>tenantId</tenantId>" + EOL +
 		"  <vnfId>vnfId</vnfId>" + EOL +
 		"  <vfModuleName>vfModuleName</vfModuleName>" + EOL +
@@ -130,6 +132,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	private final String DELETE_VF_MODULE_REQUEST =
 		"<deleteVfModuleRequest>" + EOL +
 		"  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
+		"  <cloudOwner>cloudOwner</cloudOwner>" + EOL +
 		"  <tenantId>tenantId</tenantId>" + EOL +
 		"  <vnfId>vnfId</vnfId>" + EOL +
 		"  <vfModuleId>vfModuleId</vfModuleId>" + EOL +
@@ -150,6 +153,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 			"  <skipAAI>true</skipAAI>" + EOL +
 			"  <vfModuleRollback>" + EOL +
 			"    <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
+		    "    <cloudOwner>cloudOwner</cloudOwner>" + EOL +
 			"    <tenantId>tenantId</tenantId>" + EOL +
 			"    <vnfId>vnfId</vnfId>" + EOL +
 			"    <vfModuleId>vfModuleId</vfModuleId>" + EOL +
@@ -186,6 +190,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 			"    <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL +
 			"    <vfModuleCreated>true</vfModuleCreated>" + EOL +
 			"    <tenantId>tenantId</tenantId>" + EOL +
+		    "    <cloudOwner>cloudOwner</cloudOwner>" + EOL +
 			"    <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
 			"    <msoRequest>" + EOL +
 			"      <requestId>requestId</requestId>" + EOL +

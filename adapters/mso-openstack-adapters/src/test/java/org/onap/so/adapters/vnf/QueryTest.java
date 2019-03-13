@@ -59,8 +59,9 @@ public class QueryTest {
 	@Test
 	public void testQueryCreatedVnf() throws VnfException, MsoException {
 		StackInfo info = new StackInfo("stackName", HeatStatus.CREATED);
-		when(heat.queryStack(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(info);
+		when(heat.queryStack(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(info);
 		String cloudId = "MT";
+		String cloudOwner = "CloudOwner";
 		String tenantId = "MSO_Test";
 		String vnfName = "VNF_TEST1";
 		Holder<Boolean> vnfExists = new Holder<>();
@@ -68,7 +69,7 @@ public class QueryTest {
 		Holder<VnfStatus> status = new Holder<>();
 		Holder<Map<String, String>> outputs = new Holder<>();
 
-		vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
+		vnfAdapter.queryVnf(cloudId, cloudOwner, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
 
 		assertTrue(vnfExists.value);
 	}
@@ -76,8 +77,9 @@ public class QueryTest {
 	@Test
 	public void testQueryNotFoundVnf() throws VnfException, MsoException {
 		StackInfo info = new StackInfo("stackName", HeatStatus.NOTFOUND);
-		when(heat.queryStack(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(info);
+		when(heat.queryStack(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(info);
 		String cloudId = "MT";
+		String cloudOwner = "CloudOwner";
 		String tenantId = "MSO_Test";
 		String vnfName = "VNF_TEST1";
 		Holder<Boolean> vnfExists = new Holder<>();
@@ -85,7 +87,7 @@ public class QueryTest {
 		Holder<VnfStatus> status = new Holder<>();
 		Holder<Map<String, String>> outputs = new Holder<>();
 
-		vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
+		vnfAdapter.queryVnf(cloudId, cloudOwner, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
 
 		assertFalse(vnfExists.value);
 	}
@@ -94,6 +96,7 @@ public class QueryTest {
 	// @Ignore // 1802 merge
 	public void testQueryVnfWithException() throws VnfException, MsoException {
 		String cloudId = "MT";
+		String cloudOwner = "CloudOwner";
 		String tenantId = "MSO_Test";
 		String vnfName = "VNF_TEST1";
 		Holder<Boolean> vnfExists = new Holder<>();
@@ -102,7 +105,7 @@ public class QueryTest {
 		Holder<Map<String, String>> outputs = new Holder<>();
 		thrown.expect(VnfException.class);
 		thrown.expectCause(hasProperty("context", is("QueryVNF")));
-		when(heat.queryStack(Mockito.any(), Mockito.any(), Mockito.any())).thenThrow(new MsoOpenstackException(1, "test messsage", "test detail"));
-		vnfAdapter.queryVnf(cloudId, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
+		when(heat.queryStack(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenThrow(new MsoOpenstackException(1, "test messsage", "test detail"));
+		vnfAdapter.queryVnf(cloudId, cloudOwner, tenantId, vnfName, null, vnfExists, vnfId, status, outputs);
 	}
 }

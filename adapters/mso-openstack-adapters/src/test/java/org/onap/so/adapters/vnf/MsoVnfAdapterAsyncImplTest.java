@@ -75,7 +75,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 
 		String vnfName = "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId";
 		String notificationUrl = "http://localhost:"+wireMockPort+"/notify/adapterNotify/updateVnfNotificationRequest";
-		instance.createVnfA("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.createVnfA("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId|1", new HashMap<String, Object>(), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, "messageId",
 				msoRequest, notificationUrl);
 
@@ -85,7 +85,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVNFTest_Exception() throws Exception {
 		String notificationUrl = "http://localhost:"+wireMockPort+"/notify/adapterNotify/updateVnfNotificationRequest";
-		instance.createVnfA("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+		instance.createVnfA("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 				"volumeGroupHeatStackId|1", new HashMap<String, Object>(), Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, "messageId",
 				null, notificationUrl);
 
@@ -105,7 +105,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 				(containing("messageId"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
 		String notificationUrl = "http://localhost:"+wireMockPort+"/notify/adapterNotify/updateVnfNotificationRequest";
-		instance.updateVnfA("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+		instance.updateVnfA("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 				"volumeGroupHeatStackId|1", map, "messageId", msoRequest,
 				notificationUrl);
 	}
@@ -122,7 +122,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 				(containing("messageId"))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
 		String notificationUrl = "http://localhost:"+wireMockPort+"/notify/adapterNotify/updateVnfNotificationRequest";
-		instance.updateVnfA("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+		instance.updateVnfA("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 				"volumeGroupHeatStackId|1", map, "messageId", msoRequest,
 				notificationUrl);
 		verify(1,postRequestedFor(urlEqualTo("/notify/adapterNotify/updateVnfNotificationRequest")));
@@ -133,7 +133,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
-			instance.queryVnfA("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", "messageId", msoRequest,
+			instance.queryVnfA("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", "messageId", msoRequest,
 					"http://org.onap.so/notify/adapterNotify/updateVnfNotificationRequest");
 	}
 
@@ -142,7 +142,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
-			instance.deleteVnfA("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", "messageId", msoRequest,
+			instance.deleteVnfA("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", "messageId", msoRequest,
 					"http://org.onap.so/notify/adapterNotify/updateVnfNotificationRequest");
 	}
 
@@ -150,6 +150,7 @@ public class MsoVnfAdapterAsyncImplTest extends BaseRestTestUtils {
 	public void rollbackVnfTest() {
 		VnfRollback vnfRollBack = new VnfRollback();
 		vnfRollBack.setCloudSiteId("mdt1");
+		vnfRollBack.setCloudOwner("CloudOwner");
 		vnfRollBack.setTenantId("88a6ca3ee0394ade9403f075db23167e");
 		vnfRollBack.setVnfId("ff5256d1-5a33-55df-13ab-12abad84e7ff");
 			instance.rollbackVnfA(vnfRollBack, "messageId",

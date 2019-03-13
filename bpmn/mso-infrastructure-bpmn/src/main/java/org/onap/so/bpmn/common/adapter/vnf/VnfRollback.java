@@ -36,6 +36,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="cloudSiteId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="cloudOwner" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="msoRequest" type="{http://org.onap.so/vnfNotify}msoRequest" minOccurs="0"/>
  *         &lt;element name="tenantCreated" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="tenantId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -52,6 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "vnfRollback", propOrder = {
     "cloudSiteId",
+    "cloudOwner",
     "msoRequest",
     "tenantCreated",
     "tenantId",
@@ -61,6 +63,7 @@ import javax.xml.bind.annotation.XmlType;
 public class VnfRollback {
 
     protected String cloudSiteId;
+    protected String cloudOwner;
     protected MsoRequest msoRequest;
     protected boolean tenantCreated;
     protected String tenantId;
@@ -89,6 +92,30 @@ public class VnfRollback {
      */
     public void setCloudSiteId(String value) {
         this.cloudSiteId = value;
+    }
+
+    /**
+     * Gets the value of the cloudOwner property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCloudOwner() {
+        return cloudOwner;
+    }
+
+    /**
+     * Sets the value of the cloudOwner property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCloudOwner(String value) {
+        this.cloudOwner = value;
     }
 
     /**
@@ -201,6 +228,7 @@ public class VnfRollback {
 
         	return
         		"<cloudSiteId>"+cloudSiteId+"</cloudSiteId>" + '\n' +
+        		"<cloudOwner>"+cloudOwner+"</cloudOwner>" + '\n' +
         		msoRequestElement +
         		"<tenantCreated>"+tenantCreated+"</tenantCreated>" + '\n' +
         		"<tenantId>"+tenantId+"</tenantId>" + '\n' +

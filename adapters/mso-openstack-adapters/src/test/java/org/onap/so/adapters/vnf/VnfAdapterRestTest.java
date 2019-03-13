@@ -82,6 +82,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 	private static final String MSO_REQUEST_ID = "62265093-277d-4388-9ba6-449838ade586";
 	private static final String MSO_SERVICE_INSTANCE_ID = "4147e06f-1b89-49c5-b21f-4faf8dc9805a";
 	private static final String CLOUDSITE_ID = "mtn13";
+	private static final String CLOUD_OWNER = "CloudOwner";
 	private static final String TENANT_ID = "0422ffb57ba042c0800a29dc85ca70f8";
 	private static final String VNF_TYPE = "MSOTADevInfra_vSAMP10a_Service/vSAMP10a 1";
 	private static final String VNF_NAME = "MSO-DEV-VNF-1802-it3-pwt3-vSAMP10a-1XXX-Replace";
@@ -449,7 +450,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		msoRequest.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
 		
 		VfModuleRollback vfModuleRollback = new VfModuleRollback(AAI_VNF_ID, VF_MODULE_ID,
-				"StackId", false, TENANT_ID, CLOUDSITE_ID, msoRequest, "messageId");
+				"StackId", false, TENANT_ID, CLOUD_OWNER, CLOUDSITE_ID, msoRequest, "messageId");
 		
 		RollbackVfModuleRequest request = new RollbackVfModuleRequest();
 		request.setVfModuleRollback(vfModuleRollback);

@@ -121,6 +121,7 @@ public class VnfAdapterVfModuleObjectMapper {
 		CreateVfModuleRequest createVfModuleRequest = new CreateVfModuleRequest();
 		
 		createVfModuleRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
+		createVfModuleRequest.setCloudOwner(cloudRegion.getCloudOwner());
 		createVfModuleRequest.setTenantId(cloudRegion.getTenantId());
 		createVfModuleRequest.setVfModuleId(vfModule.getVfModuleId());
 		createVfModuleRequest.setVfModuleName(vfModule.getVfModuleName());
@@ -776,6 +777,7 @@ public class VnfAdapterVfModuleObjectMapper {
 			VfModule vfModule) throws IOException {
 		DeleteVfModuleRequest deleteVfModuleRequest = new DeleteVfModuleRequest();
 		deleteVfModuleRequest.setCloudSiteId(cloudRegion.getLcpCloudRegionId());
+		deleteVfModuleRequest.setCloudOwner(cloudRegion.getCloudOwner());
 		deleteVfModuleRequest.setTenantId(cloudRegion.getTenantId());
 		deleteVfModuleRequest.setVnfId(genericVnf.getVnfId());
 		deleteVfModuleRequest.setVfModuleId(vfModule.getVfModuleId());

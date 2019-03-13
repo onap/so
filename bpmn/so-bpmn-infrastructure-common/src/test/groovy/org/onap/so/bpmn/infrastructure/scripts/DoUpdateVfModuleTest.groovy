@@ -182,6 +182,7 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable(prefix + "aicCloudRegion")).thenReturn("RDM2WAGPLCP")
+        when(mockExecution.getVariable(prefix + "cloudRegion")).thenReturn("CloudOwner")
         when(mockExecution.getVariable(prefix + "vfModuleId")).thenReturn("cb510af0-5b21-4bc7-86d9-323cb396ce32")
         when(mockExecution.getVariable(prefix + "volumeGroupStackId")).thenReturn("12345")
         when(mockExecution.getVariable(prefix + "vfModuleName")).thenReturn("PCRF::module-0-2")

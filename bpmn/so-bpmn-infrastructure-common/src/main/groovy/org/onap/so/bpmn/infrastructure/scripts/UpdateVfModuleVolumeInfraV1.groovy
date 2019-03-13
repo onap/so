@@ -135,6 +135,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
         execution.setVariable('UPDVfModVol_vnfVersion', getRequiredNodeText(execution, volumeInputs, 'asdc-service-model-version'))
         execution.setVariable('UPDVfModVol_serviceId', utils.getNodeText(volumeInputs, 'service-id'))
         execution.setVariable('UPDVfModVol_aicCloudRegion', getRequiredNodeText(execution, volumeInputs, 'aic-cloud-region'))
+        execution.setVariable('UPDVfModVol_cloudRegion', getRequiredNodeText(execution, volumeInputs, 'cloud-owner'))
         execution.setVariable('UPDVfModVol_tenantId', getRequiredNodeText(execution, volumeInputs, 'tenant-id'))
         //execution.setVariable('UPDVfModVol_modelCustomizationId', getRequiredNodeText(execution, volumeInputs, 'model-customization-id'))
 
@@ -328,6 +329,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
         String vnfAdapterRestRequest = """
 			<updateVolumeGroupRequest>
 				<cloudSiteId>${MsoUtils.xmlEscape(aicCloudRegion)}</cloudSiteId>
+				<cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 				<tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 				<vnfId>${MsoUtils.xmlEscape(vnfId)}</vnfId>
 				<vnfName>${MsoUtils.xmlEscape(vnfName)}</vnfName>

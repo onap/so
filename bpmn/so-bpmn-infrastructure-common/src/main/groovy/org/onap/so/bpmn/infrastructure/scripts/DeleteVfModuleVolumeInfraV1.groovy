@@ -68,6 +68,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		execution.setVariable('DELVfModVol_vnfType', null)
 		execution.setVariable('DELVfModVol_serviceId', null)
 		execution.setVariable('DELVfModVol_cloudRegion', null)
+		execution.setVariable('DELVfModVol_cloudOwner', null)
 		execution.setVariable('DELVfModVol_tenantId', null)
 		execution.setVariable('DELVfModVol_volumeParams', null)
 		execution.setVariable('DELVfModVol_volumeGroupHeatStackId', null)
@@ -141,6 +142,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		execution.setVariable('DELVfModVol_volumeOutputs', utils.getNodeXml(request, 'volume-outputs', false))
 		execution.setVariable('DELVfModVol_volumeParams', utils.getNodeXml(request, 'volume-params'))
 		execution.setVariable('DELVfModVol_cloudRegion', utils.getNodeText(request, 'aic-cloud-region'))
+		execution.setVariable('DELVfModVol_cloudOwner', utils.getNodeText(request, 'cloud-owner'))
 
 		setBasicDBAuthHeader(execution, isDebugLogEnabled)
 
@@ -308,6 +310,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 	public void prepareVnfAdapterDeleteRequest(DelegateExecution execution, isDebugLogEnabled) {
 		def cloudRegion = execution.getVariable('DELVfModVol_cloudRegion')
+		def cloudOwner = execution.getVariable('DELVfModVol_cloudOwner')
 		def tenantId = execution.getVariable('DELVfModVol_tenantId')
 		def volumeGroupId = execution.getVariable('DELVfModVol_volumeGroupId')
 		def volumeGroupHeatStackId = execution.getVariable('DELVfModVol_volumeGroupHeatStackId')
@@ -324,6 +327,7 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		String vnfAdapterRestRequest = """
 			<deleteVolumeGroupRequest>
 				<cloudSiteId>${MsoUtils.xmlEscape(cloudRegion)}</cloudSiteId>
+				<cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 				<tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 				<volumeGroupId>${MsoUtils.xmlEscape(volumeGroupId)}</volumeGroupId>
 				<volumeGroupStackId>${MsoUtils.xmlEscape(volumeGroupHeatStackId)}</volumeGroupStackId>

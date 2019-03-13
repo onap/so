@@ -43,6 +43,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CreateVfModuleRequest extends VfRequestCommon {
 	private String cloudSiteId;
+	private String cloudOwner;
 	private String tenantId;
 
 	private String vnfId;
@@ -73,6 +74,14 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 
 	public void setCloudSiteId(String cloudSiteId) {
 		this.cloudSiteId = cloudSiteId;
+	}
+
+	public String getCloudOwner() {
+		return cloudOwner;
+	}
+
+	public void setCloudOwner(String cloudOwner) {
+		this.cloudOwner = cloudOwner;
 	}
 
 	public String getTenantId() {

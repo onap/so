@@ -79,6 +79,9 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 				String cloudSiteId = execution.getVariable("lcpCloudRegionId")
 				execution.setVariable("cloudSiteId", cloudSiteId)
 				logger.debug("cloudSiteId: " + cloudSiteId)
+				String cloudOwner = execution.getVariable("cloudOwner")
+				execution.setVariable("cloudOwner", cloudOwner)
+				logger.debug("cloudOwner: " + cloudOwner)
 				// Source is HARDCODED
 				String source = "VID"
 				execution.setVariable("source", source)
@@ -363,6 +366,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		def origRequestId = execution.getVariable('requestId')
 		def srvInstId = execution.getVariable("serviceInstanceId")
 		def aicCloudRegion = execution.getVariable("cloudSiteId")
+		def cloudOwner = execution.getVariable("cloudOwner")
 		def vnfId = execution.getVariable("vnfId")
 		def vfModuleId = execution.getVariable("vfModuleId")
 		def vfModuleStackId = execution.getVariable('DDVMFV_heatStackId')
@@ -378,6 +382,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		String request = """
 			<deleteVfModuleRequest>
 			    <cloudSiteId>${MsoUtils.xmlEscape(aicCloudRegion)}</cloudSiteId>
+			    <cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 			    <tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 			    <vnfId>${MsoUtils.xmlEscape(vnfId)}</vnfId>
 			    <vfModuleId>${MsoUtils.xmlEscape(vfModuleId)}</vfModuleId>

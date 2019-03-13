@@ -217,6 +217,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 	 */
 	public void prepareVnfAdapterDeleteRequest(DelegateExecution execution, isDebugLogEnabled) {
 		def cloudRegion = execution.getVariable(prefix+'aicCloudRegion')
+		def cloudOwner = execution.getVariable(prefix+'cloudOwner')
 		def tenantId = execution.getVariable('tenantId')										// input parameter (optional) - see preProcessRequest
 		def volumeGroupId = execution.getVariable('volumeGroupId')								// input parameter (required)
 		def volumeGroupHeatStackId = execution.getVariable(prefix+'volumeGroupHeatStackId')		// from AAI query volume group
@@ -233,6 +234,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
 		String vnfAdapterRestRequest = """
 			<deleteVolumeGroupRequest>
 				<cloudSiteId>${MsoUtils.xmlEscape(cloudRegion)}</cloudSiteId>
+				<cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 				<tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 				<volumeGroupId>${MsoUtils.xmlEscape(volumeGroupId)}</volumeGroupId>
 				<volumeGroupStackId>${MsoUtils.xmlEscape(volumeGroupHeatStackId)}</volumeGroupStackId>
