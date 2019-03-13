@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "18065d96_47ed2e2a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/ScaleCustomE2EServiceInstance.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5100
+      },
+      "writtenOn": "2019-03-13T10:40:36Z",
+      "side": 1,
+      "message": "Method generateUUID(msoLogger) did 2 things:\n- generateUUID\n- log this new UUID\n\nMethod getUUID() does not leave any log trace - so this is change in semantic. I think adding log.debug() with new UUID in this place would be right - especially as logger is already available.\nSomething like (based on original implementation of generateUUID()):\nlogger.info(\"{} {}\", MessageEnum.APIH_GENERATED_REQUEST_ID, nodeTemplateUUID)",
+      "range": {
+        "startLine": 97,
+        "startChar": 49,
+        "endLine": 97,
+        "endChar": 60
+      },
+      "revId": "24e7473086a072dbb21969b341e71f3481bc5aa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
