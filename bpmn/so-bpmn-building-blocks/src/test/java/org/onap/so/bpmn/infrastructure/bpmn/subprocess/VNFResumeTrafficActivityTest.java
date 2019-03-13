@@ -25,7 +25,6 @@ import static org.mockito.Mockito.doThrow;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
@@ -44,8 +43,8 @@ public class VNFResumeTrafficActivityTest extends BaseBPMNTest{
 	}
 	
 	@Test
-	@Ignore
 	public void rainyDayVNFResumeTrafficActivity_Test() throws Exception {
+		variables.put("actionResumeTraffic", Action.ResumeTraffic);
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
 				.runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
 		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFResumeTrafficActivity", variables);
