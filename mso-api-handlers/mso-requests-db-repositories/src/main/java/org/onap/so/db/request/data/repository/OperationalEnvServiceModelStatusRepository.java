@@ -37,7 +37,8 @@ public interface OperationalEnvServiceModelStatusRepository extends JpaRepositor
 	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndRequestId(String operationalEnvId, String requestId);
 	public List<OperationalEnvServiceModelStatus> findAllByOperationalEnvIdAndRequestId(@Param("OPERATIONAL_ENV_ID") String operationalEnvId, 
 																						@Param("REQUEST_ID") String requestId);
-	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionId(@Param("OPERATIONAL_ENV_ID") String operationalEnvId, 
-																							  @Param("SERVICE_MODEL_VERSION_ID") String serviceModelVersionId);
+	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId(@Param("OPERATIONAL_ENV_ID") String operationalEnvId, 
+                                                                                                          @Param("SERVICE_MODEL_VERSION_ID") String serviceModelVersionId,
+                                                                                                          @Param("REQUEST_ID") String requestId);
 	
 }

@@ -86,26 +86,31 @@ public class ActivateVnfStatusOperationalEnvironment {
 	 */
 	public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException {
 
-
-		String operationalEnvironmentId = "";
+		 try {
+		
+			String operationalEnvironmentId = "";
 
 			String sdcDistributionId = request.getDistributionId();
 			Distribution sdcStatus = request.getDistribution();
 
-			// Distribution, Query for operationalEnvironmentId, serviceModelVersionId
+			// Distribution, Query for operationalEnvironmentId, serviceModelVersionId, origRequestId
 			this.queryDistributionDbResponse = client.getDistributionStatusById(sdcDistributionId);
 			operationalEnvironmentId = this.queryDistributionDbResponse.getOperationalEnvId();
+			this.origRequestId = this.queryDistributionDbResponse.getRequestId();
 			
-			// ServiceModel, Query for dbRequestId, recoveryAction, retryCountString
-			this.queryServiceModelResponse = client.findOneByOperationalEnvIdAndServiceModelVersionId(operationalEnvironmentId, queryDistributionDbResponse.getServiceModelVersionId());
-			this.origRequestId = this.queryServiceModelResponse.getRequestId();
-			
+			// ServiceModel, Query for recoveryAction, retryCountString
+			this.queryServiceModelResponse = client.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId(operationalEnvironmentId, queryDistributionDbResponse.getServiceModelVersionId(), this.origRequestId);
+
 			processActivateSDCStatus(sdcDistributionId, sdcStatus, this.queryDistributionDbResponse, this.queryServiceModelResponse);
 			
 			// After EVERY status processed, need to query the status of all service modelId 
 			//  to determine the OVERALL status if "COMPLETE" or "FAILURE":
 			checkOrUpdateOverallStatus(operationalEnvironmentId, this.origRequestId);			
-
+	    
+		 } catch(Exception e) {
+	            requestDb.updateInfraFailureCompletion(e.getMessage(), this.origRequestId, this.queryDistributionDbResponse.getOperationalEnvId());
+        }
+			
 	}
 	
 	/**
@@ -162,16 +167,20 @@ public class ActivateVnfStatusOperationalEnvironment {
 				 		
 					 	sdcStatusValue = modifiedStatus;
 					    // should update 1 row, modified status & retryCount set 0
+					 	msoLogger.debug("2. queryServiceModelResponse: " + queryServiceModelResponse.toString());
 						OperationalEnvServiceModelStatus updateRetryCountZeroAndStatus = 
 								dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(queryServiceModelResponse, 
 																									 modifiedStatus, 
-																									 RETRY_COUNT_ZERO);				 		
+																									 RETRY_COUNT_ZERO);
+						msoLogger.debug("3. updateRetryCountZeroAndStatus: " + updateRetryCountZeroAndStatus.toString());
 						client.save(updateRetryCountZeroAndStatus);
 				 		// should update 1 row, modified status
+						msoLogger.debug("2. queryDistributionDbResponse: " + queryDistributionDbResponse.toString());
 						OperationalEnvDistributionStatus updateDistStatus = 
 								dbHelper.updateStatusInOperationalEnvDistributionStatus(queryDistributionDbResponse, 
 																						modifiedStatus,
 																						errorReason);
+						msoLogger.debug("3. updateDistStatus: " + updateDistStatus.toString());
 						client.save(updateDistStatus);
 			 		} else {
 			 			// RETRY & Count = 0 (do nothing!)

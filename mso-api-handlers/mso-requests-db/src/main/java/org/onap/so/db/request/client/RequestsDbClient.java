@@ -96,7 +96,7 @@ public class RequestsDbClient {
 	
 	private String findOneByServiceIdAndOperationIdURI = "/findOneByServiceIdAndOperationId";
 	
-	private String findOneByOperationalEnvIdAndServiceModelVersionIdURI = "/findOneByOperationalEnvIdAndServiceModelVersionId";
+	private String findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI = "/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId";
 	
 	private String findAllByOperationalEnvIdAndRequestIdURI = "/findAllByOperationalEnvIdAndRequestId";
 
@@ -123,7 +123,7 @@ public class RequestsDbClient {
 		findOneByServiceIdAndOperationIdURI = endpoint + OPERATION_STATUS_SEARCH + findOneByServiceIdAndOperationIdURI;
 		requestProcessingDataURI = endpoint + requestProcessingDataURI;
 		operationalEnvDistributionStatusURI = endpoint + operationalEnvDistributionStatusURI;
-		findOneByOperationalEnvIdAndServiceModelVersionIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findOneByOperationalEnvIdAndServiceModelVersionIdURI;
+		findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI;
 		findAllByOperationalEnvIdAndRequestIdURI = endpoint + OPERATIONAL_ENV_SERVICE_MODEL_STATUS_SEARCH + findAllByOperationalEnvIdAndRequestIdURI;
 	}
 	
@@ -227,16 +227,18 @@ public class RequestsDbClient {
 		}
 	}
 
-	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionId(String operationalEnvironmentId, String serviceModelVersionId) {
+	public OperationalEnvServiceModelStatus findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId(String operationalEnvironmentId, String serviceModelVersionId, String requestId) {
 		try {
 			HttpEntity<?> entity = getHttpEntity();
-			OperationalEnvServiceModelStatus modelStatus = restTemplate.exchange(getUri(UriBuilder.fromUri(findOneByOperationalEnvIdAndServiceModelVersionIdURI)
+			OperationalEnvServiceModelStatus modelStatus = restTemplate.exchange(getUri(UriBuilder.fromUri(findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdURI)
 					.queryParam(OPERATIONAL_ENVIRONMENT_ID, operationalEnvironmentId)
 					.queryParam(SERVICE_MODEL_VERSION_ID, serviceModelVersionId)
+					.queryParam(REQUEST_ID, requestId)					
 					.build().toString()), HttpMethod.GET, entity, OperationalEnvServiceModelStatus.class).getBody();
 			if (null != modelStatus) {
 				modelStatus.setOperationalEnvId(operationalEnvironmentId);
 				modelStatus.setServiceModelVersionId(serviceModelVersionId);
+				modelStatus.setRequestId(requestId);				
 			}
 			return modelStatus;
 		}catch(HttpClientErrorException e){

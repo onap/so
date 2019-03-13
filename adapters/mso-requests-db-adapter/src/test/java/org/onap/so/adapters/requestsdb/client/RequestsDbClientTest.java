@@ -218,11 +218,17 @@ public class RequestsDbClientTest {
     }
 
     @Test
-    public void findOneByOperationalEnvIdAndServiceModelVersionIdTest(){
-        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus =requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionId("1234","TEST1234");
+    public void findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdTest(){
+        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus =requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234","TEST1234", "00032ab7-3fb3-42e5-965d-8ea592502017");
         assertNotNull(operationalEnvServiceModelStatus);
         assertEquals("1234",operationalEnvServiceModelStatus.getOperationalEnvId());
         assertEquals("TEST1234",operationalEnvServiceModelStatus.getServiceModelVersionId());
+        
+        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus1 =requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234","TEST1235", "00032ab7-3fb3-42e5-965d-8ea592502018");
+        assertNotNull(operationalEnvServiceModelStatus1);
+        assertEquals("00032ab7-3fb3-42e5-965d-8ea592502018",operationalEnvServiceModelStatus1.getRequestId());
+        assertEquals("1234",operationalEnvServiceModelStatus1.getOperationalEnvId());
+        assertEquals("TEST1235",operationalEnvServiceModelStatus1.getServiceModelVersionId());        
     }
 
     @Test
@@ -238,5 +244,7 @@ public class RequestsDbClientTest {
         OperationalEnvDistributionStatus operationalEnvDistributionStatus =requestsDbClient.getDistributionStatusById("111");
         assertNotNull(operationalEnvDistributionStatus);
         assertEquals("111",operationalEnvDistributionStatus.getDistributionId());
+        assertEquals("ERROR",operationalEnvDistributionStatus.getDistributionIdErrorReason());
+        assertEquals("00032ab7-3fb3-42e5-965d-8ea592502017",operationalEnvDistributionStatus.getRequestId());        
     }
 }

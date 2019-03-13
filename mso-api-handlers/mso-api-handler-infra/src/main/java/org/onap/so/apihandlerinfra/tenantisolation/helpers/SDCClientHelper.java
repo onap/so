@@ -82,7 +82,6 @@ public class SDCClientHelper {
 
 		try {
 			String urlString = this.buildUriBuilder(serviceModelVersionId, operationalEnvironmentId);
-			logger.debug("Url ASDC Activate request: {}", urlString);
 			String jsonPayload = this.buildJsonWorkloadContext(workloadContext);
 			String basicAuthCred = getBasicAuth();
 
@@ -158,7 +157,6 @@ public class SDCClientHelper {
 			enhancedAsdcResponseJsonObj.put("statusCode", Integer.toString(statusCode));
 			enhancedAsdcResponseJsonObj.put("messageId", "");
 			enhancedAsdcResponseJsonObj.put("message", "Success");
-			logger.debug("Url ASDC Activate response: {} {}", "distributionId ", sdcResponseJsonObj.get("distributionId"));
 
 		} else {  // error
 			if (sdcResponseJsonObj.has("requestError") ) {
