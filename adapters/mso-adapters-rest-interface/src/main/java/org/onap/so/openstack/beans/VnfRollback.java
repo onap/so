@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,6 +31,7 @@ import org.onap.so.entity.MsoRequest;
 public class VnfRollback {
 	private String vnfId;
 	private String tenantId;
+	private String cloudOwner;
 	private String cloudSiteId;
 	private boolean tenantCreated = false;
 	private boolean vnfCreated = false;
@@ -49,9 +50,10 @@ public class VnfRollback {
 
 	/**
 	 * For backwards compatibility... orchestration mode defaults to HEAT
-	 * 
+	 *
 	 * @param vnfId
 	 * @param tenantId
+	 * @param cloudOwner
 	 * @param cloudSiteId
 	 * @param tenantCreated
 	 * @param vnfCreated
@@ -61,13 +63,14 @@ public class VnfRollback {
 	 * @param requestType
 	 * @param modelCustomizationUuid
 	 */
-	public VnfRollback(String vnfId, String tenantId, String cloudSiteId,
+	public VnfRollback(String vnfId, String tenantId, String cloudOwner, String cloudSiteId,
 			boolean tenantCreated, boolean vnfCreated,
 			MsoRequest msoRequest,
 			String volumeGroupName, String volumeGroupId, String requestType, String modelCustomizationUuid) {
 		super();
 		this.vnfId = vnfId;
 		this.tenantId = tenantId;
+		this.cloudOwner = cloudOwner;
 		this.cloudSiteId = cloudSiteId;
 		this.tenantCreated = tenantCreated;
 		this.vnfCreated = vnfCreated;
@@ -79,9 +82,10 @@ public class VnfRollback {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param vnfId
 	 * @param tenantId
+	 * @param cloudOwner
 	 * @param cloudSiteId
 	 * @param tenantCreated
 	 * @param vnfCreated
@@ -91,13 +95,14 @@ public class VnfRollback {
 	 * @param requestType
 	 * @param modelCustomizationUuid
 	 */
-	public VnfRollback(String vnfId, String tenantId, String cloudSiteId,
+	public VnfRollback(String vnfId, String tenantId, String cloudOwner, String cloudSiteId,
 			boolean tenantCreated, boolean vnfCreated,
 			MsoRequest msoRequest, String volumeGroupName, String volumeGroupId,
 			String requestType, String modelCustomizationUuid, String orchestrationMode) {
 		super();
 		this.vnfId = vnfId;
 		this.tenantId = tenantId;
+		this.cloudOwner = cloudOwner;
 		this.cloudSiteId = cloudSiteId;
 		this.tenantCreated = tenantCreated;
 		this.vnfCreated = vnfCreated;
@@ -128,6 +133,12 @@ public class VnfRollback {
 	public void setCloudSiteId(String cloudId) {
 		this.cloudSiteId = cloudId;
 	}
+    public String getCloudOwner() {
+        return cloudOwner;
+    }
+    public void setCloudOwner(String cloudOwner) {
+        this.cloudOwner = cloudOwner;
+    }
 	public boolean getTenantCreated() {
 		return tenantCreated;
 	}
@@ -204,7 +215,7 @@ public class VnfRollback {
 	}
 	@Override
     public String toString() {
-		return "VnfRollback: cloud=" + cloudSiteId + ", tenant=" + tenantId +
+		return "VnfRollback: owner=" + cloudOwner + ", cloud=" + cloudSiteId + ", tenant=" + tenantId +
 				", vnf=" + vnfId + ", tenantCreated=" + tenantCreated +
 				", vnfCreated=" + vnfCreated + ", requestType = " + requestType
 				+ ", modelCustomizationUuid=" + this.modelCustomizationUuid

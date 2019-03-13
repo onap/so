@@ -132,10 +132,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     @Autowired
     private MsoTenantUtilsFactory tenantUtilsFactory;
-    
+
     @Autowired
     private KeystoneV3Authentication keystoneV3Authentication;
-    
+
     private static final Logger logger = LoggerFactory.getLogger(MsoHeatUtils.class);
 
     // Properties names and variables (with default values)
@@ -153,6 +153,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * this method does not include environment, files, or heatFiles
      */
     public StackInfo createStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -161,6 +162,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                   int timeoutMinutes) throws MsoException {
         // Just call the new method with the environment & files variable set to null
         return this.createStack (cloudSiteId,
+                                 cloudOwner,
                                  tenantId,
                                  stackName,
                                  heatTemplate,
@@ -175,6 +177,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     // This method has environment, but not files or heatFiles
     public StackInfo createStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -184,6 +187,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                   String environment) throws MsoException {
         // Just call the new method with the files/heatFiles variables set to null
         return this.createStack (cloudSiteId,
+                                 cloudOwner,
                                  tenantId,
                                  stackName,
                                  heatTemplate,
@@ -198,6 +202,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     // This method has environment and files, but not heatFiles.
     public StackInfo createStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -207,6 +212,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                   String environment,
                                   Map <String, Object> files) throws MsoException {
         return this.createStack (cloudSiteId,
+                                 cloudOwner,
                                  tenantId,
                                  stackName,
                                  heatTemplate,
@@ -221,6 +227,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     // This method has environment, files, heatfiles
     public StackInfo createStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -231,6 +238,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                   Map <String, Object> files,
                                   Map <String, Object> heatFiles) throws MsoException {
         return this.createStack (cloudSiteId,
+                                 cloudOwner,
                                  tenantId,
                                  stackName,
                                  heatTemplate,
@@ -269,6 +277,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * stack. We must combine them before we add them to the stack if they're both non-null.
      *
      * @param cloudSiteId The cloud (may be a region) in which to create the stack.
+     * @param cloudOwner the cloud owner of the cloud site in which to create the stack
      * @param tenantId The Openstack ID of the tenant in which to create the Stack
      * @param stackName The name of the stack to create
      * @param heatTemplate The Heat template
@@ -285,6 +294,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     @SuppressWarnings("unchecked")
     public StackInfo createStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -327,7 +337,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             request.header ("X-Auth-Key", CryptoUtils.decryptCloudConfigPassword(cloudIdentity.getMsoPass ()));
             heatStack = executeAndRecordOpenstackRequest (request);
         } catch (OpenStackResponseException e) {
-            if (e.getStatus () == 409) {                
+            if (e.getStatus () == 409) {
                 MsoStackAlreadyExists me = new MsoStackAlreadyExists (stackName, tenantId, cloudSiteId);
                 me.addContext (CREATE_STACK);
                 throw me;
@@ -335,9 +345,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                 logger.debug("ERROR STATUS = {},\n{}\n{}", e.getStatus(), e.getMessage(), e.getLocalizedMessage());
                 throw heatExceptionToMsoException (e, CREATE_STACK);
             }
-        } catch (OpenStackConnectException e) {          
+        } catch (OpenStackConnectException e) {
             throw heatExceptionToMsoException (e, CREATE_STACK);
-        } catch (RuntimeException e) {           
+        } catch (RuntimeException e) {
             throw runtimeExceptionToMsoException (e, CREATE_STACK);
         }
 
@@ -345,7 +355,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         // Otherwise, simple query by name returns a 302 redirect.
         // NOTE: This is specific to the v1 Orchestration API.
         String canonicalName = stackName + "/" + heatStack.getId ();
-       
+
         if (pollForCompletion) {
             heatStack = pollStackForCompletion(cloudSiteId, tenantId, stackName, timeoutMinutes, backout, heatClient,
 					heatStack, canonicalName);
@@ -378,7 +388,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		            logger.debug("an error occurred trying to print out the current outputs of the stack", e);
 		        }
 
-		        if ("CREATE_IN_PROGRESS".equals (heatStack.getStackStatus ())) {                       
+		        if ("CREATE_IN_PROGRESS".equals (heatStack.getStackStatus ())) {
 		            if (pollTimeout <= 0) {
                     logger.error("{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Create stack timeout",
                         MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
@@ -562,11 +572,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      *
      * @param tenantId The Openstack ID of the tenant in which to query
      * @param cloudSiteId The cloud identifier (may be a region) in which to query
+     * @param cloudOwner the cloud owner of the cloud site in which to query
      * @param stackName The name of the stack to query (may be simple or canonical)
      * @return A StackInfo object
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception.
      */
-    public StackInfo queryStack (String cloudSiteId, String tenantId, String stackName) throws MsoException {
+    public StackInfo queryStack (String cloudSiteId, String cloudOwner, String tenantId, String stackName) throws MsoException {
         logger.debug ("Query HEAT stack: {} in tenant {}", stackName, tenantId);
 
         // Obtain the cloud site information where we will create the stack
@@ -620,6 +631,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * all or partially deleted, so the resulting stack must be considered invalid.
      *
      * @param tenantId The Openstack ID of the tenant in which to perform the delete
+     * @param cloudOwner the cloud owner of the cloud site in  which to delete the stack
      * @param cloudSiteId The cloud identifier (may be a region) from which to delete the stack.
      * @param stackName The name/id of the stack to delete. May be simple or canonical
      * @param pollForCompletion Indicator that polling should be handled in Java vs. in the client
@@ -628,6 +640,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * @throws MsoCloudSiteNotFound
      */
     public StackInfo deleteStack (String tenantId,
+                                  String cloudOwner,
                                   String cloudSiteId,
                                   String stackName,
                                   boolean pollForCompletion) throws MsoException {
@@ -904,14 +917,14 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 	        if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
 		        Keystone keystoneTenantClient = new Keystone (keystoneUrl);
 		        Access access = null;
-	        
+
 	        	Authentication credentials = authenticationMethodFactory.getAuthenticationFor(cloudIdentity);
-	
+
 	        	OpenStackRequest <Access> request = keystoneTenantClient.tokens ()
 	                       .authenticate (credentials).withTenantId (tenantId);
-	
+
 	            access = executeAndRecordOpenstackRequest (request);
-	        
+
 		        try {
 		        	// Isolate trying to printout the region IDs
 		        	try {
@@ -1016,10 +1029,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     }
 
 
-	public Map<String, Object> queryStackForOutputs(String cloudSiteId,
+	public Map<String, Object> queryStackForOutputs(String cloudSiteId, String cloudOwner,
 			String tenantId, String stackName) throws MsoException {
       logger.debug("MsoHeatUtils.queryStackForOutputs)");
-      StackInfo heatStack = this.queryStack(cloudSiteId, tenantId, stackName);
+      StackInfo heatStack = this.queryStack(cloudSiteId, cloudOwner, tenantId, stackName);
 		if (heatStack == null || heatStack.getStatus() == HeatStatus.NOTFOUND) {
 			return null;
 		}
@@ -1198,7 +1211,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		sb.append("[END]");
 		return sb;
 	}
- 
+
 
 	public void copyBaseOutputsToInputs(Map<String, Object> inputs,
 			Map<String, Object> otherStackOutputs, List<String> paramNames, Map<String, String> aliases) {
@@ -1527,6 +1540,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     	throws VduException
     {
     	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String cloudOwner = cloudInfo.getCloudOwner();
     	String tenantId = cloudInfo.getTenantId();
 
     	// Translate the VDU ModelInformation structure to that which is needed for
@@ -1552,6 +1566,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     	try {
     	    StackInfo stackInfo = createStack (cloudSiteId,
+    	            cloudOwner,
                     tenantId,
                     instanceName,
                     heatTemplate,
@@ -1580,11 +1595,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     	throws VduException
     {
     	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String cloudOwner = cloudInfo.getCloudOwner();
     	String tenantId = cloudInfo.getTenantId();
 
     	try {
     		// Query the Cloudify Deployment object and  populate a VduInstance
-    		StackInfo stackInfo = queryStack (cloudSiteId, tenantId, instanceId);
+    		StackInfo stackInfo = queryStack (cloudSiteId, cloudOwner, tenantId, instanceId);
 
         	return stackInfoToVduInstance(stackInfo);
     	}
@@ -1602,11 +1618,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     	throws VduException
     {
     	String cloudSiteId = cloudInfo.getCloudSiteId();
+    	String cloudOwner = cloudInfo.getCloudOwner();
     	String tenantId = cloudInfo.getTenantId();
 
     	try {
     		// Delete the Heat stack
-    		StackInfo stackInfo = deleteStack (tenantId, cloudSiteId, instanceId, true);
+    		StackInfo stackInfo = deleteStack (tenantId, cloudOwner, cloudSiteId, instanceId, true);
 
     		// Populate a VduInstance based on the deleted Cloudify Deployment object
         	VduInstance vduInstance = stackInfoToVduInstance(stackInfo);
@@ -1704,7 +1721,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     	return vduStatus;
     }
-    
+
 	public Resources queryStackResources(String cloudSiteId, String tenantId, String stackName) throws MsoException {
 		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId)
 				.orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));

@@ -112,7 +112,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
      * The nested templates and get_file entries both end up being added to the "files" on the
      * stack. We must combine them before we add them to the stack if they're both non-null.
      *
-     * @param cloudSiteId The cloud (may be a region) in which to create the stack.
+     * @param cloudSiteId The cloud (may be a region) in which to create the stack
+     * @param cloudOwner the cloud owner of the cloud site in which to create the stack
      * @param tenantId The Openstack ID of the tenant in which to create the Stack
      * @param stackName The name of the stack to create
      * @param heatTemplate The Heat template
@@ -130,6 +131,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     @SuppressWarnings("unchecked")
     @Override
     public StackInfo createStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -190,7 +192,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
         }
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, null);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, null);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         if (multicloudClient == null) {
@@ -213,7 +215,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             if (logger.isDebugEnabled()) {
                 logger.debug("Multicloud Create Response Body: {}", multicloudResponseBody);
             }
-            return getStackStatus(cloudSiteId, tenantId, canonicalName, pollForCompletion, timeoutMinutes, backout);
+            return getStackStatus(cloudSiteId, cloudOwner, tenantId, canonicalName, pollForCompletion, timeoutMinutes, backout);
         }
         StringBuilder stackErrorStatusReason = new StringBuilder(response.getStatusInfo().getReasonPhrase());
         if (null != multicloudResponseBody) {
@@ -225,10 +227,10 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     }
 
     @Override
-    public Map<String, Object> queryStackForOutputs(String cloudSiteId,
+    public Map<String, Object> queryStackForOutputs(String cloudSiteId, String cloudOwner,
                                                            String tenantId, String stackName) throws MsoException {
         logger.debug("MsoHeatUtils.queryStackForOutputs)");
-        StackInfo heatStack = this.queryStack(cloudSiteId, tenantId, stackName);
+        StackInfo heatStack = this.queryStack(cloudSiteId, cloudOwner, tenantId, stackName);
         if (heatStack == null || heatStack.getStatus() == HeatStatus.NOTFOUND) {
             return null;
         }
@@ -242,12 +244,13 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
      *
      * @param tenantId The Openstack ID of the tenant in which to query
      * @param cloudSiteId The cloud identifier (may be a region) in which to query
+     * @param cloudOwner cloud owner of the cloud site in which to query
      * @param stackId The ID of the stack to query
      * @return A StackInfo object
      * @throws MsoOpenstackException Thrown if the Openstack API call returns an exception.
      */
     @Override
-    public StackInfo queryStack (String cloudSiteId, String tenantId, String instanceId) throws MsoException {
+    public StackInfo queryStack (String cloudSiteId, String cloudOwner, String tenantId, String instanceId) throws MsoException {
         if (logger.isDebugEnabled()) {
             logger.debug (String.format("Query multicloud HEAT stack: %s in tenant %s", instanceId, tenantId));
         }
@@ -265,7 +268,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         StackInfo returnInfo = new StackInfo();
         returnInfo.setName(stackName);
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, stackId);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         if (multicloudClient != null) {
@@ -295,7 +298,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         return returnInfo;
     }
 
-    public StackInfo deleteStack (String cloudSiteId, String tenantId, String instanceId) throws MsoException {
+    public StackInfo deleteStack (String cloudSiteId, String cloudOwner, String tenantId, String instanceId) throws MsoException {
         if (logger.isDebugEnabled()) {
             logger.debug (String.format("Delete multicloud HEAT stack: %s in tenant %s", instanceId, tenantId));
         }
@@ -314,7 +317,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         returnInfo.setName(stackName);
         Response response = null;
 
-        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, stackId);
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId);
         RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
 
         if (multicloudClient != null) {
@@ -327,7 +330,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                 returnInfo.setStatus(HeatStatus.NOTFOUND);
                 returnInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
             } else if (response.getStatus() == Response.Status.NO_CONTENT.getStatusCode()) {
-                return getStackStatus(cloudSiteId, tenantId, instanceId);
+                return getStackStatus(cloudSiteId, cloudOwner, tenantId, instanceId);
             } else {
                 returnInfo.setStatus(HeatStatus.FAILED);
                 returnInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
@@ -355,11 +358,11 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         return HeatStatus.UNKNOWN;
     }
 
-    private StackInfo getStackStatus(String cloudSiteId, String tenantId, String instanceId) throws MsoException {
-        return getStackStatus(cloudSiteId, tenantId, instanceId, false, 0, false);
+    private StackInfo getStackStatus(String cloudSiteId, String cloudOwner, String tenantId, String instanceId) throws MsoException {
+        return getStackStatus(cloudSiteId, cloudOwner, tenantId, instanceId, false, 0, false);
     }
 
-    private StackInfo getStackStatus(String cloudSiteId, String tenantId, String instanceId, boolean pollForCompletion, int timeoutMinutes, boolean backout) throws MsoException {
+    private StackInfo getStackStatus(String cloudSiteId, String cloudOwner, String tenantId, String instanceId, boolean pollForCompletion, int timeoutMinutes, boolean backout) throws MsoException {
         StackInfo stackInfo = new StackInfo();
 
         // If client has requested a final response, poll for stack completion
@@ -379,7 +382,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
             while (true) {
                 try {
-                    stackInfo = queryStack(cloudSiteId, tenantId, instanceId);
+                    stackInfo = queryStack(cloudSiteId, cloudOwner, tenantId, instanceId);
                     logger.debug (stackInfo.getStatus() + " (" + instanceId + ")");
 
                     if (HeatStatus.BUILDING.equals(stackInfo.getStatus())) {
@@ -388,7 +391,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                         if (pollTimeout <= 0) {
                             // Note that this should not occur, since there is a timeout specified
                             // in the Openstack (multicloud?) call.
-                            logger.error(String.format("%s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudSiteId, tenantId, instanceId, stackInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError.getValue(), "Create stack timeout"));
+                            logger.error(String.format("%s %s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudOwner, cloudSiteId, tenantId, instanceId, stackInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError.getValue(), "Create stack timeout"));
                             createTimedOut = true;
                             break;
                         }
@@ -410,17 +413,17 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                     } else {
                         try {
                             logger.debug("Create Stack error - unable to query for stack status - attempting to delete stack: " + instanceId + " - This will likely fail and/or we won't be able to query to see if delete worked");
-                            StackInfo deleteInfo = deleteStack(cloudSiteId, tenantId, instanceId);
+                            StackInfo deleteInfo = deleteStack(cloudSiteId, cloudOwner, tenantId, instanceId);
                             // this may be a waste of time - if we just got an exception trying to query the stack - we'll just
                             // get another one, n'est-ce pas?
                             boolean deleted = false;
                             while (!deleted) {
                                 try {
-                                    StackInfo queryInfo = queryStack(cloudSiteId, tenantId, instanceId);
+                                    StackInfo queryInfo = queryStack(cloudSiteId, cloudOwner, tenantId, instanceId);
                                     logger.debug("Deleting " + instanceId + ", status: " + queryInfo.getStatus());
                                     if (HeatStatus.DELETING.equals(queryInfo.getStatus())) {
                                         if (deletePollTimeout <= 0) {
-                                            logger.error(String.format("%s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudSiteId, tenantId, instanceId,
+                                            logger.error(String.format("%s %s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudOwner, cloudSiteId, tenantId, instanceId,
                                                     queryInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError.getValue(),
                                                     "Rollback: DELETE stack timeout"));
                                             break;
@@ -466,15 +469,15 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                     try {
                         logger.debug("Create Stack errored - attempting to DELETE stack: " + instanceId);
                         logger.debug("deletePollInterval=" + deletePollInterval + ", deletePollTimeout=" + deletePollTimeout);
-                        StackInfo deleteInfo = deleteStack(cloudSiteId, tenantId, instanceId);
+                        StackInfo deleteInfo = deleteStack(cloudSiteId, cloudOwner, tenantId, instanceId);
                         boolean deleted = false;
                         while (!deleted) {
                             try {
-                                StackInfo queryInfo = queryStack(cloudSiteId, tenantId, instanceId);
+                                StackInfo queryInfo = queryStack(cloudSiteId, cloudOwner, tenantId, instanceId);
                                 logger.debug("Deleting " + instanceId + ", status: " + queryInfo.getStatus());
                                 if (HeatStatus.DELETING.equals(queryInfo.getStatus())) {
                                     if (deletePollTimeout <= 0) {
-                                        logger.error(String.format("%s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudSiteId, tenantId, instanceId,
+                                        logger.error(String.format("%s %s %s %s %s %s %s %s %d %s", MessageEnum.RA_CREATE_STACK_TIMEOUT.toString(), cloudOwner, cloudSiteId, tenantId, instanceId,
                                                 queryInfo.getStatus(), "", "", MsoLogger.ErrorCode.AvailabilityError.getValue(),
                                                 "Rollback: DELETE stack timeout"));
                                         break;
@@ -520,7 +523,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             }
         } else {
             // Get initial status, since it will have been null after the create.
-            stackInfo = queryStack(cloudSiteId, tenantId, instanceId);
+            stackInfo = queryStack(cloudSiteId, cloudOwner, tenantId, instanceId);
             logger.debug("Multicloud stack query status is: " + stackInfo.getStatus());
         }
         return stackInfo;
@@ -580,7 +583,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         return null;
     }
 
-    private String getMulticloudEndpoint(String cloudSiteId, String workloadId) throws MsoCloudSiteNotFound {
+    private String getMulticloudEndpoint(String cloudSiteId, String cloudOwner, String workloadId) throws MsoCloudSiteNotFound {
 
         CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
         String endpoint = cloudSite.getIdentityService().getIdentityUrl();
@@ -645,6 +648,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         throws VduException
     {
         String cloudSiteId = cloudInfo.getCloudSiteId();
+        String cloudOwner = cloudInfo.getCloudOwner();
         String tenantId = cloudInfo.getTenantId();
 
         // Translate the VDU ModelInformation structure to that which is needed for
@@ -670,6 +674,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
         try {
             StackInfo stackInfo = createStack (cloudSiteId,
+                    cloudOwner,
                     tenantId,
                     instanceName,
                     heatTemplate,
@@ -697,11 +702,12 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         throws VduException
     {
         String cloudSiteId = cloudInfo.getCloudSiteId();
+        String cloudOwner = cloudInfo.getCloudOwner();
         String tenantId = cloudInfo.getTenantId();
 
         try {
             // Query the Cloudify Deployment object and  populate a VduInstance
-            StackInfo stackInfo = queryStack (cloudSiteId, tenantId, instanceId);
+            StackInfo stackInfo = queryStack (cloudSiteId, cloudOwner, tenantId, instanceId);
 
             return stackInfoToVduInstance(stackInfo);
         }
@@ -719,11 +725,12 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         throws VduException
     {
         String cloudSiteId = cloudInfo.getCloudSiteId();
+        String cloudOwner = cloudInfo.getCloudOwner();
         String tenantId = cloudInfo.getTenantId();
 
         try {
             // Delete the Multicloud stack
-            StackInfo stackInfo = deleteStack (cloudSiteId, tenantId, instanceId);
+            StackInfo stackInfo = deleteStack (cloudSiteId, cloudOwner, tenantId, instanceId);
 
             // Populate a VduInstance based on the deleted Cloudify Deployment object
             VduInstance vduInstance = stackInfoToVduInstance(stackInfo);

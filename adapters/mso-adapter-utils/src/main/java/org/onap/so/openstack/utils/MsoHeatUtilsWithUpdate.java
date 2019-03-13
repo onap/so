@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -68,6 +68,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
      */
 
     public StackInfo updateStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -77,6 +78,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         // Keeping this method to allow compatibility with no environment or files variable sent. In this case,
         // simply return the new method with the environment variable set to null.
         return this.updateStack (cloudSiteId,
+                                 cloudOwner,
                                  tenantId,
                                  stackName,
                                  heatTemplate,
@@ -89,6 +91,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
     }
 
     public StackInfo updateStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -99,6 +102,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         // Keeping this method to allow compatibility with no environment variable sent. In this case,
         // simply return the new method with the files variable set to null.
         return this.updateStack (cloudSiteId,
+                                 cloudOwner,
                                  tenantId,
                                  stackName,
                                  heatTemplate,
@@ -111,6 +115,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
     }
 
     public StackInfo updateStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,
@@ -120,6 +125,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                                   String environment,
                                   Map <String, Object> files) throws MsoException {
         return this.updateStack (cloudSiteId,
+                                 cloudOwner,
                                  tenantId,
                                  stackName,
                                  heatTemplate,
@@ -165,6 +171,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
      */
 
     public StackInfo updateStack (String cloudSiteId,
+                                  String cloudOwner,
                                   String tenantId,
                                   String stackName,
                                   String heatTemplate,

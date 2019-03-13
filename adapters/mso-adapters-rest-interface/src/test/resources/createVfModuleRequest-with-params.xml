@@ -1,5 +1,6 @@
 <createVfModuleRequest>
 	<cloudSiteId>RegionOne</cloudSiteId>
+	<cloudOwner>CloudOwner</cloudOwner>
 	<tenantId>09d8566ea45e43aa974cf447ed591d77</tenantId>
 	<vnfId>8daea639-82b9-4da6-aec9-5054f006a82d</vnfId>
 	<vnfName>vcpe_vnf_vcpe_infra_201903101808</vnfName>

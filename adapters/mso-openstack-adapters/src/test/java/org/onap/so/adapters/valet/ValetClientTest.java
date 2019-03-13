@@ -61,7 +61,7 @@ public class ValetClientTest extends BaseRestTestUtils {
 		
 		mockValetCreatePostResponse_200("requestId", mapper.writeValueAsString(vcr));
 		
-		GenericValetResponse<ValetCreateResponse> actual = client.callValetCreateRequest("requestId", "regionId", "tenantId", "serviceInstanceId", "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
+		GenericValetResponse<ValetCreateResponse> actual = client.callValetCreateRequest("requestId", "regionId", "ownerId", "tenantId", "serviceInstanceId", "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
 
 		assertThat(actual, sameBeanAs(expected));
 	}
@@ -73,7 +73,7 @@ public class ValetClientTest extends BaseRestTestUtils {
 		
 		mockValetCreatePutResponse_200("requestId", mapper.writeValueAsString(vur));
 		
-		GenericValetResponse<ValetUpdateResponse> actual = client.callValetUpdateRequest("requestId", "regionId", "tenantId", "serviceInstanceId", "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
+		GenericValetResponse<ValetUpdateResponse> actual = client.callValetUpdateRequest("requestId", "regionId", "ownerId", "tenantId", "serviceInstanceId", "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
 
 		assertThat(actual, sameBeanAs(expected));
 	}
@@ -85,7 +85,7 @@ public class ValetClientTest extends BaseRestTestUtils {
 		
 		mockValetDeleteDeleteResponse_200("requestId", mapper.writeValueAsString(vdr));
 		
-		GenericValetResponse<ValetDeleteResponse> actual = client.callValetDeleteRequest("requestId", "regionId", "tenantId", "vfModuleId", "vfModuleName");
+		GenericValetResponse<ValetDeleteResponse> actual = client.callValetDeleteRequest("requestId", "regionId", "ownerId", "tenantId", "vfModuleId", "vfModuleName");
 
 		assertThat(actual, sameBeanAs(expected));
 	}

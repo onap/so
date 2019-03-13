@@ -10,9 +10,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -63,10 +63,10 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.vnf.bpelauth";
     private static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
-    
+
     @Autowired
     private Environment environment;
-    
+
     @Autowired
     private MsoVnfAdapterImpl vnfImpl;
 
@@ -108,6 +108,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
      * and translating the response to an asynchronous notification.
      *
      * @param cloudSiteId CLLI code of the cloud site in which to create the VNF
+     * @param cloudOwner cloud owner of the cloud site in which to create the VNF
      * @param tenantId Openstack tenant identifier
      * @param vnfType VNF type key, should match a VNF definition in catalog DB
      * @param vnfName Name to be assigned to the new VNF
@@ -119,6 +120,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
      */
     @Override
     public void createVnfA (String cloudSiteId,
+                            String cloudOwner,
                             String tenantId,
                             String vnfType,
                             String vnfVersion,
@@ -143,6 +145,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
         try {
             vnfAdapter.createVnf (cloudSiteId,
+                                  cloudOwner,
                                   tenantId,
                                   vnfType,
                                   vnfVersion,
@@ -203,6 +206,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
     @Override
     public void updateVnfA (String cloudSiteId,
+                            String cloudOwner,
                             String tenantId,
                             String vnfType,
                             String vnfVersion,
@@ -225,7 +229,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         Holder <VnfRollback> vnfRollback = new Holder <> ();
 
         try {
-            vnfAdapter.updateVnf (cloudSiteId, tenantId, vnfType,vnfVersion, vnfName, requestType, volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
+            vnfAdapter.updateVnf (cloudSiteId, cloudOwner, tenantId, vnfType,vnfVersion, vnfName, requestType, volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
         } catch (VnfException e) {
             logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_UPDATE_VNF_ERR,
                 MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
@@ -277,6 +281,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
      * ID, its status, and the set of outputs (from when the stack was created).
      *
      * @param cloudSiteId CLLI code of the cloud site in which to query
+     * @param cloudOwner cloud owner of cloud site in which to query
      * @param tenantId Openstack tenant identifier
      * @param vnfName VNF Name or Openstack ID
      * @param msoRequest Request tracking information for logs
@@ -284,6 +289,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
      */
     @Override
     public void queryVnfA (String cloudSiteId,
+                           String cloudOwner,
                            String tenantId,
                            String vnfName,
                            String messageId,
@@ -303,7 +309,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         Holder <Map <String, String>> outputs = new Holder <> ();
 
         try {
-            vnfAdapter.queryVnf (cloudSiteId, tenantId, vnfName, msoRequest, vnfExists, vnfId, status, outputs);
+            vnfAdapter.queryVnf (cloudSiteId, cloudOwner, tenantId, vnfName, msoRequest, vnfExists, vnfId, status, outputs);
         } catch (VnfException e) {
             logger.error("{} {} Exception sending queryVnfA notification ", MessageEnum.RA_QUERY_VNF_ERR,
                 MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
@@ -363,6 +369,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
      * The method has no outputs.
      *
      * @param cloudSiteId CLLI code of the cloud site in which to delete
+     * @param cloudOwner cloud owner of cloud site in which to delete
      * @param tenantId Openstack tenant identifier
      * @param vnfName VNF Name or Openstack ID
      * @param msoRequest Request tracking information for logs
@@ -370,6 +377,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
      */
     @Override
     public void deleteVnfA (String cloudSiteId,
+                            String cloudOwner,
                             String tenantId,
                             String vnfName,
                             String messageId,
@@ -383,7 +391,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
         MsoVnfAdapter vnfAdapter = vnfImpl;
 
         try {
-            vnfAdapter.deleteVnf (cloudSiteId, tenantId, vnfName, msoRequest);
+            vnfAdapter.deleteVnf (cloudSiteId, cloudOwner, tenantId, vnfName, msoRequest);
         } catch (VnfException e) {
             logger.error("{} {} Exception sending deleteVnfA notification ", MessageEnum.RA_DELETE_VNF_ERR,
                 MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
@@ -630,7 +638,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
         return notifyPort;
     }
-    
+
     public String getEncryptedProperty(String key, String defaultValue, String encryptionKey) {
     	try {
 			return CryptoUtils.decrypt(this.environment.getProperty(key), this.environment.getProperty(encryptionKey));

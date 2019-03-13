@@ -208,7 +208,7 @@ public class VnfAdapterRest {
 				Holder<Map<String, String>> outputs = new Holder <> ();
 				if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
 					//vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest());
-					vnfAdapter.deleteVfModule (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
+					vnfAdapter.deleteVfModule (req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
 				}
 				response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE, req.getMessageId(), outputs.value);
 			} catch (VnfException e) {
@@ -254,7 +254,9 @@ public class VnfAdapterRest {
 		@PathParam("aaiVfModuleId") String aaiVfModuleId,
 		@ApiParam(value = "cloudSiteId", required = true)
 		@QueryParam("cloudSiteId") String cloudSiteId,
-		@ApiParam(value = "tenantId", required = true)
+		@ApiParam(value = "cloudOwner", required = true)
+        @QueryParam("cloudOwner") String cloudOwner,
+        @ApiParam(value = "tenantId", required = true)
 		@QueryParam("tenantId") String tenantId,
 		@ApiParam(value = "vfModuleName", required = true)
 		@QueryParam("vfModuleName") String vfModuleName, //RAA? Id in doc
@@ -276,7 +278,7 @@ public class VnfAdapterRest {
 			Holder<String> vfModuleId = new Holder<>();
 			Holder<VnfStatus> status  = new Holder<>();
 			Holder<Map<String, String>> outputs = new Holder <> ();
-			vnfAdapter.queryVnf (cloudSiteId, tenantId, vfModuleName, msoRequest, vnfExists, vfModuleId, status, outputs);
+			vnfAdapter.queryVnf (cloudSiteId, cloudOwner, tenantId, vfModuleName, msoRequest, vnfExists, vfModuleId, status, outputs);
 			if (!vnfExists.value) {
 				logger.debug("vfModule not found");
 				respStatus = HttpStatus.SC_NOT_FOUND;
@@ -417,12 +419,13 @@ public class VnfAdapterRest {
 				String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
 				logger.debug("completeVnfVfModuleType=" + completeVnfVfModuleType);
 				String cloudsite = req.getCloudSiteId();
+				String cloudOwner = req.getCloudOwner();
 				if (cloudsite != null && cloudsite.equals(TESTING_KEYWORD)) {
 					String tenant = req.getTenantId();
 					if (tenant != null && tenant.equals(TESTING_KEYWORD)) {
 						throw new VnfException("testing.");
 					}
-					vnfRollback.value = new VnfRollback(req.getVnfId(), tenant, cloudsite,
+					vnfRollback.value = new VnfRollback(req.getVnfId(), tenant, cloudOwner, cloudsite,
 							true, false, new MsoRequest("reqid", "svcid"),
 							req.getVolumeGroupId(), req.getVolumeGroupId(), req.getRequestType(), req.getModelCustomizationUuid());
 					vfModuleStackId.value = "479D3D8B-6360-47BC-AB75-21CC91981484";
@@ -443,6 +446,7 @@ public class VnfAdapterRest {
 //						outputs,
 //						vnfRollback);
 					vnfAdapter.createVfModule(req.getCloudSiteId(),
+                        req.getCloudOwner(),
 						req.getTenantId(),
 						//req.getVnfType(),
 						completeVnfVfModuleType,
@@ -561,6 +565,7 @@ public class VnfAdapterRest {
 				logger.debug("in updateVf - completeVnfVfModuleType=" + completeVnfVfModuleType);
 
 				vnfAdapter.updateVfModule (req.getCloudSiteId(),
+				        req.getCloudOwner(),
 						req.getTenantId(),
 						//req.getVnfType(),
 						completeVnfVfModuleType,
@@ -684,7 +689,7 @@ public class VnfAdapterRest {
 			try {
 				VfModuleRollback vmr = req.getVfModuleRollback();
 				VnfRollback vrb = new VnfRollback(
-						vmr.getVfModuleStackId(), vmr.getTenantId(), vmr.getCloudSiteId(), true, true,
+						vmr.getVfModuleStackId(), vmr.getTenantId(), vmr.getCloudOwner(), vmr.getCloudSiteId(), true, true,
 						vmr.getMsoRequest(), null, null, null, null);
 				vnfAdapter.rollbackVnf (vrb);
 				response = new RollbackVfModuleResponse(Boolean.TRUE, req.getMessageId());

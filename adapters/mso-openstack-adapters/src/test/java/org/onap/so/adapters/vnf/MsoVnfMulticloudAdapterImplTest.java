@@ -92,7 +92,7 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
                 .withBodyFile("MulticloudResponse_Stack_Create.json")
                 .withStatus(HttpStatus.SC_CREATED)));
 
-        instance.createVfModule("MTN13", "123", "vf", "v1", "genericVnfId", "vfname", "vfModuleId", "create", null, "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", stackInputs, true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+        instance.createVfModule("MTN13", "CloudOwner", "123", "vf", "v1", "genericVnfId", "vfname", "vfModuleId", "create", null, "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", stackInputs, true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
     }
 
     @Test
@@ -108,7 +108,7 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
         stubFor(delete(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
                 .withStatus(HttpStatus.SC_NO_CONTENT)));
 
-        instance.deleteVfModule("MTN13", "123", "workload-id", msoRequest, new Holder<>());
+        instance.deleteVfModule("MTN13", "CloudOwner", "123", "workload-id", msoRequest, new Holder<>());
     }
 
     @Test
@@ -121,7 +121,7 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
                 .withBodyFile("MulticloudResponse_Stack.json")
                 .withStatus(HttpStatus.SC_OK)));
 
-        instance.queryVnf("MTN13", "123", "workload-id", msoRequest, new Holder<>(), new Holder<>(), new Holder<>(), new Holder<>());
+        instance.queryVnf("MTN13", "CloudOwner", "123", "workload-id", msoRequest, new Holder<>(), new Holder<>(), new Holder<>(), new Holder<>());
     }
 
     // TODO Error Tests

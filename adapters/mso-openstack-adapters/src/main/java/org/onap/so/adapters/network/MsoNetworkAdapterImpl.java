@@ -11,9 +11,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -89,7 +89,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String CREATE_NETWORK_CONTEXT = "CreateNetwork";
     private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static final String NEUTRON_MODE = "NEUTRON";
-    
+
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterImpl.class);
 
     @Autowired
@@ -104,13 +104,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private MsoHeatUtilsWithUpdate heatWithUpdate;
     @Autowired
     private MsoCommonUtils commonUtils;
-    
-    @Autowired 	
+
+    @Autowired
     private NetworkResourceCustomizationRepository  networkCustomRepo;
-    
+
     @Autowired
     private CollectionNetworkResourceCustomizationRepository collectionNetworkCustomRepo;
-    
+
     @Autowired
     private NetworkResourceRepository  networkResourceRepo;
     /**
@@ -406,7 +406,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 StackInfo heatStack = null;
                 long queryNetworkStarttime = System.currentTimeMillis ();
                 try {
-                    heatStack = heat.queryStack (cloudSiteId, tenantId, networkName);
+                    heatStack = heat.queryStack (cloudSiteId, "CloudOwner", tenantId, networkName);
                 } catch (MsoException me) {
                     me.addContext (CREATE_NETWORK_CONTEXT);
                     logger.error("{} {} Create Network (heat): query network {} in {}/{}: ",
@@ -534,6 +534,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 	if (backout == null)
                 		backout = true;
                     heatStack = heat.createStack (cloudSiteId,
+                                                  "CloudOwner",
                                                   tenantId,
                                                   networkName,
                                                   template,
@@ -592,7 +593,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
                 logger.debug("Network {} successfully created via HEAT", networkName);
             }
-       
+
         return;
     }
 
@@ -736,7 +737,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
 
 
-    
+
             NetworkResource networkResource = networkCheck(
                     startTime,
                     networkType,
@@ -807,7 +808,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 StackInfo heatStack = null;
                 long queryStackStarttime = System.currentTimeMillis();
                 try {
-                    heatStack = heat.queryStack(cloudSiteId, tenantId, networkName);
+                    heatStack = heat.queryStack(cloudSiteId, "CloudOwner", tenantId, networkName);
                 } catch (MsoException me) {
                     me.addContext(UPDATE_NETWORK_CONTEXT);
                     logger.error("{} {} Exception - QueryStack query {} in {}/{} ", MessageEnum.RA_QUERY_NETWORK_EXC,
@@ -863,9 +864,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
                 boolean aic3template = false;
                 String aic3nw = AIC3_NW;
-                
+
                 aic3nw = environment.getProperty(AIC3_NW_PROPERTY, AIC3_NW);
-                
+
                 if (template.contains(aic3nw))
                     aic3template = true;
 
@@ -934,6 +935,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 long updateStackStarttime = System.currentTimeMillis();
                 try {
                     heatStack = heatWithUpdate.updateStack(cloudSiteId,
+                            "CloudOwner",
                             tenantId,
                             networkId,
                             template,
@@ -1076,7 +1078,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
 				throw new NetworkException(error, MsoExceptionCategory.USERDATA);
 			}
-		
+
         return networkResource;
     }
 
@@ -1180,7 +1182,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         StackInfo heatStack = null;
         long queryStackStarttime = System.currentTimeMillis ();
         try {
-            heatStack = heat.queryStack (cloudSiteId, tenantId, networkNameOrId);
+            heatStack = heat.queryStack (cloudSiteId, "CloudOwner", tenantId, networkNameOrId);
         } catch (MsoException me) {
         	me.addContext ("QueryNetwork");
             logger.error("{} {} Exception - Query Network (heat): {} in {}/{} ", MessageEnum.RA_QUERY_NETWORK_EXC,
@@ -1290,7 +1292,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
 
-       
+
             if (commonUtils.isNullOrEmpty (cloudSiteId)
                             || commonUtils.isNullOrEmpty(tenantId)
                             || commonUtils.isNullOrEmpty(networkId)) {
@@ -1301,7 +1303,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             // Retrieve the Network Resource definition
             NetworkResource networkResource = null;
-            
+
         	if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
         		if (!commonUtils.isNullOrEmpty(networkType)) {
         			networkResource = networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
@@ -1312,7 +1314,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 					networkResource = nrc.getNetworkResource();
 				}
 			}
-        	
+
             String mode = "";
             if (networkResource != null) {
                 logger.debug("Got Network definition from Catalog: {}", networkResource.toString());
@@ -1342,10 +1344,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     // The deleteStack function in MsoHeatUtils returns NOTFOUND if the stack was not found or if the stack was deleted.
                     //  So query first to report back if stack WAS deleted or just NOTOFUND
                 	StackInfo heatStack = null;
-                	heatStack = heat.queryStack(cloudSiteId, tenantId, networkId);
+                	heatStack = heat.queryStack(cloudSiteId, "CloudOwner", tenantId, networkId);
                 	if (heatStack != null && heatStack.getStatus() != HeatStatus.NOTFOUND)
                 	{
-                		heat.deleteStack (tenantId, cloudSiteId, networkId, true);
+                		heat.deleteStack (tenantId, "CloudOwner", cloudSiteId, networkId, true);
                 		networkDeleted.value = true;
                 	}
                 	else
@@ -1359,7 +1361,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     throw new NetworkException (me);
                 }
             }
-       
+
 
         // On success, nothing is returned.
         return;
@@ -1398,7 +1400,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // Retrieve the Network Resource definition
             NetworkResource networkResource = null;
         	if (commonUtils.isNullOrEmpty(modelCustomizationUuid)) {
-				networkResource = networkCustomRepo.findOneByNetworkType(networkType).getNetworkResource(); 
+				networkResource = networkCustomRepo.findOneByNetworkType(networkType).getNetworkResource();
 			} else {
 				networkResource = networkCustomRepo.findOneByModelCustomizationUUID(modelCustomizationUuid).getNetworkResource();
 			}
@@ -1431,7 +1433,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     try {
                         // The deleteStack function in MsoHeatUtils returns success if the stack
                         // was not found. So don't bother to query first.
-                        heat.deleteStack (tenantId, cloudSiteId, networkId, true);
+                        heat.deleteStack (tenantId, "CloudOwner", cloudSiteId, networkId, true);
                     } catch (MsoException me) {
                         me.addContext ("RollbackNetwork");
                         logger.error("{} {} Exception - Rollback Network (heat): {} in {}/{} ",
@@ -1505,7 +1507,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             stackParams.put (VLANS, csl);
         }
         if (routeTargets != null) {
-			
+
             String rtGlobal = "";
             String rtImport = "";
             String rtExport = "";
@@ -1528,7 +1530,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                   logger.debug("Input RT:{}", rt);
             		String role = rt.getRouteTargetRole();
             		String rtValue = rt.getRouteTarget();
-            		
+
             		if ("IMPORT".equalsIgnoreCase(role))
             		{
             			sep = rtImport.isEmpty() ? "" : ",";
@@ -1547,7 +1549,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             	}
             }
-            
+
             if (!rtImport.isEmpty())
             {
             	stackParams.put ("route_targets_import", rtImport);
