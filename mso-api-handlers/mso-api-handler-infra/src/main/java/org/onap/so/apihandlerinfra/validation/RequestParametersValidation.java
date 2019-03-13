@@ -73,6 +73,23 @@ public class RequestParametersValidation implements ValidationRule{
         		if(action == Action.createInstance || action == Action.updateInstance){        			
         			if(requestParameters.isUsePreload() == null){        				
         				if(reqVersion >= 4){       					
+        					if (requestParameters.getALaCarte() == null || requestParameters.getALaCarte() == true) {        						
+        						requestParameters.setUsePreload(true);
+        					}
+        					else {        						
+        						requestParameters.setUsePreload(false);
+        					}
+        				}
+        				else {        				
+        					requestParameters.setUsePreload(true);
+        				}
+        			}
+        		}
+        	}
+        	if(requestScope.equalsIgnoreCase(ModelType.service.name())){
+        		if(action == Action.createInstance){        			
+        			if(requestParameters.isUsePreload() == null){        				
+        				if(reqVersion >= 4){       					
         					if (requestParameters.getALaCarte() == null || requestParameters.getALaCarte() == false) {        						
         						requestParameters.setUsePreload(false);
         					}
