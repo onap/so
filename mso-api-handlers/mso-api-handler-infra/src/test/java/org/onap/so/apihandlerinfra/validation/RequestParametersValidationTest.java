@@ -66,7 +66,7 @@ public class RequestParametersValidationTest extends BaseTest{
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
 		
-		assertFalse(info.getReqParameters().getUsePreload());		
+		assertTrue(info.getReqParameters().getUsePreload());		
 	}
 	
 	@Test
@@ -100,4 +100,68 @@ public class RequestParametersValidationTest extends BaseTest{
 		
 		assertTrue(info.getReqParameters().getUsePreload());
 	}
+	
+	@Test
+	public void testServiceWithFalseALaCarte() throws IOException, ValidationException {
+		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RequestParameters/VfModuleModelVersionId.json")));
+		ObjectMapper mapper = new ObjectMapper();
+		ServiceInstancesRequest sir  = mapper.readValue(requestJson, ServiceInstancesRequest.class);	
+		sir.getRequestDetails().getRequestParameters().setUsePreload(null);		
+		ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(), Action.createInstance, 
+																6, false, sir.getRequestDetails().getRequestParameters());		
+		sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");
+		info.setRequestScope("service");
+		RequestParametersValidation validation = new RequestParametersValidation();
+		validation.validate(info);
+		
+		assertFalse(info.getReqParameters().getUsePreload());		
+	}
+	
+	@Test
+	public void testServiceWithNoALaCarte() throws IOException, ValidationException {
+		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RequestParameters/VfModuleRequestParametersNoALaCarte.json")));
+		ObjectMapper mapper = new ObjectMapper();
+		ServiceInstancesRequest sir  = mapper.readValue(requestJson, ServiceInstancesRequest.class);
+		ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(), Action.createInstance, 
+																6, false, sir.getRequestDetails().getRequestParameters());
+		sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");
+		sir.getRequestDetails().getRequestParameters().setSubscriptionServiceType("subscriptionServiceType");
+		info.setRequestScope("service");
+		RequestParametersValidation validation = new RequestParametersValidation();
+		validation.validate(info);
+		
+		assertFalse(info.getReqParameters().getUsePreload());		
+	}
+	
+	@Test
+	public void testServiceWithTrueALaCarte() throws IOException, ValidationException {
+		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RequestParameters/VfModuleRequestParametersIsALaCarte.json")));
+		ObjectMapper mapper = new ObjectMapper();
+		ServiceInstancesRequest sir  = mapper.readValue(requestJson, ServiceInstancesRequest.class);
+		sir.getRequestDetails().getRequestParameters().setUsePreload(null);
+		ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(), Action.createInstance, 
+																6, true, sir.getRequestDetails().getRequestParameters());
+		sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");	
+		info.setRequestScope("service");
+		RequestParametersValidation validation = new RequestParametersValidation();
+		validation.validate(info);
+		
+		assertTrue(info.getReqParameters().getUsePreload());
+	}
+	
+	@Test
+	public void testServiceWithReqVersionBelow4() throws IOException, ValidationException {
+		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RequestParameters/VfModuleModelVersionId.json")));
+		ObjectMapper mapper = new ObjectMapper();
+		ServiceInstancesRequest sir  = mapper.readValue(requestJson, ServiceInstancesRequest.class);		
+		sir.getRequestDetails().getRequestParameters().setUsePreload(null);
+		ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(), Action.createInstance, 
+																3, false, sir.getRequestDetails().getRequestParameters());
+		sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");
+		info.setRequestScope("service");
+		RequestParametersValidation validation = new RequestParametersValidation();
+		validation.validate(info);
+		
+		assertTrue(info.getReqParameters().getUsePreload());
+	}	
 }
