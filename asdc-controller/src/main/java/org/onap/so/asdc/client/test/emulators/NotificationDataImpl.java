@@ -30,19 +30,31 @@ import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
 @Component
+@JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE, setterVisibility = Visibility.NONE)
 public class NotificationDataImpl implements INotificationData {
 
+	@JsonProperty("distributionID")
 	private String distributionID;
+	@JsonProperty("serviceName")
 	private String serviceName;
+	@JsonProperty("serviceVersion")
 	private String serviceVersion;
+	@JsonProperty("serviceUUID")
 	private String serviceUUID;
+	@JsonProperty("serviceDescription")
 	private String serviceDescription;
+	@JsonProperty("serviceInvariantUUID")
 	private String serviceInvariantUUID;
+	@JsonProperty("resources")
 	private List<ResourceInfoImpl> resources;
+	@JsonProperty("serviceArtifacts")
 	private List<ArtifactInfoImpl> serviceArtifacts;
+	@JsonProperty("workloadContext")
 	private String workloadContext;
 
 	@Override
@@ -118,7 +130,6 @@ public class NotificationDataImpl implements INotificationData {
 		return ret;
 	}
 	
-	@JsonIgnore
 	public List<ResourceInfoImpl> getResourcesImpl(){
 		return resources;
 	}
