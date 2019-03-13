@@ -208,7 +208,7 @@ public class VnfAdapterRest {
 				Holder<Map<String, String>> outputs = new Holder <> ();
 				if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
 					//vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest());
-					vnfAdapter.deleteVfModule (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
+					vnfAdapter.deleteVfModule (req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
 				}
 				response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE, req.getMessageId(), outputs.value);
 			} catch (VnfException e) {
@@ -443,6 +443,7 @@ public class VnfAdapterRest {
 //						outputs,
 //						vnfRollback);
 					vnfAdapter.createVfModule(req.getCloudSiteId(),
+                        req.getCloudOwner(),
 						req.getTenantId(),
 						//req.getVnfType(),
 						completeVnfVfModuleType,

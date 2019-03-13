@@ -213,7 +213,7 @@ public class VnfAdapterRestV2 {
 					//vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest());
 					// Support different Adapter Implementations
 					MsoVnfAdapter adapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsite);
-					adapter.deleteVfModule (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
+					adapter.deleteVfModule (req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(), req.getVfModuleStackId(), req.getMsoRequest(), outputs);
 				}
 				response = new DeleteVfModuleResponse(req.getVnfId(), req.getVfModuleId(), Boolean.TRUE, req.getMessageId(), outputs.value);
 			} catch (VnfException e) {
@@ -448,6 +448,7 @@ public class VnfAdapterRestV2 {
 					// Support different Adapter Implementations
 					MsoVnfAdapter adapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsiteId);
 					adapter.createVfModule(req.getCloudSiteId(),
+					    req.getCloudOwner(),
 						req.getTenantId(),
 						completeVnfVfModuleType,
 						req.getVnfVersion(),

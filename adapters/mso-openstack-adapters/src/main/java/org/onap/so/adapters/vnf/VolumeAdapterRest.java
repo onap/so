@@ -195,6 +195,7 @@ public class VolumeAdapterRest {
 //							vnfRollback);
 					vnfAdapter.createVfModule(
 							req.getCloudSiteId(), //cloudSiteId,
+                            req.getCloudOwner(), //cloudOwner,
 							req.getTenantId(), //tenantId,
 							//req.getVnfType(), //vnfType,
 							completeVnfVfModuleType,

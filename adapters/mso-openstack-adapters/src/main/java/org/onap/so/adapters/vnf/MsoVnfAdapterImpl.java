@@ -211,6 +211,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 				logger.debug("ERROR trying to parse the volumeGroupHeatStackId " + volumeGroupHeatStackId,e);
 			}
 			this.createVfModule(cloudSiteId,
+			        "cloudOwner",
 					tenantId,
 					vnfType,
 					vnfVersion,
@@ -239,6 +240,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     		newRequestTypeSb.append(requestType);
             }
 		this.createVfModule(cloudSiteId,
+                "cloudOwner",
                                                tenantId,
 				vnfType,
 				vnfVersion,
@@ -567,6 +569,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
     @Override
     public void createVfModule(String cloudSiteId,
+            String cloudOwner,
             String tenantId,
             String vnfType,
             String vnfVersion,
@@ -1272,6 +1275,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
     @Override
     public void deleteVfModule (String cloudSiteId,
+                           String cloudOwner,
                            String tenantId,
                            String vnfName,
                            MsoRequest msoRequest,

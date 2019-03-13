@@ -595,6 +595,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
      */
     @Override
     public void createVfModule(String cloudSiteId,
+            String cloudOwner,
             String tenantId,
             String vfModuleType,
             String vnfVersion,
@@ -1160,6 +1161,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
 
     public void deleteVfModule (String cloudSiteId,
+                           String cloudOwner,
                            String tenantId,
                            String vfModuleId,
                            MsoRequest msoRequest,

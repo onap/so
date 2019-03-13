@@ -37,6 +37,7 @@ public class DeleteVfModuleRequest extends VfRequestCommon implements Serializab
 	 */
 	private static final long serialVersionUID = -8504083539107392561L;
 	private String cloudSiteId;
+	private String cloudOwner;
 	private String tenantId;
 	private String vnfId;
 	private String vfModuleId;
@@ -54,6 +55,14 @@ public class DeleteVfModuleRequest extends VfRequestCommon implements Serializab
 
 	public void setCloudSiteId(String cloudSiteId) {
 		this.cloudSiteId = cloudSiteId;
+	}
+
+	public String getCloudOwner() {
+		return cloudSiteId;
+	}
+
+	public void setCloudOwner(String cloudOwner) {
+		this.cloudOwner = cloudOwner;
 	}
 
 	public String getTenantId() {

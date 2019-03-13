@@ -189,6 +189,7 @@ public class VolumeAdapterRestV2 {
 					MsoVnfAdapter vnfAdapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudsiteId);
 					vnfAdapter.createVfModule(
 							req.getCloudSiteId(), //cloudSiteId,
+							req.getCloudOwner(), //cloudOwner,
 							req.getTenantId(), //tenantId,
 							completeVnfVfModuleType, //vnfType,
 							req.getVnfVersion(), //vnfVersion,

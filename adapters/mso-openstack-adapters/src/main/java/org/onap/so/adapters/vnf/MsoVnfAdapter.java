@@ -99,6 +99,7 @@ public interface MsoVnfAdapter
 
 	@WebMethod
 	public void createVfModule (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
+	                        @WebParam(name="cloudOwner") @XmlElement(required=false) String cloudOwner,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="vnfType") @XmlElement(required=true) String vnfType,
 							@WebParam(name="vnfVersion") @XmlElement(required=false) String vnfVersion,
@@ -121,6 +122,7 @@ public interface MsoVnfAdapter
 
 	@WebMethod
 	public void deleteVfModule (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
+	                        @WebParam(name="cloudOwner") @XmlElement(required=false) String cloudOwner,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="vfName") @XmlElement(required=true) String vfName,
 							@WebParam(name="request") MsoRequest msoRequest,
