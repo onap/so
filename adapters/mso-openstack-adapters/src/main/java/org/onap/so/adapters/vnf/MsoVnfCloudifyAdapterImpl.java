@@ -206,7 +206,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                           Holder <Map <String, String>> outputs)
         throws VnfException
     {
-        MsoLogger.setLogContext (msoRequest);
         logger.debug ("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
 
         // Will capture execution time for metrics
@@ -264,7 +263,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                            String tenantId,
                            String vnfName,
                            MsoRequest msoRequest) throws VnfException {
-        MsoLogger.setLogContext (msoRequest);
 
     	// This operation is no longer supported at the VNF level.  The adapter is only called to deploy modules.
         logger.debug("DeleteVNF command attempted but not supported");
@@ -285,8 +283,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         long startTime = System.currentTimeMillis ();
     	// rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
-            logger.info ("{} {} {} {}", MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf", MsoLogger
-                .getServiceName());
+            logger.info ("{} {} {}", MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf");
             return;
         }
 
@@ -299,8 +296,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         String cloudSiteId = rollback.getCloudSiteId ();
         String tenantId = rollback.getTenantId ();
         String vfModuleId = rollback.getVfModuleStackId ();
-
-        MsoLogger.setLogContext (rollback.getMsoRequest());
 
         logger.debug("Rolling Back VF Module {} in {}", vfModuleId, cloudSiteId + "/" + tenantId);
 
@@ -575,8 +570,6 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     {
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
-
-    	MsoLogger.setLogContext (msoRequest);
 
         // Require a model customization ID.  Every VF Module definition must have one.
         if (modelCustomizationUuid == null || modelCustomizationUuid.isEmpty()) {
@@ -1179,7 +1172,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                            String vnfName,
                            MsoRequest msoRequest,
                            Holder <Map <String, String>> outputs) throws VnfException {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.debug ("Deleting VF " + vnfName + " in " + cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();

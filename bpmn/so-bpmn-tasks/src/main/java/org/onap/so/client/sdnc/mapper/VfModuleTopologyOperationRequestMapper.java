@@ -173,8 +173,8 @@ public class VfModuleTopologyOperationRequestMapper {
 				GenericResourceApiVfModuleResponseInformation assignResponseInfo = mapper.readValue(sdncAssignResponse, GenericResourceApiVfModuleResponseInformation.class);				
 				objectPath = assignResponseInfo.getVfModuleResponseInformation().getObjectPath();
 			} catch (Exception e) {
-				logger.error("{} {} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), e.getMessage(), "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
+				logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), e.getMessage(), "BPMN",
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
 			}
 		}
 		return objectPath;

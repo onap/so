@@ -134,8 +134,8 @@ public class AppcRunTasks {
 			mapRollbackVariables(execution, action, appcCode);
 		}
 		catch (Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
-				"Caught exception in runAppcCommand", "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+				"Caught exception in runAppcCommand", "BPMN",
 				MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
 			appcMessage = e.getMessage();
 		}		
