@@ -56,7 +56,6 @@ public class WatchdogDistributionStatus implements Serializable {
 	@Column(name = "MODIFY_TIME")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifyTime;
-	@Version
 	@Column(name = "LOCK_VERSION")
     private int version; 
 	
