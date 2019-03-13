@@ -54,8 +54,9 @@ public class OperationalEnvServiceModelStatusTest {
 		status.setRetryCount(0);
 		
 		repository.saveAndFlush(status);
-		OperationalEnvServiceModelStatus status2 = repository.findOneByOperationalEnvIdAndServiceModelVersionId("oper-env-id-1", "service-model-ver-id-1");
+		OperationalEnvServiceModelStatus status2 = repository.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("oper-env-id-1", "service-model-ver-id-1", "request-id-1");
 		status2.setRetryCount(1);
+		assertEquals("request-id-1", status2.getRequestId());		
 		
 		repository.saveAndFlush(status2);
 		
