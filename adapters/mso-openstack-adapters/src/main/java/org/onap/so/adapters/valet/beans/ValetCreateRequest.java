@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,9 +30,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ValetCreateRequest implements Serializable {
 	private static final long serialVersionUID = 768026109321305392L;
-	
+
 	@JsonProperty("region_id")
 	private String regionId;
+	@JsonProperty("owner_id")
+	private String ownerId;
 	@JsonProperty("tenant_id")
 	private String tenantId;
 	@JsonProperty("service_instance_id")
@@ -49,17 +51,23 @@ public class ValetCreateRequest implements Serializable {
 	private String keystoneUrl;
 	@JsonProperty("heat_request")
 	private HeatRequest heatRequest;
-	
+
 	public ValetCreateRequest() {
 		super();
 	}
-	
+
 	public String getRegionId() {
 		return this.regionId;
 	}
 	public void setRegionId(String regionId) {
 		this.regionId = regionId;
 	}
+    public String getOwnerId() {
+        return this.ownerId;
+    }
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
 	public String getTenantId() {
 		return this.tenantId;
 	}
@@ -108,10 +116,10 @@ public class ValetCreateRequest implements Serializable {
 	public void setHeatRequest(HeatRequest heatRequest) {
 		this.heatRequest = heatRequest;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(regionId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
+		return Objects.hash(regionId, ownerId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
 	}
 	@Override
 	public boolean equals(Object o) {
@@ -121,7 +129,8 @@ public class ValetCreateRequest implements Serializable {
 			return false;
 		}
 		ValetCreateRequest vcr = (ValetCreateRequest) o;
-		return Objects.equals(regionId, vcr.regionId) 
+		return Objects.equals(regionId, vcr.regionId)
+		        && Objects.equals(ownerId, vcr.ownerId)
 				&& Objects.equals(tenantId, vcr.tenantId)
 				&& Objects.equals(serviceInstanceId, vcr.serviceInstanceId)
 				&& Objects.equals(vnfId, vcr.vnfId)

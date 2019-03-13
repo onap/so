@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,6 +33,8 @@ public class ValetUpdateRequest implements Serializable {
 
 	@JsonProperty("region_id")
 	private String regionId;
+	@JsonProperty("owner)_id")
+	private String ownerId;
 	@JsonProperty("tenant_id")
 	private String tenantId;
 	@JsonProperty("service_instance_id")
@@ -49,17 +51,23 @@ public class ValetUpdateRequest implements Serializable {
 	private String keystoneUrl;
 	@JsonProperty("heat_request")
 	private HeatRequest heatRequest;
-	
+
 	public ValetUpdateRequest() {
 		super();
 	}
-	
+
 	public String getRegionId() {
 		return this.regionId;
 	}
 	public void setRegionId(String regionId) {
 		this.regionId = regionId;
 	}
+    public String getOwnerId() {
+        return this.ownerId;
+    }
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
 	public String getTenantId() {
 		return this.tenantId;
 	}
@@ -110,7 +118,7 @@ public class ValetUpdateRequest implements Serializable {
 	}
 	@Override
 	public int hashCode() {
-		return Objects.hash(regionId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
+		return Objects.hash(regionId, ownerId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
 
 	}
 	@Override
@@ -121,9 +129,10 @@ public class ValetUpdateRequest implements Serializable {
 			return false;
 		}
 		ValetUpdateRequest vur = (ValetUpdateRequest) o;
-		return Objects.equals(regionId, vur.regionId) 
+		return Objects.equals(regionId, vur.regionId)
+				&& Objects.equals(ownerId, vur.ownerId)
 				&& Objects.equals(tenantId, vur.tenantId)
-				&& Objects.equals(serviceInstanceId, vur.serviceInstanceId)
+                && Objects.equals(serviceInstanceId, vur.serviceInstanceId)
 				&& Objects.equals(vnfId, vur.vnfId)
 				&& Objects.equals(vnfName, vur.vnfName)
 				&& Objects.equals(vfModuleId, vur.vfModuleId)

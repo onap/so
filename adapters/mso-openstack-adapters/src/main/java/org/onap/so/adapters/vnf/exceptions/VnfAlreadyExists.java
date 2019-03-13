@@ -36,7 +36,7 @@ public class VnfAlreadyExists extends VnfException {
 
 	private static final long serialVersionUID = 1L;
 
-	public VnfAlreadyExists (String name, String cloudId, String tenantId, String vnfId) {
-		super("Resource " + name + " already exists in cloud/tenant " + cloudId + "/" + tenantId + " with ID " + vnfId);
+	public VnfAlreadyExists (String name, String cloudId, String cloudOwner, String tenantId, String vnfId) {
+		super("Resource " + name + " already exists in owner/cloud/tenant " + cloudOwner + "/" + cloudId + "/" + tenantId + " with ID " + vnfId);
 	}
 }

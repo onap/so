@@ -33,6 +33,7 @@ public class VnfRollbackTest extends BaseTest {
 	
 	private String vnfId = "testVnfId";
 	private String tenantId = "testTenantId";
+	private String cloudOwner = "testCloudOwner";
 	private String cloudSiteId = "testCloudSiteId";
 	private boolean tenantCreated = true;
 	private boolean vnfCreated = true;
@@ -42,16 +43,17 @@ public class VnfRollbackTest extends BaseTest {
 	private String requestType = "testRequestType";
 	private String modelCustomizationUuid = "testModelCustimizationUuid";
 	private String orchestrationMode = "testOrchestrationMode";
-	private static final String VNF_ROLLBACK_STRING = "VnfRollback: cloud=testCloudSiteId, tenant=testTenantId, vnf=testVnfId, "
+	private static final String VNF_ROLLBACK_STRING = "VnfRollback: cloud=testCloudSiteId, cloudOwner=testCloudOwner, tenant=testTenantId, vnf=testVnfId, "
 			+ "tenantCreated=true, vnfCreated=true, requestType = testRequestType, modelCustomizationUuid=testModelCustimizationUuid, mode=testOrchestrationMode";
 	
 	@Test
 	public void VnfRollbackInstantiationTest() {
-		vnfRollback = new VnfRollback(vnfId, tenantId, cloudSiteId, tenantCreated, vnfCreated,
+		vnfRollback = new VnfRollback(vnfId, tenantId, cloudOwner, cloudSiteId, tenantCreated, vnfCreated,
 				msoRequest, volumeGroupName, volumeGroupId, requestType, modelCustomizationUuid);
 		
 		assertEquals(vnfId, vnfRollback.getVnfId());
 		assertEquals(tenantId, vnfRollback.getTenantId());
+		assertEquals(cloudOwner, vnfRollback.getCloudOwner());
 		assertEquals(cloudSiteId, vnfRollback.getCloudSiteId());
 		assertEquals(tenantCreated, vnfRollback.getTenantCreated());
 		assertEquals(vnfCreated, vnfRollback.getVnfCreated());
@@ -64,11 +66,12 @@ public class VnfRollbackTest extends BaseTest {
 	
 	@Test
 	public void VnfRollbackInstantiationOrchestrationModeTest() {
-		vnfRollback = new VnfRollback(vnfId, tenantId, cloudSiteId, tenantCreated, vnfCreated,
+		vnfRollback = new VnfRollback(vnfId, tenantId, cloudOwner, cloudSiteId, tenantCreated, vnfCreated,
 				msoRequest, volumeGroupName, volumeGroupId, requestType, modelCustomizationUuid, orchestrationMode);
 		
 		assertEquals(vnfId, vnfRollback.getVnfId());
 		assertEquals(tenantId, vnfRollback.getTenantId());
+		assertEquals(cloudOwner, vnfRollback.getCloudOwner());
 		assertEquals(cloudSiteId, vnfRollback.getCloudSiteId());
 		assertEquals(tenantCreated, vnfRollback.getTenantCreated());
 		assertEquals(vnfCreated, vnfRollback.getVnfCreated());
@@ -82,7 +85,7 @@ public class VnfRollbackTest extends BaseTest {
 	
 	@Test
 	public void toStringTest() {
-		vnfRollback = new VnfRollback(vnfId, tenantId, cloudSiteId, tenantCreated, vnfCreated,
+		vnfRollback = new VnfRollback(vnfId, tenantId, cloudOwner, cloudSiteId, tenantCreated, vnfCreated,
 				msoRequest, volumeGroupName, volumeGroupId, requestType, modelCustomizationUuid, orchestrationMode);
 		
 		assertEquals(VNF_ROLLBACK_STRING, vnfRollback.toString());
