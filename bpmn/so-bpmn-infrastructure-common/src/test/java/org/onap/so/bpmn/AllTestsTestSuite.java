@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,8 +29,8 @@ import com.googlecode.junittoolbox.WildcardPatternSuite;
 
 @RunWith(WildcardPatternSuite.class)
 @SuiteClasses({"!**/service/*Test.class", "!**/subprocess/*Test.class", "!**/process/*Test.class", 
-	"!**/tasks/*Test.class", "!**/infrastructure/aai/*Test.class", 
-	"!**/scripts/*Test.class", "**/*Test.class"})
+	"!**/tasks/*Test.class", "!**/infrastructure/aai/*Test.class",
+	"!**/infrastructure/scripts/*Test.class", "**/*Test.class"})
 public class AllTestsTestSuite {
 	// the class remains empty,
 	// used only as a holder for the above annotations

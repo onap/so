@@ -18,32 +18,29 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.vcpe.scripts;
+package org.onap.so.bpmn.vcpe.scripts
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 class MapGetter implements Answer<Object> {
-	final Map<String,Object> map;
-	
-	public MapGetter() {
-		map = new HashMap<>();
-	}
-	
-	public MapGetter(Map<String,Object> map) {
-		this.map = map;
-	}
+    final Map<String, Object> map;
 
-	public Map<String, Object> getMap() {
-		return map;
-	}
+    public MapGetter() {
+        map = new HashMap<>();
+    }
 
-	@Override
-	public Object answer(InvocationOnMock invocation) throws Throwable {
-		return map.get(invocation.getArgumentAt(0, String.class));
-	}
+    public MapGetter(Map<String, Object> map) {
+        this.map = map;
+    }
+
+    public Map<String, Object> getMap() {
+        return map;
+    }
+
+    @Override
+    public Object answer(InvocationOnMock invocation) throws Throwable {
+        return map.get(invocation.getArgumentAt(0, String.class));
+    }
 
 }

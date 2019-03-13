@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,33 +20,30 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.vcpe.scripts;
+package org.onap.so.bpmn.vcpe.scripts
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.invocation.InvocationOnMock
+import org.mockito.stubbing.Answer
 
 class MapSetter implements Answer<Void> {
-	final Map<String,Object> map;
-	
-	public MapSetter() {
-		map = new HashMap<>();
-	}
-	
-	public MapSetter(Map<String,Object> map) {
-		this.map = map;
-	}
+    final Map<String, Object> map;
 
-	public Map<String, Object> getMap() {
-		return map;
-	}
+    public MapSetter() {
+        map = new HashMap<>();
+    }
 
-	@Override
-	public Void answer(InvocationOnMock invocation) throws Throwable {
-		map.put(invocation.getArgumentAt(0, String.class), invocation.getArgumentAt(1, Object.class));
-		return null;
-	}
+    public MapSetter(Map<String, Object> map) {
+        this.map = map;
+    }
+
+    public Map<String, Object> getMap() {
+        return map;
+    }
+
+    @Override
+    public Void answer(InvocationOnMock invocation) throws Throwable {
+        map.put((String) invocation.getArgument(0), invocation.getArgument(1))
+        return null
+    }
 
 }
