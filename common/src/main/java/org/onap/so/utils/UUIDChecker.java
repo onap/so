@@ -25,6 +25,7 @@ package org.onap.so.utils;
 
 import java.util.UUID;
 
+import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,9 @@ public class UUIDChecker {
         }
     }
 
-    public static String getUUID () {
-        return UUID.randomUUID().toString();
+    public static String getUUID() {
+        String result = UUID.randomUUID().toString();
+        logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID, result);
+        return result;
     }
 }
