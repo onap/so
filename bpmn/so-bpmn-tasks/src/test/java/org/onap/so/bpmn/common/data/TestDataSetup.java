@@ -382,7 +382,24 @@ public class TestDataSetup{
 		}
 
 		collection.setInstanceGroup(instanceGroup);
+		
 
+		return instanceGroup;
+	}
+
+	public InstanceGroup setInstanceGroupVnf() {
+		InstanceGroup instanceGroup = buildInstanceGroup();
+
+		ServiceInstance serviceInstance = null;
+
+		try {
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+		} catch(BBObjectNotFoundException e) {
+			serviceInstance = setServiceInstance();
+		}
+
+		serviceInstance.getInstanceGroups().add(instanceGroup);
+		lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, instanceGroup.getId());
 
 		return instanceGroup;
 	}

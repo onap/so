@@ -657,7 +657,7 @@ public class ServiceInstances {
 	public Response deleteInstanceGroups(@PathParam("version") String version, @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_ID, instanceGroupId);
+		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_INSTANCE_ID, instanceGroupId);
 		return deleteInstanceGroups(Action.deleteInstance, instanceIdMap, version, requestId, getRequestUri(requestContext), requestContext);
 	}
 	
@@ -670,7 +670,7 @@ public class ServiceInstances {
     public Response addInstanceGroupMembers(String request, @PathParam("version") String version, @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_ID, instanceGroupId);
+		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_INSTANCE_ID, instanceGroupId);
 		return serviceInstances(request, Action.addMembers, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 	
@@ -683,7 +683,7 @@ public class ServiceInstances {
     public Response removeInstanceGroupMembers(String request, @PathParam("version") String version, @PathParam("instanceGroupId") String instanceGroupId, @Context ContainerRequestContext requestContext) throws ApiException {
 		String requestId = getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
-		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_ID, instanceGroupId);
+		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_INSTANCE_ID, instanceGroupId);
 		return serviceInstances(request, Action.removeMembers, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
 
@@ -808,16 +808,13 @@ public class ServiceInstances {
 		}
 		
 		
-		serviceInstanceId = "";
+		serviceInstanceId = setServiceInstanceId(requestScope, sir);
 		String vnfId = "";
 		String vfModuleId = "";
 		String volumeGroupId = "";
 		String networkId = "";
 		String pnfCorrelationId = "";
 		String instanceGroupId = null;
-		if(sir.getServiceInstanceId () != null){
-			serviceInstanceId = sir.getServiceInstanceId ();
-		}
 
 		if(sir.getVnfInstanceId () != null){
 			vnfId = sir.getVnfInstanceId ();
@@ -884,7 +881,7 @@ public class ServiceInstances {
 		return postBPELRequest(currentActiveReq, requestClientParameter, recipeLookupResult.getOrchestrationURI(), requestScope);
 	}
 	public Response deleteInstanceGroups(Actions action, HashMap<String, String> instanceIdMap, String version, String requestId, String requestUri, ContainerRequestContext requestContext) throws ApiException {
-		String instanceGroupId = instanceIdMap.get(CommonConstants.INSTANCE_GROUP_ID);
+		String instanceGroupId = instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID);
 		Boolean aLaCarte = true;
 		long startTime = System.currentTimeMillis ();
 		String apiVersion = version.substring(1);
@@ -1117,8 +1114,8 @@ public class ServiceInstances {
         	if(instanceIdMap.get("configurationInstanceId") != null){
         		currentActiveReq.setConfigurationId(instanceIdMap.get("configurationInstanceId"));
         	}
-        	if(instanceIdMap.get("InstanceGroupInstanceId") != null){
-        		currentActiveReq.setInstanceGroupId(instanceIdMap.get("InstanceGroupInstanceId"));
+        	if(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID) != null){
+        		currentActiveReq.setInstanceGroupId(instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID));
         	}
 		}
 	}
@@ -1969,5 +1966,21 @@ public class ServiceInstances {
 			serviceType = msoRequest.getServiceInstanceType(sir, requestScope);
 		}
 		return serviceType;
+	}
+	protected String setServiceInstanceId(String requestScope, ServiceInstancesRequest sir){
+		if(sir.getServiceInstanceId () != null){
+			return sir.getServiceInstanceId ();
+		}else if(requestScope.equalsIgnoreCase(ModelType.instanceGroup.toString())){
+			RelatedInstanceList[] relatedInstances = sir.getRequestDetails().getRelatedInstanceList();
+			if(relatedInstances != null){
+				for(RelatedInstanceList relatedInstanceList : relatedInstances){
+					RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+					if(relatedInstance.getModelInfo().getModelType() == ModelType.service){
+						return relatedInstance.getInstanceId();
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

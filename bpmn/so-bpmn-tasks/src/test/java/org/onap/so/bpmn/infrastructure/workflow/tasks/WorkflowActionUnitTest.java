@@ -144,9 +144,9 @@ public class WorkflowActionUnitTest {
 		when(catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(any(String.class), any(String.class)))
 			.thenReturn(cvnfcCustomizations);
 		
-		List<String> results = workflowAction.traverseCatalogDbForConfiguration("myVnfCustomizationId", "myVfModuleCustomizationId");
+		List<VnfVfmoduleCvnfcConfigurationCustomization> results = workflowAction.traverseCatalogDbForConfiguration("myVnfCustomizationId", "myVfModuleCustomizationId");
 		
-		assertThat(results, is(Arrays.asList("my-uuid")));
+		assertThat(results, is(Arrays.asList(vfModuleCustomization)));
 		
 	}
 	

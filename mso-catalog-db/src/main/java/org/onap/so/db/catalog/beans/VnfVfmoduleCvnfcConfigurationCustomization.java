@@ -213,6 +213,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 		this.configurationResource = configurationResource;
 	}
 
+	@LinkedResource
 	public CvnfcCustomization getCvnfcCustomization() {
 		return cvnfcCustomization;
 	}

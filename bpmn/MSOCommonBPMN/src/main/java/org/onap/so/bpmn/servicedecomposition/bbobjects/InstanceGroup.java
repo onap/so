@@ -30,6 +30,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
+import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -48,10 +49,14 @@ public class InstanceGroup  implements Serializable, ShallowCopy<InstanceGroup> 
 	private String resourceVersion;
 	@JsonProperty("instance-group-name")
 	private String instanceGroupName;
+	@JsonProperty("orchestration-status")
+	private OrchestrationStatus orchestrationStatus = OrchestrationStatus.PRECREATED;
 	@JsonProperty("model-info-instance-group")
 	private ModelInfoInstanceGroup modelInfoInstanceGroup;
 	@JsonProperty("instance-group-function")
 	private String instanceGroupFunction;
+	@JsonProperty("vnfs")
+	private List<GenericVnf> vnfs = new ArrayList<>();
 	
 	public String getId() {
 		return id;
@@ -76,6 +81,12 @@ public class InstanceGroup  implements Serializable, ShallowCopy<InstanceGroup> 
 	}
 	public void setInstanceGroupName(String instanceGroupName) {
 		this.instanceGroupName = instanceGroupName;
+	}	
+	public OrchestrationStatus getOrchestrationStatus() {
+		return orchestrationStatus;
+	}
+	public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
+		this.orchestrationStatus = orchestrationStatus;
 	}
 	public ModelInfoInstanceGroup getModelInfoInstanceGroup() {
 		return modelInfoInstanceGroup;
@@ -88,6 +99,12 @@ public class InstanceGroup  implements Serializable, ShallowCopy<InstanceGroup> 
 	}
 	public void setInstanceGroupFunction(String instanceGroupFunction) {
 		this.instanceGroupFunction = instanceGroupFunction;
+	}
+	public List<GenericVnf> getVnfs() {
+		return vnfs;
+	}
+	public void setVnfs(List<GenericVnf> vnfs) {
+		this.vnfs = vnfs;
 	}
 	@Override
 	public boolean equals(final Object other) {
