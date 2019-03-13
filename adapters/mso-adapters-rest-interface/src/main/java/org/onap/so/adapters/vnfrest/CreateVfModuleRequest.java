@@ -23,9 +23,14 @@ package org.onap.so.adapters.vnfrest;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.openstack.mappers.MapAdapter;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
@@ -35,6 +40,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 */
 @JsonRootName("createVfModuleRequest")
 @XmlRootElement(name = "createVfModuleRequest")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CreateVfModuleRequest extends VfRequestCommon {
 	private String cloudSiteId;
 	private String tenantId;
@@ -57,7 +63,7 @@ public class CreateVfModuleRequest extends VfRequestCommon {
 	private Boolean failIfExists = false;
 	private Boolean backout = true;
 	private Boolean enableBridge;
-
+	@XmlJavaTypeAdapter(MapAdapter.class)
 	private Map<String, Object> vfModuleParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 

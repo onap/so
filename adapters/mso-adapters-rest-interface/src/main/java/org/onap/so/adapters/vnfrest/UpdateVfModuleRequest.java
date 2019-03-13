@@ -24,14 +24,19 @@ package org.onap.so.adapters.vnfrest;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.openstack.mappers.MapAdapter;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateVfModuleRequest")
 @XmlRootElement(name = "updateVfModuleRequest")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class UpdateVfModuleRequest extends VfRequestCommon {
 
 	private String cloudSiteId;
@@ -57,7 +62,8 @@ public class UpdateVfModuleRequest extends VfRequestCommon {
 	private String requestType;
 	private Boolean failIfExists;
 	private Boolean backout;
-
+	
+	@XmlJavaTypeAdapter(MapAdapter.class)
 	private Map<String,Object> vfModuleParams = new HashMap<>();
 	private MsoRequest msoRequest = new MsoRequest();
 

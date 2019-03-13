@@ -18,8 +18,19 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.graphinventory.entities;
+package org.onap.so.openstack.mappers;
 
-public class Id extends Resource {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MapEntry {
+	
+	 public List<MapElements> entry = new ArrayList<>();
+	
+	public MapEntry() {} //Required by JAXB
+
+	public void addEntry(String key, Object value) {
+		entry.add(new MapElements(key, value));
+	}
 
 }
