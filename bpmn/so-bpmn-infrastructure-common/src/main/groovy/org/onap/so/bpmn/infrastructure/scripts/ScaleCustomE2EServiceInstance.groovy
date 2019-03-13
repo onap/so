@@ -94,7 +94,7 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
             execution.setVariable("resources", resources)
 
             // node template UUID
-            String nodeTemplateUUID = UUIDChecker.generateUUID(msoLogger)
+            String nodeTemplateUUID = UUIDChecker.getUUID();
             execution.setVariable("nodeTemplateUUID", nodeTemplateUUID)
 
             //subscriberInfo

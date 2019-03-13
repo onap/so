@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +26,6 @@ package org.onap.so.utils;
 import java.util.UUID;
 
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +35,7 @@ public class UUIDChecker {
 
     private static final Logger logger = LoggerFactory.getLogger(UUIDChecker.class);
 
-
     private UUIDChecker() {
-
     }
 
     public static boolean isValidUUID (String id) {
@@ -54,31 +52,8 @@ public class UUIDChecker {
     }
 
     public static String getUUID () {
-        return UUID.randomUUID().toString();
-    }
-
-    public static String verifyOldUUID (String oldId, MsoLogger msoLogger) {
-        if (!UUIDChecker.isValidUUID(oldId)) {
-            String newId = UUIDChecker.getUUID();
-            MsoLogger.setLogContext(newId, null);
-            msoLogger.info(MessageEnum.APIH_REPLACE_REQUEST_ID, oldId, "", "");
-            return newId;
-        }
-        MsoLogger.setLogContext(oldId, null);
-        return oldId;
-    }
-
-    public static String generateUUID (MsoLogger msoLogger) {
-        String newId = UUIDChecker.getUUID();
-        MsoLogger.setLogContext(newId, null);
-        msoLogger.info(MessageEnum.APIH_GENERATED_REQUEST_ID, newId, "", "");
-        return newId;
-    }
-
-    public static String generateServiceInstanceID (MsoLogger msoLogger) {
-        String newId = UUIDChecker.getUUID();
-        MsoLogger.setLogContext(null, newId);
-        msoLogger.info(MessageEnum.APIH_GENERATED_SERVICE_INSTANCE_ID, newId, "", "");
-        return newId;
+        String result = UUID.randomUUID().toString();
+        logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID, result);
+        return result;
     }
 }
