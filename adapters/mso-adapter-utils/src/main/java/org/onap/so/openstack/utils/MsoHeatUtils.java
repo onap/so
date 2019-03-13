@@ -1330,13 +1330,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         logger.debug("Parameter: {} is of type {}", key, type);
         if ("string".equalsIgnoreCase(type)) {
 				// Easiest!
-				String str = inputs.get(key).toString();
+				String str = inputs.get(key) != null ? inputs.get(key).toString() : null;
 				if (alias)
 					newInputs.put(realName, str);
 				else
 					newInputs.put(key, str);
 			} else if ("number".equalsIgnoreCase(type)) {
-				String integerString = inputs.get(key).toString();
+				String integerString = inputs.get(key) != null ? inputs.get(key).toString() : null;
 				Integer anInteger = null;
 				try {
 					anInteger = Integer.parseInt(integerString);
@@ -1375,7 +1375,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     			else
     				newInputs.put(key, json);
 			} else if ("comma_delimited_list".equalsIgnoreCase(type)) {
-				String commaSeparated = inputs.get(key).toString();
+				String commaSeparated = inputs.get(key) != null ? inputs.get(key).toString() : null;
 				try {
 					List<String> anArrayList = this.convertCdlToArrayList(commaSeparated);
 					if (alias)
@@ -1390,7 +1390,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 						newInputs.put(key, commaSeparated);
 				}
 			} else if ("boolean".equalsIgnoreCase(type)) {
-				String booleanString = inputs.get(key).toString();
+				String booleanString = inputs.get(key) != null ? inputs.get(key).toString() : null;
 				Boolean aBool = Boolean.valueOf(booleanString);
 				if (alias)
 					newInputs.put(realName, aBool);

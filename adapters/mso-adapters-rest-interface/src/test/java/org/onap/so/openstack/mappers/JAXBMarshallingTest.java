@@ -18,8 +18,34 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.graphinventory.entities;
+package org.onap.so.openstack.mappers;
 
-public class Id extends Resource {
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
+import org.junit.Test;
+import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
+
+
+public class JAXBMarshallingTest {
+
+
+	@Test
+	public void xmlMarshalTest() throws IOException, JAXBException {
+		JAXBContext context = JAXBContext.newInstance(CreateVfModuleRequest.class);
+
+		CreateVfModuleRequest request = (CreateVfModuleRequest) context.createUnmarshaller().unmarshal(Files.newBufferedReader(Paths.get("src/test/resources/createVfModuleRequest-with-params.xml")));
+
+		assertEquals("ubuntu-16-04-cloud-amd64", request.getVfModuleParams().get("vcpe_image_name"));
+		assertEquals("10.2.0.0/24", request.getVfModuleParams().get("cpe_public_net_cidr"));
+		assertEquals("", request.getVfModuleParams().get("workload_context"));
+
+	}
 
 }

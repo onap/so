@@ -24,14 +24,19 @@ package org.onap.so.adapters.vnfrest;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.openstack.mappers.MapAdapter;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("createVolumeGroupRequest")
 @XmlRootElement(name = "createVolumeGroupRequest")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CreateVolumeGroupRequest extends VfRequestCommon {
 	private String cloudSiteId;
 	private String tenantId;
@@ -41,6 +46,7 @@ public class CreateVolumeGroupRequest extends VfRequestCommon {
 	private String vnfVersion;
 	private String vfModuleType;
 	private String modelCustomizationUuid;
+	@XmlJavaTypeAdapter(MapAdapter.class)
 	private Map<String,Object> volumeGroupParams = new HashMap<>();
 	private Boolean failIfExists;
 	private Boolean enableBridge;
