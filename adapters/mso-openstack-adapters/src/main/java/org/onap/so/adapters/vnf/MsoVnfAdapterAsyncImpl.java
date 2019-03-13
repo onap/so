@@ -132,7 +132,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                             String messageId,
                             MsoRequest msoRequest,
                             String notificationUrl) {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.info("{} createVnfA", MessageEnum.RA_ASYNC_CREATE_VNF);
         // Use the synchronous method to perform the actual Create
         MsoVnfAdapter vnfAdapter = vnfImpl;
@@ -213,7 +213,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                             String messageId,
                             MsoRequest msoRequest,
                             String notificationUrl) {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.info("{} UpdateVnfA", MessageEnum.RA_ASYNC_UPDATE_VNF);
 
         // Use the synchronous method to perform the actual Create
@@ -289,9 +289,8 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                            String messageId,
                            MsoRequest msoRequest,
                            String notificationUrl) {
-        String error;
+
         String serviceName = "QueryVnfA";
-        MsoLogger.setLogContext (msoRequest);
         logger.info("{}", MessageEnum.RA_ASYNC_QUERY_VNF);
 
         // Use the synchronous method to perform the actual query
@@ -376,9 +375,8 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                             String messageId,
                             MsoRequest msoRequest,
                             String notificationUrl) {
-        String error;
+
         String serviceName = "DeleteVnfA";
-        MsoLogger.setLogContext (msoRequest);
         logger.info("{}", MessageEnum.RA_ASYNC_DELETE_VNF);
 
         // Use the synchronous method to perform the actual delete
@@ -441,7 +439,6 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             return;
         }
 
-        MsoLogger.setLogContext (rollback.getMsoRequest ());
         logger.info("{} rollbackVnfA", MessageEnum.RA_ASYNC_ROLLBACK_VNF);
 
         // Use the synchronous method to perform the actual rollback

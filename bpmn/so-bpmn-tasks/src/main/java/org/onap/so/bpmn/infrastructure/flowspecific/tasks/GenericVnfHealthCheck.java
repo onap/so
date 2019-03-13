@@ -110,23 +110,22 @@ public class GenericVnfHealthCheck {
 			appcCode = appCClient.getErrorCode();
 			appcMessage = appCClient.getErrorMessage();
         } catch (BpmnError ex) {
-			logger.error("", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Caught exception in GenericVnfHealthCheck", "BPMN",
-				MsoLogger
-				.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), ex);
-            appcMessage = ex.getMessage();
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Caught exception in GenericVnfHealthCheck", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), ex);
+			appcMessage = ex.getMessage();
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 		} catch (Exception e) {
 			if (e instanceof java.util.concurrent.TimeoutException )
 			{
 				appcMessage = "Request to APPC timed out. ";
-				logger.error("{} {} {} {} {} {}", MessageEnum.RA_CONNECTION_EXCEPTION.toString(),
+				logger.error("{} {} {} {} {}", MessageEnum.RA_CONNECTION_EXCEPTION.toString(),
 					"Caught timedOut exception in runAppcCommand in GenericVnfHealthCheck", "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
+					MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
 				throw e;
 			}
 			else {
-				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
-					"Caught exception in runAppcCommand in GenericVnfHealthCheck", "BPMN", MsoLogger.getServiceName(),
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
+					"Caught exception in runAppcCommand in GenericVnfHealthCheck", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
 				appcMessage = e.getMessage();
 				exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);

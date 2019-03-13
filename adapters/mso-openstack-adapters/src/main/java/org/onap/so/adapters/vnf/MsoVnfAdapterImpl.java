@@ -302,7 +302,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                           Holder <String> vnfId,
                           Holder <VnfStatus> status,
                           Holder <Map <String, String>> outputs) throws VnfException {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.debug("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
 
         // Will capture execution time for metrics
@@ -361,7 +361,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            String tenantId,
                            String vnfName,
                            MsoRequest msoRequest) throws VnfException {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.debug("Deleting VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics
         long startTime = System.currentTimeMillis ();
@@ -409,15 +409,12 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         String tenantId = rollback.getTenantId ();
         String vnfId = rollback.getVnfId ();
 
-        MsoLogger.setLogContext (rollback.getMsoRequest());
-
         logger.debug("Rolling Back VNF {} in {}", vnfId, cloudSiteId + "/" + tenantId);
 
         // Use the MsoHeatUtils to delete the stack. Set the polling flag to true.
         // The possible outcomes of deleteStack are a StackInfo object with status
         // of NOTFOUND (on success) or FAILED (on error). Also, MsoOpenstackException
         // could be thrown.
-        long subStartTime = System.currentTimeMillis ();
         try {
             heat.deleteStack (tenantId, cloudSiteId, vnfId, true);
         } catch (MsoException me) {
@@ -600,7 +597,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 useMCUuid = true;
             }
         }
-    	MsoLogger.setLogContext (msoRequest);
+
     	String requestTypeString = "";
         if (requestType != null && !"".equals(requestType)) {
         	requestTypeString = requestType;

@@ -88,7 +88,6 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                               MsoRequest msoRequest,
                               Holder <String> tenantId,
                               Holder <TenantRollback> rollback) throws TenantException {
-        MsoLogger.setLogContext (msoRequest);
 
         logger.debug("Call to MSO createTenant adapter. Creating Tenant: {} in {}", tenantName, cloudSiteId);
 
@@ -152,7 +151,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                              Holder <String> tenantId,
                              Holder <String> tenantName,
                              Holder <Map <String, String>> metadata) throws TenantException {
-        MsoLogger.setLogContext (msoRequest);
+
         logger.debug ("Querying Tenant {} in {}", tenantNameOrId, cloudSiteId);
 
         MsoTenantUtils tUtils;
@@ -196,7 +195,6 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                               String tenantId,
                               MsoRequest msoRequest,
                               Holder <Boolean> tenantDeleted) throws TenantException {
-        MsoLogger.setLogContext (msoRequest);
 
         logger.debug ("Deleting Tenant {} in {}", tenantId, cloudSiteId);
 
@@ -238,7 +236,6 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         String cloudSiteId = rollback.getCloudId ();
         String tenantId = rollback.getTenantId ();
 
-        MsoLogger.setLogContext (rollback.getMsoRequest ());
         logger.debug("Rolling Back Tenant {} in {}", rollback.getTenantId(), cloudSiteId);
 
         if (rollback.getTenantCreated ()) {

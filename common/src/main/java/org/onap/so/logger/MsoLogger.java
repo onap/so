@@ -888,16 +888,6 @@ public class MsoLogger {
 	        MDC.remove(TARGETSERVICENAME);
 		
 	}
-    
-    public void logStackTrace(Exception ex){
-    	StringWriter errors = new StringWriter();
-    	ex.printStackTrace(new PrintWriter(errors));
-    	logger.error(errors.toString());
-    }
-
-    public boolean isDebugEnabled() {
-        return logger.isDebugEnabled();
-    }
 
     private void prepareMsg(String loggingLevel) {
         prepareMsg(loggingLevel, null, null);
@@ -959,7 +949,6 @@ public class MsoLogger {
         MDC.put(ERRORDESC, errorDesc);
         MDC.put(TARGETENTITY, targetEntity);
         MDC.put(TARGETSERVICENAME, targetServiceName);
-        MDC.put(SERVICE_NAME, getFinalServiceName(getServiceName()));
     }
 
     private void prepareMetricMsg(long startTime, StatusCode statusCode, int responseCode, String responseDesc,
@@ -1042,7 +1031,7 @@ public class MsoLogger {
 
     /**
      * Set the requestId and serviceInstanceId
-     * 
+     *
      * @param reqId
      *            The requestId
      * @param svcId
@@ -1065,22 +1054,6 @@ public class MsoLogger {
      */
     public static String getServiceName() {
         return MDC.get(SERVICE_NAME);
-    }
-
-    /**
-     * Set the requestId and serviceInstanceId based on the mso request
-     * 
-     * @param msoRequest
-     *            The mso request
-     */
-    public static void setLogContext(MsoRequest msoRequest) {
-        if (msoRequest != null) {
-            MDC.put(REQUEST_ID, msoRequest.getRequestId());
-            MDC.put(SERVICE_INSTANCE_ID, msoRequest.getServiceInstanceId());
-        } else {
-            MDC.put(REQUEST_ID, DUMMY_VALUE);
-            MDC.put(SERVICE_INSTANCE_ID, DUMMY_VALUE);
-        }
     }
 
     private String normalize(String input) {

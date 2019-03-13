@@ -51,8 +51,8 @@ public class NamingClientResponseValidator {
 	
 	public String validateNameGenResponse(ResponseEntity<NameGenResponse> response) throws BadResponseException {
 		if (response == null) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), NO_RESPONSE_FROM_NAMING_SERVICE,
-				"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+			logger.error("{} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), NO_RESPONSE_FROM_NAMING_SERVICE,
+				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
 				NO_RESPONSE_FROM_NAMING_SERVICE);
 			throw new BadResponseException(NO_RESPONSE_FROM_NAMING_SERVICE);
 		}
@@ -61,8 +61,8 @@ public class NamingClientResponseValidator {
         String generatedName = "";
         NameGenResponse responseBody = response.getBody();
         if (responseBody == null) {
-					logger.error("{} {} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), NULL_RESPONSE_FROM_NAMING_SERVICE,
-							"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+					logger.error("{} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), NULL_RESPONSE_FROM_NAMING_SERVICE,
+							"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
 							NULL_RESPONSE_FROM_NAMING_SERVICE);
 			throw new BadResponseException(NULL_RESPONSE_FROM_NAMING_SERVICE);
 		}             
@@ -91,16 +91,16 @@ public class NamingClientResponseValidator {
 				errorMessageString = error.getMessage();
 			}
 			String errorMessage = String.format(NAMING_SERVICE_ERROR, errorMessageString);
-			logger.error("{} {} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), errorMessage, "BPMN",
-				MsoLogger.getServiceName(), MsoLogger.ErrorCode.DataError.getValue(), errorMessage);
+			logger.error("{} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), errorMessage, "BPMN",
+				MsoLogger.ErrorCode.DataError.getValue(), errorMessage);
 			throw new BadResponseException(errorMessage);
 		}		
 	}
 	
 	public String validateNameGenDeleteResponse(ResponseEntity<NameGenDeleteResponse> response) throws BadResponseException {
 		if (response == null) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), NO_RESPONSE_FROM_NAMING_SERVICE,
-				"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+			logger.error("{} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), NO_RESPONSE_FROM_NAMING_SERVICE,
+				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
 				NO_RESPONSE_FROM_NAMING_SERVICE);
 			throw new BadResponseException(NO_RESPONSE_FROM_NAMING_SERVICE);
 		}
@@ -109,8 +109,8 @@ public class NamingClientResponseValidator {
         String responseMessage = "";
         NameGenDeleteResponse responseBody = response.getBody();
         if (responseBody == null) {
-					logger.error("{} {} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), NULL_RESPONSE_FROM_NAMING_SERVICE,
-							"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+					logger.error("{} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), NULL_RESPONSE_FROM_NAMING_SERVICE,
+							"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
 							NULL_RESPONSE_FROM_NAMING_SERVICE);
 			throw new BadResponseException(NULL_RESPONSE_FROM_NAMING_SERVICE);
 		}             
@@ -122,7 +122,7 @@ public class NamingClientResponseValidator {
 			String errorMessageString = NAMING_SERVICE_ERROR;
 			
 			String errorMessage = String.format(NAMING_SERVICE_ERROR, errorMessageString);
-			logger.error("{} {} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), errorMessage, "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), errorMessage, "BPMN",
 				MsoLogger.ErrorCode.DataError.getValue(), errorMessage);
 			throw new BadResponseException(errorMessage);
 		}		
@@ -142,7 +142,7 @@ public class NamingClientResponseValidator {
 			errorMessageString = error.getMessage();
 		}
 		String errorMessage = String.format(NAMING_SERVICE_ERROR, errorMessageString);
-		logger.error("{} {} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), errorMessage, "BPMN", MsoLogger.getServiceName(),
+		logger.error("{} {} {} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), errorMessage, "BPMN",
 				MsoLogger.ErrorCode.DataError.getValue(), errorMessage);
 		return errorMessage;
 	}
