@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,28 +30,28 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.appc.client.lcm.model.Action;
 
-public class VNFQuiesceTrafficActivityTest extends BaseBPMNTest{
+public class VNFSnapShotActivityTest extends BaseBPMNTest{
 	@Test
-	public void sunnyDayVNFQuiesceTrafficActivity_Test() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFQuiesceTrafficActivity", variables);
+	public void sunnyDayVNFSnapShotActivity_Test() throws InterruptedException {
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSnapShotActivity", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFQuiesceTrafficActivity_Start",
+		assertThat(pi).isStarted().hasPassedInOrder("VNFSnapShotActivity_Start",
 				"TaskPreProcessActivity",
-				"TaskQuiesceTraffic",								   
-				"VNFQuiesceTrafficActivity_End");
+				"TaskSnapShot",								   
+				"VNFSnapShotActivity_End");
 		assertThat(pi).isEnded();
 	}
 	
-	@Test
-	public void rainyDayVNFQuiesceTrafficActivity_Test() throws Exception {
-		variables.put("actionQuiesceTraffic", Action.QuiesceTraffic);
+	@Test	
+	public void rainyDayVNFSnapShotActivity_Test() throws Exception {
+		variables.put("actionSnapshot", Action.Snapshot);
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
 				.runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFQuiesceTrafficActivity", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFQuiesceTrafficActivity_Start",
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSnapShotActivity", variables);
+		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFSnapShotActivity_Start",
 				"TaskPreProcessActivity",
-				"TaskQuiesceTraffic").hasNotPassed(								   
-				"VNFQuiesceTrafficActivity_End");		
+				"TaskSnapShot").hasNotPassed(								   
+				"VNFSnapShotActivity_End");		
 	}
 	
 }
