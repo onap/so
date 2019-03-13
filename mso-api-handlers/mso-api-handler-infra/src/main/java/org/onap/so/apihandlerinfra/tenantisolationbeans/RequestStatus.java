@@ -38,7 +38,7 @@ public class RequestStatus implements Serializable {
     protected String statusMessage;
 	@JsonProperty("percentProgress")
     protected String percentProgress;
-	@JsonProperty("timeStamp")
+	@JsonProperty("timestamp")
     protected String timeStamp;
 
 

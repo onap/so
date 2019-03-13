@@ -21,17 +21,21 @@
 package org.onap.so.serviceinstancebeans;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestStatus {
 
-    protected String requestState;
+	@JsonProperty("requestState")
+	protected String requestState;
+	@JsonProperty("statusMessage")
     protected String statusMessage;
+	@JsonProperty("percentProgress")
     protected Integer percentProgress;
+	@JsonProperty("timestamp")
     protected String timeStamp;
-
 
 	public String getRequestState() {
 		return requestState;
@@ -60,6 +64,6 @@ public class RequestStatus {
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
-				.append("percentProgress", percentProgress).append("timeStamp", timeStamp).toString();
+				.append("percentProgress", percentProgress).append("timestamp", timeStamp).toString();
 	}
 }
