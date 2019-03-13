@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,6 +32,8 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.client.HttpClient
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
 import java.util.UUID
 
@@ -37,7 +41,7 @@ import java.util.UUID
 
 
 class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, VnfAdapterRestV1.class);
+    private static final Logger logger = LoggerFactory.getLogger( VnfAdapterRestV1.class);
 
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
@@ -47,7 +51,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		def prefix="VNFREST_"
 		execution.setVariable("prefix", prefix)
@@ -61,9 +65,9 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			Node root = new XmlParser().parseText(request)
 			String requestType = root.name()
 			execution.setVariable(prefix + 'requestType', requestType)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'requestType = ' + requestType)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'requestType = ' + requestType)
 
-			msoLogger.debug('VnfAdapterRestV1, request: ' + request)
+			logger.debug('VnfAdapterRestV1, request: ' + request)
 			// Get the messageId from the request
 
 			String messageId = getChildText(root, 'messageId')
@@ -74,12 +78,13 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			if (messageId == null || messageId.isEmpty()) {
 				String msg = getProcessKey(execution) + ': no messageId in ' + requestType
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
 			execution.setVariable('VNFAResponse_CORRELATOR', messageId)
-			msoLogger.debug(getProcessKey(execution) + ': VNFAResponse_CORRELATOR = ' + messageId)
+			logger.debug(getProcessKey(execution) + ': VNFAResponse_CORRELATOR = ' + messageId)
 
 			// Get the notificationUrl from the request
 
@@ -87,12 +92,13 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			if (notificationUrl == null || notificationUrl.isEmpty()) {
 				String msg = getProcessKey(execution) + ': no notificationUrl in ' + requestType
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
 			execution.setVariable(prefix + 'notificationUrl', notificationUrl)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'notificationUrl = ' + notificationUrl)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'notificationUrl = ' + notificationUrl)
 
 			// Determine the VnfAdapter endpoint
 
@@ -100,7 +106,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			if (vnfAdapterEndpoint == null || vnfAdapterEndpoint.isEmpty()) {
 				String msg = getProcessKey(execution) + ': mso:adapters:vnf:rest:endpoint URN mapping is not defined'
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -117,7 +124,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (vnfId == null || vnfId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no vnfId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -129,7 +137,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (vnfId == null || vnfId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no vnfId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -137,7 +146,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (vfModuleId == null || vfModuleId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no vfModuleId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -150,7 +160,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (vnfId == null || vnfId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no vnfId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -158,7 +169,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (vfModuleId == null || vfModuleId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no vfModuleId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -171,7 +183,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (vfModuleRollbackNode == null) {
 					String msg = getProcessKey(execution) + ': no vfModuleRollback in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -179,7 +192,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (vnfId == null || vnfId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no vnfId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -187,7 +201,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (vfModuleId == null || vfModuleId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no vfModuleId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -207,7 +222,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (volumeGroupId == null || volumeGroupId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no volumeGroupId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -222,7 +238,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (volumeGroupId == null || volumeGroupId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no volumeGroupId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -237,7 +254,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 				if (volumeGroupId == null || volumeGroupId.isEmpty()) {
 					String msg = getProcessKey(execution) + ': no volumeGroupId in ' + requestType
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 
@@ -249,39 +267,45 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 			} else {
 				String msg = getProcessKey(execution) + ': Unsupported request type: ' + requestType
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
 			execution.setVariable(prefix + 'vnfAdapterMethod', vnfAdapterMethod)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'vnfAdapterMethod = ' + vnfAdapterMethod)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'vnfAdapterMethod = ' + vnfAdapterMethod)
 			execution.setVariable(prefix + 'vnfAdapterUrl', vnfAdapterUrl)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'vnfAdapterUrl = ' + vnfAdapterUrl)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'vnfAdapterUrl = ' + vnfAdapterUrl)
 			execution.setVariable(prefix + 'vnfAdapterRequest', vnfAdapterRequest)
-			msoLogger.debug(getProcessKey(execution) + ': ' + prefix + 'vnfAdapterRequest = \n' + vnfAdapterRequest)
+			logger.debug(getProcessKey(execution) + ': ' + prefix + 'vnfAdapterRequest = \n' + vnfAdapterRequest)
 
 			// Get the Basic Auth credentials for the VnfAdapter
 
 			String basicAuthValue = UrnPropertiesReader.getVariable("mso.adapters.po.auth", execution)
 
 			if (basicAuthValue == null || basicAuthValue.isEmpty()) {
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+						getProcessKey(execution) + ": mso:adapters:po:auth URN mapping is not defined", "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 			} else {
 				try {
 					def encodedString = utils.getBasicAuth(basicAuthValue, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 					execution.setVariable(prefix + 'basicAuthHeaderValue', encodedString)
 				} catch (IOException ex) {
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, getProcessKey(execution) + ": Unable to encode BasicAuth credentials for VnfAdapter", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for VnfAdapter",
+							"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				}
 			}
 
 		} catch (BpmnError e) {
-			msoLogger.debug(" Rethrowing MSOWorkflowException")
+			logger.debug(" Rethrowing MSOWorkflowException")
 			throw e
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
-			msoLogger.debug(msg)
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
+			logger.debug(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -302,7 +326,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.sendRequestToVnfAdapter(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		String prefix = execution.getVariable('prefix')
 
@@ -331,7 +355,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				response = httpClient.delete(vnfAdapterRequest)
 			} else {
 				String msg = 'Unsupported HTTP method "' + vnfAdapterMethod + '" in ' + method + ": " + e
-				msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -343,7 +368,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 			throw e
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "");
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
@@ -352,12 +378,12 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.processCallback(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		String callback = execution.getVariable('VNFAResponse_MESSAGE')
 
 		try {
-			msoLogger.debug(getProcessKey(execution) + ": received callback:\n" + callback)
+			logger.debug(getProcessKey(execution) + ": received callback:\n" + callback)
 
 			// The XML callback is available to the calling flow in any case,
 			// even if a WorkflowException is generated.
@@ -372,7 +398,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				vnfAdapterWorkflowException(execution, callback)
 			}
 		} catch (Exception e) {
-			msoLogger.debug("Error encountered within VnfAdapterRest ProcessCallback method", e)
+			logger.debug("Error encountered within VnfAdapterRest ProcessCallback method", e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7020, "Error encountered within VnfAdapterRest ProcessCallback method")
 		}
 	}

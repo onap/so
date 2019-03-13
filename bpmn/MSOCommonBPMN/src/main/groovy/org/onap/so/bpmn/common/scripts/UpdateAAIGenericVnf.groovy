@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -30,12 +32,14 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
 
 public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, UpdateAAIGenericVnf.class)
+    private static final Logger logger = LoggerFactory.getLogger( UpdateAAIGenericVnf.class);
 
 
 	private XmlParser xmlParser = new XmlParser()
@@ -69,12 +73,12 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.preProcessRequest(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def xml = execution.getVariable('UpdateAAIGenericVnfRequest')
-			msoLogger.debug('Received request xml:\n' + xml)
-			msoLogger.debug("UpdateAAIGenericVnf Request XML: " + xml)
+			logger.debug('Received request xml:\n' + xml)
+			logger.debug("UpdateAAIGenericVnf Request XML: " + xml)
 			initProcessVariables(execution)
 
 			def vnfId = getRequiredNodeText(execution, xml,'vnf-id')
@@ -99,17 +103,17 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			if (managementV6Address != null && !managementV6Address.isEmpty()) {
 				execution.setVariable('UAAIGenVnf_managementV6Address', managementV6Address)
 			}
-			
+
 			def orchestrationStatus = getNodeTextForce(xml, 'orchestration-status')
 			if (orchestrationStatus != null && !orchestrationStatus.isEmpty()) {
 				execution.setVariable('UAAIGenVnf_orchestrationStatus', orchestrationStatus)
 			}
 
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			msoLogger.error(e)
+			logger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -124,7 +128,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.getGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('UAAIGenVnf_vnfId')
@@ -141,14 +145,14 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 					execution.setVariable('UAAIGenVnf_getGenericVnfResponse', "Generic VNF not found for VNF ID: "+vnfId)
 				}
 			}catch (Exception ex) {
-				msoLogger.error(ex.getMessage())
-				msoLogger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.error(ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponseCode', 500)
 				execution.setVariable('UAAIGenVnf_getGenericVnfResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (Exception e) {
-			msoLogger.error(e)
+			logger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -162,14 +166,14 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.updateGenericVnf(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
 		try {
 			def vnfId = execution.getVariable('UAAIGenVnf_vnfId')
 			GenericVnf genericVnf = execution.getVariable('UAAIGenVnf_getGenericVnfResponse')
 			def origRequest = execution.getVariable('UpdateAAIGenericVnfRequest')
 
-			msoLogger.debug("UpdateGenericVnf Request: " + origRequest)
+			logger.debug("UpdateGenericVnf Request: " + origRequest)
 			// Handle persona-model-id/persona-model-version
 
 			String newPersonaModelId = execution.getVariable('UAAIGenVnf_personaModelId')
@@ -178,7 +182,8 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			if (newPersonaModelId != null || newPersonaModelVersion != null) {
 				if (newPersonaModelId != genericVnf.getModelInvariantId()) {
 					def msg = 'Can\'t update Generic VNF ' + vnfId + ' since there is \'persona-model-id\' mismatch between the current and new values'
-					msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, "")
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue())
 					throw new Exception(msg)
 				}
 
@@ -216,27 +221,27 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			payload.setIpv4OamAddress(ipv4OamAddressEntry)
 			payload.setManagementV6Address(managementV6AddressEntry)
 			payload.setOrchestrationStatus(orchestrationStatusEntry)
-			
+
 			AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId)
 
 			try {
 				getAAIClient().update(uri,payload)
 			} catch (Exception ex) {
 				ex.printStackTrace()
-				msoLogger.debug('Exception occurred while executing AAI PATCH:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI PATCH:' + ex.getMessage())
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', 500)
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', 'AAI PATCH Failed:' + ex.getMessage())
 			}
-			msoLogger.trace('Exited ' + method)
+			logger.trace('Exited ' + method)
 		} catch (Exception e) {
-			msoLogger.error(e)
+			logger.error(e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in updateGenericVnf(): ' + e.getMessage())
 		}
 	}
 
 	/**
 	 * Sets up json attributes for PATCH request for Update
-	 * 
+	 *
 	 * @param origRequest Incoming update request with Generic VNF element(s) to be updated.
 	 * @param genericVnf Current Generic VNF retrieved from AAI.
 	 * @param element Name of element to be inserted.
@@ -267,16 +272,16 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.handleAAIQueryFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
-		msoLogger.error( 'Error occurred attempting to query AAI, Response Code ' + execution.getVariable('UAAIGenVnf_getGenericVnfResponseCode'))
+		logger.error('Error occurred attempting to query AAI, Response Code ' + execution.getVariable('UAAIGenVnf_getGenericVnfResponseCode'))
 		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_getGenericVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
 
-		msoLogger.debug("Workflow Exception occurred when handling Quering AAI: " + exception.getErrorMessage())
-		msoLogger.trace('Exited ' + method)
+		logger.debug("Workflow Exception occurred when handling Quering AAI: " + exception.getErrorMessage())
+		logger.trace('Exited ' + method)
 	}
 
 	/**
@@ -288,16 +293,16 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 		def method = getClass().getSimpleName() + '.handleUpdateGenericVnfFailure(' +
 			'execution=' + execution.getId() +
 			')'
-		msoLogger.trace('Entered ' + method)
+		logger.trace('Entered ' + method)
 
-		msoLogger.error('Error occurred attempting to update Generic VNF in AAI, Response Code ' + execution.getVariable('UAAIGenVnf_updateGenericVnfResponseCode'))
+		logger.error('Error occurred attempting to update Generic VNF in AAI, Response Code ' + execution.getVariable('UAAIGenVnf_updateGenericVnfResponseCode'))
 
 		String processKey = getProcessKey(execution)
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable('UAAIGenVnf_updateGenericVnfResponse'))
 		execution.setVariable('WorkflowException', exception)
 
-		msoLogger.debug("Workflow Exception occurred when Updating GenericVnf: " + exception.getErrorMessage())
-		msoLogger.trace('Exited ' + method)
+		logger.debug("Workflow Exception occurred when Updating GenericVnf: " + exception.getErrorMessage())
+		logger.trace('Exited ' + method)
 	}
 }

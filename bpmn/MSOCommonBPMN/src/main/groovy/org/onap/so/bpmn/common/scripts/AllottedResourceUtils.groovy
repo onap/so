@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,11 +41,13 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 
 
 class AllottedResourceUtils {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, AllottedResourceUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger( AllottedResourceUtils.class);
 
 
 	private AbstractServiceTaskProcessor taskProcessor
@@ -65,7 +69,7 @@ class AllottedResourceUtils {
 	*/
 	public String getAROrchStatus (DelegateExecution execution) {
 
-		msoLogger.trace("getAROrchStatus ")
+		logger.trace("getAROrchStatus ")
 		String msg = ""
 		String serviceInstanceId = execution.getVariable("serviceInstanceId")
 		String arType = execution.getVariable("allottedResourceType")
@@ -73,7 +77,7 @@ class AllottedResourceUtils {
 		String siXml = execution.getVariable("CSI_service")
 		String orchStatus = null
 		XmlParser xmlParser = new XmlParser()
-		msoLogger.debug("getAROrchStatus siXml:" + siXml)
+		logger.debug("getAROrchStatus siXml:" + siXml)
 		try {
 			if (!isBlank(siXml)) {
 				def groovy.util.Node siNode = xmlParser.parseText(siXml)
@@ -83,7 +87,7 @@ class AllottedResourceUtils {
 					for (groovy.util.Node relationship in relationships) {
 						def groovy.util.Node relatedTo = utils.getChildNode(relationship, 'related-to')
 						if ((relatedTo != null) && (relatedTo.text().equals('allotted-resource'))) {
-							msoLogger.debug("getARORchStatus AR found")
+							logger.debug("getARORchStatus AR found")
 							def groovy.util.Node relatedLink = utils.getChildNode(relationship, 'related-link')
 							if (relatedLink != null){
 								Optional<AllottedResource> ar = getARbyLink(execution, relatedLink.text(), arRole)
@@ -97,10 +101,10 @@ class AllottedResourceUtils {
 				}
 			}
 		}catch(Exception e){
-			msoLogger.debug(" Error encountered in getAROrchStatus" + e.getMessage())
+			logger.debug(" Error encountered in getAROrchStatus" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error in getAROrchStatus" + e.getMessage())
 		}
-		msoLogger.trace(" Exit getAROrchStatus - OrchStatus:" + orchStatus)
+		logger.trace(" Exit getAROrchStatus - OrchStatus:" + orchStatus)
 		return orchStatus
 	}
 
@@ -108,7 +112,7 @@ class AllottedResourceUtils {
 	// used on Delete - called from doDeleteAR
 	// setsVariable aaiARGetResponse
 	public boolean ifExistsAR(DelegateExecution execution, String allottedResourceId) {
-		msoLogger.trace("ifExistsAR ")
+		logger.trace("ifExistsAR ")
 		try {
 			AAIResourceUri resourceUri = AAIUriFactory.createResourceUri(AAIObjectType.ALLOTTED_RESOURCE, allottedResourceId)
             AAIResultWrapper wrapper = getAAIClient().get(resourceUri)
@@ -127,24 +131,24 @@ class AllottedResourceUtils {
 	public String getPSIFmARLink(DelegateExecution execution, String arLink)
 	{
 		// Path: /aai/{version}/business/customers/customer/{cust}/service-subscriptions/service-subscription/{subs}/service-instances/service-instance/{psiid}/allotted-resources/allotted-resource/{arid}
-		msoLogger.trace(" getPSIFmARLink - path:" + arLink)
+		logger.trace(" getPSIFmARLink - path:" + arLink)
 		String[] split = arLink.split("/service-instance/")
 		String[] splitB =  split[1].split("/allotted-resources/")
 		String siId = splitB[0]
-		msoLogger.trace(" Exit getPSIFmARLink - parentServiceInstanceId:" + siId )
+		logger.trace(" Exit getPSIFmARLink - parentServiceInstanceId:" + siId )
 		return siId
 	}
-	
+
 	// get Allotted resource using Link
 	// used on Create called from getARORchStatus
 	// used on Delete called from ifExistsAR
 	// setsVariable aaiARPath - used for Patch in create
-	
+
 	public Optional<AllottedResource> getARbyLink (DelegateExecution execution, String link, String role) {
-		msoLogger.trace("getARbyLink ")
+		logger.trace("getARbyLink ")
 		Optional<AllottedResource> allottedResource = Optional.empty()
 		try {
-			msoLogger.debug("GET AR Aai Path is: \n" + link)
+			logger.debug("GET AR Aai Path is: \n" + link)
 			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(link).build())
 			allottedResource = getAAIClient().get(AllottedResource.class,uri);
 			if(allottedResource.isPresent()) {
@@ -152,16 +156,16 @@ class AllottedResourceUtils {
 					if (role == allottedResource.get().getRole()) {
 						setExecutionVariables(execution,allottedResource.get(),uri)
 					} else {
-						msoLogger.debug("AAI AR does not match input role:" + role)
+						logger.debug("AAI AR does not match input role:" + role)
 					}
 				} else {
 					setExecutionVariables(execution,allottedResource.get(),uri)
 				}
 			}else{
-				msoLogger.debug("GET AR received a Not Found (404) Response")
+				logger.debug("GET AR received a Not Found (404) Response")
 			}
 		}catch(Exception e){
-			msoLogger.debug(" Error encountered within GetAaiAR" + e.getMessage())
+			logger.debug(" Error encountered within GetAaiAR" + e.getMessage())
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error in GetAaiAR" + e.getMessage())
 		}
 		return allottedResource
@@ -181,45 +185,47 @@ class AllottedResourceUtils {
 	}
 
 	public void updateAROrchStatus(DelegateExecution execution, String status, String aaiARPath){
-		msoLogger.trace("updaAROrchStatus ")
+		logger.trace("updaAROrchStatus ")
 		try{
 
 			AllottedResource allottedResource = new AllottedResource();
 			allottedResource.setOrchestrationStatus(status)
-			msoLogger.debug('AAI AR URI: ' + aaiARPath)
+			logger.debug('AAI AR URI: ' + aaiARPath)
 
 			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(aaiARPath).build())
 			getAAIClient().update(uri,allottedResource)
 		}catch(Exception e){
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in updateAR.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.getMessage());
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in updateAR.", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, 'Internal Error in updateAROrchStatus.' + e.getMessage())
 		}
-		msoLogger.trace("Exit updateAROrchStatus ")
+		logger.trace("Exit updateAROrchStatus ")
 	}
 
 	//Sets Variable "wasDeleted"
 	public void deleteAR(DelegateExecution execution, String aaiARPath){
-		msoLogger.trace(" deleteAR - aaiARPath:" + aaiARPath)
+		logger.trace(" deleteAR - aaiARPath:" + aaiARPath)
 		try {
 
 			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(aaiARPath).build())
 			getAAIClient().delete(uri);
 		}catch(NotFoundException ex){
-			msoLogger.debug("  Delete AR Received a Not Found (404) Response")
+			logger.debug("  Delete AR Received a Not Found (404) Response")
 		}catch(PreconditionFailedException ex){
-			msoLogger.debug("Delete AR Received a Resource Version Mismatch Error: \n")
+			logger.debug("Delete AR Received a Resource Version Mismatch Error: \n")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 412, "DeleteAR Received a resource-version Mismatch Error Response from AAI")
 		}catch(Exception e){
-			msoLogger.debug(" Error encountered in deleteAR!" + e)
+			logger.debug(" Error encountered in deleteAR!" + e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured During Delete AR")
 		}
-		msoLogger.debug("  Delete AR Received a Good Response")
+		logger.debug("  Delete AR Received a Good Response")
 		execution.setVariable("wasDeleted", "true")
-		msoLogger.trace("Exit deleteAR ")
+		logger.trace("Exit deleteAR ")
 	}
 
 	public void buildAAIErrorResponse(DelegateExecution execution, String response, String errorMessage){
-		msoLogger.trace("BuildAAIErrorResponse")
+		logger.trace("BuildAAIErrorResponse")
 
 		if((response != null) && (response.contains("Fault") || response.contains("RESTFault"))){
 			WorkflowException workflowException = exceptionUtil.MapAAIExceptionToWorkflowException(response, execution)
@@ -228,10 +234,10 @@ class AllottedResourceUtils {
 			exceptionUtil.buildWorkflowException(execution, 500, errorMessage)
 		}
 
-		msoLogger.trace("Exit BuildAAIErrorResponse Process")
+		logger.trace("Exit BuildAAIErrorResponse Process")
 		throw new BpmnError("MSOWorkflowException")
 	}
-	
+
 	public  AAIResourcesClient getAAIClient(){
 		return new AAIResourcesClient()
 	}

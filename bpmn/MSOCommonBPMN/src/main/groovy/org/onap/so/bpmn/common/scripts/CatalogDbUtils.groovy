@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +33,8 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
 import org.springframework.web.util.UriUtils
 
@@ -43,7 +47,7 @@ import javax.ws.rs.core.Response
  */
 
 class CatalogDbUtils {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, CatalogDbUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger( CatalogDbUtils.class);
 
 	private HttpClientFactory httpClientFactory
 	private MsoUtils msoUtils
@@ -60,7 +64,7 @@ class CatalogDbUtils {
 		JSONArray vnfsList = null
 		String endPoint = "/serviceVnfs?vnfModelCustomizationUuid=" + UriUtils.encode(vnfModelCustomizationUuid, "UTF-8")
 		try {
-			msoLogger.debug("ENDPOINT: " + endPoint)
+			logger.debug("ENDPOINT: " + endPoint)
 			String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
 
 			if (catalogDbResponse != null) {
@@ -75,7 +79,9 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 			throw e
 		}
 
@@ -111,7 +117,9 @@ class CatalogDbUtils {
 			return getResponseFromCatalogDb(execution, endPoint)
 		}
 		catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 			throw e
 		}
 	}
@@ -133,7 +141,9 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 			throw e
 		}
 
@@ -157,7 +167,9 @@ class CatalogDbUtils {
 
 		}
 		catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in Querying Catalog DB", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 			throw e
 		}
 
@@ -167,7 +179,7 @@ class CatalogDbUtils {
 	private JSONArray parseNetworksJson (String catalogDbResponse, String arrayName, String catalogUtilsVersion) {
 		JSONArray modelInfos = null
 
-		msoLogger.debug("parseNetworksJson - catalogUtilsVersion is " + catalogUtilsVersion)
+		logger.debug("parseNetworksJson - catalogUtilsVersion is " + catalogUtilsVersion)
 		try {
 			// Create array of jsons
 
@@ -202,10 +214,12 @@ class CatalogDbUtils {
 			}
 
 			String modelInfosString = modelInfos.toString()
-			msoLogger.debug("Returning networks JSON: " + modelInfosString)
+			logger.debug("Returning networks JSON: " + modelInfosString)
 
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 		}
 
 		return modelInfos
@@ -214,7 +228,7 @@ class CatalogDbUtils {
 	private JSONArray parseVnfsJson (String catalogDbResponse, String arrayName, String catalogUtilsVersion) {
 		JSONArray modelInfos = null
 
-		msoLogger.debug("parseVnfsJson - catalogUtilsVersion is " + catalogUtilsVersion)
+		logger.debug("parseVnfsJson - catalogUtilsVersion is " + catalogUtilsVersion)
 
 		try {
 			// Create array of jsons
@@ -226,7 +240,7 @@ class CatalogDbUtils {
 			for (int i = 0; i < vnfs.length(); i++) {
 				JSONObject vnf = vnfs.getJSONObject(i)
 
-				msoLogger.debug(vnf.toString(2))
+				logger.debug(vnf.toString(2))
 				JSONObject modelInfo = buildModelInfo("vnf", vnf, catalogUtilsVersion)
 				JSONObject modelJson = new JSONObject()
 				modelJson.put("modelInfo", modelInfo)
@@ -254,7 +268,7 @@ class CatalogDbUtils {
 					vfModules = vnf.getJSONArray("vfModules")
 				} catch (Exception e)
 				{
-					msoLogger.debug("Cannot find VF MODULE ARRAY: " + i + ", exception is " + e.message)
+					logger.debug("Cannot find VF MODULE ARRAY: " + i + ", exception is " + e.message)
 				}
 
 				if (vfModules != null) {
@@ -279,10 +293,12 @@ class CatalogDbUtils {
 			}
 
 			String modelInfosString = modelInfos.toString()
-			msoLogger.debug("Returning vnfs JSON: " + modelInfosString)
+			logger.debug("Returning vnfs JSON: " + modelInfosString)
 
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 		}
 
 		return modelInfos
@@ -291,7 +307,7 @@ class CatalogDbUtils {
 	private JSONArray parseAllottedResourcesJson (String catalogDbResponse, String arrayName, String catalogUtilsVersion) {
 		JSONArray modelInfos = null
 
-		msoLogger.debug("parseAllottedResourcesJson - catalogUtilsVersion is " + catalogUtilsVersion)
+		logger.debug("parseAllottedResourcesJson - catalogUtilsVersion is " + catalogUtilsVersion)
 
 		try {
 			// Create array of jsons
@@ -331,10 +347,12 @@ class CatalogDbUtils {
 			}
 
 			String modelInfosString = modelInfos.toString()
-			msoLogger.debug("Returning allottedResources JSON: " + modelInfosString)
+			logger.debug("Returning allottedResources JSON: " + modelInfosString)
 
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 		}
 
 		return modelInfos
@@ -358,10 +376,12 @@ class CatalogDbUtils {
 			JSONArray allottedResourcesArray = parseAllottedResourcesJson(serviceResourcesRoot.toString(), "serviceAllottedResources", catalogUtilsVersion)
 			serviceResources.put("serviceAllottedResources", allottedResourcesArray)
 			serviceResourcesObject.put("serviceResources", serviceResources)
-			msoLogger.debug("Returning serviceResources JSON: " + serviceResourcesObject.toString())
+			logger.debug("Returning serviceResources JSON: " + serviceResourcesObject.toString())
 
 		} catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in parsing Catalog DB Response", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 		}
 
 		return serviceResourcesObject
@@ -407,7 +427,9 @@ class CatalogDbUtils {
 			modelJson.put("modelInfo", modelInfo)
 		}
 		catch (Exception e) {
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, "Exception while parsing model information", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError, e.message);
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception while parsing model information", "BPMN", MsoLogger.getServiceName(),
+					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
 		}
 		return modelInfo
 	}
@@ -425,16 +447,16 @@ class CatalogDbUtils {
 			String basicAuthCred = execution.getVariable("BasicAuthHeaderValueDB")
 			client.addAdditionalHeader("Authorization", StringUtils.defaultIfEmpty(basicAuthCred, getBasicDBAuthHeader(execution)))
 
-			msoLogger.debug('sending GET to Catalog DB endpoint: ' + endPoint)
+			logger.debug('sending GET to Catalog DB endpoint: ' + endPoint)
 			Response response = client.get()
 
 			responseData = response.readEntity(String.class)
 			if (responseData != null) {
-				msoLogger.debug("Received data from Catalog DB: " + responseData)
+				logger.debug("Received data from Catalog DB: " + responseData)
 			}
 
-			msoLogger.debug('Response code:' + response.getStatus())
-			msoLogger.debug('Response:' + System.lineSeparator() + responseData)
+			logger.debug('Response code:' + response.getStatus())
+			logger.debug('Response:' + System.lineSeparator() + responseData)
 			if (response.getStatus() == 200) {
 				// parse response as needed
 				return responseData
@@ -444,7 +466,7 @@ class CatalogDbUtils {
 			}
 		}
 		catch (Exception e) {
-			msoLogger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
+			logger.debug("ERROR WHILE QUERYING CATALOG DB: " + e.message)
 			throw e
 		}
 
@@ -457,7 +479,7 @@ class CatalogDbUtils {
 		String endPoint = "/resourceRecipe?resourceModelUuid=" + UriUtils.encode(resourceModelUuid, "UTF-8")+ "&action=" + UriUtils.encode(action, "UTF-8")
 		JSONObject responseJson = null
 		try {
-			msoLogger.debug("ENDPOINT: " + endPoint)
+			logger.debug("ENDPOINT: " + endPoint)
 			String catalogDbResponse = getResponseFromCatalogDb(execution, endPoint)
 
 			if (catalogDbResponse != null) {
