@@ -30,28 +30,28 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.appc.client.lcm.model.Action;
 
-public class VNFQuiesceTrafficActivityTest extends BaseBPMNTest{
+public class VNFStopActivityTest extends BaseBPMNTest{
 	@Test
-	public void sunnyDayVNFQuiesceTrafficActivity_Test() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFQuiesceTrafficActivity", variables);
+	public void sunnyDayVNFStopActivity_Test() throws InterruptedException {
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFStopActivity", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFQuiesceTrafficActivity_Start",
+		assertThat(pi).isStarted().hasPassedInOrder("VNFStopActivity_Start",
 				"TaskPreProcessActivity",
-				"TaskQuiesceTraffic",								   
-				"VNFQuiesceTrafficActivity_End");
+				"TaskStop",								   
+				"VNFStopActivity_End");
 		assertThat(pi).isEnded();
 	}
 	
-	@Test
-	public void rainyDayVNFQuiesceTrafficActivity_Test() throws Exception {
-		variables.put("actionQuiesceTraffic", Action.QuiesceTraffic);
+	@Test	
+	public void rainyDayVNFStopActivity_Test() throws Exception {
+		variables.put("actionStop", Action.Stop);
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
 				.runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFQuiesceTrafficActivity", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFQuiesceTrafficActivity_Start",
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFStopActivity", variables);
+		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFStopActivity_Start",
 				"TaskPreProcessActivity",
-				"TaskQuiesceTraffic").hasNotPassed(								   
-				"VNFQuiesceTrafficActivity_End");		
+				"TaskStop").hasNotPassed(								   
+				"VNFStopActivity_End");		
 	}
 	
 }

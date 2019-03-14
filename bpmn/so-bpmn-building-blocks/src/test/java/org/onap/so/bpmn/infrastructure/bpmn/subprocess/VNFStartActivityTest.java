@@ -30,28 +30,28 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.appc.client.lcm.model.Action;
 
-public class VNFQuiesceTrafficActivityTest extends BaseBPMNTest{
+public class VNFStartActivityTest extends BaseBPMNTest{
 	@Test
-	public void sunnyDayVNFQuiesceTrafficActivity_Test() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFQuiesceTrafficActivity", variables);
+	public void sunnyDayVNFStartActivity_Test() throws InterruptedException {
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFStartActivity", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFQuiesceTrafficActivity_Start",
+		assertThat(pi).isStarted().hasPassedInOrder("VNFStartActivity_Start",
 				"TaskPreProcessActivity",
-				"TaskQuiesceTraffic",								   
-				"VNFQuiesceTrafficActivity_End");
+				"TaskStart",								   
+				"VNFStartActivity_End");
 		assertThat(pi).isEnded();
 	}
 	
-	@Test
-	public void rainyDayVNFQuiesceTrafficActivity_Test() throws Exception {
-		variables.put("actionQuiesceTraffic", Action.QuiesceTraffic);
+	@Test	
+	public void rainyDayVNFStartActivity_Test() throws Exception {
+		variables.put("actionStart", Action.Start);
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
 				.runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFQuiesceTrafficActivity", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFQuiesceTrafficActivity_Start",
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFStartActivity", variables);
+		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFStartActivity_Start",
 				"TaskPreProcessActivity",
-				"TaskQuiesceTraffic").hasNotPassed(								   
-				"VNFQuiesceTrafficActivity_End");		
+				"TaskStart").hasNotPassed(								   
+				"VNFStartActivity_End");		
 	}
 	
 }

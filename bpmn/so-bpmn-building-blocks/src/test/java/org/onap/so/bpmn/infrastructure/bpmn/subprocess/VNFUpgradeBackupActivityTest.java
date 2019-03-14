@@ -19,7 +19,8 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
+
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 
@@ -30,28 +31,30 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.appc.client.lcm.model.Action;
 
-public class VNFQuiesceTrafficActivityTest extends BaseBPMNTest{
+public class VNFUpgradeBackupActivityTest extends BaseBPMNTest{
 	@Test
-	public void sunnyDayVNFQuiesceTrafficActivity_Test() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFQuiesceTrafficActivity", variables);
+	public void sunnyDayVNFUpgradeBackupActivity_Test() throws InterruptedException {
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeBackupActivity", variables);
 		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFQuiesceTrafficActivity_Start",
+		assertThat(pi).isStarted().hasPassedInOrder("VNFUpgradeBackupActivity_Start",
 				"TaskPreProcessActivity",
-				"TaskQuiesceTraffic",								   
-				"VNFQuiesceTrafficActivity_End");
+				"TaskUpgradeBackup",								   
+				"VNFUpgradeBackupActivity_End");
 		assertThat(pi).isEnded();
 	}
 	
 	@Test
-	public void rainyDayVNFQuiesceTrafficActivity_Test() throws Exception {
-		variables.put("actionQuiesceTraffic", Action.QuiesceTraffic);
+	public void rainyDayVNFUpgradeBackupActivity_Test() throws Exception {
+		variables.put("actionUpgradeBackup", Action.UpgradeBackup);
 		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
 				.runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFQuiesceTrafficActivity", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFQuiesceTrafficActivity_Start",
+		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeBackupActivity", variables);
+		assertThat(pi).isNotNull();
+		assertThat(pi).isStarted().hasPassedInOrder("VNFUpgradeBackupActivity_Start",
 				"TaskPreProcessActivity",
-				"TaskQuiesceTraffic").hasNotPassed(								   
-				"VNFQuiesceTrafficActivity_End");		
+				"TaskUpgradeBackup").hasNotPassed(								   
+				"VNFUpgradeBackupActivity_End");		
+		assertThat(pi).isEnded();
 	}
 	
 }
