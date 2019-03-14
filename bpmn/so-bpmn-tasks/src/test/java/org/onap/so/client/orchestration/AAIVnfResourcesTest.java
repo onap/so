@@ -21,6 +21,7 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -28,7 +29,11 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -39,6 +44,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.common.data.TestDataSetup;
+import org.onap.aai.domain.yang.Pserver;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -47,6 +53,8 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.AAIRestClientI;
+import org.onap.so.client.aai.AAIValidatorImpl;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -61,6 +69,8 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 	
 	private CloudRegion cloudRegion;
 	
+	private AAIValidatorImpl aaiValidatorImpl;
+	
 	@Mock
 	protected AAIResourcesClient MOCK_aaiResourcesClient;
 
@@ -72,6 +82,10 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 	
 	@InjectMocks
 	AAIVnfResources aaiVnfResources = new AAIVnfResources();
+	
+	@Mock
+	protected AAIValidatorImpl MOCK_aaiValidatorImpl;
+
 
 	@Before
 	public void before() {
@@ -79,6 +93,7 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 		genericVnf = buildGenericVnf();
 		cloudRegion = buildCloudRegion();
 		 doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
+		 
 	}
 
 	@Test
@@ -182,4 +197,28 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 				eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, 
 						cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())));
 	}
+	
+	@Test
+	public void checkVnfClosedLoopDisabledFlagTest () {
+		Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
+		vnf.get().setVnfId("vnfId");
+		vnf.get().setIsClosedLoopDisabled(true);
+		doReturn(vnf).when(MOCK_aaiResourcesClient).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
+		boolean isCheckVnfClosedLoopDisabledFlag = aaiVnfResources.checkVnfClosedLoopDisabledFlag("vnfId");
+		verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
+		assertEquals(isCheckVnfClosedLoopDisabledFlag, true);
+	}
+	
+	@Test
+	public void checkVnfPserversLockedFlagTest () throws IOException {
+		
+		 Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
+         vnf.get().setVnfId("vnfId");      
+         doReturn(vnf).when(MOCK_aaiResourcesClient).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
+         doReturn(true).when(MOCK_aaiValidatorImpl).isPhysicalServerLocked("vnfId");       
+         boolean isVnfPserversLockedFlag = aaiVnfResources.checkVnfPserversLockedFlag("vnfId");
+         verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
+         verify(MOCK_aaiValidatorImpl, times(1)).isPhysicalServerLocked(isA(String.class));        
+         assertTrue(isVnfPserversLockedFlag);
+}
 }

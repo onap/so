@@ -50,10 +50,12 @@ public class AAIValidatorImpl implements AAIValidator {
 		List<Pserver> pservers;
 		boolean isLocked = false;
 		pservers = client.getPhysicalServerByVnfId(vnfId);
-		for (Pserver pserver : pservers)
-			if (pserver.isInMaint())
+		for (Pserver pserver : pservers) {
+			if (pserver.isInMaint()) {
 				isLocked = true;
-		
+				return isLocked;
+			}
+		}
 		return isLocked;
 	}
 

@@ -55,7 +55,7 @@ public class AAIFlagTasks {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "VNF is in maintenance in A&AI");
 		}
 	}	
-	
+
 	public void modifyVnfInMaintFlag(BuildingBlockExecution execution, boolean inMaint) {
 		try {
 			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
@@ -71,4 +71,45 @@ public class AAIFlagTasks {
 		}
 	}	
 	
+	public void checkVnfClosedLoopDisabledFlag(BuildingBlockExecution execution) {
+		boolean isClosedLoopDisabled = false;
+		try {
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			String vnfId = vnf.getVnfId();
+			isClosedLoopDisabled = aaiVnfResources.checkVnfClosedLoopDisabledFlag(vnfId);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+		if (isClosedLoopDisabled) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "VNF Close Loop Disabled in A&AI");
+		}
+	}	
+		
+	public void modifyVnfClosedLoopDisabledFlag(BuildingBlockExecution execution, boolean closedLoopDisabled) {
+		try {
+			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+
+			GenericVnf copiedGenericVnf = genericVnf.shallowCopyId();
+			copiedGenericVnf.setClosedLoopDisabled(closedLoopDisabled);
+			genericVnf.setClosedLoopDisabled(closedLoopDisabled);
+
+			aaiVnfResources.updateObjectVnf(copiedGenericVnf);
+		} catch(Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}	
+	
+	public void checkVnfPserversLockedFlag(BuildingBlockExecution execution) {
+		boolean inPserversLocked = false;
+		try {
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			String vnfId = vnf.getVnfId();
+			inPserversLocked = aaiVnfResources.checkVnfPserversLockedFlag(vnfId);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+		if (inPserversLocked) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "VNF PServers in Locked in A&AI");
+		}
+	}	
 }

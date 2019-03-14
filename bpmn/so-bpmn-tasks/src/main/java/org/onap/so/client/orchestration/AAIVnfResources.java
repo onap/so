@@ -20,6 +20,7 @@
 
 package org.onap.so.client.orchestration;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.onap.so.bpmn.common.InjectionHelper;
@@ -31,6 +32,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Project;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.AAIValidatorImpl;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -48,6 +50,9 @@ public class AAIVnfResources {
 	
 	@Autowired
 	private AAIObjectMapper aaiObjectMapper;
+	
+	@Autowired
+	private AAIValidatorImpl aaiValidatorImpl;
 	
 	public void createVnfandConnectServiceInstance(GenericVnf vnf, ServiceInstance serviceInstance) {
 		AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
@@ -109,6 +114,26 @@ public class AAIVnfResources {
 				.get(org.onap.aai.domain.yang.GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
 				.orElse(new org.onap.aai.domain.yang.GenericVnf());
 		return vnf.isInMaint();
+	}
+	
+	/**
+	 * Check inMaint flag value of Generic VNF from AAI using vnf Id
+	 * @param vnfId - vnf-id required vnf
+	 * @return inMaint flag value
+	 */
+	public boolean checkVnfClosedLoopDisabledFlag(String vnfId) {		
+		org.onap.aai.domain.yang.GenericVnf vnf = injectionHelper.getAaiClient()
+				.get(org.onap.aai.domain.yang.GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
+				.orElse(new org.onap.aai.domain.yang.GenericVnf());
+		return vnf.isIsClosedLoopDisabled();
+	}
+	
+	public boolean checkVnfPserversLockedFlag (String vnfId) throws IOException {		
+		org.onap.aai.domain.yang.GenericVnf vnf = injectionHelper.getAaiClient()
+				.get(org.onap.aai.domain.yang.GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
+				.orElse(new org.onap.aai.domain.yang.GenericVnf());
+			return aaiValidatorImpl.isPhysicalServerLocked(vnf.getVnfId());
+
 	}
 	
 	public void connectVnfToCloudRegion(GenericVnf vnf, CloudRegion cloudRegion) {
