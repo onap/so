@@ -109,7 +109,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -134,7 +134,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -169,7 +169,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountTwo);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -208,7 +208,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 		
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -244,7 +244,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -276,7 +276,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		
 		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -339,7 +339,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -415,7 +415,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -477,7 +477,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -536,7 +536,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionId"))
+		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
