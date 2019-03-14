@@ -97,8 +97,7 @@ public class ManualTasks {
 								@Context ContainerRequestContext requestContext) throws ApiException {
 		
 		String requestId = requestContext.getProperty("requestId").toString();
-        MsoLogger.setLogContext(requestId, null);
-        logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
+    logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
 		long startTime = System.currentTimeMillis ();
 		logger.debug ("requestId is: {}", requestId);
 		TasksRequest taskRequest = null;

@@ -237,10 +237,6 @@ public class WorkflowResource extends ProcessEngineAwareService {
 	}
 
 	private void setLogContext(String processKey, Map<String, Object> inputVariables) {
-		if (inputVariables != null) {
-			MsoLogger.setLogContext(getValueFromInputVariables(inputVariables, "mso-request-id"),
-				getValueFromInputVariables(inputVariables, "mso-service-instance-id"));
-		}
 	}
 
 	private String getValueFromInputVariables(Map<String,Object> inputVariables, String key) {

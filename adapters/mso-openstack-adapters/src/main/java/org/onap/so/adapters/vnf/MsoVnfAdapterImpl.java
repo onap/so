@@ -274,7 +274,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                            Holder <Map <String, String>> outputs,
                            Holder <VnfRollback> rollback) throws VnfException {
     	// As of 1707 - this method should no longer be called
-    	MsoLogger.setLogContext (msoRequest.getRequestId (), msoRequest.getServiceInstanceId ());
       logger.debug("UpdateVnf called?? This should not be called any longer - update vfModule");
     }
 
@@ -1367,7 +1366,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	String vfModuleName = vnfName;
     	String vfModuleType = vnfType;
     	String methodName = "updateVfModule";
-    	MsoLogger.setLogContext (msoRequest.getRequestId (), msoRequest.getServiceInstanceId ());
     	String serviceName = VNF_ADAPTER_SERVICE_NAME + methodName;
 
     	StringBuilder sbInit = new StringBuilder();
