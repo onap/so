@@ -222,8 +222,8 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-            logger.error("{} {} {} Exception Encountered - \n{}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), restFaultMessage, e)
+            logger.error("{} {} Exception Encountered - \n{}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), restFaultMessage, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}	
 	}
@@ -263,8 +263,8 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -292,8 +292,8 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepDoUpdateVfModule(): ' + e.getMessage())
 		}
 	}
@@ -346,8 +346,8 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateInfraRequest(): ' + e.getMessage())
 		}
 	}
@@ -385,8 +385,8 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -438,8 +438,8 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -508,8 +508,8 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}

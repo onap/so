@@ -355,8 +355,8 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 		} catch (BpmnError e) {
 			throw e;
 		}catch(Exception ex){
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception Occurred Processing preProcessSDNCGetRequest.", "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occurred Processing preProcessSDNCGetRequest.", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + ex.getMessage())
 		}

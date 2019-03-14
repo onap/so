@@ -419,8 +419,8 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix+"unexpectedError", "Caught a Java Lang Exception")  // Adding this line temporarily until this flows error handling gets updated
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Caught a Java Lang Exception")
 		}catch(BpmnError b){
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Rethrowing MSOWorkflowException", "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Rethrowing MSOWorkflowException", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue());
 			throw b
 		}catch(Exception e){

@@ -442,8 +442,8 @@ public class DoCreateE2EServiceInstance extends AbstractServiceTaskProcessor {
             logger.debug("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
 
         }catch(Exception e){
-            logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception Occured Processing preInitResourcesOperStatus.", "BPMN", MsoLogger.getServiceName(),
+            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preInitResourcesOperStatus.", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }

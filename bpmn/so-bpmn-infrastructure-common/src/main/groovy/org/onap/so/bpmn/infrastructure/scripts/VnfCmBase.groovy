@@ -99,8 +99,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -148,8 +148,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVnfResourceDecomposition(): ' + e.getMessage())
 		}
 	}
@@ -189,8 +189,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfVnfInMaintInAAI(): ' + e.getMessage())
@@ -319,8 +319,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVnf(): ' + e.getMessage())
 		}
 	}
@@ -361,8 +361,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfPserversInMaintInAAI(): ' + e.getMessage())
@@ -408,8 +408,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}
@@ -453,8 +453,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())		
 		}
@@ -499,8 +499,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}
@@ -578,20 +578,20 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 				
 			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			
 		} catch (java.lang.NoSuchMethodError e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())		
 			
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())	
 			
@@ -657,8 +657,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -728,8 +728,8 @@ public abstract class VnfCmBase extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}

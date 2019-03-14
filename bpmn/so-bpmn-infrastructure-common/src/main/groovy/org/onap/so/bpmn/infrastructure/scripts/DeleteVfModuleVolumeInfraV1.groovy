@@ -464,8 +464,8 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		logger.debug(xmlHandlerRequest)
 
 		execution.setVariable("DELVfModVol_FalloutHandlerRequest", xmlHandlerRequest)
-		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-				"Overall Error Response going to FalloutHandler", "BPMN", MsoLogger.getServiceName(),
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Overall Error Response going to FalloutHandler", "BPMN",
 				MsoLogger.ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
 	}
 
@@ -485,9 +485,9 @@ public class DeleteVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		def String errorMessage = 'TenantId ' + tenantId + ' in incoming request does not match Tenant Id ' + volumeGroupTenantId +
 			' retrieved from AAI for Volume Group Id ' + volumeGroupId
-		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error in DeleteVfModuleVolume: " + "\n" + errorMessage, "BPMN",
-				MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
+				MsoLogger.ErrorCode.UnknownError.getValue());
 
 		ExceptionUtil exceptionUtil = new ExceptionUtil()
 		exceptionUtil.buildWorkflowException(execution, 5000, errorMessage)

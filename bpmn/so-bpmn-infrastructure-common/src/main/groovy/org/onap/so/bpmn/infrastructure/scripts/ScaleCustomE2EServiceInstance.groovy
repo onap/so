@@ -293,9 +293,9 @@ public class ScaleCustomE2EServiceInstance extends AbstractServiceTaskProcessor 
             logger.debug("Scale network service updateServiceOperStatusRequest Request: " + payload)
 
         }catch(Exception e){
-            logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception Occured Processing prepareInitServiceOperationStatus.", "BPMN",
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), e);
+                    MsoLogger.ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareInitServiceOperationStatus Method:\n" + e.getMessage())
         }
         logger.trace("COMPLETED prepareInitServiceOperationStatus Process ")

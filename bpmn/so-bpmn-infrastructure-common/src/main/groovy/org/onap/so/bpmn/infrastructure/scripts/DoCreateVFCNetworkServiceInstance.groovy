@@ -234,8 +234,8 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
             getAAIClient().connect(nsUri,relatedServiceUri)
             logger.info("NS relationship to Service added successfully")
         }catch(Exception e){
-            logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    "Exception occured while executing AAI Put Call", "BPMN", MsoLogger.getServiceName(),
+            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    "Exception occured while executing AAI Put Call", "BPMN",
                     MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
             throw new BpmnError("MSOWorkflowException")
         }

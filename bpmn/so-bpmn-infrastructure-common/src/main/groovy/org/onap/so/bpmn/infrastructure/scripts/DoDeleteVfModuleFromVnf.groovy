@@ -111,8 +111,8 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 				String sdncCallbackUrl = (String) UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 				if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 					def msg = 'Required variable \'mso.workflow.sdncadapter.callback\' is missing'
-					logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception");
+					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.ErrorCode.UnknownError.getValue(), "Exception");
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
 				execution.setVariable("sdncCallbackUrl", sdncCallbackUrl)
@@ -160,8 +160,8 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVfModule(): ' + e.getMessage())
 		}
@@ -213,8 +213,8 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in validateVfModule(): ' + e.getMessage())
 		}
@@ -239,9 +239,9 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 			
 	
 		}catch(Exception e){
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessSDNCDeactivateRequest. Exception is:\n" + e, "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCDeactivateRequest Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessSDNCDeactivateRequest ")
@@ -401,9 +401,9 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 	// generates a WorkflowException if
 	//		-
 	public void handleDoDeleteVfModuleFailure(DelegateExecution execution) {
-		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"AAI error occurred deleting the Generic Vnf: " + execution.getVariable("DDVFMV_deleteGenericVnfResponse"),
-				"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception");
+				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception");
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable("DDVFMV_deleteGenericVnfResponse"))

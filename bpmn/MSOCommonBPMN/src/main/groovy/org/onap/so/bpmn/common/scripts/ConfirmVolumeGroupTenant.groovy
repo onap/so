@@ -105,8 +105,8 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception Occured Processing queryAAIForVolumeGroup.", "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing queryAAIForVolumeGroup.", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in preProcessRequest.")
 		}
@@ -127,8 +127,8 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 			logger.debug("Volume Heat Stack Id is: " + heatStackId)
 
 		}catch(Exception e){
-		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-				"Exception Occured Processing assignVolumeHeatId.", "BPMN", MsoLogger.getServiceName(),
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Exception Occured Processing assignVolumeHeatId.", "BPMN",
 				MsoLogger.ErrorCode.UnknownError.getValue(), e);
 		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in assignVolumeHeatId.")
 	}
@@ -147,8 +147,8 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 
 			exceptionUtil.buildWorkflowException(execution, errorCode, errorMessage)
 		}catch(Exception e){
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception Occured Processing assignWorkflowException.", "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing assignWorkflowException.", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), e);
 		}
 		logger.trace("COMPLETED Assign Workflow Exception =")
