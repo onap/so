@@ -121,7 +121,6 @@ public class WorkflowContextHolder {
 			while (!isInterrupted()) {
 				try {
 					WorkflowContext requestObject = responseQueue.take();
-					MsoLogger.setLogContext(requestObject.getRequestId(), null);
 					logger.debug("Time remaining for request id: {}:{}", requestObject.getRequestId(), requestObject
 						.getDelay
 						(TimeUnit.MILLISECONDS));

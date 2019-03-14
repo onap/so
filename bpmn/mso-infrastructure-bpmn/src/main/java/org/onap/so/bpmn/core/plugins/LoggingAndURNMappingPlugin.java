@@ -56,8 +56,6 @@ import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.onap.so.bpmn.core.BPMNLogger;
 
 
-import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -316,7 +314,6 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 						
 						String requestId = (String) execution.getVariable("mso-request-id");
 						String svcid = (String) execution.getVariable("mso-service-instance-id");
-						MsoLogger.setLogContext(requestId, svcid);							
 					}
 				} catch(Exception e) {					
 					logger.error("Exception occurred", e);

@@ -124,7 +124,6 @@ public class CloudOrchestration {
 
 
 	private Response cloudOrchestration(String requestJSON, Action action, HashMap<String, String> instanceIdMap, String version, String requestId) throws ApiException{
-		MsoLogger.setLogContext(requestId, null);
 	    logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
 		long startTime = System.currentTimeMillis ();
 		CloudOrchestrationRequest cor = null;

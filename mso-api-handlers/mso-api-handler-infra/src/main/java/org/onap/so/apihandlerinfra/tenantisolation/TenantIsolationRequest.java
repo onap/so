@@ -84,11 +84,9 @@ public class TenantIsolationRequest {
 
 	TenantIsolationRequest (String requestId) {
         this.requestId = requestId;
-        MsoLogger.setLogContext (requestId, null);
     }
 
 	TenantIsolationRequest () {
-        MsoLogger.setLogContext (requestId, null);
     }
     
 	void parse(CloudOrchestrationRequest request, HashMap<String,String> instanceIdMap, Action action) throws ValidationException {

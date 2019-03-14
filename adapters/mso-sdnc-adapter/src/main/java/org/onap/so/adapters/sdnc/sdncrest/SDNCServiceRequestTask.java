@@ -65,7 +65,6 @@ public class SDNCServiceRequestTask {
 	@Async
 	public void runRequest(SDNCServiceRequest request,String msoRequestId,String msoServiceInstanceId,String myUrlSuffix)
 	{
-		MsoLogger.setLogContext(msoRequestId, msoServiceInstanceId);
 
 		String sdncRequestId = request.getSdncRequestId();
 		String sdncService = request.getSdncService();
