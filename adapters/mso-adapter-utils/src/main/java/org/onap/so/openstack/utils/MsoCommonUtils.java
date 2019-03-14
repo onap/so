@@ -39,8 +39,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.onap.so.config.beans.PoConfig;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
@@ -108,7 +108,7 @@ public class MsoCommonUtils {
         					}
         				} catch (NumberFormatException e1) {
                     logger.error("{} No retries. Exception in parsing retry code in config:{} {} {}",
-                        MessageEnum.RA_CONFIG_EXC, rCode, MsoLogger.ErrorCode.SchemaError.getValue(),
+                        MessageEnum.RA_CONFIG_EXC, rCode, ErrorCode.SchemaError.getValue(),
                         "Exception in parsing retry code in config");
                     throw e;
         				}
@@ -160,12 +160,12 @@ public class MsoCommonUtils {
                 // Failed Keystone calls return an Error entity body.
                 Error error = re.getResponse ().getErrorEntity (Error.class);
                 logger.error("{} {} Openstack Keystone Error on {}: {}",
-                    MessageEnum.RA_CONNECTION_EXCEPTION, MsoLogger.ErrorCode.DataError.getValue(), context, error);
+                    MessageEnum.RA_CONNECTION_EXCEPTION, ErrorCode.DataError.getValue(), context, error);
                 me = new MsoOpenstackException (error.getCode (), error.getTitle (), error.getMessage ());
             } catch (Exception e2) {
                 // Can't parse the body as an "Error". Report the HTTP error
                 logger.error("{} {} HTTP Error on {}: {}, {}", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), context, re.getStatus(), re.getMessage(), e2);
+                    ErrorCode.DataError.getValue(), context, re.getStatus(), re.getMessage(), e2);
                 me = new MsoOpenstackException (re.getStatus (), re.getMessage (), "");
             }
 
@@ -184,7 +184,7 @@ public class MsoCommonUtils {
 
             // Generate an alarm for all connection errors.
             logger.error("{} {} Openstack Keystone connection error on {}: ", MessageEnum.RA_GENERAL_EXCEPTION_ARG,
-                MsoLogger.ErrorCode.DataError.getValue(), context, e);
+                ErrorCode.DataError.getValue(), context, e);
         }
 
         return me;
@@ -204,7 +204,7 @@ public class MsoCommonUtils {
                 // Failed Heat calls return an Explanation entity body.
                 Explanation explanation = re.getResponse ().getErrorEntity (Explanation.class);
                 logger.error("{} {} Exception - Openstack Error on {} : {}", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), context, explanation.toString());
+                    ErrorCode.DataError.getValue(), context, explanation.toString());
                 String fullError = explanation.getExplanation() + ", error.type=" + explanation.getError().getType() + ", error.message=" + explanation.getError().getMessage();
                 logger.debug(fullError);
 				me = new MsoOpenstackException (explanation.getCode (),
@@ -214,7 +214,7 @@ public class MsoCommonUtils {
             } catch (Exception e2) {
                 // Couldn't parse the body as an "Explanation". Report the original HTTP error.
                 logger.error("{} {} Exception - HTTP Error on {}: {}, ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), context, re.getStatus(), e.getMessage(), e2);
+                    ErrorCode.DataError.getValue(), context, re.getStatus(), e.getMessage(), e2);
                 me = new MsoOpenstackException (re.getStatus (), re.getMessage (), "");
             }
 
@@ -234,7 +234,7 @@ public class MsoCommonUtils {
             // Generate an alarm for all connection errors.
 
             logger.error("{} {} Openstack Heat connection error on {}: ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                MsoLogger.ErrorCode.DataError.getValue(), context, e);
+                ErrorCode.DataError.getValue(), context, e);
         }
 
         return me;
@@ -254,12 +254,12 @@ public class MsoCommonUtils {
                 // Failed Neutron calls return an NeutronError entity body
                 NeutronError error = re.getResponse ().getErrorEntity (NeutronError.class);
                 logger.error("{} {} Openstack Neutron Error on {} {}", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), context, error);
+                    ErrorCode.DataError.getValue(), context, error);
                 me = new MsoOpenstackException (re.getStatus (), error.getType (), error.getMessage ());
             } catch (Exception e2) {
                 // Couldn't parse body as a NeutronError. Report the HTTP error.
                 logger.error("{} {} Openstack HTTP Error on {}: {}, {}", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), context, re.getStatus(), e.getMessage(), e2);
+                    ErrorCode.DataError.getValue(), context, re.getStatus(), e.getMessage(), e2);
                 me = new MsoOpenstackException (re.getStatus (), re.getMessage (), null);
             }
 
@@ -279,7 +279,7 @@ public class MsoCommonUtils {
             // Generate an alarm for all connection errors.
 
             logger.error("{} {} Openstack Neutron Connection error on {}: ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                MsoLogger.ErrorCode.DataError.getValue(), context, e);
+                ErrorCode.DataError.getValue(), context, e);
         }
 
         return me;
@@ -298,7 +298,7 @@ public class MsoCommonUtils {
 
         // Always generate an alarm for internal exceptions
         logger.error("{} {} An exception occured on {}: ", MessageEnum.RA_GENERAL_EXCEPTION_ARG,
-            MsoLogger.ErrorCode.DataError.getValue(), context, e);
+            ErrorCode.DataError.getValue(), context, e);
 
         return me;
     }
@@ -310,7 +310,7 @@ public class MsoCommonUtils {
 
         // Always generate an alarm for internal exceptions
         logger.error("{} {} An exception occured on {}: ", MessageEnum.RA_GENERAL_EXCEPTION_ARG,
-            MsoLogger.ErrorCode.DataError.getValue(), context, e);
+            ErrorCode.DataError.getValue(), context, e);
 
         return me;
     }

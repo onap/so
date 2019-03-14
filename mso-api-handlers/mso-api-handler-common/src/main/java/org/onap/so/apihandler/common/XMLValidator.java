@@ -34,9 +34,9 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.commons.io.IOUtils;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -98,7 +98,7 @@ public class XMLValidator {
 
         } catch (Exception e) {
             logger.error("{} {} {}", MessageEnum.APIH_CANNOT_READ_SCHEMA.toString(),
-                MsoLogger.ErrorCode.SchemaError.getValue(), "APIH cannot read schema file", e);
+                ErrorCode.SchemaError.getValue(), "APIH cannot read schema file", e);
 
             return "ErrorDetails: " + "Unable to read the schema file";
         }

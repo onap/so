@@ -26,6 +26,7 @@ package org.onap.so.bpmn.common.scripts
 
 import joptsimple.internal.Strings
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.logger.ErrorCode
 import org.springframework.http.HttpStatus
 
 import javax.ws.rs.core.UriBuilder
@@ -37,7 +38,6 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -132,7 +132,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 	public void handleAAIQueryFailure(DelegateExecution execution) {
 		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error occurred attempting to query AAI, Response Code " + execution.getVariable("CVGN_queryVolumeGroupResponseCode"),
-				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
+				"BPMN", ErrorCode.UnknownError.getValue(),
 				"ErrorResponse is:\n" + execution.getVariable("CVGN_queryVolumeGroupResponse"));
 	}
 
@@ -141,7 +141,7 @@ public class ConfirmVolumeGroupName extends AbstractServiceTaskProcessor{
 		def errorNotAssociated = "Error occurred - volume group id ${execution.getVariable('CVGN_volumeGroupId')} " +
 				"is not associated with ${execution.getVariable('CVGN_volumeGroupName')}"
 		logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), errorNotAssociated, "BPMN",
-				MsoLogger.ErrorCode.UnknownError.getValue());
+				ErrorCode.UnknownError.getValue());
 		exceptionUtil.buildAndThrowWorkflowException(execution, 1002, errorNotAssociated)
 	}
 

@@ -26,9 +26,9 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.appc.client.lcm.model.Action
-import org.onap.so.client.appc.ApplicationControllerAction;
+import org.onap.so.client.appc.ApplicationControllerAction
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -122,7 +122,7 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 		catch (BpmnError e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			appcMessage = e.getMessage()
 		}
 		execution.setVariable("errorCode", appcCode)

@@ -24,7 +24,7 @@ package org.onap.so.adapters.requestsdb.exceptions;
 
 import javax.xml.ws.WebFault;
 import org.onap.so.exceptions.MSOException;
-import org.onap.so.logger.MsoLogger.ErrorCode;
+import org.onap.so.logger.ErrorCode;
 
 /**
  * This class simply extends Exception (without addition additional functionality)

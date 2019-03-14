@@ -31,8 +31,8 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -353,7 +353,7 @@ public class DoDeleteAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		}catch(Exception ex){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occurred Processing preProcessSDNCGetRequest." + ex, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:" + ex);
+					ErrorCode.UnknownError.getValue(), "Exception is:" + ex);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + ex.getMessage())
 		}
 		logger.trace("end deleteAaiAR")

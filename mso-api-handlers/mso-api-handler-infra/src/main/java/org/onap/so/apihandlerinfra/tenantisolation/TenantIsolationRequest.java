@@ -47,8 +47,8 @@ import org.onap.so.apihandlerinfra.vnfbeans.RequestStatusType;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 
 import org.onap.so.utils.UUIDChecker;
 import org.slf4j.Logger;
@@ -84,11 +84,9 @@ public class TenantIsolationRequest {
 
 	TenantIsolationRequest (String requestId) {
         this.requestId = requestId;
-        MsoLogger.setLogContext (requestId, null);
     }
 
 	TenantIsolationRequest () {
-        MsoLogger.setLogContext (requestId, null);
     }
     
 	void parse(CloudOrchestrationRequest request, HashMap<String,String> instanceIdMap, Action action) throws ValidationException {
@@ -356,7 +354,7 @@ public class TenantIsolationRequest {
 			requestsDbClient.save(request);
 		} catch (Exception e) {
 			logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
-				MsoLogger.ErrorCode.DataError.getValue(), "Exception when updating record in DB");
+				ErrorCode.DataError.getValue(), "Exception when updating record in DB");
 			logger.debug("Exception: ", e);
 		}
 	}

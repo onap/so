@@ -47,8 +47,8 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,7 +174,7 @@ public class VfModuleTopologyOperationRequestMapper {
 				objectPath = assignResponseInfo.getVfModuleResponseInformation().getObjectPath();
 			} catch (Exception e) {
 				logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), e.getMessage(), "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
+					ErrorCode.UnknownError.getValue(), e.getMessage());
 			}
 		}
 		return objectPath;

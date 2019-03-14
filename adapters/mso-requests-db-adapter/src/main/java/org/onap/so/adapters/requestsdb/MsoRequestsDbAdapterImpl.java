@@ -38,7 +38,7 @@ import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.onap.so.db.request.data.repository.SiteStatusRepository;
-import org.onap.so.logger.MsoLogger;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,7 +128,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 		} catch (Exception e) {
 			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
 			logger.error(error, e);
-			throw new MsoRequestsDbException(error, MsoLogger.ErrorCode.BusinessProcesssError, e);
+			throw new MsoRequestsDbException(error, ErrorCode.BusinessProcesssError, e);
 		}
 	}
 
@@ -154,7 +154,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 		} catch (Exception e) {
 			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
 			logger.error(error,e);
-			throw new MsoRequestsDbException(error,MsoLogger.ErrorCode.BusinessProcesssError , e);
+			throw new MsoRequestsDbException(error, ErrorCode.BusinessProcesssError , e);
 		}
 		return request;
 	}

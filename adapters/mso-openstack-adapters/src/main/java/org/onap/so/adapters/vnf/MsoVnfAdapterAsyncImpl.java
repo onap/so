@@ -44,8 +44,8 @@ import org.onap.so.adapters.vnf.async.client.VnfAdapterNotify;
 import org.onap.so.adapters.vnf.async.client.VnfAdapterNotify_Service;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.utils.CryptoUtils;
@@ -159,7 +159,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                   vnfRollback);
         } catch (VnfException e) {
             logger.error("{} {} VnfException in createVnfA ", MessageEnum.RA_CREATE_VNF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -169,7 +169,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                                                                                      .name ());
             } catch (Exception e1) {
                 logger.error("{} {} Exception - Fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -177,7 +177,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                 notifyPort.createVnfNotification (messageId, false, exCat, eMsg, null, null, null);
             } catch (Exception e1) {
                 logger.error("{} {} Exception sending createVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             logger.info("{}", MessageEnum.RA_ASYNC_CREATE_VNF_COMPLETE);
             return;
@@ -195,7 +195,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                               copyVrb (vnfRollback));
         } catch (Exception e) {
             logger.error("{} {} Exception sending createVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
         }
         logger.info("{} createVnfA", MessageEnum.RA_ASYNC_CREATE_VNF_COMPLETE);
         return;
@@ -228,7 +228,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             vnfAdapter.updateVnf (cloudSiteId, tenantId, vnfType,vnfVersion, vnfName, requestType, volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
         } catch (VnfException e) {
             logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_UPDATE_VNF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -238,7 +238,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                                                                                      .name ());
             } catch (Exception e1) {
                 logger.error("{} {} Exception - fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -246,7 +246,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                 notifyPort.updateVnfNotification (messageId, false, exCat, eMsg, null, null);
             } catch (Exception e1) {
                 logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             logger.info("{} UpdateVnfA", MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
             return;
@@ -263,7 +263,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                               copyVrb (vnfRollback));
         } catch (Exception e) {
             logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
         }
         logger.info("{} UpdateVnfA", MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
         return;
@@ -306,7 +306,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             vnfAdapter.queryVnf (cloudSiteId, tenantId, vnfName, msoRequest, vnfExists, vnfId, status, outputs);
         } catch (VnfException e) {
             logger.error("{} {} Exception sending queryVnfA notification ", MessageEnum.RA_QUERY_VNF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -316,7 +316,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                                                                                      .name ());
             } catch (Exception e1) {
                 logger.error("{} {} Exception - fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -324,7 +324,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                 notifyPort.queryVnfNotification (messageId, false, exCat, eMsg, null, null, null, null);
             } catch (Exception e1) {
                 logger.error("{} {} Exception sending queryVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             logger.info("{} queryVnfA", MessageEnum.RA_ASYNC_QUERY_VNF_COMPLETE);
             return;
@@ -349,7 +349,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                              copyQueryOutputs (outputs));
         } catch (Exception e) {
             logger.error("{} {} Exception sending queryVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
         }
 
         logger.info("{} queryVnfA", MessageEnum.RA_ASYNC_QUERY_VNF_COMPLETE);
@@ -386,7 +386,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             vnfAdapter.deleteVnf (cloudSiteId, tenantId, vnfName, msoRequest);
         } catch (VnfException e) {
             logger.error("{} {} Exception sending deleteVnfA notification ", MessageEnum.RA_DELETE_VNF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -396,7 +396,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                                                                                      .name ());
             } catch (Exception e1) {
                 logger.error("{} {} Exception - fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -404,7 +404,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                 notifyPort.deleteVnfNotification (messageId, false, exCat, eMsg);
             } catch (Exception e1) {
                 logger.error("{} {} Exception sending deleteVnfA notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             logger.info("{} deleteVnfA", MessageEnum.RA_ASYNC_DELETE_VNF_COMPLETE);
             return;
@@ -418,7 +418,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
         } catch (Exception e) {
             logger.error("{} {} Exception sending deleteVnfA notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
         }
 
         logger.info("{} deleteVnfA", MessageEnum.RA_ASYNC_DELETE_VNF_COMPLETE);
@@ -448,7 +448,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             vnfAdapter.rollbackVnf (rollback);
         } catch (VnfException e) {
             logger.error("{} {} Exception sending rollbackVnfA notification ", MessageEnum.RA_ROLLBACK_VNF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
             String eMsg = null;
             try {
@@ -458,7 +458,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                                                                                                      .name ());
             } catch (Exception e1) {
                 logger.error("{} {} Exception - fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -466,7 +466,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                 notifyPort.rollbackVnfNotification (messageId, false, exCat, eMsg);
             } catch (Exception e1) {
                 logger.error("{} {} Exception sending rollbackVnfA notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                    ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             logger.info("{} rollbackVnfA", MessageEnum.RA_ASYNC_ROLLBACK_VNF_COMPLETE);
             return;
@@ -479,7 +479,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             notifyPort.rollbackVnfNotification (messageId, true, null, null);
         } catch (Exception e) {
             logger.error("{} {} Exception sending rollbackVnfA notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
         }
 
         logger.info("{} rollbackVnfA", MessageEnum.RA_ASYNC_ROLLBACK_VNF_COMPLETE);
@@ -575,17 +575,17 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             warWsdlLoc = Thread.currentThread ().getContextClassLoader ().getResource ("VnfAdapterNotify.wsdl");
         } catch (Exception e) {
             logger.error("{} {} Exception - WSDL not found ", MessageEnum.RA_WSDL_NOT_FOUND,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
         }
         if (warWsdlLoc == null) {
             logger.error("{} {} WSDL not found", MessageEnum.RA_WSDL_NOT_FOUND,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+                ErrorCode.BusinessProcesssError.getValue());
         } else {
             try {
                 logger.debug("VnfAdpaterNotify.wsdl location:{}", warWsdlLoc.toURI().toString());
             } catch (Exception e) {
                 logger.error("{} {} Exception - WSDL URL convention ", MessageEnum.RA_WSDL_URL_CONVENTION_EXC,
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                    ErrorCode.BusinessProcesssError.getValue(), e);
             }
         }
 
@@ -602,7 +602,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             epUrl = new URL (notificationUrl);
         } catch (MalformedURLException e1) {
             logger.error("{} {} MalformedURLException ", MessageEnum.RA_INIT_NOTIF_EXC,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e1);
+                ErrorCode.BusinessProcesssError.getValue(), e1);
         }
 
         if(null != epUrl) {
@@ -625,7 +625,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             headers.put ("Authorization", Collections.singletonList (basicAuth));
         } catch (Exception e) {
             logger.error("{} {} Exception - Unable to set authorization in callback request ",
-                MessageEnum.RA_SET_CALLBACK_AUTH_EXC, MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                MessageEnum.RA_SET_CALLBACK_AUTH_EXC, ErrorCode.BusinessProcesssError.getValue(), e);
         }
 
         return notifyPort;

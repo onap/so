@@ -66,8 +66,8 @@ import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.adapters.vnf.BpelRestClient;
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.NetworkStatus;
 import org.onap.so.openstack.beans.RouteTarget;
@@ -126,7 +126,7 @@ public class NetworkAdapterRest {
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
           logger.error("{} {} Exception while create network ", MessageEnum.RA_CREATE_NETWORK_EXC,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+              ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
@@ -324,7 +324,7 @@ public class NetworkAdapterRest {
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
           logger.error("{} {} Exception while delete network ", MessageEnum.RA_DELETE_NETWORK_EXC,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+              ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
@@ -450,7 +450,7 @@ public class NetworkAdapterRest {
 				.build();
 		} catch (NetworkException e) {
         logger.error("{} {} Exception when query VNF ", MessageEnum.RA_QUERY_VNF_ERR,
-            MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+            ErrorCode.BusinessProcesssError.getValue(), e);
 			QueryNetworkError err = new QueryNetworkError();
 			err.setMessage(e.getMessage());
 			err.setCategory(MsoExceptionCategory.INTERNAL);
@@ -493,7 +493,7 @@ public class NetworkAdapterRest {
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
           logger.error("{} {} Exception in rollbackNetwork ", MessageEnum.RA_ROLLBACK_NULL,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+              ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
@@ -588,7 +588,7 @@ public class NetworkAdapterRest {
 	    	} catch (Exception e) {
 	    		// problem handling create, send generic failure as sync resp to caller
             logger.error("{} {} Exception in updateNetwork ", MessageEnum.RA_UPDATE_NETWORK_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
 	    		return Response.serverError().build();
 	    	}
 	    	// send sync response (ACK) to caller

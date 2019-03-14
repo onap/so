@@ -24,6 +24,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.bpmn.common.scripts.CatalogDbUtilsFactory
 import org.onap.so.client.HttpClientFactory
+import org.onap.so.logger.ErrorCode
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
@@ -62,7 +63,6 @@ import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.constants.Defaults
 import org.onap.so.db.catalog.beans.HomingInstance
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -569,7 +569,7 @@ public class DoCreateVfModule extends VfModuleBase {
 				if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 					def msg = 'Required variable \'mso.workflow.sdncadapter.callback\' is missing'
 					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							MsoLogger.ErrorCode.UnknownError.getValue(), msg);
+							ErrorCode.UnknownError.getValue(), msg);
 
 					exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 				}
@@ -622,7 +622,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Internal Error')
 		}
@@ -751,7 +751,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())
 		}
 	}
@@ -832,7 +832,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModuleForStatus(): ' + e.getMessage())
 		}
 	}
@@ -868,7 +868,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occurred Processing preProcessSDNCAssignRequest", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during prepareProvision Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessSDNCAssignRequest")
@@ -962,7 +962,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occurred Processing preProcessSDNCGetRequest", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during prepareProvision Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessSDNCGetRequest Process")
@@ -1167,7 +1167,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}
@@ -1557,7 +1557,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessUpdateAAIVfModuleRequestOrch", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during preProcessUpdateAAIVfModuleRequestOrch Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessUpdateAAIVfModuleRequestOrch")
@@ -1587,7 +1587,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessUpdateAAIVfModuleStatus", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during preProcessUpdateAAIVfModuleStatus Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessUpdateAAIVfModuleStatus")
@@ -1617,7 +1617,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessUpdateAAIVfModuleRequestGroup", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during preProcessUpdateAAIVfModuleRequestGroup Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED  preProcessUpdateAAIVfModuleRequestGroup")
@@ -1697,7 +1697,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessSDNCGetRequest", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during prepareProvision Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessSDNCGetRequest Process")
@@ -1819,14 +1819,14 @@ public class DoCreateVfModule extends VfModuleBase {
 		} catch(BpmnError b){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Rethrowing MSOWorkflowException", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + b.getMessage());
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + b.getMessage());
 			throw b
 		}catch (Exception ex) {
 			// try error
 			String errorMessage = "Bpmn error encountered in CreateVfModule flow. Unexpected Response from AAI - " + ex.getMessage()
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"AAI Query Cloud Region Failed " + errorMessage, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Exception occured during queryCloudRegion method")
 		}
 	}
@@ -1889,7 +1889,7 @@ public class DoCreateVfModule extends VfModuleBase {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Exception Occured Processing prepareCreateAAIVfModuleVolumeGroupRequest', "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during prepareCreateAAIVfModuleVolumeGroupRequest Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED  prepareCreateAAIVfModuleVolumeGroupRequest")
@@ -2022,7 +2022,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	   } catch (Exception e) {
 		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Encountered in " + method, "BPMN",
-				   MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 	   }
@@ -2067,7 +2067,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	   } catch (Exception e) {
 		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   'Caught exception in ' + method, "BPMN",
-				   MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in postProcessUpdateAAIGenericVnf(): ' + e.getMessage())
 	   }
    }
@@ -2120,7 +2120,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	   } catch (Exception e) {
 		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   'Caught exception in queryCatalogDB', "BPMN",
-				   MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryCatalogDB(): ' + e.getMessage())
 	   }
    }

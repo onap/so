@@ -43,8 +43,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.vfc.model.RestfulResponse;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,12 +196,12 @@ public class RestfulUtil {
 
     private static void logError(String errMsg, Throwable t) {
         logger.error("{} {} {} {}", MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
-            MsoLogger.ErrorCode.AvailabilityError.getValue(), errMsg, t);
+            ErrorCode.AvailabilityError.getValue(), errMsg, t);
     }
 
     private static void logError(String errMsg) {
         logger.error("{} {} {} {}", MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
-            MsoLogger.ErrorCode.AvailabilityError.toString(), errMsg);
+            ErrorCode.AvailabilityError.toString(), errMsg);
     }
 
     private static RestfulResponse createResponse(int statusCode, String content) {

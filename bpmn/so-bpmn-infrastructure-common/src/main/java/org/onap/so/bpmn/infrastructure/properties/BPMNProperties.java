@@ -24,7 +24,6 @@ import java.util.List;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.onap.so.logger.MsoLogger;
 
 public class BPMNProperties {
 

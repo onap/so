@@ -23,6 +23,7 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.onap.so.logger.ErrorCode
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -40,7 +41,6 @@ import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -196,7 +196,7 @@ class AllottedResourceUtils {
 			getAAIClient().update(uri,allottedResource)
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception in updateAR.", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
+					"Exception in updateAR.", "BPMN", ErrorCode.UnknownError.getValue(), e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, 'Internal Error in updateAROrchStatus.' + e.getMessage())
 		}
 		logger.trace("Exit updateAROrchStatus ")

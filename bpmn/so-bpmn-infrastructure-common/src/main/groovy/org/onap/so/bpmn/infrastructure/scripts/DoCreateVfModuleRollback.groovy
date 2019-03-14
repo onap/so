@@ -36,12 +36,10 @@ import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import org.springframework.web.util.UriUtils
 
 import javax.ws.rs.NotFoundException
 
@@ -265,7 +263,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessSDNCDeactivateRequest.", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCDeactivateRequest Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessSDNCDeactivateRequest")
@@ -448,7 +446,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 
 		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"AAI error occurred deleting the Generic Vnf" + execution.getVariable("DoDVfMod_deleteGenericVnfResponse"),
-				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue());
+				"BPMN", ErrorCode.UnknownError.getValue());
 		String processKey = getProcessKey(execution);
 		exceptionUtil.buildWorkflowException(execution, 5000, "Failure in DoDeleteVfModule")
 
@@ -609,7 +607,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessUpdateAAIGenericVnf((): ' + e.getMessage())
 		}
 	}
@@ -627,7 +625,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing setSuccessfulRollbackStatus.", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setSuccessfulRollbackStatus Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED setSuccessfulRollbackStatus")
@@ -647,7 +645,7 @@ public class DoCreateVfModuleRollback extends AbstractServiceTaskProcessor{
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing setFailedRollbackStatus.", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setFailedRollbackStatus Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED setFailedRollbackStatus")

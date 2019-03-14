@@ -68,8 +68,8 @@ import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HeatTemplate;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.db.catalog.beans.ServerType;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
@@ -87,24 +87,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.woorea.openstack.base.client.OpenStackConnectException;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.heat.Heat;
-import com.woorea.openstack.heat.model.CreateStackParam;
-import com.woorea.openstack.heat.model.Resources;
-import com.woorea.openstack.heat.model.Stack;
-import com.woorea.openstack.heat.model.Stack.Output;
-import com.woorea.openstack.heat.model.Stacks;
-import com.woorea.openstack.keystone.Keystone;
-import com.woorea.openstack.keystone.model.Access;
-import com.woorea.openstack.keystone.model.Authentication;
-import com.woorea.openstack.keystone.utils.KeystoneUtils;
 
 @Primary
 @Component
@@ -382,7 +364,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		            if (pollTimeout <= 0) {
                     logger.error("{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Create stack timeout",
                         MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-                        heatStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
+                        heatStack.getStackStatus(), ErrorCode.AvailabilityError.getValue());
                     createTimedOut = true;
 		                break;
 		            }
@@ -399,7 +381,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		    	if (!backout)
 		    	{
               logger.warn("{} Exception in Create Stack, stack deletion suppressed {}",
-                  MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+                  MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue());
           }
 		    	else
 		    	{
@@ -421,7 +403,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                             logger.error(
                                 "{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Rollback: DELETE stack timeout",
                                 MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-                                heatStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
+                                heatStack.getStackStatus(), ErrorCode.AvailabilityError.getValue());
                             break;
 		        						} else {
 		        							sleep(deletePollInterval * 1000L);
@@ -445,13 +427,13 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		    				} catch (Exception e3) {
 		    					// Just log this one. We will report the original exception.
                     logger.error("{} Create Stack: Nested exception rolling back stack: {} ",
-                        MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e3);
+                        MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(), e3);
 		    				}
 		    			}
 		    		} catch (Exception e2) {
 		    			// Just log this one. We will report the original exception.
                 logger.error("{} Create Stack: Nested exception rolling back stack: {} ",
-                    MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e2);
+                    MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(), e2);
             }
 		    	}
 
@@ -464,14 +446,14 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		if (!"CREATE_COMPLETE".equals (heatStack.getStackStatus ())) {
         logger.error("{} Create Stack error:  Polling complete with non-success status: {}, {} {} ",
             MessageEnum.RA_CREATE_STACK_ERR, heatStack.getStackStatus(), heatStack.getStackStatusReason(),
-            MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+            ErrorCode.BusinessProcesssError.getValue());
 
 		    // Rollback the stack creation, since it is in an indeterminate state.
 		    if (!backout)
 		    {
             logger.warn(
                 "{} Create Stack errored, stack deletion suppressed {} Create Stack error, stack deletion suppressed",
-                MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+                MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue());
         }
 		    else
 		    {
@@ -491,7 +473,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                         logger.error(
                             "{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Rollback: DELETE stack timeout",
                             MessageEnum.RA_CREATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-                            heatStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
+                            heatStack.getStackStatus(), ErrorCode.AvailabilityError.getValue());
                         break;
 		    						} else {
 		    							sleep(deletePollInterval * 1000L);
@@ -506,7 +488,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		    						// Warn about this (?) - but still throw the original exception
                       logger.warn(
                           "{} Create Stack errored, stack deletion FAILED {} Create Stack error, stack deletion FAILED",
-                          MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+                          MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue());
                       logger.debug("Stack deletion FAILED on a rollback of a create - {}, status={}, reason={}",
                           canonicalName, heatStack.getStackStatus(), heatStack.getStackStatusReason());
                       break;
@@ -526,7 +508,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                   logger.debug("Exception thrown trying to delete {} on a create->rollback: {} ", canonicalName,
                       me2.getContextMessage(), me2);
                   logger.warn("{} Create Stack errored, then stack deletion FAILED - exception thrown {} {}",
-                      MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+                      MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(),
                       me2.getContextMessage());
               }
 
@@ -545,7 +527,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 		    	} catch (Exception e2) {
 		    		// shouldn't happen - but handle
               logger.error("{} Create Stack: Nested exception rolling back stack: {} ", MessageEnum.RA_CREATE_STACK_ERR,
-                  MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e2);
+                  ErrorCode.BusinessProcesssError.getValue(), e2);
           }
 		    }
 		    MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
@@ -588,7 +570,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         } catch (MsoException me) {
             // Got an Openstack error. Propagate it
             logger.error("{} {} Openstack Exception on Token request: ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                MsoLogger.ErrorCode.AvailabilityError.getValue(), me);
+                ErrorCode.AvailabilityError.getValue(), me);
             me.addContext ("QueryStack");
             throw me;
         }
@@ -650,7 +632,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
         } catch (MsoException me) {
             // Got an Openstack error. Propagate it
             logger.error("{} {} Openstack Exception on Token request: ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                MsoLogger.ErrorCode.AvailabilityError.getValue(), me);
+                ErrorCode.AvailabilityError.getValue(), me);
             me.addContext (DELETE_STACK);
             throw me;
         }
@@ -727,7 +709,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                 if (pollTimeout <= 0) {
                     logger.error("{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Delete Stack Timeout",
                         MessageEnum.RA_DELETE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-                        heatStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
+                        heatStack.getStackStatus(), ErrorCode.AvailabilityError.getValue());
 
                     // Throw a 'special case' of MsoOpenstackException to report the Heat status
                     MsoOpenstackException me = new MsoOpenstackException (0, "", "Stack Deletion Timeout");
@@ -846,7 +828,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
             // Problem - missing one or more required parameters
             String error = "Missing Required inputs for HEAT Template: " + missingParams;
             logger.error("{} for HEAT Template {} Missing Required inputs for HEAT Template: {}",
-                MessageEnum.RA_MISSING_PARAM, MsoLogger.ErrorCode.SchemaError.getValue(), missingParams);
+                MessageEnum.RA_MISSING_PARAM, ErrorCode.SchemaError.getValue(), missingParams);
             throw new IllegalArgumentException (error);
         }
 
@@ -865,7 +847,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
         if (!extraParams.isEmpty ()) {
             logger.warn("{} Heat Stack ({}) extra input params received: {} {}", MessageEnum.RA_GENERAL_WARNING,
-                heatTemplate.getTemplateName(), extraParams, MsoLogger.ErrorCode.DataError.getValue());
+                heatTemplate.getTemplateName(), extraParams, ErrorCode.DataError.getValue());
         }
 
         return updatedParams;

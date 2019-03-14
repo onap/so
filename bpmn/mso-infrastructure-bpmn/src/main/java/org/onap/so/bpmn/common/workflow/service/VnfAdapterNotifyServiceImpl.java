@@ -40,7 +40,6 @@ import org.onap.so.bpmn.common.adapter.vnf.UpdateVnfNotification;
 import org.onap.so.bpmn.common.adapter.vnf.VnfAdapterNotify;
 import org.onap.so.bpmn.common.adapter.vnf.VnfRollback;
 import org.onap.so.bpmn.common.adapter.vnf.VnfStatus;
-import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -118,8 +117,6 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
 		String correlationVariable = "VNFQ_messageId";
 		String correlationValue = messageId;
 
-		MsoLogger.setLogContext(correlationValue, "N/A");
-
     	QueryVnfNotification message = new QueryVnfNotification();
 
     	message.setMessageId(messageId);
@@ -161,8 +158,6 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
 		String correlationVariable = "VNFC_messageId";
 		String correlationValue = messageId;
 
-		MsoLogger.setLogContext(correlationValue, "N/A");
-
 		CreateVnfNotification message = new CreateVnfNotification();
 
 		message.setMessageId(messageId);
@@ -201,8 +196,6 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
 		String correlationVariable = "VNFU_messageId";
 		String correlationValue = messageId;
 
-		MsoLogger.setLogContext(correlationValue, "N/A");
-
     	UpdateVnfNotification message = new UpdateVnfNotification();
 
     	message.setMessageId(messageId);
@@ -235,8 +228,6 @@ public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService imple
 		String messageVariable = "deleteVnfACallback";
 		String correlationVariable = "VNFDEL_uuid";
 		String correlationValue = messageId;
-
-		MsoLogger.setLogContext(correlationValue, "N/A");
 
     	DeleteVnfNotification message = new DeleteVnfNotification();
 

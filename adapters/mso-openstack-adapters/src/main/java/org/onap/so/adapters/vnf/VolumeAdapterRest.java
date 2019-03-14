@@ -60,8 +60,8 @@ import org.onap.so.adapters.vnfrest.UpdateVolumeGroupResponse;
 import org.onap.so.adapters.vnfrest.VolumeGroupExceptionResponse;
 import org.onap.so.adapters.vnfrest.VolumeGroupRollback;
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
@@ -124,7 +124,7 @@ public class VolumeAdapterRest {
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
           logger.error("{} {} Exception - createVNFVolumes: ", MessageEnum.RA_CREATE_VNF_ERR,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+              ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
@@ -286,7 +286,7 @@ public class VolumeAdapterRest {
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
           logger.error("{} {} Exception - deleteVNFVolumes: ", MessageEnum.RA_DELETE_VNF_ERR,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+              ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
@@ -383,7 +383,7 @@ public class VolumeAdapterRest {
 			} catch (Exception e) {
 				// problem handling create, send generic failure as sync resp to caller
           logger.error("{} {} Exception - rollbackVNFVolumes: ", MessageEnum.RA_ROLLBACK_VNF_ERR,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+              ErrorCode.BusinessProcesssError.getValue(), e);
 				return Response.serverError().build();
 			}
 			// send sync response (ACK) to caller
@@ -483,7 +483,7 @@ public class VolumeAdapterRest {
 	    	} catch (Exception e) {
 	    		// problem handling create, send generic failure as sync resp to caller
             logger.error("{} {} Exception - updateVNFVolumes: ", MessageEnum.RA_UPDATE_VNF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                ErrorCode.BusinessProcesssError.getValue(), e);
 	    		return Response.serverError().build();
 	    	}
 	    	// send sync response (ACK) to caller
@@ -637,7 +637,7 @@ public class VolumeAdapterRest {
     			.build();
     	} catch (VnfException e) {
           logger.error("{} {} AaiVolumeGroupId: {} VnfException - queryVNFVolumes", MessageEnum.RA_QUERY_VNF_ERR,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), aaiVolumeGroupId, e);
+              ErrorCode.BusinessProcesssError.getValue(), aaiVolumeGroupId, e);
     		VolumeGroupExceptionResponse excResp = new VolumeGroupExceptionResponse(e.getMessage(), MsoExceptionCategory.INTERNAL, Boolean.FALSE, null);
           logger.debug("Query queryVNFVolumes exit");
     		return Response

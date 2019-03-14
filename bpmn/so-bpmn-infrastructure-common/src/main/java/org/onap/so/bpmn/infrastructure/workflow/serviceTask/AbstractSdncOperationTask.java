@@ -45,8 +45,8 @@ import org.onap.so.bpmn.core.BaseTask;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.GenericResourceApi;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -285,7 +285,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             logger.error("exception: AbstractSdncOperationTask.updateProgress fail:", exception);
             logger.error("{} {} {} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(),
                 " updateProgress catch exception: ", this.getTaskName(),
-                MsoLogger.ErrorCode.UnknownError.getValue(), exception.getClass().toString());
+                ErrorCode.UnknownError.getValue(), exception.getClass().toString());
         }
     }
 

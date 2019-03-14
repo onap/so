@@ -45,7 +45,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.http.HttpStatus;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -116,7 +115,6 @@ public class GlobalHealthcheckHandler {
     	try{
             // Generated RequestId
             String requestId = requestContext.getProperty("requestId").toString();
-            MsoLogger.setLogContext(requestId, null);
             logger.info("{} {}", MessageEnum.APIH_GENERATED_REQUEST_ID.toString(), requestId);
             
             // set APIH status, this is the main entry point

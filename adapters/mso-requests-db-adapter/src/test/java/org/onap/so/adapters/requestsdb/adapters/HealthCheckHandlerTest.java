@@ -30,7 +30,6 @@ import org.junit.runner.RunWith;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
 import org.onap.so.adapters.requestsdb.application.TestAppender;
-import org.onap.so.logger.MsoLogger;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;

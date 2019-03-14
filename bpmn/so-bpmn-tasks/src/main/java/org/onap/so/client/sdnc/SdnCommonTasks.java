@@ -30,8 +30,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.MapperException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -69,7 +69,7 @@ public class SdnCommonTasks {
         } catch (JsonProcessingException e) {
             logger.error("{} {} {} {} {}", MessageEnum.JAXB_EXCEPTION.toString(),
                 COULD_NOT_CONVERT_SDNC_POJO_TO_JSON,
-                    "BPMN", MsoLogger.ErrorCode.DataError.getValue(), e.getMessage());
+                    "BPMN", ErrorCode.DataError.getValue(), e.getMessage());
             throw new MapperException(COULD_NOT_CONVERT_SDNC_POJO_TO_JSON);
         }
         jsonRequest = "{\"input\":" + jsonRequest + "}";
@@ -101,7 +101,7 @@ public class SdnCommonTasks {
 	public String validateSDNResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
 		if (CollectionUtils.isEmpty(output)) {
 			logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
+					ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
 			throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
 		}
         LinkedHashMap<String, Object> embeddedResponse =(LinkedHashMap<String, Object>) output.get("output");
@@ -128,7 +128,7 @@ public class SdnCommonTasks {
 		} else {
 			String errorMessage = String.format(SDNC_CODE_NOT_0_OR_IN_200_299, responseMessage);
         logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), errorMessage, "BPMN",
-            MsoLogger.ErrorCode.DataError.getValue(), errorMessage);
+            ErrorCode.DataError.getValue(), errorMessage);
         throw new BadResponseException(errorMessage);
 		}
 	}
@@ -142,7 +142,7 @@ public class SdnCommonTasks {
     public String validateSDNGetResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
         if (CollectionUtils.isEmpty(output)) {
             logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
-                    MsoLogger.ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
+                    ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
             throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
         }
         ObjectMapper objMapper = new ObjectMapper();
@@ -153,7 +153,7 @@ public class SdnCommonTasks {
         }
         catch (Exception e) {
             logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), BAD_RESPONSE_FROM_SDNC,
-                "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
+                "BPMN", ErrorCode.UnknownError.getValue(),
                 BAD_RESPONSE_FROM_SDNC);
             throw new BadResponseException(BAD_RESPONSE_FROM_SDNC);
         }

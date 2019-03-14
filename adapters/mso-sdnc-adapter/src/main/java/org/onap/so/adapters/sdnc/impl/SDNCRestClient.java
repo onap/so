@@ -46,6 +46,8 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
+
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
 import org.onap.so.adapters.sdnc.client.CallbackHeader;
@@ -54,7 +56,6 @@ import org.onap.so.adapters.sdnc.client.SDNCCallbackAdapterPortType;
 import org.onap.so.adapters.sdnc.client.SDNCCallbackAdapterService;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,7 +193,7 @@ public class SDNCRestClient{
 		catch (Exception e)
 		{
 			logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
-				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception processing request to SDNC", e);
+				ErrorCode.BusinessProcesssError.getValue(), "Exception processing request to SDNC", e);
 			//default
 			sdncResp.setRespCode(HttpURLConnection.HTTP_INTERNAL_ERROR);
 			String respMsg = "Error processing request to SDNC. ";
@@ -233,7 +234,7 @@ public class SDNCRestClient{
 									sdncErrMsg = new StringBuilder(". SDNC Returned-[error-type:" + eType);
 								} catch (Exception e3) {
 									logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-type",
-										error.toString(), "SDNC", MsoLogger.ErrorCode.DataError.getValue(), EXCEPTION_MSG, e3);
+										error.toString(), "SDNC", ErrorCode.DataError.getValue(), EXCEPTION_MSG, e3);
 								}
 
 								String eTag = null;
@@ -242,7 +243,7 @@ public class SDNCRestClient{
 									sdncErrMsg.append(", error-tag:").append(eTag);
 								} catch (Exception e3) {
 									logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-tag",
-										error.toString(), "SDNC", MsoLogger.ErrorCode.DataError.getValue(), EXCEPTION_MSG, e3);
+										error.toString(), "SDNC", ErrorCode.DataError.getValue(), EXCEPTION_MSG, e3);
 								}
 
 								String eMsg = null;
@@ -251,17 +252,17 @@ public class SDNCRestClient{
 									sdncErrMsg.append(", error-message:").append(eMsg).append("]");
 								} catch (Exception e3) {
 									logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-message", error.toString(),
-										"SDNC", MsoLogger.ErrorCode.DataError.getValue(), EXCEPTION_MSG, e3);
+										"SDNC", ErrorCode.DataError.getValue(), EXCEPTION_MSG, e3);
 								}
 							}
 						} catch (Exception e2) {
 							logger.error("{} {} {} {}", MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
-								MsoLogger.ErrorCode.DataError.getValue(), "Exception while analyse error", e2);
+								ErrorCode.DataError.getValue(), "Exception while analyse error", e2);
 						}
 					} //is != null
 				} catch (Exception e1) {
 					logger.error("{} {} {} {}", MessageEnum.RA_ERROR_GET_RESPONSE_SDNC.toString(), "SDNC",
-						MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception while get SDNC response", e1);
+						ErrorCode.BusinessProcesssError.getValue(), "Exception while get SDNC response", e1);
 				}
 			} //con != null
 
@@ -273,7 +274,7 @@ public class SDNCRestClient{
 			sdncResp.setRespMsg(respMsg);
 
 			logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
-				MsoLogger.ErrorCode.AvailabilityError.getValue(), "Exception while communicate with SDNC", e);
+				ErrorCode.AvailabilityError.getValue(), "Exception while communicate with SDNC", e);
 
 			return sdncResp;
 		}
@@ -304,7 +305,7 @@ public class SDNCRestClient{
 			} catch (MalformedURLException e1) {
 				error = "Caught exception initializing Callback wsdl " + e1.getMessage();
 				logger.error("{} {} {} {}", MessageEnum.RA_INIT_CALLBACK_WSDL_ERR.toString(), CAMUNDA,
-					MsoLogger.ErrorCode.DataError.getValue(), "Exception initializing Callback wsdl", e1);
+					ErrorCode.DataError.getValue(), "Exception initializing Callback wsdl", e1);
 
 			}
 
@@ -335,7 +336,7 @@ public class SDNCRestClient{
 			catch (Exception e2) {
 				error = "Unable to set authorization in callback request " + e2.getMessage();
 				logger.error("{} {} {} {}", MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
-					MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+					ErrorCode.BusinessProcesssError.getValue(),
 					"Exception - Unable to set authorization in callback request", e2);
 
 			}
@@ -347,7 +348,7 @@ public class SDNCRestClient{
 		catch (Exception e)
 		{
 			error = "Error sending BpelCallback request" + e.getMessage();
-			logger.error("Error {} - {} - {}", MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+			logger.error("Error {} - {} - {}", ErrorCode.BusinessProcesssError.getValue(),
 				MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), error, e);
 		}
 		logger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), CAMUNDA);

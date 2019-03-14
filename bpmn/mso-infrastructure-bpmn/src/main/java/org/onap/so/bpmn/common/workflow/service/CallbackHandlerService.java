@@ -33,8 +33,8 @@ import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.MessageCorrelationResult;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -221,7 +221,7 @@ public class CallbackHandlerService {
 					+ queryException;
 				logger.debug(msg);
 				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue(), msg, queryException);
+						ErrorCode.UnknownError.getValue(), msg, queryException);
 			}
 
 			return false;
@@ -264,7 +264,7 @@ public class CallbackHandlerService {
 				+ "': " + ole;
 			logger.debug(msg);
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN CORRELATION ERROR -",
-				MsoLogger.ErrorCode.UnknownError.getValue(), msg, ole);
+				ErrorCode.UnknownError.getValue(), msg, ole);
 			
 			//Retry for OptimisticLocking Exceptions
 			int retryCount = 0;
@@ -297,14 +297,14 @@ public class CallbackHandlerService {
 					String strMsg = "Received exception, OptimisticLockingException retry failed, retryCount:" + retryCount + " | exception returned: " + olex;
 					logger.debug(strMsg);
 					logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-							MsoLogger.ErrorCode.UnknownError.getValue(), strMsg, olex);
+							ErrorCode.UnknownError.getValue(), strMsg, olex);
 				} catch (Exception excep) {
 					retryCount = 0;
 					//oleFlag = ex instanceof org.camunda.bpm.engine.OptimisticLockingException;
 					String strMsg = "Received exception, OptimisticLockingException retry failed, retryCount:" + retryCount + " | exception returned: " + excep;
 					logger.debug(strMsg);
 					logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue(), strMsg, excep);
+						ErrorCode.UnknownError.getValue(), strMsg, excep);
 				}
 		
 			}
@@ -318,7 +318,7 @@ public class CallbackHandlerService {
 				+ "': " + e;
 			logger.debug(msg);
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-				MsoLogger.ErrorCode.UnknownError.getValue(), msg, e);
+				ErrorCode.UnknownError.getValue(), msg, e);
 		}
 	}  catch (Exception e) {
 		// This must be an exception from the flow itself.  Log it, but don't
@@ -328,7 +328,7 @@ public class CallbackHandlerService {
 			+ "': " + e;
 		logger.debug(msg);
 		logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN CORRELATION ERROR -",
-			MsoLogger.ErrorCode.UnknownError.getValue(), msg, e);
+			ErrorCode.UnknownError.getValue(), msg, e);
 	}	
 
 		return true;
@@ -364,10 +364,10 @@ public class CallbackHandlerService {
 	protected void logCallbackError(String method, long startTime, String msg, Exception e) {
 		if (e == null) {
 			logger.error("{} {} {} {}", MessageEnum.BPMN_CALLBACK_EXCEPTION.toString(), "BPMN",
-				MsoLogger.ErrorCode.UnknownError.getValue(), msg);
+				ErrorCode.UnknownError.getValue(), msg);
 		} else {
 			logger.error("{} {} {} {}", MessageEnum.BPMN_CALLBACK_EXCEPTION.toString(), "BPMN",
-				MsoLogger.ErrorCode.UnknownError.getValue(), msg, e);
+				ErrorCode.UnknownError.getValue(), msg, e);
 		}
 	}
 	
