@@ -83,54 +83,6 @@ public class WorkflowActionUnitTest {
 	private WorkflowAction workflowAction;
 	
 	@Test
-	public void filterOrchFlowsHasFabricTest() {
-		
-		List<OrchestrationFlow> flows = createFlowList(
-				"DeactivateFabricConfigurationBB",
-				"flow x",
-				"flow y",
-				"ActivateFabricConfigurationBB",
-				"flow z");
-		doReturn(Arrays.asList("yes", "yes")).when(workflowAction).traverseCatalogDbForConfiguration(ArgumentMatchers.any(String.class), ArgumentMatchers.isNull());
-		
-		ServiceInstancesRequest sIRequest = new ServiceInstancesRequest();
-		RequestDetails requestDetails = new RequestDetails();
-		ModelInfo modelInfo = new ModelInfo();
-		requestDetails.setModelInfo(modelInfo);
-		RelatedInstance relatedInstance = new RelatedInstance();
-		sIRequest.setRequestDetails(requestDetails);
-		
-		List<OrchestrationFlow> result = workflowAction.filterOrchFlows(sIRequest, flows, WorkflowType.VFMODULE, mock(DelegateExecution.class));
-		
-		assertThat(result, is(flows));
-	}
-	
-	@Test
-	public void filterOrchFlowNoFabricTest() {
-		List<OrchestrationFlow> flows = createFlowList(
-				"DeactivateFabricConfigurationBB",
-				"flow x",
-				"flow y",
-				"ActivateFabricConfigurationBB",
-				"flow z");
-		
-		ServiceInstancesRequest sIRequest = new ServiceInstancesRequest();
-		RequestDetails requestDetails = new RequestDetails();
-		ModelInfo modelInfo = new ModelInfo();
-		modelInfo.setModelCustomizationUuid("");
-		requestDetails.setModelInfo(modelInfo);
-		sIRequest.setRequestDetails(requestDetails);
-		
-		List<OrchestrationFlow> result = workflowAction.filterOrchFlows(sIRequest, flows, WorkflowType.VFMODULE, mock(DelegateExecution.class));
-		List<OrchestrationFlow> expected = createFlowList(
-				"flow x",
-				"flow y",
-				"flow z");
-		
-		assertThat(result, is(expected));
-	}
-	
-	@Test
 	public void traverseCatalogDbForConfigurationTest() {
 		
 		CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
@@ -148,33 +100,6 @@ public class WorkflowActionUnitTest {
 		
 		assertThat(results, is(Arrays.asList(vfModuleCustomization)));
 		
-	}
-	
-	@Test
-	public void verifyFilterOrchInvocation() throws Exception {
-		DelegateExecution execution = mock(DelegateExecution.class);
-		
-		when(execution.getVariable(eq("aLaCarte"))).thenReturn(true);
-		when(execution.getVariable(eq("bpmnRequest"))).thenReturn(getJson("ServiceMacroAssign.json"));
-		when(execution.getVariable(eq("requestUri"))).thenReturn("/v6/serviceInstances/123/vnfs/1234");
-		
-		OrchestrationFlow flow = new OrchestrationFlow();
-		flow.setFlowName("flow x");
-		
-		List<OrchestrationFlow> flows = Arrays.asList(flow);
-		doReturn(Arrays.asList(flow)).when(workflowAction).queryNorthBoundRequestCatalogDb(any(), any(), any(), anyBoolean(), any(), any());
-		workflowAction.selectExecutionList(execution);
-		
-		verify(workflowAction, times(1)).filterOrchFlows(any(), eq(flows), any(), any());
-		
-		flow = new OrchestrationFlow();
-		flow.setFlowName("flow y");
-		flows = Arrays.asList(flow);
-		when(execution.getVariable(eq("aLaCarte"))).thenReturn(false);
-		workflowAction.selectExecutionList(execution);
-		
-		verify(workflowAction, never()).filterOrchFlows(any(), eq(flows), any(), any());
-
 	}
 	
 	private String getJson(String filename) throws IOException {

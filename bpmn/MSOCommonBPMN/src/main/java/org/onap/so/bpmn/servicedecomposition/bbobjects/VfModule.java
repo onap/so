@@ -21,19 +21,21 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Id;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 
 @JsonRootName("vf-module")
 public class VfModule implements Serializable, ShallowCopy<VfModule> {
@@ -59,6 +61,8 @@ public class VfModule implements Serializable, ShallowCopy<VfModule> {
     private Integer moduleIndex;
 	@JsonProperty("selflink")
     private String selflink;
+	@JsonProperty("vnfcs")
+	private List<Vnfc> vnfcs = new ArrayList<>();
 	@JsonProperty("model-info-vf-module")
 	private ModelInfoVfModule modelInfoVfModule;
 
@@ -121,6 +125,9 @@ public class VfModule implements Serializable, ShallowCopy<VfModule> {
 	}
 	public void setCascaded(boolean cascaded) {
 		this.cascaded = cascaded;
+	}
+	public List<Vnfc> getVnfcs() {
+		return vnfcs;
 	}
 	@Override
 	public boolean equals(final Object other) {

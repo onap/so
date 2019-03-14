@@ -51,6 +51,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
@@ -65,6 +66,7 @@ import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
@@ -333,10 +335,11 @@ public class BBInputSetup implements JavaDelegate {
 					relatedInstanceList, instanceName, vnfType, null);
 		} else if (modelType.equals(ModelType.vfModule)) {
 			if(bbName.contains("Configuration")) {
+				String configurationId = lookupKeyMap.get(ResourceKey.CONFIGURATION_ID);
 				ModelInfo configurationModelInfo = new ModelInfo();
 				configurationModelInfo.setModelCustomizationUuid(configurationKey);
 				populateConfiguration(configurationModelInfo, service, bbName, serviceInstance, 
-						lookupKeyMap, resourceId, instanceName, configurationResourceKeys);
+						lookupKeyMap, configurationId, instanceName, configurationResourceKeys);
 			} else {
 				lookupKeyMap.put(ResourceKey.VF_MODULE_ID, resourceId);
 				this.populateVfModule(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
@@ -381,7 +384,20 @@ public class BBInputSetup implements JavaDelegate {
 			serviceInstance.getConfigurations().add(configuration);
 		}
 		if(configuration != null) {
+			Vnfc vnfc = getVnfcToConfiguration(configurationResourceKeys.getVnfcName());
+			configuration.setVnfc(vnfc);
 			this.mapCatalogConfiguration(configuration, modelInfo, service, configurationResourceKeys);
+		}
+	}
+
+	protected Vnfc getVnfcToConfiguration(String vnfcName) {
+		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfcName);
+		Optional<org.onap.aai.domain.yang.Vnfc> vnfcOp = bbInputSetupUtils.getAAIResourceDepthOne(uri).asBean(org.onap.aai.domain.yang.Vnfc.class);
+		if(vnfcOp.isPresent()) {
+			org.onap.aai.domain.yang.Vnfc vnfcAAI = vnfcOp.get();
+			return this.mapperLayer.mapAAIVnfc(vnfcAAI);
+		} else {
+			return null;
 		}
 	}
 
@@ -405,8 +421,8 @@ public class BBInputSetup implements JavaDelegate {
 					, vnfVfmoduleCvnfcConfigurationCustomization));
 		} else {
 			logger.debug("for Fabric configuration mapping by VF MODULE CUST UUID: " + configurationResourceKeys.getVfModuleCustomizationUUID());
-			vnfVfmoduleCvnfcConfigurationCustomization = findVnfVfmoduleCvnfcConfigurationCustomization(configurationResourceKeys.getVfModuleCustomizationUUID(),
-					configurationResourceKeys.getVnfResourceCustomizationUUID(), configurationResourceKeys.getCvnfcCustomizationUUID());
+			vnfVfmoduleCvnfcConfigurationCustomization = findVnfVfmoduleCvnfcConfigurationCustomization(configurationResourceKeys.getVnfResourceCustomizationUUID(),
+					configurationResourceKeys.getVfModuleCustomizationUUID(), configurationResourceKeys.getCvnfcCustomizationUUID());
 			if (vnfVfmoduleCvnfcConfigurationCustomization != null){
 				configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(vnfVfmoduleCvnfcConfigurationCustomization));
 			}
@@ -438,7 +454,7 @@ public class BBInputSetup implements JavaDelegate {
 	
 	protected VnfVfmoduleCvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String vnfResourceCustomizationUUID,
 			String vfModuleCustomizationUUID, String cvnfcCustomizationUUID) {
-		return bbInputSetupUtils.getVnfVfmoduleCvnfcConfigurationCustomizationByActionAndIsALaCarteAndRequestScopeAndCloudOwner(vnfResourceCustomizationUUID,
+		return bbInputSetupUtils.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationIdnAndVfModuleCustomizationIdAndCvnfcCustomizationId(vnfResourceCustomizationUUID,
 				vfModuleCustomizationUUID, cvnfcCustomizationUUID);
 
 	}

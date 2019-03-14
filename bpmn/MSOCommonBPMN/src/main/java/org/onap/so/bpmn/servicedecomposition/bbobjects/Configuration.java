@@ -62,9 +62,11 @@ public class Configuration implements Serializable, ShallowCopy<Configuration> {
 	@JsonProperty("metadata")
 	private Metadata metadata;
 	@JsonProperty("forwarder-evcs")
-	private List<ForwarderEvc> forwarderEvcs = new ArrayList<ForwarderEvc>();
+	private List<ForwarderEvc> forwarderEvcs = new ArrayList<>();
 	@JsonProperty("evcs")
-	private List<Evc> evcs = new ArrayList<Evc>();
+	private List<Evc> evcs = new ArrayList<>();
+	@JsonProperty("vnfc")
+	private Vnfc vnfc = new Vnfc();
 	@JsonProperty("model-info-configuration")
 	private ModelInfoConfiguration modelInfoConfiguration;
 	
@@ -87,6 +89,14 @@ public class Configuration implements Serializable, ShallowCopy<Configuration> {
 
 	public List<ForwarderEvc> getForwarderEvcs() {
 		return forwarderEvcs;
+	}
+	
+	public Vnfc getVnfc() {
+		return vnfc;
+	}
+
+	public void setVnfc(Vnfc vnfc) {
+		this.vnfc = vnfc;
 	}
 
 	public List<Evc> getEvcs() {

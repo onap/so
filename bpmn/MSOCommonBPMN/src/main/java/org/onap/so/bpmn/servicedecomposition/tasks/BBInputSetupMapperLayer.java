@@ -55,6 +55,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Subnet;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Tenant;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.License;
@@ -510,5 +511,9 @@ public class BBInputSetupMapperLayer {
 	public NetworkResourceCustomization mapCollectionNetworkResourceCustToNetworkResourceCust(
 			CollectionNetworkResourceCustomization collectionNetworkResourceCust) {
 		return modelMapper.map(collectionNetworkResourceCust, NetworkResourceCustomization.class);
+	}
+
+	public Vnfc mapAAIVnfc(org.onap.aai.domain.yang.Vnfc vnfcAAI) {
+		return modelMapper.map(vnfcAAI, Vnfc.class);
 	}
 }

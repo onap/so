@@ -47,7 +47,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
@@ -67,6 +66,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.RouteTableReference;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceSubscription;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Vnfc;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
@@ -85,10 +85,8 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.constants.Defaults;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
@@ -1194,6 +1192,7 @@ public class BBInputSetupTest {
 		configuration.setConfigurationName("configurationName");
 		serviceInstance.getConfigurations().add(configuration);
 		String resourceId = "configurationId";
+		String vnfcName = "vnfcName";
 		// Mock service
 		Service service = mapper.readValue(
 				new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
@@ -1207,9 +1206,12 @@ public class BBInputSetupTest {
 		configResourceKeys.setCvnfcCustomizationUUID("cvnfcCustomizationUUID");
 		configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
 		configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
+		configResourceKeys.setVnfcName(vnfcName);
+		Vnfc vnfc = new Vnfc();
+		vnfc.setVnfcName(vnfcName);
 
 		doNothing().when(SPY_bbInputSetup).mapCatalogConfiguration(configuration, modelInfo, service, configResourceKeys);
-
+		doReturn(vnfc).when(SPY_bbInputSetup).getVnfcToConfiguration(vnfcName);
 		SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
 				instanceName, configResourceKeys);
 		verify(SPY_bbInputSetup, times(1)).mapCatalogConfiguration(configuration, modelInfo, service, configResourceKeys);
@@ -1264,6 +1266,7 @@ public class BBInputSetupTest {
 		configuration.setConfigurationName("configurationName");
 		serviceInstance.getConfigurations().add(configuration);
 		String resourceId = "configurationId";
+		String vnfcName = "vnfcName";
 		// Mock service
 		Service service = mapper.readValue(
 				new File(RESOURCE_PATH + "CatalogDBService_getServiceInstanceNOAAIInput.json"), Service.class);
@@ -1274,6 +1277,9 @@ public class BBInputSetupTest {
 		configResourceKeys.setCvnfcCustomizationUUID("cvnfcCustomizationUUID");
 		configResourceKeys.setVfModuleCustomizationUUID("vfModuleCustomizationUUID");
 		configResourceKeys.setVnfResourceCustomizationUUID("vnfResourceCustomizationUUID");
+		configResourceKeys.setVnfcName(vnfcName);
+		Vnfc vnfc = new Vnfc();
+		vnfc.setVnfcName(vnfcName);
 		
 		VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new VnfVfmoduleCvnfcConfigurationCustomization();
 		ConfigurationResource configurationResource = new ConfigurationResource();
@@ -1282,7 +1288,7 @@ public class BBInputSetupTest {
 		vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(configurationResource);
 
 		doReturn(null).when(SPY_bbInputSetup).findConfigurationResourceCustomization(modelInfo, service);
-		doReturn(vnfVfmoduleCvnfcConfigurationCustomization).when(SPY_bbInputSetup).findVnfVfmoduleCvnfcConfigurationCustomization("vfModuleCustomizationUUID","vnfResourceCustomizationUUID","cvnfcCustomizationUUID");
+		doReturn(vnfc).when(SPY_bbInputSetup).getVnfcToConfiguration(vnfcName);
 		
 		SPY_bbInputSetup.populateConfiguration(modelInfo, service, bbName, serviceInstance, lookupKeyMap, resourceId,
 				instanceName, configResourceKeys);

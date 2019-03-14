@@ -75,6 +75,7 @@ public class CatalogDbClient {
 
     private static final String CLOUD_SITE = "/cloudSite";
     private static final String CLOUDIFY_MANAGER = "/cloudifyManager";
+    private static final String CVNFC_CUSTOMZIATION = "/cvnfcCustomization";
     private static final String RAINY_DAY_HANDLER_MACRO = "/rainy_day_handler_macro";
     private static final String NORTHBOUND_REQUEST_REF_LOOKUP = "/northbound_request_ref_lookup";
     private static final String NETWORK_RESOURCE_CUSTOMIZATION = "/networkResourceCustomization";
@@ -177,6 +178,7 @@ public class CatalogDbClient {
     private String cloudifyManagerURI;
     private String cloudSiteURI;
     private String homingInstanceURI;
+    private String cvnfcResourceCustomizationURI;
     private String pnfResourceURI;
     private String pnfResourceCustomizationURI;
 
@@ -238,10 +240,10 @@ public class CatalogDbClient {
 
     private final Client<PnfResourceCustomization> pnfResourceCustomizationClient;
 
-    @Value("${mso.catalog.db.spring.endpoint}")
+    @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
 
-    @Value("${mso.db.auth}")
+    @Value("${mso.db.auth:#{null}}")
     private String msoAdaptersAuth;
 
 
@@ -305,6 +307,7 @@ public class CatalogDbClient {
         networkCollectionResourceCustomizationURI =
             endpoint + NETWORK_COLLECTION_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         networkResourceCustomizationURI = endpoint + NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
+        cvnfcResourceCustomizationURI = endpoint + CVNFC_CUSTOMZIATION + URI_SEPARATOR;
         vnfResourceCustomizationURI = endpoint + VNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         collectionNetworkResourceCustomizationURI =
             endpoint + COLLECTION_NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
@@ -516,6 +519,15 @@ public class CatalogDbClient {
             networkResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         }
         return networkResourceCustomization;
+    }
+
+    public CvnfcCustomization getCvnfcCustomizationByModelCustomizationUUID(String modelCustomizationUUID){
+        CvnfcCustomization cvnfcResourceCustomization =
+                this.getSingleResource(cvnfcCustomizationClient, getUri(cvnfcResourceCustomizationURI + modelCustomizationUUID));
+        if (cvnfcResourceCustomization != null) {
+            cvnfcResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
+        }
+        return cvnfcResourceCustomization;
     }
 
     public BuildingBlockDetail getBuildingBlockDetail(String buildingBlockName) {

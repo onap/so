@@ -22,18 +22,28 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
-import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.aai.domain.yang.Vnfc;
 import org.onap.so.bpmn.common.workflow.context.WorkflowCallbackResponse;
 import org.onap.so.bpmn.common.workflow.context.WorkflowContextHolder;
-import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.ConfigurationResourceKeys;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.client.aai.entities.Relationships;
+import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.db.catalog.beans.CvnfcCustomization;
+import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.serviceinstancebeans.RequestReferences;
@@ -55,6 +65,9 @@ public class WorkflowActionBBTasks {
 	private static final String G_ALACARTE = "aLaCarte";
 	private static final String G_ACTION = "requestAction";
 	private static final String RETRY_COUNT = "retryCount";
+	private static final String FABRIC_CONFIGURATION = "FabricConfiguration";
+	private static final String ASSIGN_FABRIC_CONFIGURATION_BB = "AssignFabricConfigurationBB";
+	private static final String ACTIVATE_FABRIC_CONFIGURATION_BB = "ActivateFabricConfigurationBB";
 	protected String maxRetries = "mso.rainyDay.maxRetries";
 	private static final Logger logger = LoggerFactory.getLogger(WorkflowActionBBTasks.class);
 
@@ -66,6 +79,10 @@ public class WorkflowActionBBTasks {
 	private WorkflowActionBBFailure workflowActionBBFailure;
 	@Autowired
 	private Environment environment;
+	@Autowired
+	private BBInputSetupUtils bbInputSetupUtils;
+	@Autowired
+	private CatalogDbClient catalogDbClient;
 	
 	public void selectBB(DelegateExecution execution) {
 		List<ExecuteBuildingBlock> flowsToExecute = (List<ExecuteBuildingBlock>) execution
@@ -281,9 +298,11 @@ public class WorkflowActionBBTasks {
 			
 			int flowSize = rollbackFlows.size();
 			String handlingCode = (String) execution.getVariable("handlingCode");
-			if(handlingCode.equals("RollbackToAssigned")){
+			if(handlingCode.equals("RollbackToAssigned") || handlingCode.equals("RollbackToCreated")){
 				for(int i = 0; i<flowSize; i++){
 					if(rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Unassign")){
+						rollbackFlows.remove(i);
+					} else if(rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Delete") && handlingCode.equals("RollbackToCreated")) {
 						rollbackFlows.remove(i);
 					}
 				}
@@ -330,5 +349,91 @@ public class WorkflowActionBBTasks {
 		}catch(Exception ex){
 			workflowAction.buildAndThrowException(execution, "Failed to update Request db with instanceId");
 		}
+	}
+	
+	public void postProcessingExecuteBB(DelegateExecution execution) {
+		List<ExecuteBuildingBlock> flowsToExecute = (List<ExecuteBuildingBlock>) execution
+				.getVariable("flowsToExecute");
+		String handlingCode = (String) execution.getVariable("handlingCode");
+		final boolean aLaCarte = (boolean) execution.getVariable(G_ALACARTE);
+		int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
+		ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence - 1);
+		String bbFlowName = ebb.getBuildingBlock().getBpmnFlowName();
+		if(bbFlowName.equalsIgnoreCase("ActivateVfModuleBB") && aLaCarte && handlingCode.equalsIgnoreCase("Success")) {
+			postProcessingExecuteBBActivateVfModule(execution, ebb, flowsToExecute);
+		}
+	}
+	
+	protected void postProcessingExecuteBBActivateVfModule(DelegateExecution execution, 
+			ExecuteBuildingBlock ebb, List<ExecuteBuildingBlock> flowsToExecute) {
+		try {
+			String vnfId = ebb.getWorkflowResourceIds().getVnfId();
+			String vfModuleId = ebb.getWorkflowResourceIds().getVfModuleId();
+			String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
+			String vfModuleCustomizationUUID = bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId).getModelCustomizationId();
+			List<Vnfc> vnfcs = workflowAction.getRelatedResourcesInVfModule(vnfId, vfModuleId, Vnfc.class, AAIObjectType.VNFC);
+			for(Vnfc vnfc : vnfcs) {
+				String modelCustomizationId = vnfc.getModelCustomizationId();
+				List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(vnfCustomizationUUID, vfModuleCustomizationUUID);
+				CvnfcCustomization cvnfcCustomization = null;
+				for(CvnfcCustomization cvnfc : cvnfcCustomizations) {
+					if(cvnfc.getModelCustomizationUUID().equalsIgnoreCase(modelCustomizationId)) {
+						cvnfcCustomization = cvnfc;
+					}
+				}
+				if(cvnfcCustomization != null) {
+					VnfVfmoduleCvnfcConfigurationCustomization fabricConfig = null;
+					for(VnfVfmoduleCvnfcConfigurationCustomization customization : cvnfcCustomization.getVnfVfmoduleCvnfcConfigurationCustomization()){
+						if(customization.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)){
+							if(fabricConfig == null) {
+								fabricConfig = customization;
+							} else {
+								throw new Exception("Multiple Fabric configs found for this vnfc");
+							}
+						}
+					}
+					if(fabricConfig != null) {
+						String configurationId = UUID.randomUUID().toString();
+						ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
+						configurationResourceKeys.setCvnfcCustomizationUUID(modelCustomizationId);
+						configurationResourceKeys.setVfModuleCustomizationUUID(vfModuleCustomizationUUID);
+						configurationResourceKeys.setVnfResourceCustomizationUUID(vnfCustomizationUUID);
+						configurationResourceKeys.setVnfcName(vnfc.getVnfcName());
+						ExecuteBuildingBlock assignConfigBB = getExecuteBBForConfig(ASSIGN_FABRIC_CONFIGURATION_BB, ebb, configurationId, configurationResourceKeys);
+						ExecuteBuildingBlock activateConfigBB = getExecuteBBForConfig(ACTIVATE_FABRIC_CONFIGURATION_BB, ebb, configurationId, configurationResourceKeys);
+						flowsToExecute.add(assignConfigBB);
+						flowsToExecute.add(activateConfigBB);
+						execution.setVariable("flowsToExecute", flowsToExecute);
+						execution.setVariable("completed", false);
+					}
+				} else {
+					logger.debug("No cvnfcCustomization found for customizationId: " + modelCustomizationId);
+				}
+			}
+		} catch (Exception e) {
+			String errorMessage = "Error occurred in post processing of Vf Module create";
+			execution.setVariable("handlingCode", "RollbackToCreated");
+			execution.setVariable("WorkflowActionErrorMessage", errorMessage);
+			logger.error(errorMessage, e);
+		}
+	}
+	
+	protected ExecuteBuildingBlock getExecuteBBForConfig(String bbName, ExecuteBuildingBlock ebb, String configurationId, ConfigurationResourceKeys configurationResourceKeys) {
+		ExecuteBuildingBlock configBB = new ExecuteBuildingBlock();
+		BuildingBlock buildingBlock = new BuildingBlock();
+		buildingBlock.setBpmnFlowName(bbName);
+		buildingBlock.setMsoId(UUID.randomUUID().toString());
+		configBB.setaLaCarte(ebb.isaLaCarte());
+		configBB.setApiVersion(ebb.getApiVersion());
+		configBB.setRequestAction(ebb.getRequestAction());
+		configBB.setVnfType(ebb.getVnfType());
+		configBB.setRequestId(ebb.getRequestId());
+		configBB.setRequestDetails(ebb.getRequestDetails());
+		configBB.setBuildingBlock(buildingBlock);
+		WorkflowResourceIds workflowResourceIds = ebb.getWorkflowResourceIds();
+		workflowResourceIds.setConfigurationId(configurationId);
+		configBB.setWorkflowResourceIds(workflowResourceIds);
+		configBB.setConfigurationResourceKeys(configurationResourceKeys);
+		return configBB;
 	}
 }

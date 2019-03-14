@@ -451,4 +451,9 @@ public class BBInputSetupUtils {
 			return Optional.of(volumeGroup);
 		}
 	}
+
+	public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationIdnAndVfModuleCustomizationIdAndCvnfcCustomizationId(
+			String vnfResourceCustomizationUUID, String vfModuleCustomizationUUID, String cvnfcCustomizationUUID) {
+		return catalogDbClient.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(vnfResourceCustomizationUUID, vfModuleCustomizationUUID, cvnfcCustomizationUUID);
+	}
 }

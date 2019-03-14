@@ -31,6 +31,7 @@ public class ConfigurationResourceKeys implements Serializable{
 	private String vfModuleCustomizationUUID;
 	private String vnfResourceCustomizationUUID;
 	private String cvnfcCustomizationUUID;
+	private String vnfcName;
 	
 	public String getVfModuleCustomizationUUID() {
 		return vfModuleCustomizationUUID;
@@ -49,6 +50,12 @@ public class ConfigurationResourceKeys implements Serializable{
 	}
 	public void setCvnfcCustomizationUUID(String cvnfcCustomizationUUID) {
 		this.cvnfcCustomizationUUID = cvnfcCustomizationUUID;
+	}
+	public String getVnfcName() {
+		return vnfcName;
+	}
+	public void setVnfcName(String vnfcName) {
+		this.vnfcName = vnfcName;
 	}
 	
 	
