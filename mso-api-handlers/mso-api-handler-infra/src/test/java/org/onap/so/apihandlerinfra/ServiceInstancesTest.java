@@ -194,6 +194,24 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals("10",modelInfo.getModelUuid());
 
     }
+    
+    
+    @Test
+    public void test_mapJSONtoMSOStyleUsePreload() throws IOException{
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        String testRequest= inputStream("/ServiceInstanceDefault.json");
+        ServiceInstancesRequest sir = new ServiceInstancesRequest();
+        RequestDetails rd = new RequestDetails();
+        RequestParameters rp = new RequestParameters();
+        rp.setUsePreload(true);
+        rd.setRequestParameters(rp);
+        sir.setRequestDetails(rd);
+        String resultString = servInstances.mapJSONtoMSOStyle(testRequest, sir, false, null);
+        ServiceInstancesRequest sir1 = mapper.readValue(resultString, ServiceInstancesRequest.class);
+        assertTrue(sir1.getRequestDetails().getRequestParameters().getUsePreload());
+    }
+    
     @Test
     public void createServiceInstanceVIDDefault() throws IOException{
         TestAppender.events.clear();

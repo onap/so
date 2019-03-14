@@ -50,7 +50,7 @@ public class RequestParametersValidationTest extends BaseTest{
 		sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");		
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
-		
+		assertFalse(sir.getRequestDetails().getRequestParameters().getUsePreload());
 		assertFalse(info.getReqParameters().getUsePreload());		
 	}
 	
@@ -66,7 +66,8 @@ public class RequestParametersValidationTest extends BaseTest{
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
 		
-		assertTrue(info.getReqParameters().getUsePreload());		
+		assertTrue(sir.getRequestDetails().getRequestParameters().getUsePreload());
+		assertTrue(info.getReqParameters().getUsePreload());
 	}
 	
 	@Test
@@ -82,6 +83,7 @@ public class RequestParametersValidationTest extends BaseTest{
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
 		
+		assertTrue(sir.getRequestDetails().getRequestParameters().getUsePreload());
 		assertTrue(info.getReqParameters().getUsePreload());
 	}
 	
@@ -97,7 +99,7 @@ public class RequestParametersValidationTest extends BaseTest{
 		sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");		
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
-		
+		assertTrue(sir.getRequestDetails().getRequestParameters().getUsePreload());
 		assertTrue(info.getReqParameters().getUsePreload());
 	}
 	
@@ -113,7 +115,7 @@ public class RequestParametersValidationTest extends BaseTest{
 		info.setRequestScope("service");
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
-		
+		assertFalse(sir.getRequestDetails().getRequestParameters().getUsePreload());
 		assertFalse(info.getReqParameters().getUsePreload());		
 	}
 	
@@ -129,7 +131,7 @@ public class RequestParametersValidationTest extends BaseTest{
 		info.setRequestScope("service");
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
-		
+		assertFalse(sir.getRequestDetails().getRequestParameters().getUsePreload());
 		assertFalse(info.getReqParameters().getUsePreload());		
 	}
 	
@@ -145,7 +147,7 @@ public class RequestParametersValidationTest extends BaseTest{
 		info.setRequestScope("service");
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
-		
+		assertTrue(sir.getRequestDetails().getRequestParameters().getUsePreload());
 		assertTrue(info.getReqParameters().getUsePreload());
 	}
 	
@@ -161,7 +163,7 @@ public class RequestParametersValidationTest extends BaseTest{
 		info.setRequestScope("service");
 		RequestParametersValidation validation = new RequestParametersValidation();
 		validation.validate(info);
-		
+		assertTrue(sir.getRequestDetails().getRequestParameters().getUsePreload());
 		assertTrue(info.getReqParameters().getUsePreload());
 	}	
 }
