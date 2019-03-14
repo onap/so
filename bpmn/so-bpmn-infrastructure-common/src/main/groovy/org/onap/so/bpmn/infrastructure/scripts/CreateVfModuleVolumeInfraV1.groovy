@@ -310,7 +310,8 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 		String xmlHandlerRequest = utils.formatXml(falloutHandlerRequest)
 
 		execution.setVariable(prefix+'FalloutHandlerRequest', xmlHandlerRequest)
-		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Overall Error Response going to FalloutHandler", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Overall Error Response " +
+				"going to FalloutHandler", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
 	}
 
 

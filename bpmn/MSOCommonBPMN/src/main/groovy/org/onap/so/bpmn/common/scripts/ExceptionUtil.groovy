@@ -90,8 +90,8 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 			buildWorkflowException(execution, 5000, modifiedErrorMessage)
 
 			wfex = execution.getVariable("WorkflowException")
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), wfex.errorMessage);
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+					MsoLogger.ErrorCode.UnknownError.getValue(), wfex.errorMessage);
 			return wfex
 		} else {
 			try {
@@ -103,8 +103,8 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 
 				logger.debug("mappedErrorMessage " + mappedErrorMessage)
 				wfex = execution.getVariable("WorkflowException")
-				logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
-						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), wfex.errorMessage);
+				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+						MsoLogger.ErrorCode.UnknownError.getValue(), wfex.errorMessage);
 				return wfex
 			} catch(Exception ex) {
 				logger.debug("error mapping error, return null: " + ex)

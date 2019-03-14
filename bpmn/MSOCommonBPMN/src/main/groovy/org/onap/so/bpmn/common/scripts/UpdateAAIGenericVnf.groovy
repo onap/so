@@ -182,8 +182,8 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			if (newPersonaModelId != null || newPersonaModelVersion != null) {
 				if (newPersonaModelId != genericVnf.getModelInvariantId()) {
 					def msg = 'Can\'t update Generic VNF ' + vnfId + ' since there is \'persona-model-id\' mismatch between the current and new values'
-					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue())
+					logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+							MsoLogger.ErrorCode.UnknownError.getValue())
 					throw new Exception(msg)
 				}
 

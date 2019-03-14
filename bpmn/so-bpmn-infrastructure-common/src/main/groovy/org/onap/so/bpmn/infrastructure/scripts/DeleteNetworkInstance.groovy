@@ -357,9 +357,9 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 
 			logger.debug(falloutHandlerRequest)
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest, "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue())
+					MsoLogger.ErrorCode.UnknownError.getValue())
 
 		} catch (Exception ex) {
 			// caught exception
@@ -380,9 +380,9 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest,"BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex)
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex)
 		}
 	}
 

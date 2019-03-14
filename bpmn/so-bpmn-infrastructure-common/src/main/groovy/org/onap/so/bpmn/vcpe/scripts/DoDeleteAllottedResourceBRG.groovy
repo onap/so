@@ -351,9 +351,9 @@ public class DoDeleteAllottedResourceBRG extends AbstractServiceTaskProcessor{
 		} catch (BpmnError e) {
 			throw e;
 		}catch(Exception ex){
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occurred Processing preProcessSDNCGetRequest." + ex, "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:" + ex);
+					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:" + ex);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + ex.getMessage())
 		}
 		logger.trace("end deleteAaiAR")

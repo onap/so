@@ -294,15 +294,15 @@ class MsoUtils {
 
 	def log(logmode,logtxt,isDebugLogEnabled="false"){
 		if ("INFO"==logmode) {
-			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN", MsoLogger.getServiceName());
+			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN");
 		} else if ("WARN"==logmode) {
 			// to see the warning text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger warn() method
-			logger.warn ("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(), logtxt, "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), logtxt);
+			logger.warn ("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(), logtxt, "BPMN",
+					MsoLogger.ErrorCode.UnknownError.getValue(), logtxt);
 		} else if ("ERROR"==logmode) {
 			// to see the error text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger error() method
-		    logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), logtxt);
+		    logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN",
+					MsoLogger.ErrorCode.UnknownError.getValue(), logtxt);
 
 		} else {
 			BPMNLogger.debug(isDebugLogEnabled, logtxt);

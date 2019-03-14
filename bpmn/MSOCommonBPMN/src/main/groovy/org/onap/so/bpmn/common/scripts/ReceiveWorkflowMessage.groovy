@@ -66,8 +66,8 @@ public void preProcessRequest (DelegateExecution execution) {
 			if ((timeout == null) || (timeout.isEmpty())) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_timeout\''
 				logger.debug(msg)
-				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
+				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -77,8 +77,8 @@ public void preProcessRequest (DelegateExecution execution) {
 			if ((messageType == null) || (messageType.isEmpty())) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_messageType\''
 				logger.debug(msg)
-				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
+				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -88,8 +88,8 @@ public void preProcessRequest (DelegateExecution execution) {
 			if ((correlator == null) || (correlator.isEmpty())) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_correlator\''
 				logger.debug(msg)
-				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
+				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+						MsoLogger.ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 			execution.setVariable(messageType + '_CORRELATOR', correlator)
@@ -100,8 +100,8 @@ public void preProcessRequest (DelegateExecution execution) {
 		} catch (Exception e) {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
+					MsoLogger.ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}

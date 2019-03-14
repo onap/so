@@ -120,8 +120,8 @@ public class AppCClient extends AbstractServiceTaskProcessor{
 			appcMessage = client.getErrorMessage()
 		}
 		catch (BpmnError e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					'Caught exception in ' + method, "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			appcMessage = e.getMessage()
 		}

@@ -109,8 +109,8 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (Exception e) {
-			logger.warn("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
-					'Exception transforming network params to vnfNetworks', "BPMN", MsoLogger.getServiceName(),
+			logger.warn("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
+					'Exception transforming network params to vnfNetworks', "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception is: \n' + e);
 		}
 		return vnfNetworks
@@ -148,8 +148,8 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				entries = entries + entry
 			}
 		} catch (Exception e) {
-			logger.warn("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
-					'Exception transforming params to entries', "BPMN", MsoLogger.getServiceName(),
+			logger.warn("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
+					'Exception transforming params to entries', "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception transforming params to entries' + e);
 		}
 		return entries
@@ -189,8 +189,8 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 				}
 			}
 		} catch (Exception e) {
-			logger.warn("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
-					'Exception transforming params to entries', "BPMN", MsoLogger.getServiceName(),
+			logger.warn("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
+					'Exception transforming params to entries', "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception transforming params to entries' + e);
 		}
 		return entries

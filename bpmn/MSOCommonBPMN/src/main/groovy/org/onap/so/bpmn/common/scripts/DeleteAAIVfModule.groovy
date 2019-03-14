@@ -206,9 +206,9 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 
 	// generates a WorkflowException if the A&AI query returns a response code other than 200
 	public void handleAAIQueryFailure(DelegateExecution execution) {
-		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error occurred attempting to query AAI, Response Code " + execution.getVariable("DAAIVfMod_queryGenericVnfResponseCode") + ", Error Response " + execution.getVariable("DAAIVfMod_queryGenericVnfResponse"),
-				"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
+				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue());
 		def errorCode = 5000
 		// set the errorCode to distinguish between a A&AI failure
 		// and the Generic Vnf Id not found
@@ -253,8 +253,8 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			}
 		}
 
-		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-				"Error occurred during DeleteAAIVfModule flow", "BPMN", MsoLogger.getServiceName(),
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Error occurred during DeleteAAIVfModule flow", "BPMN",
 				MsoLogger.ErrorCode.UnknownError.getValue(), errorResponse);
 		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, errorResponse)
 
@@ -263,8 +263,8 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	// generates a WorkflowException if
 	//		- the A&AI Generic Vnf DELETE returns a response code other than 200
 	public void handleDeleteGenericVnfFailure(DelegateExecution execution) {
-		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-				"AAI error occurred deleting the Generic Vnf", "BPMN", MsoLogger.getServiceName(),
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"AAI error occurred deleting the Generic Vnf", "BPMN",
 				MsoLogger.ErrorCode.UnknownError.getValue(),
 				execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"));
 		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"))

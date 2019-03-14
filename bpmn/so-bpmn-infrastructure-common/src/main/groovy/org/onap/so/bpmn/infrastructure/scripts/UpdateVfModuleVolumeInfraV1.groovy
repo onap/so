@@ -479,7 +479,8 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
                 " retrieved from AAI for Volume Group Id " + volumeGroupId + ", AIC Cloud Region " + aicCloudRegion
 
         ExceptionUtil exceptionUtil = new ExceptionUtil()
-        logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
+        logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in ' +
+                'UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
         exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
     }
 
@@ -497,7 +498,8 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
                 " retrieved from AAI for Volume Group Id "
 
         ExceptionUtil exceptionUtil = new ExceptionUtil()
-        logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
+        logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in ' +
+                'UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
         exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
     }
 

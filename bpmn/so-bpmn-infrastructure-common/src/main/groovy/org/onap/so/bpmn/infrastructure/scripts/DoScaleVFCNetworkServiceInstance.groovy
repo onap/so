@@ -182,8 +182,8 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         try {
             Thread.sleep(5000)
         } catch (InterruptedException e) {
-            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    "Time Delay exception" + e, "BPMN", MsoLogger.getServiceName(),
+            logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    "Time Delay exception" + e, "BPMN",
                     MsoLogger.ErrorCode.UnknownError.getValue());
         }
     }
@@ -216,7 +216,8 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
             logger.info("response code:"+ apiResponse.getStatus() +"\nresponse body:"+ apiResponse.readEntity(String.class))
             logger.trace("Completed Execute VF-C adapter Post Process ")
         }catch(Exception e){
-            logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception occured while executing VFC Post Call.", "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), e);
+            logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception occured " +
+                    "while executing VFC Post Call.", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), e);
             throw new BpmnError("MSOWorkflowException")
         }
         return apiResponse

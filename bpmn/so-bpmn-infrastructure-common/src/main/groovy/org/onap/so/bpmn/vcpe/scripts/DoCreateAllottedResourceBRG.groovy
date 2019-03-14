@@ -585,8 +585,8 @@ public class DoCreateAllottedResourceBRG extends AbstractServiceTaskProcessor{
 			execution.setVariable("sdncGetRequest", SDNCGetRequest)
 
 		}catch(Exception e){
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception Occurred Processing preProcessSDNCGetRequest.", "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occurred Processing preProcessSDNCGetRequest.", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + e.getMessage())
 		}

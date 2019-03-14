@@ -465,8 +465,8 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, sendRequestToVnfAdapter() - " + ex.getMessage()
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
-					"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
+					"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
 					"Exception is:\n" + ex);
 			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
@@ -517,8 +517,8 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRequest() - " + ex.getMessage()
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
-					"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
+					"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
 					"Exception is:\n" + ex);
 			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
@@ -558,8 +558,8 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRequest() - " + ex.getMessage()
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
-					"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
+					"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
 					"Exception is:\n" + ex);
 			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)
@@ -998,8 +998,8 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		} catch (Exception ex) {
 			// caught exception
 			String exceptionMessage = "Bpmn error encountered in DoDeleteNetworkInstance, prepareSDNCRollback() - " + ex.getMessage()
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
-					"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), exceptionMessage,
+					"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(),
 					"Exception is:\n" + ex);
 			logger.debug(exceptionMessage)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, exceptionMessage)

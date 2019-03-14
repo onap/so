@@ -114,8 +114,8 @@ public class RollbackVnf extends VnfCmBase {
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception Encountered - " + "\n" + restFaultMessage, "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Encountered - " + "\n" + restFaultMessage, "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("rollbackErrorCode", "1")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
