@@ -1,0 +1,522 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: ONAP SO VNFM Adapter API
+  description: >-
+    Describes the API between SO (Service Orchestrator) and the adapter for VNFM
+    (Virtual Network Function Manager)
+basePath: /so/vnfm-adapter/v1
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  '/vnfs/{vnfId}':
+    post:
+      tags:
+        - SO VNFM Adapter
+      summary: VNF create
+      description: Create a VNF instance using a VNFM.
+      operationId: vnf_create
+      consumes:
+        - application/json
+      parameters:
+        - required: true
+          type: string
+          description: >-
+            The identifier of the VNF. This must be the vnf-id of an existing
+            generic-vnf in AAI.
+          name: vnfId
+          in: path
+        - in: body
+          name: body
+          description: VNF creation parameters
+          required: true
+          schema:
+            $ref: '#/definitions/CreateVnfRequest'
+        - name: X-ONAP-RequestID
+          description: >-
+            Used to track REST requests for logging purposes. Identifies a
+            single top level invocation of ONAP
+          in: header
+          required: true
+          type: string
+        - name: X-InvocationID
+          description: >-
+            Used to track REST requests for logging purposes. Identifies a
+            single invocation of a single component
+          in: header
+          required: true
+          type: string
+      responses:
+        '202':
+          description: >-
+            The request was accepted for processing, but the processing has not
+            been completed.
+          schema:
+            $ref: '#/definitions/CreateVnfResponse'
+        '400':
+          description: >-
+            An error occurred in the VNFM adapter relating to the given input,
+            for example, if the definition of the given VNF in AAI does not
+            included required information.
+        '404':
+          description: A VNF with the specified ID was not found in AAI.
+        '500':
+          description: >-
+            An error occurred in the VNFM adapter not relating to the given
+            input, or an error is received from the VNFM.
+    delete:
+      tags:
+        - SO VNFM Adapter
+      summary: VNF delete
+      description: Delete an instance of a VNF using a VNFM.
+      operationId: vnf_delete
+      consumes:
+        - application/json
+      parameters:
+        - required: true
+          type: string
+          description: >-
+            The identifier of the VNF. This must be the vnf-id of an existing
+            generic-vnf in AAI
+          name: vnfId
+          in: path
+        - name: X-ONAP-RequestID
+          description: >-
+            Used to track REST requests for logging purposes. Identifies a
+            single top level invocation of ONAP
+          in: header
+          required: true
+          type: string
+        - name: X-InvocationID
+          description: >-
+            Used to track REST requests for logging purposes. Identifies a
+            single invocation of a single component
+          in: header
+          required: true
+          type: string
+      responses:
+        '202':
+          description: >-
+            The request was accepted for processing, but the processing has not
+            been completed.
+          schema:
+            $ref: '#/definitions/DeleteVnfResponse'
+        '400':
+          description: >-
+            An error occurred in the VNFM adapter relating to the given input,
+            for example, if the definition of the given VNF in AAI does not
+            included required information.
+        '404':
+          description: A VNF with the specified ID was not found in AAI.
+        '500':
+          description: >-
+            An error occurred in the VNFM adapter not relating to the given
+            input, or an error is received from the VNFM.
+  '/jobs/{jobId}':
+    get:
+      tags:
+        - SO VNFM Adapter
+      summary: Job query
+      description: Query the status of a job.
+      operationId: job_query
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - required: true
+          type: string
+          description: The identifier of the Job.
+          name: jobId
+          in: path
+        - name: X-ONAP-RequestID
+          description: >-
+            Used to track REST requests for logging purposes. Identifies a
+            single top level invocation of ONAP
+          in: header
+          required: true
+          type: string
+        - name: X-InvocationID
+          description: >-
+            Used to track REST requests for logging purposes. Identifies a
+            single invocation of a single component
+          in: header
+          required: true
+          type: string
+      responses:
+        '200':
+          description: ''
+          schema:
+            $ref: '#/definitions/QueryJobResponse'
+        '404':
+          description: A job with the specified ID was not found.
+        '500':
+          description: >-
+            An error occurred in the VNFM adapter not relating to the given
+            input, or an error is received from the VNFM.
+definitions:
+  CreateVnfRequest:
+    type: object
+    properties:
+      name:
+        type: string
+        description: The name to be applied to the VNF.
+      tenant:
+        $ref: '#/definitions/Tenant'
+      additionalParams:
+        type: object
+        description: >-
+          Additional input parameters for the instantiation process, specific to
+          the VNF being instantiated, as declared in the VNFD as part of
+          "InstantiateVnfOpConfig".
+        additionalProperties:
+          type: string
+      externalVirtualLinks:
+        type: array
+        description: Information about external VLs to connect the VNF to.
+        items:
+          $ref: '#/definitions/ExternalVirtualLink'
+    required:
+      - name
+      - tenant
+  Tenant:
+    type: object
+    description: Details of the tenant that VNFs can be deployed into
+    properties:
+      cloudOwner:
+        type: string
+        description: The owner in AAI of the cloud to which the tenant belongs.
+      regionName:
+        type: string
+        description: The regionName in AAI of the cloud to which the tenant belongs.
+      tenantId:
+        type: string
+        description: The identifier of the tenant in the VIM.
+    required:
+      - cloudOwner
+      - regionName
+      - tenantId
+  CreateVnfResponse:
+    type: object
+    properties:
+      jobId:
+        description: The ID of the job which can be used to query the status of the job
+        type: string
+    required:
+      - jobId
+  DeleteVnfResponse:
+    type: object
+    properties:
+      jobId:
+        description: >-
+          The ID of the job which can be used to query the status of the delete
+          job
+        type: string
+    required:
+      - jobId
+  QueryJobResponse:
+    type: object
+    properties:
+      operationStatusRetrievalStatus:
+        $ref: '#/definitions/OperationStatusRetrievalStatusEnum'
+      id:
+        type: string
+      operation:
+        $ref: '#/definitions/OperationEnum'
+      operationState:
+        $ref: '#/definitions/OperationStateEnum'
+      startTime:
+        type: string
+        format: date-time
+      stateEnteredTime:
+        type: string
+        format: date-time
+      vnfInstanceId:
+        type: string
+    required:
+      - operationStatusRetrievalStatus
+  OperationStatusRetrievalStatusEnum:
+    description: The status of the attempt to retrrieve the operation from the VNFM
+    type: string
+    enum:
+      - STATUS_FOUND
+      - WAITING_FOR_STATUS
+      - OPERATION_NOT_FOUND
+      - CANNOT_RETRIEVE_STATUS
+  OperationEnum:
+    description: The operation
+    type: string
+    enum:
+      - INSTANTIATE
+      - SCALE
+      - SCALE_TO_LEVEL
+      - CHANGE_FLAVOUR
+      - TERMINATE
+      - HEAL
+      - OPERATE
+      - CHANGE_EXT_CONN
+      - MODIFY_INFO
+  OperationStateEnum:
+    description: The status of the operation
+    type: string
+    enum:
+      - STARTING
+      - PROCESSING
+      - COMPLETED
+      - FAILED_TEMP
+      - FAILED
+      - ROLLING_BACK
+      - ROLLED_BACK
+  ExternalVirtualLink:
+    description: |
+      This type represents an external VL.
+    type: object
+    required:
+      - id
+      - resourceId
+      - extCps
+    properties:
+      id:
+        description: |
+          An identifier with the intention of being globally unique.
+        type: string
+      tenant:
+        $ref: '#/definitions/Tenant'
+      resourceId:
+        description: |
+          An identifier maintained by the VIM.
+        type: string
+      extCps:
+        description: |
+          External CPs of the VNF to be connected to this external VL.
+        type: array
+        items:
+          description: >
+            This type represents configuration information for external CPs
+            created from a CPD.
+          type: object
+          required:
+            - cpdId
+          properties:
+            cpdId:
+              description: |
+                An identifier that is unique within a VNF descriptor.
+              type: string
+            cpConfig:
+              description: >
+                List of instance data that need to be configured on the CP
+                instances created from the respective CPD.
+              type: array
+              items:
+                description: >
+                  This type represents an externally provided link port or
+                  network address information per instance of an external
+                  connection point. In case a link port is provided, the VNFM
+                  shall use that link port when connecting the external CP to
+                  the external VL. In a link port is not provided, the VNFM
+                  shall create a link port on the external VL, and use that link
+                  port to connect the external CP to the external VL.
+                type: object
+                properties:
+                  cpInstanceId:
+                    description: >
+                      An identifier that is unique for the respective type
+                      within a VNF instance, but may not be globally unique.
+                    type: string
+                  linkPortId:
+                    description: |
+                      An identifier with the intention of being globally unique.
+                    type: string
+                  cpProtocolData:
+                    description: >
+                      Parameters for configuring the network protocols on the
+                      link port that connects the CP to a VL.  The following
+                      conditions apply to the attributes "linkPortId" and
+                      "cpProtocolData":  * The "linkPortId" and "cpProtocolData"
+                      attributes shall both be  absent for the deletion of an
+                      existing external CP instance
+                        addressed by cpInstanceId. 
+                      * At least one of these attributes shall be present for a 
+                      to-be-created external CP instance or an existing external
+                        CP instance.
+                      * If the "linkPortId" attribute is absent, the VNFM shall
+                      create a  link port.
+
+                      * If the "cpProtocolData" attribute is absent, the
+                      "linkPortId"  attribute shall be provided referencing a
+                      pre-created link port,
+                        and the VNFM can use means outside the scope of the present
+                        document to obtain the pre-configured address information for the
+                        connection point from the resource representing the link port.
+                      * If both "cpProtocolData" and "linkportId" are provided,
+                      the API  consumer shall ensure that the cpProtocolData can
+                      be used with the
+                        pre-created link port referenced by "linkPortId".
+                    type: array
+                    items:
+                      description: |
+                        This type represents network protocol data.
+                      type: object
+                      required:
+                        - layerProtocol
+                      properties:
+                        layerProtocol:
+                          description: >
+                            Identifier of layer(s) and protocol(s). This
+                            attribute allows to signal the addition of further
+                            types of layer and protocol in future versions of
+                            the present document in a backwards-compatible way.
+                            In the current version of the present document, only
+                            IP over Ethernet is supported.
+                          type: string
+                          enum:
+                            - IP_OVER_ETHERNET
+                        ipOverEthernet:
+                          description: >
+                            This type represents network address data for IP
+                            over Ethernet.
+                          type: object
+                          properties:
+                            macAddress:
+                              description: >
+                                A MAC address. Representation: string that
+                                consists of groups of two hexadecimal digits,
+                                separated by hyphens or colons.
+                              type: string
+                              format: MAC
+                            ipAddresses:
+                              description: >
+                                List of IP addresses to assign to the CP
+                                instance. Each entry represents IP address data
+                                for fixed or dynamic IP address assignment per
+                                subnet. If this attribute is not present, no IP
+                                address shall be assigned.
+                              type: array
+                              items:
+                                type: object
+                                required:
+                                  - type
+                                properties:
+                                  type:
+                                    description: >
+                                      The type of the IP addresses. Permitted
+                                      values: IPV4, IPV6.
+                                    type: string
+                                    enum:
+                                      - IPV4
+                                      - IPV6
+                                  fixedAddresses:
+                                    description: >
+                                      Fixed addresses to assign (from the subnet
+                                      defined by "subnetId" if provided).
+                                      Exactly one of "fixedAddresses",
+                                      "numDynamicAddresses" or "ipAddressRange"
+                                      shall be present.
+                                    type: array
+                                    items:
+                                      description: >
+                                        An IPV4 or IPV6 address. Representation:
+                                        In case of an IPV4 address, string that
+                                        consists of four decimal integers
+                                        separated by dots, each integer ranging
+                                        from 0 to 255. In case of an IPV6
+                                        address, string that  consists of groups
+                                        of zero to four hexadecimal digits,
+                                        separated by colons.
+                                      type: string
+                                      format: IP
+                                  numDynamicAddresses:
+                                    description: >
+                                      Number of dynamic addresses to assign
+                                      (from the subnet defined by "subnetId" if
+                                      provided). Exactly one of
+                                      "fixedAddresses", "numDynamicAddresses" or
+                                      "ipAddressRange" shall be present.
+                                    type: integer
+                                  addressRange:
+                                    description: >
+                                      An IP address range to be used, e.g. in
+                                      case of egress connections. In case this
+                                      attribute is present, IP addresses from
+                                      the range will be used.
+                                    type: object
+                                    required:
+                                      - minAddress
+                                      - maxAddress
+                                    properties:
+                                      minAddress:
+                                        description: >
+                                          An IPV4 or IPV6 address. Representation:
+                                          In case of an IPV4 address, string that
+                                          consists of four decimal integers
+                                          separated by dots, each integer ranging
+                                          from 0 to 255. In case of an IPV6
+                                          address, string that  consists of groups
+                                          of zero to four hexadecimal digits,
+                                          separated by colons.
+                                        type: string
+                                        format: IP
+                                      maxAddress:
+                                        description: >
+                                          An IPV4 or IPV6 address. Representation:
+                                          In case of an IPV4 address, string that
+                                          consists of four decimal integers
+                                          separated by dots, each integer ranging
+                                          from 0 to 255. In case of an IPV6
+                                          address, string that  consists of groups
+                                          of zero to four hexadecimal digits,
+                                          separated by colons.
+                                        type: string
+                                        format: IP
+                                  subnetId:
+                                    description: >
+                                      An identifier maintained by the VIM or
+                                      other resource provider. It is expected to
+                                      be unique within the VIM instance.
+                                    type: string
+      extLinkPorts:
+        description: >
+          Externally provided link ports to be used to connect external
+          connection points to this external VL. If this attribute is not
+          present, the VNFM shall create the link ports on the external VL.
+        type: array
+        items:
+          description: >
+            This type represents an externally provided link port to be used to
+            connect an external connection point to an external VL.
+          type: object
+          required:
+            - id
+            - resourceHandle
+          properties:
+            id:
+              description: |
+                An identifier with the intention of being globally unique.
+              type: string
+            resourceHandle:
+              required:
+                - tenant
+                - resourceId
+              type: object
+              description: >
+                This type represents the information that allows addressing a
+                virtualised resource that is used by a VNF instance.
+              properties:
+                tenant:
+                  $ref: '#/definitions/Tenant'
+                resourceId:
+                  description: >
+                    An identifier maintained by the VIM or other resource
+                    provider. It is expected to be unique within the VIM
+                    instance.
+                  type: string
+                vimLevelResourceType:
+                  description: >
+                    Type of the resource in the scope of the VIM or the resource
+                    provider.
+                  type: string
