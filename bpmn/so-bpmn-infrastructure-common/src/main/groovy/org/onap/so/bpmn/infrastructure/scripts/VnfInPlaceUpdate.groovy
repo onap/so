@@ -178,8 +178,8 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		}
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
-            logger.error("{} {} {} Exception Encountered - {} \n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), restFaultMessage, e)
+            logger.error("{} {} Exception Encountered - {} \n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), restFaultMessage, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}
 	}
@@ -219,8 +219,8 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {} \n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {} \n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -261,8 +261,8 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {} \n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {} \n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfVnfInMaintInAAI(): ' + e.getMessage())
@@ -304,8 +304,8 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {} \n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {} \n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfPserversInMaintInAAI(): ' + e.getMessage())
@@ -351,7 +351,8 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in' +
+					' ' + method, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}
@@ -395,7 +396,8 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in' +
+					' ' + method, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}
@@ -439,7 +441,8 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in' +
+					' ' + method, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}
@@ -517,15 +520,18 @@ public class VnfInPlaceUpdate extends VnfCmBase {
 
 			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in' +
+					' ' + method, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		} catch (java.lang.NoSuchMethodError e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in' +
+					' ' + method, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in ' + method, "BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught exception in' +
+					' ' + method, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}

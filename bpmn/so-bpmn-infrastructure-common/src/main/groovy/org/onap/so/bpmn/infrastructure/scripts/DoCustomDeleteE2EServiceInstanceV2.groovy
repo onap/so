@@ -945,8 +945,8 @@ public class DoCustomDeleteE2EServiceInstanceV2 extends AbstractServiceTaskProce
 
 
         }catch(Exception e){
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception Occured Processing preUpdateServiceOperationStatus.", "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception Occured Processing preUpdateServiceOperationStatus.", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preUpdateServiceOperationStatus Method:\n" + e.getMessage())
         }

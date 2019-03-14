@@ -134,14 +134,14 @@ class AaiUtil {
 				}
 				logger.debug("Cloud Region value for code='404' of " + backend + " is: " + regionId)
 			}else{
-				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-						"Call AAI Cloud Region is NOT Successful.", "BPMN", MsoLogger.getServiceName(),
+				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+						"Call AAI Cloud Region is NOT Successful.", "BPMN",
 						MsoLogger.ErrorCode.UnknownError.getValue());
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(Exception e) {
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception occured while getting the Cloud Reqion.", "BPMN", MsoLogger.getServiceName(),
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception occured while getting the Cloud Reqion.", "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}

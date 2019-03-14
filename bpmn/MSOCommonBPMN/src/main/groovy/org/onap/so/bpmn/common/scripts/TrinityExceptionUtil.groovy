@@ -215,8 +215,8 @@ class TrinityExceptionUtil {
 
 		if(message != null) {
 			 execution.setVariable(prefix+"ErrorResponse",message)
-			 logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
-					 MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+			 logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+					 MsoLogger.ErrorCode.UnknownError.getValue(),
 					 execution.getVariable(prefix+"ErrorResponse"));
 			 return message
 		} else {
@@ -311,8 +311,8 @@ class TrinityExceptionUtil {
 				 execution.setVariable(prefix+"err", myErr)
 				 execution.setVariable(prefix+"errTxt", messageTxt)
 				 execution.setVariable(prefix+"errVariables", msgVars)
-				 logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
-						 MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(),
+				 logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
+						 MsoLogger.ErrorCode.UnknownError.getValue(),
 						 execution.getVariable(prefix+"ErrorResponse"));
 				 return message
 			}catch(Exception ex) {

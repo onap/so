@@ -195,9 +195,8 @@ class AllottedResourceUtils {
 			AAIResourceUri uri = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.ALLOTTED_RESOURCE, UriBuilder.fromPath(aaiARPath).build())
 			getAAIClient().update(uri,allottedResource)
 		}catch(Exception e){
-			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-					"Exception in updateAR.", "BPMN", MsoLogger.getServiceName(),
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+					"Exception in updateAR.", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 500, 'Internal Error in updateAROrchStatus.' + e.getMessage())
 		}
 		logger.trace("Exit updateAROrchStatus ")

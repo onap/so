@@ -1047,15 +1047,6 @@ public class MsoLogger {
         }
     }
 
-    /**
-     * Get the serviceName
-     * 
-     * @return The service name
-     */
-    public static String getServiceName() {
-        return MDC.get(SERVICE_NAME);
-    }
-
     private String normalize(String input) {
         if (input == null) {
             return null;

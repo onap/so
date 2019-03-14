@@ -110,8 +110,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		} catch (BpmnError bpmnError) {
 			throw bpmnError
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -162,8 +162,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendSynchResponse(): ' + e.getMessage())
 		}
 	}
@@ -213,8 +213,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVolumeGroup(): ' + e.getMessage())
 		}
 	}
@@ -282,8 +282,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepVnfAdapterRest(): ' + e.getMessage())
 		}
 	}
@@ -327,8 +327,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepDbInfraDbRequest(): ' + e.getMessage())
 		}
 	}
@@ -365,8 +365,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepCompletionHandlerRequest(): ' + e.getMessage())
 		}
 	}
@@ -415,8 +415,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-            logger.error("{} {} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+            logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepFalloutHandler(): ' + e.getMessage())
 		}
 	}
@@ -443,8 +443,8 @@ class UpdateVfModuleVolume extends VfModuleBase {
 		def String errorMessage = 'TenantId \'' + tenantId + '\' in incoming request does not match Tenant Id \'' + volumeGroupTenantId +
 			'\' retrieved from AAI for Volume Group Id \'' + volumeGroupId + '\', AIC Cloud Region \'' + aicCloudRegion + '\''
 
-		logger.error("{} {} {} Error in UpdateVfModuleVol: {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue(), errorMessage)
+		logger.error("{} {} Error in UpdateVfModuleVol: {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+                MsoLogger.ErrorCode.UnknownError.getValue(), errorMessage)
 
 		WorkflowException exception = new WorkflowException(processKey, 5000, errorMessage)
 		execution.setVariable("WorkflowException", exception)

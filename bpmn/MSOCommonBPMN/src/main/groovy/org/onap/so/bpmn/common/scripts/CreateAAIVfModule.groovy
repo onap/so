@@ -424,9 +424,9 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 
 	// generates a WorkflowException when the A&AI query returns a response code other than 200 or 404
 	public void handleAAIQueryFailure(DelegateExecution execution) {
-		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+		logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error occurred attempting to query AAI, Response Code " + execution.getVariable("CAAIVfMod_queryGenericVnfResponseCode") + ", Error Response " + execution.getVariable("CAAIVfMod_queryGenericVnfResponse"),
-				"BPMN", MsoLogger.getServiceName(), MsoLogger.ErrorCode.UnknownError.getValue());
+				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue());
 		int code = execution.getVariable("CAAIVfMod_queryGenericVnfResponseCode")
 		exceptionUtil.buildAndThrowWorkflowException(execution, code, "Error occurred attempting to query AAI")
 
@@ -476,8 +476,8 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			errorCode = 2000
 		}
 
-		logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-				"Error occurred during CreateAAIVfModule flow", "BPMN", MsoLogger.getServiceName(),
+		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+				"Error occurred during CreateAAIVfModule flow", "BPMN",
 				MsoLogger.ErrorCode.UnknownError.getValue(), errorResponse);
 		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, errorResponse)
 		logger.debug("Workflow exception occurred in CreateAAIVfModule: " + errorResponse)
