@@ -34,7 +34,6 @@ import org.onap.so.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackError;
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackResult;
-import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,8 +63,6 @@ public class SDNCAdapterCallbackServiceImpl extends ProcessEngineAwareService im
 		String messageVariable = "sdncAdapterCallbackRequest";
 		String correlationVariable = "SDNCA_requestId";
 		String correlationValue = sdncAdapterCallbackRequest.getCallbackHeader().getRequestId();
-
-		MsoLogger.setLogContext(correlationValue, "N/A");
 
 		CallbackResult result = callback.handleCallback(method, message, messageEventName,
 			messageVariable, correlationVariable, correlationValue, logMarker);
