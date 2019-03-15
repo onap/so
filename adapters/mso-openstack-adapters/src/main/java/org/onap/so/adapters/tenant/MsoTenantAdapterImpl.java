@@ -33,8 +33,8 @@ import org.onap.so.adapters.tenant.exceptions.TenantAlreadyExists;
 import org.onap.so.adapters.tenant.exceptions.TenantException;
 import org.onap.so.adapters.tenantrest.TenantRollback;
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
@@ -101,7 +101,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
 			tUtils = tFactory.getTenantUtils (cloudSiteId);
 		} catch (MsoCloudSiteNotFound me) {
         logger.error("{} {} no implementation found for {}: ", MessageEnum.RA_CREATE_TENANT_ERR,
-            MsoLogger.ErrorCode.DataError.getValue(), cloudSiteId, me);
+            ErrorCode.DataError.getValue(), cloudSiteId, me);
             throw new TenantException (me);
 		}
 
@@ -111,7 +111,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
             newTenant = tUtils.queryTenantByName (tenantName, cloudSiteId);
         } catch (MsoException me) {
             logger.error(OPENSTACK_COMMUNICATE_EXCEPTION_MSG, MessageEnum.RA_CREATE_TENANT_ERR,
-                MsoLogger.ErrorCode.DataError.getValue(), me);
+                ErrorCode.DataError.getValue(), me);
             throw new TenantException (me);
         }
         if (newTenant == null) {
@@ -120,7 +120,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
             try {
                 newTenantId = tUtils.createTenant (tenantName, cloudSiteId, metadata, backout.booleanValue ());
             } catch (MsoException me) {
-                logger.error (OPENSTACK_COMMUNICATE_EXCEPTION_MSG, MessageEnum.RA_CREATE_TENANT_ERR, MsoLogger.ErrorCode.DataError.getValue(), me);
+                logger.error (OPENSTACK_COMMUNICATE_EXCEPTION_MSG, MessageEnum.RA_CREATE_TENANT_ERR, ErrorCode.DataError.getValue(), me);
                 throw new TenantException (me);
             }
             tenantRollback.setTenantId (newTenantId);
@@ -129,7 +129,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         } else {
             if (failIfExists != null && failIfExists) {
                 logger.error("{} {} CreateTenant: Tenant {} already exists in {} ", MessageEnum.RA_TENANT_ALREADY_EXIST,
-                    MsoLogger.ErrorCode.DataError.getValue(), tenantName, cloudSiteId);
+                    ErrorCode.DataError.getValue(), tenantName, cloudSiteId);
                 throw new TenantAlreadyExists (tenantName, cloudSiteId, newTenant.getTenantId ());
             }
 
@@ -159,7 +159,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
 			tUtils = tFactory.getTenantUtils (cloudSiteId);
 		} catch (MsoCloudSiteNotFound me) {
         logger.error("{} {} no implementation found for {}: ", MessageEnum.RA_CREATE_TENANT_ERR,
-            MsoLogger.ErrorCode.DataError.getValue(), cloudSiteId, me);
+            ErrorCode.DataError.getValue(), cloudSiteId, me);
             throw new TenantException (me);
 		}
         
@@ -184,7 +184,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
             }
         } catch (MsoException me) {
             logger.error("Exception in queryTenant for {}: ", MessageEnum.RA_GENERAL_EXCEPTION,
-                MsoLogger.ErrorCode.DataError.getValue(), tenantNameOrId, me);
+                ErrorCode.DataError.getValue(), tenantNameOrId, me);
             throw new TenantException (me);
         }
         return;
@@ -206,7 +206,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
             tenantDeleted.value = deleted;
         } catch (MsoException me) {
             logger.error("{} {} Exception - DeleteTenant {}: ", MessageEnum.RA_DELETE_TEMAMT_ERR,
-                MsoLogger.ErrorCode.DataError.getValue(), tenantId, me);
+                ErrorCode.DataError.getValue(), tenantId, me);
             throw new TenantException (me);
         }
 
@@ -228,7 +228,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.warn("{} {} rollbackTenant, rollback is null", MessageEnum.RA_ROLLBACK_NULL,
-                MsoLogger.ErrorCode.DataError.getValue());
+                ErrorCode.DataError.getValue());
             return;
         }
 
@@ -247,7 +247,7 @@ public class MsoTenantAdapterImpl implements MsoTenantAdapter {
                 me.addContext (ROLLBACK_TENANT);
                 // Failed to delete the tenant.
                 logger.error("{} {} Exception - rollbackTenant {}: ", MessageEnum.RA_ROLLBACK_TENANT_ERR,
-                    MsoLogger.ErrorCode.DataError.getValue(), tenantId, me);
+                    ErrorCode.DataError.getValue(), tenantId, me);
                 throw new TenantException (me);
             }
         }

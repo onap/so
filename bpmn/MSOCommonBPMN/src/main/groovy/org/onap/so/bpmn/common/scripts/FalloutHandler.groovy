@@ -23,13 +23,13 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.logger.ErrorCode
 
 import java.text.SimpleDateFormat
 
 import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -99,7 +99,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
@@ -212,7 +212,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
 
@@ -246,7 +246,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
@@ -277,7 +277,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
@@ -308,7 +308,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
@@ -337,7 +337,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
@@ -357,7 +357,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		//	exceptionUtil.buildWorkflowException(execution, 2000, "Internal Error - Occured in " + method)
 		}
 	}
@@ -392,7 +392,7 @@ public class FalloutHandler extends AbstractServiceTaskProcessor {
 			// Do NOT throw WorkflowException!
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		}
 	}
 }

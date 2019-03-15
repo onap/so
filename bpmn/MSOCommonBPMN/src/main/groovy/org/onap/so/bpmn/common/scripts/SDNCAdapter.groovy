@@ -21,14 +21,14 @@
  */
 
 package org.onap.so.bpmn.common.scripts;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.onap.so.logger.ErrorCode;
 
 import java.text.SimpleDateFormat
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -75,7 +75,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 			} catch (IOException ex) {
 				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						"Unable to encode username password string", "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue());
 			}
 
 			// TODO Use variables instead of passing xml request - Huh?

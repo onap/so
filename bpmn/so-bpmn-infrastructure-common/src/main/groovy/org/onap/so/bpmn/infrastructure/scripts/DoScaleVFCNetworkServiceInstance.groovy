@@ -33,6 +33,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.onap.so.client.HttpClientFactory
+import org.onap.so.logger.ErrorCode
 
 import javax.ws.rs.core.Response
 
@@ -47,7 +48,6 @@ import org.onap.so.bpmn.infrastructure.vfcmodel.NsScaleParameters
 import org.onap.so.bpmn.infrastructure.vfcmodel.NsParameters
 import org.onap.so.bpmn.infrastructure.vfcmodel.LocationConstraint
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
@@ -184,7 +184,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
         } catch (InterruptedException e) {
             logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Time Delay exception" + e, "BPMN",
-                    MsoLogger.ErrorCode.UnknownError.getValue());
+                    ErrorCode.UnknownError.getValue());
         }
     }
 
@@ -217,7 +217,7 @@ public class DoScaleVFCNetworkServiceInstance extends AbstractServiceTaskProcess
             logger.trace("Completed Execute VF-C adapter Post Process ")
         }catch(Exception e){
             logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception occured " +
-                    "while executing VFC Post Call.", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), e);
+                    "while executing VFC Post Call.", "BPMN", ErrorCode.UnknownError.getValue(), e);
             throw new BpmnError("MSOWorkflowException")
         }
         return apiResponse

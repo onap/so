@@ -32,8 +32,8 @@ import org.onap.so.db.request.beans.ArchivedInfraRequests;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.repository.ArchivedInfraRequestsRepository;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,7 +148,7 @@ public class ArchiveInfraRequestsScheduler {
 				newArchivedReqs.add(archivedInfra);
 				oldInfraReqs.add(iar);
 			} catch(Exception e) {
-				logger.error("{} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), MsoLogger.ErrorCode
+				logger.error("{} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(), ErrorCode
 					.UnknownError.getValue(), e);
 			}
 		}

@@ -35,13 +35,12 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -185,7 +184,7 @@ public class BpmnRestClient {
             logger.trace("request body is {}", jsonReq);
         } catch(Exception e) {
             logger.error("{} {} {} {} {}", MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapVIDRequest",
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
+                ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
         }
         return jsonReq;
     }

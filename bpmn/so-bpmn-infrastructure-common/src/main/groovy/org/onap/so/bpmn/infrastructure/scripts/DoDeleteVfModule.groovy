@@ -24,18 +24,17 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.aai.domain.yang.NetworkPolicies
 import org.onap.aai.domain.yang.NetworkPolicy
+import org.onap.so.logger.ErrorCode
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-import org.onap.so.bpmn.common.scripts.VfModule
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
@@ -44,10 +43,8 @@ import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.web.util.UriUtils
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.Node
@@ -358,7 +355,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 	public void handleDoDeleteVfModuleFailure(DelegateExecution execution) {
 		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"AAI error occurred deleting the Generic Vnf: " + execution.getVariable("DoDVfMod_deleteGenericVnfResponse"),
-				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception");
+				"BPMN", ErrorCode.UnknownError.getValue(), "Exception");
 		String processKey = getProcessKey(execution);
 		WorkflowException exception = new WorkflowException(processKey, 5000,
 			execution.getVariable("DoDVfMod_deleteGenericVnfResponse"))
@@ -579,7 +576,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 		}
 	}
@@ -628,7 +625,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModuleForStatus(): ' + e.getMessage())
 		}
 	}

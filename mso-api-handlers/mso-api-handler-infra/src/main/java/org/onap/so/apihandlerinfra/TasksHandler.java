@@ -54,9 +54,9 @@ import org.onap.so.apihandlerinfra.tasksbeans.TaskList;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskVariableValue;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskVariables;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksGetResponse;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,7 +163,7 @@ public class TasksHandler {
 			response = requestClient.post(camundaJsonReq);
 
 		} catch(JsonProcessingException e){
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).build();
 
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
@@ -171,7 +171,7 @@ public class TasksHandler {
 
 			throw validateException;
 		} catch(IOException e) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError).build();
 			BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),HttpStatus.SC_BAD_GATEWAY,ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
 			throw bpmnFailureException;
 		}
@@ -203,7 +203,7 @@ public class TasksHandler {
 		
 		} else {
 
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError).build();
 
 
 			BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(bpelStatus), bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
@@ -218,7 +218,7 @@ public class TasksHandler {
 			jsonResponse = mapper.writeValueAsString(trr);
 		}
 		catch (JsonProcessingException e) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).build();
 
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
@@ -241,7 +241,7 @@ public class TasksHandler {
 		try {
 			getResponse = requestClient.get();
 		}catch(IOException e){
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError).build();
 			BPMNFailureException validateException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY), HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).build();
 			throw validateException;
 		}
@@ -253,7 +253,7 @@ public class TasksHandler {
 				taskList = buildTaskList(taskId, respBody);				
 			}
 			else {
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError).build();
 
 
 
@@ -265,7 +265,7 @@ public class TasksHandler {
 			
 		}
 		else {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError).build();
 
 
 

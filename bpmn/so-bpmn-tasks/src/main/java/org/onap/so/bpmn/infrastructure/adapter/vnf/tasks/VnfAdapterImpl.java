@@ -37,8 +37,8 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.exceptions.MarshallerException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,9 +167,9 @@ public class VnfAdapterImpl {
             SAXSource source = new SAXSource(xmlReader, inputSource);
             return jaxbUnmarshaller.unmarshal(source);
         } catch (Exception e) {
-					logger.error("{} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(), MsoLogger.ErrorCode.SchemaError.getValue(),
+					logger.error("{} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(), ErrorCode.SchemaError.getValue(),
 						e.getMessage(), e);
-					throw new MarshallerException("Error parsing VNF Adapter response. " + e.getMessage(), MsoLogger.ErrorCode.SchemaError.getValue(), e);
+					throw new MarshallerException("Error parsing VNF Adapter response. " + e.getMessage(), ErrorCode.SchemaError.getValue(), e);
         }
     }
     

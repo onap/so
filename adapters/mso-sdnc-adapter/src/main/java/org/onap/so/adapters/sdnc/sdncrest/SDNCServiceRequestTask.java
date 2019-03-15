@@ -39,8 +39,8 @@ import org.onap.so.adapters.sdncrest.RequestInformation;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
 import org.onap.so.adapters.sdncrest.SDNCServiceError;
 import org.onap.so.adapters.sdncrest.SDNCServiceRequest;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,7 +192,7 @@ public class SDNCServiceRequestTask {
 			addTextChild(agnosticServiceInformation, "anydata", anydata);
 		} catch (Exception e) {
 			logger.error("{} {} {} {}", MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
-					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in genSdncReq", e);
+					ErrorCode.BusinessProcesssError.getValue(), "Exception in genSdncReq", e);
 			return null;
 		}
 
@@ -210,7 +210,7 @@ public class SDNCServiceRequestTask {
 			transformer.transform(new DOMSource(doc), new StreamResult(writer));
 			xml = writer.toString();
 		} catch (Exception e) {
-			logger.error("{} {} {}", MessageEnum.RA_ERROR_CONVERT_XML2STR.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+			logger.error("{} {} {}", MessageEnum.RA_ERROR_CONVERT_XML2STR.toString(), ErrorCode.DataError.getValue(),
 					"Exception - domToStr", e);
 			return null;
 		}

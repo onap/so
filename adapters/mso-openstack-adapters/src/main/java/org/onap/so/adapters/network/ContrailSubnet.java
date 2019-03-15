@@ -27,8 +27,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.HostRoute;
 import org.onap.so.openstack.beans.Pool;
 import org.onap.so.openstack.beans.Subnet;
@@ -133,7 +134,7 @@ public class ContrailSubnet {
 		catch (Exception e)
 		{
         logger.error("{} {} Error creating JsonNode for Contrail Subnet: {} ", MessageEnum.RA_MARSHING_ERROR,
-            MsoLogger.ErrorCode.SchemaError.getValue(), subnetName, e);
+            ErrorCode.SchemaError.getValue(), subnetName, e);
 		}
 		
 		return node;
@@ -150,7 +151,7 @@ public class ContrailSubnet {
 		catch (Exception e)
 		{
         logger.error("{} {} Error creating JsonString for Contrail Subnet: {} ", MessageEnum.RA_MARSHING_ERROR,
-            MsoLogger.ErrorCode.SchemaError.getValue(), subnetName, e);
+            ErrorCode.SchemaError.getValue(), subnetName, e);
 		}
 		
 		return jsonString;

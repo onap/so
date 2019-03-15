@@ -40,7 +40,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.mock.FileUtil;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

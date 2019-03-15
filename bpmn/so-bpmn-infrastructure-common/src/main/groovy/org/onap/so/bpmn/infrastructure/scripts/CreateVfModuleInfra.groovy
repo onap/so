@@ -20,9 +20,8 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.v12.GenericVnf;
@@ -35,9 +34,9 @@ import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.infrastructure.aai.AAICreateResources;
+import org.onap.so.bpmn.infrastructure.aai.AAICreateResources
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.w3c.dom.*
@@ -254,7 +253,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 			//execution.setVariable("CVFMODVOL2_isDataOk", false)
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					" Exception Encountered - " + "\n" + restFaultMessage, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 400, "Internal Error - During PreProcessRequest")
 		}
 
@@ -304,7 +303,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Encountered ", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -405,7 +404,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing PostProcessResponse - " + "\n", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occured during PostProcessResponse Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED PostProcessResponse Process")
@@ -482,7 +481,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Caught exception in " + method , "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}
@@ -531,7 +530,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing prepareUpdateInfraRequest.", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during prepareUpdateInfraRequest Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED prepareUpdateInfraRequest Process")
@@ -587,7 +586,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Caught exception in " + method , "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}

@@ -21,6 +21,13 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 
 import static org.junit.Assert.*;
+import static org.onap.so.logger.MdcConstants.ENDTIME;
+import static org.onap.so.logger.MdcConstants.INVOCATION_ID;
+import static org.onap.so.logger.MdcConstants.PARTNERNAME;
+import static org.onap.so.logger.MdcConstants.RESPONSECODE;
+import static org.onap.so.logger.MdcConstants.RESPONSEDESC;
+import static org.onap.so.logger.MdcConstants.SERVICE_NAME;
+import static org.onap.so.logger.MdcConstants.STATUSCODE;
 
 
 import java.io.IOException;
@@ -39,7 +46,6 @@ import org.junit.runner.RunWith;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.catalogdb.CatalogDBApplication;
 
-import org.onap.so.logger.MsoLogger;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -833,22 +839,22 @@ public class CatalogDBRestTest {
 	            Map<String,String> mdc = logEvent.getMDCPropertyMap();
 	            assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
 	            assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-	            assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));	           
-	            assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-	            assertEquals("v2/vfModules",mdc.get(MsoLogger.SERVICE_NAME));
-	            assertEquals("INPROGRESS",mdc.get(MsoLogger.STATUSCODE));
+	            assertNotNull(mdc.get(INVOCATION_ID));
+	            assertEquals("UNKNOWN",mdc.get(PARTNERNAME));
+	            assertEquals("v2/vfModules",mdc.get(SERVICE_NAME));
+	            assertEquals("INPROGRESS",mdc.get(STATUSCODE));
 	        }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
                     logEvent.getMarker().getName().equals("EXIT")){
 	            Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(MsoLogger.ENDTIME));
+                assertNotNull(mdc.get(ENDTIME));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
-                assertEquals("500",mdc.get(MsoLogger.RESPONSECODE));
-                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-                assertEquals("v2/vfModules",mdc.get(MsoLogger.SERVICE_NAME));
-                assertEquals("ERROR",mdc.get(MsoLogger.STATUSCODE));
-                assertNotNull(mdc.get(MsoLogger.RESPONSEDESC));
+                assertNotNull(mdc.get(INVOCATION_ID));
+                assertEquals("500",mdc.get(RESPONSECODE));
+                assertEquals("UNKNOWN",mdc.get(PARTNERNAME));
+                assertEquals("v2/vfModules",mdc.get(SERVICE_NAME));
+                assertEquals("ERROR",mdc.get(STATUSCODE));
+                assertNotNull(mdc.get(RESPONSEDESC));
 	        }
 	}
 	

@@ -27,20 +27,14 @@ import org.onap.so.bpmn.common.scripts.*;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.common.scripts.AaiUtil
 import org.onap.so.bpmn.common.scripts.SDNCAdapterUtils
-
-
-import java.util.UUID;
+import org.onap.so.logger.ErrorCode
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.apache.commons.lang3.*
-import org.springframework.web.util.UriUtils;
+
 import static org.apache.commons.lang3.StringUtils.*
 
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -214,7 +208,7 @@ public class DoCreateAllottedResourceTXCRollback extends AbstractServiceTaskProc
 		}catch(Exception ex){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					     "Exception Occurred Processing preProcessSDNCGetRequest.", "BPMN",
-					     MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
+					     ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occured during SDNC GET Method:\n" + ex.getMessage())
 		}
 		logger.trace("end deleteAaiAR")

@@ -50,8 +50,8 @@ import org.camunda.bpm.engine.variable.Variables.SerializationDataFormats;
 import org.camunda.bpm.engine.variable.impl.VariableMapImpl;
 import org.onap.so.bpmn.common.workflow.context.WorkflowResponse;
 import org.onap.so.bpmn.core.WorkflowException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -202,7 +202,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 			if (processInstance != null) workflowResponse.setProcessInstanceID(processInstance.getId());
 
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "BPMN", MDC.get(processKey),
-				MsoLogger.ErrorCode.UnknownError.getValue(),
+				ErrorCode.UnknownError.getValue(),
 				LOGMARKER + workflowResponse.getMessage() + " for processKey: " + processKey + " with response: "
 					+ workflowResponse.getResponse());
 			
@@ -587,7 +587,7 @@ public class WorkflowResource extends ProcessEngineAwareService {
 			response.setProcessInstanceID(processInstanceId);
 
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "BPMN", MDC.get(processKey),
-				MsoLogger.ErrorCode.UnknownError.getValue(),
+				ErrorCode.UnknownError.getValue(),
 				LOGMARKER + response.getMessage() + " for processKey: " + processKey + " with response: " + response
 					.getResponse());
 			logger.debug("Exception :",ex);

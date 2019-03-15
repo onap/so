@@ -33,8 +33,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,7 +135,7 @@ public class SDNCAdapterCallbackRequest {
 		}
 		catch (Exception e)
 		{
-        logger.error("{} {} {}", MessageEnum.RA_MARSHING_ERROR.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+        logger.error("{} {} {}", MessageEnum.RA_MARSHING_ERROR.toString(), ErrorCode.DataError.getValue(),
             "Exception - MARSHING_ERROR", e);
     }
 		return "";

@@ -43,7 +43,6 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.adapter.network.NetworkAdapterClientException;
 import org.onap.so.client.adapter.network.NetworkAdapterClientImpl;
 import org.onap.so.client.adapter.network.mapper.NetworkAdapterObjectMapper;
-import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

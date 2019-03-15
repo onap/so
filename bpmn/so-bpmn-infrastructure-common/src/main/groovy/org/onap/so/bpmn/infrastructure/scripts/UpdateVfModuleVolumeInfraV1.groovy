@@ -41,8 +41,8 @@ import org.onap.so.client.aai.entities.Relationships
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -480,7 +480,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 
         ExceptionUtil exceptionUtil = new ExceptionUtil()
         logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in ' +
-                'UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
+                'UpdateVfModuleVol: ' + errorMessage, "BPMN", ErrorCode.UnknownError.getValue(), "Exception")
         exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
     }
 
@@ -499,7 +499,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
 
         ExceptionUtil exceptionUtil = new ExceptionUtil()
         logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Error in ' +
-                'UpdateVfModuleVol: ' + errorMessage, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception")
+                'UpdateVfModuleVol: ' + errorMessage, "BPMN", ErrorCode.UnknownError.getValue(), "Exception")
         exceptionUtil.buildAndThrowWorkflowException(execution, 2500, errorMessage)
     }
 

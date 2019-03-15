@@ -31,8 +31,8 @@ import javax.xml.ws.WebEndpoint;
 import javax.xml.ws.WebServiceClient;
 import javax.xml.ws.WebServiceFeature;
 
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,18 +59,18 @@ public class SDNCCallbackAdapterService extends Service {
         	wsdlUrl = Thread.currentThread().getContextClassLoader().getResource("main/resources/SDNCCallbackAdapter.wsdl");
         } catch (Exception e) {
             logger.error("{} {} {} {} {}", MessageEnum.RA_WSDL_NOT_FOUND.toString(), SDNC_CALLBACK_ADAPTER_WSDL, "SDNC",
-                MsoLogger.ErrorCode.DataError.getValue(), "Exception - WSDL not found", e);
+                ErrorCode.DataError.getValue(), "Exception - WSDL not found", e);
         }
         if(wsdlUrl == null) {
             logger.error("{} {} {} {} {}", MessageEnum.RA_WSDL_NOT_FOUND.toString(), SDNC_CALLBACK_ADAPTER_WSDL, "SDNC",
-                MsoLogger.ErrorCode.DataError.getValue(), "WSDL not found");
+                ErrorCode.DataError.getValue(), "WSDL not found");
         } else {
     		try {
             logger.info("{} {} {} {}", MessageEnum.RA_PRINT_URL.toString(), SDNC_CALLBACK_ADAPTER_WSDL,
                 wsdlUrl.toURI().toString(), "SDNC");
         } catch (Exception e) {
             logger.error("{} {} {} {} {}", MessageEnum.RA_WSDL_URL_CONVENTION_EXC.toString(), SDNC_CALLBACK_ADAPTER_WSDL,
-                    "SDNC", MsoLogger.ErrorCode.DataError.getValue(), "Exception - URL convention problem", e);
+                    "SDNC", ErrorCode.DataError.getValue(), "Exception - URL convention problem", e);
         }
     	}
         WSDL_LOCATION = wsdlUrl;

@@ -40,9 +40,9 @@ import javax.xml.bind.Marshaller;
 
 
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.RequestError;
 import org.onap.so.serviceinstancebeans.ServiceException;
 
@@ -137,7 +137,7 @@ public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
         } catch (JsonProcessingException | JAXBException e) {
             String errorMsg = "Exception in buildServiceErrorResponse writing exceptionType to string " + e.getMessage();
             logger.error("{} {} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(), "BuildServiceErrorResponse",
-                MsoLogger.ErrorCode.DataError.getValue(), errorMsg, e);
+                ErrorCode.DataError.getValue(), errorMsg, e);
             return errorMsg;
         }
 

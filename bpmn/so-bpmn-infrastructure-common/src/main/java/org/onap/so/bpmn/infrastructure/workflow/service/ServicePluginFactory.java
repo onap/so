@@ -62,8 +62,8 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriUtils;
@@ -688,7 +688,7 @@ public class ServicePluginFactory {
 			return mapper.readValue(jsonstr, type);
 		} catch (IOException e) {
 			logger.error("{} {} fail to unMarshal json", MessageEnum.RA_NS_EXC.toString(),
-				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+				ErrorCode.BusinessProcesssError.getValue(), e);
 		}
 		return null;
 	}

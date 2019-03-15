@@ -21,41 +21,14 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import groovy.json.JsonOutput
-
-import groovy.json.JsonSlurper
-import groovy.util.Node
-import groovy.util.XmlParser;
-import groovy.xml.QName
-
-import java.io.Serializable;
-import java.util.UUID;
+import org.onap.so.logger.ErrorCode
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
-import org.camunda.bpm.engine.delegate.BpmnError
-import org.camunda.bpm.engine.impl.cmd.AbstractSetVariableCmd
 import org.camunda.bpm.engine.delegate.DelegateExecution
-
-import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
-import org.onap.so.bpmn.common.scripts.VidUtils;
-import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
-import org.onap.so.bpmn.core.domain.ModelInfo
-import org.onap.so.bpmn.core.domain.ServiceDecomposition
-import org.onap.so.bpmn.core.domain.VnfResource
-import org.onap.so.client.aai.*
-
-import org.onap.so.client.appc.ApplicationControllerClient;
-import org.onap.so.client.appc.ApplicationControllerSupport;
-import org.onap.so.client.aai.AAIResourcesClient
-import org.onap.so.client.aai.entities.AAIResultWrapper
-import org.onap.so.client.aai.entities.uri.AAIUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.appc.client.lcm.model.Action;
 
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -116,7 +89,7 @@ public class RollbackVnf extends VnfCmBase {
 			String restFaultMessage = e.getMessage()
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Encountered - " + "\n" + restFaultMessage, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			execution.setVariable("rollbackErrorCode", "1")
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}

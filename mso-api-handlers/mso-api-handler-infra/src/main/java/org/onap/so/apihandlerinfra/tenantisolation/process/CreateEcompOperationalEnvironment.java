@@ -31,8 +31,8 @@ import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.onap.so.apihandlerinfra.tenantisolation.dmaap.DmaapOperationalEnvClient;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientObjectBuilder;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +75,7 @@ public class CreateEcompOperationalEnvironment {
                     request.getRequestDetails().getRequestParameters().getWorkloadContext(),
                     "Create");
         }catch(Exception e){
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
             ValidateException validateException = new ValidateException.Builder("Could not publish DMaap", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                     .errorInfo(errorLoggerInfo).build();
             requestDb.updateInfraFailureCompletion(e.getMessage(), requestId, request.getOperationalEnvironmentId());

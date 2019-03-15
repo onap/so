@@ -22,8 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static org.apache.commons.lang3.StringUtils.*;
-
+import org.onap.so.logger.ErrorCode
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
@@ -34,7 +33,6 @@ import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -167,7 +165,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessCreateVfModuleRollback ", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessCreateVfModuleRollback Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessCreateVfModuleRollback")
@@ -187,14 +185,14 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing postProcessCreateVfModuleRollback ", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during postProcessCreateVfModuleRollback Method:\n" + e.getMessage())
 		}
 		if (rolledBack == false) {
 			logger.debug("Failure on DoCreateVfModuleRollback")
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Unsuccessful rollback of DoCreateVfModule ", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during rollback of DoCreateVfModule")
 		}
 		logger.trace("COMPLETED postProcessCreateVfModuleRollback")
@@ -220,7 +218,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessSDNCDeactivateRequest ", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessSDNCDeactivateRequest Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED preProcessSDNCDeactivateRequest")
@@ -342,7 +340,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 	
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured " +
-					"Processing setSuccessfulRollbackStatus ", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					"Processing setSuccessfulRollbackStatus ", "BPMN", ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setSuccessfulRollbackStatus Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED setSuccessfulRollbackStatus")
@@ -364,7 +362,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 	
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Exception Occured " +
-					"Processing setFailedRollbackStatus. ", "BPMN",MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					"Processing setFailedRollbackStatus. ", "BPMN",ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during setFailedRollbackStatus Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED setFailedRollbackStatus")

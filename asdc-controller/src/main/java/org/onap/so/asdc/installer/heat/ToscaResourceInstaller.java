@@ -124,8 +124,8 @@ import org.onap.so.db.request.beans.WatchdogServiceModVerIdLookup;
 import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
 import org.onap.so.db.request.data.repository.WatchdogServiceModVerIdLookupRepository;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -267,7 +267,7 @@ public class ToscaResourceInstaller {
 			return status;
 		} catch (Exception e) {
 			logger
-				.error("{} {} {}", MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(), MsoLogger.ErrorCode.SchemaError.getValue(),
+				.error("{} {} {}", MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(), ErrorCode.SchemaError.getValue(),
 					"Exception - isResourceAlreadyDeployed");
 			throw new ArtifactInstallerException("Exception caught during checking existence of the VNF Resource.", e);
 		}
@@ -336,14 +336,14 @@ public class ToscaResourceInstaller {
 					|| dbExceptionToCapture instanceof LockAcquisitionException) {
 				logger.warn("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_ALREADY_DEPLOYED.toString(),
 					vfResourceStructure.getResourceInstance().getResourceName(),
-					vfResourceStructure.getNotification().getServiceVersion(), MsoLogger.ErrorCode.DataError.getValue(),
+					vfResourceStructure.getNotification().getServiceVersion(), ErrorCode.DataError.getValue(),
 					"Exception - ASCDC Artifact already deployed", e);
 			} else {
 				String elementToLog = (!artifactListForLogging.isEmpty()
 						? artifactListForLogging.get(artifactListForLogging.size() - 1).toString()
 						: "No element listed");
 				logger.error("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_INSTALL_EXC.toString(), elementToLog,
-					MsoLogger.ErrorCode.DataError.getValue(),
+					ErrorCode.DataError.getValue(),
 					"Exception caught during installation of " + vfResourceStructure.getResourceInstance().getResourceName()
 						+ ". Transaction rollback", e);
 				throw new ArtifactInstallerException("Exception caught during installation of "
@@ -793,7 +793,7 @@ public class ToscaResourceInstaller {
 			case ASDCConfiguration.OTHER:
 				logger.warn("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_TYPE_NOT_SUPPORT.toString(),
 					vfModuleArtifact.getArtifactInfo().getArtifactType() + "(Artifact Name:" + vfModuleArtifact.getArtifactInfo()
-						.getArtifactName() + ")", MsoLogger.ErrorCode.DataError.getValue(), "Artifact type not supported");
+						.getArtifactName() + ")", ErrorCode.DataError.getValue(), "Artifact type not supported");
 				break;
 			default:
 				break;

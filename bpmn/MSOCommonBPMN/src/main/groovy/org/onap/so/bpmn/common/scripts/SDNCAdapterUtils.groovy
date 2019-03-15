@@ -26,11 +26,11 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.aai.domain.yang.L3Network
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.json.JsonUtils;
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.logger.ErrorCode;
 import org.springframework.web.util.UriUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -265,7 +265,7 @@ class SDNCAdapterUtils {
 			if (callbackUrl == null || callbackUrl.trim() == "") {
 				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						'mso:workflow:sdncadapter:callback URN is not set', "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue());
 				workflowException(execution, 'Internal Error', 9999) // TODO: what message and error code?
 			}
 
@@ -403,7 +403,7 @@ class SDNCAdapterUtils {
 			if (callbackUrl == null || callbackUrl.trim() == "") {
 				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						'mso:workflow:sdncadapter:callback URN is not set', "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
 			}
 
@@ -476,7 +476,7 @@ class SDNCAdapterUtils {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error")
 		}
 	}
@@ -983,7 +983,7 @@ class SDNCAdapterUtils {
 					}else {
 						logger.warn("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING,
 								'sdncAdapter did not complete successfully, sdncAdapter Success Indicator was false ',
-								"BPMN", MsoLogger.ErrorCode.UnknownError,
+								"BPMN", ErrorCode.UnknownError,
 								'sdncAdapter did not complete successfully, sdncAdapter Success Indicator was false ')
 						execution.setVariable("L3HLAB_rollback", true)
 						def msg = trinityExceptionUtil.intDataResponseCode(response, execution)
@@ -993,7 +993,7 @@ class SDNCAdapterUtils {
 					if (response == null || response.trim().equals("")) {
 						logger.warn("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING,
 								'sdncAdapter workflow response is empty', "BPMN",
-								MsoLogger.ErrorCode.UnknownError, 'sdncAdapter workflow response is empty')
+								ErrorCode.UnknownError, 'sdncAdapter workflow response is empty')
 						execution.setVariable("L3HLAB_rollback", true)
 						def msg = trinityExceptionUtil.buildException("Exception occurred while validating SDNC response " , execution)
 						exceptionUtil.buildAndThrowWorkflowException(execution, intResponseCode, msg)
@@ -1005,7 +1005,7 @@ class SDNCAdapterUtils {
 					throw e;
 				} catch (Exception e) {
 					logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), 'Caught ' +
-							'exception in ' + method, "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+							'exception in ' + method, "BPMN", ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 					execution.setVariable(prefix+"ResponseCode",400)
 					execution.setVariable("L3HLAB_rollback", true)
 					def msg = trinityExceptionUtil.buildException("Exception occurred while validating SDNC response: " + e.getMessage(), execution)

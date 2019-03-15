@@ -57,8 +57,8 @@ import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
 import org.onap.so.asdc.util.ASDCNotificationLogging;
 import org.onap.so.db.request.beans.WatchdogDistributionStatus;
 import org.onap.so.db.request.data.repository.WatchdogDistributionStatusRepository;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -308,7 +308,7 @@ public class ASDCController {
         } else {
             logger.error("{} {} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
                 artifact.getArtifactName(), artifact.getArtifactURL(), artifact.getArtifactUUID(),
-                downloadResult.getDistributionMessageResult(), MsoLogger.ErrorCode.DataError.getValue(),
+                downloadResult.getDistributionMessageResult(), ErrorCode.DataError.getValue(),
                 "ASDC artifact download fail");
 
             this.sendASDCNotification (NotificationType.DOWNLOAD,
@@ -369,7 +369,7 @@ public class ASDCController {
           logger.debug("Exception :", e);
           logger.error("{} {} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_DOWNLOAD_FAIL.toString(),
               artifact.getArtifactName(), artifact.getArtifactURL(), artifact.getArtifactUUID(),
-              resultArtifact.getDistributionMessageResult(), MsoLogger.ErrorCode.DataError.getValue(),
+              resultArtifact.getDistributionMessageResult(), ErrorCode.DataError.getValue(),
               "ASDC write to file failed");
         }
 
@@ -519,7 +519,7 @@ public class ASDCController {
             }
         } catch (RuntimeException e) {
             logger.warn("{} {} {} {} {}", MessageEnum.ASDC_SEND_NOTIF_ASDC_EXEC.toString(), "ASDC",
-                "sendASDCNotification", MsoLogger.ErrorCode.SchemaError.getValue(),
+                "sendASDCNotification", ErrorCode.SchemaError.getValue(),
                 "RuntimeException - sendASDCNotification", e);
         }
     }
@@ -549,7 +549,7 @@ public class ASDCController {
     	} catch (RuntimeException e) {
           logger.debug("Exception caught in sendFinalDistributionStatus {}", e.getMessage());
           logger.warn("{} {} {} {} {}", MessageEnum.ASDC_SEND_NOTIF_ASDC_EXEC.toString(), "ASDC", "sendASDCNotification",
-                  MsoLogger.ErrorCode.SchemaError.getValue(), "RuntimeException - sendASDCNotification", e);
+                  ErrorCode.SchemaError.getValue(), "RuntimeException - sendASDCNotification", e);
       }
     }
 
@@ -671,12 +671,12 @@ public class ASDCController {
                 iNotif.getDistributionID());
             logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                 "Database concurrency exception: ", "ASDC", "treatNotification",
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "RuntimeException in treatNotification", e);
+                ErrorCode.BusinessProcesssError.getValue(), "RuntimeException in treatNotification", e);
 
         } catch (Exception e) {
             logger.error("", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                           "Unexpected exception caught during the notification processing",  "ASDC",
-                "treatNotification", MsoLogger.ErrorCode.SchemaError.getValue(), "RuntimeException in treatNotification",
+                "treatNotification", ErrorCode.SchemaError.getValue(), "RuntimeException in treatNotification",
                           e);
 
             try {
@@ -785,7 +785,7 @@ public class ASDCController {
     	} catch (ASDCDownloadException | UnsupportedEncodingException e) {
           logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
               "Exception caught during Installation of artifact", "ASDC", "processResourceNotification",
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in processResourceNotification", e);
+              ErrorCode.BusinessProcesssError.getValue(), "Exception in processResourceNotification", e);
       }
     }
     protected void processCsarServiceArtifacts (INotificationData iNotif, ToscaResourceStructure toscaResourceStructure) {
@@ -814,7 +814,7 @@ public class ASDCController {
     				} catch(Exception e){
     					logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
     							"Exception caught during processCsarServiceArtifacts", "ASDC", "processCsarServiceArtifacts",
-                  MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in processCsarServiceArtifacts", e);
+                  ErrorCode.BusinessProcesssError.getValue(), "Exception in processCsarServiceArtifacts", e);
     				}
     			}
     			else if(artifact.getArtifactType().equals(ASDCConfiguration.WORKFLOWS)){
@@ -834,7 +834,7 @@ public class ASDCController {
                 logger.info("Whats the error {}", e.getMessage());
                 logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception caught during processCsarServiceArtifacts", "ASDC", "processCsarServiceArtifacts",
-                    MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in processCsarServiceArtifacts",
+                    ErrorCode.BusinessProcesssError.getValue(), "Exception in processCsarServiceArtifacts",
                     e);
             }
     			}

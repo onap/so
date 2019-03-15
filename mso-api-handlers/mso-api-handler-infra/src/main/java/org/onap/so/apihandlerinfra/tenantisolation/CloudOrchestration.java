@@ -55,8 +55,8 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.TenantSyncResponse;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +134,8 @@ public class CloudOrchestration {
 		try {
 			tenantIsolationRequest.parse(cor, instanceIdMap, action);
 		}catch(ValidationException e){
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+          ErrorCode.SchemaError).build();
 
 
 			throw new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER)
@@ -159,7 +160,7 @@ public class CloudOrchestration {
 				instance = instanceIdMap.get(resourceType + "InstanceId");
 			}
 
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_FOUND, MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_FOUND, ErrorCode.SchemaError).build();
 
 
 			throw new DuplicateRequestException.Builder(resourceType,instance,dup.getRequestStatus(),dup.getRequestId(), HttpStatus.SC_CONFLICT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
@@ -188,7 +189,8 @@ public class CloudOrchestration {
 		try {
 			 encodedValue = new String(instanceId.getBytes("UTF-8"));
 		} catch(UnsupportedEncodingException ex) {
-			 ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,MsoLogger.ErrorCode.DataError).build();
+			 ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+           ErrorCode.DataError).build();
 
 
 			 throw new ValidateException.Builder("Could not encode instanceID" + ex.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER)
@@ -209,7 +211,7 @@ public class CloudOrchestration {
 		try {
 			return requestsDbClient.checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
 		} catch (Exception e) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
 			throw new ValidateException.Builder("Duplicate Check Request", HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
@@ -225,7 +227,8 @@ public class CloudOrchestration {
 			return mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
 		} catch(IOException e){
 
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+          ErrorCode.SchemaError).build();
 
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,ErrorNumbers.SVC_BAD_PARAMETER)

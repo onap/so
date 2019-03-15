@@ -22,21 +22,17 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import org.apache.commons.collections.CollectionUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
-import org.onap.aai.domain.yang.SearchResults
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor;
 import org.onap.so.bpmn.common.scripts.ExceptionUtil;
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.client.aai.AAIObjectType
-import org.onap.so.client.aai.AAIResourcesClient
-import org.onap.so.client.aai.entities.AAIResultWrapper
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -311,7 +307,7 @@ class CreateVfModuleVolumeInfraV1 extends AbstractServiceTaskProcessor {
 
 		execution.setVariable(prefix+'FalloutHandlerRequest', xmlHandlerRequest)
 		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Overall Error Response " +
-				"going to FalloutHandler", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
+				"going to FalloutHandler", "BPMN", ErrorCode.UnknownError.getValue(), "\n" + xmlHandlerRequest);
 	}
 
 

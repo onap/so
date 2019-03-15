@@ -23,6 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import org.onap.so.client.HttpClientFactory
+import org.onap.so.logger.ErrorCode
 
 import javax.ws.rs.core.Response
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -41,7 +42,6 @@ import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
@@ -275,7 +275,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModule(): ' + e.getMessage())
 		}
 	}
@@ -331,7 +331,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing preProcessAddOnModule. Exception is:\n" + e, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during prepareNextModuleToUpdate Method:\n" + e.getMessage())
 		}
 		logger.trace("COMPLETED prepareNextModuleToUpdate ")
@@ -407,7 +407,7 @@ class DoUpdateVnfAndModules extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateAAIGenericVnf(): ' + e.getMessage())
 		}
 	}

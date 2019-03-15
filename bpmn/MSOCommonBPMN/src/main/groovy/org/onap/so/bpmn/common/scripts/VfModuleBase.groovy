@@ -20,7 +20,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.scripts;
+package org.onap.so.bpmn.common.scripts
+
+import org.onap.so.logger.ErrorCode;
 
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
@@ -31,7 +33,6 @@ import org.w3c.dom.Node
 import org.w3c.dom.NodeList
 import org.xml.sax.InputSource
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -111,7 +112,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.warn("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
 					'Exception transforming network params to vnfNetworks', "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception is: \n' + e);
+					ErrorCode.UnknownError.getValue(), 'Exception is: \n' + e);
 		}
 		return vnfNetworks
 	}
@@ -150,7 +151,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.warn("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
 					'Exception transforming params to entries', "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception transforming params to entries' + e);
+					ErrorCode.UnknownError.getValue(), 'Exception transforming params to entries' + e);
 		}
 		return entries
 	}
@@ -191,7 +192,7 @@ public abstract class VfModuleBase extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.warn("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(),
 					'Exception transforming params to entries', "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), 'Exception transforming params to entries' + e);
+					ErrorCode.UnknownError.getValue(), 'Exception transforming params to entries' + e);
 		}
 		return entries
 	}

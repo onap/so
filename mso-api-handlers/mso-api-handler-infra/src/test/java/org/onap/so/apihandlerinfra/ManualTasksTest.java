@@ -29,6 +29,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
+import static org.onap.so.logger.MdcConstants.ECOMP_REQUEST_ID;
+import static org.onap.so.logger.MdcConstants.ENDTIME;
+import static org.onap.so.logger.MdcConstants.INVOCATION_ID;
+import static org.onap.so.logger.MdcConstants.PARTNERNAME;
+import static org.onap.so.logger.MdcConstants.RESPONSECODE;
+import static org.onap.so.logger.MdcConstants.RESPONSEDESC;
+import static org.onap.so.logger.MdcConstants.SERVICE_NAME;
+import static org.onap.so.logger.MdcConstants.STATUSCODE;
+import static org.onap.so.logger.MdcConstants.CLIENT_ID;
 
 import java.io.IOException;
 import java.util.Map;
@@ -44,7 +53,6 @@ import org.onap.so.apihandlerinfra.tasksbeans.RequestInfo;
 import org.onap.so.apihandlerinfra.tasksbeans.TaskRequestReference;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.tasksbeans.ValidResponses;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.RequestError;
 import org.onap.so.serviceinstancebeans.ServiceException;
 import org.springframework.http.HttpEntity;
@@ -63,8 +71,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 public class ManualTasksTest extends BaseTest{
 
     private final String basePath = "/tasks/v1/";
-
-
 
     @Test
     public void testCreateOpEnvObjectMapperError() throws IOException {
@@ -88,8 +94,8 @@ public class ManualTasksTest extends BaseTest{
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        headers.set(MsoLogger.ECOMP_REQUEST_ID, "987654321");
-        headers.set(MsoLogger.CLIENT_ID, "VID");
+        headers.set(ECOMP_REQUEST_ID, "987654321");
+        headers.set(CLIENT_ID, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath) + taskId + "/complete");	       
@@ -116,22 +122,22 @@ public class ManualTasksTest extends BaseTest{
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));               
-                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-                assertEquals("tasks/v1/55/complete",mdc.get(MsoLogger.SERVICE_NAME));
-                assertEquals("INPROGRESS",mdc.get(MsoLogger.STATUSCODE));
+                assertNotNull(mdc.get(INVOCATION_ID));
+                assertEquals("UNKNOWN",mdc.get(PARTNERNAME));
+                assertEquals("tasks/v1/55/complete",mdc.get(SERVICE_NAME));
+                assertEquals("INPROGRESS",mdc.get(STATUSCODE));
             }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
             		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(MsoLogger.ENDTIME));
+                assertNotNull(mdc.get(ENDTIME));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
-                assertEquals("202",mdc.get(MsoLogger.RESPONSECODE));
-                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-                assertEquals("tasks/v1/55/complete",mdc.get(MsoLogger.SERVICE_NAME));
-                assertEquals("COMPLETE",mdc.get(MsoLogger.STATUSCODE));
-                assertNotNull(mdc.get(MsoLogger.RESPONSEDESC));
+                assertNotNull(mdc.get(INVOCATION_ID));
+                assertEquals("202",mdc.get(RESPONSECODE));
+                assertEquals("UNKNOWN",mdc.get(PARTNERNAME));
+                assertEquals("tasks/v1/55/complete",mdc.get(SERVICE_NAME));
+                assertEquals("COMPLETE",mdc.get(STATUSCODE));
+                assertNotNull(mdc.get(RESPONSEDESC));
                 assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
                 assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
                 assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -151,8 +157,8 @@ public class ManualTasksTest extends BaseTest{
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        headers.set(MsoLogger.ECOMP_REQUEST_ID, "987654321");
-        headers.set(MsoLogger.CLIENT_ID, "VID");
+        headers.set(ECOMP_REQUEST_ID, "987654321");
+        headers.set(CLIENT_ID, "VID");
         HttpEntity<String> entity = new HttpEntity<String>(invalidRequest, headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath) + "55" + "/complete");	       
@@ -187,8 +193,8 @@ public class ManualTasksTest extends BaseTest{
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        headers.set(MsoLogger.ECOMP_REQUEST_ID, "987654321");
-        headers.set(MsoLogger.CLIENT_ID, "VID");
+        headers.set(ECOMP_REQUEST_ID, "987654321");
+        headers.set(CLIENT_ID, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath) + taskId + "/complete");	       
@@ -227,8 +233,8 @@ public class ManualTasksTest extends BaseTest{
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        headers.set(MsoLogger.ECOMP_REQUEST_ID, "987654321");
-        headers.set(MsoLogger.CLIENT_ID, "VID");
+        headers.set(ECOMP_REQUEST_ID, "987654321");
+        headers.set(CLIENT_ID, "VID");
         HttpEntity<TasksRequest> entity = new HttpEntity<TasksRequest>(taskReq, headers);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath) + taskId + "/complete");	       
