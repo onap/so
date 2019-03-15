@@ -50,7 +50,8 @@ public class ActivateVnfDBHelper {
 																						 	String status,
 																						 	String recoveryAction, 
 																						 	int retryCount,
-																						 	String workloadContext) { 
+																						 	String workloadContext,
+																						 	String vnfOperationalEnvironmentId) { 
 		OperationalEnvServiceModelStatus serviceModelStatus = new OperationalEnvServiceModelStatus();
 		serviceModelStatus.setRequestId(requestId);
 		serviceModelStatus.setOperationalEnvId(operationalEnvironmentId);
@@ -59,6 +60,7 @@ public class ActivateVnfDBHelper {
 		serviceModelStatus.setRecoveryAction(recoveryAction);
 		serviceModelStatus.setRetryCount(new Integer(retryCount));
 		serviceModelStatus.setWorkloadContext(workloadContext);
+		serviceModelStatus.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
 		return serviceModelStatus;
 	}
 

@@ -119,7 +119,7 @@ public class ActivateVnfOperationalEnvironment {
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
 		}		
 
-		processActivateSDCRequest(requestId, ecompOperationalEnvironmentId, serviceModelVersionIdList, workloadContext);
+		processActivateSDCRequest(requestId, ecompOperationalEnvironmentId, serviceModelVersionIdList, workloadContext, vnfOperationalEnvironmentId);
 
 	}	
 	
@@ -134,7 +134,7 @@ public class ActivateVnfOperationalEnvironment {
 	 */		
 	public void processActivateSDCRequest(String requestId, String operationalEnvironmentId, 
 										  List<ServiceModelList> serviceModelVersionIdList, 
-										  String workloadContext) throws ApiException {
+										  String workloadContext, String vnfOperationalEnvironmentId) throws ApiException {
 		
 		JSONObject jsonResponse = null;		
 		int retryCount = 0;
@@ -157,7 +157,8 @@ public class ActivateVnfOperationalEnvironment {
 																	    DISTRIBUTION_STATUS_SENT,
 																	    recoveryAction, 
 																	    retryCount,
-				 													    workloadContext); 					
+				 													    workloadContext,
+				 													    vnfOperationalEnvironmentId); 					
 			client.save(serviceModelStatus);
 			
 			String distributionId = "";

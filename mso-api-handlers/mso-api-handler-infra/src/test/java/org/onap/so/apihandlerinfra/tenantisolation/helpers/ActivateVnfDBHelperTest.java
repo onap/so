@@ -41,6 +41,7 @@ import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 public class ActivateVnfDBHelperTest extends BaseTest{
 
 	String operationalEnvironmentId = "TEST_operationalEnvironmentId";
+	String vnfOperationalEnvironmentId = "VNF_operationalEnvironmentId";
 	String requestId = "TEST_requestId";
 	String origRequestId = "TEST_requestId";
 
@@ -81,6 +82,7 @@ public class ActivateVnfDBHelperTest extends BaseTest{
 		expectedServiceModelStatus.setRecoveryAction(recoveryActionRetry);
 		expectedServiceModelStatus.setRetryCount(new Integer(retryCountThree));
 		expectedServiceModelStatus.setWorkloadContext(workloadContext1);
+		expectedServiceModelStatus.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
 	}	
 	
 	@Test
@@ -122,7 +124,8 @@ public class ActivateVnfDBHelperTest extends BaseTest{
 																		statusOk, 
 																		recoveryActionRetry, 
 																		retryCountThree, 
-																		workloadContext1);
+																		workloadContext1,
+																		vnfOperationalEnvironmentId);
 		assertThat(serviceModelStatus1, sameBeanAs(expectedServiceModelStatus));
 		
 		// prepare updated expected object		

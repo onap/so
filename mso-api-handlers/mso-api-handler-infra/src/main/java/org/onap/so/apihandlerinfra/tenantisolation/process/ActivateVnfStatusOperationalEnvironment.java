@@ -24,21 +24,25 @@ package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
+import org.onap.aai.domain.yang.OperationalEnvironment;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
+import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.ActivateVnfDBHelper;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.SDCClientHelper;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Distribution;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
+import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.onap.so.logger.MessageEnum;
@@ -57,7 +61,8 @@ public class ActivateVnfStatusOperationalEnvironment {
 	private String errorMessage = ""; 
 	private OperationalEnvDistributionStatus queryDistributionDbResponse = null;
 	private OperationalEnvServiceModelStatus queryServiceModelResponse = null;		
-
+	private boolean isOverallSuccess = false;
+	
 	private final int RETRY_COUNT_ZERO = 0;	
 	private final String ERROR_REASON_ABORTED = "ABORTED";
 	private final String RECOVERY_ACTION_RETRY  = "RETRY";
@@ -77,6 +82,8 @@ public class ActivateVnfStatusOperationalEnvironment {
 	private SDCClientHelper sdcClientHelper;		
 	@Autowired
 	private RequestsDbClient client;
+	@Autowired 
+	private AAIClientHelper aaiHelper;	
 	
 	/**
 	 * The Point-Of-Entry from APIH with activate status from SDC
@@ -107,8 +114,19 @@ public class ActivateVnfStatusOperationalEnvironment {
 			//  to determine the OVERALL status if "COMPLETE" or "FAILURE":
 			checkOrUpdateOverallStatus(operationalEnvironmentId, this.origRequestId);			
 	    
+			// Update AAI to ACTIVE if Overall success
+			if (isOverallSuccess) {
+				OperationalEnvironment aaiOpEnv = getAAIOperationalEnvironment(this.queryServiceModelResponse.getVnfOperationalEnvId());
+				if (aaiOpEnv != null) {
+					aaiOpEnv.setOperationalEnvironmentStatus("ACTIVE");
+					aaiHelper.updateAaiOperationalEnvironment(operationalEnvironmentId, aaiOpEnv);
+				}else {
+					requestDb.updateInfraFailureCompletion("Unable to update ACTIVATE status in AAI. ", this.origRequestId, this.queryServiceModelResponse.getVnfOperationalEnvId());
+				}
+			}
+			
 		 } catch(Exception e) {
-	            requestDb.updateInfraFailureCompletion(e.getMessage(), this.origRequestId, this.queryDistributionDbResponse.getOperationalEnvId());
+	            requestDb.updateInfraFailureCompletion(e.getMessage(), this.origRequestId, this.queryServiceModelResponse.getVnfOperationalEnvId());
         }
 			
 	}
@@ -280,6 +298,7 @@ public class ActivateVnfStatusOperationalEnvironment {
 		
 		if (status.equals("Completed") && queryServiceModelResponseList.size() == count) {
 			String messageStatus = "Overall Activation process is complete. " + status;
+			isOverallSuccess = true;
 			requestDb.updateInfraSuccessCompletion(messageStatus, origRequestId, operationalEnvironmentId);
 		} else {	
 			if (status.equals("Failure") && queryServiceModelResponseList.size() == count) {
@@ -293,4 +312,15 @@ public class ActivateVnfStatusOperationalEnvironment {
 			
 		}	
 	}
+	
+	/**
+	 * Get OperationalEnvironment object
+	 * @param  operationalEnvironmentId - String 
+	 * @return operationalEnv - OperationalEnvironment object
+	 */
+	private OperationalEnvironment getAAIOperationalEnvironment(String operationalEnvironmentId) {
+		AAIResultWrapper aaiResult = aaiHelper.getAaiOperationalEnvironment(operationalEnvironmentId);
+		Optional<OperationalEnvironment> operationalEnvironmentOpt = aaiResult.asBean(OperationalEnvironment.class);
+		return operationalEnvironmentOpt.isPresent() ? operationalEnvironmentOpt.get() : null;
+	}	
 }

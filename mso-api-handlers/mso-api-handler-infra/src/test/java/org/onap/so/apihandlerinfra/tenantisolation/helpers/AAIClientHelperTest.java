@@ -92,6 +92,7 @@ public class AAIClientHelperTest extends BaseTest{
 		Map<String, String> payload = new HashMap<String, String>();
 		payload.put("tenant-context", "Test");
 		payload.put("workload-context", "ECOMPL_PSL");
+		payload.put("operational-environment-status", "ACTIVE");
 		
 		try {
 			AAIClientHelper clientHelper = mock(AAIClientHelper.class);
