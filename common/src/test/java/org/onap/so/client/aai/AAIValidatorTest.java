@@ -49,11 +49,25 @@ public class AAIValidatorTest {
 		validator.setClient(client);
 	}
 	
-	public List<Pserver> getPservers(boolean locked){
-		Pserver pserver = new Pserver();
-		pserver.setInMaint(locked);
+	public List<Pserver> getPserversLocked(){
+		Pserver pserver1 = new Pserver();
+		pserver1.setInMaint(true);
+		Pserver pserver2 = new Pserver();
+		pserver2.setInMaint(false);
 		List<Pserver> pservers = new ArrayList<Pserver>();
-		pservers.add(pserver);
+		pservers.add(pserver1);
+		pservers.add(pserver2);
+		return pservers;		
+	}
+	
+	public List<Pserver> getPserversNotLocked(){
+		Pserver pserver1 = new Pserver();
+		pserver1.setInMaint(false);
+		Pserver pserver2 = new Pserver();
+		pserver2.setInMaint(false);
+		List<Pserver> pservers = new ArrayList<Pserver>();
+		pservers.add(pserver1);
+		pservers.add(pserver2);
 		return pservers;		
 	}
 	
@@ -64,15 +78,15 @@ public class AAIValidatorTest {
 	}
 
 	@Test
-	public void test_IsPhysicalServerLocked_True() throws IOException{		
-		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPservers(true));
+	public void test_IsPhysicalServerLocked_True() throws IOException{	 	
+		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPserversLocked());
 		boolean locked = validator.isPhysicalServerLocked(vnfName);
 		assertEquals(true, locked);
 	}
 	
 	@Test
 	public void test_IsPhysicalServerLocked_False() throws IOException {
-		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPservers(false));
+		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPserversNotLocked());
 		boolean locked = validator.isPhysicalServerLocked(vnfName);
 		assertEquals(false, locked);
 	}
