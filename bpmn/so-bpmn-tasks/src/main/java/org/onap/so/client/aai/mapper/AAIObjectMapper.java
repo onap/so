@@ -254,6 +254,9 @@ public class AAIObjectMapper {
 					map().setModelCustomizationId(source.getModelInfoConfiguration().getModelCustomizationId());
 					map().setModelVersionId(source.getModelInfoConfiguration().getModelVersionId());
 					map().setModelInvariantId(source.getModelInfoConfiguration().getModelInvariantId());
+					map().setConfigurationType(source.getModelInfoConfiguration().getConfigurationType());
+					map().setConfigurationSubType(source.getModelInfoConfiguration().getConfigurationRole());
+					map().setConfigPolicyName(source.getModelInfoConfiguration().getPolicyName());
 				}
 			});
 		}

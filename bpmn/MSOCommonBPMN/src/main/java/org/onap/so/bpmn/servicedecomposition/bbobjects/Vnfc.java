@@ -13,11 +13,11 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("vnfc")
 public class Vnfc implements Serializable {
 	
-	
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -9170269565756850796L;
 	@Id
 	@JsonProperty("vnfc-name")
 	private String vnfcName;

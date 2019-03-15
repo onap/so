@@ -74,24 +74,27 @@ public class AAIObjectMapperTest {
 		Configuration configuration = new Configuration();
 		configuration.setConfigurationId("configId");
 		configuration.setConfigurationName("VNR");
-		configuration.setConfigurationType("VNR-TYPE");
 		configuration.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 		configuration.setManagementOption("managementOption");
 		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
 		modelInfoConfiguration.setModelCustomizationId("modelCustId");
 		modelInfoConfiguration.setModelInvariantId("modelInvariantId");
 		modelInfoConfiguration.setModelVersionId("modelVersionId");
+		modelInfoConfiguration.setConfigurationType("5G");
+		modelInfoConfiguration.setConfigurationRole("ConfigurationRole");
 		configuration.setModelInfoConfiguration(modelInfoConfiguration);
 
 		org.onap.aai.domain.yang.Configuration expectedConfiguration = new org.onap.aai.domain.yang.Configuration();
 		expectedConfiguration.setConfigurationId(configuration.getConfigurationId());
 		expectedConfiguration.setConfigurationName(configuration.getConfigurationName());
-		expectedConfiguration.setConfigurationType(configuration.getConfigurationType());
+		expectedConfiguration.setConfigurationType(configuration.getModelInfoConfiguration().getConfigurationType());
 		expectedConfiguration.setOrchestrationStatus(configuration.getOrchestrationStatus().toString());
 		expectedConfiguration.setManagementOption(configuration.getManagementOption());
 		expectedConfiguration.setModelInvariantId(configuration.getModelInfoConfiguration().getModelInvariantId());
 		expectedConfiguration.setModelVersionId(configuration.getModelInfoConfiguration().getModelVersionId());
 		expectedConfiguration.setModelCustomizationId(configuration.getModelInfoConfiguration().getModelCustomizationId());
+		expectedConfiguration.setConfigurationSubType(configuration.getModelInfoConfiguration().getConfigurationRole());
+		expectedConfiguration.setConfigPolicyName(configuration.getModelInfoConfiguration().getPolicyName());
 
 		org.onap.aai.domain.yang.Configuration actualConfiguration = aaiObjectMapper.mapConfiguration(configuration);
 

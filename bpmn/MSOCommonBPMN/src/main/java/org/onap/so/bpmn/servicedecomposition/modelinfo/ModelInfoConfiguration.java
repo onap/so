@@ -34,9 +34,25 @@ public class ModelInfoConfiguration implements Serializable{
 	private String modelVersionId;
 	@JsonProperty("model-customization-id")
 	private String modelCustomizationId;
+	@JsonProperty("configuration-type")
+	private String configurationType;
+	@JsonProperty("configuration-role")
+	private String configurationRole;
 	@JsonProperty("policy-name")
 	private String policyName;
 	
+	public String getConfigurationRole() {
+		return configurationRole;
+	}
+	public void setConfigurationRole(String configurationRole) {
+		this.configurationRole = configurationRole;
+	}
+	public String getConfigurationType() {
+		return configurationType;
+	}
+	public void setConfigurationType(String configurationType) {
+		this.configurationType = configurationType;
+	}
 	public String getModelInvariantId() {
 		return modelInvariantId;
 	}

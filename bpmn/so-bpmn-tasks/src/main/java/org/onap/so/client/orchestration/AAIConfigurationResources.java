@@ -165,7 +165,7 @@ public class AAIConfigurationResources {
         injectionHelper.getAaiClient().connect(configurationURI, vpnBindingURI);
     }
 
-    public void connectConfigurationToVfModule(String configurationId, String vfModuleId, String vnfId){
+    public void connectConfigurationToVfModule(String configurationId, String vnfId, String vfModuleId){
     	 AAIResourceUri configurationURI = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configurationId);
     	 AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnfId, vfModuleId);
     	 injectionHelper.getAaiClient().connect(configurationURI, vfModuleURI);
