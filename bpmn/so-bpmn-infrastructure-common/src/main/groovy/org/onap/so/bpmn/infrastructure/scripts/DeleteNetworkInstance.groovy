@@ -20,9 +20,8 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.infrastructure.scripts;
+package org.onap.so.bpmn.infrastructure.scripts
 
-import org.apache.commons.lang3.*
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
@@ -30,13 +29,11 @@ import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.common.scripts.NetworkUtils
 import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
-import org.onap.so.bpmn.core.json.JsonUtils;
+import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
-import groovy.json.*
 
 public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 	String Prefix="DELNI_"
@@ -359,7 +356,7 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue())
+					ErrorCode.UnknownError.getValue())
 
 		} catch (Exception ex) {
 			// caught exception
@@ -382,7 +379,7 @@ public class DeleteNetworkInstance extends AbstractServiceTaskProcessor {
 			execution.setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Overall Error Response going to FalloutHandler: " + "\n" + falloutHandlerRequest,"BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex)
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + ex)
 		}
 	}
 

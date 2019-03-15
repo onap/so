@@ -47,8 +47,8 @@ import org.onap.so.client.grm.beans.ServiceEndPoint;
 import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.client.grm.beans.ServiceEndPointRequest;
 import org.onap.so.client.grm.beans.Version;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,7 +108,7 @@ public class CreateVnfOperationalEnvironment {
 			requestDb.updateInfraSuccessCompletion("SUCCESSFULLY created VNF operational environment", requestId, request.getOperationalEnvironmentId());
 
 		}catch(Exception e) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
 
 
 			ValidateException validateException = new ValidateException.Builder(e.getMessage(),

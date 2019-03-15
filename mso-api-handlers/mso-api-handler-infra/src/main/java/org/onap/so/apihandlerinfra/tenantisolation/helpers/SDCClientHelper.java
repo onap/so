@@ -37,8 +37,8 @@ import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.TargetEntity;
 import org.slf4j.Logger;
@@ -86,7 +86,7 @@ public class SDCClientHelper {
 			String basicAuthCred = getBasicAuth();
 
 			if ( basicAuthCred == null || "".equals(basicAuthCred) ) {
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError).build();
                 ValidateException validateException = new ValidateException.Builder(" SDC credentials 'mso.sdc.client.auth' not setup in properties file!",
                         HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
 
@@ -131,7 +131,7 @@ public class SDCClientHelper {
 		try {
             return client.post(jsonPayload);
         }catch(Exception ex){
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError).build();
             ValidateException validateException = new ValidateException.Builder("Bad request could not post payload",
                     HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(ex).errorInfo(errorLoggerInfo).build();
 

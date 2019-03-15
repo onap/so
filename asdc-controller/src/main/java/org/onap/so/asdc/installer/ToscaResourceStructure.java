@@ -50,8 +50,8 @@ import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -140,7 +140,7 @@ public class ToscaResourceStructure {
 			logger.info("System out {}", e.getMessage());
 			logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
 				"Exception caught during parser *****LOOK********* " + artifact.getArtifactName(), "ASDC",
-				"processResourceNotification", MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+				"processResourceNotification", ErrorCode.BusinessProcesssError.getValue(),
 				"Exception in " + "processResourceNotification", e);
 			
 			throw new ASDCDownloadException ("Exception caught when passing the csar file to the parser ", e);

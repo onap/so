@@ -39,8 +39,8 @@ import org.onap.so.bpmn.core.json.DecomposeJsonUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.so.bpmn.infrastructure.aai.groovyflows.AAICreateResources;
-import org.onap.so.logger.MsoLogger
+import org.onap.so.bpmn.infrastructure.aai.groovyflows.AAICreateResources
+import org.onap.so.logger.ErrorCode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.logger.MessageEnum
@@ -310,7 +310,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   }catch(Exception e){
 		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Occured Processing preProcessAddOnModule ", "BPMN",
-				   MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())
 	   }
 	   logger.trace("COMPLETED preProcessAddOnModule")
@@ -328,7 +328,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   }catch(Exception e){
 		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Occured Processing postProcessAddOnModule ", "BPMN",
-				   MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during postProcessAddOnModule Method:\n" + e.getMessage())
 	   }
 	   logger.trace("COMPLETED postProcessAddOnModule")
@@ -358,7 +358,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   }catch(Exception e){
 		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Occured Processing validateBaseModule ", "BPMN",
-				   MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during validateBaseModule Method:\n" + e.getMessage())
 	   }
 	   logger.trace("COMPLETED validateBaseModule")
@@ -389,7 +389,7 @@ class DoCreateVnfAndModules extends AbstractServiceTaskProcessor {
 	   }catch(Exception e){
 		   logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				   "Exception Occured Processing preProcessAddOnModule ", "BPMN",
-				   MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+				   ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 		   exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Error Occurred during preProcessAddOnModule Method:\n" + e.getMessage())
 	   }
 	   logger.trace("COMPLETED validateAddOnModule")

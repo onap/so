@@ -30,8 +30,8 @@ import org.onap.so.bpmn.common.scripts.NetworkUtils
 import org.onap.so.bpmn.common.scripts.VidUtils
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.core.json.JsonUtils
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -421,7 +421,7 @@ public class DeleteVcpeResCustService extends AbstractServiceTaskProcessor {
 		}catch(BpmnError b){
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Rethrowing MSOWorkflowException", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue());
 			throw b
 		}catch(Exception e){
 			logger.debug("Caught Exception during processJavaException Method: " + e)

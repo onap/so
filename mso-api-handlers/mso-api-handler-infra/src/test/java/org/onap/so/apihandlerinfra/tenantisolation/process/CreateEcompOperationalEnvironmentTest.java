@@ -40,8 +40,8 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestInfo;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestParameters;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.core.HttpHeaders;
@@ -102,7 +102,7 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		stubFor(post(urlPathMatching("/events/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
-        ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+        ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
         ValidateException expectedException = new ValidateException.Builder("Could not publish DMaap", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER)
                 .errorInfo(errorLoggerInfo).build();
         

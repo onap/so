@@ -40,8 +40,8 @@ import org.onap.so.apihandler.camundabeans.CamundaInput;
 import org.onap.so.apihandler.camundabeans.CamundaIntegerInput;
 import org.onap.so.apihandler.camundabeans.CamundaRequest;
 import org.onap.so.apihandler.camundabeans.CamundaVIDRequest;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -195,7 +195,7 @@ public class CamundaClient extends RequestClient{
 			logger.trace("request body is {}", jsonReq);
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapRequest",
-				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
+				ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
 		}
 		return jsonReq;
 	}
@@ -288,7 +288,7 @@ public class CamundaClient extends RequestClient{
 			logger.trace("request body is {}", jsonReq);
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapVIDRequest",
-				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
+				ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
 		}
 		return jsonReq;
 	}

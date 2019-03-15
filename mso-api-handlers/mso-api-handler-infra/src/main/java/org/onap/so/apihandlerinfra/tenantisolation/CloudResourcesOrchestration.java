@@ -45,7 +45,6 @@ import org.apache.http.HttpStatus;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.Constants;
-import org.onap.so.apihandlerinfra.Messages;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 
@@ -59,9 +58,9 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestStatus;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,7 +102,8 @@ public class CloudResourcesOrchestration {
 			ObjectMapper mapper = new ObjectMapper();
 			cor = mapper.readValue(requestJSON, CloudOrchestrationRequest.class);
 		} catch(IOException e){
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+          ErrorCode.SchemaError).build();
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(), HttpStatus.SC_BAD_REQUEST,ErrorNumbers.SVC_BAD_PARAMETER)
 					.cause(e).errorInfo(errorLoggerInfo).build();
@@ -113,7 +113,8 @@ public class CloudResourcesOrchestration {
 		try{
 			msoRequest.parseOrchestration(cor);
 		} catch (ValidationException e) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR,
+          ErrorCode.SchemaError).build();
 			ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST,ErrorNumbers.SVC_BAD_PARAMETER)
 					.cause(e).errorInfo(errorLoggerInfo).build();
 			throw validateException;
@@ -126,7 +127,7 @@ public class CloudResourcesOrchestration {
 		}
 		if(infraActiveRequest == null) {
 
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,MsoLogger.ErrorCode.BusinessProcesssError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.BusinessProcesssError).build();
 			ValidateException validateException = new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB", HttpStatus.SC_BAD_REQUEST,ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
 					.errorInfo(errorLoggerInfo).build();
 
@@ -140,7 +141,8 @@ public class CloudResourcesOrchestration {
 				infraActiveRequest.setRequestId(requestId);
 				requestDbClient.save(infraActiveRequest);
 			}else{
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,MsoLogger.ErrorCode.DataError).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND,
+            ErrorCode.DataError).build();
 				ValidateException validateException = new ValidateException.Builder("Orchestration RequestId " + requestId + " has a status of " + status + " and can not be unlocked",
 						HttpStatus.SC_BAD_REQUEST,ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
 
@@ -173,14 +175,14 @@ public class CloudResourcesOrchestration {
 			try {
 				requestDB = requestDbClient.getInfraActiveRequestbyRequestId(requestId);
 			} catch (Exception e) {
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.AvailabilityError).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.AvailabilityError).build();
 				ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
 						.errorInfo(errorLoggerInfo).build();
 				throw validateException;				
 			}
 
 			if(requestDB == null) {
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcesssError).build();
 				ValidateException validateException = new ValidateException.Builder("Orchestration RequestId " + requestId + " is not found in DB",
 						HttpStatus.SC_NO_CONTENT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
 						.errorInfo(errorLoggerInfo).build();
@@ -202,7 +204,7 @@ public class CloudResourcesOrchestration {
 			try{
 				orchestrationMap = tenantIsolationRequest.getOrchestrationFilters(queryParams);
 			}catch(ValidationException ex){
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError).build();
 				ValidateException validateException = new ValidateException.Builder(ex.getMessage(),
 						HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR).cause(ex)
 						.errorInfo(errorLoggerInfo).build();
@@ -251,7 +253,7 @@ public class CloudResourcesOrchestration {
 				ObjectMapper mapper = new ObjectMapper();
 				requestDetails = mapper.readValue(requestBody, RequestDetails.class);
 			} catch (IOException e) {
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).build();
 				ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed.  " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER)
 						.cause(e).errorInfo(errorLoggerInfo).build();
 				throw validateException;

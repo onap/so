@@ -34,8 +34,8 @@ import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class DeactivateVnfOperationalEnvironment {
 	
 			if(StringUtils.isBlank(operationalEnvironmentStatus)) {
 	            String error = "OperationalEnvironmentStatus is null on OperationalEnvironmentId: " + operationalEnvironmentId;
-	            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+	            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
 	            throw new ValidateException.Builder(error, HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
 	            							.errorInfo(errorLoggerInfo)
 	            							.build();
@@ -75,7 +75,7 @@ public class DeactivateVnfOperationalEnvironment {
 				
 			} else if(!operationalEnvironmentStatus.equalsIgnoreCase("INACTIVE")) {
 	            String error = "Invalid OperationalEnvironmentStatus on OperationalEnvironmentId: " + operationalEnvironmentId;
-	            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+	            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
 	            ValidateException validateException = new ValidateException.Builder(error,
 	                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
 	            requestDb.updateInfraFailureCompletion(error, requestId, operationalEnvironmentId);

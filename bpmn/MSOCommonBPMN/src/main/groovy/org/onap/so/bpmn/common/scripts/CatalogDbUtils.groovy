@@ -31,8 +31,9 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
 import org.onap.so.client.HttpClientFactory
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
+
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.utils.TargetEntity
@@ -81,7 +82,7 @@ class CatalogDbUtils {
 		catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in Querying Catalog DB", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 			throw e
 		}
 
@@ -119,7 +120,7 @@ class CatalogDbUtils {
 		catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in Querying Catalog DB", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 			throw e
 		}
 	}
@@ -143,7 +144,7 @@ class CatalogDbUtils {
 		catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in Querying Catalog DB", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 			throw e
 		}
 
@@ -169,7 +170,7 @@ class CatalogDbUtils {
 		catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in Querying Catalog DB", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 			throw e
 		}
 
@@ -219,7 +220,7 @@ class CatalogDbUtils {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in parsing Catalog DB Response", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 		}
 
 		return modelInfos
@@ -298,7 +299,7 @@ class CatalogDbUtils {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in parsing Catalog DB Response", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 		}
 
 		return modelInfos
@@ -352,7 +353,7 @@ class CatalogDbUtils {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in parsing Catalog DB Response", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 		}
 
 		return modelInfos
@@ -381,7 +382,7 @@ class CatalogDbUtils {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception in parsing Catalog DB Response", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 		}
 
 		return serviceResourcesObject
@@ -429,7 +430,7 @@ class CatalogDbUtils {
 		catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception while parsing model information", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.message);
+					ErrorCode.UnknownError.getValue(), e.message);
 		}
 		return modelInfo
 	}

@@ -24,7 +24,6 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
-import org.onap.so.logger.MsoLogger;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;

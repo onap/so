@@ -40,8 +40,8 @@ import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +111,7 @@ public class ASDCRestInterface {
 			logger.info("Error caught " + e.getMessage());
 			logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION.toString(),
 				"Exception caught during ASDCRestInterface", "ASDC", "invokeASDCService",
-				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in invokeASDCService", e);
+				ErrorCode.BusinessProcesssError.getValue(), "Exception in invokeASDCService", e);
 		}
 		logger.info("ASDC Updates are complete");
 		logger.info("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_DEPLOY_SUC.toString(), statusData.getDistributionID(), "ASDC",

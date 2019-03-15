@@ -69,9 +69,9 @@ import org.onap.so.apihandlerinfra.vnfbeans.VnfRequest;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.InstanceDirection;
 import org.onap.so.serviceinstancebeans.ModelInfo;
@@ -153,7 +153,7 @@ public class MsoRequest {
         	mapper.setSerializationInclusion(Include.NON_DEFAULT);
         	requestErrorStr = mapper.writeValueAsString(re);
         }catch(Exception e){
-					logger.error("{} {} {}", MessageEnum.APIH_VALIDATION_ERROR.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+					logger.error("{} {} {}", MessageEnum.APIH_VALIDATION_ERROR.toString(), ErrorCode.DataError.getValue(),
 							"Exception in buildServiceErrorResponse writing exceptionType to string ", e);
 				}
 
@@ -384,7 +384,7 @@ public class MsoRequest {
             aq.setRequestStatus (status.toString ());
             aq.setLastModifiedBy (Constants.MODIFIED_BY_APIHANDLER);           
         } catch (Exception e) {
-					logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+					logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), ErrorCode.DataError.getValue(),
 						"Exception when creation record request", e);
 
 					if (!status.equals (Status.FAILED)) {
@@ -424,7 +424,7 @@ public class MsoRequest {
            aq.setLastModifiedBy (Constants.MODIFIED_BY_APIHANDLER);
                   
        } catch (Exception e) {
-				 logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+				 logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), ErrorCode.DataError.getValue(),
 					 "Exception when creation record request", e);
 
 				 if (!status.equals (Status.FAILED)) {
@@ -452,7 +452,7 @@ public class MsoRequest {
 			requestsDbClient.save(request);
         } catch (Exception e) {
 					logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
-						MsoLogger.ErrorCode.DataError.getValue(), "Exception when updating record in DB");
+						ErrorCode.DataError.getValue(), "Exception when updating record in DB");
 					logger.debug("Exception: ", e);
 				}
     }
@@ -536,7 +536,7 @@ public class MsoRequest {
             return null;
 
         } catch (Exception e) {
-					logger.error("{} {} {}", MessageEnum.APIH_DOM2STR_ERROR.toString(), MsoLogger.ErrorCode.DataError.getValue(),
+					logger.error("{} {} {}", MessageEnum.APIH_DOM2STR_ERROR.toString(), ErrorCode.DataError.getValue(),
 						"Exception in domToStr", e);
 				}
         return null;

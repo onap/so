@@ -28,9 +28,8 @@ import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.exceptions.*;
 
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-
-import org.onap.so.logger.MsoLogger;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -89,7 +88,7 @@ public class ApiExceptionTest {
 
     @Test
     public void testDuplicateRequestException() throws ApiException {
-        ErrorLoggerInfo testLog = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+        ErrorLoggerInfo testLog = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
         thrown.expect(DuplicateRequestException.class);
         thrown.expectMessage(startsWith("Error: Locked instance"));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_NOT_FOUND)));

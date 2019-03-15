@@ -28,9 +28,6 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.onap.aai.domain.yang.OperationalEnvironment;
-import org.onap.aai.domain.yang.RelationshipList;
-import org.onap.aai.domain.yang.Relationship;
-import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
@@ -47,8 +44,8 @@ import org.onap.so.client.aai.entities.Relationships;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,12 +106,12 @@ public class ActivateVnfOperationalEnvironment {
 		String workloadContext = operationalEnv.getWorkloadContext();
 		logger.debug("  aai workloadContext: {}", workloadContext);
 		if (!vidWorkloadContext.equals(workloadContext)) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError).build();
 			throw new ValidateException.Builder(" The vid workloadContext did not match from aai record. " + " vid workloadContext:" + vidWorkloadContext + " aai workloadContext:" + workloadContext,
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
 		}
 		if (ecompOperationalEnvironmentId==null) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError).build();
 			throw new ValidateException.Builder(" The ECOMP OE was not in aai record; the value of relationship.relationship-data key: " + OPER_ENVIRONMENT_ID_KEY,
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
 		}		
@@ -178,7 +175,7 @@ public class ActivateVnfOperationalEnvironment {
 				client.save(distStatus);
 
 			} else {
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError).build();
                 String dbErrorMessage = " Failure calling SDC: statusCode: " + statusCode +
                         "; messageId: " + jsonResponse.get("messageId") +
                         "; message: " + jsonResponse.get("message");

@@ -20,7 +20,9 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.scripts;
+package org.onap.so.bpmn.common.scripts
+
+import org.onap.so.logger.ErrorCode;
 
 import static org.apache.commons.lang3.StringUtils.*;
 
@@ -44,7 +46,6 @@ import org.onap.so.bpmn.core.domain.ServiceDecomposition
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.ruby.*
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -286,7 +287,7 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
 		}
 
@@ -337,11 +338,11 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 		} catch (BpmnError e) {
 			msg = "BPMN error in createAOTSTicket " + ex.getMessage()
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue());
 		} catch (Exception ex){
 			msg = "Exception in createAOTSTicket " + ex.getMessage()
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue());
 		}
 		logger.trace("Exit createAOTSTicket of ManualHandling ")
 	}

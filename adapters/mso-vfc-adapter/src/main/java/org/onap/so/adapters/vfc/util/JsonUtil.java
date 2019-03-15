@@ -27,8 +27,8 @@ import java.io.IOException;
 
 import org.onap.so.adapters.vfc.constant.HttpCode;
 import org.onap.so.adapters.vfc.exceptions.ApplicationException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -86,7 +86,7 @@ public class JsonUtil {
     try {
       return MAPPER.readValue(jsonstr, type);
     } catch (IOException e) {
-      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
           UNMARSHAL_FAIL_MSG, e);
       throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
     }
@@ -104,7 +104,7 @@ public class JsonUtil {
     try {
       return MAPPER.readValue(jsonstr, type);
     } catch (IOException e) {
-      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
           UNMARSHAL_FAIL_MSG, e);
       throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
     }
@@ -121,7 +121,7 @@ public class JsonUtil {
     try {
       return MAPPER.writeValueAsString(srcObj);
     } catch (IOException e) {
-      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
           "fail to marshal json", e);
       throw new ApplicationException(HttpCode.BAD_REQUEST, "srcObj marshal failed!");
     }

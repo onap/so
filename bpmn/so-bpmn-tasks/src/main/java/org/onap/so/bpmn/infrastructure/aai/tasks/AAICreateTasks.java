@@ -62,8 +62,8 @@ import org.onap.so.client.orchestration.AAIVfModuleResources;
 import org.onap.so.client.orchestration.AAIVnfResources;
 import org.onap.so.client.orchestration.AAIVolumeGroupResources;
 import org.onap.so.client.orchestration.AAIVpnBindingResources;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,7 +121,7 @@ public class AAICreateTasks {
                 String errorMessage = "Exception in creating ServiceSubscription. Customer not present for ServiceInstanceID: "
                         + serviceInstance.getServiceInstanceId();
 							logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), errorMessage, "BPMN",
-								MsoLogger.ErrorCode.UnknownError.getValue(), errorMessage);
+								ErrorCode.UnknownError.getValue(), errorMessage);
 							exceptionUtil.buildAndThrowWorkflowException(execution, 7000, errorMessage);
             }
             aaiSIResources.createServiceSubscription(customer);
@@ -166,13 +166,13 @@ public class AAICreateTasks {
 					if (owningEntityName == null || "".equals(owningEntityName)) {
 						String msg = "Exception in AAICreateOwningEntity. Can't create an owningEntity with no owningEntityName.";
 						logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-							MsoLogger.ErrorCode.UnknownError.getValue(), msg);
+							ErrorCode.UnknownError.getValue(), msg);
 						exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
 					} else {
 						if(aaiSIResources.existsOwningEntityName(owningEntityName)){
 							String msg = "Exception in AAICreateOwningEntity. Can't create OwningEntity as name already exists in AAI associated with a different owning-entity-id (name must be unique)";
 							logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-								MsoLogger.ErrorCode.UnknownError.getValue(), msg);
+								ErrorCode.UnknownError.getValue(), msg);
 							exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
 						}else{
 							aaiSIResources.createOwningEntityandConnectServiceInstance(owningEntity, serviceInstance);

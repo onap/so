@@ -52,9 +52,9 @@ import org.apache.http.util.EntityUtils;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.adapters.sdncrest.SDNCErrorCommon;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,12 +201,12 @@ public abstract class SDNCConnector {
 
 	protected void logError(String errMsg) {
 		logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
-			MsoLogger.ErrorCode.AvailabilityError.getValue(), errMsg);
+			ErrorCode.AvailabilityError.getValue(), errMsg);
 	}
 
 	protected void logError(String errMsg, Throwable t) {
 		logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
-			MsoLogger.ErrorCode.AvailabilityError.getValue(), errMsg, t);
+			ErrorCode.AvailabilityError.getValue(), errMsg, t);
 	}
 
 	/**
@@ -290,7 +290,7 @@ public abstract class SDNCConnector {
 					info += "error-type:" + errorType;
 				} catch (XPathExpressionException e) {
 					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-type", error.toString(),
-							"SDNC", MsoLogger.ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
+							"SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
 				}
 
 				try {
@@ -301,7 +301,7 @@ public abstract class SDNCConnector {
 					info += "error-tag:" + errorTag;
 				} catch (XPathExpressionException e) {
 					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-tag", error.toString(),
-							"SDNC", MsoLogger.ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
+							"SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
 				}
 
 				try {
@@ -312,7 +312,7 @@ public abstract class SDNCConnector {
 					info += "error-message:" + errorMessage;
 				} catch (Exception e) {
 					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-message",
-						error.toString(), "SDNC", MsoLogger.ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
+						error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
 				}
 
 				if (!info.isEmpty()) {
@@ -325,7 +325,7 @@ public abstract class SDNCConnector {
 			}
 		} catch (Exception e) {
 			logger.error("{} {} {} {}", MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
-				MsoLogger.ErrorCode.DataError.getValue(), "Exception while analyzing errors", e);
+				ErrorCode.DataError.getValue(), "Exception while analyzing errors", e);
 		}
 
 		return output.toString();

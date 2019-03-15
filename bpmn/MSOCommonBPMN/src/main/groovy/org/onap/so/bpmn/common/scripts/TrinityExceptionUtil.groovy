@@ -24,8 +24,8 @@ package org.onap.so.bpmn.common.scripts
 
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.apache.commons.lang3.*
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -216,7 +216,7 @@ class TrinityExceptionUtil {
 		if(message != null) {
 			 execution.setVariable(prefix+"ErrorResponse",message)
 			 logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
-					 MsoLogger.ErrorCode.UnknownError.getValue(),
+					 ErrorCode.UnknownError.getValue(),
 					 execution.getVariable(prefix+"ErrorResponse"));
 			 return message
 		} else {
@@ -312,7 +312,7 @@ class TrinityExceptionUtil {
 				 execution.setVariable(prefix+"errTxt", messageTxt)
 				 execution.setVariable(prefix+"errVariables", msgVars)
 				 logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
-						 MsoLogger.ErrorCode.UnknownError.getValue(),
+						 ErrorCode.UnknownError.getValue(),
 						 execution.getVariable(prefix+"ErrorResponse"));
 				 return message
 			}catch(Exception ex) {

@@ -27,8 +27,8 @@ import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -208,7 +208,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	public void handleAAIQueryFailure(DelegateExecution execution) {
 		logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error occurred attempting to query AAI, Response Code " + execution.getVariable("DAAIVfMod_queryGenericVnfResponseCode") + ", Error Response " + execution.getVariable("DAAIVfMod_queryGenericVnfResponse"),
-				"BPMN", MsoLogger.ErrorCode.UnknownError.getValue());
+				"BPMN", ErrorCode.UnknownError.getValue());
 		def errorCode = 5000
 		// set the errorCode to distinguish between a A&AI failure
 		// and the Generic Vnf Id not found
@@ -255,7 +255,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 
 		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Error occurred during DeleteAAIVfModule flow", "BPMN",
-				MsoLogger.ErrorCode.UnknownError.getValue(), errorResponse);
+				ErrorCode.UnknownError.getValue(), errorResponse);
 		exceptionUtil.buildAndThrowWorkflowException(execution, errorCode, errorResponse)
 
 	}
@@ -265,7 +265,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 	public void handleDeleteGenericVnfFailure(DelegateExecution execution) {
 		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"AAI error occurred deleting the Generic Vnf", "BPMN",
-				MsoLogger.ErrorCode.UnknownError.getValue(),
+				ErrorCode.UnknownError.getValue(),
 				execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"));
 		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, execution.getVariable("DAAIVfMod_deleteGenericVnfResponse"))
 	}

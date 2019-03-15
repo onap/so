@@ -30,8 +30,8 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -223,7 +223,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
             logger.error("{} {} Exception Encountered - \n{}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), restFaultMessage, e)
+                    ErrorCode.UnknownError.getValue(), restFaultMessage, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}	
 	}
@@ -264,7 +264,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -293,7 +293,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepDoUpdateVfModule(): ' + e.getMessage())
 		}
 	}
@@ -347,7 +347,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepUpdateInfraRequest(): ' + e.getMessage())
 		}
 	}
@@ -386,7 +386,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -439,7 +439,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildWorkflowException(execution, 2000, 'Internal Error')
 		}
 	}
@@ -509,7 +509,7 @@ public class UpdateVfModuleInfra extends AbstractServiceTaskProcessor {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}

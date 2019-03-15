@@ -46,7 +46,6 @@ import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -45,8 +45,8 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +84,7 @@ public class BpmnInstaller {
 							logger.debug("Failed deploying BPMN {}", name);
 							logger
 								.error("{} {} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), name, fileName,
-									Integer.toString(response.getStatusLine().getStatusCode()), MsoLogger.ErrorCode.DataError.getValue(),
+									Integer.toString(response.getStatusLine().getStatusCode()), ErrorCode.DataError.getValue(),
 									"ASDC BPMN deploy failed");
 						}						
 						else {
@@ -95,7 +95,7 @@ public class BpmnInstaller {
 						logger.debug("Exception :", e);
 						logger
 							.error("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), name, e.getMessage(),
-								MsoLogger.ErrorCode.DataError.getValue(), "ASDC BPMN deploy failed");
+								ErrorCode.DataError.getValue(), "ASDC BPMN deploy failed");
 					}							
 				}
 				entry = csarFile.getNextEntry();
@@ -104,7 +104,7 @@ public class BpmnInstaller {
 		} catch (IOException ex) {
 			logger.debug("Exception :", ex);
 			logger.error("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_NOT_DEPLOYED_DETAIL.toString(), csarFilePath,
-				ex.getMessage(), MsoLogger.ErrorCode.DataError.getValue(), "ASDC reading CSAR with workflows failed");
+				ex.getMessage(), ErrorCode.DataError.getValue(), "ASDC reading CSAR with workflows failed");
 		}
 		return;
 	}
@@ -123,7 +123,7 @@ public class BpmnInstaller {
         } catch (Exception e) {
 					logger.debug("Exception :", e);
 					logger.error("{} {} {} {} {}", MessageEnum.ASDC_ARTIFACT_CHECK_EXC.toString(), csarFilePath, e.getMessage(),
-						MsoLogger.ErrorCode.DataError.getValue(), "ASDC Unable to check CSAR entries");
+						ErrorCode.DataError.getValue(), "ASDC Unable to check CSAR entries");
 				}
         return workflowsInCsar;
     }
