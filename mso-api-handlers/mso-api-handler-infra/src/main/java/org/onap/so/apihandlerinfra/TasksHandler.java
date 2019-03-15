@@ -294,7 +294,9 @@ public class TasksHandler {
     	taskList.setErrorCode(getOptVariableValue(variables, "errorCode"));
     	taskList.setErrorMessage(getOptVariableValue(variables, "errorMessage"));
     	taskList.setBuildingBlockName(getOptVariableValue(variables, "buildingBlockName"));
-    	taskList.setBuildingBlockStep(getOptVariableValue(variables, "buildingBlockStep"));  
+    	taskList.setBuildingBlockStep(getOptVariableValue(variables, "buildingBlockStep"));
+    	taskList.setDescription(getOptVariableValue(variables, "description"));
+    	taskList.setTimeout(getOptVariableValue(variables, "timeout"));
     	
     	String validResponses = getOptVariableValue(variables, "validResponses").toLowerCase();
     	List<String> items = Arrays.asList(validResponses.split("\\s*,\\s*"));
