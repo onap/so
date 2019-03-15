@@ -29,6 +29,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -118,5 +120,90 @@ public class AAIFlagTasksTest extends BaseTaskTest {
 			verify(aaiVnfResources, times(1)).checkInMaintFlag(any(String.class));
 			verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
 		}
+	}
+	
+	@Test
+	public void checkVnfClosedLoopDisabledTestTrue() throws Exception {
+		doThrow(new BpmnError("VNF Closed Loop Disabled in A&AI")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		doReturn(false).when(aaiVnfResources).checkVnfClosedLoopDisabledFlag(isA(String.class));
+		try {
+			aaiFlagTasks.checkVnfClosedLoopDisabledFlag(execution);
+		} catch (Exception e) {
+			verify(aaiVnfResources, times(1)).checkVnfClosedLoopDisabledFlag(any(String.class));
+			verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), eq("VNF Closed Loop Disabled in A&AI"));		
+		}
+	}
+
+	@Test
+	public void checkVnfClosedLoopDisabledTestFalse() throws Exception {
+		doReturn(false).when(aaiVnfResources).checkVnfClosedLoopDisabledFlag(isA(String.class));
+		aaiFlagTasks.checkVnfClosedLoopDisabledFlag(execution);
+		verify(exceptionUtil, times(0)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), any(int.class), any(String.class));    
+	}
+
+	@Test
+	public void checkVnfClosedLoopDisabledFlagExceptionTest() {
+
+		doThrow(new BpmnError("Unknown Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		doThrow(RuntimeException.class).when(aaiVnfResources).checkVnfClosedLoopDisabledFlag(isA(String.class));
+		try {
+			aaiFlagTasks.checkVnfClosedLoopDisabledFlag(execution);
+		} catch (Exception e) {
+			verify(aaiVnfResources, times(1)).checkVnfClosedLoopDisabledFlag(any(String.class));
+			verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		}	
+	}
+
+	@Test
+	public void modifyVnfClosedLoopDisabledFlagTest() throws Exception {
+		doNothing().when(aaiVnfResources).updateObjectVnf(ArgumentMatchers.any(GenericVnf.class));
+		aaiFlagTasks.modifyVnfClosedLoopDisabledFlag(execution, true);
+		verify(aaiVnfResources, times(1)).updateObjectVnf(ArgumentMatchers.any(GenericVnf.class));
+	}
+
+	@Test
+	public void modifyVnfClosedLoopDisabledFlagExceptionTest() {
+		
+		doThrow(new BpmnError("Unknown Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		doThrow(RuntimeException.class).when(aaiVnfResources).updateObjectVnf(isA(GenericVnf.class));
+		try {
+			aaiFlagTasks.modifyVnfClosedLoopDisabledFlag(execution, true);
+		} catch (Exception e) {
+			verify(aaiVnfResources, times(1)).checkVnfClosedLoopDisabledFlag(any(String.class));
+			verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		}
+	}
+	
+
+	@Test
+	public void checkVnfPserversLockedFlagTestTrue() throws Exception {
+		doThrow(new BpmnError("VNF PServers in Locked in A&AI")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		doReturn(true).when(aaiVnfResources).checkVnfPserversLockedFlag(isA(String.class));
+		try {
+			aaiFlagTasks.checkVnfClosedLoopDisabledFlag(execution);
+		} catch (Exception e) {
+			verify(aaiVnfResources, times(1)).checkVnfPserversLockedFlag(any(String.class));
+			verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), eq("VNF PServers in Locked in A&AI"));		
+		}
+	}
+
+	@Test
+	public void checkVnfPserversLockedFlagTestFalse() throws Exception {
+		doReturn(false).when(aaiVnfResources).checkVnfPserversLockedFlag(isA(String.class));
+		aaiFlagTasks.checkVnfPserversLockedFlag(execution);
+		verify(exceptionUtil, times(0)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), any(int.class), any(String.class));    
+	}
+
+	@Test
+	public void checkVnfPserversLockedFlagExceptionTest() throws IOException {
+
+		doThrow(new BpmnError("Unknown Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		doThrow(RuntimeException.class).when(aaiVnfResources).checkVnfClosedLoopDisabledFlag(isA(String.class));
+		try {
+			aaiFlagTasks.checkVnfPserversLockedFlag(execution);
+		} catch (Exception e) {
+			verify(aaiVnfResources, times(1)).checkVnfPserversLockedFlag(any(String.class));
+			verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+		}	
 	}
 }
