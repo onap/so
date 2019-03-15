@@ -101,6 +101,14 @@
         "type": "String",
         "value": "Configurationactivate SDNO Post-Check",
         "valueInfo": {}
+    },"description": {
+        "type": "String",
+        "value": "test task",
+        "valueInfo": {}
+    },"timeout": {
+        "type": "String",
+        "value": "PT3000S",
+        "valueInfo": {}
     },"type": {
         "type": "String",
         "value": "fallout",

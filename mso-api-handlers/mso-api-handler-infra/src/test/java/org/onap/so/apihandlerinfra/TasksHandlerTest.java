@@ -89,6 +89,8 @@ public class TasksHandlerTest extends BaseTest{
 		taskList1.setOriginalRequestorId("VID");
 		taskList1.setSubscriptionServiceType("PORT-MIRROR");
 		taskList1.setTaskId("b5fa707a-f55a-11e7-a796-005056856d52");
+		taskList1.setDescription("test task");
+		taskList1.setTimeout("PT3000S");
 		taskList1.setValidResponses(validEntries);		
 		taskList.add(taskList1);
 	
