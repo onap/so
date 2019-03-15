@@ -892,7 +892,7 @@ class MsoUtils {
 		return callbackUrlToUse
 		
 	}
-	
+
 	/**
 	 * Retrieves text context of the element if the element exists, returns empty string otherwise
 	 * @param com.sun.org.apache.xerces.internal.dom.DeferredElementNSImpl element to parse
