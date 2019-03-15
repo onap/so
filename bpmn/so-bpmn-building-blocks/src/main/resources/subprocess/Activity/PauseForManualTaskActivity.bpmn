@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="PauseForManualTaskActivity" name="PauseForManualTaskActivity" isExecutable="true">
+    <bpmn2:startEvent id="PauseForManualTaskActivity_Start">
+      <bpmn2:outgoing>SequenceFlow_0jav6cu</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:endEvent id="PauseForManualTaskActivity_End">
+      <bpmn2:incoming>SequenceFlow_14cyk9v</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_0jav6cu" sourceRef="PauseForManualTaskActivity_Start" targetRef="UpdateDbStatusToPendingManualTask" />
+    <bpmn2:sequenceFlow id="SequenceFlow_192yimz" sourceRef="ManualUserTask" targetRef="UpdateDbStatusToInProgress" />
+    <bpmn2:userTask id="ManualUserTask" name="Manual User Task">
+      <bpmn2:extensionElements>
+        <camunda:taskListener expression="${ManualHandlingTasks.completeTask(task)}" event="complete" />
+        <camunda:properties>
+          <camunda:property />
+        </camunda:properties>
+        <camunda:taskListener expression="${ManualHandlingTasks.setPauseTaskVariables(task)}" event="create" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_0igra4l</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_192yimz</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0b84ki5" sourceRef="UpdateDbStatusToPendingManualTask" targetRef="CreateExternalTicket" />
+    <bpmn2:sequenceFlow id="SequenceFlow_14cyk9v" sourceRef="UpdateDbStatusToInProgress" targetRef="PauseForManualTaskActivity_End" />
+    <bpmn2:serviceTask id="UpdateDbStatusToPendingManualTask" name="Update Infra DB Status to PENDING_MANUAL_TASK" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(execution,&#34;PENDING_MANUAL_TASK&#34;)}">
+      <bpmn2:incoming>SequenceFlow_0jav6cu</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0b84ki5</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:serviceTask id="UpdateDbStatusToInProgress" name="Update Infra DB Status to IN_PROGRESS" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(execution, &#34;IN_PROGRESS&#34;)}">
+      <bpmn2:incoming>SequenceFlow_192yimz</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_14cyk9v</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_0igra4l" sourceRef="CreateExternalTicket" targetRef="ManualUserTask" />
+    <bpmn2:boundaryEvent id="ManualTaskTimer" name="Timer" cancelActivity="false" attachedToRef="ManualUserTask">
+      <bpmn2:outgoing>SequenceFlow_01k6zgt</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition>
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression"><![CDATA[${execution.getVariable("taskTimeout")}]]></bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:boundaryEvent>
+    <bpmn2:serviceTask id="CreateExternalTicket" name="Create ExternalTicket" camunda:expression="${ManualHandlingTasks.createExternalTicket(execution)}">
+      <bpmn2:incoming>SequenceFlow_0b84ki5</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0igra4l</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_01k6zgt" sourceRef="ManualTaskTimer" targetRef="UpdateDBStatusToTimeout" />
+    <bpmn2:serviceTask id="UpdateDBStatusToTimeout" name="Update Infra DB Status To TIMEOUT" camunda:expression="${ManualHandlingTasks.updateRequestDbStatus(execution, &#34;TIMEOUT&#34;)}">
+      <bpmn2:incoming>SequenceFlow_01k6zgt</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_16bjdgj</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:endEvent id="ThrowTimeoutError">
+      <bpmn2:incoming>SequenceFlow_16bjdgj</bpmn2:incoming>
+      <bpmn2:errorEventDefinition errorRef="Error_2" />
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_16bjdgj" sourceRef="UpdateDBStatusToTimeout" targetRef="ThrowTimeoutError" />
+  </bpmn2:process>
+  <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PauseForManualTaskActivity">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_47" bpmnElement="PauseForManualTaskActivity_Start">
+        <dc:Bounds x="152" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="171" y="120" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_EndEvent_177" bpmnElement="PauseForManualTaskActivity_End">
+        <dc:Bounds x="919" y="79" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="937" y="120" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jav6cu_di" bpmnElement="SequenceFlow_0jav6cu">
+        <di:waypoint xsi:type="dc:Point" x="188" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="270" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="229" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_192yimz_di" bpmnElement="SequenceFlow_192yimz">
+        <di:waypoint xsi:type="dc:Point" x="688" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="744" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="716" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_1krqrz1_di" bpmnElement="ManualUserTask">
+        <dc:Bounds x="588" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0b84ki5_di" bpmnElement="SequenceFlow_0b84ki5">
+        <di:waypoint xsi:type="dc:Point" x="370" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="432" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="401" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_14cyk9v_di" bpmnElement="SequenceFlow_14cyk9v">
+        <di:waypoint xsi:type="dc:Point" x="844" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="919" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="882" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0c0yopb_di" bpmnElement="UpdateDbStatusToPendingManualTask">
+        <dc:Bounds x="270" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1hc2ewj_di" bpmnElement="UpdateDbStatusToInProgress">
+        <dc:Bounds x="744" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0igra4l_di" bpmnElement="SequenceFlow_0igra4l">
+        <di:waypoint xsi:type="dc:Point" x="532" y="97" />
+        <di:waypoint xsi:type="dc:Point" x="588" y="97" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="560" y="82" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_1g8ju6a_di" bpmnElement="ManualTaskTimer">
+        <dc:Bounds x="652" y="119" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="692" y="144" width="28" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_04rimht_di" bpmnElement="CreateExternalTicket">
+        <dc:Bounds x="432" y="57" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01k6zgt_di" bpmnElement="SequenceFlow_01k6zgt">
+        <di:waypoint xsi:type="dc:Point" x="670" y="137" />
+        <di:waypoint xsi:type="dc:Point" x="670" y="265" />
+        <di:waypoint xsi:type="dc:Point" x="744" y="265" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="685" y="201" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_18sdiiw_di" bpmnElement="UpdateDBStatusToTimeout">
+        <dc:Bounds x="744" y="225" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_08q2jx4_di" bpmnElement="ThrowTimeoutError">
+        <dc:Bounds x="919" y="247" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="937" y="283" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_16bjdgj_di" bpmnElement="SequenceFlow_16bjdgj">
+        <di:waypoint xsi:type="dc:Point" x="844" y="265" />
+        <di:waypoint xsi:type="dc:Point" x="919" y="265" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="882" y="240" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
