@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat
 
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.StringEscapeUtils
-import org.onap.so.bpmn.core.BPMNLogger
 import org.onap.so.bpmn.core.xml.XmlTool
 import org.onap.so.logger.MessageEnum
 import org.onap.so.logger.MsoLogger
@@ -294,7 +293,7 @@ class MsoUtils {
 
 	def log(logmode,logtxt,isDebugLogEnabled="false"){
 		if ("INFO"==logmode) {
-			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN");
+			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN");
 		} else if ("WARN"==logmode) {
 			// to see the warning text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger warn() method
 			logger.warn ("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(), logtxt, "BPMN",
@@ -303,9 +302,8 @@ class MsoUtils {
 			// to see the error text displayed in the log entry, the text must also be passed as arg0 (2nd argument) to invoke the correct MsoLogger error() method
 		    logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN",
 					MsoLogger.ErrorCode.UnknownError.getValue(), logtxt);
-
 		} else {
-			BPMNLogger.debug(isDebugLogEnabled, logtxt);
+			logger.debug(logtxt);
 		}
 	}
 

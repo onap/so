@@ -53,7 +53,6 @@ import org.camunda.bpm.model.bpmn.impl.instance.FlowNodeImpl;
 import org.camunda.bpm.model.bpmn.instance.EndEvent;
 import org.camunda.bpm.model.bpmn.instance.FlowNode;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
-import org.onap.so.bpmn.core.BPMNLogger;
 
 
 import org.onap.so.logger.MessageEnum;
