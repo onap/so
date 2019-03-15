@@ -28,7 +28,6 @@ import java.text.SimpleDateFormat
 
 import org.apache.commons.codec.binary.Base64
 import org.apache.commons.lang3.StringEscapeUtils
-import org.onap.so.bpmn.core.BPMNLogger
 import org.onap.so.bpmn.core.xml.XmlTool
 import org.onap.so.logger.MessageEnum
 import org.slf4j.Logger
@@ -89,7 +88,7 @@ class MsoUtils {
 		}
 		return nodes
 	}
-	
+
 	def getNodeXml(xmlInput,element){
 		return getNodeXml(xmlInput, element, true)
 	}
@@ -106,7 +105,7 @@ class MsoUtils {
 
 		return unescapeNodeContents(nodeToSerialize, nodeAsText)
 	}
-	
+
 	def unescapeNodeContents(NodeChild node, String text) {
 		if (!node.childNodes().hasNext()) {
 			return StringEscapeUtils.unescapeXml(text)
@@ -125,7 +124,7 @@ class MsoUtils {
 		}
 	}
 
-	
+
 	/***** Utilities when using XmlParser *****/
 	
 	/**
@@ -139,12 +138,12 @@ class MsoUtils {
 		nodeAsString = removeXmlPreamble(nodeAsString)
 		return formatXml(nodeAsString)
 	}
-	
+
 	/**
 	 * Get the specified child Node of the specified parent. If there are
 	 * multiple children of the same name, only the first one is returned.
 	 * If there are no children with the specified name, 'null' is returned.
-	 * 
+	 *
 	 * @param parent Parent Node in which to find a child.
 	 * @param childNodeName Name of the child Node to get.
 	 * @return the (first) child Node with the specified name or 'null'
@@ -158,11 +157,11 @@ class MsoUtils {
 			return nodeList.get(0)
 		}
 	}
-	
+
 	/**
 	 * Get the textual value of the specified child Node of the specified parent.
 	 * If there are no children with the specified name, 'null' is returned.
-	 * 
+	 *
 	 * @param parent Parent Node in which to find a child.
 	 * @param childNodeName Name of the child Node whose value to get.
 	 * @return the textual value of child Node with the specified name or 'null'
@@ -176,11 +175,11 @@ class MsoUtils {
 			return childNode.text()
 		}
 	}
-	
+
 	/**
 	 * Get all of the child nodes from the specified parent that have the
 	 * specified name.  The returned NodeList could be empty.
-	 * 
+	 *
 	 * @param parent Parent Node in which to find children.
 	 * @param childNodeName Name of the children to get.
 	 * @return a NodeList of all the children from the parent with the specified
@@ -192,14 +191,14 @@ class MsoUtils {
 
 	/***** End of Utilities when using XmlParser *****/
 
-	
+
 	/** these are covered under the common function above**/
 	def getSubscriberName(xmlInput,element){
 		def rtn=null
 		if(xmlInput!=null){
 			def xml= new XmlSlurper().parseText(xmlInput)
 			rtn= xml.'**'.find{node->node.name()==element}.text()
-		} 
+		}
 		return rtn
 	}
 	def getTenantInformation(xmlInput,element){
@@ -235,7 +234,7 @@ class MsoUtils {
 		}
 		return ret
 	}
-	
+
 	// for Trinity L3 add/delete bonding
 	def getPBGFList(isDebugLogEnabled, xmlInput){
 		log("DEBUG", "getPBGFList: xmlInput " + xmlInput,isDebugLogEnabled)
@@ -271,20 +270,18 @@ class MsoUtils {
 						}
 						myNodes.add(XmlUtil.serialize(nodeToAdd))
 					}
-					
 			}
 		}
-				
 			return myNodes
 		}else{
 			return null
 		}
 	}
-	
+
 	def getPBGFList(xmlInput){
 		getPBGFList("false", xmlInput)
 	}
-	
+
 	def getMetaVal(node, name){
 		try{
 			return node.'**'.find {it.metaname.text() == name}.metaval.text()
@@ -295,25 +292,24 @@ class MsoUtils {
 
 	def log(logmode,logtxt,isDebugLogEnabled="false"){
 		if ("INFO"==logmode) {
-			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, logtxt, "BPMN");
+			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN");
 		} else if ("WARN"==logmode) {
 			logger.warn ("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_WARNING.toString(), logtxt, "BPMN",
 					ErrorCode.UnknownError.getValue(), logtxt);
 		} else if ("ERROR"==logmode) {
 		    logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN",
 					ErrorCode.UnknownError.getValue(), logtxt);
-
 		} else {
-			BPMNLogger.debug(isDebugLogEnabled, logtxt);
+			logger.debug(logtxt);
 		}
 	}
 
 	def logContext(requestId, serviceInstanceId){
 //		msoLogger.setLogContext(requestId, serviceInstanceId);
 	}
-	
+
 	def logMetrics(elapsedTime, logtxt){
-		
+
 //		msoLogger.recordMetricEvent (elapsedTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
 //			logtxt, "BPMN", MsoLogger.getServiceName(), null);
 	}
@@ -333,7 +329,7 @@ class MsoUtils {
 		}
 		return rtn
 	}
-	
+
 	/**
 	 * Gets the children of the specified element.
 	 */
@@ -352,10 +348,10 @@ class MsoUtils {
 		}
 		return out.toString();
 	}
-	
+
 	/**
 	 * Encodes a value so it can be used inside an XML text element.
-	 * 
+	 *
 	 * <b>Will double encode</b>
 	 * @param s the string to encode
 	 * @return the encoded string
@@ -363,7 +359,7 @@ class MsoUtils {
 	public static String xmlEscape(Object value) {
 		return XmlTool.encode(value)
 	}
-	
+
 	/**
 	 * Removes the preamble, if present, from an XML document.
 	 * Also, for historical reasons, this also trims leading and trailing
@@ -411,29 +407,29 @@ class MsoUtils {
 	public String formatXml(def xml) {
 		return XmlTool.normalize(xml);
 	}
-	
+
 	// build single elements
 	def buildElements(xmlInput, elementList, parentName) {
 		String var = ""
 		def xmlBuild = ""
 		if (parentName != "") {
 		   xmlBuild += "<tns2:"+parentName+">"
-		}   
+		}
 		if (xmlInput != null) {
 			   for (element in elementList) {
 			      def xml= new XmlSlurper().parseText(xmlInput)
 			      var = xml.'**'.find {it.name() == element}
 				  if (var != null) {
 			         xmlBuild += "<tns2:"+element+">"+var.toString()+"</tns2:"+element+">"
-				  } 
+				  }
 			   }
 		}
 		if (parentName != "") {
 		   xmlBuild += "</tns2:"+parentName+">"
-		}   
+		}
 		return xmlBuild
 	}
-	
+
 	// build the Unbounded elements
 	def buildElementsUnbounded(xmlInput, elementList, parentName) {
 		def varParents = ""
@@ -461,7 +457,7 @@ class MsoUtils {
 		}
 		return xmlBuildUnbounded
 	 }
-	
+
 	// Build l2-homing-information
 	def buildL2HomingInformation(xmlInput) {
 		def elementsL2HomingList = ["evc-name", "topology", "preferred-aic-clli","aic-version"]
@@ -471,7 +467,7 @@ class MsoUtils {
 		}
 		return rebuildL2Home
 	}
-	
+
 	// Build internet-evc-access-information
 	def buildInternetEvcAccessInformation(xmlInput) {
 		def elementsInternetEvcAccessInformationList = ["internet-evc-speed-value", "internet-evc-speed-units", "ip-version"]
@@ -481,7 +477,7 @@ class MsoUtils {
 		}
 		return rebuildInternetEvcAccess
 	}
-	
+
 	// Build ucpe-vms-service-information
 	def buildUcpeVmsServiceInformation(xmlInput) {
 		def rebuildUcpeVmsServiceInformation = ''
@@ -513,7 +509,7 @@ class MsoUtils {
 		log("DEBUG", " rebuildUcpeVmsServiceInformation - " + rebuildUcpeVmsServiceInformation)
 		return rebuildUcpeVmsServiceInformation
 	}
-	
+
     // Build internet-service-change-details
 	def buildInternetServiceChangeDetails(xmlInput) {
 		def rebuildInternetServiceChangeDetails = ""
@@ -544,32 +540,32 @@ class MsoUtils {
 		}
 	    return rebuildInternetServiceChangeDetails
 	}		
- 	
-	// Build vr-lan 
+
+	// Build vr-lan
 	def buildVrLan(xmlInput) {
-		
+
 		def rebuildVrLan = ''
 		if (xmlInput != null) {
-			
+
 			rebuildVrLan = "<tns2:vr-lan>"
 			def vrLan = getNodeXml(xmlInput, "vr-lan").drop(38).trim()
 			rebuildVrLan += buildElements(vrLan, ["routing-protocol"], "")
-			
+
 			// vr-lan-interface
 			def rebuildVrLanInterface = "<tns2:vr-lan-interface>"
 			def vrLanInterface = getNodeXml(vrLan, "vr-lan-interface").drop(38).trim()
 			rebuildVrLanInterface += buildVrLanInterfacePartial(vrLanInterface)
-			
+
 			 // dhcp
 			 def dhcp = getNodeXml(vrLan, "dhcp").drop(38).trim()
 			 def rebuildDhcp = buildDhcp(dhcp)
 			 rebuildVrLanInterface += rebuildDhcp
-			 
+
 			 // pat
 			 def pat = getNodeXml(vrLan, "pat").drop(38).trim()
 			 def rebuildPat = buildPat(pat)
 			 rebuildVrLanInterface += rebuildPat
-			 
+
 			 // nat
 			 def rebuildNat = ""
 			 try { // optional
@@ -579,31 +575,31 @@ class MsoUtils {
 				 log("ERROR", " Optional - Exception 'nat' ")
 			 }
 			 rebuildVrLanInterface += rebuildNat
-										
+
 			 // firewall-lite
 			 def firewallLite = getNodeXml(vrLan, "firewall-lite").drop(38).trim()
 			 def rebuildFirewallLite = buildFirewallLite(firewallLite)
 			 rebuildVrLanInterface += rebuildFirewallLite
-			 
+
 			 // static-routes
 			 def rebuildStaticRoutes = ""
-			 try { // optional 
+			 try { // optional
 				 def staticRoutes = getNodeXml(vrLan, "static-routes").drop(38).trim()
 				 rebuildStaticRoutes = buildStaticRoutes(staticRoutes)
 			} catch (Exception e) {
 				 log("ERROR", " Optional - Exception 'static-routes' ")
 			}
 			rebuildVrLanInterface += rebuildStaticRoutes
-			 
+
 		   rebuildVrLan += rebuildVrLanInterface
 		   rebuildVrLan += "</tns2:vr-lan-interface>"
 		   rebuildVrLan += "</tns2:vr-lan>"
-			
+
 		}
 		log("DEBUG", " rebuildVrLan - " + rebuildVrLan)
-		return rebuildVrLan 		
+		return rebuildVrLan
 	}
-	
+
 	// Build vr-lan-interface
 	def buildVrLanInterfacePartial(xmlInput) {
 		def rebuildingVrLanInterface = ''
@@ -632,7 +628,7 @@ class MsoUtils {
 		log("DEBUG", " rebuildingVrLanInterface - " + rebuildingVrLanInterface)
 		return rebuildingVrLanInterface
 	}
-	
+
 	// Build dhcp
 	def buildDhcp(xmlInput) {
 		def rebuildingDhcp = ''
@@ -702,10 +698,10 @@ class MsoUtils {
 				 log("ERROR", " Optional - Exception DHCP 'v6-dhcp-pools' ")
 			 }
 			 rebuildingDhcp += "</tns2:dhcp>"
-		}	 
+		}
 		log("DEBUG", " rebuildingDhcp - " + rebuildingDhcp)
 		return rebuildingDhcp
-	}	
+	}
 
 	// Build pat
 	def buildPat(xmlInput) {
@@ -726,7 +722,7 @@ class MsoUtils {
 		 log("DEBUG", " rebuildingPat - " + rebuildingPat)
 	     return rebuildingPat
     }
-	
+
 	// Build nat
 	def buildNat(xmlInput) {
 		def rebuildingNat = ''
@@ -744,19 +740,19 @@ class MsoUtils {
 		}
 		log("DEBUG", " rebuildingNat - " + rebuildingNat)
 	    return rebuildingNat
-	}				
-	
+	}
+
 	// Build firewall-lite
 	def buildFirewallLite(xmlInput) {
 		def rebuildingFirewallLite = ''
-		
+
 		if (xmlInput != null) {
-			
+
 			def firewallLiteData = new XmlSlurper().parseText(xmlInput)
 			rebuildingFirewallLite = "<tns2:firewall-lite>"
 			def firewallLiteList = ["stateful-firewall-lite-v4-enabled", "stateful-firewall-lite-v6-enabled"]
 			rebuildingFirewallLite += buildElements(xmlInput, firewallLiteList, "")
-			
+
 			 try { // optional
 				 def v4FirewallPacketFilters = firewallLiteData.'**'.findAll {it.name() == "v4-firewall-packet-filters"}
 				 def v4FirewallPacketFiltersSize = v4FirewallPacketFilters.size()
@@ -784,7 +780,7 @@ class MsoUtils {
 			 } catch (Exception e) {
 				 log("ERROR", " Optional - Exception FIREWALL-LITE 'v4-firewall-packet-filters' ")
 			 }
-			 
+
 			 try { // optional
 				 def v6FirewallPacketFilters = firewallLiteData.'**'.findAll {it.name() == "v6-firewall-packet-filters"}
 				 def v6FirewallPacketFiltersSize = v6FirewallPacketFilters.size()
@@ -817,7 +813,7 @@ class MsoUtils {
 		log("DEBUG", " rebuildingFirewallLite - " + rebuildingFirewallLite)
 		return rebuildingFirewallLite
      }
-	
+
 	def buildStaticRoutes(xmlInput) {
 		def rebuildingStaticRoutes = ''
 		if (xmlInput != null) {
@@ -831,21 +827,21 @@ class MsoUtils {
 		log("DEBUG", " rebuildingStaticRoutes - " + rebuildingStaticRoutes)
 		return rebuildingStaticRoutes
 	}
-	
+
 	public String generateCurrentTimeInUtc(){
 		final  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
 		final String utcTime = sdf.format(new Date());
 		return utcTime;
 	}
-	
+
 	public String generateCurrentTimeInGMT(){
 		final  SimpleDateFormat sdf = new SimpleDateFormat("E, d MMM yyyy h:m:s z");
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		final String utcTime = sdf.format(new Date());
 		return utcTime;
 	}
-	
+
 
 	/**
 	 * @param encryptedAuth: encrypted credentials from urn properties
@@ -866,7 +862,7 @@ class MsoUtils {
 			throw ex
 		}
 	}
-	
+
 	def encrypt(toEncrypt, msokey){
 		try {
 			String result = CryptoUtils.encrypt(toEncrypt, msokey);
@@ -876,7 +872,7 @@ class MsoUtils {
 			log("ERROR", "Failed to encrypt credentials")
 		}
 	}
-	
+
 	def decrypt(toDecrypt, msokey){
 		try {
 			String result = CryptoUtils.decrypt(toDecrypt, msokey);
@@ -887,7 +883,7 @@ class MsoUtils {
 			throw e
 		}
 	}
-	
+
 	/**
 	 * Return URL with qualified host name (if any) or urn mapping
 	 * @param  String url from urn mapping
@@ -906,9 +902,9 @@ class MsoUtils {
 				log("DEBUG", "unable to grab qualified host name, using what's in urn properties for callbackurl. Exception was: " + e.printStackTrace())
 		}
 		return callbackUrlToUse
-		
+
 	}
-	
+
 	/**
 	 * Retrieves text context of the element if the element exists, returns empty string otherwise
 	 * @param com.sun.org.apache.xerces.internal.dom.DeferredElementNSImpl element to parse
@@ -923,7 +919,7 @@ class MsoUtils {
 	 	}
 	 	return text
 	 }
-	 
+
 	 /**
 	  *
 	  * Find the lowest unused module-index value in a given xml
@@ -931,14 +927,14 @@ class MsoUtils {
 	 public String getLowestUnusedIndex(String xml) {
 		 if (xml == null || xml.isEmpty()) {
 			 return "0"
-		 }		 
+		 }
 		 def moduleIndexList = getMultNodes(xml, "module-index") 
-		 if (moduleIndexList == null || moduleIndexList.size() == 0) {			
+		 if (moduleIndexList == null || moduleIndexList.size() == 0) {
 			 return "0"
 		 }
-		 
+
 		 def sortedModuleIndexList = moduleIndexList.sort{ a, b -> a as Integer <=> b as Integer}
-		
+
 		 for (i in 0..sortedModuleIndexList.size()-1) {
 			 if (Integer.parseInt(sortedModuleIndexList[i]) != i) {
 				 return i.toString()

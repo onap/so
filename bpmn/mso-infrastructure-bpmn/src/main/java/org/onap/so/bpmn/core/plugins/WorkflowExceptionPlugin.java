@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,9 +42,10 @@ import org.camunda.bpm.engine.impl.pvm.process.ActivityImpl;
 import org.camunda.bpm.engine.impl.pvm.process.TransitionImpl;
 import org.camunda.bpm.engine.impl.util.xml.Element;
 
-import org.onap.so.bpmn.core.BPMNLogger;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This plugin does the following:
@@ -60,7 +63,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
-	
+	private static final Logger logger = LoggerFactory.getLogger(WorkflowExceptionPlugin.class);
+
 	@Override
 	public void preInit(ProcessEngineConfigurationImpl processEngineConfiguration) {
 		List<BpmnParseListener> preParseListeners =
@@ -73,7 +77,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 
 		preParseListeners.add(new WorkflowExceptionParseListener());
 	}
-	
+
 	public static class WorkflowExceptionParseListener extends AbstractBpmnParseListener {
 		@Override
 		public void parseProcess(Element processElement, ProcessDefinitionEntity processDefinition) {
@@ -131,7 +135,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 			}
 		}
 	}
-	
+
     /**
      * If there is a WorkflowException object in the execution, this method
      * removes it (saving a copy of it in a different variable).
@@ -147,8 +151,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 					saveName = "SavedWorkflowException" + (++index);
 				}
 
-				BPMNLogger.debug((String)execution.getVariable("isDebugLogEnabled"),
-					"WorkflowExceptionResetTask is moving WorkflowException to " + saveName);
+				logger.debug("WorkflowExceptionResetTask is moving WorkflowException to " + saveName);
 
 				execution.setVariable(saveName, workflowException);
 				execution.setVariable("WorkflowException", null);
@@ -163,8 +166,7 @@ public class WorkflowExceptionPlugin extends AbstractProcessEnginePlugin {
 	public static class WorkflowExceptionTriggerTask implements JavaDelegate {
 		public void execute(DelegateExecution execution) throws Exception {
 			if (execution.getVariable("WorkflowException") instanceof WorkflowException) {
-				BPMNLogger.debug((String)execution.getVariable("isDebugLogEnabled"),
-					"WorkflowExceptionTriggerTask is generating a MSOWorkflowException event");
+				logger.debug("WorkflowExceptionTriggerTask is generating a MSOWorkflowException event");
 				throw new BpmnError("MSOWorkflowException");
 			}
 		}
