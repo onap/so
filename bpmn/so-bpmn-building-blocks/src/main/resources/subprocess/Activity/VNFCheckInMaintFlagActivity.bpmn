@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.9.0">
+  <bpmn:process id="VNFCheckInMaintFlagActivity" name="VNFCheckInMaintFlagActivity&#10;" isExecutable="true">
+    <bpmn:startEvent id="VNFCheckInMaintFlagActivity_Start">
+      <bpmn:outgoing>SequenceFlow_0h1gkvd</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="VNFCheckInMaintFlagActivity_End">
+      <bpmn:incoming>SequenceFlow_0xu6esl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="TaskCheckInMaintFlag" name="VNF Check InMaint Flag (AAI)" camunda:expression="${AAIFlagTasks.checkVnfInMaintFlag(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0h1gkvd</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0xu6esl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0h1gkvd" sourceRef="VNFCheckInMaintFlagActivity_Start" targetRef="TaskCheckInMaintFlag" />
+    <bpmn:sequenceFlow id="SequenceFlow_0xu6esl" sourceRef="TaskCheckInMaintFlag" targetRef="VNFCheckInMaintFlagActivity_End" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="VNFCheckInMaintFlagActivity">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="VNFCheckInMaintFlagActivity_Start">
+        <dc:Bounds x="104" y="76" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="122" y="112" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1h93h9d_di" bpmnElement="VNFCheckInMaintFlagActivity_End">
+        <dc:Bounds x="384" y="76" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="357" y="116" width="90" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1r380lg_di" bpmnElement="TaskCheckInMaintFlag">
+        <dc:Bounds x="194" y="54" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0h1gkvd_di" bpmnElement="SequenceFlow_0h1gkvd">
+        <di:waypoint xsi:type="dc:Point" x="140" y="94" />
+        <di:waypoint xsi:type="dc:Point" x="194" y="94" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="167" y="73" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0xu6esl_di" bpmnElement="SequenceFlow_0xu6esl">
+        <di:waypoint xsi:type="dc:Point" x="294" y="94" />
+        <di:waypoint xsi:type="dc:Point" x="384" y="94" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="339" y="73" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

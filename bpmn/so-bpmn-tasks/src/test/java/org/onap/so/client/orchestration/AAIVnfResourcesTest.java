@@ -21,6 +21,7 @@
 package org.onap.so.client.orchestration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.junit.Before;
@@ -47,6 +49,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
+import org.onap.so.client.aai.AAIValidatorImpl;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
@@ -69,6 +72,9 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 
 	@Mock
 	protected InjectionHelper MOCK_injectionHelper;
+	
+	@Mock
+	protected AAIValidatorImpl MOCK_aaiValidatorImpl;
 	
 	@InjectMocks
 	AAIVnfResources aaiVnfResources = new AAIVnfResources();
@@ -181,5 +187,30 @@ public class AAIVnfResourcesTest extends TestDataSetup {
 		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId())),
 				eq(AAIUriFactory.createResourceUri(AAIObjectType.CLOUD_REGION, 
 						cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId())));
+	}
+	
+
+	@Test
+	public void checkVnfClosedLoopDisabledFlagTest () {
+		Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
+		vnf.get().setVnfId("vnfId");
+		vnf.get().setIsClosedLoopDisabled(true);
+		doReturn(vnf).when(MOCK_aaiResourcesClient).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
+		boolean isCheckVnfClosedLoopDisabledFlag = aaiVnfResources.checkVnfClosedLoopDisabledFlag("vnfId");
+		verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
+		assertEquals(isCheckVnfClosedLoopDisabledFlag, true);
+	}
+	
+	@Test
+	public void checkVnfPserversLockedFlagTest () throws IOException {
+		
+		 Optional<org.onap.aai.domain.yang.GenericVnf> vnf = Optional.of(new org.onap.aai.domain.yang.GenericVnf());
+         vnf.get().setVnfId("vnfId");      
+         doReturn(vnf).when(MOCK_aaiResourcesClient).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
+         doReturn(true).when(MOCK_aaiValidatorImpl).isPhysicalServerLocked("vnfId");       
+         boolean isVnfPserversLockedFlag = aaiVnfResources.checkVnfPserversLockedFlag("vnfId");
+         verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.GenericVnf.class),isA(AAIResourceUri.class));
+         verify(MOCK_aaiValidatorImpl, times(1)).isPhysicalServerLocked(isA(String.class));        
+         assertTrue(isVnfPserversLockedFlag);
 	}
 }

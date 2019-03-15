@@ -26,8 +26,7 @@ import java.util.List;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Pserver;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
+import org.springframework.stereotype.Component;
 
 
 public class AAIValidatorImpl implements AAIValidator {
@@ -50,10 +49,12 @@ public class AAIValidatorImpl implements AAIValidator {
 		List<Pserver> pservers;
 		boolean isLocked = false;
 		pservers = client.getPhysicalServerByVnfId(vnfId);
-		for (Pserver pserver : pservers)
-			if (pserver.isInMaint())
+		for (Pserver pserver : pservers) {
+			if (pserver.isInMaint()) {
 				isLocked = true;
-		
+				return isLocked;
+			}
+		}
 		return isLocked;
 	}
 
