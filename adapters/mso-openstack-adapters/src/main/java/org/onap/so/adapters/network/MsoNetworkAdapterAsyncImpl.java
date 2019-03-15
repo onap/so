@@ -46,8 +46,8 @@ import org.onap.so.adapters.network.async.client.QueryNetworkNotification;
 import org.onap.so.adapters.network.async.client.UpdateNetworkNotification;
 import org.onap.so.adapters.network.exceptions.NetworkException;
 import org.onap.so.entity.MsoRequest;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.NetworkStatus;
 import org.onap.so.openstack.beans.Subnet;
@@ -176,7 +176,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
                 logger.error(FAULT_INFO_ERROR_LOGMSG, MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e1);
+                    ErrorCode.DataError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -184,7 +184,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 notifyPort.createNetworkNotification (messageId, false, exCat, eMsg, null, null, null, null);
             } catch (Exception e1) {
                 logger.error(CREATE_NETWORK_ERROR_LOGMSG, MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e1.getMessage(), e1);
+                    ErrorCode.DataError.getValue(), e1.getMessage(), e1);
 
             }
             return;
@@ -203,7 +203,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                                   copyNrb (networkRollback));
         } catch (Exception e) {
             logger.error(CREATE_NETWORK_ERROR_LOGMSG, MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
-                MsoLogger.ErrorCode.DataError.getValue(), e.getMessage(), e);
+                ErrorCode.DataError.getValue(), e.getMessage(), e);
 
         }
         return;
@@ -294,7 +294,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
                 logger.error(FAULT_INFO_ERROR_LOGMSG, MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e1);
+                    ErrorCode.DataError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -302,7 +302,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 notifyPort.updateNetworkNotification (messageId, false, exCat, eMsg, null, copyNrb (networkRollback));
             } catch (Exception e1) {
                 logger.error("{} {} Error sending updateNetwork notification {} ",
-                    MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, MsoLogger.ErrorCode.DataError.getValue(), e1.getMessage(),
+                    MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, ErrorCode.DataError.getValue(), e1.getMessage(),
                     e1);
 
             }
@@ -320,7 +320,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                                   copyNrb (networkRollback));
         } catch (Exception e) {
             logger.error("{} {} Error sending updateNotification request {} ", MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
-                MsoLogger.ErrorCode.DataError.getValue(), e.getMessage(), e);
+                ErrorCode.DataError.getValue(), e.getMessage(), e);
         }
         return;
     }
@@ -374,7 +374,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
                 logger.error(FAULT_INFO_ERROR_LOGMSG, MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e1);
+                    ErrorCode.DataError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -382,7 +382,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 notifyPort.queryNetworkNotification (messageId, false, exCat, eMsg, null, null, null, null, null, null);
             } catch (Exception e1) {
                 logger.error(errorCreateNetworkMessage, MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e1.getMessage(), e1);
+                    ErrorCode.DataError.getValue(), e1.getMessage(), e1);
             }
             return;
         }
@@ -403,7 +403,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                                                  copyQuerySubnetIdMap (subnetIdMap));
         } catch (Exception e) {
             logger.error(errorCreateNetworkMessage, MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
-                MsoLogger.ErrorCode.DataError.getValue(), e.getMessage(), e);
+                ErrorCode.DataError.getValue(), e.getMessage(), e);
         }
         return;
     }
@@ -456,7 +456,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
                 logger.error(FAULT_INFO_ERROR_LOGMSG, MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e1);
+                    ErrorCode.DataError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -464,7 +464,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 notifyPort.deleteNetworkNotification (messageId, false, exCat, eMsg, null);
             } catch (Exception e1) {
                 logger.error("{} {} Error sending createNetwork notification {} ",
-                    MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, MsoLogger.ErrorCode.DataError.getValue(), e1.getMessage(),
+                    MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, ErrorCode.DataError.getValue(), e1.getMessage(),
                     e1);
 
             }
@@ -477,7 +477,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             notifyPort.deleteNetworkNotification (messageId, true, null, null, networkDeleted.value);
         } catch (Exception e) {
             logger.error("{} {} Error sending deleteNetwork notification {} ", MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
-                MsoLogger.ErrorCode.DataError.getValue(), e.getMessage(), e);
+                ErrorCode.DataError.getValue(), e.getMessage(), e);
 
         }
         return;
@@ -497,7 +497,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         // rollback may be null (e.g. if network already existed when Create was called)
         if (rollback == null) {
             logger.warn("{} {} Rollback is null", MessageEnum.RA_ROLLBACK_NULL,
-                MsoLogger.ErrorCode.SchemaError.getValue());
+                ErrorCode.SchemaError.getValue());
             return;
         }
 
@@ -517,7 +517,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 exCat = MsoExceptionCategory.fromValue (e.getFaultInfo ().getCategory ().name ());
             } catch (Exception e1) {
                 logger.error("{} {} Exception in get fault info ", MessageEnum.RA_FAULT_INFO_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e1);
+                    ErrorCode.DataError.getValue(), e1);
             }
             // Build and send Asynchronous error response
             try {
@@ -525,7 +525,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 notifyPort.rollbackNetworkNotification (rollback.getMsoRequest ().getRequestId (), false, exCat, eMsg);
             } catch (Exception e1) {
                 logger.error(CREATE_NETWORK_ERROR_LOGMSG, MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e1.getMessage(), e1);
+                    ErrorCode.DataError.getValue(), e1.getMessage(), e1);
 
             }
             return;
@@ -538,7 +538,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         } catch (Exception e) {
             logger
                 .error("{} {} Error sending rollbackNetwork notification {} ", MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
-                    MsoLogger.ErrorCode.DataError.getValue(), e.getMessage(), e);
+                    ErrorCode.DataError.getValue(), e.getMessage(), e);
 
         }
         return;
@@ -578,17 +578,17 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             warWsdlLoc = Thread.currentThread ().getContextClassLoader ().getResource ("NetworkAdapterNotify.wsdl");
         } catch (Exception e) {
             logger.error("{} {} Exception - WSDL not found ", MessageEnum.RA_WSDL_NOT_FOUND,
-                MsoLogger.ErrorCode.DataError.getValue(), e);
+                ErrorCode.DataError.getValue(), e);
         }
         if (warWsdlLoc == null) {
             logger
-                .error("{} {} WSDL not found", MessageEnum.RA_WSDL_NOT_FOUND, MsoLogger.ErrorCode.DataError.getValue());
+                .error("{} {} WSDL not found", MessageEnum.RA_WSDL_NOT_FOUND, ErrorCode.DataError.getValue());
         } else {
             try {
                 logger.debug("NetworkAdpaterNotify.wsdl location: {}", warWsdlLoc.toURI().toString());
             } catch (Exception e) {
                 logger.error("{} {} Exception - WSDL URL convention ", MessageEnum.RA_WSDL_URL_CONVENTION_EXC,
-                    MsoLogger.ErrorCode.SchemaError.getValue(), e);
+                    ErrorCode.SchemaError.getValue(), e);
             }
         }
 
@@ -605,7 +605,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             epUrl = new URL (notificationUrl);
         } catch (MalformedURLException e1) {
             logger.error("{} {} Exception - init notification ", MessageEnum.RA_INIT_NOTIF_EXC,
-                MsoLogger.ErrorCode.DataError.getValue(), e1);
+                ErrorCode.DataError.getValue(), e1);
         }
 
         if(null != epUrl) {
@@ -628,7 +628,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             headers.put ("Authorization", Collections.singletonList (basicAuth));
         } catch (Exception e) {
             logger.error("{} {} Unable to set authorization in callback request {} ",
-                MessageEnum.RA_SET_CALLBACK_AUTH_EXC, MsoLogger.ErrorCode.DataError.getValue(), e.getMessage(), e);
+                MessageEnum.RA_SET_CALLBACK_AUTH_EXC, ErrorCode.DataError.getValue(), e.getMessage(), e);
         }
 
         return notifyPort;

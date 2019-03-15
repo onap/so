@@ -19,7 +19,9 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.bpmn.vcpe.scripts;
+package org.onap.so.bpmn.vcpe.scripts
+
+import org.onap.so.logger.ErrorCode;
 
 import static org.apache.commons.lang3.StringUtils.*
 
@@ -34,7 +36,6 @@ import org.onap.so.bpmn.core.domain.*
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.springframework.web.util.UriUtils
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -421,7 +422,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
         } catch (Exception e) {
             logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     'Caught exception in ' + method, "BPMN",
-                    MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+                    ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
             exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error - Occured in" + method)
         }
     }
@@ -848,7 +849,7 @@ public class CreateVcpeResCustService extends AbstractServiceTaskProcessor {
         } catch (BpmnError b) {
             logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Rethrowing MSOWorkflowException", "BPMN",
-                    MsoLogger.ErrorCode.UnknownError.getValue());
+                    ErrorCode.UnknownError.getValue());
             throw b
         } catch (Exception e) {
             logger.debug("Caught Exception during processJavaException Method: " + e)

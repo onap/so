@@ -36,8 +36,8 @@ import javax.ws.rs.core.Response;
 
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackError;
 import org.onap.so.bpmn.common.workflow.service.CallbackHandlerService.CallbackResult;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +90,7 @@ public class WorkflowMessageResource{
 			String msg = "Missing message type";
 			logger.debug(LOGMARKER + " " + msg);
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-				MsoLogger.ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
+				ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
 			return Response.status(400).entity(msg).build();
 		}
 
@@ -98,7 +98,7 @@ public class WorkflowMessageResource{
 			String msg = "Missing correlator";
 			logger.debug(LOGMARKER + " " + msg);
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "BPMN",
-				MsoLogger.ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
+				ErrorCode.DataError.getValue(), LOGMARKER + ":" + msg);
 			return Response.status(400).entity(msg).build();
 		}
 

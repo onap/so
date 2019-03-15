@@ -29,8 +29,8 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -67,7 +67,7 @@ public void preProcessRequest (DelegateExecution execution) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_timeout\''
 				logger.debug(msg)
 				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -78,7 +78,7 @@ public void preProcessRequest (DelegateExecution execution) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_messageType\''
 				logger.debug(msg)
 				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 
@@ -89,7 +89,7 @@ public void preProcessRequest (DelegateExecution execution) {
 				String msg = getProcessKey(execution) + ': Missing or empty input variable \'RCVWFMSG_correlator\''
 				logger.debug(msg)
 				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue());
 				exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 			}
 			execution.setVariable(messageType + '_CORRELATOR', correlator)
@@ -101,7 +101,7 @@ public void preProcessRequest (DelegateExecution execution) {
 			String msg = 'Caught exception in ' + method + ": " + e
 			logger.debug(msg)
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue());
+					ErrorCode.UnknownError.getValue());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}

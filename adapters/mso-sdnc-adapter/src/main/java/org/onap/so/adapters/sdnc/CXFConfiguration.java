@@ -32,7 +32,6 @@ import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.cxf.transport.servlet.CXFServlet;
 import org.onap.so.adapters.sdnc.sdncrest.SNIROResponse;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging;

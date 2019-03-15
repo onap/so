@@ -39,8 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
@@ -295,7 +295,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                             logger.error(
                                 "{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Update stack timeout",
                                 MessageEnum.RA_UPDATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-                                updateStack.getStackStatus(), MsoLogger.ErrorCode.AvailabilityError.getValue());
+                                updateStack.getStackStatus(), ErrorCode.AvailabilityError.getValue());
                             loopAgain = false;
                         } else {
                             try {
@@ -324,7 +324,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             if (!"UPDATE_COMPLETE".equals (updateStack.getStackStatus ())) {
                 logger.error("{} Stack status: {} Stack status reason: {} {} Update Stack error",
                     MessageEnum.RA_UPDATE_STACK_ERR, updateStack.getStackStatus(), updateStack.getStackStatusReason(),
-                    MsoLogger.ErrorCode.DataError.getValue());
+                    ErrorCode.DataError.getValue());
 
                 // TODO: No way to roll back the stack at this point. What to do?
                 // Throw a 'special case' of MsoOpenstackException to report the Heat status

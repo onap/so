@@ -35,8 +35,8 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.aai.AAIRestClientImpl
 import org.onap.so.client.aai.AAIUpdatorImpl
 import org.onap.so.client.aai.AAIValidatorImpl
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -214,7 +214,7 @@ public class UpdateVnfInfra extends VnfCmBase {
 		catch(Exception e) {
 			String restFaultMessage = e.getMessage()
             logger.error("{} {} Exception Encountered - \n{}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), restFaultMessage, e)
+                    ErrorCode.UnknownError.getValue(), restFaultMessage, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, restFaultMessage)
 		}	
 	}
@@ -255,7 +255,7 @@ public class UpdateVnfInfra extends VnfCmBase {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendResponse(): ' + e.getMessage())
 		}
 	}
@@ -305,7 +305,7 @@ public class UpdateVnfInfra extends VnfCmBase {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in getVnfResourceDecomposition(): ' + e.getMessage())
 		}
 	}
@@ -346,7 +346,7 @@ public class UpdateVnfInfra extends VnfCmBase {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfVnfInMaintInAAI(): ' + e.getMessage())
@@ -389,7 +389,7 @@ public class UpdateVnfInfra extends VnfCmBase {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 			//exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in checkIfPserversInMaintInAAI(): ' + e.getMessage())
@@ -436,7 +436,7 @@ public class UpdateVnfInfra extends VnfCmBase {
 			throw e;
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			execution.setVariable("errorCode", "1002")
 			execution.setVariable("errorText", e.getMessage())
 		}

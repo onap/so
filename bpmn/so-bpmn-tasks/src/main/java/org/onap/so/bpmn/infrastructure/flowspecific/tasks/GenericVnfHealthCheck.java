@@ -34,8 +34,8 @@ import org.onap.so.client.appc.ApplicationControllerAction;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +111,7 @@ public class GenericVnfHealthCheck {
 			appcMessage = appCClient.getErrorMessage();
         } catch (BpmnError ex) {
 			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-				"Caught exception in GenericVnfHealthCheck", "BPMN", MsoLogger.ErrorCode.UnknownError.getValue(), ex);
+				"Caught exception in GenericVnfHealthCheck", "BPMN", ErrorCode.UnknownError.getValue(), ex);
 			appcMessage = ex.getMessage();
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 		} catch (Exception e) {
@@ -120,13 +120,13 @@ public class GenericVnfHealthCheck {
 				appcMessage = "Request to APPC timed out. ";
 				logger.error("{} {} {} {} {}", MessageEnum.RA_CONNECTION_EXCEPTION.toString(),
 					"Caught timedOut exception in runAppcCommand in GenericVnfHealthCheck", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
+					ErrorCode.UnknownError.getValue(), "APPC Error", e);
 				throw e;
 			}
 			else {
 				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(),
 					"Caught exception in runAppcCommand in GenericVnfHealthCheck", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "APPC Error", e);
+					ErrorCode.UnknownError.getValue(), "APPC Error", e);
 				appcMessage = e.getMessage();
 				exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
 			}

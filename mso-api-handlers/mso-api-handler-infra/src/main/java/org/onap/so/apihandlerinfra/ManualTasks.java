@@ -54,9 +54,9 @@ import org.onap.so.apihandlerinfra.tasksbeans.Value;
 import org.onap.so.apihandlerinfra.tasksbeans.Variables;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,7 +121,7 @@ public class ManualTasks {
 			}
 
 		}catch(IOException e){
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).build();
 
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed: " + e.getMessage(),
@@ -130,7 +130,7 @@ public class ManualTasks {
 			throw validateException;
 		}
 		catch(ValidationException e){
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON Object failed. " + e.getMessage(),
@@ -160,7 +160,7 @@ public class ManualTasks {
 			camundaJsonReq = mapper.writeValueAsString(variablesForComplete);
 		} catch(JsonProcessingException e){
 
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.UnknownError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.UnknownError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
 			ValidateException validateException = new ValidateException.Builder("Mapping of JSON object to Camunda request failed",
@@ -180,7 +180,7 @@ public class ManualTasks {
 
 		} catch (Exception e) {
 
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
 
@@ -191,7 +191,7 @@ public class ManualTasks {
 		}
 
 		if (response == null) {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
             BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(HttpStatus.SC_BAD_GATEWAY),
@@ -217,7 +217,7 @@ public class ManualTasks {
 			}
 			catch (JsonProcessingException e) {
 
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError).build();
 
 
                 ValidateException validateException = new ValidateException.Builder("Request Failed due to bad response format" ,
@@ -229,7 +229,7 @@ public class ManualTasks {
 			logger.debug ("End of the transaction, the final response is: {}", completeResp);
 			return builder.buildResponse(HttpStatus.SC_ACCEPTED, requestId, completeResp, apiVersion);
 		} else {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError).build();
 
 
             BPMNFailureException bpmnFailureException = new BPMNFailureException.Builder(String.valueOf(bpelStatus),

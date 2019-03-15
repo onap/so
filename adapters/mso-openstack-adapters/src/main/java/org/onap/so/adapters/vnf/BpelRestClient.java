@@ -37,8 +37,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.utils.CryptoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -221,7 +221,7 @@ public class BpelRestClient {
 			if (totalretries >= retryCount) {
 				debug("Retried " + totalretries + " times, giving up.");
           logger.error("{} {} Could not deliver response to BPEL after {} tries: {}", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), totalretries, toBpelStr);
+              ErrorCode.BusinessProcesssError.getValue(), totalretries, toBpelStr);
 				return false;
 			}
 			totalretries++;
@@ -278,7 +278,7 @@ public class BpelRestClient {
 			}
 		} catch (Exception e) {
             logger.error("{} {} Exception - Error sending Bpel notification: {} ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
-                MsoLogger.ErrorCode.BusinessProcesssError.getValue(), toBpelStr, e);
+                ErrorCode.BusinessProcesssError.getValue(), toBpelStr, e);
 			lastResponseCode = 900;
 			lastResponse = "";
 		}

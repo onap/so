@@ -31,8 +31,8 @@ import org.onap.so.client.aai.entities.Relationships
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -107,7 +107,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing queryAAIForVolumeGroup.", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
+					ErrorCode.UnknownError.getValue(), e.getMessage());
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in preProcessRequest.")
 		}
 		logger.trace("COMPLETED queryAAIForVolumeGroup Process ")
@@ -129,7 +129,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		}catch(Exception e){
 		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 				"Exception Occured Processing assignVolumeHeatId.", "BPMN",
-				MsoLogger.ErrorCode.UnknownError.getValue(), e);
+				ErrorCode.UnknownError.getValue(), e);
 		exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in assignVolumeHeatId.")
 	}
 	logger.trace("COMPLETED assignVolumeHeatId Process ")
@@ -149,7 +149,7 @@ class ConfirmVolumeGroupTenant extends AbstractServiceTaskProcessor{
 		}catch(Exception e){
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception Occured Processing assignWorkflowException.", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e);
+					ErrorCode.UnknownError.getValue(), e);
 		}
 		logger.trace("COMPLETED Assign Workflow Exception =")
 	}

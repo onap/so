@@ -42,8 +42,8 @@ import java.util.Optional;
 import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.MsoTenant;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
@@ -97,7 +97,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         Optional<CloudSite> cloudSiteOpt = cloudConfig.getCloudSite(cloudSiteId);
         if (!cloudSiteOpt.isPresent()) {
             logger.error("{} MSOCloudSite {} not found {} ", MessageEnum.RA_CREATE_TENANT_ERR, cloudSiteId,
-                MsoLogger.ErrorCode.DataError.getValue());
+                ErrorCode.DataError.getValue());
             throw new MsoCloudSiteNotFound (cloudSiteId);
         }
         Keystone keystoneAdminClient = getKeystoneAdminClient(cloudSiteOpt.get());
@@ -109,7 +109,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             if (tenant != null) {
                 // Tenant already exists. Throw an exception
                 logger.error("{} Tenant name {} already exists on Cloud site id {}, {}",
-                    MessageEnum.RA_TENANT_ALREADY_EXIST, tenantName, cloudSiteId, MsoLogger.ErrorCode.DataError.getValue());
+                    MessageEnum.RA_TENANT_ALREADY_EXIST, tenantName, cloudSiteId, ErrorCode.DataError.getValue());
                 throw new MsoTenantAlreadyExists (tenantName, cloudSiteId);
             }
 
@@ -159,7 +159,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         	if (!backout)
         	{
               logger.warn("{} Create Tenant errored, Tenant deletion suppressed {} ", MessageEnum.RA_CREATE_TENANT_ERR,
-                  MsoLogger.ErrorCode.DataError.getValue());
+                  ErrorCode.DataError.getValue());
           }
         	else
         	{
@@ -169,7 +169,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         		} catch (Exception e2) {
         			// Just log this one. We will report the original exception.
                 logger.error("{} Nested exception rolling back tenant {} ", MessageEnum.RA_CREATE_TENANT_ERR,
-                    MsoLogger.ErrorCode.DataError.getValue(), e2);
+                    ErrorCode.DataError.getValue(), e2);
             }
         	}
         	
@@ -306,7 +306,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             Tenant tenant = findTenantById (keystoneAdminClient, tenantId);
             if (tenant == null) {
                 logger.error("{} Tenant id {} not found on cloud site id {}, {}", MessageEnum.RA_TENANT_NOT_FOUND,
-                    tenantId, cloudSiteId, MsoLogger.ErrorCode.DataError.getValue());
+                    tenantId, cloudSiteId, ErrorCode.DataError.getValue());
                 return false;
             }
 
@@ -353,7 +353,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             if (tenant == null) {
                 // OK if tenant already doesn't exist.
                 logger.error("{} Tenant {} not found on Cloud site id {}, {}", MessageEnum.RA_TENANT_NOT_FOUND,
-                    tenantName, cloudSiteId, MsoLogger.ErrorCode.DataError.getValue());
+                    tenantName, cloudSiteId, ErrorCode.DataError.getValue());
                 return false;
             }
 
@@ -437,7 +437,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
 
             logger.error("{} Region: {} Cloud identity {} {} Exception in findEndpointURL ",
                 MessageEnum.IDENTITY_SERVICE_NOT_FOUND, region, cloudIdentity.getId(),
-                MsoLogger.ErrorCode.DataError.getValue(), e);
+                ErrorCode.DataError.getValue(), e);
             throw new MsoAdapterException (error, e);
         }
 
@@ -493,7 +493,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                 return null;
             } else {
                 logger.error("{} {} Openstack Error, GET Tenant by Id ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), tenantId, e);
+                    ErrorCode.DataError.getValue(), tenantId, e);
                 throw e;
             }
         }
@@ -522,7 +522,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                 return null;
             } else {
                 logger.error("{} {} Openstack Error, GET Tenant By Name ({}) ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), tenantName, e);
+                    ErrorCode.DataError.getValue(), tenantName, e);
                 throw e;
             }
         }
@@ -552,7 +552,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                 return findUserByName (adminClient, userNameOrId);
             } else {
                 logger.error("{} {} Openstack Error, GET User ({}) ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), userNameOrId, e);
+                    ErrorCode.DataError.getValue(), userNameOrId, e);
                 throw e;
             }
         }
@@ -581,7 +581,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                 return null;
             } else {
                 logger.error("{} {} Openstack Error, GET User By Name ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    MsoLogger.ErrorCode.DataError.getValue(), userName, e);
+                    ErrorCode.DataError.getValue(), userName, e);
                 throw e;
             }
         }

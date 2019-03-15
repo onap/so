@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.vfcmodel;
 
 
-import org.onap.so.logger.MsoLogger;
 
 
 /**

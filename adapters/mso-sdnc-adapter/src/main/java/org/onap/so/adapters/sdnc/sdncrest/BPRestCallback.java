@@ -36,9 +36,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.sdnc.impl.Constants;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,7 +134,7 @@ public class BPRestCallback {
 				method.setHeader(ONAPLogConstants.Headers.PARTNER_NAME,"SO-SDNCAdapter");
 			} catch (Exception e) {
 				logger.error("{} {} {} {}", MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
-					MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Unable to set authorization in callback request", e);
+					ErrorCode.BusinessProcesssError.getValue(), "Unable to set authorization in callback request", e);
 				error = true;
 			}
 
@@ -150,7 +150,7 @@ public class BPRestCallback {
 
 				if (httpResponse.getStatusLine().getStatusCode() >= 300) {
 					String msg = "Received error response to callback request: " + httpResponse.getStatusLine();
-					logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA, MsoLogger.ErrorCode
+					logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA, ErrorCode
 						.BusinessProcesssError.getValue(), msg);
 
 				}
@@ -158,7 +158,7 @@ public class BPRestCallback {
 			return true;
 		} catch (Exception e) {
 			logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
-				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Error sending callback request", e);
+				ErrorCode.BusinessProcesssError.getValue(), "Error sending callback request", e);
 			return false;
 		} finally {
 			if (httpResponse != null) {

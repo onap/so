@@ -22,6 +22,8 @@
 
 package org.onap.so.bpmn.common.scripts
 
+import org.onap.so.logger.ErrorCode
+
 import static org.apache.commons.lang3.StringUtils.*
 
 import com.google.common.xml.XmlEscapers
@@ -31,7 +33,6 @@ import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -91,7 +92,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 
 			wfex = execution.getVariable("WorkflowException")
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), wfex.errorMessage);
+					ErrorCode.UnknownError.getValue(), wfex.errorMessage);
 			return wfex
 		} else {
 			try {
@@ -104,7 +105,7 @@ class ExceptionUtil extends AbstractServiceTaskProcessor {
 				logger.debug("mappedErrorMessage " + mappedErrorMessage)
 				wfex = execution.getVariable("WorkflowException")
 				logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), "Fault", "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue(), wfex.errorMessage);
+						ErrorCode.UnknownError.getValue(), wfex.errorMessage);
 				return wfex
 			} catch(Exception ex) {
 				logger.debug("error mapping error, return null: " + ex)
