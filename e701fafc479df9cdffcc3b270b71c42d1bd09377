@@ -16,6 +16,40 @@
       "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "97b3ce8b_1edb7296",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-15T16:15:03Z",
+      "side": 1,
+      "message": "This method seems to not follow the patterns for a building block, we no longer use pre-process.  please define methods that state what they do.  We would prefer to not pass data through execution if possible.",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fc4b07c7_8c02fdfb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-15T16:15:03Z",
+      "side": 1,
+      "message": "This can be found off the vnf object, by getting the model info no need to add another rest query here.",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
