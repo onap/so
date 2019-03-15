@@ -72,7 +72,9 @@ public class OperationalEnvServiceModelStatus implements Serializable {
    	@Column(name = "MODIFY_TIME")
    	@Temporal(TemporalType.TIMESTAMP)
 	private Date modifyTime;
-	
+   	@Column(name = "VNF_OPERATIONAL_ENV_ID", length=45)
+	private String vnfOperationalEnvId;	
+   	
    	public OperationalEnvServiceModelStatus() {
    		
    	}
@@ -146,6 +148,14 @@ public class OperationalEnvServiceModelStatus implements Serializable {
 	public Date getModifyTime() {
 		return modifyTime;
 	}
+
+	public String getVnfOperationalEnvId() {
+		return vnfOperationalEnvId;
+	}
+	
+	public void setVnfOperationalEnvId(String vnfOperationalEnvId) {
+		this.vnfOperationalEnvId = vnfOperationalEnvId;
+	}	
 	
 	@PrePersist
 	protected void onCreate() {
@@ -183,7 +193,8 @@ public class OperationalEnvServiceModelStatus implements Serializable {
 				.append("serviceModelVersionDistrStatus", getServiceModelVersionDistrStatus())
 				.append("recoveryAction", getRecoveryAction()).append("retryCount", getRetryCount())
 				.append("workloadContext", getWorkloadContext()).append("createTime", getCreateTime())
-				.append("modifyTime", getModifyTime()).toString();
+				.append("modifyTime", getModifyTime())
+				.append("vnfOperationalEnvId", getVnfOperationalEnvId()).toString();
 	}
 	
 

@@ -23,6 +23,7 @@ package org.onap.so.apihandlerinfra.tenantisolation.process;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
@@ -48,6 +49,7 @@ import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Distribution;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Status;
+import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
@@ -66,6 +68,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 	private final String requestId = "TEST_requestId";
 	private final String requestIdOrig = "TEST_requestIdOrig";	
 	private final String operationalEnvironmentId = "TEST_operationalEnvironmentId";	
+	private final String vnfOperationalEnvironmentId = "VNF_operationalEnvironmentId";	
 	private final CloudOrchestrationRequest request = new CloudOrchestrationRequest();
 	private final String workloadContext = "TEST_workloadContext";
 	private final String recoveryActionRetry  = "RETRY";
@@ -81,6 +84,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 	private final String statusOk = Status.DISTRIBUTION_COMPLETE_OK.toString();
 	private final String statusError = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
 	private final String statusSent = "SENT";
+	String json = "{\"operational-environment-status\" : \"INACTIVE\"}";
 	
 	private final ObjectMapper mapper = new ObjectMapper();
 
@@ -96,6 +100,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusOk);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
 		
 		serviceModelDb.setRequestId(requestIdOrig);
 		serviceModelDb.setServiceModelVersionId(serviceModelVersionId1);
@@ -104,6 +109,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusOk);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);		
 
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
@@ -134,6 +140,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);		
 		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
@@ -169,6 +176,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountTwo);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);		
 		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
@@ -188,6 +196,8 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusSent);
+		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);		
 
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -221,7 +231,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
-				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"RETRY\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null}"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"RETRY\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
@@ -229,7 +239,12 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
-
+		
+		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
+		
 		activateVnfStatus.execute(requestId, request);		
 	}				
 	
@@ -244,6 +259,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
 		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
@@ -294,9 +310,14 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 						.withStatus(HttpStatus.SC_OK)));
 
 		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
-				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null}"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
+		
+		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		activateVnfStatus.execute(requestId, request);	
 	}
@@ -312,6 +333,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
 		
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -360,6 +382,11 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
+		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
+		
         try {
             activateVnfStatus.execute(requestId, request);
         }catch(ApiException e){
@@ -382,6 +409,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
 		
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -390,8 +418,6 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		distributionDb.setDistributionIdStatus(statusError);
 		distributionDb.setServiceModelVersionId(serviceModelVersionId);
 		distributionDb.setDistributionIdErrorReason(null);
-		
-		
 		
 		// prepare distribution obj
 		Distribution distribution = new Distribution();
@@ -428,13 +454,18 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
-				.withRequestBody(containing("operationalEnvId\":\"TEST_operationalEnvironmentId\""))
+				.withRequestBody(containing("operationalEnvId\":\"VNF_operationalEnvironmentId\""))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 		
 		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonMessages.toString()).withStatus(HttpStatus.SC_CONFLICT)));
 
+		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
+		
 		try {
             activateVnfStatus.execute(requestId, request);
         }catch(ApiException e){
@@ -455,6 +486,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
 
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -490,7 +522,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
-				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"SKIP\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null}"))
+				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"SKIP\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
@@ -499,6 +531,11 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
+		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
+		
 		activateVnfStatus.execute(requestId, request);			
 
 	}	
@@ -514,6 +551,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setOperationalEnvId(operationalEnvironmentId);
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
+		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
 		
 		OperationalEnvDistributionStatus distributionDb = new OperationalEnvDistributionStatus();
 		distributionDb.setDistributionId(sdcDistributionId);
@@ -558,6 +596,12 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 				.withRequestBody(containing("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_ERROR\""))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
+		
+		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
+		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
+		
         try {
             activateVnfStatus.execute(requestId, request);
         }catch(ApiException e) {
