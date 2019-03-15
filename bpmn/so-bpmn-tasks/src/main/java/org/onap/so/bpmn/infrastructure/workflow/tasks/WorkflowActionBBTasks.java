@@ -368,7 +368,8 @@ public class WorkflowActionBBTasks {
 			ExecuteBuildingBlock ebb, List<ExecuteBuildingBlock> flowsToExecute) {
 		try {
 			String vnfId = ebb.getWorkflowResourceIds().getVnfId();
-			String vfModuleId = ebb.getWorkflowResourceIds().getVfModuleId();
+			String vfModuleId = ebb.getResourceId();
+			ebb.getWorkflowResourceIds().setVfModuleId(vfModuleId);
 			String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
 			String vfModuleCustomizationUUID = bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId).getModelCustomizationId();
 			List<Vnfc> vnfcs = workflowAction.getRelatedResourcesInVfModule(vnfId, vfModuleId, Vnfc.class, AAIObjectType.VNFC);

@@ -505,6 +505,8 @@ public class BBInputSetupMapperLayer {
 		modelInfoConfiguration.setModelCustomizationId(vnfVfmoduleCvnfcConfigurationCustomization.getModelCustomizationUUID());
 		modelInfoConfiguration.setModelInvariantId(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationResource().getModelInvariantUUID());
 		modelInfoConfiguration.setPolicyName(vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName());
+		modelInfoConfiguration.setConfigurationType(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationType());
+		modelInfoConfiguration.setConfigurationRole(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationRole());
 		return modelInfoConfiguration;
 	}
 
