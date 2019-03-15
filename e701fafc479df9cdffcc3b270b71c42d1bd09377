@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "14044716_2adac8d9",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-15T16:12:03Z",
+      "side": 1,
+      "message": "Is there a reason to return a pure String here and rawJSONObject?  Is there no bean we are mapping to?",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
