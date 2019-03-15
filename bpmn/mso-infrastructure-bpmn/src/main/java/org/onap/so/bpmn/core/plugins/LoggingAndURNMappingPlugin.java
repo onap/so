@@ -53,7 +53,6 @@ import org.camunda.bpm.model.bpmn.impl.instance.FlowNodeImpl;
 import org.camunda.bpm.model.bpmn.instance.EndEvent;
 import org.camunda.bpm.model.bpmn.instance.FlowNode;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
-import org.onap.so.bpmn.core.BPMNLogger;
 
 
 import org.onap.so.logger.MessageEnum;
@@ -73,11 +72,11 @@ import org.springframework.stereotype.Component;
  * Plugin for MSO logging and URN mapping.
  */
 @Component
-public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {	
-	
+public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
+
 	@Autowired
 	private LoggingParseListener loggingParseListener;
-	
+
 	@Override
 	public void preInit(
 			ProcessEngineConfigurationImpl processEngineConfiguration) {
@@ -89,14 +88,14 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 		}
 		preParseListeners.add(loggingParseListener);
 	}
-	
+
 	/**
 	 * Called when a process flow is parsed so we can inject listeners.
 	 */
 	@Component
-	public class LoggingParseListener extends AbstractBpmnParseListener {		
-		
-		
+	public class LoggingParseListener extends AbstractBpmnParseListener {
+
+
 		private void injectLogExecutionListener(ActivityImpl activity) {
 			activity.addListener(
 					ExecutionListener.EVENTNAME_END,
@@ -117,7 +116,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 
                 @Override
 		public void parseStartEvent(Element startEventElement, ScopeImpl scope, ActivityImpl startEventActivity) {
-			// Inject these listeners only on the main start event for the flow, not on any embedded subflow start events			
+			// Inject these listeners only on the main start event for the flow, not on any embedded subflow start events
 
 			injectLogExecutionListener(startEventActivity);
 		}
@@ -285,7 +284,7 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 		private final Logger logger = LoggerFactory.getLogger(LoggingExecutionListener.class);
 
 		private String event;
-		
+
 		public LoggingExecutionListener() {
 			this.event = "";
 		}
@@ -293,32 +292,32 @@ public class LoggingAndURNMappingPlugin extends AbstractProcessEnginePlugin {
 		public LoggingExecutionListener(String event) {
 			this.event = event;
 		}
-		
+
 		public String getEvent() {
 			return event;
 		}
 
 		@Override
-		public void notify(DelegateExecution execution) throws Exception {			
+		public void notify(DelegateExecution execution) throws Exception {
 			//required for legacy groovy processing in camunda
 			execution.setVariable("isDebugLogEnabled", "true");
 			if (!isBlank(execution.getCurrentActivityName())) {
 				try {
-				
+
 					String id = execution.getId();
-					if (id != null ) {				
+					if (id != null ) {
 						RepositoryService repositoryService = execution.getProcessEngineServices().getRepositoryService();
 						String processName = repositoryService.createProcessDefinitionQuery()
 						  .processDefinitionId(execution.getProcessDefinitionId())
 						  .singleResult()
-						  .getName();				
+						  .getName();
 
-						
+
 						String requestId = (String) execution.getVariable("mso-request-id");
 						String svcid = (String) execution.getVariable("mso-service-instance-id");
-						MsoLogger.setLogContext(requestId, svcid);							
+						MsoLogger.setLogContext(requestId, svcid);
 					}
-				} catch(Exception e) {					
+				} catch(Exception e) {
 					logger.error("Exception occurred", e);
 				}
 			}
