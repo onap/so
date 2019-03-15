@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "922f2801_39f3061e",
+        "filename": "bpmn/so-bpmn-building-blocks/src/test/java/org/onap/so/bpmn/infrastructure/bpmn/subprocess/PauseForManualTaskActivityTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-15T15:36:09Z",
+      "side": 1,
+      "message": "10s seems high for a junit, is it necessary?",
+      "revId": "c5327d21bafbc8c0284a659704d70106bbd93c7e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
