@@ -41,7 +41,7 @@ public class ArtifactInfoImpl implements IArtifactInfo {
 	private ArtifactInfoImpl generatedArtifact;
 	private List<IArtifactInfo> relatedArtifactsInfo;
 	private List<ArtifactInfoImpl> relatedArtifactsImpl;
-	ArtifactInfoImpl(){}
+	public ArtifactInfoImpl(){}
 	
 	private ArtifactInfoImpl(IArtifactInfo iArtifactInfo){
 		artifactName = iArtifactInfo.getArtifactName();

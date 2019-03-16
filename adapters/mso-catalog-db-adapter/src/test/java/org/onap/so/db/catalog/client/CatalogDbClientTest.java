@@ -201,7 +201,27 @@ public class CatalogDbClientTest {
         Assert.assertNotNull(vnfResourceCustomization.getVnfResources());
         Assert.assertNotNull(vnfResourceCustomization.getVfModuleCustomizations());
         Assert.assertEquals("vSAMP10a", vnfResourceCustomization.getVnfResources().getModelName());
+    }
 
+    @Test
+    public void getVnfResourceCustomizationFromJoinTable_serviceUuid_expectedOutput() {
+        List<VnfResourceCustomization> vnfResourceCustomizationList = client
+            .getVnfResourceCustomizationFromJoinTable("5df8b6de-2083-11e7-93ae-92361f002671");
+        assertEquals(1, vnfResourceCustomizationList.size());
+        VnfResourceCustomization vnfResourceCustomization = vnfResourceCustomizationList.get(0);
+        Assert.assertNotNull(vnfResourceCustomization);
+        Assert.assertEquals("vSAMP", vnfResourceCustomization.getNfRole());
+        Assert.assertNotNull(vnfResourceCustomization.getModelCustomizationUUID());
+        Assert.assertNotNull(vnfResourceCustomization.getVnfResources());
+        Assert.assertNotNull(vnfResourceCustomization.getVfModuleCustomizations());
+        Assert.assertEquals("vSAMP10a", vnfResourceCustomization.getVnfResources().getModelName());
+    }
+
+    @Test
+    public void getVnfResourceCustomizationFromJoinTable_invalidServiceUuid_nullOutput() {
+        List<VnfResourceCustomization> vnfResourceCustomizationList = client
+            .getVnfResourceCustomizationFromJoinTable(UUID.randomUUID().toString());
+        assertEquals(0, vnfResourceCustomizationList.size());
     }
 
     @Test
@@ -659,7 +679,33 @@ public class CatalogDbClientTest {
             pnfResource.getModelInvariantUUID());
         assertEquals("PNFResource modelVersion", "1.0", pnfResource.getModelVersion());
         assertEquals("PNFResource orchestration mode", "", pnfResource.getOrchestrationMode());
+    }
 
+    @Test
+    public void getPnfResourceCustomizationFromJoinTable_validServiceUuid_expectedOutput() {
+        List<PnfResourceCustomization> pnfResourceCustomizationList = client
+            .getPnfResourceCustomizationFromJoinTable("5df8b6de-2083-11e7-93ae-92361f002676");
+        assertEquals(1, pnfResourceCustomizationList.size());
+
+        PnfResourceCustomization pnfResourceCustomization= pnfResourceCustomizationList.get(0);
+        assertEquals("modelInstanceName", "PNF routing", pnfResourceCustomization.getModelInstanceName());
+        assertEquals("blueprintName", "test_configuration_restconf", pnfResourceCustomization.getBlueprintName());
+        assertEquals("blueprintVersion", "1.0.0", pnfResourceCustomization.getBlueprintVersion());
+        PnfResource pnfResource = pnfResourceCustomization.getPnfResources();
+        assertNotNull(pnfResource);
+
+        assertEquals("PNFResource modelUUID", "ff2ae348-214a-11e7-93ae-92361f002680", pnfResource.getModelUUID());
+        assertEquals("PNFResource modelInvariantUUID", "2fff5b20-214b-11e7-93ae-92361f002680",
+            pnfResource.getModelInvariantUUID());
+        assertEquals("PNFResource modelVersion", "1.0", pnfResource.getModelVersion());
+        assertEquals("PNFResource orchestration mode", "", pnfResource.getOrchestrationMode());
+    }
+
+    @Test
+    public void getPnfResourceCustomizationFromJoinTable_invalidServiceUuid_nullOutput() {
+        List<PnfResourceCustomization> pnfResourceCustomizationList = client
+            .getPnfResourceCustomizationFromJoinTable(UUID.randomUUID().toString());
+        assertEquals(0, pnfResourceCustomizationList.size());
     }
 
     @Test

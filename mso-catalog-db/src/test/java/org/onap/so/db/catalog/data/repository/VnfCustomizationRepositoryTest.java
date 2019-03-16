@@ -62,6 +62,13 @@ public class VnfCustomizationRepositoryTest extends BaseTest {
         checkVnfResourceCustomization(vnfResourceCustomization);
     }
 
+    @Test
+    public void findVnfResourceCustomizationFromJoinTable_ValidServiceUuidAndCustomizationUuid_ExpectedOutput() {
+        List<VnfResourceCustomization> vnfResourceCustomizationList = vnfCustomizationRepository.findVnfResourceCustomizationFromJoinTable("5df8b6de-2083-11e7-93ae-92361f002671");
+        assertEquals("Found the matching resource entity", 1, vnfResourceCustomizationList.size());
+        checkVnfResourceCustomization(vnfResourceCustomizationList.get(0));
+    }
+
     private void checkVnfResourceCustomization(VnfResourceCustomization vnfResourceCustomization) {
         assertEquals("modelInstanceName", "vSAMP10a 1", vnfResourceCustomization.getModelInstanceName());
         assertEquals("blueprintName", "test_configuration_restconf", vnfResourceCustomization.getBlueprintName());
