@@ -31,7 +31,7 @@ import org.onap.sdc.api.notification.IResourceInstance;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ResourceInfoImpl implements IResourceInstance{
-	ResourceInfoImpl (){}
+	public ResourceInfoImpl (){}
 	private String resourceInstanceName;
 	private String resourceCustomizationUUID;
 	private String resourceName;
