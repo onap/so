@@ -399,6 +399,8 @@ create table `vnf_resource_customization` (
   `vnf_resource_model_uuid` varchar(200) not null,
   `multi_stage_design` varchar(20) default null,
   `resource_input` varchar(20000) default null,
+  `cds_blueprint_name` varchar(200) default null,
+  `cds_blueprint_version` varchar(20) default null,
   primary key (`model_customization_uuid`),
   key `fk_vnf_resource_customization__vnf_resource1_idx` (`vnf_resource_model_uuid`),
   constraint `fk_vnf_resource_customization__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade
@@ -801,27 +803,41 @@ UPDATE CASCADE) ENGINE = InnoDB AUTO_INCREMENT = 20654 DEFAULT CHARACTER SET = l
 
 
 CREATE TABLE IF NOT EXISTS vnf_vfmodule_cvnfc_configuration_customization (
-  `ID` INT(11) NOT NULL AUTO_INCREMENT, 
-  `MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL, 
-  `MODEL_INSTANCE_NAME` VARCHAR(200) NOT NULL, 
-  `CONFIGURATION_TYPE` VARCHAR(200) NULL, 
-  `CONFIGURATION_ROLE` VARCHAR(200) NULL, 
-  `CONFIGURATION_FUNCTION` VARCHAR(200) NULL, 
-  `POLICY_NAME` VARCHAR(200) NULL, 
-  `CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-  `CONFIGURATION_MODEL_UUID` VARCHAR(200) NOT NULL,
-  `VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) DEFAULT NULL,
-  `VF_MODULE_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) DEFAULT NULL, 
-  `CVNFC_CUSTOMIZATION_ID` INT(11) DEFAULT NULL,
-  PRIMARY KEY (`ID`), 
-  INDEX `fk_vnf_vfmodule_cvnfc_config_cust__configuration_idx` (`CONFIGURATION_MODEL_UUID` ASC), 
- 
-  CONSTRAINT `fk_vnf_vfmod_cvnfc_config_cust__configuration_resource` FOREIGN KEY (`CONFIGURATION_MODEL_UUID`) 
-  REFERENCES `configuration` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = INNODB AUTO_INCREMENT = 20654 DEFAULT CHARACTER SET = LATIN1;
+    `ID` INT(11) NOT NULL AUTO_INCREMENT,
+    `MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL,
+    `VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL,
+    `VF_MODULE_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL,
+    `CVNFC_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL,
+    `MODEL_INSTANCE_NAME` VARCHAR(200) NOT NULL,
+    `CONFIGURATION_TYPE` VARCHAR(200) NULL,
+    `CONFIGURATION_ROLE` VARCHAR(200) NULL,
+    `CONFIGURATION_FUNCTION` VARCHAR(200) NULL,
+    `POLICY_NAME` VARCHAR(200) NULL,
+    `CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `CONFIGURATION_MODEL_UUID` VARCHAR(200) NOT NULL,
+    PRIMARY KEY (`ID`),
+    INDEX `fk_vnf_vfmodule_cvnfc_config_cust__configuration_idx` (`CONFIGURATION_MODEL_UUID` ASC),
+    UNIQUE INDEX `UK_vnf_vfmodule_cvnfc_configuration_customization` (`VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID` ASC , `VF_MODULE_MODEL_CUSTOMIZATION_UUID` ASC , `CVNFC_MODEL_CUSTOMIZATION_UUID` ASC , `MODEL_CUSTOMIZATION_UUID` ASC),
+    INDEX `fk_vnf_vfmodule_cvnfc_config_cust__cvnfc_cust1_idx` (`CVNFC_MODEL_CUSTOMIZATION_UUID` ASC),
+    INDEX `fk_vnf_vfmodule_cvnfc_config_cust__vf_module_cust_idx` (`VF_MODULE_MODEL_CUSTOMIZATION_UUID` ASC),
+    INDEX `fk_vnf_vfmodule_cvnfc_config_cust__vnf_res_cust_idx` (`VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID` ASC),
+    CONSTRAINT `fk_vnf_vfmod_cvnfc_config_cust__configuration_resource` FOREIGN KEY (`CONFIGURATION_MODEL_UUID`)
+        REFERENCES `configuration` (`MODEL_UUID`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_cvnfc_configuration_customization__cvnfc_customization1` FOREIGN KEY (`CVNFC_MODEL_CUSTOMIZATION_UUID`)
+        REFERENCES `cvnfc_customization` (`MODEL_CUSTOMIZATION_UUID`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_vnf_configuration_cvnfc_customization__vf_module_customiza1` FOREIGN KEY (`VF_MODULE_MODEL_CUSTOMIZATION_UUID`)
+        REFERENCES `vf_module_customization` (`MODEL_CUSTOMIZATION_UUID`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `fk_vfmodule_cvnfc_configuration_customization__vnf_resource_c1` FOREIGN KEY (`VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID`)
+        REFERENCES `vnf_resource_customization` (`MODEL_CUSTOMIZATION_UUID`)
+        ON DELETE CASCADE ON UPDATE CASCADE
+)  ENGINE=INNODB AUTO_INCREMENT=20654 DEFAULT CHARACTER SET=LATIN1;
+
 
 CREATE TABLE IF NOT EXISTS `pnf_resource` (
-  `ORCHESTRATION_MODE` varchar(20) NOT NULL DEFAULT 'HEAT',
+  `ORCHESTRATION_MODE` varchar(20) DEFAULT NULL,
   `DESCRIPTION` varchar(1200) DEFAULT NULL,
   `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `MODEL_UUID` varchar(200) NOT NULL,
@@ -857,6 +873,7 @@ CREATE TABLE IF NOT EXISTS `pnf_resource_customization_to_service` (
   `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
   PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 --------START Request DB SCHEMA --------
 CREATE DATABASE requestdb;
 USE requestdb;
