@@ -19,14 +19,17 @@
 
 package org.onap.so.db.catalog.data.repository;
 
+import java.util.List;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
-import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "pnfResourceCustomization", path = "pnfResourceCustomization")
 public interface PnfCustomizationRepository extends JpaRepository<PnfResourceCustomization, String> {
 
+    @Query(value = "select b.* from pnf_resource_customization_to_service a join pnf_resource_customization b where a.RESOURCE_MODEL_CUSTOMIZATION_UUID = b.MODEL_CUSTOMIZATION_UUID and a.SERVICE_MODEL_UUID = ?1", nativeQuery = true)
+    List<PnfResourceCustomization> findPnfResourceCustomizationFromJoinTable(
+        @Param("SERVICE_MODEL_UUID") String serviceModelUuid);
 }

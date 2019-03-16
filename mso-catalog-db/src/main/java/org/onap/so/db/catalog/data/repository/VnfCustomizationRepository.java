@@ -21,10 +21,10 @@
 package org.onap.so.db.catalog.data.repository;
 
 import java.util.List;
-
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "vnfResourceCustomization", path = "vnfResourceCustomization")
@@ -35,5 +35,8 @@ public interface VnfCustomizationRepository extends JpaRepository<VnfResourceCus
 
 	@Query(value = "SELECT * FROM vnf_resource_customization WHERE MODEL_INSTANCE_NAME = ?1 AND VNF_RESOURCE_MODEL_UUID = ?2 LIMIT 1;", nativeQuery = true)
 	VnfResourceCustomization findByModelInstanceNameAndVnfResources(String modelInstanceName, String vnfResourceModelUUID);
+
+	@Query(value = "select b.* from vnf_resource_customization_to_service a join vnf_resource_customization b where a.RESOURCE_MODEL_CUSTOMIZATION_UUID = b.MODEL_CUSTOMIZATION_UUID and a.SERVICE_MODEL_UUID = ?1", nativeQuery = true)
+	List<VnfResourceCustomization> findVnfResourceCustomizationFromJoinTable(@Param("SERVICE_MODEL_UUID") String serviceModelUuid);
 
 }

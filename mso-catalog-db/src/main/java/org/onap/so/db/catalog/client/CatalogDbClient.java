@@ -164,6 +164,8 @@ public class CatalogDbClient {
     private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
     private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
     private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
+    private String findPnfResourceCustomizationFromJoinTable = "/findPnfResourceCustomizationFromJoinTable";
+    private String findVnfResourceCustomizationFromJoinTable = "/findVnfResourceCustomizationFromJoinTable";
 
 
     private String serviceURI;
@@ -299,6 +301,10 @@ public class CatalogDbClient {
         findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH
             + findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep;
         findByClliAndCloudVersion = endpoint + CLOUD_SITE + SEARCH + findByClliAndCloudVersion;
+        findVnfResourceCustomizationFromJoinTable =
+            endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findVnfResourceCustomizationFromJoinTable;
+        findPnfResourceCustomizationFromJoinTable =
+            endpoint + PNF_RESOURCE_CUSTOMIZATION + SEARCH + findPnfResourceCustomizationFromJoinTable;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
@@ -365,7 +371,8 @@ public class CatalogDbClient {
         cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
         controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
-        vnfVfmoduleCvnfcConfigurationCustomizationClient = clientFactory.create(VnfVfmoduleCvnfcConfigurationCustomization.class);
+        vnfVfmoduleCvnfcConfigurationCustomizationClient = clientFactory
+            .create(VnfVfmoduleCvnfcConfigurationCustomization.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
     }
@@ -415,7 +422,8 @@ public class CatalogDbClient {
         cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
         controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
-        vnfVfmoduleCvnfcConfigurationCustomizationClient = clientFactory.create(VnfVfmoduleCvnfcConfigurationCustomization.class);
+        vnfVfmoduleCvnfcConfigurationCustomizationClient = clientFactory
+            .create(VnfVfmoduleCvnfcConfigurationCustomization.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
     }
@@ -480,6 +488,12 @@ public class CatalogDbClient {
             pnfResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         }
         return pnfResourceCustomization;
+    }
+
+    public List<PnfResourceCustomization> getPnfResourceCustomizationFromJoinTable(String modelUuid) {
+        return this.getMultipleResources(pnfResourceCustomizationClient, getUri(
+            UriBuilder.fromUri(findPnfResourceCustomizationFromJoinTable).queryParam("SERVICE_MODEL_UUID", modelUuid)
+                .build().toString()));
     }
 
     public CollectionNetworkResourceCustomization getCollectionNetworkResourceCustomizationByID(
@@ -684,6 +698,12 @@ public class CatalogDbClient {
             .queryParam(VNF_RESOURCE_MODEL_UUID, vnfResource.getModelUUID()).build().toString()));
     }
 
+    public List<VnfResourceCustomization> getVnfResourceCustomizationFromJoinTable(String modelUuid) {
+        return this.getMultipleResources(vnfResourceCustomizationClient, getUri(
+            UriBuilder.fromUri(findVnfResourceCustomizationFromJoinTable).queryParam("SERVICE_MODEL_UUID", modelUuid)
+                .build().toString()));
+    }
+
     public VnfRecipe getFirstVnfRecipeByNfRoleAndAction(String nfRole, String action) {
         return this.getSingleResource(vnfRecipeClient, getUri(UriBuilder
             .fromUri(findFirstVnfRecipeByNfRoleAndAction)
@@ -801,12 +821,14 @@ public class CatalogDbClient {
             .queryParam("VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUUID).build().toString()));
     }
 
-    public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(String vnfCustomizationUuid,
-            String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
+    public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(
+        String vnfCustomizationUuid,
+        String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
         return this.getSingleResource(vnfVfmoduleCvnfcConfigurationCustomizationClient, getUri(UriBuilder
-                .fromUri(endpoint + "/vnfVfmoduleCvnfcConfigurationCustomization/search/findOneByVnfResourceCustomizationAndVfModuleCustomizationAndCvnfcCustomization")
-                .queryParam("VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID", vnfCustomizationUuid)
-                .queryParam("VF_MODULE_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUuid)
-                .queryParam("CVNFC_MODEL_CUSTOMIZATION_UUID", cvnfcCustomizationUuid).build().toString()));
+            .fromUri(endpoint
+                + "/vnfVfmoduleCvnfcConfigurationCustomization/search/findOneByVnfResourceCustomizationAndVfModuleCustomizationAndCvnfcCustomization")
+            .queryParam("VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID", vnfCustomizationUuid)
+            .queryParam("VF_MODULE_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUuid)
+            .queryParam("CVNFC_MODEL_CUSTOMIZATION_UUID", cvnfcCustomizationUuid).build().toString()));
     }
 }

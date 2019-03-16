@@ -46,6 +46,14 @@ public class PnfCustomizationRepositoryTest extends BaseTest {
         checkPnfResourceCustomization(pnfResourceCustomization);
     }
 
+    @Test
+    public void findPnfResourceCustomizationFromJoinTable_ValidServiceUuidAndCustomizationUuid_ExpectedOutput() {
+        List<PnfResourceCustomization> pnfResourceCustomizationList = pnfCustomizationRepository
+            .findPnfResourceCustomizationFromJoinTable("5df8b6de-2083-11e7-93ae-92361f002676");
+        assertEquals("Found the matching resource entity", 1, pnfResourceCustomizationList.size());
+        checkPnfResourceCustomization(pnfResourceCustomizationList.get(0));
+    }
+
     private void checkPnfResourceCustomization(PnfResourceCustomization pnfResourceCustomization) {
         assertEquals("modelInstanceName", "PNF routing", pnfResourceCustomization.getModelInstanceName());
         assertEquals("blueprintName", "test_configuration_restconf", pnfResourceCustomization.getBlueprintName());
