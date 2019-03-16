@@ -42,8 +42,7 @@ public final class VfModuleArtifact {
 	private HeatEnvironment heatEnvironment;
 		
 	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
-		artifactInfo=artifactinfo;
-		result = new String(clientResult.getArtifactPayload(), "UTF-8");
+		this(artifactinfo, clientResult, null);
 	}
 	
 	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult, String modifiedHeatTemplate) throws UnsupportedEncodingException {

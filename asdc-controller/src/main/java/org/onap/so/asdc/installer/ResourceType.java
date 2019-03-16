@@ -17,13 +17,25 @@
  *  ============LICENSE_END=========================================================
  */
 
-package org.onap.so.db.catalog.data.repository;
+package org.onap.so.asdc.installer;
 
-import org.onap.so.db.catalog.beans.PnfResourceCustomization;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+/**
+ * This enum defines the resource type, it's used for tosca parsing, extraction and ingestion in SO.
+ */
+public enum ResourceType {
 
-@RepositoryRestResource(collectionResourceRel = "pnfResourceCustomization", path = "pnfResourceCustomization")
-public interface PnfCustomizationRepository extends JpaRepository<PnfResourceCustomization, String> {
+    /**
+     * VF resource and the category is not allotted_resource.
+     */
+    VF_RESOURCE,
 
+    /**
+     * PNF resource.
+     */
+    PNF_RESOURCE,
+
+    /**
+     * Other resource type, including VF resource of allotted_resource category.
+     */
+    OTHER
 }

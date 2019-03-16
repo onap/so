@@ -129,6 +129,10 @@ public class NotificationDataImpl implements INotificationData {
 		}
 		return ret;
 	}
+
+	public void setResources(List<ResourceInfoImpl> resources){
+		this.resources = resources;
+	}
 	
 	public List<ResourceInfoImpl> getResourcesImpl(){
 		return resources;
