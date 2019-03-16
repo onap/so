@@ -20,7 +20,6 @@
 package org.onap.so.db.catalog.data.repository;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
@@ -29,9 +28,6 @@ import org.onap.so.db.catalog.beans.PnfResource;
 import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.CollectionUtils;
-
-import java.util.List;
 
 public class PnfCustomizationRepositoryTest extends BaseTest {
 
