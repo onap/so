@@ -156,6 +156,24 @@
       "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b9061cc5_c7cd53e8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-18T12:54:19Z",
+      "side": 1,
+      "message": "You should add them to the bean, and it will just map them in or adjust the mapping layer there is no need for this rest call.",
+      "parentUuid": "d9364eb3_caab9ddb",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
