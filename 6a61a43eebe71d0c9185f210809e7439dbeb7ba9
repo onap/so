@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "67282421_e17b2aaf",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/PnfCustomizationRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-03-18T19:12:53Z",
+      "side": 1,
+      "message": "I would blame the auto-import when copying code snippet. run the \u0027optimize imports\u0027 on the class. fixed now.",
+      "parentUuid": "f3292fd1_b8ea2565",
+      "revId": "6a61a43eebe71d0c9185f210809e7439dbeb7ba9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "62dc2866_327f6398",
         "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/VnfCustomizationRepository.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-18T09:59:42Z",
       "side": 1,
       "message": "Should not be needed for VNF?",
+      "revId": "6a61a43eebe71d0c9185f210809e7439dbeb7ba9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ee9bfdb9_48c40ba9",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/VnfCustomizationRepository.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-03-18T19:12:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "62dc2866_327f6398",
       "revId": "6a61a43eebe71d0c9185f210809e7439dbeb7ba9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
