@@ -19,6 +19,40 @@
     },
     {
       "key": {
+        "uuid": "fff5e334_8aef7c41",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-18T10:17:36Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it be vnf-id rather than vnf_id?",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f7b3c34d_34b3b70c",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-18T10:17:36Z",
+      "side": 1,
+      "message": "Shouldn\u0027t it be pnf-id rather than pnf_id?",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "97b3ce8b_1edb7296",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
         "patchSetId": 6
