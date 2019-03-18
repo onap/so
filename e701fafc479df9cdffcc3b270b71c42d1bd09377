@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "24b7cd4e_25b93a49",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 161,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-18T12:01:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fff5e334_8aef7c41",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "f7b3c34d_34b3b70c",
         "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
         "patchSetId": 6
@@ -47,6 +65,24 @@
       "writtenOn": "2019-03-18T10:17:36Z",
       "side": 1,
       "message": "Shouldn\u0027t it be pnf-id rather than pnf_id?",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fceb7bf3_9fa8f3ff",
+        "filename": "bpmn/MSOCommonBPMN/src/main/java/org/onap/so/client/cds/AbstractCDSProcessingBBUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-18T12:01:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f7b3c34d_34b3b70c",
       "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -70,6 +106,24 @@
     },
     {
       "key": {
+        "uuid": "c91b9f25_b5eef3f9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-18T12:01:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "97b3ce8b_1edb7296",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fc4b07c7_8c02fdfb",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
         "patchSetId": 6
@@ -81,6 +135,24 @@
       "writtenOn": "2019-03-15T16:15:03Z",
       "side": 1,
       "message": "This can be found off the vnf object, by getting the model info no need to add another rest query here.",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d9364eb3_caab9ddb",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-18T12:01:55Z",
+      "side": 1,
+      "message": "Not only \"vnf-customization-uuid\" we are also getting \"blueprintName\" and \"blueprintVersion\" from this REST call.",
+      "parentUuid": "fc4b07c7_8c02fdfb",
       "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
