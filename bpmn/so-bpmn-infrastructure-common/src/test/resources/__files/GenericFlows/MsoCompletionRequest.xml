@@ -1,11 +1,11 @@
 <aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                             xmlns:ns="http://org.onap/so/request/types/v1"
                             xmlns="http://org.onap/so/infra/vnf-request/v1">
-    <request-info>
-        <request-id>null</request-id>
-        <action>DELETE</action>
-        <source>null</source>
-    </request-info>
-    <aetgt:status-message>E2E Service Instance was deleted successfully.</aetgt:status-message>
-    <aetgt:mso-bpel-name>DeleteCustomE2EServiceInstance</aetgt:mso-bpel-name>
+   <request-info>
+      <request-id>null</request-id>
+      <action>DELETE</action>
+      <source>null</source>
+   </request-info>
+   <aetgt:status-message>E2E Service Instance was deleted successfully.</aetgt:status-message>
+   <aetgt:mso-bpel-name>DeleteCustomE2EServiceInstance</aetgt:mso-bpel-name>
 </aetgt:MsoCompletionRequest>

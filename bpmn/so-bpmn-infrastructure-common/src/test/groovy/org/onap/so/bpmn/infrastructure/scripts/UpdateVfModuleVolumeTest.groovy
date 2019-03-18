@@ -4,7 +4,9 @@
  * ================================================================================ 
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
  * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
  * 
@@ -20,10 +22,8 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,9 +32,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.onap.aai.domain.yang.GenericVnf
-import org.onap.aai.domain.yang.VfModule
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.VolumeGroup
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.mock.FileUtil
@@ -44,25 +42,22 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
 
-import javax.ws.rs.core.UriBuilder
-
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class UpdateVfModuleVolumeTest extends MsoGroovyTest{
-	
-    def prefix = "UPDVfModVol_"
+
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
     @Rule
     public ExpectedException thrown = ExpectedException.none()
-	
 
-	@Before
-	public void init(){
+
+    @Before
+    public void init() {
         super.init("UpdateVfModuleVolume")
-		MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.initMocks(this)
     }
 
 
@@ -79,7 +74,7 @@ class UpdateVfModuleVolumeTest extends MsoGroovyTest{
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId(volumeGroupId)
 
-        AAIResultWrapper wrapper = new AAIResultWrapper(FileUtil.readResourceFile("__files/aai/VolumeGroupWithTenant.json"))
+        AAIResultWrapper wrapper = new AAIResultWrapper(FileUtil.readResourceFile("__files/AAI/VolumeGroupWithTenant.json"))
         when(client.get(uri)).thenReturn(wrapper)
         obj.queryAAIForVolumeGroup(mockExecution)
         verify(mockExecution).setVariable("UPDVfModVol_volumeGroupHeatStackId","heatStackId")
@@ -98,8 +93,7 @@ class UpdateVfModuleVolumeTest extends MsoGroovyTest{
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setVolumeGroupId(volumeGroupId)
 
-        AAIResultWrapper wrapper = new AAIResultWrapper(FileUtil.readResourceFile("__files/aai/VolumeGroupWithTenant.json"))
-        when(client.get(uri)).thenThrow(Exception.class)
+        when(client.get(uri)).thenThrow(NullPointerException.class)
         thrown.expect(BpmnError.class)
         obj.queryAAIForVolumeGroup(mockExecution)
     }

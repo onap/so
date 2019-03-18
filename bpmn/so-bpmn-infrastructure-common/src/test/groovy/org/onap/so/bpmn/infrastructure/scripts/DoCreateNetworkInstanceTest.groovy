@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 
 import static org.mockito.Mockito.*
+import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetwork
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkByName;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkByName_404;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkByIdWithDepth;
@@ -3839,10 +3840,13 @@ String sdncAdapterWorkflowAssignResponse =
 			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
 			WireMock.reset();
-			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
+            MockGetNetwork("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "CreateNetworkV2/createNetwork_queryNetworkId_AAIResponse_Success.xml", 200);
+            MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "CreateNetworkV2/createNetwork_queryNetworkId_AAIResponse_Success.xml", "all");
+            MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
 			MockGetNetworkVpnBinding("CreateNetworkV2/createNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
 
 			ExecutionEntity mockExecution = setupMock()
+            when(mockExecution.getVariable(Prefix + "networkId")).thenReturn("49c86598-f766-46f8-84f8-8d1c1b10f9b4")
 			when(mockExecution.getVariable(Prefix + "queryIdAAIResponse")).thenReturn(queryIdAIIResponse)
 			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
 			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
@@ -3852,8 +3856,9 @@ String sdncAdapterWorkflowAssignResponse =
 			when(mockExecution.getVariable("mso.workflow.default.aai.v8.vpn-binding.uri")).thenReturn("/aai/v8/network/vpn-bindings/vpn-binding")
 			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+            when(mockExecution.getVariable("mso.adapters.po.auth")).
+                    thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C")
+            when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
 
 			// preProcessRequest(DelegateExecution execution)
 			DoCreateNetworkInstance DoCreateNetworkInstance = new DoCreateNetworkInstance()

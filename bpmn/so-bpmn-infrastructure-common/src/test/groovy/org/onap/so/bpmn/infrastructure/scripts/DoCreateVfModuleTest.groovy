@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,13 +34,17 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.core.RollbackData
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
+import org.springframework.core.env.Environment
+import org.springframework.mock.env.MockEnvironment
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
@@ -180,8 +186,11 @@ class DoCreateVfModuleTest {
         obj.createNetworkPoliciesInAAI(mockExecution)
 
         Mockito.verify(mockExecution).setVariable("prefix", prefix)
-        Mockito.verify(mockExecution).setVariable(prefix + "networkPolicyFqdnCount", 1)
-        Mockito.verify(mockExecution).setVariable(prefix + "aaiQqueryNetworkPolicyByFqdnReturnCode", 200)
+        RollbackData rollbackData = new RollbackData()
+        rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "true")
+        rollbackData.put("VFMODULE", "contrailNetworkPolicyFqdn0", "test")
+
+        Mockito.verify(mockExecution).setVariable(eq("rollbackData"), refEq(rollbackData))
     }
 
    
@@ -204,7 +213,18 @@ class DoCreateVfModuleTest {
         when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
         when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
 
+        prepareUrnPropertiesReader()
+
         return mockExecution
+    }
+
+    private static void prepareUrnPropertiesReader() {
+        MockEnvironment mockEnvironment = mock(MockEnvironment.class)
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.version")).thenReturn("14")
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.namespace")).thenReturn("defaultTestNamespace")
+        when(mockEnvironment.getProperty("aai.endpoint")).thenReturn("http://localhost:28090")
+        UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
+        urnPropertiesReader.setEnvironment(mockEnvironment)
     }
 
     private static void mockData() {
@@ -220,10 +240,11 @@ class DoCreateVfModuleTest {
                 .willReturn(aResponse()
                 .withStatus(200).withHeader("Content-Type", "text/xml")
                 .withBodyFile("DoCreateVfModule/cloudRegion_AAIResponse_Success.xml")))
-        stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy\\?network-policy-fqdn=.*"))
+        stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies\\?depth=0&nodes-only=&network-policy-fqdn=.*"))
                 .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBodyFile("VfModularity/QueryNetworkPolicy_AAIResponse_Success.xml")))
+                .withStatus(404)))
+        stubFor(put(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/.*"))
+                .willReturn(aResponse()
+                .withStatus(202)))
     }
 }

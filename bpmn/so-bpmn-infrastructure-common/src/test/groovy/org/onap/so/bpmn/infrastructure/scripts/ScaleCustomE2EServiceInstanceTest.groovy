@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,20 +24,14 @@ package org.onap.so.bpmn.infrastructure.scripts
 
 import static org.mockito.Mockito.*
 
-import org.apache.commons.lang3.*
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.runtime.Execution
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.MsoUtils
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 
 
@@ -189,6 +185,11 @@ class SacleCustomE2EServiceInstanceTest{
         scaleCustomE2EServiceInstance.prepareInitServiceOperationStatus(mockExecution)
 
         payload = utils.formatXml(payload)
+        verify(mockExecution).setVariable("serviceInstanceId", "56c881ad-6c9d-4b79-aacc-401e5640b47f")
+        verify(mockExecution).setVariable("operationId", "0a5b1651-c56e-4263-8c26-c8f8a6ef72d8")
+        verify(mockExecution).setVariable("operationType", "SCALE")
+        verify(mockExecution).setVariable("CVFMI_dbAdapterEndpoint", null)
+
         verify(mockExecution).setVariable("CVFMI_updateServiceOperStatusRequest", payload)
     }
 

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,51 +22,37 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-
-import static org.mockito.Mockito.*
-
-import org.camunda.bpm.engine.delegate.BpmnError
+import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.impl.pvm.process.ProcessDefinitionImpl
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.mockito.internal.debugging.MockitoDebuggerImpl
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
-import org.junit.Before
-import org.junit.Rule;
-import org.junit.Test
-import org.junit.Ignore
-import org.junit.runner.RunWith
 
-import static org.junit.Assert.*;
-
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import org.apache.commons.lang3.*
-
+import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.ArgumentMatchers.refEq
+import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
 class DoDeleteNetworkInstanceRollbackTest  {
-	
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
-	
-		def utils = new MsoUtils()
-		String Prefix="DELNWKIR_"
+
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(8090);
+
+    def utils = new MsoUtils()
+    String Prefix = "DELNWKIR_"
 
 
-		String rollbackNetworkRequest =
-		"""<NetworkAdapter:rollbackNetwork xmlns:NetworkAdapter="http://org.onap.so/network">
+    String rollbackNetworkRequest =
+            """<NetworkAdapter:rollbackNetwork xmlns:NetworkAdapter="http://org.onap.so/network">
    <rollback>
       <networkId>MNS-25180-L-01-dmz_direct_net_1/2c88a3a9-69b9-43a7-ada6-1aca577c3641</networkId>
       <neutronNetworkId>c4f4e878-cde0-4b15-ae9a-bda857759cea</neutronNetworkId>
@@ -78,10 +66,10 @@ class DoDeleteNetworkInstanceRollbackTest  {
          <serviceInstanceId/>
       </msoRequest>
    </rollback>
-</NetworkAdapter:rollbackNetwork>"""			
-								
-					String rollbackDeActivateSDNCRequest =
-		"""<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+</NetworkAdapter:rollbackNetwork>"""
+
+    String rollbackDeActivateSDNCRequest =
+            """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                   xmlns:ns5="http://org.onap/so/request/types/v1"
                                   xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1">
    <sdncadapter:RequestHeader>
@@ -126,10 +114,10 @@ class DoDeleteNetworkInstanceRollbackTest  {
          <aic-cloud-region>RDM2WAGPLCP</aic-cloud-region>
       </network-request-information>
    </aetgt:SDNCRequestData>
-</aetgt:SDNCAdapterWorkflowRequest>"""			
-		
-					String rollbackSDNCRequest =
-		"""<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+</aetgt:SDNCAdapterWorkflowRequest>"""
+
+    String rollbackSDNCRequest =
+            """<aetgt:SDNCAdapterWorkflowRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                                   xmlns:ns5="http://org.onap/so/request/types/v1"
                                   xmlns:sdncadapter="http://org.onap.so/workflow/sdnc/adapter/schema/v1">
    <sdncadapter:RequestHeader>
@@ -173,171 +161,156 @@ class DoDeleteNetworkInstanceRollbackTest  {
          <aic-cloud-region>RDM2WAGPLCP</aic-cloud-region>
       </network-request-information>
    </aetgt:SDNCRequestData>
-</aetgt:SDNCAdapterWorkflowRequest>"""			
-		
-// - - - - - - - -
+</aetgt:SDNCAdapterWorkflowRequest>"""
 
 
-	    @Before
-		public void init()
-		{
-			MockitoAnnotations.initMocks(this)
-		}
-		
-		public void initializeVariables (DelegateExecution mockExecution) {
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this)
+    }
 
-			verify(mockExecution).setVariable(Prefix + "WorkflowException", null)
-		
-			verify(mockExecution).setVariable(Prefix + "rollbackDeactivateSDNCRequest", null)
-			verify(mockExecution).setVariable(Prefix + "rollbackDeactivateSDNCResponse", "")
-			verify(mockExecution).setVariable(Prefix + "rollbackDeactivateSDNCReturnCode", "")
-	
-			verify(mockExecution).setVariable(Prefix + "rollbackNetworkRequest", null)
-			verify(mockExecution).setVariable(Prefix + "rollbackNetworkResponse", "")
-			verify(mockExecution).setVariable(Prefix + "rollbackNetworkReturnCode", "")
-					
-			verify(mockExecution).setVariable(Prefix + "Success", false)
-			verify(mockExecution).setVariable(Prefix + "fullRollback", false)
-			
-		}
-		
-		@Test
-		//@Ignore  
-		public void preProcessRequest() {
-			
-			println "************ preProcessRequest ************* " 
-			
-			WorkflowException workflowException = new WorkflowException("DoCreateNetworkInstance", 2500, "Received error from Network Adapter: JBWEB000065: HTTP Status 500.")
-			Map<String, String> rollbackData = new HashMap<String, String>();
-			rollbackData.put("rollbackDeactivateSDNCRequest", rollbackDeActivateSDNCRequest)
-			rollbackData.put("rollbackNetworkRequest", rollbackNetworkRequest)
-			rollbackData.put("rollbackSDNCRequest", rollbackSDNCRequest)
-					
-			ExecutionEntity mockExecution = setupMock()
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
-			when(mockExecution.getVariable("WorkflowException")).thenReturn(workflowException)
-			when(mockExecution.getVariable("rollbackData")).thenReturn(rollbackData)
-			when(mockExecution.getVariable("sdncVersion")).thenReturn("1702")
-			
-			when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("3141634BF7E070AA289CF2892C986C0B")
-			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			
-			when(mockExecution.getVariable("mso.adapters.sdnc.endpoint")).thenReturn("http://localhost:8090/SDNCAdapter")
-			when(mockExecution.getVariable("mso.adapters.network.rest.endpoint")).thenReturn("http://localhost:8090/networks/NetworkAdapter")
-			when(mockExecution.getVariable("mso.adapters.sdnc.resource.endpoint")).thenReturn("http://localhost:8090/SDNCAdapterRpc")
-			
-			
-			// preProcessRequest(DelegateExecution execution)						
-			DoDeleteNetworkInstanceRollback DoDeleteNetworkInstanceRollback = new DoDeleteNetworkInstanceRollback()
-			DoDeleteNetworkInstanceRollback.preProcessRequest(mockExecution)
+    public void initializeVariables(DelegateExecution mockExecution) {
 
-			//verify variable initialization
-			initializeVariables(mockExecution)
-			
-//			verify(mockExecution).getVariable("isDebugLogEnabled")
-			verify(mockExecution).setVariable("prefix", Prefix)
-								
-		}
-		
+        verify(mockExecution).setVariable(Prefix + "WorkflowException", null)
 
-		@Test
-		//@Ignore
-		public void validateRollbackResponses_Good() {
-			
-			WorkflowException workflowException = new WorkflowException("DoDeleteNetworkInstanceRollback", 2500, "AAI Update Contrail Failed.  Error 404.")
-			WorkflowException expectedWorkflowException = new WorkflowException("DoDeleteNetworkInstanceRollback", 2500, "AAI Update Contrail Failed.  Error 404. + SNDC deactivate rollback completed. + PO Network rollback completed. + SNDC unassign rollback completed.")
-				  
-			println "************ validateRollbackResponses_Good() ************* "
-			ExecutionEntity mockExecution = setupMock()
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
+        verify(mockExecution).setVariable(Prefix + "rollbackDeactivateSDNCRequest", null)
+        verify(mockExecution).setVariable(Prefix + "rollbackDeactivateSDNCResponse", "")
+        verify(mockExecution).setVariable(Prefix + "rollbackDeactivateSDNCReturnCode", "")
 
-			when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCRequest")).thenReturn("Good")
-			when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCReturnCode")).thenReturn("200")
-			when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCResponse")).thenReturn("GoodResponse")
-			when(mockExecution.getVariable(Prefix + "rollbackNetworkRequest")).thenReturn("Good")
-			when(mockExecution.getVariable(Prefix + "rollbackNetworkReturnCode")).thenReturn("200")
-			when(mockExecution.getVariable(Prefix + "rollbackNetworkResponse")).thenReturn("GoodResponse")
-			when(mockExecution.getVariable(Prefix + "rollbackSDNCRequest")).thenReturn("Good")
-			when(mockExecution.getVariable(Prefix + "rollbackSDNCReturnCode")).thenReturn("200")
-			when(mockExecution.getVariable(Prefix + "rollbackSDNCResponse")).thenReturn("GoodResponse")
-			when(mockExecution.getVariable(Prefix + "WorkflowException")).thenReturn(workflowException)
-			when(mockExecution.getVariable(Prefix + "fullRollback")).thenReturn(false)
-									
-			DoDeleteNetworkInstanceRollback DoDeleteNetworkInstanceRollback = new DoDeleteNetworkInstanceRollback()
-			DoDeleteNetworkInstanceRollback.validateRollbackResponses(mockExecution)
-			
-			// verify set prefix = Prefix + ""
-			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
-			verify(mockExecution, atLeast(1)).setVariable("rolledBack", true)
-			verify(mockExecution, atLeast(1)).setVariable("wasDeleted", true)
-			verify(mockExecution).setVariable("WorkflowException", refEq(expectedWorkflowException, any(WorkflowException.class)))
-			//verify(mockExecution).setVariable("WorkflowException", expectedWorkflowException)
-		}
-		
-		@Test
-		//@Ignore
-		public void validateRollbackResponses_FullRollback() {
-			
-			Map<String, String> rollbackData = new HashMap<String, String>();
-			rollbackData.put("rollbackDeactivateSDNCRequest", rollbackDeActivateSDNCRequest)
-			rollbackData.put("rollbackNetworkRequest", rollbackNetworkRequest)
-			rollbackData.put("rollbackSDNCRequest", rollbackSDNCRequest)
-				  
-			println "************ validateRollbackResponses_FullRollback() ************* "
-			ExecutionEntity mockExecution = setupMock()
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
+        verify(mockExecution).setVariable(Prefix + "rollbackNetworkRequest", null)
+        verify(mockExecution).setVariable(Prefix + "rollbackNetworkResponse", "")
+        verify(mockExecution).setVariable(Prefix + "rollbackNetworkReturnCode", "")
 
-			when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCRequest")).thenReturn("Good")
-			when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCReturnCode")).thenReturn("200")
-			when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCResponse")).thenReturn("GoodResponse")
-			when(mockExecution.getVariable(Prefix + "rollbackNetworkRequest")).thenReturn("Good")
-			when(mockExecution.getVariable(Prefix + "rollbackNetworkReturnCode")).thenReturn("200")
-			when(mockExecution.getVariable(Prefix + "rollbackNetworkResponse")).thenReturn("GoodResponse")
-			when(mockExecution.getVariable(Prefix + "rollbackSDNCRequest")).thenReturn("Good")
-			when(mockExecution.getVariable(Prefix + "rollbackSDNCReturnCode")).thenReturn("200")
-			when(mockExecution.getVariable(Prefix + "rollbackSDNCResponse")).thenReturn("GoodResponse")
-			when(mockExecution.getVariable(Prefix + "WorkflowException")).thenReturn(null)
-			when(mockExecution.getVariable(Prefix + "fullRollback")).thenReturn(true)
-			when(mockExecution.getVariable("rollbackData")).thenReturn(rollbackData)
-									
-			DoDeleteNetworkInstanceRollback DoDeleteNetworkInstanceRollback = new DoDeleteNetworkInstanceRollback()
-			DoDeleteNetworkInstanceRollback.validateRollbackResponses(mockExecution)
-			
-			// verify set prefix = Prefix + ""
-			verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
-			verify(mockExecution, atLeast(1)).setVariable("rollbackSuccessful", true)
-			verify(mockExecution, atLeast(1)).setVariable("rollbackError", false)
-			
-		}
-		
-		
-		private ExecutionEntity setupMock() {
-			
-			ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-			when(mockProcessDefinition.getKey()).thenReturn("DoDeleteNetworkInstanceRollback")
-			RepositoryService mockRepositoryService = mock(RepositoryService.class)
-			when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-			when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoDeleteNetworkInstanceRollback")
-			when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-			ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-			when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
-			
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			// Initialize prerequisite variables
-			
-			when(mockExecution.getId()).thenReturn("100")
-			when(mockExecution.getProcessDefinitionId()).thenReturn("DoDeleteNetworkInstanceRollback")
-			when(mockExecution.getProcessInstanceId()).thenReturn("DoDeleteNetworkInstanceRollback")
-			when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-			when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-			
-			return mockExecution
-		}
-		
+        verify(mockExecution).setVariable(Prefix + "Success", false)
+        verify(mockExecution).setVariable(Prefix + "fullRollback", false)
+
+    }
+
+    @Test
+    public void preProcessRequest() {
+
+        println "************ preProcessRequest ************* "
+
+        WorkflowException workflowException = new WorkflowException("DoCreateNetworkInstance", 2500, "Received error from Network Adapter: JBWEB000065: HTTP Status 500.")
+        Map<String, String> rollbackData = new HashMap<String, String>();
+        rollbackData.put("rollbackDeactivateSDNCRequest", rollbackDeActivateSDNCRequest)
+        rollbackData.put("rollbackNetworkRequest", rollbackNetworkRequest)
+        rollbackData.put("rollbackSDNCRequest", rollbackSDNCRequest)
+
+        ExecutionEntity mockExecution = setupMock()
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
+        when(mockExecution.getVariable("WorkflowException")).thenReturn(workflowException)
+        when(mockExecution.getVariable("rollbackData")).thenReturn(rollbackData)
+        when(mockExecution.getVariable("sdncVersion")).thenReturn("1702")
+
+        when(mockExecution.getVariable("mso.adapters.po.auth")).thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C")
+        when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
+
+        when(mockExecution.getVariable("mso.adapters.sdnc.endpoint")).thenReturn("http://localhost:8090/SDNCAdapter")
+        when(mockExecution.getVariable("mso.adapters.network.rest.endpoint")).thenReturn("http://localhost:8090/networks/NetworkAdapter")
+        when(mockExecution.getVariable("mso.adapters.sdnc.resource.endpoint")).thenReturn("http://localhost:8090/SDNCAdapterRpc")
+
+        DoDeleteNetworkInstanceRollback DoDeleteNetworkInstanceRollback = new DoDeleteNetworkInstanceRollback()
+        DoDeleteNetworkInstanceRollback.preProcessRequest(mockExecution)
+
+        //verify variable initialization
+        initializeVariables(mockExecution)
+        verify(mockExecution).setVariable("prefix", Prefix)
+    }
+
+
+    @Test
+    public void validateRollbackResponses_Good() {
+
+        WorkflowException workflowException = new WorkflowException("DoDeleteNetworkInstanceRollback", 2500, "AAI Update Contrail Failed.  Error 404.")
+        WorkflowException expectedWorkflowException = new WorkflowException("DoDeleteNetworkInstanceRollback", 2500, "AAI Update Contrail Failed.  Error 404. + SNDC deactivate rollback completed. + PO Network rollback completed. + SNDC unassign rollback completed.")
+
+        println "************ validateRollbackResponses_Good() ************* "
+        ExecutionEntity mockExecution = setupMock()
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
+
+        when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCRequest")).thenReturn("Good")
+        when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCReturnCode")).thenReturn("200")
+        when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCResponse")).thenReturn("GoodResponse")
+        when(mockExecution.getVariable(Prefix + "rollbackNetworkRequest")).thenReturn("Good")
+        when(mockExecution.getVariable(Prefix + "rollbackNetworkReturnCode")).thenReturn("200")
+        when(mockExecution.getVariable(Prefix + "rollbackNetworkResponse")).thenReturn("GoodResponse")
+        when(mockExecution.getVariable(Prefix + "rollbackSDNCRequest")).thenReturn("Good")
+        when(mockExecution.getVariable(Prefix + "rollbackSDNCReturnCode")).thenReturn("200")
+        when(mockExecution.getVariable(Prefix + "rollbackSDNCResponse")).thenReturn("GoodResponse")
+        when(mockExecution.getVariable(Prefix + "WorkflowException")).thenReturn(workflowException)
+        when(mockExecution.getVariable(Prefix + "fullRollback")).thenReturn(false)
+
+        DoDeleteNetworkInstanceRollback DoDeleteNetworkInstanceRollback = new DoDeleteNetworkInstanceRollback()
+        DoDeleteNetworkInstanceRollback.validateRollbackResponses(mockExecution)
+
+        // verify set prefix = Prefix + ""
+        verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
+        verify(mockExecution, atLeast(1)).setVariable("rolledBack", true)
+        verify(mockExecution, atLeast(1)).setVariable("wasDeleted", true)
+        verify(mockExecution).setVariable(eq("workflowException"), refEq(expectedWorkflowException))
+    }
+
+    @Test
+    public void validateRollbackResponses_FullRollback() {
+
+        Map<String, String> rollbackData = new HashMap<String, String>();
+        rollbackData.put("rollbackDeactivateSDNCRequest", rollbackDeActivateSDNCRequest)
+        rollbackData.put("rollbackNetworkRequest", rollbackNetworkRequest)
+        rollbackData.put("rollbackSDNCRequest", rollbackSDNCRequest)
+
+        println "************ validateRollbackResponses_FullRollback() ************* "
+        ExecutionEntity mockExecution = setupMock()
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("prefix")).thenReturn(Prefix + "")
+
+        when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCRequest")).thenReturn("Good")
+        when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCReturnCode")).thenReturn("200")
+        when(mockExecution.getVariable(Prefix + "rollbackDeactivateSDNCResponse")).thenReturn("GoodResponse")
+        when(mockExecution.getVariable(Prefix + "rollbackNetworkRequest")).thenReturn("Good")
+        when(mockExecution.getVariable(Prefix + "rollbackNetworkReturnCode")).thenReturn("200")
+        when(mockExecution.getVariable(Prefix + "rollbackNetworkResponse")).thenReturn("GoodResponse")
+        when(mockExecution.getVariable(Prefix + "rollbackSDNCRequest")).thenReturn("Good")
+        when(mockExecution.getVariable(Prefix + "rollbackSDNCReturnCode")).thenReturn("200")
+        when(mockExecution.getVariable(Prefix + "rollbackSDNCResponse")).thenReturn("GoodResponse")
+        when(mockExecution.getVariable(Prefix + "WorkflowException")).thenReturn(null)
+        when(mockExecution.getVariable(Prefix + "fullRollback")).thenReturn(true)
+        when(mockExecution.getVariable("rollbackData")).thenReturn(rollbackData)
+
+        DoDeleteNetworkInstanceRollback DoDeleteNetworkInstanceRollback = new DoDeleteNetworkInstanceRollback()
+        DoDeleteNetworkInstanceRollback.validateRollbackResponses(mockExecution)
+
+        // verify set prefix = Prefix + ""
+        verify(mockExecution, atLeast(1)).setVariable("prefix", Prefix)
+        verify(mockExecution, atLeast(1)).setVariable("rollbackSuccessful", true)
+        verify(mockExecution, atLeast(1)).setVariable("rollbackError", false)
+
+    }
+
+
+    private ExecutionEntity setupMock() {
+
+        ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
+        when(mockProcessDefinition.getKey()).thenReturn("DoDeleteNetworkInstanceRollback")
+        RepositoryService mockRepositoryService = mock(RepositoryService.class)
+        when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
+        when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoDeleteNetworkInstanceRollback")
+        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
+        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
+
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+        // Initialize prerequisite variables
+
+        when(mockExecution.getProcessDefinitionId()).thenReturn("DoDeleteNetworkInstanceRollback")
+        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
+        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
+
+        return mockExecution
+    }
+
 }

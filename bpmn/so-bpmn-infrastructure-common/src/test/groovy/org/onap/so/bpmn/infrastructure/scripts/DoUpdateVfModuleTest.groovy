@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,32 +23,26 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.ArgumentCaptor
-import org.mockito.Captor
-import org.mockito.Mockito
-import org.mockito.MockitoAnnotations
-import org.mockito.Spy
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.*
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.bpmn.common.scripts.VfModule
-import org.onap.so.bpmn.core.WorkflowException
+import org.onap.aai.domain.yang.VfModule
+import org.onap.so.bpmn.common.scripts.utils.XmlComparator
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.mock.FileUtil
+import org.springframework.mock.env.MockEnvironment
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
-import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class DoUpdateVfModuleTest extends MsoGroovyTest{
 
     def prefix = "DOUPVfMod_"
@@ -72,8 +68,6 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testPreProcessRequest() {
-        ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("DoUpdateVfModuleRequest")).thenReturn(doUpdateVfModuleRequest)
         when(mockExecution.getVariable("mso.workflow.sdncadapter.callback")).thenReturn("http://localhost:28080/mso/SDNCAdapterCallbackService")
@@ -88,7 +82,13 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testPrepConfirmVolumeGroupTenant() {
-        ExecutionEntity mockExecution = setupMock()
+        MockEnvironment mockEnvironment = mock(MockEnvironment.class)
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.version")).thenReturn("14")
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.namespace")).thenReturn("defaultTestNamespace")
+        when(mockEnvironment.getProperty("aai.endpoint")).thenReturn("http://localhost:28090")
+        UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
+        urnPropertiesReader.setEnvironment(mockEnvironment)
+
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable(prefix + "aicCloudRegion")).thenReturn("CloudOwner")
@@ -101,7 +101,8 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         DoUpdateVfModule obj = new DoUpdateVfModule()
         obj.prepConfirmVolumeGroupTenant(mockExecution)
 
-        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest", "http://localhost:28090/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner")
+        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest",
+                "http://localhost:28090/aai/v14/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/CloudOwner")
         Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionReturnCode", "200")
         Mockito.verify(mockExecution).setVariable(prefix + "cloudRegionForVolume", "AAIAIC25")
         Mockito.verify(mockExecution).setVariable(prefix + "isCloudRegionGood", true)
@@ -110,8 +111,6 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testPrepSDNCTopologyChg() {
-        ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable(prefix + "requestId")).thenReturn("12345")
         when(mockExecution.getVariable("testReqId")).thenReturn("testReqId")
 
@@ -124,9 +123,8 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         when(mockExecution.getVariable(prefix + "usePreload")).thenReturn("Y")
         when(mockExecution.getVariable(prefix + "vnfNameFromAAI")).thenReturn("skask-test")
 
-        def node = new Node(null, 'vfModule')
-        new Node(node, 'vf-module-name', "abc")
-        VfModule vfModule = new VfModule(node, true);
+        VfModule vfModule = new VfModule()
+        vfModule.setVfModuleName("abc")
         when(mockExecution.getVariable(prefix + "vfModule")).thenReturn(vfModule)
 
         when(mockExecution.getVariable(prefix + "tenantId")).thenReturn("fba1bd1e195a404cacb9ce17a9b2b421")
@@ -159,8 +157,6 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testPrepSDNCTopologyQuery() {
-        ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("testReqId")).thenReturn("testReqId")
         when(mockExecution.getVariable(prefix + "vfModuleId")).thenReturn("12345")
         when(mockExecution.getVariable(prefix + "serviceId")).thenReturn("12345")
@@ -179,8 +175,6 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testPrepVnfAdapterRest() {
-        ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable(prefix + "aicCloudRegion")).thenReturn("RDM2WAGPLCP")
         when(mockExecution.getVariable(prefix + "vfModuleId")).thenReturn("cb510af0-5b21-4bc7-86d9-323cb396ce32")
         when(mockExecution.getVariable(prefix + "volumeGroupStackId")).thenReturn("12345")
@@ -201,9 +195,8 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         when(mockExecution.getVariable(prefix + "baseVfModuleId")).thenReturn("12345")
         when(mockExecution.getVariable(prefix + "baseVfModuleHeatStackId")).thenReturn("12345")
 
-        def node = new Node(null, 'vfModule')
-        new Node(node, 'heat-stack-id', "abc")
-        VfModule vfModule = new VfModule(node, true);
+        VfModule vfModule = new VfModule()
+        vfModule.setHeatStackId("abc")
         when(mockExecution.getVariable(prefix + "vfModule")).thenReturn(vfModule)
 
         String sdncGetResponse = FileUtil.readResourceFile("__files/DoUpdateVfModule/sdncGetResponse.xml");
@@ -230,8 +223,6 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testPrepSDNCTopologyAct() {
-        ExecutionEntity mockExecution = setupMock()
-        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable(prefix + "aicCloudRegion")).thenReturn("RDM2WAGPLCP")
         when(mockExecution.getVariable("testReqId")).thenReturn("testReqId")
@@ -247,9 +238,8 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         when(mockExecution.getVariable(prefix + "usePreload")).thenReturn("Y")
         when(mockExecution.getVariable(prefix + "modelCustomizationUuid")).thenReturn("cb510af0-5b21-4bc7-86d9-323cb396ced3")
 
-        def node = new Node(null, 'vfModule')
-        new Node(node, 'vf-module-name', "abc")
-        VfModule vfModule = new VfModule(node, true);
+        VfModule vfModule = new VfModule()
+        vfModule.setVfModuleName("abc")
         when(mockExecution.getVariable(prefix + "vfModule")).thenReturn(vfModule)
 
         when(mockExecution.getVariable("mso.workflow.sdncadapter.callback")).thenReturn("http://localhost:8090/SDNCAdapter")
@@ -259,13 +249,12 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         obj.prepSDNCTopologyAct(mockExecution)
 
         String createVnfARequest = FileUtil.readResourceFile("__files/DoUpdateVfModule/sdncActivateRequest.xml")
-        Mockito.verify(mockExecution, times(1)).setVariable(captor.capture(), captor.capture())
+        Mockito.verify(mockExecution, times(1)).setVariable(eq("DOUPVfMod_sdncActivateRequest"), captor.capture())
         XmlComparator.assertXMLEquals(createVnfARequest, captor.getValue())
     }
 
     @Test
     void testQueryAAIVfModule() {
-        when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable(prefix + "vnfId")).thenReturn("12345")
 
         mockAAIGenericVnf("12345","__files/AAI/GenericVnfVfModule.json")
@@ -283,23 +272,23 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
         RepositoryService mockRepositoryService = mock(RepositoryService.class)
         when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
         when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoUpdateVfModule")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
+        //when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
+        //ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
+        //when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
 
         ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         // Initialize prerequisite variables
-        when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("DoUpdateVfModule")
-        when(mockExecution.getProcessInstanceId()).thenReturn("DoUpdateVfModule")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
+        //when(mockExecution.getId()).thenReturn("100")
+       // when(mockExecution.getProcessDefinitionId()).thenReturn("DoUpdateVfModule")
+        //when(mockExecution.getProcessInstanceId()).thenReturn("DoUpdateVfModule")
+       // when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
+        //when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
 
         return mockExecution
     }
 
     private static void mockData() {
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner"))
+        stubFor(get(urlMatching(".*/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/CloudOwner"))
                 .willReturn(aResponse()
                 .withStatus(200).withHeader("Content-Type", "text/xml")
                 .withBodyFile("DoUpdateVfModule/cloudRegion_AAIResponse_Success.xml")))
