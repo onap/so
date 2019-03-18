@@ -236,7 +236,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				serviceInstanceId = (String) execution.getVariable("mso-service-instance-id")
 			}
 
-			utils.logContext(requestId, serviceInstanceId)
 			logDebug('Incoming message: ' + System.lineSeparator() + request, isDebugLogEnabled)
 			logDebug('Exited ' + method, isDebugLogEnabled)
 			return request
@@ -263,13 +262,6 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 
 		String processKey = getProcessKey(execution);
 		def prefix = execution.getVariable("prefix")
-
-		def requestId =getVariable(execution, "mso-request-id")
-		def serviceInstanceId = getVariable(execution, "mso-service-instance-id")
-		if(requestId!=null && serviceInstanceId!=null){
-			utils.logContext(requestId, serviceInstanceId)
-		}
-
 
 		def request = getVariable(execution, prefix + 'Request')
 

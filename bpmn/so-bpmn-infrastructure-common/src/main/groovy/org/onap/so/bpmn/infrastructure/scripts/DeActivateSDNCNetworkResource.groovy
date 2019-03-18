@@ -328,7 +328,6 @@ public class DeActivateSDNCNetworkResource extends AbstractServiceTaskProcessor 
             }
 
             String sdncTopologyDeleteRequesAsString = utils.formatXml(sdncTopologyDeleteRequest)
-            utils.logAudit(sdncTopologyDeleteRequesAsString)
             execution.setVariable("sdncAdapterWorkflowRequest", sdncTopologyDeleteRequesAsString)
             logger.info("sdncAdapterWorkflowRequest - " + "\n" +  sdncTopologyDeleteRequesAsString)
 

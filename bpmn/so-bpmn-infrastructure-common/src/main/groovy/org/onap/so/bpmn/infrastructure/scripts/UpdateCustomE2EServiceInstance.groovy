@@ -72,7 +72,6 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 		try {
 
 			String siRequest = execution.getVariable("bpmnRequest")
-			utils.logAudit(siRequest)
 
 			String requestId = execution.getVariable("mso-request-id")
 			execution.setVariable("msoRequestId", requestId)
@@ -277,7 +276,6 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_updateServiceOperStatusRequest", payload)
 			logger.error( "Outgoing updateServiceOperStatusRequest: \n" + payload)
-			utils.logAudit("CreateVfModuleInfra Outgoing updateServiceOperStatusRequest Request: " + payload)
 
 		}catch(Exception e){
 			logger.debug( "Exception Occured Processing prepareInitServiceOperationStatus. Exception is:\n" + e)
@@ -398,7 +396,6 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 					<aetgt:ErrorCode>${MsoUtils.xmlEscape(errorCode)}</aetgt:ErrorCode>
 				   </aetgt:WorkflowException>"""
 
-			utils.logAudit(buildworkflowException)
 			sendWorkflowResponse(execution, 500, buildworkflowException)
 
 		} catch (Exception ex) {

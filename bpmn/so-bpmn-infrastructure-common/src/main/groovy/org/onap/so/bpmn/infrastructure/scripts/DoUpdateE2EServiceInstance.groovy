@@ -195,7 +195,6 @@ public class DoUpdateE2EServiceInstance extends AbstractServiceTaskProcessor {
 			payload = utils.formatXml(payload)
 			execution.setVariable("CVFMI_initResOperStatusRequest", payload)
 			logger.info( "Outgoing initResourceOperationStatus: \n" + payload)
-			utils.logAudit("CreateVfModuleInfra Outgoing initResourceOperationStatus Request: " + payload)
 
         }catch(Exception e){
             logger.info( "Exception Occured Processing preInitResourcesOperStatus. Exception is:\n" + e)
