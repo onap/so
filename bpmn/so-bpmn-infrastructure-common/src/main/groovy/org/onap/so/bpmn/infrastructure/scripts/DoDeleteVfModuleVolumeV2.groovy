@@ -170,7 +170,7 @@ class DoDeleteVfModuleVolumeV2 extends AbstractServiceTaskProcessor{
                 execution.setVariable(prefix+'volumeGroupHeatStackId', heatStackId)
 
                 logger.debug('Heat stack id from AAI response: ' + heatStackId)
-				AAIResultWrapper wrapper = getAAIClient().get(uri);
+				AAIResultWrapper wrapper = getAAIClient().get(resourceUri);
 				Optional<Relationships> relationships = wrapper.getRelationships()
 				String volumeGroupTenantId = null
 

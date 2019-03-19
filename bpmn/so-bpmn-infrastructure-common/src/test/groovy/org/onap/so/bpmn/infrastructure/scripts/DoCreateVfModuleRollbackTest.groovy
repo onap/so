@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,16 +37,16 @@ import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.NetworkPolicies
 import org.onap.aai.domain.yang.NetworkPolicy
-import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.core.RollbackData
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException
@@ -55,9 +57,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
-class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
+class DoCreateVfModuleRollbackTest{
 
     def prefix = "DCVFMR_"
+    protected AAIResourcesClient client
 
     @Spy
     DoCreateVfModuleRollback doCreateVfModuleRollback
@@ -70,8 +73,8 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
 
     @Before
     void init() throws IOException {
-        super.init("CreateVFCNSResource")
         MockitoAnnotations.initMocks(this)
+        client = mock(AAIResourcesClient.class)
         when(doCreateVfModuleRollback.getAAIClient()).thenReturn(client)
     }
 
@@ -256,30 +259,15 @@ class DoCreateVfModuleRollbackTest extends MsoGroovyTest{
         RepositoryService mockRepositoryService = mock(RepositoryService.class)
         when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
         when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoCreateVfModuleRollback")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
         ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
         when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
 
         ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         // Initialize prerequisite variables
-        when(mockExecution.getId()).thenReturn("100")
         when(mockExecution.getProcessDefinitionId()).thenReturn("DoCreateVfModuleRollback")
-        when(mockExecution.getProcessInstanceId()).thenReturn("DoCreateVfModuleRollback")
         when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
         when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
 
         return mockExecution
-    }
-
-    private static void mockData() {
-        stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy\\?network-policy-fqdn=.*"))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBodyFile("VfModularity/QueryNetworkPolicy_AAIResponse_Success.xml")))
-        stubFor(delete(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/.*"))
-                .willReturn(aResponse()
-                .withStatus(200)));
-
     }
 }

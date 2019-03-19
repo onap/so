@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +23,9 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -34,13 +34,17 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
 import org.onap.so.bpmn.core.RollbackData
-import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.mock.FileUtil
+import org.onap.so.bpmn.mock.StubResponseAAI
+import org.springframework.mock.env.MockEnvironment
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
+import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.ArgumentMatchers.refEq
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
@@ -68,6 +72,7 @@ class DoCreateVfModuleTest {
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
 
+        prepareUrnPropertiesReader()
         mockData()
         DoCreateVfModule obj = new DoCreateVfModule()
         obj.queryAAIVfModule(mockExecution)
@@ -86,6 +91,7 @@ class DoCreateVfModuleTest {
         when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:28090")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
 
+        prepareUrnPropertiesReader()
         mockData()
         DoCreateVfModule obj = new DoCreateVfModule()
         obj.queryAAIVfModuleForStatus(mockExecution)
@@ -154,7 +160,8 @@ class DoCreateVfModuleTest {
         obj.queryCloudRegion(mockExecution)
 
         Mockito.verify(mockExecution).setVariable("prefix", prefix)
-        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest", "http://localhost:28090/aai/v8/cloud-infrastructure/cloud-regions/cloud-region/12345")
+        Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionRequest",
+                "http://localhost:28090/aai/v14/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/12345")
         Mockito.verify(mockExecution).setVariable(prefix + "queryCloudRegionReturnCode", "200")
     }
 
@@ -175,13 +182,17 @@ class DoCreateVfModuleTest {
         fqdnList.add("test")
         when(mockExecution.getVariable("DCVFM_contrailNetworkPolicyFqdnList")).thenReturn(fqdnList)
 
+        prepareUrnPropertiesReader()
         mockData()
         DoCreateVfModule obj = new DoCreateVfModule()
         obj.createNetworkPoliciesInAAI(mockExecution)
 
         Mockito.verify(mockExecution).setVariable("prefix", prefix)
-        Mockito.verify(mockExecution).setVariable(prefix + "networkPolicyFqdnCount", 1)
-        Mockito.verify(mockExecution).setVariable(prefix + "aaiQqueryNetworkPolicyByFqdnReturnCode", 200)
+        RollbackData rollbackData = new RollbackData()
+        rollbackData.put("VFMODULE", "rollbackCreateNetworkPoliciesAAI", "true")
+        rollbackData.put("VFMODULE", "contrailNetworkPolicyFqdn0", "test")
+
+        Mockito.verify(mockExecution).setVariable(eq("rollbackData"), refEq(rollbackData))
     }
 
    
@@ -192,38 +203,32 @@ class DoCreateVfModuleTest {
         RepositoryService mockRepositoryService = mock(RepositoryService.class)
         when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
         when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoCreateVfModule")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
 
         ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         // Initialize prerequisite variables
         when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("DoCreateVfModule")
-        when(mockExecution.getProcessInstanceId()).thenReturn("DoCreateVfModule")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
 
         return mockExecution
     }
 
+    private static void prepareUrnPropertiesReader() {
+        MockEnvironment mockEnvironment = mock(MockEnvironment.class)
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.version")).thenReturn("14")
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.namespace")).thenReturn("defaultTestNamespace")
+        when(mockEnvironment.getProperty("aai.endpoint")).thenReturn("http://localhost:28090")
+        UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
+        urnPropertiesReader.setEnvironment(mockEnvironment)
+    }
+
     private static void mockData() {
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/network/generic-vnfs/generic-vnf/12345[?]depth=1"))
+        StubResponseAAI.MockGetGenericVnfById("12345", "DoCreateVfModule/getGenericVnfResponse.xml");
+        StubResponseAAI.MockGetVfModuleByName("12345",
+                "module-0", "DoCreateVfModule/getGenericVnfResponse.xml", 200);
+        StubResponseAAI.MockGetNetworkCloudRegion(
+                "DoCreateVfModule/cloudRegion_AAIResponse_Success.xml", "12345")
+        stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies\\?depth=0&nodes-only=&network-policy-fqdn=.*"))
                 .willReturn(aResponse()
-                .withStatus(200).withHeader("Content-Type", "text/xml")
-                .withBodyFile("DoCreateVfModule/getGenericVnfResponse.xml")))
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/network/generic-vnfs/generic-vnf/12345/vf-modules/vf-module[?]vf-module-name=module-0"))
-                .willReturn(aResponse()
-                .withStatus(200).withHeader("Content-Type", "text/xml")
-                .withBodyFile("DoCreateVfModule/getGenericVnfResponse.xml")))
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/12345"))
-                .willReturn(aResponse()
-                .withStatus(200).withHeader("Content-Type", "text/xml")
-                .withBodyFile("DoCreateVfModule/cloudRegion_AAIResponse_Success.xml")))
-        stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy\\?network-policy-fqdn=.*"))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBodyFile("VfModularity/QueryNetworkPolicy_AAIResponse_Success.xml")))
+                .withStatus(404)))
+        StubResponseAAI.MockPutNetwork(".*", "", 202)
     }
 }

@@ -63,12 +63,11 @@ abstract class MsoGroovyTest {
 	protected ExecutionEntity setupMock(String procName) {
 		ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
 		when(mockProcessDefinition.getKey()).thenReturn(procName)
-		
+        when(mockProcessDefinition.getId()).thenReturn("100")
+
 		RepositoryService mockRepositoryService = mock(RepositoryService.class)
 		when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-		when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn(procName)
-		when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-		
+
 		ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
 		when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
 		

@@ -4,7 +4,9 @@
  * ================================================================================ 
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved. 
  * ================================================================================ 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
+ * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. 
  * You may obtain a copy of the License at 
  * 
@@ -32,7 +34,7 @@ import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.GenericVnf
 import org.onap.aai.domain.yang.VfModule
 import org.onap.aai.domain.yang.VolumeGroup
@@ -48,23 +50,23 @@ import javax.ws.rs.core.UriBuilder
 
 import static org.mockito.Mockito.*
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(MockitoJUnitRunner.Silent.class)
 class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
-	
+
     def prefix = "UPDVfModVol_"
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
     @Rule
     public ExpectedException thrown = ExpectedException.none()
-	
 
-	@Before
-	public void init(){
+
+    @Before
+    public void init() {
         super.init("UpdateVfModuleVolumeInfraV1")
-		MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.initMocks(this)
     }
-		
+
     @Test
     void testQueryAAIForVfModule() {
         ExecutionEntity mockExecution = setupMock()

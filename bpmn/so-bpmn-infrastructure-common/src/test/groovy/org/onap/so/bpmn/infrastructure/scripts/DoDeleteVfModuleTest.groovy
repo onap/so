@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,13 +23,8 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.junit.Assert
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -36,27 +33,26 @@ import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.Spy
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 import org.onap.aai.domain.yang.NetworkPolicies
 import org.onap.aai.domain.yang.NetworkPolicy
 import org.onap.aai.domain.yang.VfModule
-import org.onap.aai.domain.yang.VfModules
-import org.onap.so.bpmn.common.scripts.MsoGroovyTest
 import org.onap.so.bpmn.common.scripts.utils.XmlComparator
-import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIObjectType
+import org.onap.so.client.aai.AAIResourcesClient
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 
 import javax.ws.rs.NotFoundException
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
 
 @RunWith(MockitoJUnitRunner.class)
-class DoDeleteVfModuleTest extends MsoGroovyTest{
+class DoDeleteVfModuleTest {
+
+    protected AAIResourcesClient client
 
     @Spy
     DoDeleteVfModule doDeleteVfModule
@@ -69,14 +65,15 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
 
     @Before
     public void init() throws IOException {
-        super.init("DoDeleteVfModule")
+        //super.init("DoDeleteVfModule")
         MockitoAnnotations.initMocks(this);
+        client = mock(AAIResourcesClient.class)
         when(doDeleteVfModule.getAAIClient()).thenReturn(client)
     }
 
     @Test
     public void testPrepSDNCAdapterRequest() {
-        ExecutionEntity mockExecution = setupMock()
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("testReqId")).thenReturn("testReqId")
         when(mockExecution.getVariable("requestId")).thenReturn("12345")
@@ -100,6 +97,7 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testDeleteNetworkPoliciesFromAAI() {
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         List fqdnList = new ArrayList()
         fqdnList.add("test")
         when(mockExecution.getVariable("DoDVfMod_contrailNetworkPolicyFqdnList")).thenReturn(fqdnList)
@@ -116,6 +114,7 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testDeleteNetworkPoliciesFromAAIError() {
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         List fqdnList = new ArrayList()
         fqdnList.add("test")
         when(mockExecution.getVariable("DoDVfMod_contrailNetworkPolicyFqdnList")).thenReturn(fqdnList)
@@ -134,6 +133,7 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
 
     @Test
     void testQueryAAIVfModuleForStatus() {
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("vnfId")).thenReturn("12345")
         when(mockExecution.getVariable("vfModuleId")).thenReturn("module-0")
@@ -143,50 +143,6 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
         when(client.get(VfModule.class, uri)).thenReturn(Optional.of(vfModule))
         doDeleteVfModule.queryAAIVfModuleForStatus(mockExecution)
         Mockito.verify(mockExecution).setVariable("DoDVfMod_queryAAIVfModuleForStatusResponseCode", 200)
-    }
-
-  
-
-    private ExecutionEntity setupMock() {
-
-        ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-        when(mockProcessDefinition.getKey()).thenReturn("DoDeleteVfModule")
-        RepositoryService mockRepositoryService = mock(RepositoryService.class)
-        when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-        when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoDeleteVfModule")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
-
-        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-        // Initialize prerequisite variables
-
-        when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("DoDeleteVfModule")
-        when(mockExecution.getProcessInstanceId()).thenReturn("DoDeleteVfModule")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-
-        return mockExecution
-
-    }
-
-    private static void mockData() {
-        stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy\\?network-policy-fqdn=.*"))
-                .willReturn(aResponse()
-                .withStatus(200)
-                .withHeader("Content-Type", "text/xml")
-                .withBodyFile("VfModularity/QueryNetworkPolicy_AAIResponse_Success.xml")))
-
-        stubFor(delete(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/.*"))
-                .willReturn(aResponse()
-                .withStatus(200)))
-
-        stubFor(get(urlMatching(".*/aai/v[0-9]+/network/generic-vnfs/generic-vnf/12345/vf-modules/vf-module[?]vf-module-name=module-0"))
-                .willReturn(aResponse()
-                .withStatus(200).withHeader("Content-Type", "text/xml")
-                .withBodyFile("DoDeleteVfModule/getGenericVnfResponse.xml")))
-
     }
 }
 
