@@ -11,14 +11,16 @@ import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.ticket.ExternalTicket;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ManualHandlingTasks {
-	private static final MsoLogger msoLogger = MsoLogger.getMsoLogger(MsoLogger.Catalog.BPEL, ManualHandlingTasks.class);
+	private static final Logger logger = LoggerFactory.getLogger(ManualHandlingTasks.class);
 
 	private static final String TASK_TYPE_PAUSE = "pause";
 	private static final String TASK_TYPE_FALLOUT = "fallout";
@@ -34,7 +36,7 @@ public class ManualHandlingTasks {
 		DelegateExecution execution = task.getExecution();	
 		try {
 			String taskId = task.getId();
-			msoLogger.debug("taskId is: " + taskId);			
+			logger.debug("taskId is: " + taskId);
 			String type = TASK_TYPE_FALLOUT;
 			String nfRole = (String) execution.getVariable("vnfType");
 			String subscriptionServiceType = (String) execution.getVariable("serviceType");
@@ -66,13 +68,13 @@ public class ManualHandlingTasks {
 			TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
 			taskService.setVariables(taskId, taskVariables);
-			msoLogger.debug("successfully created fallout task: "+ taskId);
+			logger.debug("successfully created fallout task: "+ taskId);
 		} catch (BpmnError e) {
-			msoLogger.debug("BPMN exception: " + e.getMessage());
+			logger.debug("BPMN exception: " + e.getMessage());
 			throw e;
 		} catch (Exception ex){
 			String msg = "Exception in setFalloutTaskVariables " + ex.getMessage();
-			msoLogger.debug(msg);
+			logger.debug(msg);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
 		}		
 	}
@@ -83,7 +85,7 @@ public class ManualHandlingTasks {
 
 		try {
 			String taskId = task.getId();
-			msoLogger.debug("taskId is: " + taskId);			
+			logger.debug("taskId is: " + taskId);
 			String type = TASK_TYPE_PAUSE;
 			String nfRole = (String) execution.getVariable("vnfType");
 			String subscriptionServiceType = (String) execution.getVariable("serviceType");
@@ -115,13 +117,13 @@ public class ManualHandlingTasks {
 			TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
 			taskService.setVariables(taskId, taskVariables);
-			msoLogger.debug("successfully created pause task: "+ taskId);
+			logger.debug("successfully created pause task: "+ taskId);
 		} catch (BpmnError e) {
-			msoLogger.debug("BPMN exception: " + e.getMessage());
+			logger.debug("BPMN exception: " + e.getMessage());
 			throw e;
 		} catch (Exception ex){
 			String msg = "Exception in setPauseTaskVariables " + ex.getMessage();
-			msoLogger.debug(msg);
+			logger.debug(msg);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
 		}
 		
@@ -134,24 +136,24 @@ public class ManualHandlingTasks {
 		try {
 
 			String taskId = task.getId();
-			msoLogger.debug("taskId is: " + taskId);
+			logger.debug("taskId is: " + taskId);
 			TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
 			Map<String, Object> taskVariables = taskService.getVariables(taskId);
 			String responseValue = (String) taskVariables.get("responseValue");
 
-			msoLogger.debug("Received responseValue on completion: "+ responseValue);
+			logger.debug("Received responseValue on completion: "+ responseValue);
 			// Have to set the first letter of the response to upper case
 			String responseValueUppercaseStart = responseValue.substring(0, 1).toUpperCase() + responseValue.substring(1);
-			msoLogger.debug("ResponseValue to taskListener: "+ responseValueUppercaseStart);
+			logger.debug("ResponseValue to taskListener: "+ responseValueUppercaseStart);
 			execution.setVariable("responseValueTask", responseValueUppercaseStart);			
 			
 		} catch (BpmnError e) {
-			msoLogger.debug("BPMN exception: " + e.getMessage());
+			logger.debug("BPMN exception: " + e.getMessage());
 			throw e;
 		} catch (Exception ex){
 			String msg = "Exception in completeManualTask " + ex.getMessage();
-			msoLogger.debug(msg);
+			logger.debug(msg);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
 		}
 		
@@ -177,10 +179,10 @@ public class ManualHandlingTasks {
 			ticket.createTicket();
 		} catch (BpmnError e) {
 			String msg = "BPMN error in createAOTSTicket " + e.getMessage();
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.ErrorCode.UnknownError, "");
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", ErrorCode.UnknownError.getValue());
 		} catch (Exception ex){
 			String msg = "Exception in createExternalTicket " + ex.getMessage();
-			msoLogger.error(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", MsoLogger.ErrorCode.UnknownError, "");
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG, msg, "BPMN", ErrorCode.UnknownError.getValue());
 		}
 	
 	}
@@ -195,7 +197,7 @@ public class ManualHandlingTasks {
 				
 			requestDbclient.updateInfraActiveRequests(request);
 		} catch (Exception e) {
-			msoLogger.error("Unable to save the updated request status to the DB",e);
+			logger.error("Unable to save the updated request status to the DB",e);
 		}
 	}
 

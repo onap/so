@@ -33,9 +33,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.onap.so.adapters.sdnc.impl.Constants;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +72,7 @@ public class SNIROResponse {
 		if (bpUrl == null || ("").equals(bpUrl)) {
 			String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
 			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), Constants.BPEL_REST_URL_PROP,
-				"SDNC", MsoLogger.ErrorCode.DataError.getValue(), "Missing config param");
+				"SDNC", ErrorCode.DataError.getValue(), "Missing config param");
 
 			return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(error).build();
 		}

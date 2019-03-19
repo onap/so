@@ -24,6 +24,7 @@ package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.client.HttpClientFactory
+import org.onap.so.logger.ErrorCode
 
 import java.io.Serializable;
 
@@ -42,7 +43,6 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.client.graphinventory.entities.uri.Depth
 import org.onap.so.utils.TargetEntity
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -161,7 +161,7 @@ public class GenerateVfModuleName extends AbstractServiceTaskProcessor{
 		} catch (Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAI(): ' + e.getMessage())
 		}
 

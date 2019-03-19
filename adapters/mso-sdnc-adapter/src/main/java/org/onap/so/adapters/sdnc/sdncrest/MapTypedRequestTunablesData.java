@@ -25,9 +25,9 @@ package org.onap.so.adapters.sdnc.sdncrest;
 
 import org.onap.so.adapters.sdnc.exception.SDNCAdapterException;
 import org.onap.so.adapters.sdnc.impl.Constants;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +56,7 @@ public class MapTypedRequestTunablesData {
 		if ("".equals(value)) {
 			error= MISSING_CONFIGURATION_ERROR_MSG + reqTunable.getKey();
 			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), reqTunable.getKey(), "SDNC",
-				MsoLogger.ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
+				ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 		
 			throw new SDNCAdapterException(error);
 		}
@@ -66,7 +66,7 @@ public class MapTypedRequestTunablesData {
 		if (parts.length != 5) {
 			error="Invalid configuration for: " + reqTunable.getKey();
 			logger.error("{} {} {} {} {} {}", MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), reqTunable.getKey(), value, "SDNC",
-					MsoLogger.ErrorCode.DataError.getValue(), "Invalid config");
+					ErrorCode.DataError.getValue(), "Invalid config");
 			throw new SDNCAdapterException(error);
 		}
 
@@ -82,7 +82,7 @@ public class MapTypedRequestTunablesData {
 		if ("".equals(reqTunable.getSdncUrl())) {
 			error=MISSING_CONFIGURATION_ERROR_MSG + urlPropKey;
 			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), urlPropKey, "SDNC",
-				MsoLogger.ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
+				ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 
 			throw new SDNCAdapterException(error);
 		}
@@ -100,7 +100,7 @@ public class MapTypedRequestTunablesData {
 		if ("".equals(reqTunable.getMyUrl())) {
 			error=MISSING_CONFIGURATION_ERROR_MSG + Constants.MY_URL_PROP;
 			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), Constants.MY_URL_PROP, "SDNC",
-				MsoLogger.ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
+				ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 		
 			throw new SDNCAdapterException(error);
 		}

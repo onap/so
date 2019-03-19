@@ -34,6 +34,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.onap.so.logger.HttpHeadersConstants.ONAP_REQUEST_ID;
+import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
+import static org.onap.so.logger.MdcConstants.CLIENT_ID;
+import static org.onap.so.logger.MdcConstants.ENDTIME;
+import static org.onap.so.logger.MdcConstants.INVOCATION_ID;
+import static org.onap.so.logger.MdcConstants.PARTNERNAME;
+import static org.onap.so.logger.MdcConstants.RESPONSECODE;
+import static org.onap.so.logger.MdcConstants.RESPONSEDESC;
+import static org.onap.so.logger.MdcConstants.SERVICE_NAME;
+import static org.onap.so.logger.MdcConstants.STATUSCODE;
+import static org.onap.so.logger.HttpHeadersConstants.TRANSACTION_ID;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -59,8 +71,7 @@ import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
-import org.onap.so.logger.LogConstants;
-import org.onap.so.logger.MsoLogger;
+import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
@@ -117,11 +128,11 @@ public class ServiceInstancesTest extends BaseTest{
         // set headers
 		headers = new HttpHeaders();
         headers.set(ONAPLogConstants.Headers.PARTNER_NAME, "test_name");        
-		headers.set(MsoLogger.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
-        headers.set(MsoLogger.ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");	
+		headers.set(HttpHeadersConstants.TRANSACTION_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        headers.set(ONAP_REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
         headers.set(ONAPLogConstants.MDCs.REQUEST_ID, "32807a28-1a14-4b88-b7b3-2950918aa76d");
-        headers.set(MsoLogger.CLIENT_ID, "VID");
-        headers.set(MsoLogger.REQUESTOR_ID, "xxxxxx");        
+        headers.set(CLIENT_ID, "VID");
+        headers.set(REQUESTOR_ID, "xxxxxx");
 		try {  // generate one-time port number to avoid RANDOM port number later.
 			initialUrl = new URL(createURLWithPort(Constants.ORCHESTRATION_REQUESTS_PATH));
 			initialPort = initialUrl.getPort();
@@ -263,22 +274,22 @@ public class ServiceInstancesTest extends BaseTest{
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));               
-                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",mdc.get(MsoLogger.SERVICE_NAME));
-                assertEquals("INPROGRESS",mdc.get(MsoLogger.STATUSCODE));
+                assertNotNull(mdc.get(INVOCATION_ID));
+                assertEquals("UNKNOWN",mdc.get(PARTNERNAME));
+                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",mdc.get(SERVICE_NAME));
+                assertEquals("INPROGRESS",mdc.get(STATUSCODE));
             }else if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.jersey.JaxRsFilterLogging") &&
             		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("EXIT")){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP));
-                assertNotNull(mdc.get(MsoLogger.ENDTIME));
+                assertNotNull(mdc.get(ENDTIME));
                 assertNotNull(mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));
-                assertNotNull(mdc.get(MsoLogger.INVOCATION_ID));
-                assertEquals("202",mdc.get(MsoLogger.RESPONSECODE));
-                assertEquals("UNKNOWN",mdc.get(MsoLogger.PARTNERNAME));
-                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",mdc.get(MsoLogger.SERVICE_NAME));
-                assertEquals("COMPLETE",mdc.get(MsoLogger.STATUSCODE));
-                assertNotNull(mdc.get(MsoLogger.RESPONSEDESC));
+                assertNotNull(mdc.get(INVOCATION_ID));
+                assertEquals("202",mdc.get(RESPONSECODE));
+                assertEquals("UNKNOWN",mdc.get(PARTNERNAME));
+                assertEquals("onap/so/infra/serviceInstantiation/v5/serviceInstances",mdc.get(SERVICE_NAME));
+                assertEquals("COMPLETE",mdc.get(STATUSCODE));
+                assertNotNull(mdc.get(RESPONSEDESC));
                 assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
                 assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
                 assertEquals("5.0.0", response.getHeaders().get("X-LatestVersion").get(0));
@@ -2387,14 +2398,14 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
         ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
         assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
-        assertEquals(response.getHeaders().get(MsoLogger.TRANSACTION_ID).get(0), "32807a28-1a14-4b88-b7b3-2950918aa76d");
+        assertEquals(response.getHeaders().get(TRANSACTION_ID).get(0), "32807a28-1a14-4b88-b7b3-2950918aa76d");
         
         for(ILoggingEvent logEvent : TestAppender.events){
             if(logEvent.getLoggerName().equals("org.onap.so.logging.jaxrs.filter.JaxRsFilterLogging") &&
             		logEvent.getMarker() != null && logEvent.getMarker().getName().equals("ENTRY")){
                 Map<String,String> mdc = logEvent.getMDCPropertyMap();
                 assertEquals("32807a28-1a14-4b88-b7b3-2950918aa76d", mdc.get(ONAPLogConstants.MDCs.REQUEST_ID));             
-                assertEquals("VID",mdc.get(MsoLogger.PARTNERNAME));
+                assertEquals("VID",mdc.get(PARTNERNAME));
             }
         }
     }
@@ -2451,7 +2462,7 @@ public class ServiceInstancesTest extends BaseTest{
     public void deleteInstanceGroupNoPartnerNameHeader() throws IOException{
     	HttpHeaders noPartnerHeaders = new HttpHeaders();
     	noPartnerHeaders.set(ONAPLogConstants.Headers.REQUEST_ID, "eca3a1b1-43ab-457e-ab1c-367263d148b4");
-    	noPartnerHeaders.set(MsoLogger.REQUESTOR_ID, "xxxxxx");
+    	noPartnerHeaders.set(REQUESTOR_ID, "xxxxxx");
         uri = servInstanceuri + "/v7/instanceGroups/e05864f0-ab35-47d0-8be4-56fd9619ba3c";
         ResponseEntity<String> response = sendRequest(null, uri, HttpMethod.DELETE, noPartnerHeaders);
         //then		

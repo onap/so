@@ -23,6 +23,7 @@
 package org.onap.so.bpmn.common.scripts
 
 import org.onap.so.client.HttpClientFactory
+import org.onap.so.logger.ErrorCode
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -39,7 +40,6 @@ import org.onap.so.client.HttpClient
 import org.onap.so.client.aai.AAIVersion
 import org.onap.so.client.aai.entities.uri.AAIUri
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.openpojo.rules.HasToStringRule
@@ -136,13 +136,13 @@ class AaiUtil {
 			}else{
 				logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 						"Call AAI Cloud Region is NOT Successful.", "BPMN",
-						MsoLogger.ErrorCode.UnknownError.getValue());
+						ErrorCode.UnknownError.getValue());
 				throw new BpmnError("MSOWorkflowException")
 			}
 		}catch(Exception e) {
 			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					"Exception occured while getting the Cloud Reqion.", "BPMN",
-					MsoLogger.ErrorCode.UnknownError.getValue(), e.getMessage());
+					ErrorCode.UnknownError.getValue(), e.getMessage());
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 		}
 		return regionId

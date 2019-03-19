@@ -21,6 +21,8 @@
  */
 package org.onap.so.bpmn.infrastructure.scripts
 
+import org.onap.so.logger.ErrorCode
+
 import static org.apache.commons.lang3.StringUtils.*;
 
 import org.camunda.bpm.engine.delegate.BpmnError
@@ -32,7 +34,6 @@ import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.web.util.UriUtils;
@@ -139,7 +140,7 @@ public class DoScaleE2EServiceInstance extends AbstractServiceTaskProcessor {
         }catch(Exception e){
             logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception Occured Processing preInitResourcesOperStatus.", "BPMN",
-                    MsoLogger.ErrorCode.UnknownError.getValue(), e);
+                    ErrorCode.UnknownError.getValue(), e);
             execution.setVariable("CVFMI_ErrorResponse", "Error Occurred during preInitResourcesOperStatus Method:\n" + e.getMessage())
         }
         logger.trace("COMPLETED preInitResourcesOperStatus Process ")

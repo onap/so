@@ -26,8 +26,8 @@ package org.onap.so.adapters.network;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +49,7 @@ public class ContrailPolicyRef {
 		catch (Exception e)
 		{
         logger.error("{} {} Error creating JsonString for Contrail Policy Ref: ", MessageEnum.RA_MARSHING_ERROR,
-            MsoLogger.ErrorCode.SchemaError.getValue(), e);
+            ErrorCode.SchemaError.getValue(), e);
 		}
 		
 		return node;
@@ -66,7 +66,7 @@ public class ContrailPolicyRef {
 		catch (Exception e)
 		{
         logger.error("{} {} Error creating JsonString for Contrail Policy Ref: ", MessageEnum.RA_MARSHING_ERROR,
-            MsoLogger.ErrorCode.SchemaError.getValue(), e);
+            ErrorCode.SchemaError.getValue(), e);
 		}
 		
 		return jsonString;

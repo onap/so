@@ -32,7 +32,6 @@ import javax.ws.rs.ext.Provider;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.aai.entities.AAIError;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.MDC;
 
 import com.fasterxml.jackson.databind.ObjectMapper;

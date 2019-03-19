@@ -85,8 +85,8 @@ import org.onap.so.config.beans.PoConfig;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
@@ -271,7 +271,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             	if (!backout)
             	{
                   logger.warn("{} Deployment installation failed, backout deletion suppressed {} {}",
-                      MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+                      MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(),
                       "Exception in Deployment Installation, backout suppressed");
               }
             	else {
@@ -293,14 +293,14 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	            		// Didn't uninstall successfully.  Log this error
                         logger.error("{} Create Deployment: Cloudify error rolling back deployment install: {} {}",
                             MessageEnum.RA_CREATE_STACK_ERR, installWorkflow.getError(),
-                            MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+                            ErrorCode.BusinessProcesssError.getValue());
                     }
     	            }
     	            catch (Exception e) {
     	            	// Catch-all for backout errors trying to uninstall/delete
     	            	// Log this error, and return the original exception
                       logger.error("{} Create Stack: Nested exception rolling back deployment install: {}",
-                          MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                          MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(), e);
                   }
             	}
 
@@ -316,7 +316,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         	if (!backout)
         	{
               logger.warn("{} Deployment installation failed, backout deletion suppressed {}",
-                  MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+                  MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue());
           }
         	else {
 	        	// Poll on delete if we rollback - use same values for now
@@ -336,7 +336,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 	            	// Catch-all for backout errors trying to uninstall/delete
 	            	// Log this error, and return the original exception
                   logger.error("{} Create Stack: Nested exception rolling back deployment install: {} ",
-                      MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(), e);
+                      MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(), e);
               }
         	}
 
@@ -366,7 +366,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	catch (CloudifyConnectException ce) {
     		// Couldn't connect to Cloudify
           logger.error("{} QueryDeploymentOutputs: Cloudify connection failure: {} ",
-              MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(), ce);
+              MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(), ce);
           throw new MsoIOException (ce.getMessage(), ce);
     	}
     	catch (CloudifyResponseException re) {
@@ -455,36 +455,36 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 				// Workflow failed.  Log it and return the execution object (don't throw exception here)
           logger.error("{} Cloudify workflow failure: {} {} Execute Workflow: Failed: {}",
               MessageEnum.RA_CREATE_STACK_ERR, execution.getError(),
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), execution.getError());
+              ErrorCode.BusinessProcesssError.getValue(), execution.getError());
           return execution;
 			}
 			else if (status.equals(CANCELLED)){
 				// Workflow was cancelled, leaving the deployment in an indeterminate state.  Log it and return the execution object (don't throw exception here)
           logger.error("{} Cloudify workflow cancelled. Deployment is in an indeterminate state {} {} {}",
-              MessageEnum.RA_CREATE_STACK_ERR, MsoLogger.ErrorCode.BusinessProcesssError.getValue(),
+              MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(),
               "Execute Workflow cancelled: ", workflowId);
           return execution;
 			}
 			else {
 				// Can only get here after a timeout
           logger.error("{} Cloudify workflow timeout {} Execute Workflow: Timed Out", MessageEnum.RA_CREATE_STACK_ERR,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue());
+              ErrorCode.BusinessProcesssError.getValue());
       }
 		}
 		catch (CloudifyConnectException ce) {
         logger.error("{} {} Execute Workflow ({} {}): Cloudify connection failure {} ", MessageEnum.RA_CREATE_STACK_ERR,
-            MsoLogger.ErrorCode.BusinessProcesssError.getValue(), command, ce);
+            ErrorCode.BusinessProcesssError.getValue(), command, ce);
         savedException = ce;
 		}
 		catch (CloudifyResponseException re) {
         logger.error("{} {} Execute Workflow ({}): Cloudify response error {} ", MessageEnum.RA_CREATE_STACK_ERR,
-            MsoLogger.ErrorCode.BusinessProcesssError.getValue(), command, re.getMessage(), re);
+            ErrorCode.BusinessProcesssError.getValue(), command, re.getMessage(), re);
         savedException = re;
 		}
 		catch (RuntimeException e) {
 			// Catch-all
         logger.error("{} {} Execute Workflow ({}): Internal error {}", MessageEnum.RA_CREATE_STACK_ERR,
-            MsoLogger.ErrorCode.BusinessProcesssError.getValue(), command, e.getMessage(), e);
+            ErrorCode.BusinessProcesssError.getValue(), command, e.getMessage(), e);
         savedException = e;
 		}
 
@@ -612,7 +612,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	catch (CloudifyConnectException ce) {
     		// Couldn't connect to Cloudify
           logger.error("{} QueryDeployment: Cloudify connection failure: {} ", MessageEnum.RA_CREATE_STACK_ERR,
-              MsoLogger.ErrorCode.BusinessProcesssError.getValue(), ce);
+              ErrorCode.BusinessProcesssError.getValue(), ce);
           throw new MsoIOException (ce.getMessage(), ce);
     	}
     	catch (CloudifyResponseException re) {
@@ -1126,7 +1126,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         					}
         				} catch (NumberFormatException e1) {
                     logger.error("{} No retries. Exception in parsing retry code in config:{} {}",
-                        MessageEnum.RA_CONFIG_EXC, rCode, MsoLogger.ErrorCode.SchemaError.getValue());
+                        MessageEnum.RA_CONFIG_EXC, rCode, ErrorCode.SchemaError.getValue());
                     throw e;
         				}
         			}
@@ -1166,7 +1166,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
                 // Failed Cloudify calls return an error entity body.
                 CloudifyError error = re.getResponse ().getErrorEntity (CloudifyError.class);
                 logger.error("{} {} {} Exception - Cloudify Error on {}: {}", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    CLOUDIFY, MsoLogger.ErrorCode.DataError.getValue(), context, error.getErrorCode());
+                    CLOUDIFY, ErrorCode.DataError.getValue(), context, error.getErrorCode());
                 String fullError = error.getErrorCode() + ": " + error.getMessage();
                 logger.debug(fullError);
 				me = new MsoCloudifyException (re.getStatus(),
@@ -1175,7 +1175,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             } catch (Exception e2) {
                 // Couldn't parse the body as a "CloudifyError". Report the original HTTP error.
                 logger.error("{} {} {} Exception - HTTP Error on {}: {}, {} ", MessageEnum.RA_CONNECTION_EXCEPTION,
-                    CLOUDIFY, MsoLogger.ErrorCode.DataError.getValue(), context, re.getStatus(), e.getMessage(), e2);
+                    CLOUDIFY, ErrorCode.DataError.getValue(), context, re.getStatus(), e.getMessage(), e2);
                 me = new MsoCloudifyException (re.getStatus (), re.getMessage (), "");
             }
 
@@ -1195,7 +1195,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
             // Generate an alarm for all connection errors.
 
             logger.error("{} {} {} Cloudify connection error on {}: ", MessageEnum.RA_CONNECTION_EXCEPTION, CLOUDIFY,
-                MsoLogger.ErrorCode.DataError.getValue(), context, e);
+                ErrorCode.DataError.getValue(), context, e);
         }
 
         return me;

@@ -46,8 +46,8 @@ import org.onap.so.cloud.authentication.ServiceEndpointNotFoundException;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.ServerType;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.NetworkInfo;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
@@ -119,7 +119,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			// Network already exists.  Throw an exception
         logger.error("{} Network {} on Cloud site {} for tenant {} already exists {}",
             MessageEnum.RA_NETWORK_ALREADY_EXIST, networkName, cloudSiteId, tenantId,
-            MsoLogger.ErrorCode.DataError.getValue());
+            ErrorCode.DataError.getValue());
         throw new MsoNetworkAlreadyExists (networkName, tenantId, cloudSiteId);
 		}
 
@@ -296,7 +296,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		if (network == null) {
 			// Network not found.  Throw an exception
         logger.error("{} Network {} on Cloud site {} for Tenant {} not found {}", MessageEnum.RA_NETWORK_NOT_FOUND,
-            networkId, cloudSiteId, tenantId, MsoLogger.ErrorCode.DataError.getValue());
+            networkId, cloudSiteId, tenantId, ErrorCode.DataError.getValue());
 			throw new MsoNetworkNotFound (networkId, tenantId, cloudSiteId);
 		}
 
@@ -483,7 +483,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 				return null;
 			} else {
           logger.error("{} {} Openstack Error, GET Network By ID ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,
-              MsoLogger.ErrorCode.DataError.getValue(), networkId, e);
+              ErrorCode.DataError.getValue(), networkId, e);
           throw e;
 			}
 		}
@@ -530,7 +530,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 				return null;
 			} else {
           logger.error("{} {} Openstack Error, GET Network By Name ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,
-              MsoLogger.ErrorCode.DataError.getValue(), networkName, e);
+              ErrorCode.DataError.getValue(), networkName, e);
           throw e;
 			}
 		}

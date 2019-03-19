@@ -26,7 +26,6 @@ import java.util.Optional;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
-import org.onap.so.logger.MsoLogger;
 import org.springframework.stereotype.Component;
 
 @Component

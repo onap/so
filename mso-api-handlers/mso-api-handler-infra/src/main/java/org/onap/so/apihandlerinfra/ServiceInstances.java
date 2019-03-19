@@ -66,9 +66,9 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.LogConstants;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
@@ -124,6 +124,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.onap.so.logger.HttpHeadersConstants.REQUESTOR_ID;
 
 @Component
 @Path("/onap/so/infra/serviceInstantiation")
@@ -703,8 +705,8 @@ public class ServiceInstances {
 		if(!headers.containsKey(ONAPLogConstants.Headers.PARTNER_NAME)){
 			throw new ValidationException(ONAPLogConstants.Headers.PARTNER_NAME + " header", true);
 		}
-		if(!headers.containsKey(MsoLogger.REQUESTOR_ID)){
-			throw new ValidationException(MsoLogger.REQUESTOR_ID + " header", true);
+		if(!headers.containsKey(REQUESTOR_ID)){
+			throw new ValidationException(REQUESTOR_ID + " header", true);
 		}
 	}
     
@@ -799,7 +801,7 @@ public class ServiceInstances {
 					}
 
                 String errorMessage = "VnfType " + vnfType + " and VF Module Model Name " + modelInfo.getModelName() + serviceVersionText + " not found in MSO Catalog DB";
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
                 VfModuleNotFoundException vfModuleException = new VfModuleNotFoundException.Builder(errorMessage, HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
                 updateStatus(currentActiveReq, Status.FAILED, vfModuleException.getMessage());
 
@@ -840,7 +842,7 @@ public class ServiceInstances {
         try{
             infraActiveRequestsClient.save(currentActiveReq);
         }catch(Exception e){
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
                     .errorInfo(errorLoggerInfo).build();
         }
@@ -874,7 +876,7 @@ public class ServiceInstances {
 						.setRequestUri(requestUri)
 						.setInstanceGroupId(instanceGroupId).build();
 		} catch (IOException e) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 			throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
 	                  .errorInfo(errorLoggerInfo).build();
 		}
@@ -895,7 +897,7 @@ public class ServiceInstances {
 			validateHeaders(requestContext);
 		} catch (ValidationException e) {
 			logger.error("Exception occurred", e);
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                         .errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
@@ -927,7 +929,7 @@ public class ServiceInstances {
         try{
             infraActiveRequestsClient.save(currentActiveReq);
         }catch(Exception e){
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
                     .errorInfo(errorLoggerInfo).build();
         }
@@ -993,7 +995,7 @@ public class ServiceInstances {
 			response = requestClient.post(requestClientParameter);
 		} catch (Exception e) {
 			
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.AvailabilityError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             String url = requestClient != null ? requestClient.getUrl() : "";
             ClientConnectionException clientException = new ClientConnectionException.Builder(url, HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).cause(e).errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
@@ -1003,7 +1005,7 @@ public class ServiceInstances {
 
 		if (response == null) {
 			
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_COMMUNICATE_ERROR, ErrorCode.BusinessProcesssError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ClientConnectionException clientException = new ClientConnectionException.Builder(requestClient.getUrl(), HttpStatus.SC_BAD_GATEWAY, ErrorNumbers.SVC_NO_SERVER_RESOURCES).errorInfo(errorLoggerInfo).build();
 
             updateStatus(currentActiveReq, Status.FAILED, clientException.getMessage());
@@ -1018,7 +1020,7 @@ public class ServiceInstances {
             bpelStatus = respHandler.getStatus ();
         } catch (ApiException e) {
             logger.error("Exception occurred", e);
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ValidateException validateException = new ValidateException.Builder("Exception caught mapping Camunda JSON response to object", HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                         .errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
@@ -1043,7 +1045,7 @@ public class ServiceInstances {
 					}    
 				} catch (IOException e) {
 					logger.error("Exception occurred", e);
-					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+					ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 					ValidateException validateException = new ValidateException.Builder("Exception caught mapping Camunda JSON response to object", HttpStatus.SC_NOT_ACCEPTABLE, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
 			                    .errorInfo(errorLoggerInfo).build();
 					updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
@@ -1058,7 +1060,7 @@ public class ServiceInstances {
 		String camundaJSONResponseBody = respHandler.getResponseBody ();
 		if (camundaJSONResponseBody != null && !camundaJSONResponseBody.isEmpty ()) {
 			
-		    ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).errorSource(requestClient.getUrl()).build();
+		    ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError).errorSource(requestClient.getUrl()).build();
 		    BPMNFailureException bpmnException = new BPMNFailureException.Builder(String.valueOf(bpelStatus) + camundaJSONResponseBody, bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
 		            .errorInfo(errorLoggerInfo).build();
 
@@ -1067,7 +1069,7 @@ public class ServiceInstances {
 		    throw bpmnException;
 		} else {
 		
-		    ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.BusinessProcesssError).errorSource(requestClient.getUrl()).build();
+		    ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.BusinessProcesssError).errorSource(requestClient.getUrl()).build();
 
 
 		    BPMNFailureException servException = new BPMNFailureException.Builder(String.valueOf(bpelStatus), bpelStatus, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
@@ -1153,7 +1155,7 @@ public class ServiceInstances {
 		}
 		//List<String> variables = new ArrayList<String>();
 		//variables.add(dup.getRequestStatus());
-        ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_FOUND, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+        ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_FOUND, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
         DuplicateRequestException dupException = new DuplicateRequestException.Builder(requestScope,instance,dup.getRequestStatus(),dup.getRequestId(), HttpStatus.SC_CONFLICT, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)
@@ -1172,7 +1174,7 @@ public class ServiceInstances {
 				dup = infraActiveRequestsClient.checkInstanceNameDuplicate (instanceIdMap, instanceName, requestScope);
 			}
 		} catch (Exception e) {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             RequestDbFailureException requestDbFailureException = new RequestDbFailureException.Builder("check for duplicate instance", e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
                     .errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, requestDbFailureException.getMessage());
@@ -1190,7 +1192,7 @@ public class ServiceInstances {
     	try{
     		response = restTemplate.exchange(targetUrl, HttpMethod.GET, requestEntity, new ParameterizedTypeReference<List<HistoricProcessInstanceEntity>>(){});
     	}catch(HttpStatusCodeException e){
-    		ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+    		ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DUPLICATE_CHECK_EXC, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             ContactCamundaException contactCamundaException= new ContactCamundaException.Builder(requestId, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
                     .errorInfo(errorLoggerInfo).build();
             updateStatus(currentActiveReq, Status.FAILED, contactCamundaException.getMessage());
@@ -1232,7 +1234,7 @@ public class ServiceInstances {
 
         } catch (IOException e) {
 
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
             ValidateException validateException = new ValidateException.Builder("Error mapping request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                     .errorInfo(errorLoggerInfo).build();
@@ -1251,7 +1253,7 @@ public class ServiceInstances {
 			msoRequest.parse(sir, instanceIdMap, action, version, requestJSON, reqVersion, aLaCarte);
 		} catch (Exception e) {
 			logger.error("failed to parse request", e);
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 	        ValidateException validateException = new ValidateException.Builder("Error parsing request: " + e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
                  .errorInfo(errorLoggerInfo).build();
 
@@ -1276,7 +1278,7 @@ public class ServiceInstances {
 			try {
 			recipeLookupResult = getServiceURI(sir, action,alaCarteFlag);
 			} catch (IOException e) {
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
                 ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
@@ -1291,7 +1293,7 @@ public class ServiceInstances {
             try {
 			recipeLookupResult = getVnfOrVfModuleUri( sir, action);
             } catch (ValidationException e) {
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
                 ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
@@ -1306,7 +1308,7 @@ public class ServiceInstances {
 			recipeLookupResult = getNetworkUri( sir, action);
             } catch (ValidationException e) {
 
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
                 ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
@@ -1320,7 +1322,7 @@ public class ServiceInstances {
         }
 
         if (recipeLookupResult == null) {
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
             RecipeNotFoundException recipeNotFoundExceptionException = new RecipeNotFoundException.Builder("Recipe could not be retrieved from catalog DB.", HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR)
@@ -1852,7 +1854,7 @@ public class ServiceInstances {
 		if (StringUtils.isBlank(orchestrationUri) || StringUtils.isBlank(timeOut)) {
 			String error = StringUtils.isBlank(orchestrationUri) ? "ALaCarte Orchestration URI not found in properties" : "ALaCarte Recipe Timeout not found in properties";
 			
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ATTRIBUTE_NOT_FOUND, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
 
             ValidateException validateException = new ValidateException.Builder(error, HttpStatus.SC_NOT_FOUND, ErrorNumbers.SVC_GENERAL_SERVICE_ERROR)
@@ -1881,7 +1883,7 @@ public class ServiceInstances {
 		try{
 			infraActiveRequestsClient.save(currentActiveReq);
 		}catch(Exception e){
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
             throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
                     .errorInfo(errorLoggerInfo).build();
 		}
@@ -1906,7 +1908,7 @@ public class ServiceInstances {
 				.setALaCarte(aLaCarte)
 				.setRequestUri(requestUri).build();
 		} catch (IOException e) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 			throw new ValidateException.Builder("Unable to generate RequestClientParamter object" + e.getMessage(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
 	                    .errorInfo(errorLoggerInfo).build();
 		}
@@ -1922,7 +1924,7 @@ public class ServiceInstances {
     	if (UUIDChecker.isValidUUID(requestId)) {
     		return requestId;
     	} else {
-    		ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, MsoLogger.ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+    		ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_BPEL_RESPONSE_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 			ValidateException validateException = new ValidateException.Builder("Request Id " + requestId + " is not a valid UUID", HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_BAD_PARAMETER)
 	                    .errorInfo(errorLoggerInfo).build();
 			
@@ -1939,7 +1941,7 @@ public class ServiceInstances {
 			try{
 				infraActiveRequestsClient.save(aq);
 			}catch(Exception e){
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, MsoLogger.ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_DB_ACCESS_EXC, ErrorCode.DataError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 	            throw new RequestDbFailureException.Builder(SAVE_TO_DB, e.toString(), HttpStatus.SC_INTERNAL_SERVER_ERROR, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).cause(e)
 	                    .errorInfo(errorLoggerInfo).build();
 			}

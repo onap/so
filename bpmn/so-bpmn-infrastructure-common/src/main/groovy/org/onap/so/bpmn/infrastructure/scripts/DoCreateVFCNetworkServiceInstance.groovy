@@ -32,8 +32,8 @@ import org.onap.so.bpmn.common.scripts.AbstractServiceTaskProcessor
 import org.onap.so.bpmn.common.scripts.ExceptionUtil
 import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.client.HttpClient
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.onap.so.bpmn.core.UrnPropertiesReader
@@ -236,7 +236,7 @@ public class DoCreateVFCNetworkServiceInstance extends AbstractServiceTaskProces
         }catch(Exception e){
             logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
                     "Exception occured while executing AAI Put Call", "BPMN",
-                    MsoLogger.ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+                    ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
             throw new BpmnError("MSOWorkflowException")
         }
     }

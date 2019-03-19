@@ -34,8 +34,8 @@ import org.onap.so.apihandlerinfra.tenantisolation.process.CreateVnfOperationalE
 import org.onap.so.apihandlerinfra.tenantisolation.process.DeactivateVnfOperationalEnvironment;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Action;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.OperationalEnvironment;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +76,7 @@ public class TenantIsolationRunnable {
 				} else if(OperationalEnvironment.VNF.name().equalsIgnoreCase(operationalEnvType)) {
 					createVnfOpEnv.execute(requestId, cor);
 				} else {
-                    ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+                    ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
                     ValidateException validateException = new ValidateException.Builder("Invalid OperationalEnvironment Type specified for Create Action",
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
 											.build();
@@ -90,7 +90,7 @@ public class TenantIsolationRunnable {
 			} else if(Action.distributionStatus.equals(action)) {
 				activateVnfStatusOpEnv.execute(requestId, cor);
 			} else {
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.DataError).build();
+                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
                 ValidateException validateException = new ValidateException.Builder("Invalid Action specified: " + action,
                         HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
                 throw validateException;

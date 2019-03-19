@@ -33,8 +33,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -103,7 +103,7 @@ public class Utils {
 
 		} catch (Exception e) {
 			logger.error("{} {} {} {}", MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
-				MsoLogger.ErrorCode.BusinessProcesssError.getValue(), "Exception in genSdncReq", e);
+				ErrorCode.BusinessProcesssError.getValue(), "Exception in genSdncReq", e);
 		}
 		return null;
 	}
@@ -137,7 +137,7 @@ public class Utils {
 
 		} catch (Exception e) {
 			logger.error("{} {} {} {}", MessageEnum.RA_ERROR_CREATE_SDNC_REQUEST.toString(), "SDNC",
-				MsoLogger.ErrorCode.DataError.getValue(), "Exception in genSdncPutReq", e);
+				ErrorCode.DataError.getValue(), "Exception in genSdncPutReq", e);
 		}
 		return null;
 	}
@@ -172,7 +172,7 @@ public class Utils {
 
 		} catch (Exception e) {
 			logger.error("{} {} {} {}", MessageEnum.RA_ERROR_CREATE_SDNC_RESPONSE.toString(), "SDNC",
-				MsoLogger.ErrorCode.DataError.getValue(), "Exception in genMsoFailResp", e);
+				ErrorCode.DataError.getValue(), "Exception in genMsoFailResp", e);
 		}
 		return null;
 	}
@@ -198,7 +198,7 @@ public class Utils {
 				s = s.replaceAll("xmlns=\"\"", "");
 				return s;
 			} catch (Exception e) {
-				logger.error("{} {} {}", MessageEnum.RA_ERROR_CONVERT_XML2STR.toString(), MsoLogger.ErrorCode.DataError
+				logger.error("{} {} {}", MessageEnum.RA_ERROR_CONVERT_XML2STR.toString(), ErrorCode.DataError
 						.getValue(), "Exception - domToStr", e);
 			}
 		}

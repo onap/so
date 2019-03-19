@@ -37,8 +37,8 @@ import org.onap.so.client.aai.entities.Relationships
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.onap.so.constants.Defaults
+import org.onap.so.logger.ErrorCode
 import org.onap.so.logger.MessageEnum
-import org.onap.so.logger.MsoLogger
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -111,7 +111,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw bpmnError
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in preProcessRequest(): ' + e.getMessage())
 		}
 	}
@@ -163,7 +163,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw e
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in sendSynchResponse(): ' + e.getMessage())
 		}
 	}
@@ -214,7 +214,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw e
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVolumeGroup(): ' + e.getMessage())
 		}
 	}
@@ -283,7 +283,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw e
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepVnfAdapterRest(): ' + e.getMessage())
 		}
 	}
@@ -328,7 +328,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw e
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepDbInfraDbRequest(): ' + e.getMessage())
 		}
 	}
@@ -366,7 +366,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw e
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in prepCompletionHandlerRequest(): ' + e.getMessage())
 		}
 	}
@@ -416,7 +416,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			throw e
 		} catch (Exception e) {
             logger.error("{} {} Caught exception in {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                    MsoLogger.ErrorCode.UnknownError.getValue(), method, e)
+                    ErrorCode.UnknownError.getValue(), method, e)
 			exceptionUtil.buildWorkflowException(execution, 1002, 'Error in prepFalloutHandler(): ' + e.getMessage())
 		}
 	}
@@ -444,7 +444,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			'\' retrieved from AAI for Volume Group Id \'' + volumeGroupId + '\', AIC Cloud Region \'' + aicCloudRegion + '\''
 
 		logger.error("{} {} Error in UpdateVfModuleVol: {}\n ", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
-                MsoLogger.ErrorCode.UnknownError.getValue(), errorMessage)
+                ErrorCode.UnknownError.getValue(), errorMessage)
 
 		WorkflowException exception = new WorkflowException(processKey, 5000, errorMessage)
 		execution.setVariable("WorkflowException", exception)

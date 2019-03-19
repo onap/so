@@ -36,8 +36,8 @@ import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.client.exception.ExceptionBuilder;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 import org.slf4j.Logger;
@@ -136,7 +136,7 @@ public class ExecuteActivity implements JavaDelegate {
 	
 	protected void buildAndThrowException(DelegateExecution execution, String msg, Exception ex) {
 		logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), msg, "BPMN",
-			MsoLogger.ErrorCode.UnknownError.getValue(), msg, ex);
+			ErrorCode.UnknownError.getValue(), msg, ex);
 		execution.setVariable("ExecuteActivityErrorMessage", msg);
 		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, msg);
 	}

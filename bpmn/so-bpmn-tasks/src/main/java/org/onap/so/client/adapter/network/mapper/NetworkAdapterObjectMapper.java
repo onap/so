@@ -51,7 +51,6 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoNetwork;
 import org.onap.so.entity.MsoRequest;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.openstack.beans.NetworkRollback;
 import org.onap.so.openstack.beans.RouteTarget;
 import org.onap.so.openstack.beans.Subnet;

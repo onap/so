@@ -45,8 +45,8 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.DistributionStatus;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
+import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-import org.onap.so.logger.MsoLogger;
 import org.onap.so.requestsdb.RequestsDBHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -254,7 +254,7 @@ public class ActivateVnfStatusOperationalEnvironment {
             String dbErrorMessage = "Failure calling SDC: statusCode: " + statusCode +
                     "; messageId: " + jsonResponse.get("messageId") +
                     "; message: " + jsonResponse.get("message");
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError).build();
 			ValidateException validateException = new ValidateException.Builder(dbErrorMessage,
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
                     requestDb.updateInfraFailureCompletion(dbErrorMessage, this.origRequestId, operEnvironmentId);
@@ -303,7 +303,7 @@ public class ActivateVnfStatusOperationalEnvironment {
 		} else {	
 			if (status.equals("Failure") && queryServiceModelResponseList.size() == count) {
 				this.errorMessage = "Overall Activation process is a Failure. " + status;
-				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, MsoLogger.ErrorCode.BusinessProcesssError).build();
+				ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.BusinessProcesssError).build();
 				ValidateException validateException = new ValidateException.Builder(this.errorMessage,
 						HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_DETAILED_SERVICE_ERROR).errorInfo(errorLoggerInfo).build();
                 requestDb.updateInfraFailureCompletion(this.errorMessage, origRequestId, operationalEnvironmentId);
