@@ -29,13 +29,13 @@ import org.junit.Test;
 
 public class JsonUtilForPnfCorrelationIdTest {
 
-    private static final String JSON_EXAMPLE_WITH_PNF_CORRELATION_ID = "[{\"pnfCorrelationId\": \"corrTest1\","
-            + "\"key1\":\"value1\"},{\"pnfCorrelationId\": \"corrTest2\",\"key2\":\"value2\"}]";
+    private static final String JSON_EXAMPLE_WITH_PNF_CORRELATION_ID = "[{\"correlationId\": \"corrTest1\","
+            + "\"key1\":\"value1\"},{\"correlationId\": \"corrTest2\",\"key2\":\"value2\"}]";
 
-    private static final String JSON_WITH_ONE_PNF_CORRELATION_ID = "[{\"pnfCorrelationId\":\"corrTest3\"}]";
+    private static final String JSON_WITH_ONE_PNF_CORRELATION_ID = "[{\"correlationId\":\"corrTest3\"}]";
 
     private static final String JSON_WITH_TWO_PNF_CORRELATION_ID_AND_ESCAPED_CHARACTERS =
-            "[\"{\\\"pnfCorrelationId\\\":\\\"corrTest4\\\"}\", \"{\\\"pnfCorrelationId\\\":\\\"corrTest5\\\"}\"]";
+            "[\"{\\\"correlationId\\\":\\\"corrTest4\\\"}\", \"{\\\"correlationId\\\":\\\"corrTest5\\\"}\"]";
 
     private static final String JSON_WITH_NO_PNF_CORRELATION_ID = "[{\"key1\":\"value1\"}]";
 
