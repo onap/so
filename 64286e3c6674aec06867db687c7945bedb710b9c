@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "85610bb8_33cc678e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-19T12:40:03Z",
+      "side": 1,
+      "message": "If you simply add the same variable name to our domain object Generic VNF the model mapper should use pattern matching to automatically map it from catalogdb to the domain object with no code.",
+      "revId": "64286e3c6674aec06867db687c7945bedb710b9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
