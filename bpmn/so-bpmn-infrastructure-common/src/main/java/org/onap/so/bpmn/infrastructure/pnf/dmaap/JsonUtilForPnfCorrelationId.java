@@ -33,7 +33,7 @@ import java.util.Spliterator;
 
 public final class JsonUtilForPnfCorrelationId {
 
-    private static final String JSON_PNF_CORRELATION_ID_FIELD_NAME = "pnfCorrelationId";
+    private static final String JSON_PNF_CORRELATION_ID_FIELD_NAME = "correlationId";
 
     static List<String> parseJsonToGelAllPnfCorrelationId(String json) {
         JsonElement je = new JsonParser().parse(json);

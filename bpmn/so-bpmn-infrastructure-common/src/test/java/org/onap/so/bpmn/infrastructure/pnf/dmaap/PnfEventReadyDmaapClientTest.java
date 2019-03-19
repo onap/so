@@ -58,8 +58,8 @@ public class PnfEventReadyDmaapClientTest {
 
     private static final String PNF_CORRELATION_ID = "corrTestId";
     private static final String PNF_CORRELATION_ID_NOT_FOUND_IN_MAP = "otherCorrId";
-    private static final String JSON_EXAMPLE_WITH_PNF_CORRELATION_ID = "[{\"pnfCorrelationId\": \"%s\","
-            + "\"value\":\"value1\"},{\"pnfCorrelationId\": \"corr\",\"value\":\"value2\"}]";
+    private static final String JSON_EXAMPLE_WITH_PNF_CORRELATION_ID = "[{\"correlationId\": \"%s\","
+            + "\"value\":\"value1\"},{\"correlationId\": \"corr\",\"value\":\"value2\"}]";
 
     private static final String JSON_EXAMPLE_WITH_NO_PNF_CORRELATION_ID = "[{\"key1\":\"value1\"}]";
 
