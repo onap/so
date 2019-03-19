@@ -36,7 +36,9 @@ public class TaskList {
     protected String errorCode;   
     protected String errorMessage;    
     protected String buildingBlockName;   
-    protected String buildingBlockStep;    
+    protected String buildingBlockStep;
+    protected String description;
+    protected String timeout;
     protected List<String> validResponses;
 
     /**
@@ -301,6 +303,54 @@ public class TaskList {
      */
     public void setBuildingBlockStep(String value) {
         this.buildingBlockStep = value;
+    }
+    
+    /**
+     * Gets the value of the description property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the value of the description property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setDescription(String value) {
+        this.description = value;
+    }
+    
+    /**
+     * Gets the value of the timeout property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTimeout() {
+        return timeout;
+    }
+
+    /**
+     * Sets the value of the timeout property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTimeout(String value) {
+        this.timeout = value;
     }
 
     /**

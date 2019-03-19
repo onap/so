@@ -158,6 +158,8 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 			taskVariables.put("buildingBlockName", buildingBlockName)
 			taskVariables.put("buildingBlockStep", buildingBlockStep)
 			taskVariables.put("validResponses", validResponses)
+			taskVariables.put("description", "")
+			taskVariables.put("timeout", "")
 
 			TaskService taskService = execution.getProcessEngineServices().getTaskService()
 			Task manualTask = taskService.newTask(taskId)
@@ -212,6 +214,8 @@ public class ManualHandling extends AbstractServiceTaskProcessor {
 			taskVariables.put("buildingBlockName", buildingBlockName)
 			taskVariables.put("buildingBlockStep", buildingBlockStep)
 			taskVariables.put("validResponses", validResponses)
+			taskVariables.put("description", "")
+			taskVariables.put("timeout", "")
 			TaskService taskService = execution.getProcessEngineServices().getTaskService()
 
 
