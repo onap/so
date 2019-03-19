@@ -16,6 +16,24 @@
       "revId": "2f8d95cbd5872e29f623738313559e2d74103330",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8e7603aa_fb8ec5fd",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/PnfCustomizationRepository.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-03-19T14:02:24Z",
+      "side": 1,
+      "message": "I added this one purely for the testing purpose. I need one way to native query the join table of service and vnf/pnf customization and make sue it\u0027s populated with correct mappings. I can remove this operation and use service to retrieve pnf/vnf customization mapping instead in the integration test.",
+      "parentUuid": "57cdd837_4ac11331",
+      "revId": "2f8d95cbd5872e29f623738313559e2d74103330",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
