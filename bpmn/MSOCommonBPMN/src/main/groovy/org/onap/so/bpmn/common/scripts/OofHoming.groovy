@@ -195,7 +195,6 @@ class OofHoming extends AbstractServiceTaskProcessor {
         try {
             String response = execution.getVariable("asyncCallbackResponse")
             logger.debug( "OOF Async Callback Response is: " + response)
-            utils.logAudit("OOF Async Callback Response is: " + response)
 
             oofUtils.validateCallbackResponse(execution, response)
             String placements = jsonUtil.getJsonValue(response, "solutions.placementSolutions")
@@ -378,7 +377,6 @@ class OofHoming extends AbstractServiceTaskProcessor {
         }
         execution.setVariable("DHVCS_requestId", requestId)
         logger.debug( "***** STARTED Homing Subflow for request: " + requestId + " *****")
-        utils.logAudit("***** STARTED Homing Subflow for request: " + requestId + " *****")
     }
 
     /**

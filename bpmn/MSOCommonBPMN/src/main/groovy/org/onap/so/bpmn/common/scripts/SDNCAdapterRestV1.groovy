@@ -274,9 +274,6 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 
 		String prefix = execution.getVariable('prefix')
 		String callback = execution.getVariable('SDNCAResponse_MESSAGE')
-		String requestId = execution.getVariable("mso-request-id");
-		String serviceInstanceId = execution.getVariable("mso-service-instance-id")
-		utils.logContext(requestId, serviceInstanceId)
 		logger.debug("Incoming SDNC Rest Callback is: " + callback)
 
 		try {

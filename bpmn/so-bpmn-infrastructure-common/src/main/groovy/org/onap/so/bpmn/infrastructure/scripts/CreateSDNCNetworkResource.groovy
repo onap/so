@@ -441,7 +441,6 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             }
 
             String sndcTopologyCreateRequesAsString = utils.formatXml(sdncTopologyCreateRequest)
-            utils.logAudit(sndcTopologyCreateRequesAsString)
             execution.setVariable("sdncAdapterWorkflowRequest", sndcTopologyCreateRequesAsString)
             logger.debug("sdncAdapterWorkflowRequest - " + "\n" +  sndcTopologyCreateRequesAsString)
 

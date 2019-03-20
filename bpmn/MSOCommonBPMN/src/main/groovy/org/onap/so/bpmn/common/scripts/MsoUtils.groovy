@@ -308,22 +308,6 @@ class MsoUtils {
 		}
 	}
 
-	def logContext(requestId, serviceInstanceId){
-//		msoLogger.setLogContext(requestId, serviceInstanceId);
-	}
-	
-	def logMetrics(elapsedTime, logtxt){
-		
-//		msoLogger.recordMetricEvent (elapsedTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc,
-//			logtxt, "BPMN", MsoLogger.getServiceName(), null);
-	}
-
-	def logAudit(logtxt){
-		long startTime = System.currentTimeMillis();
-		
-//		msoLogger.recordAuditEvent (startTime, MsoLogger.StatusCode.COMPLETE, MsoLogger.ResponseCode.Suc, logtxt);
-	}
-	
 	// headers: header - name-value
 	def getHeaderNameValue(xmlInput, nameAttribute){
 		def rtn=null
