@@ -294,4 +294,8 @@ class SDNCAdapterRestV2 extends SDNCAdapterRestV1 {
 			exceptionUtil.buildWorkflowException(execution, 5300, msg)
 		}
 	}
+	
+	public Logger getLogger() {
+		return logger;
+	}
 }

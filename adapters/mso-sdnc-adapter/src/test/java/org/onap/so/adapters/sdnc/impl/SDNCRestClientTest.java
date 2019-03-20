@@ -26,13 +26,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.adapters.sdnc.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.assertTrue;
 
 
 public class SDNCRestClientTest extends BaseTest {
@@ -48,7 +47,7 @@ public class SDNCRestClientTest extends BaseTest {
         rt.setReqMethod("POST");
         rt.setSdncUrl("http://localhost:" + wireMockPort + "/sdnc");
 
-        stubFor(post(urlPathEqualTo("/sdnc"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/sdnc"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/xml").withBody("").withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 
         SDNCResponse response = sdncClient.getSdncResp("", rt);

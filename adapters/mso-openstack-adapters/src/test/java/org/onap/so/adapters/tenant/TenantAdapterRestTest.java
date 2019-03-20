@@ -90,19 +90,19 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 		request.setBackout(backout);
 		request.setFailIfExists(failIfExists);
 		
-		mockOpenStackResponseAccessAdmin(wireMockPort);
+		mockOpenStackResponseAccessAdmin(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetTenantByName_404(tenantName);
+		mockOpenStackGetTenantByName_404(wireMockServer, tenantName);
 		
-		mockOpenStackPostTenantWithBodyFile_200();
+		mockOpenStackPostTenantWithBodyFile_200(wireMockServer);
 		
-		mockOpenStackGetUser_200("m93945");
+		mockOpenStackGetUser_200(wireMockServer, "m93945");
 		
-		mockOpenStackGetRoles_200("OS-KSADM");
+		mockOpenStackGetRoles_200(wireMockServer, "OS-KSADM");
 		
-		mockOpenStackPutRolesAdmin_200("OS-KSADM");
+		mockOpenStackPutRolesAdmin_200(wireMockServer, "OS-KSADM");
 		
-		mockOpenStackPostMetadata_200();
+		mockOpenStackPostMetadata_200(wireMockServer);
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<CreateTenantRequest> entity = new HttpEntity<CreateTenantRequest>(request, headers);
@@ -141,13 +141,13 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 		request.setBackout(backout);
 		request.setFailIfExists(failIfExists);
 
-		mockOpenStackResponseAccessAdmin(wireMockPort);
+		mockOpenStackResponseAccessAdmin(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetTenantByName_200(tenantName);
+		mockOpenStackGetTenantByName_200(wireMockServer, tenantName);
 		
-		mockOpenStackPostTenant_200();
+		mockOpenStackPostTenant_200(wireMockServer);
 		
-		mockOpenStackGetMetadata_200();
+		mockOpenStackGetMetadata_200(wireMockServer);
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<CreateTenantRequest> entity = new HttpEntity<CreateTenantRequest>(request, headers);
@@ -180,11 +180,11 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 		request.setTenantId(tenantId);
 		request.setMsoRequest(msoReq);
 		
-		mockOpenStackResponseAccessAdmin(wireMockPort);
+		mockOpenStackResponseAccessAdmin(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetTenantById_200(tenantId);
+		mockOpenStackGetTenantById_200(wireMockServer, tenantId);
 		
-		mockOpenStackDeleteTenantById_200(tenantId);
+		mockOpenStackDeleteTenantById_200(wireMockServer, tenantId);
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<DeleteTenantRequest> entity = new HttpEntity<DeleteTenantRequest>(request, headers);
@@ -218,9 +218,9 @@ public class TenantAdapterRestTest extends BaseRestTestUtils {
 		request.setTenantId(tenantId);
 		request.setMsoRequest(msoReq);
 		
-		mockOpenStackResponseAccessAdmin(wireMockPort);
+		mockOpenStackResponseAccessAdmin(wireMockServer, wireMockPort);
 
-		mockOpenStackGetTenantById_404(tenantId);
+		mockOpenStackGetTenantById_404(wireMockServer, tenantId);
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<DeleteTenantRequest> entity = new HttpEntity<DeleteTenantRequest>(request, headers);

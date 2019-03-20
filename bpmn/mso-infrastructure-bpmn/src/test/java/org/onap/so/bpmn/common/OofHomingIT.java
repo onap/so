@@ -271,7 +271,7 @@ public class OofHomingIT extends BaseIntegrationTest {
     @Test    
     public void testHoming_success_2AR1Vnf() throws Exception {
 
-        mockOof();
+        mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -323,7 +323,7 @@ public class OofHomingIT extends BaseIntegrationTest {
     @Test  
     public void testHoming_success_2AR1Vnf2Net() throws Exception {
 
-        mockOof();
+        mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -398,7 +398,7 @@ public class OofHomingIT extends BaseIntegrationTest {
     public void testHoming_success_vnfResourceList() throws Exception {
 
         // Create a Service Decomposition
-        MockGetServiceResourcesCatalogDataByModelUuid("2f7f309d-c842-4644-a2e4-34167be5eeb4",
+        MockGetServiceResourcesCatalogDataByModelUuid(wireMockServer, "2f7f309d-c842-4644-a2e4-34167be5eeb4",
                 "/BuildingBlocks/oofCatalogResp.json");
         String busKey = UUID.randomUUID().toString();
         Map<String, Object> vars = new HashMap<>();
@@ -413,7 +413,7 @@ public class OofHomingIT extends BaseIntegrationTest {
 
         // Invoke Homing
 
-        mockOof();
+        mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -479,7 +479,7 @@ public class OofHomingIT extends BaseIntegrationTest {
     @Test   
     public void testHoming_success_existingLicense() throws Exception {
 
-        mockOof();
+        mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<String, Object>();
@@ -549,7 +549,7 @@ public class OofHomingIT extends BaseIntegrationTest {
 
     @Test  
     public void testHoming_error_badResponse() throws Exception {
-        mockOof_500();
+        mockOof_500(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -568,7 +568,7 @@ public class OofHomingIT extends BaseIntegrationTest {
 
     @Test   
     public void testHoming_error_oofNoSolution() throws Exception {
-        mockOof();
+        mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -590,7 +590,7 @@ public class OofHomingIT extends BaseIntegrationTest {
 
     @Test  
     public void testHoming_error_oofPolicyException() throws Exception {
-        mockOof();
+        mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();
@@ -613,7 +613,7 @@ public class OofHomingIT extends BaseIntegrationTest {
 
     @Test   
     public void testHoming_error_oofServiceException() throws Exception {
-        mockOof();
+        mockOof(wireMockServer);
 
         String businessKey = UUID.randomUUID().toString();
         Map<String, Object> variables = new HashMap<>();

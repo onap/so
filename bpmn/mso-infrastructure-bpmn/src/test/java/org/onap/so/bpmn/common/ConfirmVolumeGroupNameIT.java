@@ -46,7 +46,7 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
 	@Test	
 	public void sunnyDay() throws Exception {
 		logStart();
-		MockGetVolumeGroupById("MDTWNJ21", "VOLUME_GROUP_ID_1", "aai-volume-group-id-info.xml");		
+		MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "VOLUME_GROUP_ID_1", "aai-volume-group-id-info.xml");		
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -72,7 +72,7 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
 		logStart();
 		
 		// does not exist would return a 404 from AAI
-		MockGetVolumeGroupById("MDTWNJ21", "VOLUME_GROUP_ID_THAT_DOES_NOT_EXIST", "aai-volume-group-id-info.xml", 404);
+		MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "VOLUME_GROUP_ID_THAT_DOES_NOT_EXIST", "aai-volume-group-id-info.xml", 404);
 					
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -98,7 +98,7 @@ public class ConfirmVolumeGroupNameIT extends BaseIntegrationTest {
 	public void rainyDayNameDoesNotMatch() throws Exception {
 		logStart();
 		
-		MockGetVolumeGroupById("MDTWNJ21", "VOLUME_GROUP_ID_1", "aai-volume-group-id-info.xml", 200);
+		MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "VOLUME_GROUP_ID_1", "aai-volume-group-id-info.xml", 200);
 				
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");

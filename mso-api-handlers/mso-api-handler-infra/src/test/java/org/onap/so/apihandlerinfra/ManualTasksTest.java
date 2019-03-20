@@ -22,8 +22,8 @@ package org.onap.so.apihandlerinfra;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -75,7 +75,7 @@ public class ManualTasksTest extends BaseTest{
     @Test
     public void testCreateOpEnvObjectMapperError() throws IOException {
         TestAppender.events.clear();
-        stubFor(post(urlPathEqualTo("/sobpmnengine/task/55/complete"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/sobpmnengine/task/55/complete"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
 
         String taskId = "55";
@@ -212,7 +212,7 @@ public class ManualTasksTest extends BaseTest{
     }
     @Test
     public void completeTaskBpelResponseError() throws IOException {
-        stubFor(post(urlPathEqualTo("/sobpmnengine/task/55/complete"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/sobpmnengine/task/55/complete"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json").withFault(Fault.EMPTY_RESPONSE)));
 
         String taskId = "55";

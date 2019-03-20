@@ -22,7 +22,6 @@ package org.onap.so.client.aai.entities.uri;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -197,7 +196,7 @@ public class ServiceInstanceUriTest {
 		ServiceInstanceUri spy = spy(instance);
 		AAIResourcesClient client = aaiClient;
 		doReturn(client).when(spy).getResourcesClient();
-		stubFor(get(urlPathMatching("/aai/v[0-9]+/nodes/service-instances/service-instance/key3")) 
+		wireMockRule.stubFor(get(urlPathMatching("/aai/v[0-9]+/nodes/service-instances/service-instance/key3")) 
 				.willReturn(aResponse() 
 					.withStatus(404) 
 					.withHeader("Content-Type", "application/json") 

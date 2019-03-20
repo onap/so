@@ -39,6 +39,7 @@ import org.onap.so.adapters.requestsdb.application.TestAppender;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter;
 import org.onap.so.adapters.requestsdb.RequestStatusType;
+import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
 import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -57,10 +58,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class MSORequestDBImplTest {
+public class MSORequestDBImplTest extends RequestsAdapterBase {
 
 	@LocalServerPort
 	private int port;

@@ -55,10 +55,7 @@ import org.apache.commons.lang3.*
 @RunWith(MockitoJUnitRunner.class)
 class DoCreateNetworkInstanceRollbackTest  {
 	
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(28090);
-	
-		def utils = new MsoUtils()
+	def utils = new MsoUtils()
 		String Prefix="CRENWKIR_"
 
 

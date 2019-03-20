@@ -399,4 +399,8 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		}
 	}
+	
+	public Logger getLogger() {
+		return logger;
+	}
 }

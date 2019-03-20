@@ -23,7 +23,6 @@ package org.onap.so.apihandlerinfra;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
@@ -60,10 +59,10 @@ public class TasksHandlerTest extends BaseTest{
 	
 	@Test
 	public void getTasksTestByOriginalRequestId() throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException{
-		stubFor(post(urlPathEqualTo("/sobpmnengine/task"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/sobpmnengine/task"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("Camunda/GetTaskResponse.json").withStatus(HttpStatus.SC_OK)));
 				
-		stubFor(get(urlPathEqualTo("/sobpmnengine/task/b5fa707a-f55a-11e7-a796-005056856d52/variables"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/sobpmnengine/task/b5fa707a-f55a-11e7-a796-005056856d52/variables"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("Camunda/GetTaskVariablesResponse.json").withStatus(HttpStatus.SC_OK)));
 		
 		String requestId = "4f6fe9ac-800c-4540-a93e-10d179fa1b0a";

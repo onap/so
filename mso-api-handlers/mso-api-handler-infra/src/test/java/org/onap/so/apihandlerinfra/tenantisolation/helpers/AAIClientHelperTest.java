@@ -24,7 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -56,7 +55,7 @@ public class AAIClientHelperTest extends BaseTest{
 	
 	@Test
 	public void testGetAaiOperationalEnvironmentSuccess() throws Exception { 
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		AAIResultWrapper wrapper = clientHelper.getAaiOperationalEnvironment("EMOE-001");
@@ -66,7 +65,7 @@ public class AAIClientHelperTest extends BaseTest{
 	
 	@Test
 	public void testUpdateSuccess() { 
-		stubFor(post(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		OperationalEnvironment ecompEnv = new OperationalEnvironment();
@@ -86,7 +85,7 @@ public class AAIClientHelperTest extends BaseTest{
 	
 	@Test
 	public void testUpdateMapSuccess() { 
-		stubFor(post(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		Map<String, String> payload = new HashMap<String, String>();
@@ -107,7 +106,7 @@ public class AAIClientHelperTest extends BaseTest{
 	
 	@Test
 	public void testCreateSuccess() { 
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		OperationalEnvironment ecompEnv = new OperationalEnvironment();
@@ -128,7 +127,7 @@ public class AAIClientHelperTest extends BaseTest{
 	
 	@Test
 	public void testcreateRelationshipSuccess() { 
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		OperationalEnvironment ecompEnv = new OperationalEnvironment();

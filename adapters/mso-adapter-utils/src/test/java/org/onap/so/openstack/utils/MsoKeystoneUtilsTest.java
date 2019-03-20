@@ -39,15 +39,15 @@ public class MsoKeystoneUtilsTest extends BaseTest {
 
     @Before
     public void before() throws IOException {
-        StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
+        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
     }
 
     @Test
     public void createTenantTest() throws Exception {
-        StubOpenStack.mockOpenStackPostTenantWithBodyFile_200();
+        StubOpenStack.mockOpenStackPostTenantWithBodyFile_200(wireMockServer);
 
-        StubOpenStack.mockOpenStackGetUserById("john");
-        StubOpenStack.mockOpenStackGetRoles_200("OS-KSADM");
+        StubOpenStack.mockOpenStackGetUserById(wireMockServer, "john");
+        StubOpenStack.mockOpenStackGetRoles_200(wireMockServer, "OS-KSADM");
         String response = msoKeystoneUtils.createTenant("tenant", "MTN13", new HashMap<>(), true);
 
         Assert.assertEquals("tenantId", response);
@@ -55,10 +55,10 @@ public class MsoKeystoneUtilsTest extends BaseTest {
 
     @Test
     public void createTenantTest_FindUserByName() throws Exception {
-        StubOpenStack.mockOpenStackPostTenantWithBodyFile_200();
+        StubOpenStack.mockOpenStackPostTenantWithBodyFile_200(wireMockServer);
 
-        StubOpenStack.mockOpenStackGetUserByName("john");
-        StubOpenStack.mockOpenStackGetRoles_200("OS-KSADM");
+        StubOpenStack.mockOpenStackGetUserByName(wireMockServer, "john");
+        StubOpenStack.mockOpenStackGetRoles_200(wireMockServer, "OS-KSADM");
         String response = msoKeystoneUtils.createTenant("tenant", "MTN13", new HashMap<>(), true);
         Assert.assertEquals("tenantId", response);
 
@@ -67,15 +67,15 @@ public class MsoKeystoneUtilsTest extends BaseTest {
     @Test
     public void createTenantTest_Exception() throws Exception {
         expectedException.expect(MsoException.class);
-        StubOpenStack.mockOpenStackPostTenantWithBodyFile_200();
-        StubOpenStack.mockOpenStackGetUserByName_500("john");
-        StubOpenStack.mockOpenStackGetRoles_200("OS-KSADM");
+        StubOpenStack.mockOpenStackPostTenantWithBodyFile_200(wireMockServer);
+        StubOpenStack.mockOpenStackGetUserByName_500(wireMockServer, "john");
+        StubOpenStack.mockOpenStackGetRoles_200(wireMockServer, "OS-KSADM");
         msoKeystoneUtils.createTenant("tenant", "Test", new HashMap<>(), true);
     }
 
     @Test
     public void queryTenantTest() throws Exception {
-        StubOpenStack.mockOpenStackGetTenantById("tenantId");
+        StubOpenStack.mockOpenStackGetTenantById(wireMockServer, "tenantId");
 
         MsoTenant msoTenant = msoKeystoneUtils.queryTenant("tenantId", "MTN13");
 
@@ -84,7 +84,7 @@ public class MsoKeystoneUtilsTest extends BaseTest {
 
     @Test
     public void queryTenantByNameTest() throws Exception {
-        StubOpenStack.mockOpenStackGetTenantByName("tenant");
+        StubOpenStack.mockOpenStackGetTenantByName(wireMockServer, "tenant");
 
         MsoTenant msoTenant = msoKeystoneUtils.queryTenantByName("tenant", "MTN13");
 
@@ -93,8 +93,8 @@ public class MsoKeystoneUtilsTest extends BaseTest {
 
     @Test
     public void deleteTenantTest() throws Exception {
-        StubOpenStack.mockOpenStackGetTenantById("tenantId");
-        StubOpenStack.mockOpenStackDeleteTenantById_200("tenantId");
+        StubOpenStack.mockOpenStackGetTenantById(wireMockServer, "tenantId");
+        StubOpenStack.mockOpenStackDeleteTenantById_200(wireMockServer, "tenantId");
         boolean result = msoKeystoneUtils.deleteTenant("tenantId", "MTN13");
 
         Assert.assertTrue(result);
@@ -102,8 +102,8 @@ public class MsoKeystoneUtilsTest extends BaseTest {
 
     @Test
     public void deleteTenantByNameTest() throws Exception {
-        StubOpenStack.mockOpenStackGetTenantByName("tenant");
-        StubOpenStack.mockOpenStackDeleteTenantById_200("tenantId");
+        StubOpenStack.mockOpenStackGetTenantByName(wireMockServer, "tenant");
+        StubOpenStack.mockOpenStackDeleteTenantById_200(wireMockServer, "tenantId");
         boolean result = msoKeystoneUtils.deleteTenantByName("tenant", "MTN13");
 
         Assert.assertTrue(result);

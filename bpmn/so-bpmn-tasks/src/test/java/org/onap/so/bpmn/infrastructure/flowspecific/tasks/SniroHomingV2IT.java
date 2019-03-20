@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,6 +40,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.onap.so.BaseIntegrationTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.AllottedResource;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -53,7 +53,7 @@ import org.onap.so.bpmn.servicedecomposition.homingobjects.Candidate;
 import org.onap.so.bpmn.servicedecomposition.homingobjects.CandidateType;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
-import org.onap.so.BaseIntegrationTest;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -117,7 +117,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 	public void testCallSniro_success_1VpnLink() throws BadResponseException, IOException{
     	beforeVpnBondingLink("1");
 
-        stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+        wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(mockResponse)));
@@ -138,7 +138,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
     	beforeVpnBondingLink("2");
     	beforeVpnBondingLink("3");
 
-        stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+        wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(mockResponse)));
@@ -157,7 +157,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 	public void testCallSniro_success_3Allotteds() throws BadResponseException, JsonProcessingException{
 		beforeAllottedResource();
 
-        stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+        wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(mockResponse)));
@@ -176,7 +176,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 	public void testCallSniro_success_1Vnf() throws JsonProcessingException, BadResponseException{
 		beforeVnf();
 
-        stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+        wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(mockResponse)));
@@ -193,7 +193,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 		beforeAllottedResource();
 		beforeVnf();
 
-        stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+        wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody(mockResponse)));
@@ -482,7 +482,7 @@ public class SniroHomingV2IT extends BaseIntegrationTest{
 		beforeAllottedResource();
 
 		mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"\", \"requestStatus\": \"failed\"}";
-		stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+		wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
 				.willReturn(aResponse().withStatus(200)
 						.withHeader("Content-Type", "application/json")
 						.withBody(mockResponse)));

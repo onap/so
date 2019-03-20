@@ -38,7 +38,7 @@ import org.onap.so.BaseIntegrationTest;
 public class CompleteMsoProcessIT extends BaseIntegrationTest {
 	
 	private void executeFlow(String inputRequestFile) throws InterruptedException {
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("CompleteMsoProcessRequest",inputRequestFile);
 		variables.put("mso-request-id", UUID.randomUUID().toString());

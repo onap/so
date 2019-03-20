@@ -24,19 +24,17 @@ package org.onap.so.openstack.utils;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertNotNull;
 
-import com.woorea.openstack.heat.Heat;
-import com.woorea.openstack.heat.model.CreateStackParam;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,6 +56,9 @@ import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoIOException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.woorea.openstack.heat.Heat;
+import com.woorea.openstack.heat.model.CreateStackParam;
 
 public class MsoHeatUtilsTest extends BaseTest{
 
@@ -94,10 +95,10 @@ public class MsoHeatUtilsTest extends BaseTest{
 		Map<String, Object> inputs = new HashMap<>();
 		boolean rollbackOnFailure = true;
 
-		StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
-		StubOpenStack.mockOpenStackPostStack_200("OpenstackResponse_Stack_Created.json");
+		StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
 		
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceName/stackId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceName/stackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_StackId.json")
 						.withStatus(HttpStatus.SC_OK)));
@@ -123,10 +124,10 @@ public class MsoHeatUtilsTest extends BaseTest{
 		cloudInfo.setTenantId("tenantId");
 		String instanceId = "instanceId";
 
-		StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
-		StubOpenStack.mockOpenStackPostStack_200("OpenstackResponse_Stack_Created.json");
+		StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
 
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_StackId.json")
 						.withStatus(HttpStatus.SC_OK)));
@@ -152,10 +153,10 @@ public class MsoHeatUtilsTest extends BaseTest{
 
 		int timeoutInMinutes = 1;
 
-		StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId")).willReturn(aResponse().withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
-		StubOpenStack.mockOpenStackDelete("name/da886914-efb2-4917-b335-c8381528d90b");
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/name/da886914-efb2-4917-b335-c8381528d90b")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_DeleteComplete.json").withStatus(HttpStatus.SC_OK)));
+		StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId")).willReturn(aResponse().withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
+		StubOpenStack.mockOpenStackDelete(wireMockServer, "name/da886914-efb2-4917-b335-c8381528d90b");
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/name/da886914-efb2-4917-b335-c8381528d90b")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_DeleteComplete.json").withStatus(HttpStatus.SC_OK)));
 		
 		VduInstance actual = heatUtils.deleteVdu(cloudInfo, instanceId, timeoutInMinutes);
 		
@@ -195,7 +196,7 @@ public class MsoHeatUtilsTest extends BaseTest{
     @Test
     public final void getHeatClientSuccessTest() throws MsoException, IOException {
         CloudSite cloudSite = getCloudSite(getCloudIdentity());
-        StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
+        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         Heat heatClient = heatUtils.getHeatClient(cloudSite, "TEST-tenant");
         assertNotNull(heatClient);
     }
@@ -210,7 +211,7 @@ public class MsoHeatUtilsTest extends BaseTest{
     @Test(expected = MsoAdapterException.class)
     public final void getHeatClientOpenStackResponseException401Test() throws MsoException, IOException {
         CloudSite cloudSite = getCloudSite(getCloudIdentity());
-        StubOpenStack.mockOpenStackResponseUnauthorized(wireMockPort);
+        StubOpenStack.mockOpenStackResponseUnauthorized(wireMockServer, wireMockPort);
         heatUtils.getHeatClient(cloudSite, "TEST-tenant");
     }
 
@@ -226,9 +227,9 @@ public class MsoHeatUtilsTest extends BaseTest{
     @Test
     public final void createStackSuccessTest() throws MsoException, IOException {
         CloudSite cloudSite = getCloudSite(getCloudIdentity());
-        StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
-        StubOpenStack.mockOpenStackPostStack_200("OpenstackResponse_Stack_Created.json");
-        StubOpenStack.mockOpenStackGet("TEST-stack/stackId");
+        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
+        StubOpenStack.mockOpenStackGet(wireMockServer, "TEST-stack/stackId");
         StackInfo stackInfo = heatUtils.createStack(cloudSite.getId(), "CloudOwner", "tenantId", "TEST-stack", null,
             "TEST-heat", new HashMap<>(), false, 1, "TEST-env",
             new HashMap<>(), new HashMap<>(), false);

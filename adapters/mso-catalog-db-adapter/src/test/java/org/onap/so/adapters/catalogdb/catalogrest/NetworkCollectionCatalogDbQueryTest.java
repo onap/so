@@ -35,6 +35,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.catalogdb.CatalogDBApplication;
+import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
@@ -50,10 +51,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class NetworkCollectionCatalogDbQueryTest {
+public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(NetworkCollectionCatalogDbQueryTest.class);
 	private static final String NETWORKCOLLECTION = "NetworkCollection";
