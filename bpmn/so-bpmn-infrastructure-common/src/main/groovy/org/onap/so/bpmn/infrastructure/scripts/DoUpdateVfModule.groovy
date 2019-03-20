@@ -143,6 +143,12 @@ public class DoUpdateVfModule extends VfModuleBase {
 				execution.setVariable("DOUPVfMod_aicCloudRegion", cloudSiteId)
 
 				logger.debug("cloudSiteId: " + cloudSiteId)
+
+				//cloudOwner
+				def cloudOwner = execution.getVariable("cloudOwner")
+				execution.setVariable("DOUPVfMod_cloudOwner", cloudOwner)
+				logger.debug("cloudOwner: " + cloudOwner)
+
 				//vnfType
 				def vnfType = execution.getVariable("vnfType")
 				execution.setVariable("DOUPVfMod_vnfType", vnfType)
@@ -304,6 +310,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 				execution.setVariable('DOUPVfMod_modelCustomizationUuid', getNodeTextForce(vnfInputs, 'model-customization-id'))
 				execution.setVariable('DOUPVfMod_serviceId', getRequiredNodeText(execution, vnfInputs, 'service-id'))
 				execution.setVariable('DOUPVfMod_aicCloudRegion', getRequiredNodeText(execution, vnfInputs, 'aic-cloud-region'))
+				execution.setVariable('DOUPVfMod_cloudOwner', getRequiredNodeText(execution, vnfInputs, 'cloud-owner'))
 				execution.setVariable('DOUPVfMod_tenantId', getRequiredNodeText(execution, vnfInputs, 'tenant-id'))
 				//isBaseVfModule
 				def isBaseVfModule = "false"
@@ -640,6 +647,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 				heatStackId = vfModule.getHeatStackId()
 			}			
 			def cloudId = execution.getVariable('DOUPVfMod_aicCloudRegion')
+			def cloudOwner = execution.getVariable('DOUPVfMod_cloudOwner')
 			def vnfType = execution.getVariable('DOUPVfMod_vnfType')
 			def vnfName = execution.getVariable('DOUPVfMod_vnfName')
 			def vfModuleModelName = execution.getVariable('DOUPVfMod_vfModuleModelName')
@@ -672,6 +680,7 @@ public class DoUpdateVfModule extends VfModuleBase {
 			String vnfAdapterRestRequest = """
 				<updateVfModuleRequest>
 					<cloudSiteId>${MsoUtils.xmlEscape(cloudId)}</cloudSiteId>
+					<cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 					<tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 					<vnfId>${MsoUtils.xmlEscape(vnfId)}</vnfId>
 					<vfModuleId>${MsoUtils.xmlEscape(vfModuleId)}</vfModuleId>

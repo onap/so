@@ -85,6 +85,7 @@ public class VnfAdapterRestV1Test {
       <volumeGroupId>8a07b246-155e-4b08-b56e-76e98a3c2d66</volumeGroupId>
       <volumeGroupStackId>phmaz401me6-vpevre-VOLUMEGROUP/dbd560b6-b03f-4a17-92e7-8942459a60c1</volumeGroupStackId>
       <cloudSiteId>mtrnj1b</cloudSiteId>
+      <cloudOwnerId>CloudOwner</cloudOwnerId>
       <tenantId>cfb5e0a790374c9a98a1c0d2044206a7</tenantId>
       <volumeGroupCreated>true</volumeGroupCreated>
       <msoRequest>

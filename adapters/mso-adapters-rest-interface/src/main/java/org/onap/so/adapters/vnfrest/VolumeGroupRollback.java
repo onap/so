@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -34,6 +34,7 @@ public class VolumeGroupRollback {
 //	“volumeGroupId”: “<A&AI_ VOLUME_GROUP_ID>”,
 //	“volumeGroupStackId”: “<VOLUME_GROUP _STACK_ID>”,
 //	 “tenantId”: “<TENANT_ID>”,
+//  "cloudOwnerId"" "<CLOUD_OWNER>",
 //	“cloudSiteId”: “<CLOUD_CLLI>”,
 //	“volumeGroupCreated”: TRUE|FALSE,
 //	“msoRequest”: {
@@ -45,6 +46,7 @@ public class VolumeGroupRollback {
 	private String volumeGroupId;
 	private String volumeGroupStackId;
 	private String tenantId;
+	private String cloudOwnerId;
 	private String cloudSiteId;
 	private boolean volumeGroupCreated = false;
 	private MsoRequest msoRequest;
@@ -58,6 +60,7 @@ public class VolumeGroupRollback {
 		this.volumeGroupId      = vrb.getVolumeGroupId();
 		this.volumeGroupStackId = volumeGroupStackId;
 		this.tenantId           = vrb.getTenantId();
+		this.cloudOwnerId       = vrb.getCloudOwnerId();
 		this.cloudSiteId        = vrb.getCloudSiteId();
 		this.volumeGroupCreated = vrb.isVolumeGroupCreated();
 		this.msoRequest         = vrb.getMsoRequest();
@@ -69,6 +72,7 @@ public class VolumeGroupRollback {
 			String volumeGroupStackId,
 			boolean volumeGroupCreated,
 			String tenantId,
+			String cloudOwnerId,
 			String cloudSiteId,
 			MsoRequest msoRequest,
 			String messageId)
@@ -78,6 +82,7 @@ public class VolumeGroupRollback {
 		this.volumeGroupStackId = volumeGroupStackId;
 		this.volumeGroupCreated = volumeGroupCreated;
 		this.tenantId = tenantId;
+		this.cloudOwnerId = cloudOwnerId;
 		this.cloudSiteId = cloudSiteId;
 		this.msoRequest = msoRequest;
 		this.messageId = messageId;
@@ -107,7 +112,12 @@ public class VolumeGroupRollback {
 	public void setCloudSiteId(String cloudSiteId) {
 		this.cloudSiteId = cloudSiteId;
 	}
-	public boolean isVolumeGroupCreated() {
+	public String getCloudOwnerId() {
+	    return cloudOwnerId;
+	}
+	public void setCloudOwnerId(String cloudOwnerId) {
+	    this.cloudOwnerId = cloudOwnerId;
+	}public boolean isVolumeGroupCreated() {
 		return volumeGroupCreated;
 	}
 	public void setVolumeGroupCreated(boolean volumeGroupCreated) {

@@ -100,6 +100,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			execution.setVariable('UPDVfModVol_vnfType', getRequiredNodeText(execution, volumeInputs, 'vnf-type'))
 			execution.setVariable('UPDVfModVol_serviceId', getRequiredNodeText(execution, volumeInputs, 'service-id'))
 			execution.setVariable('UPDVfModVol_aicCloudRegion', getRequiredNodeText(execution, volumeInputs, 'aic-cloud-region'))
+			execution.setVariable('UPDVfModVol_cloudOwner', getRequiredNodeText(execution, volumeInputs, 'cloud-owner'))
 			execution.setVariable('UPDVfModVol_tenantId', getRequiredNodeText(execution, volumeInputs, 'tenant-id'))
 
 			def volumeParams = utils.getNodeXml(request, 'volume-params')
@@ -255,6 +256,7 @@ class UpdateVfModuleVolume extends VfModuleBase {
 			String vnfAdapterRestRequest = """
 				<updateVolumeGroupRequest>
 					<cloudSiteId>${MsoUtils.xmlEscape(aicCloudRegion)}</cloudSiteId>
+					<cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 					<tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 					<volumeGroupId>${MsoUtils.xmlEscape(volumeGroupId)}</volumeGroupId>
 					<volumeGroupStackId>${MsoUtils.xmlEscape(volumeGroupHeatStackId)}</volumeGroupStackId>

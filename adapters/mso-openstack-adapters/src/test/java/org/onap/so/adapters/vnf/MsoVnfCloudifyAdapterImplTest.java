@@ -68,7 +68,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        instance.queryVnf("siteid", "1234", "vfname",
+        instance.queryVnf("siteid", "CloudOwner", "1234", "vfname",
                 msoRequest, new Holder<>(), new Holder<>(), new Holder<>(),
                 new Holder<>());
     }
@@ -94,7 +94,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 				.withBodyFile("OpenstackResponse_Access.json")
 				.withStatus(HttpStatus.SC_OK)));
 		
-		instance.queryVnf("mtn13", "1234", "vfname",
+		instance.queryVnf("mtn13", "CloudOwner", "1234", "vfname",
 				msoRequest, new Holder<>(), new Holder<>(), new Holder<>(),
 				new Holder<>());
 	}
@@ -106,7 +106,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.deleteVfModule("mtn13", "1234", "vfname", msoRequest, new Holder<>());
+		instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", msoRequest, new Holder<>());
 	}
 
 	@Test
@@ -131,7 +131,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 				.withBodyFile("OpenstackResponse_Access.json")
 				.withStatus(HttpStatus.SC_OK)));
 
-		instance.deleteVfModule("mtn13", "1234", "vfname", msoRequest, new Holder<>());
+		instance.deleteVfModule("mtn13", "CloudOwner", "1234", "vfname", msoRequest, new Holder<>());
 	}
 	
 	@Test
@@ -141,7 +141,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        instance.deleteVnf("12344", "234", "vnfname", msoRequest);
+        instance.deleteVnf("12344", "CloudOwner", "234", "vnfname", msoRequest);
 
     }
 
@@ -184,7 +184,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("123", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "123", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("123", "CloudOwner", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "123", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -194,7 +194,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("123", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", null, new 
+		instance.createVfModule("123", "CloudOwner", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", null, new 
 				HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
@@ -205,7 +205,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("123", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("123", "CloudOwner", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -215,7 +215,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.createVfModule("mtn13", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("mtn13", "CloudOwner", "123", "vf", "v1", "", "module-005", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -241,7 +241,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 				.withBodyFile("OpenstackResponse_Access.json")
 				.withStatus(HttpStatus.SC_OK)));
 
-		instance.createVfModule("mtn13", "123", "vf", "v1", "", "vfname", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
+		instance.createVfModule("mtn13", "CloudOwner", "123", "vf", "v1", "", "vfname", "", "create", "3245", "234", "9b339a61-69ca-465f-86b8-1c72c582b8e8", new HashMap<>(), true, true, true,  msoRequest, new Holder<>(), new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -251,7 +251,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		instance.updateVfModule("123", "1234", "fw", "v2", "vnf1", "create", "123", "12", "233", "234", new HashMap<>(), msoRequest, new Holder<>(), new Holder<>());
+		instance.updateVfModule("123", "CloudOwner", "1234", "fw", "v2", "vnf1", "create", "123", "12", "233", "234", new HashMap<>(), msoRequest, new Holder<>(), new Holder<>());
 	}
 
 	@Test
@@ -268,7 +268,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		try {
-			instance.createVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+			instance.createVnf("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 					"volumeGroupHeatStackId|1", map,
 					Boolean.FALSE, Boolean.TRUE, Boolean.TRUE, msoRequest, new Holder<>(), new Holder<>(),
                 new Holder<>());
@@ -286,7 +286,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		
 		map.put("key1", "value1");
 		try {
-			instance.updateVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+			instance.updateVnf("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 					"volumeGroupHeatStackId|1",  map, msoRequest, new Holder<>(),
                 new Holder<>());
 		} catch (Exception e) {
@@ -300,7 +300,7 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 		try {
-			instance.deleteVnf("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest);
+			instance.deleteVnf("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest);
 		} catch (Exception e) {
 
 		}

@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -47,7 +47,8 @@ public interface MsoVnfAdapterAsync
 	@WebMethod
 	@Oneway
 	public void createVnfA (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
-							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
+	                        @WebParam(name="cloudOwner") @XmlElement(required=false) String cloudOwner,
+	                        @WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="vnfType") @XmlElement(required=true) String vnfType,
 							@WebParam(name="vnfVersion") @XmlElement(required=false) String vnfVersion,
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
@@ -60,10 +61,11 @@ public interface MsoVnfAdapterAsync
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );
-	
+
 	@WebMethod
 	@Oneway
 	public void updateVnfA (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
+	                        @WebParam(name="cloudOwner") @XmlElement(required=false) String cloudOwner,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="vnfType") @XmlElement(required=true) String vnfType,
 							@WebParam(name="vnfVersion") @XmlElement(required=false) String vnfVersion,
@@ -74,10 +76,11 @@ public interface MsoVnfAdapterAsync
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );
-							
+
 	@WebMethod
 	@Oneway
 	public void queryVnfA (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
+	                        @WebParam(name="cloudOwner") @XmlElement(required=false) String cloudOwner,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
@@ -87,6 +90,7 @@ public interface MsoVnfAdapterAsync
 	@WebMethod
 	@Oneway
 	public void deleteVnfA (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
+	                        @WebParam(name="cloudOwner") @XmlElement(required=false) String cloudOwner,
 							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
@@ -99,7 +103,7 @@ public interface MsoVnfAdapterAsync
 						@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 						@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );
 
-	
+
 	@WebMethod
 	public void healthCheckA ();
 }

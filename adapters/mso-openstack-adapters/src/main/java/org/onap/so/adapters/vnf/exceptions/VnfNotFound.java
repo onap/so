@@ -35,7 +35,7 @@ public class VnfNotFound extends VnfException {
 
 	private static final long serialVersionUID = 1L;
 
-	public VnfNotFound (String cloudId, String tenantId, String vnfName) {
-		super("Resource " + vnfName + " not found in cloud/tenant " + cloudId + "/" + tenantId);
+	public VnfNotFound (String cloudId, String cloudOwner, String tenantId, String vnfName) {
+		super("Resource " + vnfName + " not found in owner/cloud/tenant " + cloudOwner + "/" + cloudId + "/" + tenantId);
 	}
 }

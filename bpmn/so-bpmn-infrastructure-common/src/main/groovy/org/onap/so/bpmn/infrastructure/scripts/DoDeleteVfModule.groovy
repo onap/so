@@ -111,6 +111,8 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				execution.setVariable("tenantId", tenantId)
 				String cloudSiteId = jsonUtil.getJsonValue(cloudConfiguration, "lcpCloudRegionId")
 				execution.setVariable("cloudSiteId", cloudSiteId)
+				String cloudOwner = jsonUtil.getJsonValue(cloudConfiguration, "cloudOwner")
+				execution.setVariable("cloudOwner", cloudOwner)
 				// Source is HARDCODED
 				String source = "VID"
 				execution.setVariable("source", source)
@@ -176,6 +178,8 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 				execution.setVariable("vfModuleModelName", vfModuleModelName)
 				String cloudSiteId = utils.getNodeText(xml, "aic-cloud-region")
 				execution.setVariable("cloudSiteId", cloudSiteId)
+				String cloudOwner = utils.getNodeText(xml, "cloud-owner")
+				execution.setVariable("cloudOwner", cloudOwner)
 			}
 
 			// formulate the request for PrepareUpdateAAIVfModule
@@ -281,6 +285,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		def origRequestId = execution.getVariable('requestId')
 		def srvInstId = execution.getVariable("serviceInstanceId")
 		def aicCloudRegion = execution.getVariable("cloudSiteId")
+		def cloudOwner = execution.getVariable("cloudOwner")
 		def vnfId = execution.getVariable("vnfId")
 		def vfModuleId = execution.getVariable("vfModuleId")
 		def vfModuleStackId = execution.getVariable('DoDVfMod_heatStackId')
@@ -296,6 +301,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
 		String request = """
 			<deleteVfModuleRequest>
 			    <cloudSiteId>${MsoUtils.xmlEscape(aicCloudRegion)}</cloudSiteId>
+			    <cloudOwner>${MsoUtils.xmlEscape(cloudOwner)}</cloudOwner>
 			    <tenantId>${MsoUtils.xmlEscape(tenantId)}</tenantId>
 			    <vnfId>${MsoUtils.xmlEscape(vnfId)}</vnfId>
 			    <vfModuleId>${MsoUtils.xmlEscape(vfModuleId)}</vfModuleId>

@@ -143,6 +143,7 @@ class UpdateVfModuleVolumeInfraV1Test extends MsoGroovyTest{
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable(prefix + "aicCloudRegion")).thenReturn("RDM2WAGPLCP")
+        when(mockExecution.getVariable(prefix + "cloudOwner")).thenReturn("CloudOwner")
         when(mockExecution.getVariable(prefix + "tenantId")).thenReturn("")
         VolumeGroup volumeGroup = new VolumeGroup();
         volumeGroup.setHeatStackId("heatStackId")

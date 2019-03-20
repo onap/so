@@ -195,6 +195,7 @@ public class VolumeAdapterRest {
 //							vnfRollback);
 					vnfAdapter.createVfModule(
 							req.getCloudSiteId(), //cloudSiteId,
+                            req.getCloudOwner(), //cloudOwner,
 							req.getTenantId(), //tenantId,
 							//req.getVnfType(), //vnfType,
 							completeVnfVfModuleType,
@@ -220,6 +221,7 @@ public class VolumeAdapterRest {
 						stackId.value,
 						true, 						// TODO boolean volumeGroupCreated, when would it be false?
 						req.getTenantId(),
+						req.getCloudOwner(),
 						req.getCloudSiteId(),
 						req.getMsoRequest(),
 						req.getMessageId());
@@ -325,7 +327,7 @@ public class VolumeAdapterRest {
         logger.debug("DeleteVNFVolumesTask start");
 			try {
 				if (!req.getCloudSiteId().equals(TESTING_KEYWORD)) {
-					vnfAdapter.deleteVnf(req.getCloudSiteId(), req.getTenantId(), req.getVolumeGroupStackId(), req.getMsoRequest());
+					vnfAdapter.deleteVnf(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(), req.getVolumeGroupStackId(), req.getMsoRequest());
 				}
 				response = new DeleteVolumeGroupResponse(true, req.getMessageId());
 			} catch (VnfException e) {
@@ -423,7 +425,7 @@ public class VolumeAdapterRest {
 			try {
 				VolumeGroupRollback vgr = req.getVolumeGroupRollback();
 				VnfRollback vrb = new VnfRollback(
-						vgr.getVolumeGroupStackId(), vgr.getTenantId(), vgr.getCloudSiteId(), true, true,
+						vgr.getVolumeGroupStackId(), vgr.getTenantId(), vgr.getCloudOwnerId(), vgr.getCloudSiteId(), true, true,
 						vgr.getMsoRequest(), null, null, null, null);
 				vnfAdapter.rollbackVnf(vrb);
 				response = new RollbackVolumeGroupResponse(true, req.getMessageId());
@@ -542,6 +544,7 @@ public class VolumeAdapterRest {
 					//		outputs,
 					//		vnfRollback);
 					vnfAdapter.updateVfModule (req.getCloudSiteId(),
+					        req.getCloudOwner(),
 							req.getTenantId(),
 							//req.getVnfType(),
 							completeVnfVfModuleType,
@@ -587,6 +590,8 @@ public class VolumeAdapterRest {
 		@PathParam("aaiVolumeGroupId") String aaiVolumeGroupId,
 		@ApiParam(value = "cloudSiteId", required = true)
 		@QueryParam("cloudSiteId") String cloudSiteId,
+        @ApiParam(value = "cloudOwner", required = true)
+        @QueryParam("cloudOwner") String cloudOwner,
 		@ApiParam(value = "tenantId", required = true)
 		@QueryParam("tenantId") String tenantId,
 		@ApiParam(value = "volumeGroupStackId", required = true)
@@ -619,7 +624,7 @@ public class VolumeAdapterRest {
 				status.value = VnfStatus.ACTIVE;
 				outputs.value = testMap();
 			} else {
-				vnfAdapter.queryVnf(cloudSiteId, tenantId, volumeGroupStackId, msoRequest, vnfExists, vfModuleId, status, outputs);
+				vnfAdapter.queryVnf(cloudSiteId, cloudOwner, tenantId, volumeGroupStackId, msoRequest, vnfExists, vfModuleId, status, outputs);
 			}
     		if (!vnfExists.value) {
             logger.debug("VNFVolumes not found");

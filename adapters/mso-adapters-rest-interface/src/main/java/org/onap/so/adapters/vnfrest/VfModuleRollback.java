@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,6 +36,7 @@ public class VfModuleRollback {
 	private String vfModuleStackId;
 	private boolean vfModuleCreated = false;
 	private String tenantId;
+	private String cloudOwner;
 	private String cloudSiteId;
 	private MsoRequest msoRequest;
 	private String messageId;
@@ -51,6 +52,7 @@ public class VfModuleRollback {
 		this.vfModuleStackId = vfModuleStackId;
 		this.vfModuleCreated = vrb.getVnfCreated();
 		this.tenantId = vrb.getTenantId();
+		this.cloudOwner = vrb.getCloudOwner();
 		this.cloudSiteId = vrb.getCloudSiteId();
 		this.msoRequest = vrb.getMsoRequest();
 		this.messageId = messageId;
@@ -59,6 +61,7 @@ public class VfModuleRollback {
 
 	public VfModuleRollback(String vnfId, String vfModuleId,
 			String vfModuleStackId, boolean vfModuleCreated, String tenantId,
+			String cloudOwner,
 			String cloudSiteId,
 			MsoRequest msoRequest,
 			String messageId) {
@@ -68,6 +71,7 @@ public class VfModuleRollback {
 		this.vfModuleStackId = vfModuleStackId;
 		this.vfModuleCreated = vfModuleCreated;
 		this.tenantId = tenantId;
+		this.cloudOwner = cloudOwner;
 		this.cloudSiteId = cloudSiteId;
 		this.msoRequest = msoRequest;
 		this.messageId = messageId;
@@ -109,6 +113,12 @@ public class VfModuleRollback {
 	public void setCloudSiteId(String cloudSiteId) {
 		this.cloudSiteId = cloudSiteId;
 	}
+    public String getCloudOwner() {
+        return cloudOwner;
+    }
+    public void setCloudOwner(String cloudOwner) {
+        this.cloudOwner = cloudOwner;
+    }
 	public MsoRequest getMsoRequest() {
 		return msoRequest;
 	}

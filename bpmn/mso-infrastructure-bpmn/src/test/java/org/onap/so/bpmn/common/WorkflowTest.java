@@ -1100,6 +1100,10 @@ public abstract class WorkflowTest {
 				"/tns:createVnfNotification/tns:rollback/tns:cloudSiteId/text()");
 			rollback.setCloudSiteId(cloudSiteId);
 
+			String cloudOwner = xpathTool.evaluate(
+				"/tns:createVnfNotification/tns:rollback/tns:cloudOwner/text()");
+			rollback.setCloudOwner(cloudOwner);
+
 			String requestId = xpathTool.evaluate(
 				"/tns:createVnfNotification/tns:rollback/tns:msoRequest/tns:requestId/text()");
 			String serviceInstanceId = xpathTool.evaluate(
@@ -1275,6 +1279,10 @@ public abstract class WorkflowTest {
 			String cloudSiteId = xpathTool.evaluate(
 				"/tns:updateVnfNotification/tns:rollback/tns:cloudSiteId/text()");
 			rollback.setCloudSiteId(cloudSiteId);
+
+			String cloudOwner = xpathTool.evaluate(
+				"/tns:updateVnfNotification/tns:rollback/tns:cloudOwner/text()");
+			rollback.setCloudOwner(cloudOwner);
 
 			String requestId = xpathTool.evaluate(
 				"/tns:updateVnfNotification/tns:rollback/tns:msoRequest/tns:requestId/text()");

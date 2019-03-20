@@ -106,7 +106,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("MTN13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -126,7 +126,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -146,7 +146,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -166,7 +166,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -183,7 +183,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.TRUE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -197,7 +197,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -213,7 +213,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -232,7 +232,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -252,7 +252,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -270,7 +270,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -302,7 +302,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -339,7 +339,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "XVFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "XVFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", null, map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -357,7 +357,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.createVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
+		instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
 				Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -377,7 +377,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
+		instance.updateVfModule("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "vSAMP12", "VFMOD",
 				"volumeGroupHeatStackId|1", "baseVfHeatStackId", "vfModuleStackId",
 				"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -390,7 +390,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		mockOpenStackResponseAccess(wireMockPort);
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -407,7 +407,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -424,7 +424,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 						.withStatus(HttpStatus.SC_NOT_FOUND)));
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -440,7 +440,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_INTERNAL_SERVER_ERROR,"OpenstackResponse_Stack_Created_VfModule.json");
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -456,7 +456,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_NOT_FOUND,"OpenstackResponse_Stack_Created_VfModule.json");
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -472,7 +472,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -491,7 +491,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		vfModuleCustomization.getVfModule().getModuleHeatTemplate().setParameters(new HashSet<>());
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("mtn13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"88a6ca3ee0394ade9403f075db23167e", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -511,7 +511,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		vfModuleCustomization.getVfModule().getModuleHeatTemplate().setParameters(new HashSet<>());
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
-		instance.updateVfModule("MTN13", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
+		instance.updateVfModule("MTN13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
 				"volumeGroupHeatStackId", "baseVfHeatStackId", "vfModuleStackId",
 				"b4ea86b4-253f-11e7-93ae-92361f002671", map, msoRequest, new Holder<Map<String, String>>(),
 				new Holder<VnfRollback>());
@@ -523,12 +523,12 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 		Map<String, Object> outputs = new HashMap<>();
 		outputs.put("Key1", "value1");
-		when(heatUtils.queryStackForOutputs("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12")).thenReturn(outputs);
+		when(heatUtils.queryStackForOutputs("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12")).thenReturn(outputs);
 
 		MsoVnfAdapterImpl instance = new MsoVnfAdapterImpl();
 		MsoRequest msoRequest = getMsoRequest();
 		try {
-			instance.deleteVfModule("mdt1", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
+			instance.deleteVfModule("mdt1", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
 					new Holder<Map<String, String>>());
 		} catch (Exception e) {
 
