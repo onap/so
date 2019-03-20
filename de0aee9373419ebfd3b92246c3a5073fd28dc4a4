@@ -114,6 +114,29 @@
       "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6aa5e3b2_f5c62669",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterControllerTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T10:01:15Z",
+      "side": 1,
+      "message": "Use best practices for test method names https://stackoverflow.com/questions/155436/unit-test-naming-best-practices \n\ni.e. name should be [UnitOfWork_StateUnderTest_ExpectedBehavior]",
+      "range": {
+        "startLine": 52,
+        "startChar": 16,
+        "endLine": 52,
+        "endChar": 29
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
