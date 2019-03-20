@@ -30,7 +30,7 @@ SPDX-License-Identifier: Apache-2.0
     <!-- Dropdown Filter and TextBox for Service Instance Id -->
     <div class="container-home">
       <mat-form-field class="selectFilter">
-        <mat-select class="formatBox" [(ngModel)]="searchData.selectedValueSII" name="sel" placeholder="Select Filter">
+        <mat-select class="formatBox" [(value)]="searchData.selectedValueSII" placeholder="Select Filter">
           <mat-option *ngFor="let option of options" [value]="option.value">{{option.name}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -42,7 +42,7 @@ SPDX-License-Identifier: Apache-2.0
     <!-- Dropdown Filter and TextBox for Request Id -->
     <div class="container-home">
       <mat-form-field class="selectFilter">
-        <mat-select class="formatBox" [(ngModel)]="searchData.selectedValueRI" name="sel" placeholder="Select Filter">
+        <mat-select class="formatBox" [(value)]="searchData.selectedValueRI" placeholder="Select Filter">
           <mat-option *ngFor="let option of options" [value]="option.value">{{option.name}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -59,14 +59,14 @@ SPDX-License-Identifier: Apache-2.0
 
       <!-- Dropdown box for Start Hour selection -->
       <mat-form-field class="selectHour">
-        <mat-select class="formatBox" [(ngModel)]="searchData.selectedStartHour" name="hourFrom" placeholder="Select Hour">
+        <mat-select class="formatBox" [(value)]="searchData.selectedStartHour"  placeholder="Select Hour">
           <mat-option *ngFor="let option of hourOptions" [value]="option">{{option}}</mat-option>
         </mat-select>
       </mat-form-field>
 
       <!-- Dropdown box for Start Minute selection -->
       <mat-form-field class="selectMinute">
-        <mat-select class="formatBox" [(ngModel)]="searchData.selectedStartMinute" name="minuteFrom" placeholder="Select Minute">
+        <mat-select class="formatBox" [(value)]="searchData.selectedStartMinute" placeholder="Select Minute">
           <mat-option *ngFor="let option of minuteOptions" [value]="option">{{option}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -75,7 +75,7 @@ SPDX-License-Identifier: Apache-2.0
     <!-- Dropdown Filter and TextBox for Service Name -->
     <div class="container-home">
       <mat-form-field class="selectFilter">
-        <mat-select class="formatBox" [(ngModel)]="searchData.selectedValueSN" name="sel" placeholder="Select Filter">
+        <mat-select class="formatBox" [(value)]="searchData.selectedValueSN" placeholder="Select Filter">
           <mat-option *ngFor="let option of options" [value]="option.value">{{option.name}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -92,14 +92,14 @@ SPDX-License-Identifier: Apache-2.0
 
       <!-- Dropdown box for End Hour selection -->
       <mat-form-field class="selectHour">
-        <mat-select class="formatBox" [(ngModel)]="searchData.selectedEndHour" name="hourTo" placeholder="Select Hour">
+        <mat-select class="formatBox" [(value)]="searchData.selectedEndHour"  placeholder="Select Hour">
           <mat-option *ngFor="let option of hourOptions" [value]="option">{{option}}</mat-option>
         </mat-select>
       </mat-form-field>
 
       <!-- Dropdown box for End Minute selection -->
       <mat-form-field class="selectMinute">
-        <mat-select class="formatBox" [(ngModel)]="searchData.selectedEndMinute" name="minuteTo" placeholder="Select Minute">
+        <mat-select class="formatBox" [(value)]="searchData.selectedEndMinute"  placeholder="Select Minute">
           <mat-option *ngFor="let option of minuteOptions" [value]="option">{{option}}</mat-option>
         </mat-select>
       </mat-form-field>
@@ -108,7 +108,7 @@ SPDX-License-Identifier: Apache-2.0
     <!-- Dropdown Filter for Status -->
     <div class="container-home">
       <mat-form-field class="selectFilter">
-        <mat-select class="formatBox" [(ngModel)]="searchData.selectedValueSTATUS" name="sel" placeholder="Status">
+        <mat-select class="formatBox" [(value)]="searchData.selectedValueSTATUS" placeholder="Status">
           <mat-option *ngFor="let statusOption of statusOptions" [value]="statusOption.value">{{ statusOption.name }}</mat-option>
         </mat-select>
       </mat-form-field>
