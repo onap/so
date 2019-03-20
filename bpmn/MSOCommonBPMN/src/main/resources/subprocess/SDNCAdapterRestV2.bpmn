@@ -11,8 +11,7 @@ def statusCode = execution.getVariable('SDNCREST_sdncAdapterStatusCode')
 String response = String.valueOf(execution.getVariable('SDNCREST_sdncAdapterResponse'))
 def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 def processKey = sdncAdapterRestV2.getProcessKey(execution)
-sdncAdapterRestV2.logDebug(processKey + " received response from SDNCAdapter: statusCode=" + statusCode +
-	" response=" + (response.isEmpty() ? "" : "\n") + response, isDebugLogEnabled)</bpmn2:script>
+sdncAdapterRestV2.getLogger().debug("{} received response from SDNCAdapter: statusCode= {} response={}", processKey, statusCode, (response.isEmpty() ? "" : "\n" + response))</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_3" name="Workflow Exception (no connection)" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_17</bpmn2:incoming>

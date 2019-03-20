@@ -30,7 +30,6 @@
         <version>0.7.7.201606060606</version>
         <configuration>
           <excludes>
-            +
             <exclude>**/resource-examples/**</exclude>
           </excludes>
         </configuration>
@@ -143,6 +142,24 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-test</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/AllTestsTestSuite.java</include>
+              </includes>
+              <parallel>suites</parallel>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -232,7 +249,7 @@
       <groupId>org.antlr</groupId>
       <artifactId>antlr4</artifactId>
       <version>${antlr.version}</version>
-
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

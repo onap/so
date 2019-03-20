@@ -65,15 +65,15 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
 		 * have a bug in that they don't URL-encode the SI id before using
 		 * it in the query
 		 */
-		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
-		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
 		
-		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "testRequestId123");
@@ -108,15 +108,15 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
 		 * have a bug in that they don't URL-encode the SI id before using
 		 * it in the query
 		 */
-		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getNotFound.xml");
-		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getNotFound.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
 		
-		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "testRequestId123");
@@ -142,16 +142,16 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
 		 * have a bug in that they don't URL-encode the SI id before using
 		 * it in the query
 		 */
-		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
-		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
 		
-		MockGetServiceInstance(CUST, SVC, INST, "VCPE/DoCreateAllottedResourceTXC/getSIandAR.xml");
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc2.xml");
-		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "VCPE/DoCreateAllottedResourceTXC/getSIandAR.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc2.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "testRequestId123");
@@ -184,16 +184,16 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
 		 * have a bug in that they don't URL-encode the SI id before using
 		 * it in the query
 		 */
-		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
 		
-		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getNotFound.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getNotFound.xml");
 		
-		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "testRequestId123");
@@ -219,15 +219,15 @@ public class DoCreateAllottedResourceTXCIT extends AbstractTestBase {
 		 * have a bug in that they don't URL-encode the SI id before using
 		 * it in the query
 		 */
-		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
-		MockNodeQueryServiceInstanceById(DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
 		
-		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		mockSDNCAdapter(404);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		mockSDNCAdapter(wireMockServer, 404);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables, "testRequestId123");

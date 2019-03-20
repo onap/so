@@ -24,7 +24,6 @@ package org.onap.so.apihandlerinfra;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
@@ -101,7 +100,7 @@ public class InstanceManagementTest extends BaseTest{
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} 
-		stubFor(post(urlMatching(".*/infraActiveRequests.*"))
+		wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 	}
@@ -155,11 +154,11 @@ public class InstanceManagementTest extends BaseTest{
 
     @Test
     public void executeCustomWorkflow() throws IOException {
-        stubFor(post(urlPathEqualTo("/mso/async/services/VnfInPlaceUpdate"))
+    	wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/VnfInPlaceUpdate"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
         
-        stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]" +
+    	wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]" +
                 "nfRole=GR-API-DEFAULT&action=inPlaceSoftwareUpdate"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(getWiremockResponseForCatalogdb("vnfRecipeInPlaceUpdate_Response.json"))

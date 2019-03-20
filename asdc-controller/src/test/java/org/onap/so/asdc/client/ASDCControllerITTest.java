@@ -21,7 +21,6 @@ package org.onap.so.asdc.client;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -144,7 +143,7 @@ public class ASDCControllerITTest extends BaseTest {
         String modelEndpoint = "/aai/v15/service-design-and-creation/models/model/" + serviceInvariantUuid
             + "/model-vers/model-ver/" + serviceUuid + "?depth=0";
 
-        stubFor(post(urlEqualTo(modelEndpoint)).willReturn(ok()));
+        wireMockServer.stubFor(post(urlEqualTo(modelEndpoint)).willReturn(ok()));
     }
 
     /**

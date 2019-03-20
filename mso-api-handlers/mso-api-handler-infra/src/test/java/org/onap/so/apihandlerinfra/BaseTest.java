@@ -22,26 +22,28 @@
 
 package org.onap.so.apihandlerinfra;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+import javax.transaction.Transactional;
+
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.transaction.Transactional;
-
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApiHandlerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -59,6 +61,9 @@ public abstract class BaseTest {
 	@LocalServerPort
 	private int port;
 	
+	@Autowired
+	protected WireMockServer wireMockServer;
+	
 	protected String createURLWithPort(String uri) {
 		return "http://localhost:" + port + uri;
 	}
@@ -69,7 +74,7 @@ public abstract class BaseTest {
 	
 	@After
 	public void tearDown(){
-		WireMock.reset();
+		wireMockServer.resetAll();
 	}
 
 	public static String getResponseTemplate;

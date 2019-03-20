@@ -20,22 +20,9 @@
 
 package org.onap.so.bpmn.vcpe;
 
-import com.github.tomakehurst.wiremock.stubbing.Scenario;
-import org.junit.Before;
-import org.junit.Test;
-import org.onap.so.bpmn.common.BPMNUtil;
-import org.onap.so.bpmn.mock.FileUtil;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -50,6 +37,19 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchAllottedResource;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockQueryAllottedResourceById;
 import static org.onap.so.bpmn.mock.StubResponseDatabase.mockUpdateRequestDB;
 import static org.onap.so.bpmn.mock.StubResponseSDNCAdapter.mockSDNCAdapter;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.onap.so.bpmn.common.BPMNUtil;
+import org.onap.so.bpmn.mock.FileUtil;
+
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
 
 public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 
@@ -77,7 +77,7 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 	@Test
 	public void testDeleteVcpeResCustService_Success() throws Exception {
 		logStart();
-		MockNodeQueryServiceInstanceById(INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, INST, "GenericFlows/getSIUrlById.xml");
 
 		// TODO: use INST instead of DEC_INST
 		/*
@@ -85,15 +85,15 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 		 * fail to URL-encode the SI id before performing the query so we'll
 		 * add a stub for that case, too.
 		 */
-		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
 
 		/*
-		 * cannot use MockGetServiceInstance(), because we need to return
+		 * cannot use MockGetServiceInstance(wireMockServer, ), because we need to return
 		 * different responses as we traverse through the flow
 		 */
 
 		// initially, the SI includes the ARs
-		stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST))
 				.inScenario("SI retrieval")
 				.whenScenarioStateIs(Scenario.STARTED)
 				.willReturn(aResponse()
@@ -103,7 +103,7 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 				.willSetStateTo("ARs Deleted"));
 
 		// once the ARs have been deleted, the SI should be empty
-		stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST))
 				.inScenario("SI retrieval")
 				.whenScenarioStateIs("ARs Deleted")
 				.willReturn(aResponse()
@@ -112,34 +112,34 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 						.withBodyFile("VCPE/DeleteVcpeResCustService/getSIAfterDelArs.xml")));
 
 		// for BRG
-		MockQueryAllottedResourceById(AR_BRG_ID, "VCPE/DeleteVcpeResCustService/getBRGArUrlById.xml");
-		MockGetAllottedResource(CUST, SVC, INST, AR_BRG_ID, "VCPE/DeleteVcpeResCustService/arGetBRGById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, AR_BRG_ID);
-		MockDeleteAllottedResource(CUST, SVC, INST, AR_BRG_ID, ARVERS);
+		MockQueryAllottedResourceById(wireMockServer, AR_BRG_ID, "VCPE/DeleteVcpeResCustService/getBRGArUrlById.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, AR_BRG_ID, "VCPE/DeleteVcpeResCustService/arGetBRGById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, AR_BRG_ID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, AR_BRG_ID, ARVERS);
 
 		// for TXC
-		MockQueryAllottedResourceById(AR_TXC_ID, "VCPE/DeleteVcpeResCustService/getTXCArUrlById.xml");
-		MockGetAllottedResource(CUST, SVC, INST, AR_TXC_ID, "VCPE/DeleteVcpeResCustService/arGetTXCById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, AR_TXC_ID);
-		MockDeleteAllottedResource(CUST, SVC, INST, AR_TXC_ID, ARVERS);
+		MockQueryAllottedResourceById(wireMockServer, AR_TXC_ID, "VCPE/DeleteVcpeResCustService/getTXCArUrlById.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, AR_TXC_ID, "VCPE/DeleteVcpeResCustService/arGetTXCById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, AR_TXC_ID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, AR_TXC_ID, ARVERS);
 
         //MockGetGenericVnfById("vnfX.*", "GenericFlows/getGenericVnfByNameResponse.xml");
-        stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
+        wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
                         .withBodyFile("GenericFlows/getGenericVnfByNameResponse.xml")));
 
 
-		stubFor(delete(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
+		wireMockServer.stubFor(delete(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
 				.willReturn(aResponse()
 						.withStatus(204)
 						.withHeader("Content-Type", "text/xml")));
 
-        MockDeleteServiceInstance(CUST,SVC,INST,SVC);
+        MockDeleteServiceInstance(wireMockServer, CUST,SVC,INST,SVC);
 
-        mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+        mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = setupVariables(businessKey);
@@ -193,7 +193,7 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 	@Test
 	public void testDeleteVcpeResCustService_NoBRG_NoTXC_NoVNF() throws Exception {
 		logStart();
-		MockNodeQueryServiceInstanceById(INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, INST, "GenericFlows/getSIUrlById.xml");
 
 		// TODO: use INST instead of DEC_INST
 		/*
@@ -201,12 +201,12 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 		 * fail to URL-encode the SI id before performing the query so we'll
 		 * add a stub for that case, too.
 		 */
-		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
 
-		MockGetServiceInstance(CUST, SVC, INST, "VCPE/DeleteVcpeResCustService/getSIAfterDelArs.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "VCPE/DeleteVcpeResCustService/getSIAfterDelArs.xml");
 
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = setupVariables(businessKey);
@@ -242,7 +242,7 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 	@Test
 	public void testDeleteVcpeResCustService_Fault() throws Exception {
 		logStart();
-		MockNodeQueryServiceInstanceById(INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, INST, "GenericFlows/getSIUrlById.xml");
 
 		// TODO: use INST instead of DEC_INST
 		/*
@@ -250,14 +250,14 @@ public class DeleteVcpeResCustServiceIT extends AbstractTestBase {
 		 * fail to URL-encode the SI id before performing the query so we'll
 		 * add a stub for that case, too.
 		 */
-		MockNodeQueryServiceInstanceById(DEC_INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, DEC_INST, "GenericFlows/getSIUrlById.xml");
 
-		MockGetServiceInstance(CUST, SVC, INST, "VCPE/DeleteVcpeResCustService/getSIAfterDelArs.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "VCPE/DeleteVcpeResCustService/getSIAfterDelArs.xml");
 
 		// generate failure
-		mockSDNCAdapter(404);
+		mockSDNCAdapter(wireMockServer, 404);
 
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = setupVariables(businessKey);

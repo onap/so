@@ -21,7 +21,23 @@
 package org.onap.so.adapters.vnf;
 
 
-import com.github.tomakehurst.wiremock.client.WireMock;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.mockito.Mockito.when;
+import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_200;
+import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_404;
+import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackPutStack;
+import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;
+import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenstackGetWithResponse;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import javax.xml.ws.Holder;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -38,8 +54,6 @@ import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResource;
-import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
-import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
@@ -47,25 +61,8 @@ import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import javax.xml.ws.Holder;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
-import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_200;
-import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_404;
-import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackPutStack;
-import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;
-import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenstackGetWithResponse;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 
 public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
@@ -80,13 +77,6 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 
 	String vnfName = "DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId";
 
-	@Before
-	public void before() throws Exception {
-		MockitoAnnotations.initMocks(this);
-		WireMock.reset();
-		setUp();
-	}
-
 	@Test
 	@Ignore
 	public void healthCheckVNFTest() {
@@ -99,8 +89,8 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 		StackInfo info = new StackInfo();
 		info.setStatus(HeatStatus.CREATED);
 
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_200();
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
 
 		MsoRequest msoRequest = getMsoRequest();
 
@@ -115,9 +105,9 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_HeatStatusUpdating() throws Exception {
 		expectedException.expect(VnfAlreadyExists.class);
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Stack_Updating_VfModule.json")
 						.withStatus(HttpStatus.SC_OK)));
@@ -135,9 +125,9 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_HeatStatusUpdated() throws Exception {
 		expectedException.expect(VnfAlreadyExists.class);
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_StackId.json")
 						.withStatus(HttpStatus.SC_OK)));
@@ -155,9 +145,9 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_HeatStatusFailed() throws Exception {
 		expectedException.expect(VnfAlreadyExists.class);
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Stack_Failed_VfModule.json")
 						.withStatus(HttpStatus.SC_OK)));
@@ -175,9 +165,9 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_HeatStatusCreated() throws Exception {
 		expectedException.expect(VnfAlreadyExists.class);
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackVfModule_200();
+		mockOpenStackGetStackVfModule_200(wireMockServer);
 
 		MsoRequest msoRequest = getMsoRequest();
 
@@ -206,8 +196,8 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_NestedHeatStatusNotFound() throws Exception {
 		expectedException.expect(VnfException.class);
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_404();
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_404(wireMockServer);
 
 		MsoRequest msoRequest = getMsoRequest();
 
@@ -222,9 +212,9 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_ExceptionInGettingNestedHeat() throws Exception {
 		expectedException.expect(VnfException.class);
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_404();
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_404(wireMockServer);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 
@@ -241,9 +231,9 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_NestedBaseHeatStatus_NotFound() throws Exception {
 		expectedException.expect(VnfException.class);
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_404();
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_404(wireMockServer);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Stack_Created_VfModule.json")
 						.withStatus(HttpStatus.SC_OK)));
@@ -261,10 +251,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_ExceptionInGettingBaseNestedHeat() throws Exception {
 		expectedException.expect(VnfException.class);
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_404();
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfHeatStackId")).willReturn(aResponse().withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_404(wireMockServer);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfHeatStackId")).willReturn(aResponse().withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 
 		MsoRequest msoRequest = getMsoRequest();
 
@@ -279,10 +269,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_ExceptionInCreateStack() throws Exception {
 		expectedException.expect(VnfException.class);
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_404();
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_404(wireMockServer);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
 
 		VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
 		VfModule vfModule = new VfModule();
@@ -311,10 +301,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_ModelCustUuidIsNull() throws Exception {
 		expectedException.expect(VnfException.class);
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_404();
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_404(wireMockServer);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
 
 		VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
 		VfModule vfModule = new VfModule();
@@ -348,10 +338,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void createVnfTest_HeatEnvironment_ContainsParameters() throws Exception {
 		expectedException.expect(VnfException.class);
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_404();
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_404(wireMockServer);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfHeatStackId")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
 
 		MsoRequest msoRequest = getMsoRequest();
 
@@ -387,7 +377,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	public void updateVnfTest_HeatStackNotFound() throws Exception {
 		expectedException.expect(VnfNotFound.class);
 		MsoRequest msoRequest = getMsoRequest();
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
@@ -400,9 +390,9 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	public void updateVnfTest_ExceptionInGettingNestedHeatStack() throws Exception {
 		expectedException.expect(VnfException.class);
 		MsoRequest msoRequest = getMsoRequest();
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_200();
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 		Map<String, Object> map = new HashMap<>();
@@ -417,9 +407,9 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	public void updateVnfTest_NestedHeatStackNotFound() throws Exception {
 		expectedException.expect(VnfException.class);
 		MsoRequest msoRequest = getMsoRequest();
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_200();
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withStatus(HttpStatus.SC_NOT_FOUND)));
 		Map<String, Object> map = new HashMap<>();
@@ -434,10 +424,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	public void updateVnfTest_ExceptionInGettingNestedBaseHeatStack() throws Exception {
 		expectedException.expect(VnfException.class);
 		MsoRequest msoRequest = getMsoRequest();
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_200();
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_INTERNAL_SERVER_ERROR,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_INTERNAL_SERVER_ERROR,"OpenstackResponse_Stack_Created_VfModule.json");
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
@@ -450,10 +440,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	public void updateVnfTest_NestedBaseHeatStackNotFound() throws Exception {
 		expectedException.expect(VnfException.class);
 		MsoRequest msoRequest = getMsoRequest();
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_200();
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_NOT_FOUND,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_NOT_FOUND,"OpenstackResponse_Stack_Created_VfModule.json");
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
@@ -466,10 +456,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	public void updateVnfTest_MissingParams() throws Exception {
 		expectedException.expect(VnfException.class);
 		MsoRequest msoRequest = getMsoRequest();
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_200();
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
 		Map<String, Object> map = new HashMap<>();
 		map.put("key1", "value1");
 		instance.updateVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", vnfName, "VFMOD",
@@ -482,10 +472,10 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	public void updateVnfTest_UpdateStackException() throws Exception {
 		expectedException.expect(VnfException.class);
 		MsoRequest msoRequest = getMsoRequest();
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_200();
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
 
 		VfModuleCustomization vfModuleCustomization = getVfModuleCustomization();
 		vfModuleCustomization.getVfModule().getModuleHeatTemplate().setParameters(new HashSet<>());
@@ -500,12 +490,12 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
 	@Test
 	public void updateVnfTest() throws Exception {
 		MsoRequest msoRequest = getMsoRequest();
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/"+vnfName,HttpStatus.SC_OK,"OpenstackResponse_Stack_UpdateComplete.json");
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
-		mockOpenStackPutStack("null/stackId", HttpStatus.SC_OK);
-		mockOpenstackGetWithResponse("/mockPublicUrl/stacks/null/stackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_UpdateComplete.json");
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/"+vnfName,HttpStatus.SC_OK,"OpenstackResponse_Stack_UpdateComplete.json");
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/volumeGroupHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/baseVfHeatStackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_Created_VfModule.json");
+		mockOpenStackPutStack(wireMockServer, "null/stackId", HttpStatus.SC_OK);
+		mockOpenstackGetWithResponse(wireMockServer, "/mockPublicUrl/stacks/null/stackId",HttpStatus.SC_OK,"OpenstackResponse_Stack_UpdateComplete.json");
 
 		VfModuleCustomization vfModuleCustomization = getVfModuleCustomization();
 		vfModuleCustomization.getVfModule().getModuleHeatTemplate().setParameters(new HashSet<>());

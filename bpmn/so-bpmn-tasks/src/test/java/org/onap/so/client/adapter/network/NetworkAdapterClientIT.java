@@ -26,11 +26,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 import javax.ws.rs.core.Response;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
@@ -75,7 +76,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 		CreateNetworkResponse mockResponse = new CreateNetworkResponse();
 		mockResponse.setNetworkCreated(true);
-		stubFor(post(urlPathEqualTo(REST_ENDPOINT))
+		wireMockServer.stubFor(post(urlPathEqualTo(REST_ENDPOINT))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -90,7 +91,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 		CreateNetworkError mockResponse = new CreateNetworkError();
 		mockResponse.setMessage("Error in create network");
-		stubFor(post(urlPathEqualTo(REST_ENDPOINT))
+		wireMockServer.stubFor(post(urlPathEqualTo(REST_ENDPOINT))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
 
@@ -105,7 +106,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 		DeleteNetworkResponse mockResponse = new DeleteNetworkResponse();
 		mockResponse.setNetworkDeleted(true);
 
-		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		wireMockServer.stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -120,7 +121,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 		DeleteNetworkError mockResponse = new DeleteNetworkError();
 		mockResponse.setMessage("Error in delete network");
-		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		wireMockServer.stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
 
@@ -137,7 +138,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 		RollbackNetworkResponse mockResponse = new RollbackNetworkResponse();
 		mockResponse.setNetworkRolledBack(true);
 
-		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		wireMockServer.stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -155,7 +156,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 		RollbackNetworkError mockResponse = new RollbackNetworkError();
 		mockResponse.setMessage("Error in rollback network");
 
-		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		wireMockServer.stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
 
@@ -167,7 +168,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 		QueryNetworkResponse mockResponse = new QueryNetworkResponse();
 		mockResponse.setNetworkExists(true);
 
-		stubFor(get(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID)).withQueryParam("cloudSiteId", equalTo(TESTING_ID))
+		wireMockServer.stubFor(get(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID)).withQueryParam("cloudSiteId", equalTo(TESTING_ID))
 				.withQueryParam("tenantId", equalTo(TESTING_ID))
 				.withQueryParam("networkStackId", equalTo("networkStackId")).withQueryParam("skipAAI", equalTo("true"))
 				.withQueryParam("msoRequest.requestId", equalTo("testRequestId"))
@@ -185,7 +186,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 		QueryNetworkError mockResponse = new QueryNetworkError();
 		mockResponse.setMessage("Error in query network");
 
-		stubFor(get(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID)).withQueryParam("cloudSiteId", equalTo(TESTING_ID))
+		wireMockServer.stubFor(get(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID)).withQueryParam("cloudSiteId", equalTo(TESTING_ID))
 				.withQueryParam("tenantId", equalTo(TESTING_ID))
 				.withQueryParam("networkStackId", equalTo("networkStackId")).withQueryParam("skipAAI", equalTo("true"))
 				.withQueryParam("msoRequest.requestId", equalTo("testRequestId"))
@@ -205,7 +206,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 		UpdateNetworkResponse mockResponse = new UpdateNetworkResponse();
 		mockResponse.setNetworkId("test1");
-		stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		wireMockServer.stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -221,7 +222,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 		UpdateNetworkResponse mockResponse = new UpdateNetworkResponse();
 		mockResponse.setNetworkId("test1");
-		stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		wireMockServer.stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -237,7 +238,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 		UpdateNetworkError mockResponse = new UpdateNetworkError();
 		mockResponse.setMessage("Error in update network");
-		stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		wireMockServer.stubFor(put(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
 

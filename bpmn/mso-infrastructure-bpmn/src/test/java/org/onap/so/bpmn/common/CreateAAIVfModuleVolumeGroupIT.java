@@ -56,8 +56,8 @@ public class CreateAAIVfModuleVolumeGroupIT extends BaseIntegrationTest {
 		logStart();
 
 		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
-		MockGetGenericVnfByIdWithPriority("skask", "lukewarm", 200, "VfModularity/VfModule-lukewarm.xml", 2);
-		MockPutVfModuleIdNoResponse("skask", "PCRF", "lukewarm");
+		MockGetGenericVnfByIdWithPriority(wireMockServer, "skask", "lukewarm", 200, "VfModularity/VfModule-lukewarm.xml", 2);
+		MockPutVfModuleIdNoResponse(wireMockServer, "skask", "PCRF", "lukewarm");
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -85,7 +85,7 @@ public class CreateAAIVfModuleVolumeGroupIT extends BaseIntegrationTest {
 		logStart();
 
 		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
-		MockGetVfModuleId("skask", ".*", "VfModularity/VfModule-supercool.xml", 404);
+		MockGetVfModuleId(wireMockServer, "skask", ".*", "VfModularity/VfModule-supercool.xml", 404);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -112,8 +112,8 @@ public class CreateAAIVfModuleVolumeGroupIT extends BaseIntegrationTest {
 		logStart();
 
 		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
-		MockGetVfModuleId("skask", "lukewarm", "VfModularity/VfModule-lukewarm.xml", 200);
-		MockPutVfModuleId("skask", "lukewarm", 404);
+		MockGetVfModuleId(wireMockServer, "skask", "lukewarm", "VfModularity/VfModule-lukewarm.xml", 200);
+		MockPutVfModuleId(wireMockServer, "skask", "lukewarm", 404);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();

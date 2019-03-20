@@ -62,9 +62,9 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 		logStart();
 		
 		String updateAAIGenericVnfRequest =	FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
-		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
-		MockPutGenericVnf("/skask", 200);
-		MockPatchGenericVnf("skask");
+		MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
+		MockPutGenericVnf(wireMockServer, "/skask", 200);
+		MockPatchGenericVnf(wireMockServer, "skask");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -95,7 +95,7 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 		String updateAAIGenericVnfRequest =	FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
 		updateAAIGenericVnfRequest = updateAAIGenericVnfRequest.replaceFirst("introvert", "extrovert");
 		
-		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
+		MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -123,7 +123,7 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 		
 		String updateAAIGenericVnfRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
 		
-		MockGetGenericVnfById_404("skask[?]depth=1");
+		MockGetGenericVnfById_404(wireMockServer, "skask[?]depth=1");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -153,9 +153,9 @@ public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
 		
 		String updateAAIGenericVnfRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
 		
-		MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
-		MockPutGenericVnf_Bad("skask", 404);
-		MockAAIVfModuleBadPatch("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask", 404);
+		MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
+		MockPutGenericVnf_Bad(wireMockServer, "skask", 404);
+		MockAAIVfModuleBadPatch(wireMockServer, "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask", 404);
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();

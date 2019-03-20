@@ -44,7 +44,7 @@ public class MsoNeutronUtilsTest extends BaseTest{
     public void before() throws IOException {
         vlans = new ArrayList<>();
         vlans.add(3014);
-        StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
+        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
     }
     
     @Test
@@ -56,7 +56,7 @@ public class MsoNeutronUtilsTest extends BaseTest{
 
     @Test
     public void createNetworkTest_NetworkTypeAsMultiProvider() throws Exception {
-        StubOpenStack.mockOpenstackPostNetwork("OpenstackCreateNeutronNetworkResponse.json");
+        StubOpenStack.mockOpenstackPostNetwork(wireMockServer, "OpenstackCreateNeutronNetworkResponse.json");
         NetworkInfo networkInfo = msoNeutronUtils.createNetwork("MTN13", "tenantId",
                 MsoNeutronUtils.NetworkType.MULTI_PROVIDER,"networkName","PROVIDER", vlans);
 
@@ -65,7 +65,7 @@ public class MsoNeutronUtilsTest extends BaseTest{
 
     @Test
     public void createNetworkTest() throws Exception {
-        StubOpenStack.mockOpenstackPostNetwork("OpenstackCreateNeutronNetworkResponse.json");
+        StubOpenStack.mockOpenstackPostNetwork(wireMockServer, "OpenstackCreateNeutronNetworkResponse.json");
         NetworkInfo networkInfo = msoNeutronUtils.createNetwork("MTN13", "tenantId",
                 MsoNeutronUtils.NetworkType.PROVIDER,"networkName","PROVIDER", vlans);
 
@@ -74,7 +74,7 @@ public class MsoNeutronUtilsTest extends BaseTest{
 
     @Test
     public void queryNetworkTest() throws Exception {
-        StubOpenStack.mockOpenStackGetNeutronNetwork("GetNeutronNetwork.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        StubOpenStack.mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
         NetworkInfo networkInfo = msoNeutronUtils.queryNetwork("43173f6a-d699-414b-888f-ab243dda6dfe", "tenantId","MTN13");
 
         Assert.assertEquals("net1",networkInfo.getName());
@@ -89,15 +89,15 @@ public class MsoNeutronUtilsTest extends BaseTest{
     @Test
     public void queryNetworkTest_500() throws Exception {
         expectedException.expect(MsoException.class);
-        StubOpenStack.mockOpenStackGetNeutronNetwork_500("43173f6a-d699-414b-888f-ab243dda6dfe");
+        StubOpenStack.mockOpenStackGetNeutronNetwork_500(wireMockServer, "43173f6a-d699-414b-888f-ab243dda6dfe");
         msoNeutronUtils.queryNetwork("43173f6a-d699-414b-888f-ab243dda6dfe", "tenantId","MTN13");
 
     }
 
     @Test
     public void deleteNetworkkTest() throws Exception {
-        StubOpenStack.mockOpenStackGetNeutronNetwork("GetNeutronNetwork.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
-        StubOpenStack.mockOpenStackDeleteNeutronNetwork("43173f6a-d699-414b-888f-ab243dda6dfe");
+        StubOpenStack.mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        StubOpenStack.mockOpenStackDeleteNeutronNetwork(wireMockServer, "43173f6a-d699-414b-888f-ab243dda6dfe");
         Boolean result = msoNeutronUtils.deleteNetwork("43173f6a-d699-414b-888f-ab243dda6dfe", "tenantId","MTN13");
 
         Assert.assertTrue(result);
@@ -105,8 +105,8 @@ public class MsoNeutronUtilsTest extends BaseTest{
 
     @Test
     public void updateNetworkTest() throws Exception {
-        StubOpenStack.mockOpenStackGetNeutronNetwork("GetNeutronNetwork.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
-        StubOpenStack.mockOpenstackPutNetwork("OpenstackCreateNeutronNetworkResponse.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        StubOpenStack.mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        StubOpenStack.mockOpenstackPutNetwork(wireMockServer, "OpenstackCreateNeutronNetworkResponse.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
         NetworkInfo networkInfo = msoNeutronUtils.updateNetwork("MTN13", "tenantId",
                 "43173f6a-d699-414b-888f-ab243dda6dfe",MsoNeutronUtils.NetworkType.PROVIDER,"PROVIDER", vlans);
 
@@ -115,8 +115,8 @@ public class MsoNeutronUtilsTest extends BaseTest{
 
     @Test
     public void updateNetworkTest_NetworkTypeAsMultiProvider() throws Exception {
-        StubOpenStack.mockOpenStackGetNeutronNetwork("GetNeutronNetwork.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
-        StubOpenStack.mockOpenstackPutNetwork("OpenstackCreateNeutronNetworkResponse.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        StubOpenStack.mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        StubOpenStack.mockOpenstackPutNetwork(wireMockServer, "OpenstackCreateNeutronNetworkResponse.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
         NetworkInfo networkInfo = msoNeutronUtils.updateNetwork("MTN13", "tenantId",
                 "43173f6a-d699-414b-888f-ab243dda6dfe",MsoNeutronUtils.NetworkType.MULTI_PROVIDER,"PROVIDER", vlans);
 

@@ -140,7 +140,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 	
 	public void testHoming_success_2AR1Vnf() throws Exception {
 
-		mockSNIRO();
+		mockSNIRO(wireMockServer);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -184,7 +184,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 	
 	public void testHoming_success_2AR1Vnf2Net() throws Exception {
 
-		mockSNIRO();
+		mockSNIRO(wireMockServer);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -239,7 +239,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 	public void testHoming_success_vnfResourceList() throws Exception {
 
 		// Create a Service Decomposition 
-		MockGetServiceResourcesCatalogDataByModelUuid("2f7f309d-c842-4644-a2e4-34167be5eeb4", "/BuildingBlocks/catalogResp.json");
+		MockGetServiceResourcesCatalogDataByModelUuid(wireMockServer, "2f7f309d-c842-4644-a2e4-34167be5eeb4", "/BuildingBlocks/catalogResp.json");
 		String busKey = UUID.randomUUID().toString();
 		Map<String, Object> vars = new HashMap<>();
 		setVariablesForServiceDecomposition(vars, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
@@ -251,7 +251,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 
 		// Invoke Homing
 
-		mockSNIRO();
+		mockSNIRO(wireMockServer);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -290,7 +290,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 	
 	public void testHoming_success_existingLicense() throws Exception {
 
-		mockSNIRO();
+		mockSNIRO(wireMockServer);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<String, Object>();
@@ -351,7 +351,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 	@Test
 	
 	public void testHoming_error_badResponse() throws Exception {
-		mockSNIRO_500();
+		mockSNIRO_500(wireMockServer);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -371,7 +371,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 	 // 1802 merge
 	
 	public void testHoming_error_sniroNoSolution() throws Exception {
-		mockSNIRO();
+		mockSNIRO(wireMockServer);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -392,7 +392,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 	@Test
 	
 	public void testHoming_error_sniroPolicyException() throws Exception {
-		mockSNIRO();
+		mockSNIRO(wireMockServer);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -413,7 +413,7 @@ public class SniroHomingV1IT extends BaseIntegrationTest {
 	@Test
 	
 	public void testHoming_error_sniroServiceException() throws Exception {
-		mockSNIRO();
+		mockSNIRO(wireMockServer);
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();

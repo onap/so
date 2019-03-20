@@ -23,7 +23,6 @@ package org.onap.so.client.sdnc;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 
@@ -46,7 +45,7 @@ public class SDNCClientIT extends BaseIntegrationTest {
     	String responseJson =  new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "SDNCClientGetResponse.json")));
     	String queryLink = "/topologyQuery";		
 				     
-    	stubFor(get(urlEqualTo(queryLink))
+    	wireMockServer.stubFor(get(urlEqualTo(queryLink))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json").withBody(responseJson)));
         String response = SPY_sdncClient.get(queryLink);
@@ -59,7 +58,7 @@ public class SDNCClientIT extends BaseIntegrationTest {
         
     	String queryLink = "/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation/";
     			
-    	stubFor(post(urlMatching(queryLink))
+    	wireMockServer.stubFor(post(urlMatching(queryLink))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json").withBody(responseJson)));
     	
@@ -72,7 +71,7 @@ public class SDNCClientIT extends BaseIntegrationTest {
         
     	String queryLink = "/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation/";
     			
-    	stubFor(post(urlMatching(queryLink))
+    	wireMockServer.stubFor(post(urlMatching(queryLink))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json").withBody(responseJson)));
     	

@@ -59,7 +59,7 @@ public class ValetClientTest extends BaseRestTestUtils {
 		ValetCreateResponse vcr = mapper.readValue(new File("src/test/resources/__files/ValetCreateRequest.json"), ValetCreateResponse.class);
 		GenericValetResponse<ValetCreateResponse> expected = new GenericValetResponse<ValetCreateResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vcr);
 		
-		mockValetCreatePostResponse_200("requestId", mapper.writeValueAsString(vcr));
+		mockValetCreatePostResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vcr));
 		
 		GenericValetResponse<ValetCreateResponse> actual = client.callValetCreateRequest("requestId", "regionId", "ownerId", "tenantId", "serviceInstanceId", "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
 
@@ -71,7 +71,7 @@ public class ValetClientTest extends BaseRestTestUtils {
 		ValetUpdateResponse vur = mapper.readValue(new File("src/test/resources/__files/ValetCreateRequest.json"), ValetUpdateResponse.class);
 		GenericValetResponse<ValetUpdateResponse> expected = new GenericValetResponse<ValetUpdateResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vur);
 		
-		mockValetCreatePutResponse_200("requestId", mapper.writeValueAsString(vur));
+		mockValetCreatePutResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vur));
 		
 		GenericValetResponse<ValetUpdateResponse> actual = client.callValetUpdateRequest("requestId", "regionId", "ownerId", "tenantId", "serviceInstanceId", "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
 
@@ -83,7 +83,7 @@ public class ValetClientTest extends BaseRestTestUtils {
 		ValetDeleteResponse vdr = mapper.readValue(new File("src/test/resources/__files/ValetDeleteRequest.json"), ValetDeleteResponse.class);
 		GenericValetResponse<ValetDeleteResponse> expected = new GenericValetResponse<ValetDeleteResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vdr);
 		
-		mockValetDeleteDeleteResponse_200("requestId", mapper.writeValueAsString(vdr));
+		mockValetDeleteDeleteResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vdr));
 		
 		GenericValetResponse<ValetDeleteResponse> actual = client.callValetDeleteRequest("requestId", "regionId", "ownerId", "tenantId", "vfModuleId", "vfModuleName");
 
@@ -95,7 +95,7 @@ public class ValetClientTest extends BaseRestTestUtils {
 		ValetConfirmResponse vcr = new ValetConfirmResponse();
 		GenericValetResponse<ValetConfirmResponse> expected = new GenericValetResponse<ValetConfirmResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vcr);
 		
-		mockValetConfirmPutRequest_200("requestId", "{}");
+		mockValetConfirmPutRequest_200(wireMockServer, "requestId", "{}");
 		
 		GenericValetResponse<ValetConfirmResponse> actual = client.callValetConfirmRequest("requestId", "stackId");
 
@@ -107,7 +107,7 @@ public class ValetClientTest extends BaseRestTestUtils {
 		ValetRollbackResponse vrr = new ValetRollbackResponse();	
 		GenericValetResponse<ValetRollbackResponse> expected = new GenericValetResponse<ValetRollbackResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vrr);
 		
-		mockValetRollbackPutRequest_200("requestId", "{}");
+		mockValetRollbackPutRequest_200(wireMockServer, "requestId", "{}");
 		
 		GenericValetResponse<ValetRollbackResponse> actual = client.callValetRollbackRequest("requestId", "stackId", true, "error");
 

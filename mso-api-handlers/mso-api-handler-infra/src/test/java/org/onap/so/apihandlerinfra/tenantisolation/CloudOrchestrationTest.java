@@ -20,7 +20,19 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.IOException;
+
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -36,13 +48,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.ws.rs.core.MediaType;
-import java.io.File;
-import java.io.IOException;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class CloudOrchestrationTest extends BaseTest {
@@ -53,7 +59,7 @@ public class CloudOrchestrationTest extends BaseTest {
 
 	@Before
 	public void setupTestClass() throws Exception{
-		stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_CREATED)));
+		wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_CREATED)));
 	}
 
 	@Test
@@ -95,7 +101,7 @@ public class CloudOrchestrationTest extends BaseTest {
 	
 	@Test
 	public void testCreateOpEnvReqRecordDuplicateCheck() throws IOException {
-		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+		wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withBody(String.format(getResponseTemplate, "123", "PENDING"))
 				.withStatus(HttpStatus.SC_OK)));
 		ObjectMapper mapper = new ObjectMapper();
@@ -124,7 +130,7 @@ public class CloudOrchestrationTest extends BaseTest {
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
 	
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments");
-		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+		wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_NOT_FOUND)));
 		ResponseEntity<String> response = restTemplate.exchange(
 				builder.toUriString(),
@@ -134,7 +140,7 @@ public class CloudOrchestrationTest extends BaseTest {
 	
 	@Test
 	public void testCreateVNFDuplicateCheck() throws IOException {
-		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+		wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withBody(String.format(getResponseTemplate, "requestId", Status.IN_PROGRESS.toString()))
 				.withStatus(HttpStatus.SC_OK)));
 		ObjectMapper mapper = new ObjectMapper();
@@ -160,7 +166,7 @@ public class CloudOrchestrationTest extends BaseTest {
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
 	
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments");
-		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+		wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":null,\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_NOT_FOUND)));
 
 		ResponseEntity<String> response = restTemplate.exchange(
@@ -178,10 +184,10 @@ public class CloudOrchestrationTest extends BaseTest {
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
 	
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments/ff3514e3-5a33-55df-13ab-12abad84e7ff/activate");
-		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":{\"operationalEnvironmentId\":\"ff3514e3-5a33-55df-13ab-12abad84e7ff\"},\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+		wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":{\"operationalEnvironmentId\":\"ff3514e3-5a33-55df-13ab-12abad84e7ff\"},\"instanceName\":\"myVnfOpEnv\",\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_NOT_FOUND)));
 
-		stubFor(get(urlPathEqualTo(getTestUrl("checkVnfIdStatus/ff3514e3-5a33-55df-13ab-12abad84e7ff"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+		wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("checkVnfIdStatus/ff3514e3-5a33-55df-13ab-12abad84e7ff"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
 
 		ResponseEntity<String> response = restTemplate.exchange(
@@ -201,10 +207,10 @@ public class CloudOrchestrationTest extends BaseTest {
 		HttpEntity<TenantIsolationRequest> entity = new HttpEntity<TenantIsolationRequest>(request, headers);
 
 
-//		stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":{\"operationalEnvironmentId\":\"ff3514e3-5a33-55df-13ab-12abad84e7fa\"},\"instanceName\":null,\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+//		wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("checkInstanceNameDuplicate"))).withRequestBody(equalTo("{\"instanceIdMap\":{\"operationalEnvironmentId\":\"ff3514e3-5a33-55df-13ab-12abad84e7fa\"},\"instanceName\":null,\"requestScope\":\"operationalEnvironment\"}")).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 //				.withBodyFile((String.format(getResponseTemplate, "ff3514e3-5a33-55df-13ab-12abad84e7fa", Status.COMPLETE.toString()))).withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathEqualTo(getTestUrl("checkVnfIdStatus/ff3514e3-5a33-55df-13ab-12abad84e7fa"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+		wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl("checkVnfIdStatus/ff3514e3-5a33-55df-13ab-12abad84e7fa"))).willReturn(aResponse().withHeader(javax.ws.rs.core.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
 
 		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path) + "/operationalEnvironments/ff3514e3-5a33-55df-13ab-12abad84e7fa/deactivate");

@@ -25,17 +25,18 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.onap.so.utils.TargetEntity;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class HttpClientTest{
 
@@ -47,7 +48,7 @@ public class HttpClientTest{
 	@Test
 	public void testPost_success() throws MalformedURLException{
 
-        stubFor(post(urlEqualTo("/services/sdnc/post"))
+		wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
     			.willReturn(aResponse().withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody("")));
@@ -66,7 +67,7 @@ public class HttpClientTest{
     @Test
 	public void testPost_nullHeader() throws MalformedURLException{
 
-        stubFor(post(urlEqualTo("/services/sdnc/post"))
+    	wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
     			.willReturn(aResponse().withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody("")));
@@ -86,7 +87,7 @@ public class HttpClientTest{
     @Test
 	public void testPost_nullBasicAuth() throws MalformedURLException{
 
-        stubFor(post(urlEqualTo("/services/sdnc/post"))
+    	wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
     			.willReturn(aResponse().withStatus(200)
                 .withHeader("Content-Type", "application/json")
                 .withBody("")));

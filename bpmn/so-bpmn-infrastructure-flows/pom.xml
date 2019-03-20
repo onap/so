@@ -104,6 +104,9 @@
 							</configuration>
 						</execution>
 					</executions>
+					<configuration>
+						<parallel>suites</parallel>
+					</configuration>
 				</plugin>
 			</plugins>
 		</pluginManagement>

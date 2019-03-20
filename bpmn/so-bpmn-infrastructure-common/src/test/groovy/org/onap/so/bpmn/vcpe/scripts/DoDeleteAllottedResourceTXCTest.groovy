@@ -132,7 +132,7 @@ class DoDeleteAllottedResourceTXCTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initUpdateAaiAROrchStatus(mex)
 
-        MockPatchAllottedResource(CUST, SVC, INST, ARID)
+        MockPatchAllottedResource(wireMockRule, CUST, SVC, INST, ARID)
 
         DoDeleteAllottedResourceTXC DoDeleteAllottedResourceTXC = new DoDeleteAllottedResourceTXC()
         DoDeleteAllottedResourceTXC.updateAaiAROrchStatus(mex, "success")
@@ -412,8 +412,8 @@ class DoDeleteAllottedResourceTXCTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initDeleteAaiAR(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml")
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml")
+        MockDeleteAllottedResource(wireMockRule, CUST, SVC, INST, ARID, VERS)
 
         DoDeleteAllottedResourceTXC DoDeleteAllottedResourceTXC = new DoDeleteAllottedResourceTXC()
         DoDeleteAllottedResourceTXC.deleteAaiAR(mex)
@@ -424,8 +424,8 @@ class DoDeleteAllottedResourceTXCTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initDeleteAaiAR(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml")
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml")
+        MockDeleteAllottedResource(wireMockRule, CUST, SVC, INST, ARID, VERS)
 
         when(mex.getVariable("aaiARPath")).thenReturn("")
 
@@ -439,8 +439,8 @@ class DoDeleteAllottedResourceTXCTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initDeleteAaiAR(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml")
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml")
+        MockDeleteAllottedResource(wireMockRule, CUST, SVC, INST, ARID, VERS)
 
         when(mex.getVariable("aaiARPath")).thenThrow(new BpmnError("expected exception"))
 
@@ -454,8 +454,8 @@ class DoDeleteAllottedResourceTXCTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initDeleteAaiAR(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml")
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml")
+        MockDeleteAllottedResource(wireMockRule, CUST, SVC, INST, ARID, VERS)
 
         when(mex.getVariable("aaiARPath")).thenThrow(new RuntimeException("expected exception"))
 

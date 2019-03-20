@@ -24,7 +24,6 @@ package org.onap.so.apihandlerinfra;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -108,7 +107,7 @@ public class RequestHandlerUtilsTest extends BaseTest{
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} 
-		stubFor(post(urlMatching(".*/infraActiveRequests.*"))
+		wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 	}
@@ -184,7 +183,7 @@ public class RequestHandlerUtilsTest extends BaseTest{
 		Service defaultService = new Service();
 		defaultService.setServiceType("testServiceTypeALaCarte");
     	
-    	stubFor(get(urlMatching(".*/service/search/.*"))
+		wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService))
                         .withStatus(HttpStatus.SC_OK)));
@@ -208,7 +207,7 @@ public class RequestHandlerUtilsTest extends BaseTest{
 		Service defaultService = new Service();
 		defaultService.setServiceType("testServiceType");
     	
-    	stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
+		wireMockServer.stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService))
                         .withStatus(HttpStatus.SC_OK)));
@@ -232,10 +231,10 @@ public class RequestHandlerUtilsTest extends BaseTest{
 		Service defaultService = new Service();
 		defaultService.setServiceType("testServiceType");
     	
-    	stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
+		wireMockServer.stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withStatus(HttpStatus.SC_NOT_FOUND)));
-    	stubFor(get(urlMatching(".*/service/search/.*"))
+		wireMockServer.stubFor(get(urlMatching(".*/service/search/.*"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody(mapper.writeValueAsString(defaultService))
                         .withStatus(HttpStatus.SC_OK)));
@@ -281,7 +280,7 @@ public class RequestHandlerUtilsTest extends BaseTest{
     }
     @Test
     public void camundaHistoryCheckTest() throws ContactCamundaException, RequestDbFailureException{
-    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+    	wireMockServer.stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/HistoryCheckResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
     	
@@ -293,7 +292,7 @@ public class RequestHandlerUtilsTest extends BaseTest{
     }
     @Test
     public void camundaHistoryCheckNoneFoundTest() throws ContactCamundaException, RequestDbFailureException{
-    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+    	wireMockServer.stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBody("[]").withStatus(org.apache.http.HttpStatus.SC_OK)));
     	
@@ -305,7 +304,7 @@ public class RequestHandlerUtilsTest extends BaseTest{
     }
     @Test
     public void camundaHistoryCheckNotInProgressTest()throws ContactCamundaException, RequestDbFailureException{
-    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
+    	wireMockServer.stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/HistoryCheckResponseCompleted.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
     	

@@ -21,6 +21,17 @@
 
 package org.onap.so.adapters.vnf;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.ws.Holder;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -32,12 +43,6 @@ import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.xml.ws.Holder;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 
@@ -62,15 +67,15 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 	
 	@Test 
     public void queryVnfExceptionTest() throws Exception {
-		reset();
-		expectedException.expect(VnfException.class);
         MsoRequest msoRequest = new MsoRequest();
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
-
+        Holder <Map <String, String>> outputs = new Holder<>();
         instance.queryVnf("siteid", "CloudOwner", "1234", "vfname",
                 msoRequest, new Holder<>(), new Holder<>(), new Holder<>(),
-                new Holder<>());
+                outputs);
+        
+        assertTrue(outputs.value.isEmpty());
     }
 
 	@Test
@@ -78,19 +83,19 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname")).willReturn(aResponse()
 				.withBody("{ \"id\": \"123\" }")
 				.withStatus(HttpStatus.SC_OK)));
 		
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname/outputs")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname/outputs")).willReturn(aResponse()
 				.withBody("{ \"deployment_id\": \"123\",\"outputs\":{\"abc\":\"abc\"} }")
 				.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching("/v2.0/api/v3/executions?.*")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlMatching("/v2.0/api/v3/executions?.*")).willReturn(aResponse()
 				.withBody("{ \"items\": {\"id\": \"123\",\"workflow_id\":\"install\",\"status\":\"terminated\" } } ")
 				.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/tokens")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/tokens")).willReturn(aResponse()
 				.withBodyFile("OpenstackResponse_Access.json")
 				.withStatus(HttpStatus.SC_OK)));
 		
@@ -115,19 +120,19 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		MsoRequest msoRequest = new MsoRequest();
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname")).willReturn(aResponse()
 				.withBody("{ \"id\": \"123\" }")
 				.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname/outputs")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname/outputs")).willReturn(aResponse()
 				.withBody("{ \"deployment_id\": \"123\",\"outputs\":{\"abc\":\"abc\"} }")
 				.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching("/v2.0/api/v3/executions?.*")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlMatching("/v2.0/api/v3/executions?.*")).willReturn(aResponse()
 				.withBody("{ \"items\": {\"id\": \"123\",\"workflow_id\":\"install\",\"status\":\"terminated\" } } ")
 				.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/tokens")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/tokens")).willReturn(aResponse()
 				.withBodyFile("OpenstackResponse_Access.json")
 				.withStatus(HttpStatus.SC_OK)));
 
@@ -225,19 +230,19 @@ public class MsoVnfCloudifyAdapterImplTest extends BaseRestTestUtils {
 		msoRequest.setRequestId("12345");
 		msoRequest.setServiceInstanceId("12345");
 
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname")).willReturn(aResponse()
 				.withBody("{ \"id\": \"123\" }")
 				.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname/outputs")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/deployments/vfname/outputs")).willReturn(aResponse()
 				.withBody("{ \"deployment_id\": \"123\",\"outputs\":{\"abc\":\"abc\"} }")
 				.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlMatching("/v2.0/api/v3/executions?.*")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlMatching("/v2.0/api/v3/executions?.*")).willReturn(aResponse()
 				.withBody("{ \"items\": {\"id\": \"123\",\"workflow_id\":\"install\",\"status\":\"terminated\" } } ")
 				.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathEqualTo("/v2.0/api/v3/tokens")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/v2.0/api/v3/tokens")).willReturn(aResponse()
 				.withBodyFile("OpenstackResponse_Access.json")
 				.withStatus(HttpStatus.SC_OK)));
 

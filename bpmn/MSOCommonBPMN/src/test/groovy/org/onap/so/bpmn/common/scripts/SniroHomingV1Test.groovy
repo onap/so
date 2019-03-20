@@ -70,9 +70,6 @@ class SniroHomingV1Test {
         serviceDecomp.setVnfResources(vnfResourceList)
     }
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
-
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 

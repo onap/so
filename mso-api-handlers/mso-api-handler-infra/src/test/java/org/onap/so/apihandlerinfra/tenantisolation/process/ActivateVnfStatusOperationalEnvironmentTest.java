@@ -21,26 +21,25 @@
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertEquals;
-
 import static org.junit.Assert.assertThat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.rules.ExpectedException;
 import org.onap.so.apihandler.common.ErrorNumbers;
 import org.onap.so.apihandlerinfra.BaseTest;
@@ -55,8 +54,8 @@ import org.onap.so.db.request.beans.OperationalEnvDistributionStatus;
 import org.onap.so.db.request.beans.OperationalEnvServiceModelStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 
@@ -115,11 +114,11 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
@@ -141,7 +140,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setRetryCount(retryCountZero);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
 		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);		
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -150,7 +149,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
@@ -177,7 +176,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setRetryCount(retryCountTwo);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
 		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);		
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -218,31 +217,31 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 		
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(distributionDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
 				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"RETRY\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
 				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 		
-		stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/operational-environment/VNF_operationalEnvironmentId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/operational-environment/VNF_operationalEnvironmentId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathEqualTo("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/operational-environment/VNF_operationalEnvironmentId"))
+		wireMockServer.stubFor(put(urlPathEqualTo("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/operational-environment/VNF_operationalEnvironmentId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		activateVnfStatus.execute(requestId, request);		
@@ -260,7 +259,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		serviceModelDb.setRetryCount(retryCountThree);
 		serviceModelDb.setServiceModelVersionDistrStatus(statusError);
 		serviceModelDb.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
@@ -290,33 +289,33 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		jsonObject.put("message", "Success");
 		jsonObject.put("distributionId", sdcDistributionId1);
 		
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(distributionDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
 				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_ERROR\",\"distributionIdErrorReason\":\"Unable to process.\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
 				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 		
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		activateVnfStatus.execute(requestId, request);	
@@ -361,30 +360,30 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(distributionDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 		
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 
-		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
 				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":2,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"handler\":{}}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
         try {
@@ -441,29 +440,29 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(distributionDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
 				.withRequestBody(containing("operationalEnvId\":\"VNF_operationalEnvironmentId\""))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 		
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonMessages.toString()).withStatus(HttpStatus.SC_CONFLICT)));
 
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		try {
@@ -509,31 +508,31 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(distributionDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
 				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"recoveryAction\":\"SKIP\",\"retryCount\":0,\"workloadContext\":\"TEST_workloadContext\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"VNF_operationalEnvironmentId\"}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
 				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_OK\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		activateVnfStatus.execute(requestId, request);			
@@ -574,32 +573,32 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestId(requestIdOrig);
 		iar.setRequestStatus("PENDING");
 
-		stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvServiceModelStatus/search/findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(serviceModelDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/operationalEnvDistributionStatus/"+sdcDistributionId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(distributionDb))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestIdOrig))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
 				.withRequestBody(containing("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestIdOrig\",\"distributionIdStatus\":\"DISTRIBUTION_COMPLETE_ERROR\""))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
 				.withRequestBody(containing("{\"requestId\":\"TEST_requestIdOrig\",\"operationalEnvId\":\"TEST_operationalEnvironmentId\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"DISTRIBUTION_COMPLETE_ERROR\""))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 		
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
         try {
@@ -646,7 +645,7 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 		request.setDistributionId(sdcDistributionId);
 		request.setOperationalEnvironmentId(operationalEnvironmentId);		
 		
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		JSONObject jsonResponse = activateVnfStatus.callSDClientForRetry(distributionDb, serviceModelDb, distribution); 

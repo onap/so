@@ -238,8 +238,8 @@ class DoCreateAllottedResourceTXCRollbackTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initUpdateAaiAROrchStatus(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
-        MockPatchAllottedResource(CUST, SVC, INST, ARID)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
+        MockPatchAllottedResource(wireMockRule, CUST, SVC, INST, ARID)
 
         DoCreateAllottedResourceTXCRollback DoCreateAllottedResourceTXCRollback = new DoCreateAllottedResourceTXCRollback()
         DoCreateAllottedResourceTXCRollback.updateAaiAROrchStatus(mex, "success")
@@ -265,8 +265,8 @@ class DoCreateAllottedResourceTXCRollbackTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initUpdateAaiAROrchStatus(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
-        MockPatchAllottedResource(CUST, SVC, INST, ARID)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
+        MockPatchAllottedResource(wireMockRule, CUST, SVC, INST, ARID)
 
         when(mex.getVariable("aaiARPath")).thenReturn(null)
 
@@ -354,8 +354,8 @@ class DoCreateAllottedResourceTXCRollbackTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initDeleteAaiAR(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
+        MockDeleteAllottedResource(wireMockRule, CUST, SVC, INST, ARID, VERS)
 
         DoCreateAllottedResourceTXCRollback DoCreateAllottedResourceTXCRollback = new DoCreateAllottedResourceTXCRollback()
         DoCreateAllottedResourceTXCRollback.deleteAaiAR(mex)
@@ -366,8 +366,8 @@ class DoCreateAllottedResourceTXCRollbackTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initDeleteAaiAR(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
+        MockDeleteAllottedResource(wireMockRule, CUST, SVC, INST, ARID, VERS)
 
         when(mex.getVariable("aaiARPath")).thenReturn("")
 
@@ -381,8 +381,8 @@ class DoCreateAllottedResourceTXCRollbackTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initDeleteAaiAR(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
+        MockDeleteAllottedResource(wireMockRule, CUST, SVC, INST, ARID, VERS)
 
         when(mex.getVariable("aaiARPath")).thenThrow(new BpmnError("expected exception"))
 
@@ -396,8 +396,8 @@ class DoCreateAllottedResourceTXCRollbackTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initDeleteAaiAR(mex)
 
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
-        MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXCRollback/arGetById.xml")
+        MockDeleteAllottedResource(wireMockRule, CUST, SVC, INST, ARID, VERS)
 
         when(mex.getVariable("aaiARPath")).thenThrow(new RuntimeException("expected exception"))
 
