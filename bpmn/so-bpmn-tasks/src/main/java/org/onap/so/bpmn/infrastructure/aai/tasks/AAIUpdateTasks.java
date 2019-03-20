@@ -530,4 +530,12 @@ public class AAIUpdateTasks {
 		}
 	}
 	
+	public void updateOrchestrationStatusConfigAssignedVnf(BuildingBlockExecution execution) {
+		try {
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			aaiVnfResources.updateOrchestrationStatusVnf(vnf, OrchestrationStatus.CONFIGASSIGNED);
+		} catch (Exception ex) {
+			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+		}
+	}
 }
