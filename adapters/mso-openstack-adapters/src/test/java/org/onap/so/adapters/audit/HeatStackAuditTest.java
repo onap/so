@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -42,6 +43,7 @@ import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.LInterfaces;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.openstack.utils.MsoHeatUtils;
+import org.onap.so.openstack.utils.MsoNeutronUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -49,6 +51,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.heat.model.Resource;
 import com.woorea.openstack.heat.model.Resources;
 import com.woorea.openstack.heat.model.Stack;
+import com.woorea.openstack.quantum.model.Port;
 
 
 @RunWith(MockitoJUnitRunner.Silent.class)
@@ -59,6 +62,9 @@ public class HeatStackAuditTest extends HeatStackAudit {
 
 	@Mock
 	private MsoHeatUtils msoHeatUtilsMock;
+	
+	@Mock
+	private MsoNeutronUtils neutronUtilsMock;
 	
 	@Mock
 	private AuditVServer auditVserver;
@@ -72,10 +78,32 @@ public class HeatStackAuditTest extends HeatStackAudit {
 	
 	private ObjectMapper stackObjectMapper = new ObjectMapper().configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
 
+	private List<Optional<Port>> portList = new ArrayList<>();
+	
 	@Before
 	public void setup() throws Exception{		
 		resources= objectMapper.readValue(new File("src/test/resources/GetResources.json"), Resources.class);
+		Port neutronPort1 =stackObjectMapper.readValue(new File("src/test/resources/NeutronPort1.json"), Port.class);
+		doReturn(Optional.of(neutronPort1)).when(neutronUtilsMock).getNeutronPort("7ee06d9d-3d18-411c-9d3e-aec930f70413", cloudRegion,tenantId);
+		Port neutronPort2 = stackObjectMapper.readValue(new File("src/test/resources/NeutronPort2.json"), Port.class);
+		doReturn(Optional.of(neutronPort2)).when(neutronUtilsMock).getNeutronPort("27391d94-33af-474a-927d-d409249e8fd3", cloudRegion,tenantId);
+		Port neutronPort3 = stackObjectMapper.readValue(new File("src/test/resources/NeutronPort3.json"), Port.class);
+		doReturn(Optional.of(neutronPort3)).when(neutronUtilsMock).getNeutronPort("fdeedf37-c01e-4ab0-bdd6-8d5fc4913943", cloudRegion,tenantId);	
+		Port neutronPort4 = stackObjectMapper.readValue(new File("src/test/resources/NeutronPort4.json"), Port.class);
+		doReturn(Optional.of(neutronPort4)).when(neutronUtilsMock).getNeutronPort("8d93f63e-e972-48c7-ad98-b2122da47315", cloudRegion,tenantId);
+		Port neutronPort5 = stackObjectMapper.readValue(new File("src/test/resources/NeutronPort5.json"), Port.class);
+		doReturn(Optional.of(neutronPort5)).when(neutronUtilsMock).getNeutronPort("0594a2f2-7ea4-42eb-abc2-48ea49677fca", cloudRegion,tenantId);
+		Port neutronPort6 = stackObjectMapper.readValue(new File("src/test/resources/NeutronPort6.json"), Port.class);
+		doReturn(Optional.of(neutronPort6)).when(neutronUtilsMock).getNeutronPort("00bb8407-650e-48b5-b919-33b88d6f8fe3", cloudRegion,tenantId);
 		
+
+		portList.add(Optional.empty());
+		portList.add(Optional.of(neutronPort1));
+		portList.add(Optional.of(neutronPort2));
+		portList.add(Optional.of(neutronPort3));
+		portList.add(Optional.of(neutronPort4));
+		portList.add(Optional.of(neutronPort5));
+		portList.add(Optional.of(neutronPort6));
 	} 
 	
 	@Test
@@ -111,13 +139,13 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		vServer1.setLInterfaces(vServer1Linterfaces);
 		
 		LInterface ssc_1_trusted_port_0 = new LInterface();
-		ssc_1_trusted_port_0.setInterfaceId("d2f51f82-0ec2-4581-bd1a-d2a82073e52b");
+		ssc_1_trusted_port_0.setInterfaceId("7ee06d9d-3d18-411c-9d3e-aec930f70413");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_trusted_port_0);
 		
 
 		
 		LInterface ssc_1_mgmt_port_1 = new LInterface();
-		ssc_1_mgmt_port_1.setInterfaceId("07f5b14c-147a-4d14-8c94-a9e94dbc097b");
+		ssc_1_mgmt_port_1.setInterfaceId("fdeedf37-c01e-4ab0-bdd6-8d5fc4913943");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_1);
 		
 		LInterface ssc_1_mgmt_port_0 = new LInterface();
@@ -187,7 +215,7 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		Resources service1ResourceQuerySubInt3 = objectMapper.readValue(new File("src/test/resources/Service1SubInterface2Resources.json"), Resources.class);
 		doReturn(service1ResourceQuerySubInt3).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz-2-y3ndsavmsymv/bd0fc728-cbde-4301-a581-db56f494675c/resources", cloudRegion,tenantId, Resources.class);
 	
-		Set<Vserver> vServersToAudit = heatStackAudit.createVserverSet(resources, novaResources);
+		Set<Vserver> vServersToAudit = heatStackAudit.createVserverSet(resources, novaResources,portList);
 		Set<Vserver> vserversWithSubInterfaces = heatStackAudit.processSubInterfaces(cloudRegion,tenantId,resourceGroups, vServersToAudit);
 		
 		String actualValue = objectMapper.writeValueAsString(vserversWithSubInterfaces);
@@ -219,7 +247,7 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		vServer1.setLInterfaces(vServer1Linterfaces);
 		
 		LInterface ssc_1_trusted_port_0 = new LInterface();
-		ssc_1_trusted_port_0.setInterfaceId("d2f51f82-0ec2-4581-bd1a-d2a82073e52b");
+		ssc_1_trusted_port_0.setInterfaceId("7ee06d9d-3d18-411c-9d3e-aec930f70413");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_trusted_port_0);
 		
 		LInterface ssc_1_service1_port_0 = new LInterface();
@@ -227,7 +255,7 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_service1_port_0);
 		
 		LInterface ssc_1_mgmt_port_1 = new LInterface();
-		ssc_1_mgmt_port_1.setInterfaceId("07f5b14c-147a-4d14-8c94-a9e94dbc097b");
+		ssc_1_mgmt_port_1.setInterfaceId("fdeedf37-c01e-4ab0-bdd6-8d5fc4913943");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_1);
 		
 		LInterface ssc_1_mgmt_port_0 = new LInterface();
@@ -244,7 +272,7 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		
 		expectedVservers.add(vServer1);
 	
-		Set<Vserver> actualVservers = heatStackAudit.createVserverSet(resources, novaResources);
+		Set<Vserver> actualVservers = heatStackAudit.createVserverSet(resources, novaResources,portList);
 		
 		assertThat(actualVservers, sameBeanAs(expectedVservers));
 	}

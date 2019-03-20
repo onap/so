@@ -34,6 +34,7 @@ import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.LInterfaces;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.openstack.utils.MsoHeatUtils;
+import org.onap.so.openstack.utils.MsoNeutronUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import com.woorea.openstack.heat.model.Link;
 import com.woorea.openstack.heat.model.Resource;
 import com.woorea.openstack.heat.model.Resources;
 import com.woorea.openstack.heat.model.Stack;
+import com.woorea.openstack.quantum.model.Port;
 
 @Component
 public class HeatStackAudit {
@@ -53,6 +55,9 @@ public class HeatStackAudit {
 
 	@Autowired
 	protected MsoHeatUtils heat;
+
+	@Autowired
+	protected MsoNeutronUtils neutron;
 
 	@Autowired
 	protected AuditVServer auditVservers;
@@ -82,8 +87,9 @@ public class HeatStackAudit {
 		if(novaResources.isEmpty())
 			return true;
 		else{
+			List<Optional<Port>> neutronPortDetails = retrieveNeutronPortDetails(resources,cloudRegion,tenantId);
 			List<Resource> resourceGroups = extractResourceGroups(resources);
-			Set<Vserver> vserversToAudit = createVserverSet(resources, novaResources);
+			Set<Vserver> vserversToAudit = createVserverSet(resources, novaResources,neutronPortDetails);
 			Set<Vserver> vserversWithSubInterfaces = processSubInterfaces(cloudRegion, tenantId, resourceGroups,
 				vserversToAudit);
 			if(isCreateAudit){
@@ -186,23 +192,46 @@ public class HeatStackAudit {
 							lInterface.getInterfaceId(),subinterfaceStack.getId());
 	}
 
-	protected Set<Vserver> createVserverSet(Resources resources, List<Resource> novaResources) {
+	protected Set<Vserver> createVserverSet(Resources resources, List<Resource> novaResources, List<Optional<Port>> neutronPortDetails) {
 		Set<Vserver> vserversToAudit = new HashSet<>();
 		for (Resource novaResource : novaResources) {
 			Vserver auditVserver = new Vserver();
 			auditVserver.setLInterfaces(new LInterfaces());
 			auditVserver.setVserverId(novaResource.getPhysicalResourceId());
-			Stream<Resource> filteredNeutronNetworks = resources.getList().stream()
-					.filter(resource -> resource.getRequiredBy().contains(novaResource.getLogicalResourceId()))
-					.filter(resource -> "OS::Neutron::Port".equals(resource.getType()));
-			filteredNeutronNetworks.forEach(network -> {
+			Stream<Port> filteredNeutronPorts = filterNeutronPorts(novaResource, neutronPortDetails);
+			filteredNeutronPorts.forEach(port -> {
 				LInterface lInterface = new LInterface();
-				lInterface.setInterfaceId(network.getPhysicalResourceId());
+				lInterface.setInterfaceId(port.getId());
 				auditVserver.getLInterfaces().getLInterface().add(lInterface);
 			});
 			vserversToAudit.add(auditVserver);
 		}
 		return vserversToAudit;
+	}
+
+	/**
+	 * @param novaResource Single openstack resource that is of type Nova
+	 * @param neutronPorts List of Neutron ports created within the stack
+	 * @return Filtered list of neutron ports taht relate to the nova server in openstack
+	 */
+	protected Stream<Port> filterNeutronPorts(Resource novaResource, List<Optional<Port>> neutronPorts) {
+		List<Port> filteredNeutronPorts = neutronPorts.stream().filter(Optional::isPresent).map(Optional::get)
+				.collect(Collectors.toList());
+		return filteredNeutronPorts.stream()
+				.filter(port -> port.getDeviceId().equalsIgnoreCase(novaResource.getPhysicalResourceId()));
+	}
+	
+	/**
+	 * @param resources Resource stream created by the stack in openstack
+	 * @param cloudSiteId Unique site id to identify which openstack we talk to
+	 * @param tenantId The tenant within the cloud we are talking to where resouces exist
+	 * @return List of optional neutron ports found within the cloud site and tenant
+	 */
+	protected List<Optional<Port>> retrieveNeutronPortDetails(Resources resources,String cloudSiteId,String tenantId){
+		return resources.getList().stream()	
+				.filter(resource -> "OS::Neutron::Port".equals(resource.getType()))
+				.map(resource -> neutron.getNeutronPort(resource.getPhysicalResourceId(),cloudSiteId,tenantId)).collect(Collectors.toList());
+
 	}
 
 	protected Optional<String> extractResourcePathFromHref(String href) {		
@@ -234,3 +263,4 @@ public class HeatStackAudit {
 	}
 	
 }
+
