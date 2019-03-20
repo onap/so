@@ -309,6 +309,8 @@ public class CvnfcCustomizationRepositoryTest extends BaseTest {
     	Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomizationSet = new HashSet<VnfVfmoduleCvnfcConfigurationCustomization>();
     	vnfVfmoduleCvnfcConfigurationCustomizationSet.add(vnfVfmoduleCvnfcConfigurationCustomization);
     	cvnfcCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(vnfVfmoduleCvnfcConfigurationCustomizationSet);
+    	vfModuleCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(vnfVfmoduleCvnfcConfigurationCustomizationSet);
+    	vnfResourceCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(vnfVfmoduleCvnfcConfigurationCustomizationSet);
     	
     	cvnfcCustomizationRepository.save(cvnfcCustomization);
     	

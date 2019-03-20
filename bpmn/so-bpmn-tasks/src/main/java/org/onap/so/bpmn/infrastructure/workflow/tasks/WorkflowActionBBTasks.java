@@ -375,38 +375,23 @@ public class WorkflowActionBBTasks {
 			List<Vnfc> vnfcs = workflowAction.getRelatedResourcesInVfModule(vnfId, vfModuleId, Vnfc.class, AAIObjectType.VNFC);
 			for(Vnfc vnfc : vnfcs) {
 				String modelCustomizationId = vnfc.getModelCustomizationId();
-				List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(vnfCustomizationUUID, vfModuleCustomizationUUID);
-				CvnfcCustomization cvnfcCustomization = null;
-				for(CvnfcCustomization cvnfc : cvnfcCustomizations) {
-					if(cvnfc.getModelCustomizationUUID().equalsIgnoreCase(modelCustomizationId)) {
-						cvnfcCustomization = cvnfc;
-					}
-				}
-				if(cvnfcCustomization != null) {
-					VnfVfmoduleCvnfcConfigurationCustomization fabricConfig = null;
-					for(VnfVfmoduleCvnfcConfigurationCustomization customization : cvnfcCustomization.getVnfVfmoduleCvnfcConfigurationCustomization()){
-						if(customization.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)){
-							if(fabricConfig == null) {
-								fabricConfig = customization;
-							} else {
-								throw new Exception("Multiple Fabric configs found for this vnfc");
-							}
-						}
-					}
-					if(fabricConfig != null) {
-						String configurationId = UUID.randomUUID().toString();
-						ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
-						configurationResourceKeys.setCvnfcCustomizationUUID(modelCustomizationId);
-						configurationResourceKeys.setVfModuleCustomizationUUID(vfModuleCustomizationUUID);
-						configurationResourceKeys.setVnfResourceCustomizationUUID(vnfCustomizationUUID);
-						configurationResourceKeys.setVnfcName(vnfc.getVnfcName());
-						ExecuteBuildingBlock assignConfigBB = getExecuteBBForConfig(ASSIGN_FABRIC_CONFIGURATION_BB, ebb, configurationId, configurationResourceKeys);
-						ExecuteBuildingBlock activateConfigBB = getExecuteBBForConfig(ACTIVATE_FABRIC_CONFIGURATION_BB, ebb, configurationId, configurationResourceKeys);
-						flowsToExecute.add(assignConfigBB);
-						flowsToExecute.add(activateConfigBB);
-						execution.setVariable("flowsToExecute", flowsToExecute);
-						execution.setVariable("completed", false);
-					}
+				VnfVfmoduleCvnfcConfigurationCustomization fabricConfig = 
+						catalogDbClient.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(vnfCustomizationUUID, vfModuleCustomizationUUID, modelCustomizationId);
+				if(fabricConfig != null && fabricConfig.getConfigurationResource() != null 
+						&& fabricConfig.getConfigurationResource().getToscaNodeType() != null 
+						&& fabricConfig.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)) {
+					String configurationId = UUID.randomUUID().toString();
+					ConfigurationResourceKeys configurationResourceKeys = new ConfigurationResourceKeys();
+					configurationResourceKeys.setCvnfcCustomizationUUID(modelCustomizationId);
+					configurationResourceKeys.setVfModuleCustomizationUUID(vfModuleCustomizationUUID);
+					configurationResourceKeys.setVnfResourceCustomizationUUID(vnfCustomizationUUID);
+					configurationResourceKeys.setVnfcName(vnfc.getVnfcName());
+					ExecuteBuildingBlock assignConfigBB = getExecuteBBForConfig(ASSIGN_FABRIC_CONFIGURATION_BB, ebb, configurationId, configurationResourceKeys);
+					ExecuteBuildingBlock activateConfigBB = getExecuteBBForConfig(ACTIVATE_FABRIC_CONFIGURATION_BB, ebb, configurationId, configurationResourceKeys);
+					flowsToExecute.add(assignConfigBB);
+					flowsToExecute.add(activateConfigBB);
+					execution.setVariable("flowsToExecute", flowsToExecute);
+					execution.setVariable("completed", false);
 				} else {
 					logger.debug("No cvnfcCustomization found for customizationId: " + modelCustomizationId);
 				}
