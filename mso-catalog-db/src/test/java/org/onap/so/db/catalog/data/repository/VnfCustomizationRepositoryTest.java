@@ -22,6 +22,7 @@ package org.onap.so.db.catalog.data.repository;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.junit.Test;
@@ -65,6 +66,7 @@ public class VnfCustomizationRepositoryTest extends BaseTest {
         assertEquals("modelInstanceName", "vSAMP10a 1", vnfResourceCustomization.getModelInstanceName());
         assertEquals("blueprintName", "test_configuration_restconf", vnfResourceCustomization.getBlueprintName());
         assertEquals("blueprintVersion", "1.0.0", vnfResourceCustomization.getBlueprintVersion());
+        assertTrue("skip post instantiation configuration", vnfResourceCustomization.isSkipPostInstConf());
         VnfResource vnfResource = vnfResourceCustomization.getVnfResources();
         assertNotNull(vnfResource);
 
