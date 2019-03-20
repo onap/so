@@ -174,6 +174,24 @@
       "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dce433ec_1c30c4ca",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-20T11:53:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b9061cc5_c7cd53e8",
+      "revId": "e701fafc479df9cdffcc3b270b71c42d1bd09377",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
