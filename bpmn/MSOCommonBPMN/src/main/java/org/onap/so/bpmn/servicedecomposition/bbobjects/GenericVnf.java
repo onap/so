@@ -143,7 +143,27 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 	private String nfFunction;
 	@JsonProperty("nf-role")
 	private String nfRole;
+	@JsonProperty("CDS_BLUEPRINT_NAME")
+	private String blueprintName;
+	@JsonProperty("CDS_BLUEPRINT_VERSION")
+	private String blueprintVersion;
 
+
+	public String getBlueprintName() {
+		return blueprintName;
+	}
+
+	public void setBlueprintName(String blueprintName) {
+		this.blueprintName = blueprintName;
+	}
+
+	public String getBlueprintVersion() {
+		return blueprintVersion;
+	}
+
+	public void setBlueprintVersion(String blueprintVersion) {
+		this.blueprintVersion = blueprintVersion;
+	}
 
 	public String getNfFunction() {
 		return nfFunction;
