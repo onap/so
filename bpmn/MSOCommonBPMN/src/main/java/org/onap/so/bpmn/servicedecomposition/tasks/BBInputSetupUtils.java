@@ -146,7 +146,7 @@ public class BBInputSetupUtils {
 	}
 	
 	public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByActionAndIsALaCarteAndRequestScopeAndCloudOwner(String vnfCustomizationUuid,
-			String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
+			String vfModuleCustomizationUuid, String cvnfcCustomizationUuid){
 		return catalogDbClient.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(vnfCustomizationUuid,
 				vfModuleCustomizationUuid, cvnfcCustomizationUuid);
 	}

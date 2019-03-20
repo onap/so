@@ -323,7 +323,65 @@ public class ASDCNotificationLogging {
             		buffer.append(System.lineSeparator());
         		}
         		
+       	   		buffer.append(System.lineSeparator());
+        		buffer.append("VF Module Customization Properties:");
+        		buffer.append(System.lineSeparator());
+        		buffer.append("Model Customization UUID:");
+        		buffer.append(testNull(toscaResourceStructure.getSdcCsarHelper().getMetadataPropertyValue(vfMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULECUSTOMIZATIONUUID)));
+        		buffer.append(System.lineSeparator());
         		
+    		}
+    		
+    		List<NodeTemplate> vfConfigList = toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(vfNodeTemplate, SdcTypes.CONFIGURATION);
+			
+    		if(vfConfigList != null){
+    			for (NodeTemplate configNodeTemplate :  vfConfigList) {
+    				
+    				buffer.append(System.lineSeparator());
+    				buffer.append(System.lineSeparator());
+    				buffer.append("Fabric Configuration Properties:");
+    				buffer.append(System.lineSeparator());
+    				
+    		   		buffer.append("Model Name:");
+    	    		buffer.append(configNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+    	    		buffer.append(System.lineSeparator());
+    	    		buffer.append("Model UUID:");
+    	    		buffer.append(configNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));		
+    	    		buffer.append(System.lineSeparator());
+    	       		buffer.append("Description:");
+    	    		buffer.append(configNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION));
+    	    		buffer.append(System.lineSeparator());
+    	       		buffer.append("Version:");
+    	    		buffer.append(configNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+    	    		buffer.append(System.lineSeparator());
+    	      		buffer.append("InvariantUuid:");
+    	    		buffer.append(configNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+    	    		buffer.append(System.lineSeparator());
+    	      		buffer.append("Tosca Node Type:");
+    	    		buffer.append(configNodeTemplate.getType());
+    	    		
+    	    		buffer.append(System.lineSeparator());
+    	    		buffer.append(System.lineSeparator());
+    	    		buffer.append("Fabric Configuration Customization Properties:");
+    	    		buffer.append(System.lineSeparator());
+    	    		
+    	       		buffer.append("Model Customization UUID:");
+    	    		buffer.append(configNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+    	    		buffer.append(System.lineSeparator());
+    	    		buffer.append("Model Instance Name:");
+    	    		buffer.append(configNodeTemplate.getName());		
+    	    		buffer.append(System.lineSeparator());
+    	      		buffer.append("NFFunction:");
+    	      		buffer.append(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(configNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFFUNCTION));
+    	    		buffer.append(System.lineSeparator());
+    	      		buffer.append("NFRole:");
+    	      		buffer.append(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(configNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFROLE));
+    	    		buffer.append(System.lineSeparator());
+    	      		buffer.append("NFType:");
+    	      		buffer.append(toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(configNodeTemplate, SdcPropertyNames.PROPERTY_NAME_NFTYPE));
+    	    		buffer.append(System.lineSeparator());
+    				
+    			}
     		}
     		
     		List<NodeTemplate> cvfcList = toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(vfNodeTemplate, SdcTypes.CVFC);
@@ -523,6 +581,7 @@ public class ASDCNotificationLogging {
     	    		buffer.append(System.lineSeparator());	
 	    			
 	    		}
+
 	    		
 	    		List<Group> groupList = toscaResourceStructure.getSdcCsarHelper().getGroupsOfOriginOfNodeTemplateByToscaGroupType(crNode, "org.openecomp.groups.NetworkCollection");	
 	    		

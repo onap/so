@@ -31,6 +31,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
@@ -74,7 +75,8 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 	private String configurationFunction;	
 
 	@Column(name = "POLICY_NAME")
-	private String policyName;	
+	private String policyName;
+
 	
 	@Column(name = "CREATION_TIMESTAMP", updatable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
@@ -87,7 +89,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 	
 	@BusinessKey
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CVNFC_MODEL_CUSTOMIZATION_UUID", referencedColumnName = "MODEL_CUSTOMIZATION_UUID")
+	@JoinColumn(name = "CVNFC_CUSTOMIZATION_ID")
 	private CvnfcCustomization cvnfcCustomization;
 	
 	@BusinessKey
@@ -98,7 +100,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 	@BusinessKey
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID")
-	private VnfResourceCustomization vnfResourceCustomization;
+	private VnfResourceCustomization vnfResourceCustomization; 
 
 	@Override
 	public boolean equals(final Object other) {
@@ -222,6 +224,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 		this.cvnfcCustomization = cvnfcCustomization;
 	}
 
+	@LinkedResource
 	public VfModuleCustomization getVfModuleCustomization() {
 		return vfModuleCustomization;
 	}
@@ -230,6 +233,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 		this.vfModuleCustomization = vfModuleCustomization;
 	}
 
+	@LinkedResource
 	public VnfResourceCustomization getVnfResourceCustomization() {
 		return vnfResourceCustomization;
 	}
