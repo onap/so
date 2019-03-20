@@ -20,14 +20,16 @@
 
 package org.onap.so.adapters.sdnc.sdncrest;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.adapters.sdnc.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class BPRestCallbackTest extends BaseTest {
 
@@ -44,7 +46,7 @@ public class BPRestCallbackTest extends BaseTest {
                 "\t\t//   </error>\n" +
                 "\t\t// </errors>";
 
-        stubFor(post(urlPathEqualTo("/sdnc"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/sdnc"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/xml").withBody(response).withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
 
         boolean responseCommon = bpRestCallback.send("http://localhost:" + wireMockPort + "/sdnc", "Test");

@@ -22,30 +22,31 @@ package org.onap.so.bpmn.common;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 public class MockAAIGenericVnfSearch {
 	
 	private static final String EOL = "\n";
 
-	public MockAAIGenericVnfSearch(){
+	public MockAAIGenericVnfSearch(WireMockServer wireMockServer){
 		String body;
 		
 		// The following stubs are for CreateAAIVfModule and UpdateAAIVfModule
 	
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC23&depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC23&depth=1"))
 				.willReturn(aResponse()
 						.withStatus(500)
 						.withHeader("Content-Type", "text/xml")
 						.withBodyFile("aaiFault.xml")));
 	
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC22&depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC22&depth=1"))
 				.willReturn(aResponse()
 						.withStatus(404)
 						.withHeader("Content-Type", "text/xml")
 						.withBody("Generic VNF Not Found")));
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/768073c7-f41f-4822-9323-b75962763d74[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/768073c7-f41f-4822-9323-b75962763d74[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(404)
 						.withHeader("Content-Type", "text/xml")
@@ -78,12 +79,12 @@ public class MockAAIGenericVnfSearch {
 			"  <l-interfaces/>" + EOL +
 			"  <lag-interfaces/>" + EOL +
 			"</generic-vnf>" + EOL;
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC21&depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC21&depth=1"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
 						.withBody(body)));
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
@@ -126,12 +127,12 @@ public class MockAAIGenericVnfSearch {
 			"  <l-interfaces/>" + EOL +
 			"  <lag-interfaces/>" + EOL +
 			"</generic-vnf>" + EOL;
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC20&depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/[?]vnf-name=STMTN5MMSC20&depth=1"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
 						.withBody(body)));
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/2f6aee38-1e2a-11e6-82d1-ffc7d9ee8aa4[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/2f6aee38-1e2a-11e6-82d1-ffc7d9ee8aa4[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
@@ -139,13 +140,13 @@ public class MockAAIGenericVnfSearch {
 	
 		// The following stubs are for DeleteAAIVfModule
 	
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c723[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c723[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(500)
 						.withHeader("Content-Type", "text/xml")
 						.withBodyFile("aaiFault.xml")));
 	
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c722[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c722[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(404)
 						.withHeader("Content-Type", "text/xml")
@@ -178,7 +179,7 @@ public class MockAAIGenericVnfSearch {
 				"  <l-interfaces/>" + EOL +
 				"  <lag-interfaces/>" + EOL +
 				"</generic-vnf>" + EOL;
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
@@ -221,7 +222,7 @@ public class MockAAIGenericVnfSearch {
 			"  <l-interfaces/>" + EOL +
 			"  <lag-interfaces/>" + EOL +
 			"</generic-vnf>" + EOL;
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c720[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c720[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
@@ -264,7 +265,7 @@ public class MockAAIGenericVnfSearch {
 			"  <l-interfaces/>" + EOL +
 			"  <lag-interfaces/>" + EOL +
 			"</generic-vnf>" + EOL;
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c719[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c719[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
@@ -297,7 +298,7 @@ public class MockAAIGenericVnfSearch {
 			"  <l-interfaces/>" + EOL +
 			"  <lag-interfaces/>" + EOL +
 			"</generic-vnf>" + EOL;
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c718[?]depth=1"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c718[?]depth=1"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")
@@ -330,7 +331,7 @@ public class MockAAIGenericVnfSearch {
 			"  <l-interfaces/>" + EOL +
 			"  <lag-interfaces/>" + EOL +
 			"</generic-vnf>" + EOL;
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721/vf-modules/vf-module/973ed047-d251-4fb9-bf1a-65b8949e0a73"))
+		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721/vf-modules/vf-module/973ed047-d251-4fb9-bf1a-65b8949e0a73"))
 				.willReturn(aResponse()
 						.withStatus(200)
 						.withHeader("Content-Type", "text/xml")

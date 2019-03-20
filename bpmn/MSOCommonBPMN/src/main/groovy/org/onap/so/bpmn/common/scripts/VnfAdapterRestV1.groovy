@@ -450,4 +450,8 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 		Node child = getChild(node, name)
 		return child == null ? null : child.text()
 	}
+	
+	public Logger getLogger() {
+		return logger;
+	}
 }

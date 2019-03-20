@@ -21,33 +21,19 @@
 package org.onap.so.adapters.requestsdb;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.repository.ArchivedInfraRequestsRepository;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-@Transactional
-public class ArchiveInfraRequestsSchedulerTest {
+public class ArchiveInfraRequestsSchedulerTest extends RequestsAdapterBase {
 	
 	@Autowired
 	private ArchiveInfraRequestsScheduler scheduler;

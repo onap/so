@@ -26,7 +26,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
@@ -423,10 +422,10 @@ public class OrchestrationRequestsTest extends BaseTest {
 
     public void setupTestGetOrchestrationRequest() throws Exception{
         //For testGetOrchestrationRequest
-        stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequest.json"))))
                 .withStatus(HttpStatus.SC_OK)));
-        stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
+        wireMockServer.stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
         		.withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-na18-42e5-965d-8ea592502018"))
         		.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))
@@ -434,10 +433,10 @@ public class OrchestrationRequestsTest extends BaseTest {
     }
     public void setupTestGetOrchestrationRequestInstanceGroup() throws Exception{
         //For testGetOrchestrationRequest
-        stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequestInstanceGroup.json"))))
                 .withStatus(HttpStatus.SC_OK)));
-        stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
+        wireMockServer.stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
         		.withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-na18-42e5-965d-8ea592502018"))
         		.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))
@@ -445,13 +444,13 @@ public class OrchestrationRequestsTest extends BaseTest {
     }
 
     private void setupTestGetOrchestrationRequestRequestDetails(String requestId, String status) throws Exception{
-        stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequestDetails.json"))))
                 .withStatus(HttpStatus.SC_OK)));
     }
 
     private void setupTestUnlockOrchestrationRequest(String requestId, String status) {
-        stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(String.format(getResponseTemplate, requestId, status))
                 .withStatus(HttpStatus.SC_OK)));
 
@@ -460,24 +459,24 @@ public class OrchestrationRequestsTest extends BaseTest {
 
 
     private void setupTestUnlockOrchestrationRequest_invalid_Json() {
-        stubFor(get(urlPathEqualTo(getTestUrl(INVALID_REQUEST_ID))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(INVALID_REQUEST_ID))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 
     }
 
     private void setupTestUnlockOrchestrationRequest_Valid_Status(String requestID, String status) {
-        stubFor(get(urlPathEqualTo(getTestUrl(requestID))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestID))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(String.format(getResponseTemplate, requestID, status))
                 .withStatus(HttpStatus.SC_OK)));
 
-        stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(String.format(infraActivePost, requestID))
                 .withStatus(HttpStatus.SC_OK)));
     }
 
     private void setupTestGetOrchestrationRequestFilter() throws Exception{
         //for testGetOrchestrationRequestFilter();
-        stubFor(any(urlPathEqualTo("/infraActiveRequests/getOrchestrationFiltersFromInfraActive/")).withRequestBody(equalToJson("{\"modelType\":[\"EQUALS\",\"vfModule\"]}")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/getOrchestrationFiltersFromInfraActive/")).withRequestBody(equalToJson("{\"modelType\":[\"EQUALS\",\"vfModule\"]}")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getRequestDetailsFilter.json"))))
                 .withStatus(HttpStatus.SC_OK)));
     }

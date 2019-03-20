@@ -22,8 +22,9 @@ package org.onap.so.bpmn.mock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * StubResponseOof.java class
@@ -34,30 +35,30 @@ public class StubResponseOof {
 
     }
 
-    public static void mockOof() {
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+    public static void mockOof(WireMockServer wireMockServer) {
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse()
                         .withStatus(202)
                         .withHeader("Content-Type", "application/json")));
     }
 
-    public static void mockOof(String responseFile) {
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+    public static void mockOof(WireMockServer wireMockServer, String responseFile) {
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse()
                         .withStatus(202)
                         .withHeader("Content-Type", "application/json")
                         .withBodyFile(responseFile)));
     }
 
-    public static void mockOof_400() {
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+    public static void mockOof_400(WireMockServer wireMockServer) {
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse()
                         .withStatus(400)
                         .withHeader("Content-Type", "application/json")));
     }
 
-    public static void mockOof_500() {
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+    public static void mockOof_500(WireMockServer wireMockServer) {
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse()
                         .withStatus(500)
                         .withHeader("Content-Type", "application/json")));

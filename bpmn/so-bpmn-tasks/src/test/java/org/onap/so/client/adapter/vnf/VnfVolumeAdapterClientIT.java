@@ -44,8 +44,6 @@ import org.onap.so.adapters.vnfrest.UpdateVolumeGroupResponse;
 import org.onap.so.client.adapter.rest.AdapterRestClient;
 import org.onap.so.BaseIntegrationTest;
 
-
-@RunWith(MockitoJUnitRunner.Silent.class)
 public class VnfVolumeAdapterClientIT extends BaseIntegrationTest{
 
 	private static final String TESTING_ID = "___TESTING___";

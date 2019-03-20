@@ -34,8 +34,6 @@ import org.junit.Test;
 import org.onap.so.BaseTest;
 import org.springframework.core.ParameterizedTypeReference;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-
 import wiremock.org.apache.http.entity.ContentType;
 
 
@@ -46,7 +44,7 @@ public class BaseClientTest extends BaseTest {
 		BaseClient<String, String> client = new BaseClient<>();
 		String response = "{\"hello\" : \"world\"}";
 		client.setTargetUrl(UriBuilder.fromUri("http://localhost/test").port(Integer.parseInt(wireMockPort)).build().toString());
-		stubFor(get(urlEqualTo("/test"))
+		wireMockServer.stubFor(get(urlEqualTo("/test"))
                 .willReturn(aResponse().withStatus(200).withBody(response).withHeader("Content-Type", ContentType.APPLICATION_JSON.toString())));
 		
 		String result = client.get("", new ParameterizedTypeReference<String>() {});
@@ -58,7 +56,7 @@ public class BaseClientTest extends BaseTest {
 		BaseClient<String, Map<String, Object>> client = new BaseClient<>();
 		String response = "{\"hello\" : \"world\"}";
 		client.setTargetUrl(UriBuilder.fromUri("http://localhost/test").port(Integer.parseInt(wireMockPort)).build().toString());
-		stubFor(get(urlEqualTo("/test"))
+		wireMockServer.stubFor(get(urlEqualTo("/test"))
                 .willReturn(aResponse().withStatus(200).withBody(response).withHeader("Content-Type", ContentType.APPLICATION_JSON.toString())));
 		
 		Map<String, Object> result = client.get("", new ParameterizedTypeReference<Map<String, Object>>() {});

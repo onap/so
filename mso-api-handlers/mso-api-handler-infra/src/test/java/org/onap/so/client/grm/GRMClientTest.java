@@ -25,10 +25,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.matching;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
@@ -47,7 +45,6 @@ import org.junit.rules.ExpectedException;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.TestAppender;
-import org.onap.so.client.grm.GRMClient;
 import org.onap.so.client.grm.beans.ServiceEndPoint;
 import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.client.grm.beans.ServiceEndPointLookupRequest;
@@ -75,7 +72,7 @@ public class GRMClientTest extends BaseTest{
 	public void testFind() throws Exception {
         TestAppender.events.clear();
 		String endpoints = getFileContentsAsString("__files/grm/endpoints.json");
-		stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
 			.willReturn(aResponse()
 				.withStatus(200)
 				.withHeader("Content-Type", MediaType.APPLICATION_JSON)
@@ -113,7 +110,7 @@ public class GRMClientTest extends BaseTest{
         if(!foundInvokeReturn)
             fail("INVOKE RETURN Marker not found");
         
-        verify(postRequestedFor(urlEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+       wireMockServer.verify(postRequestedFor(urlEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
                 .withHeader(ONAPLogConstants.Headers.INVOCATION_ID.toString(), matching(uuidRegex))
                         .withHeader(ONAPLogConstants.Headers.REQUEST_ID.toString(), matching(uuidRegex))
                                 .withHeader(ONAPLogConstants.Headers.PARTNER_NAME.toString(), equalTo("SO")));
@@ -122,7 +119,7 @@ public class GRMClientTest extends BaseTest{
 	
 	@Test 
 	public void testFindFail() throws Exception {		
-		stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/findRunning"))
 			.willReturn(aResponse()
 				.withStatus(400)
 				.withHeader("Content-Type", MediaType.APPLICATION_JSON)
@@ -135,7 +132,7 @@ public class GRMClientTest extends BaseTest{
 	
 	@Test
 	public void testAddFail() throws Exception {
-		stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/add"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/GRMLWPService/v1/serviceEndPoint/add"))
 				.willReturn(aResponse()
 					.withStatus(404)
 					.withHeader("Content-Type", MediaType.APPLICATION_JSON)

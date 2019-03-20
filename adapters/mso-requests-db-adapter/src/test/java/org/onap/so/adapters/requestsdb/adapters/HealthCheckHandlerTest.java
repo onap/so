@@ -20,32 +20,29 @@
 
 package org.onap.so.adapters.requestsdb.adapters;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.Map;
+
 import javax.ws.rs.core.Response;
 
 import org.json.JSONException;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
+import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
 import org.onap.so.adapters.requestsdb.application.TestAppender;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class HealthCheckHandlerTest {
+public class HealthCheckHandlerTest extends RequestsAdapterBase {
 	
 	@LocalServerPort
 	private int port;

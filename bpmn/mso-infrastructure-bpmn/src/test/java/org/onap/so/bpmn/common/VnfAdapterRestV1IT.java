@@ -247,7 +247,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	public void testCreateVfModuleSuccess() throws Exception {
 		logStart();
 
-		mockVNFPost("", 202, "vnfId");
+		mockVNFPost(wireMockServer, "", 202, "vnfId");
 
 		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
 		String messageId = requestId + "-" + System.currentTimeMillis();
@@ -276,7 +276,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	public void testUpdateVfModuleSuccess() throws Exception {
 		logStart();
 
-		mockVNFPut("/vfModuleId", 202);
+		mockVNFPut(wireMockServer, "/vfModuleId", 202);
 
 		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
 		String messageId = requestId + "-" + System.currentTimeMillis();
@@ -305,7 +305,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	public void testDeleteVfModuleSuccess() throws Exception {
 		logStart();
 
-		mockVNFDelete("vnfId", "/vfModuleId", 202);
+		mockVNFDelete(wireMockServer, "vnfId", "/vfModuleId", 202);
 
 		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
 		String messageId = requestId + "-" + System.currentTimeMillis();
@@ -334,7 +334,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	public void testRollbackVfModuleSuccess() throws Exception {
 		logStart();
 
-		mockVNFRollbackDelete("/vfModuleId", 202);
+		mockVNFRollbackDelete(wireMockServer, "/vfModuleId", 202);
 
 		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
 		String messageId = requestId + "-" + System.currentTimeMillis();
@@ -363,7 +363,7 @@ public class VnfAdapterRestV1IT extends BaseIntegrationTest {
 	public void testCreateVfModuleException() throws Exception {
 		logStart();
 
-		mockVNFPost("", 202, "vnfId");
+		mockVNFPost(wireMockServer, "", 202, "vnfId");
 
 		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
 		String messageId = requestId + "-" + System.currentTimeMillis();

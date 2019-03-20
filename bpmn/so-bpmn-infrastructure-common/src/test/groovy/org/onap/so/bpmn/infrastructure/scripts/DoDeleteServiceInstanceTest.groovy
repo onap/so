@@ -46,9 +46,6 @@ import static org.mockito.Mockito.*
 @RunWith(MockitoJUnitRunner.class)
 class DoDeleteServiceInstanceTest {
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
-
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 

@@ -29,17 +29,17 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.onap.so.adapters.requestsdb.application.TestAppender;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.requestsdb.MsoRequestsDbAdapter;
 import org.onap.so.adapters.requestsdb.RequestStatusType;
-import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
+import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
+import org.onap.so.adapters.requestsdb.application.TestAppender;
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
@@ -48,19 +48,11 @@ import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class MSORequestDBImplTest {
+public class MSORequestDBImplTest extends RequestsAdapterBase {
 
 	@LocalServerPort
 	private int port;
@@ -81,13 +73,34 @@ public class MSORequestDBImplTest {
 	}	
 	
 	@Before
-	public void before(){
+	public void before() throws MsoRequestsDbException{
         JaxWsProxyFactoryBean jaxWsProxyFactory = new JaxWsProxyFactoryBean();
         jaxWsProxyFactory.setServiceClass(MsoRequestsDbAdapter.class);
         jaxWsProxyFactory.setAddress("http://localhost:" + port + "/services/RequestsDbAdapter");
         jaxWsProxyFactory.setUsername("bpel");
         jaxWsProxyFactory.setPassword("mso-db-1507!");
         dbAdapter = (MsoRequestsDbAdapter) jaxWsProxyFactory.create();
+        
+        InfraActiveRequests testRequest = this.buildTestRequest();
+
+        dbAdapter.updateInfraRequest ( testRequest.getRequestId(),
+        		testRequest.getLastModifiedBy(),
+        		testRequest.getStatusMessage(),
+        		testRequest.getResponseBody(),
+        		RequestStatusType.valueOf(testRequest.getRequestStatus()),
+        		testRequest.getProgress().toString(),
+        		testRequest.getVnfOutputs(),
+        		testRequest.getServiceInstanceId(),
+        		testRequest.getNetworkId(),
+        		testRequest.getVnfId(),
+        		testRequest.getVfModuleId(),
+        		testRequest.getVolumeGroupId(),
+        		testRequest.getServiceInstanceName(),
+                testRequest.getConfigurationId(),
+                testRequest.getConfigurationName(),
+                testRequest.getVfModuleName());
+        
+        
 	}
 
 	private InfraActiveRequests buildTestRequest() {	
@@ -108,8 +121,15 @@ public class MSORequestDBImplTest {
 		testRequest.setVfModuleId("c7d527b1-7a91-49fd-b97d-1c8c0f4a7992");
 		testRequest.setVfModuleModelName("vSAMP10aDEV::base::module-0");
 		testRequest.setVnfId("b92f60c8-8de3-46c1-8dc1-e4390ac2b005");
-		testRequest.setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");
-		
+		testRequest.setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");	
+		testRequest.setVolumeGroupId("volumeGroupId");
+		testRequest.setServiceInstanceName("serviceInstanceName");
+		testRequest.setConfigurationId("configurationId");
+		testRequest.setConfigurationName("configurationName");
+		testRequest.setNetworkId("networkId");
+		testRequest.setResponseBody("responseBody");
+		testRequest.setVfModuleName("vfModuleName");
+		testRequest.setVnfOutputs("vnfOutputs");
 		return testRequest;
 	}
 
@@ -155,7 +175,7 @@ public class MSORequestDBImplTest {
 			 fail("Null infraRequest");
 		
 		// Then
-		assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime").ignoring("startTime").ignoring("modifyTime"));		
+		assertEquals(clientRequestId, infraRequest.getClientRequestId());
 	}
 	
 	
@@ -221,6 +241,8 @@ public class MSORequestDBImplTest {
 		InfraActiveRequests infraRequest = dbAdapter.getInfraRequest(clientRequestId);
 		// Then
 		assertThat(infraRequest, sameBeanAs(testRequest).ignoring("requestBody").ignoring("endTime").ignoring("startTime").ignoring("modifyTime"));		
+	
+		
 	}
 	
 	@Test

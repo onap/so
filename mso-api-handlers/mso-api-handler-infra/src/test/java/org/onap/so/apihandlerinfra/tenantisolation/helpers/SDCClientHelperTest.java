@@ -22,7 +22,6 @@ package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -52,7 +51,7 @@ public class SDCClientHelperTest extends BaseTest{
 		jsonObject.put("message", "Success");
 		jsonObject.put("distributionId", "TEST_distributionId");
 
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 
 	    JSONObject jsonResponse = sdcClientUtils.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext);
@@ -69,7 +68,7 @@ public class SDCClientHelperTest extends BaseTest{
 		JSONObject jsonErrorResponse = new JSONObject();
 		jsonErrorResponse.put("requestError", "");
 
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonErrorResponse.toString()).withStatus(HttpStatus.SC_BAD_REQUEST)));
 
 	    JSONObject jsonResponse = sdcClientUtils.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext);

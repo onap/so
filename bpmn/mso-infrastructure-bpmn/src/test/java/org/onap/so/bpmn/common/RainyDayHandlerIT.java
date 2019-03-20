@@ -52,7 +52,7 @@ public class RainyDayHandlerIT extends BaseIntegrationTest {
 		variables.put("errorText", "update failed");
 		variables.put("vnfName", "vSAMP1");
 		
-		MockPolicyAbort();
+		MockPolicyAbort(wireMockServer);
 		
 		
 		String businessKey = UUID.randomUUID().toString();

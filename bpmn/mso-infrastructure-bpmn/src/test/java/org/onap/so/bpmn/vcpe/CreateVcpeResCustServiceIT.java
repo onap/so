@@ -24,7 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -101,43 +100,43 @@ public class CreateVcpeResCustServiceIT extends AbstractTestBase {
 	@Test
 	public void testCreateVcpeResCustService_Success() throws Exception {
 		System.out.println("starting:  testCreateVcpeResCustService_Success\n");
-		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "2","VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
-		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
-		MockGetCustomer(CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
-		StubResponseOof.mockOof();
+		MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "2","VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
+		MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
+		MockGetCustomer(wireMockServer, CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
+		StubResponseOof.mockOof(wireMockServer);
 		// TODO: the SI should NOT have to be URL-encoded yet again!
-		MockPutServiceInstance(CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
+		MockPutServiceInstance(wireMockServer, CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
 		
-		MockNodeQueryServiceInstanceById(INST, "GenericFlows/getSIUrlById.xml");
-		MockNodeQueryServiceInstanceById(PARENT_INST, "GenericFlows/getParentSIUrlById.xml");		
-		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
-        MockGetGenericVnfByIdWithDepth(".*", 1, "VCPE/CreateVcpeResCustService/GenericVnf.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, PARENT_INST, "GenericFlows/getParentSIUrlById.xml");		
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+        MockGetGenericVnfByIdWithDepth(wireMockServer, ".*", 1, "VCPE/CreateVcpeResCustService/GenericVnf.xml");
 
-		MockPutGenericVnf(".*");
-        MockPatchGenericVnf(".*");
+		MockPutGenericVnf(wireMockServer, ".*");
+        MockPatchGenericVnf(wireMockServer, ".*");
 
-        MockGetGenericVnfByIdWithPriority(".*", ".*", 200, "VfModularity/VfModule-new.xml", 5);
-        // MockGetGenericVnfByIdWithDepth("skask", 1, "VfModularity/GenericVnf.xml");
-        MockPutVfModuleIdNoResponse(".*", "PCRF", ".*");
-        MockPutNetwork(".*", "VfModularity/AddNetworkPolicy_AAIResponse_Success.xml", 200);
+        MockGetGenericVnfByIdWithPriority(wireMockServer, ".*", ".*", 200, "VfModularity/VfModule-new.xml", 5);
+        // MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
+        MockPutVfModuleIdNoResponse(wireMockServer, ".*", "PCRF", ".*");
+        MockPutNetwork(wireMockServer, ".*", "VfModularity/AddNetworkPolicy_AAIResponse_Success.xml", 200);
 
-		MockGetNetworkPolicyfqdn(".*","CreateNetworkV2/createNetwork_queryNetworkPolicy_AAIResponse_Success.xml",200);
-		MockNodeQueryServiceInstanceByName_404(".*");
+		MockGetNetworkPolicyfqdn(wireMockServer, ".*","CreateNetworkV2/createNetwork_queryNetworkPolicy_AAIResponse_Success.xml",200);
+		MockNodeQueryServiceInstanceByName_404(wireMockServer, ".*");
 
-		mockVNFPost("", 202, ".*");
+		mockVNFPost(wireMockServer, "", 202, ".*");
 
-        stubFor(post(urlMatching("/services/rest/v1/vnfs" + ".*" + "/vf-modules" )).willReturn(aResponse().withStatus(202)));
-		stubFor(get(urlMatching(".*/business/owning-entities?.*")).willReturn(aResponse().withStatus(404)));
-		stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/.*")).willReturn(aResponse().withStatus(200)));
-		stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/038d99af-0427-42c2-9d15-971b99b9b489/relationship-list/relationship")).willReturn(aResponse().withStatus(200)));
-		stubFor(put(urlMatching(".*/query?.*")).willReturn(aResponse().withStatus(200)));
-		MockPostRequestDB();	
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
-		mockSDNCAdapter(200);
+        wireMockServer.stubFor(post(urlMatching("/services/rest/v1/vnfs" + ".*" + "/vf-modules" )).willReturn(aResponse().withStatus(202)));
+		wireMockServer.stubFor(get(urlMatching(".*/business/owning-entities?.*")).willReturn(aResponse().withStatus(404)));
+		wireMockServer.stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/.*")).willReturn(aResponse().withStatus(200)));
+		wireMockServer.stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/038d99af-0427-42c2-9d15-971b99b9b489/relationship-list/relationship")).willReturn(aResponse().withStatus(200)));
+		wireMockServer.stubFor(put(urlMatching(".*/query?.*")).willReturn(aResponse().withStatus(200)));
+		MockPostRequestDB(wireMockServer);	
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
+		mockSDNCAdapter(wireMockServer, 200);
 		
 		Map<String, Object> variables = setupVariables();
 
@@ -195,33 +194,33 @@ public class CreateVcpeResCustServiceIT extends AbstractTestBase {
 	@Test
 	public void testCreateVcpeResCustService_NoParts() throws Exception {
 		System.out.println("starting: testCreateVcpeResCustService_NoParts\n"  );
-		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesNoData.json");
-		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesNoData.json");
-		MockGetCustomer(CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
+		MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesNoData.json");
+		MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesNoData.json");
+		MockGetCustomer(wireMockServer, CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
 		
 		// TODO: the SI should NOT have to be URL-encoded yet again!
-		MockPutServiceInstance(CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
+		MockPutServiceInstance(wireMockServer, CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
 		
-		MockNodeQueryServiceInstanceById(INST, "GenericFlows/getSIUrlById.xml");		
-		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
-		MockNodeQueryServiceInstanceById(PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
-		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, INST, "GenericFlows/getSIUrlById.xml");		
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, PARENT_INST, "GenericFlows/getParentSIUrlById.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
 		
 		// TODO: should these really be PARENT_INST, or should they be INST?
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
 
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
-        StubResponseOof.mockOof();
-        stubFor(get(urlMatching(".*/business/owning-entities?.*")).willReturn(aResponse().withStatus(404)));
-        stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/.*")).willReturn(aResponse().withStatus(200)));
-        stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/038d99af-0427-42c2-9d15-971b99b9b489/relationship-list/relationship")).willReturn(aResponse().withStatus(200)));
-        stubFor(put(urlMatching(".*/query?.*")).willReturn(aResponse().withStatus(200)));
-        MockPostRequestDB();
-        mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+        StubResponseOof.mockOof(wireMockServer);
+        wireMockServer.stubFor(get(urlMatching(".*/business/owning-entities?.*")).willReturn(aResponse().withStatus(404)));
+        wireMockServer.stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/.*")).willReturn(aResponse().withStatus(200)));
+        wireMockServer.stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/038d99af-0427-42c2-9d15-971b99b9b489/relationship-list/relationship")).willReturn(aResponse().withStatus(200)));
+        wireMockServer.stubFor(put(urlMatching(".*/query?.*")).willReturn(aResponse().withStatus(200)));
+        MockPostRequestDB(wireMockServer);
+        mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		Map<String, Object> variables = setupVariables();
 
@@ -253,30 +252,30 @@ public class CreateVcpeResCustServiceIT extends AbstractTestBase {
 	@Test
 	public void testCreateVcpeResCustService_Fault_NoRollback() throws Exception {
 		System.out.println("starting:  testCreateVcpeResCustService_Fault_NoRollback\n");
-		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
-		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
-		MockGetCustomer(CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
+		MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
+		MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
+		MockGetCustomer(wireMockServer, CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
 		
 		// TODO: the SI should NOT have to be URL-encoded yet again!
-		MockPutServiceInstance(CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
+		MockPutServiceInstance(wireMockServer, CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
 		
-		MockNodeQueryServiceInstanceById(INST, "GenericFlows/getSIUrlById.xml");
-		MockNodeQueryServiceInstanceById(PARENT_INST, "GenericFlows/getParentSIUrlById.xml");		
-		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance_500(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
+		MockNodeQueryServiceInstanceById(wireMockServer, INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, PARENT_INST, "GenericFlows/getParentSIUrlById.xml");		
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance_500(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
 
-		mockSDNCAdapter(404);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		mockSDNCAdapter(wireMockServer, 404);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
-        StubResponseOof.mockOof();
-        stubFor(get(urlMatching(".*/business/owning-entities?.*")).willReturn(aResponse().withStatus(404)));
-        stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/.*")).willReturn(aResponse().withStatus(200)));
-        stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/038d99af-0427-42c2-9d15-971b99b9b489/relationship-list/relationship")).willReturn(aResponse().withStatus(200)));
-        stubFor(put(urlMatching(".*/query?.*")).willReturn(aResponse().withStatus(200)));
-        MockPostRequestDB();
+        StubResponseOof.mockOof(wireMockServer);
+        wireMockServer.stubFor(get(urlMatching(".*/business/owning-entities?.*")).willReturn(aResponse().withStatus(404)));
+        wireMockServer.stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/.*")).willReturn(aResponse().withStatus(200)));
+        wireMockServer.stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/038d99af-0427-42c2-9d15-971b99b9b489/relationship-list/relationship")).willReturn(aResponse().withStatus(200)));
+        wireMockServer.stubFor(put(urlMatching(".*/query?.*")).willReturn(aResponse().withStatus(200)));
+        MockPostRequestDB(wireMockServer);
 		
 		Map<String, Object> variables = setupVariables();
 
@@ -305,33 +304,33 @@ public class CreateVcpeResCustServiceIT extends AbstractTestBase {
 	@Test
 	public void testCreateVcpeResCustService_Fault_Rollback() throws Exception {
 		System.out.println("starting:  testCreateVcpeResCustService_Fault_Rollback\n");
-		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
-		MockGetServiceResourcesCatalogData("uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
-		MockGetCustomer(CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
+		MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "2", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
+		MockGetServiceResourcesCatalogData(wireMockServer, "uuid-miu-svc-011-abcdef", "VCPE/CreateVcpeResCustService/getCatalogServiceResourcesData.json");
+		MockGetCustomer(wireMockServer, CUST, "VCPE/CreateVcpeResCustService/getCustomer.xml");
 		
 		// TODO: the SI should NOT have to be URL-encoded yet again!
-		MockPutServiceInstance(CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
+		MockPutServiceInstance(wireMockServer, CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST.replace("%", "%25"), "GenericFlows/getServiceInstance.xml");
 		
-		MockNodeQueryServiceInstanceById(INST, "GenericFlows/getSIUrlById.xml");
-		MockNodeQueryServiceInstanceById(PARENT_INST, "GenericFlows/getParentSIUrlById.xml");		
-		MockGetServiceInstance(CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
-		MockGetServiceInstance(CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/CreateVcpeResCustService/arGetById.xml");
-		MockGetAllottedResource(CUST, SVC, PARENT_INST, ARID, "VCPE/CreateVcpeResCustService/arGetById.xml");
-		MockPutAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockPatchAllottedResource(CUST, SVC, PARENT_INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, PARENT_INST, ARID, ARVERS);
+		MockNodeQueryServiceInstanceById(wireMockServer, INST, "GenericFlows/getSIUrlById.xml");
+		MockNodeQueryServiceInstanceById(wireMockServer, PARENT_INST, "GenericFlows/getParentSIUrlById.xml");		
+		MockGetServiceInstance(wireMockServer, CUST, SVC, INST, "GenericFlows/getServiceInstance.xml");
+		MockGetServiceInstance(wireMockServer, CUST, SVC, PARENT_INST, "GenericFlows/getParentServiceInstance.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/CreateVcpeResCustService/arGetById.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID, "VCPE/CreateVcpeResCustService/arGetById.xml");
+		MockPutAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, PARENT_INST, ARID, ARVERS);
 
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
-		StubResponseOof.mockOof();
-		stubFor(get(urlMatching(".*/business/owning-entities?.*")).willReturn(aResponse().withStatus(404)));
-		stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/.*")).willReturn(aResponse().withStatus(200)));
-		stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/038d99af-0427-42c2-9d15-971b99b9b489/relationship-list/relationship")).willReturn(aResponse().withStatus(200)));
-		stubFor(put(urlMatching(".*/query?.*")).willReturn(aResponse().withStatus(200)));
-		MockPostRequestDB();
+		StubResponseOof.mockOof(wireMockServer);
+		wireMockServer.stubFor(get(urlMatching(".*/business/owning-entities?.*")).willReturn(aResponse().withStatus(404)));
+		wireMockServer.stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/.*")).willReturn(aResponse().withStatus(200)));
+		wireMockServer.stubFor(put(urlMatching(".*/business/owning-entities/owning-entity/038d99af-0427-42c2-9d15-971b99b9b489/relationship-list/relationship")).willReturn(aResponse().withStatus(200)));
+		wireMockServer.stubFor(put(urlMatching(".*/query?.*")).willReturn(aResponse().withStatus(200)));
+		MockPostRequestDB(wireMockServer);
 		String req = FileUtil.readResourceFile("__files/VCPE/CreateVcpeResCustService/requestRollback.json");
 
 		Map<String, Object> variables = setupVariables();

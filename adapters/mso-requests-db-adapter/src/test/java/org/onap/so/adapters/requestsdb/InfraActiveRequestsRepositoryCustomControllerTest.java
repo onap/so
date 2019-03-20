@@ -21,42 +21,34 @@
 package org.onap.so.adapters.requestsdb;
 
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.ws.rs.core.MediaType;
+
 import org.junit.Before;
-import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.ArrayList;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 @Transactional
-public class InfraActiveRequestsRepositoryCustomControllerTest {
+public class InfraActiveRequestsRepositoryCustomControllerTest extends RequestsAdapterBase {
 
     @LocalServerPort
     private int port;

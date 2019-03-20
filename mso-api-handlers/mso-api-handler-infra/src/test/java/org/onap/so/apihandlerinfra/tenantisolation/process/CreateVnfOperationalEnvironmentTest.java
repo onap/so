@@ -20,7 +20,13 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -28,7 +34,9 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.UUID;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,10 +50,8 @@ import org.onap.so.client.grm.beans.ServiceEndPointList;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
 
 public class CreateVnfOperationalEnvironmentTest extends BaseTest{
@@ -124,13 +130,13 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	
 	@Test
 	public void testExecute() throws ApiException, JsonProcessingException {
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+		wireMockServer.stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/endpoints.json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/add"))
+		wireMockServer.stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/add"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		String requestId = UUID.randomUUID().toString();
 		InfraActiveRequests iar = new InfraActiveRequests();
@@ -140,12 +146,12 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
 		ObjectMapper mapper = new ObjectMapper();
-		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
 				.withRequestBody(containing("{\"requestId\":\""+ requestId+"\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
@@ -154,13 +160,13 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 	
 	@Test
 	public void testExecuteEndpointsListBeginWithUppercase() throws ApiException, JsonProcessingException {
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
+		wireMockServer.stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/findRunning"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/endpoints2.json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/add"))
+		wireMockServer.stubFor(post(urlPathMatching("/GRMLWPService/v1/serviceEndPoint/add"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironment.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		String requestId = UUID.randomUUID().toString();
 		InfraActiveRequests iar = new InfraActiveRequests();
@@ -170,12 +176,12 @@ public class CreateVnfOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
 		ObjectMapper mapper = new ObjectMapper();
-		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
 				.withRequestBody(containing("{\"requestId\":\""+ requestId+"\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));

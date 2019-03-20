@@ -25,9 +25,7 @@ package org.onap.so.bpmn.common;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +38,8 @@ import org.onap.so.bpmn.core.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+
 /**
  * Unit test for CreateAAIVfModule.bpmn.
  */
@@ -51,9 +51,9 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 	@Test	
 	public void  TestCreateGenericVnfSuccess_200() {
 
-		new MockAAIGenericVnfSearch();
-		MockAAICreateGenericVnf();
-		MockAAIVfModulePUT(true);
+		new MockAAIGenericVnfSearch(wireMockServer);
+		MockAAICreateGenericVnf(wireMockServer);
+		MockAAIVfModulePUT(wireMockServer, true);
 					
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", UUID.randomUUID().toString());
@@ -76,9 +76,9 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 	@Test	
 	public void  TestCreateVfModuleSuccess_200() {
 		// create Add-on VF Module for existing Generic VNF
-		new MockAAIGenericVnfSearch();
-		MockAAICreateGenericVnf();
-		MockAAIVfModulePUT(true);					
+		new MockAAIGenericVnfSearch(wireMockServer);
+		MockAAICreateGenericVnf(wireMockServer);
+		MockAAIVfModulePUT(wireMockServer, true);					
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", UUID.randomUUID().toString());
 		variables.put("isDebugLogEnabled","true");
@@ -98,9 +98,9 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 
 	@Test		
 	public void  TestQueryGenericVnfFailure_5000() {
-		new MockAAIGenericVnfSearch();
-		MockAAICreateGenericVnf();
-		MockAAIVfModulePUT(true);
+		new MockAAIGenericVnfSearch(wireMockServer);
+		MockAAICreateGenericVnf(wireMockServer);
+		MockAAIVfModulePUT(wireMockServer, true);
 					
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", UUID.randomUUID().toString());
@@ -121,9 +121,9 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 
 	@Test	
 	public void  TestCreateDupGenericVnfFailure_1002() {
-		new MockAAIGenericVnfSearch();
-		MockAAICreateGenericVnf();
-		MockAAIVfModulePUT(true);
+		new MockAAIGenericVnfSearch(wireMockServer);
+		MockAAICreateGenericVnf(wireMockServer);
+		MockAAIVfModulePUT(wireMockServer, true);
 			
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", UUID.randomUUID().toString());
@@ -144,9 +144,9 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 
 	@Test		
 	public void  TestCreateDupVfModuleFailure_1002() {
-		new MockAAIGenericVnfSearch();
-		MockAAICreateGenericVnf();
-		MockAAIVfModulePUT(true);
+		new MockAAIGenericVnfSearch(wireMockServer);
+		MockAAICreateGenericVnf(wireMockServer);
+		MockAAIVfModulePUT(wireMockServer, true);
 			
 		Map<String, Object> variables = new HashMap<>(); 
 		variables.put("mso-request-id", UUID.randomUUID().toString());
@@ -167,9 +167,9 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 	
 	@Test		
 	public void  TestCreateGenericVnfFailure_5000() {
-		new MockAAIGenericVnfSearch();
-		MockAAICreateGenericVnf();
-		MockAAIVfModulePUT(true);
+		new MockAAIGenericVnfSearch(wireMockServer);
+		MockAAICreateGenericVnf(wireMockServer);
+		MockAAIVfModulePUT(wireMockServer, true);
 			
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", UUID.randomUUID().toString());
@@ -190,9 +190,9 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 
 	@Test	
 	public void  TestCreateGenericVnfFailure_1002() {
-		new MockAAIGenericVnfSearch();
-		MockAAICreateGenericVnf();
-		MockAAIVfModulePUT(true);
+		new MockAAIGenericVnfSearch(wireMockServer);
+		MockAAICreateGenericVnf(wireMockServer);
+		MockAAIVfModulePUT(wireMockServer, true);
 			
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("mso-request-id", UUID.randomUUID().toString());
@@ -213,9 +213,9 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 
 	@Test	
 	public void  TestCreateVfModuleFailure_5000() {
-		new MockAAIGenericVnfSearch();
-		MockAAICreateGenericVnf();
-		MockAAIVfModulePUT(true);
+		new MockAAIGenericVnfSearch(wireMockServer);
+		MockAAICreateGenericVnf(wireMockServer);
+		MockAAIVfModulePUT(wireMockServer, true);
 			
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");		
@@ -234,12 +234,12 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 		logger.debug(exception.getErrorMessage());
 	}
 
-	public static void MockAAICreateGenericVnf(){
-		stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
+	public static void MockAAICreateGenericVnf(WireMockServer wireMockServer){
+		wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
 				.withRequestBody(containing("<service-id>00000000-0000-0000-0000-000000000000</service-id>"))
 				.willReturn(aResponse()
 						.withStatus(201)));
-		stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
+		wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*"))
 				.withRequestBody(containing("<service-id>99999999-9999-9999-9999-999999999999</service-id>"))
 				.willReturn(aResponse()
 						.withStatus(500)
@@ -248,18 +248,18 @@ public class CreateAAIVfModuleIT extends BaseIntegrationTest {
 	}
 	
 	// start of mocks used locally and by other VF Module unit tests
-	public static void MockAAIVfModulePUT(boolean isCreate){
-		stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*/vf-modules/vf-module/.*"))
+	public static void MockAAIVfModulePUT(WireMockServer wireMockServer, boolean isCreate){
+		wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*/vf-modules/vf-module/.*"))
 				.withRequestBody(containing("MMSC"))
 				.willReturn(aResponse()
 						.withStatus(isCreate ? 201 : 200)));
-		stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*/vf-modules/vf-module/.*"))
+		wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/.*/vf-modules/vf-module/.*"))
 				.withRequestBody(containing("PCRF"))
 				.willReturn(aResponse()
 						.withStatus(500)
 						.withHeader("Content-Type", "text/xml")
 						.withBodyFile("aaiFault.xml")));
-		stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721"))				
+		wireMockServer.stubFor(put(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/a27ce5a9-29c4-4c22-a017-6615ac73c721"))				
 				.willReturn(aResponse()
 					.withStatus(200)));
 	}

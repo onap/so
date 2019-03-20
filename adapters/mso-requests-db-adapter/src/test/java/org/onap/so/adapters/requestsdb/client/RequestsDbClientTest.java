@@ -23,6 +23,7 @@ package org.onap.so.adapters.requestsdb.client;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onap.so.adapters.requestsdb.RequestsAdapterBase;
 import org.onap.so.adapters.requestsdb.application.MSORequestDBApplication;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
@@ -47,10 +48,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertFalse;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class RequestsDbClientTest {
+public class RequestsDbClientTest extends RequestsAdapterBase {
 
     @Autowired
     private RequestDbClientPortChanger requestsDbClient;

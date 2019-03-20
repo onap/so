@@ -44,9 +44,6 @@ import static org.mockito.Mockito.*
 class DoCreateVnfTest {
     def prefix = "DoCVNF_"
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
-
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 

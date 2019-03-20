@@ -55,7 +55,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 public class AAIResourcesClientWithServiceInstanceUriTest {
 
 	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(8443));
+	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 	
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
@@ -69,8 +69,7 @@ public class AAIResourcesClientWithServiceInstanceUriTest {
 	private ServiceInstanceUri uri;
 	@Before
 	public void setUp() {
-		
-		doReturn(new DefaultAAIPropertiesImpl()).when(client).getRestProperties();
+		doReturn(new DefaultAAIPropertiesImpl(wireMockRule.port())).when(client).getRestProperties();
 		wireMockRule.stubFor(get(urlMatching("/aai/v[0-9]+/nodes.*")) 
 				.willReturn(aResponse() 
 					.withStatus(404) 
