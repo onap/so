@@ -49,8 +49,6 @@ import static org.mockito.Mockito.*
 class UpdateAAIGenericVnfTest {
 
     String getVfModuleResponse = FileUtil.readResourceFile("__files/VfModularity/GenericVnf.xml")
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
 
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)

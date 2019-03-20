@@ -233,6 +233,7 @@
 							<includes>
 								<include>**/AllTestsTestSuite.java</include>
 							</includes>
+							<parallel>suites</parallel>
 						</configuration>
 					</execution>
 				</executions>

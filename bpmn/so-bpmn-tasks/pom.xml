@@ -43,6 +43,9 @@
 						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<parallel>suites</parallel>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>io.swagger</groupId>

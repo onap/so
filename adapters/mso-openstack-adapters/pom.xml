@@ -35,6 +35,13 @@
 					</execution>
 				</executions>
 			</plugin>
+			 <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<parallel>suites</parallel>
+				</configuration>
+			</plugin>
 
 <!--  run the following plugin only when there's a wsdl change and you need to recompile the java classes
 			<plugin>

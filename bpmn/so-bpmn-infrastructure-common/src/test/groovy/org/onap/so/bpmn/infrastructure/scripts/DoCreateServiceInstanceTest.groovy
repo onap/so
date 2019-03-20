@@ -41,9 +41,6 @@ class DoCreateServiceInstanceTest extends MsoGroovyTest{
     def prefix = "DCRESI_"
 
     @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
-
-    @Rule
     public ExpectedException thrown = ExpectedException.none()
 
     @Before

@@ -57,9 +57,6 @@ class DoUpdateVfModuleTest extends MsoGroovyTest{
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
-
     @Spy
     DoUpdateVfModule doUpdateVfModule
 

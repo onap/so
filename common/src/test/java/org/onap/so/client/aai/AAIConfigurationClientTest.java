@@ -20,10 +20,6 @@
 
 package org.onap.so.client.aai;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
@@ -34,7 +30,6 @@ import static org.mockito.Mockito.verify;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -42,18 +37,12 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.aai.entities.Configuration;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestDetails;
-
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
 @RunWith(MockitoJUnitRunner.class) 
 public class AAIConfigurationClientTest {
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().port(8443));
-	
 	@Mock
 	AAIResourcesClient aaiClient;
 	
@@ -162,19 +151,5 @@ public class AAIConfigurationClientTest {
 		String uuid = UUID.randomUUID().toString();
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, uuid);
 		assertEquals(uri, aaiConfigurationClient.getConfigurationURI(uuid));
-	}
-	
-	@Test
-	public void verifyNotExists() {
-		AAIUri path = AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, "test2");
-		wireMockRule.stubFor(get(
-				urlMatching("/aai/v[0-9]+" + path.build() + ".*"))
-				.willReturn(
-					aResponse()
-					.withHeader("Content-Type", "text/plain")
-					.withBody("hello")
-					.withStatus(404)));
-		boolean result = aaiConfigurationClient.configurationExists("test2");
-		assertEquals("path not found", false, result);
 	}
 }
