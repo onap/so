@@ -163,6 +163,29 @@
     },
     {
       "key": {
+        "uuid": "f70ba91c_82c5657c",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T19:20:47Z",
+      "side": 1,
+      "message": "You would need remove MDC after response no?",
+      "range": {
+        "startLine": 76,
+        "startChar": 8,
+        "endLine": 76,
+        "endChar": 61
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6aa5e3b2_f5c62669",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/test/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterControllerTest.java",
         "patchSetId": 2
