@@ -1487,8 +1487,6 @@ public class ToscaResourceInstaller {
 		List<NodeTemplate> cvfcList = toscaResourceStructure.getSdcCsarHelper().getNodeTemplateBySdcType(vfTemplate, SdcTypes.CVFC);
 						
 		for(NodeTemplate cvfcTemplate : cvfcList) {
-												
-			CvnfcCustomization existingCvnfcCustomization = findExistingCvfc(existingCvnfcSet, cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 			
 			if(vfModuleMemberName != null && vfModuleMemberName.equalsIgnoreCase(cvfcTemplate.getName())){
 			
@@ -1529,13 +1527,8 @@ public class ToscaResourceInstaller {
 			// This check is needed incase the VFC subcategory is something other than Abstract.  In that case we want to skip adding that record to our DB.
 			if(vnfcCustomization.getModelCustomizationUUID() != null){
 				
-				CvnfcCustomization cvnfcCustomization = null;
-				
-				if(existingCvnfcCustomization != null){
-					cvnfcCustomization = existingCvnfcCustomization;					
-				}
-				else{
-				
+					CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
+	
 					cvnfcCustomization = new CvnfcCustomization();
 					cvnfcCustomization.setModelCustomizationUUID(cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 					cvnfcCustomization.setModelInstanceName(cvfcTemplate.getName());
@@ -1562,7 +1555,6 @@ public class ToscaResourceInstaller {
 	
 					cvnfcCustomizations.add(cvnfcCustomization);
 					existingCvnfcSet.add(cvnfcCustomization);				
-			 }
 			
 			//*****************************************************************************************************************************************
 			//* Extract Fabric Configuration
@@ -1586,18 +1578,15 @@ public class ToscaResourceInstaller {
 				
 				VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = createVfCnvfConfigCustomization(fabricTemplate, toscaResourceStructure, 
 																			   vnfResource, vfModuleCustomization, cvnfcCustomization, fabricConfig, vfTemplate, vfModuleMemberName);
-				
 				vnfVfmoduleCvnfcConfigurationCustomizations.add(vnfVfmoduleCvnfcConfigurationCustomization);
 			}
-			
+			cvnfcCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(vnfVfmoduleCvnfcConfigurationCustomizations);
 			}
 			
 		   }
 			
 		  }
-			
 		} 
-		
 		vfModuleCustomization.setCvnfcCustomization(cvnfcCustomizations);
 		vfModuleCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(vnfVfmoduleCvnfcConfigurationCustomizations);
 		
@@ -1609,7 +1598,7 @@ public class ToscaResourceInstaller {
             ConfigurationResource configResource, NodeTemplate vfTemplate, String vfModuleMemberName) {
 
 		Metadata fabricMetadata = fabricTemplate.getMetaData();	
-		
+				
 		VnfVfmoduleCvnfcConfigurationCustomization vfModuleToCvnfc = new VnfVfmoduleCvnfcConfigurationCustomization();
 		
 		vfModuleToCvnfc.setConfigurationResource(configResource);

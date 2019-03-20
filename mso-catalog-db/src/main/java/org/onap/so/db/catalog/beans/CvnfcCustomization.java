@@ -121,7 +121,7 @@ public class CvnfcCustomization implements Serializable {
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+		return new HashCodeBuilder().append(modelCustomizationUUID).append(vfModuleCustomization).append(vnfcCustomization).append(vnfResourceCustomization).toHashCode();
 	}
 
 	@Override
@@ -249,6 +249,7 @@ public class CvnfcCustomization implements Serializable {
 		this.created = created;
 	}
 
+	@LinkedResource
 	public VfModuleCustomization getVfModuleCustomization() {
 		return vfModuleCustomization;
 	}
@@ -257,6 +258,7 @@ public class CvnfcCustomization implements Serializable {
 		this.vfModuleCustomization = vfModuleCustomization;
 	}
 
+	@LinkedResource
 	public VnfcCustomization getVnfcCustomization() {
 		return vnfcCustomization;
 	}
@@ -265,6 +267,7 @@ public class CvnfcCustomization implements Serializable {
 		this.vnfcCustomization = vnfcCustomization;
 	}
 
+	@LinkedResource
 	public VnfResourceCustomization getVnfResourceCustomization() {
 		return vnfResourceCustomization;
 	}

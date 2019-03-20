@@ -234,8 +234,6 @@ public class CatalogDbClient {
 
     private final Client<ControllerSelectionReference> controllerSelectionReferenceClient;
 
-    private final Client<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomizationClient;
-
     private final Client<PnfResource> pnfResourceClient;
 
     private final Client<PnfResourceCustomization> pnfResourceCustomizationClient;
@@ -365,7 +363,6 @@ public class CatalogDbClient {
         cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
         controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
-        vnfVfmoduleCvnfcConfigurationCustomizationClient = clientFactory.create(VnfVfmoduleCvnfcConfigurationCustomization.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
     }
@@ -415,7 +412,6 @@ public class CatalogDbClient {
         cvnfcCustomizationClient = clientFactory.create(CvnfcCustomization.class);
         controllerSelectionReferenceClient = clientFactory.create(ControllerSelectionReference.class);
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
-        vnfVfmoduleCvnfcConfigurationCustomizationClient = clientFactory.create(VnfVfmoduleCvnfcConfigurationCustomization.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
     }
@@ -801,12 +797,24 @@ public class CatalogDbClient {
             .queryParam("VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUUID).build().toString()));
     }
 
-    public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(String vnfCustomizationUuid,
-            String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
-        return this.getSingleResource(vnfVfmoduleCvnfcConfigurationCustomizationClient, getUri(UriBuilder
-                .fromUri(endpoint + "/vnfVfmoduleCvnfcConfigurationCustomization/search/findOneByVnfResourceCustomizationAndVfModuleCustomizationAndCvnfcCustomization")
-                .queryParam("VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID", vnfCustomizationUuid)
-                .queryParam("VF_MODULE_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUuid)
-                .queryParam("CVNFC_MODEL_CUSTOMIZATION_UUID", cvnfcCustomizationUuid).build().toString()));
+    public CvnfcCustomization getCvnfcCustomizationByCustomizationUUID(String cvnfcCustomizationUuid){
+        return this.getSingleResource(cvnfcCustomizationClient,getUri(UriBuilder
+                        .fromUri(endpoint + "/cvnfcCustomization/search/findOneByModelCustomizationUUID").queryParam("modelCustomizationUuid", cvnfcCustomizationUuid)
+                        .build().toString()));
+    }
+
+    //fetch all VnfVfmoduleCvnfcConfigurationCustomization underneath a vnfc
+    //find the VnfVfmoduleCvnfcConfigurationCustomization that is related to our vnf and our vf-module, filter all others.
+    public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(
+            String vnfCustomizationUuid, String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
+        CvnfcCustomization cvnfc = getCvnfcCustomizationByCustomizationUUID(cvnfcCustomizationUuid);
+        for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfModuleCvnfcCust: cvnfc.getVnfVfmoduleCvnfcConfigurationCustomization()){
+            if(vnfVfModuleCvnfcCust.getVnfResourceCustomization().getModelCustomizationUUID().equals(vnfCustomizationUuid) &&
+                    vnfVfModuleCvnfcCust.getVfModuleCustomization().getModelCustomizationUUID().equals(vfModuleCustomizationUuid)){
+                return vnfVfModuleCvnfcCust;
+            }
+        }
+        return null;
+        
     }
 }
