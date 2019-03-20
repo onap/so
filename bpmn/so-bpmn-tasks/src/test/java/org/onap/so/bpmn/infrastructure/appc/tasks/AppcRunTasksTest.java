@@ -73,7 +73,7 @@ public class AppcRunTasksTest extends BaseTaskTest {
     public void runAppcCommandVnfNull() throws BBObjectNotFoundException {
         execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "NULL-TEST");
         fillRequiredAppcExecutionFields();
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID), eq("NULL-TEST")))
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID)))
             .thenReturn(null);
         when(catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory(
             isNull(), eq(Action.Lock.toString()))).
@@ -92,7 +92,7 @@ public class AppcRunTasksTest extends BaseTaskTest {
     public void runAppcCommandBBObjectNotFoundException() throws BBObjectNotFoundException {
         execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "EXCEPTION-TEST");
         fillRequiredAppcExecutionFields();
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID), eq("EXCEPTION-TEST")))
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID)))
             .thenThrow(new BBObjectNotFoundException());
 
         appcRunTasks.runAppcCommand(execution, Action.Lock);
@@ -107,11 +107,11 @@ public class AppcRunTasksTest extends BaseTaskTest {
         execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "SUCCESS-TEST");
         fillRequiredAppcExecutionFields();
         GenericVnf genericVnf = getTestGenericVnf();
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID), eq("SUCCESS-TEST")))
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID)))
             .thenReturn(genericVnf);
         mockReferenceResponse();
         execution.getLookupMap().put(ResourceKey.VF_MODULE_ID, "VF-MODULE-ID-TEST");
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID), eq("VF-MODULE-ID-TEST")))
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID)))
             .thenReturn(null);
         when(appCClient.getErrorCode()).thenReturn("0");
 
@@ -125,13 +125,13 @@ public class AppcRunTasksTest extends BaseTaskTest {
         execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "SUCCESS-TEST");
         fillRequiredAppcExecutionFields();
         GenericVnf genericVnf = getTestGenericVnf();
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID), eq("SUCCESS-TEST")))
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID)))
             .thenReturn(genericVnf);
         mockReferenceResponse();
         execution.getLookupMap().put(ResourceKey.VF_MODULE_ID, "VF-MODULE-ID-TEST");
         VfModule vfModule = new VfModule();
         vfModule.setVfModuleId("VF-MODULE-ID");
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID), eq("VF-MODULE-ID-TEST")))
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID)))
             .thenReturn(vfModule);
         when(appCClient.getErrorCode()).thenReturn("0");
 

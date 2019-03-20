@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.namingservice.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -47,7 +46,7 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
 	@Before
 	public void before() throws BBObjectNotFoundException {
 		instanceGroup = setInstanceGroup();				
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID), any())).thenReturn(instanceGroup);		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID))).thenReturn(instanceGroup);		
 	}
 	
 	@Test
@@ -68,7 +67,7 @@ public class NamingServiceCreateTasksTest extends BaseTaskTest {
 	public void createInstanceGroupExceptionTest() throws Exception {
 		expectedException.expect(BBObjectNotFoundException.class);		
 		lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, "notfound");
-		doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID),eq("notfound"));	
+		doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));	
 		String policyInstanceName = "policyInstanceName";
 		String nfNamingCode = "nfNamingCode";
 		execution.setVariable(policyInstanceName, policyInstanceName);

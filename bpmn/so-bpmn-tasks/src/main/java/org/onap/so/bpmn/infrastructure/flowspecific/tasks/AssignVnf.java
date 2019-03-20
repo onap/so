@@ -50,7 +50,7 @@ public class AssignVnf {
 	
 	public void createInstanceGroups(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			List<InstanceGroup> instanceGroups = vnf.getInstanceGroups();
 			for(InstanceGroup instanceGroup : instanceGroups) {
 				if(ModelInfoInstanceGroup.TYPE_VNFC.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {

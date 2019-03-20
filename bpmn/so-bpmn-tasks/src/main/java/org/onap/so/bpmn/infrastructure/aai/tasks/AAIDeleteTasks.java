@@ -82,8 +82,8 @@ public class AAIDeleteTasks {
 	private AAIInstanceGroupResources aaiInstanceGroupResources;
 	
 	public void deleteVfModule(BuildingBlockExecution execution) throws Exception {		
-		GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-		VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+		GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+		VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 		
 		execution.setVariable("aaiVfModuleRollback", false);
 		try {
@@ -95,7 +95,7 @@ public class AAIDeleteTasks {
 	}
 
 	public void deleteVnf(BuildingBlockExecution execution) throws Exception {		
-		GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+		GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 		
 		execution.setVariable("aaiVnfRollback", false);
 		try {
@@ -108,7 +108,7 @@ public class AAIDeleteTasks {
 	
 	public void deleteServiceInstance(BuildingBlockExecution execution) throws Exception {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID)); 
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID); 
 			aaiSIResources.deleteServiceInstance(serviceInstance);
 		}
 		catch(Exception ex) {
@@ -119,7 +119,7 @@ public class AAIDeleteTasks {
 	
 	public void deleteNetwork(BuildingBlockExecution execution) throws Exception {
 		try {
-			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID)); 
+			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID); 
 			aaiNetworkResources.deleteNetwork(l3network);
 			execution.setVariable("isRollbackNeeded", true);
 		}
@@ -130,7 +130,7 @@ public class AAIDeleteTasks {
 	
 	public void deleteCollection(BuildingBlockExecution execution) throws Exception {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID)); 
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID); 
 			aaiNetworkResources.deleteCollection(serviceInstance.getCollection());
 		}
 		catch(Exception ex) {
@@ -140,7 +140,7 @@ public class AAIDeleteTasks {
 	
 	public void deleteInstanceGroup(BuildingBlockExecution execution) throws Exception {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID)); 
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID); 
 			aaiNetworkResources.deleteNetworkInstanceGroup(serviceInstance.getCollection().getInstanceGroup());
 		}
 		catch(Exception ex) {
@@ -150,7 +150,7 @@ public class AAIDeleteTasks {
 	
 	public void deleteVolumeGroup(BuildingBlockExecution execution) {
 		try {
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 			CloudRegion cloudRegion = execution.getGeneralBuildingBlock().getCloudRegion();
 			aaiVolumeGroupResources.deleteVolumeGroup(volumeGroup, cloudRegion);
 		} catch (Exception ex) {
@@ -159,7 +159,7 @@ public class AAIDeleteTasks {
 	}
 	public void deleteConfiguration(BuildingBlockExecution execution) {
 		try {
-			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
 			aaiConfigurationResources.deleteConfiguration(configuration);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -168,7 +168,7 @@ public class AAIDeleteTasks {
 	
 	public void deleteInstanceGroupVnf(BuildingBlockExecution execution) {
 		try {
-			InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, execution.getLookupMap().get(ResourceKey.INSTANCE_GROUP_ID));
+			InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
 			aaiInstanceGroupResources.deleteInstanceGroup(instanceGroup);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

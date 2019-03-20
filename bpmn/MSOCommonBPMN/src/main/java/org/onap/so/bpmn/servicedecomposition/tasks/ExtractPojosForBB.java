@@ -46,7 +46,10 @@ public class ExtractPojosForBB {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExtractPojosForBB.class);
 	
-	public <T> T extractByKey(BuildingBlockExecution execution, ResourceKey key, String value)
+	public <T> T extractByKey(BuildingBlockExecution execution, ResourceKey key) throws BBObjectNotFoundException {
+		return extractByKey(execution, key, execution.getLookupMap().get(key));
+	}
+	protected <T> T extractByKey(BuildingBlockExecution execution, ResourceKey key, String value)
 			throws BBObjectNotFoundException {
 
 		Optional<T> result = Optional.empty();
@@ -59,39 +62,39 @@ public class ExtractPojosForBB {
 					result = lookupObjectInList(gBBInput.getCustomer().getServiceSubscription().getServiceInstances(), value);
 					break;
 				case GENERIC_VNF_ID:
-					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 					result = lookupObjectInList(serviceInstance.getVnfs(), value);
 					break;
 				case NETWORK_ID:
-					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 					result = lookupObjectInList(serviceInstance.getNetworks(), value);
 					break;
 				case VOLUME_GROUP_ID:
-					vnf = extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+					vnf = extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 					result = lookupObjectInList(vnf.getVolumeGroups(), value);
 					break;
 				case VF_MODULE_ID:
-					vnf = extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+					vnf = extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 					result = lookupObjectInList(vnf.getVfModules(), value);
 					break;
 				case ALLOTTED_RESOURCE_ID:
-					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 					result = lookupObjectInList(serviceInstance.getAllottedResources(), value);
 					break;
 				case CONFIGURATION_ID:
-					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 					result =  lookupObjectInList(serviceInstance.getConfigurations(), value);
 					break;
 				case VPN_ID:
-					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 					result = lookupObjectInList(gBBInput.getCustomer().getVpnBindings(), value);
 					break;
 				case VPN_BONDING_LINK_ID:
-					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
                     result = lookupObjectInList(serviceInstance.getVpnBondingLinks(),value);
 					break;
 				case INSTANCE_GROUP_ID:
-					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+					serviceInstance = extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 					result = lookupObjectInList(serviceInstance.getInstanceGroups(), value);
 					break;	
 				default:

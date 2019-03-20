@@ -47,7 +47,7 @@ public class AAIFlagTasks {
 	public void checkVnfInMaintFlag(BuildingBlockExecution execution) {
 		boolean inMaint = false;
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			String vnfId = vnf.getVnfId();
 			inMaint = aaiVnfResources.checkInMaintFlag(vnfId);
 		} catch (Exception ex) {
@@ -60,7 +60,7 @@ public class AAIFlagTasks {
 	
 	public void modifyVnfInMaintFlag(BuildingBlockExecution execution, boolean inMaint) {
 		try {
-			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
 			GenericVnf copiedGenericVnf = genericVnf.shallowCopyId();
 
@@ -76,7 +76,7 @@ public class AAIFlagTasks {
 	public void checkVnfClosedLoopDisabledFlag(BuildingBlockExecution execution) {
 		boolean isClosedLoopDisabled = false;
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			String vnfId = vnf.getVnfId();
 			isClosedLoopDisabled = aaiVnfResources.checkVnfClosedLoopDisabledFlag(vnfId);
 		} catch (Exception ex) {
@@ -89,7 +89,7 @@ public class AAIFlagTasks {
 		
 	public void modifyVnfClosedLoopDisabledFlag(BuildingBlockExecution execution, boolean closedLoopDisabled) {
 		try {
-			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
 			GenericVnf copiedGenericVnf = genericVnf.shallowCopyId();
 			copiedGenericVnf.setClosedLoopDisabled(closedLoopDisabled);
@@ -104,7 +104,7 @@ public class AAIFlagTasks {
 	public void checkVnfPserversLockedFlag(BuildingBlockExecution execution) {
 		boolean inPserversLocked = false;
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			String vnfId = vnf.getVnfId();
 			inPserversLocked = aaiVnfResources.checkVnfPserversLockedFlag(vnfId);
 		} catch (Exception ex) {

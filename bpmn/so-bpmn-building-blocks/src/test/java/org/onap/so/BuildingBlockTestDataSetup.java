@@ -349,7 +349,7 @@ public class BuildingBlockTestDataSetup{
 		ServiceInstance serviceInstance = null;
 
 		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
@@ -367,7 +367,7 @@ public class BuildingBlockTestDataSetup{
 		Collection collection = null;
 
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			collection = serviceInstance.getCollection();
 
 			if (collection == null) {
@@ -442,7 +442,7 @@ public class BuildingBlockTestDataSetup{
 		ServiceInstance serviceInstance = null;
 
 		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
@@ -487,7 +487,7 @@ public class BuildingBlockTestDataSetup{
 		ServiceInstance serviceInstance = null;
 
 		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
@@ -522,7 +522,7 @@ public class BuildingBlockTestDataSetup{
 		GenericVnf genericVnf = null;
 
 		try {
-			genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 		} catch(BBObjectNotFoundException e) {
 			genericVnf = setGenericVnf();
 		}
@@ -550,7 +550,7 @@ public class BuildingBlockTestDataSetup{
 		GenericVnf genericVnf = null;
 
 		try {
-			genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 		} catch(BBObjectNotFoundException e) {
 			genericVnf = setGenericVnf();
 		}
@@ -614,7 +614,7 @@ public class BuildingBlockTestDataSetup{
 		ServiceInstance serviceInstance = null;
 
 		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 		} catch(BBObjectNotFoundException e) {
 			serviceInstance = setServiceInstance();
 		}
