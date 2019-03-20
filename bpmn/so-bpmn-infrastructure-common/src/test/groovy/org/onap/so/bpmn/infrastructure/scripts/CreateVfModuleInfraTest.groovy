@@ -44,9 +44,6 @@ class CreateVfModuleInfraTest {
     def prefix = "CVFMI_"
     def requestInfo = "<requestInfo><request-id>12345</request-id></requestInfo>"
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
-
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 

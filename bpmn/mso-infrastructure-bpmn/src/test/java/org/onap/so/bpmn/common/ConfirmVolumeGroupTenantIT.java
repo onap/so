@@ -42,7 +42,7 @@ public class ConfirmVolumeGroupTenantIT extends BaseIntegrationTest {
 
 	@Test	
 	public void testRemoveLayer3Service_success() throws Exception{
-		MockGetVolumeGroupById("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume.xml");
+		MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume.xml");
 
 		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);
@@ -60,7 +60,7 @@ public class ConfirmVolumeGroupTenantIT extends BaseIntegrationTest {
 
 	@Test	
 	public void testRemoveLayer3Service_idsNotMatch() throws Exception{
-		MockGetVolumeGroupById("MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume_idsNotMatch.xml");
+		MockGetVolumeGroupById(wireMockServer, "MDTWNJ21", "a8399879-31b3-4973-be26-0a0cbe776b58", "CRTGVNF_queryAAIResponseVolume_idsNotMatch.xml");
 
 		Map<String, Object> variables = new HashMap<>();
 		setVariables(variables);

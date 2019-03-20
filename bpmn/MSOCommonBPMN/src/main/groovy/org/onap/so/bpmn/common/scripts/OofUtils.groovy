@@ -518,9 +518,9 @@ class OofUtils {
         Response response = client.post(request.getBody().toString())
 
         int responseCode = response.getStatus()
-        logDebug("CatalogDB response code is: " + responseCode)
+        logger.debug("CatalogDB response code is: " + responseCode)
         String syncResponse = response.readEntity(String.class)
-        logDebug("CatalogDB response is: " + syncResponse)
+        logger.debug("CatalogDB response is: " + syncResponse)
 
         if(responseCode != 202){
             exceptionUtil.buildAndThrowWorkflowException(execution, responseCode, "Received a Bad Sync Response from CatalogDB.")

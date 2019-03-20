@@ -61,7 +61,7 @@ public class GenerateVfModuleNameIT extends BaseIntegrationTest {
 			"  <vnf-params xmlns:tns=\"http://ecomp.att.com/mso/infra/vnf-request/v1\"/>" + EOL +
 			"</vnf-request>" + EOL;
 
-		MockGetGenericVnfById(".*", "GenericFlows/getGenericVnfByNameResponse.xml");
+		MockGetGenericVnfById(wireMockServer, ".*", "GenericFlows/getGenericVnfByNameResponse.xml");
 		RuntimeService runtimeService = processEngine.getRuntimeService();				
 		Map<String, Object> variables = new HashMap<String, Object>();		
 		variables.put("isDebugLogEnabled","true");		

@@ -24,7 +24,6 @@ package org.onap.so.bpmn.common;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.onap.so.bpmn.common.BPMNUtil.waitForWorkflowToFinish;
 
@@ -48,12 +47,12 @@ public class FalloutHandlerIT extends BaseIntegrationTest {
 	
 	
 	private void setupMocks() {
-		stubFor(post(urlEqualTo("/dbadapters/AttRequestsDbAdapter"))
+		wireMockServer.stubFor(post(urlEqualTo("/dbadapters/AttRequestsDbAdapter"))
 				.willReturn(aResponse()
 				.withStatus(200)
 				.withHeader("Content-Type", "text/xml")
 				.withBody("<DbTag>Notified</DbTag>")));
-		stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
+		wireMockServer.stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
 				.willReturn(aResponse()
 				.withStatus(200)
 				.withHeader("Content-Type", "text/xml")

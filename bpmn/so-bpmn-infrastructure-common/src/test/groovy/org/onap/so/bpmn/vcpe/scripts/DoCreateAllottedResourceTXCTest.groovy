@@ -93,7 +93,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
     @Test
     @Ignore
     public void getAaiAR() {
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 
         ExecutionEntity mex = setupMock()
         initGetAaiAR(mex)
@@ -107,7 +107,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
     @Test
 
     public void getAaiAR_Duplicate() {
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 
         ExecutionEntity mex = setupMock()
         initGetAaiAR(mex)
@@ -122,7 +122,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 
     @Test
     public void getAaiAR_NotActive() {
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 
         ExecutionEntity mex = setupMock()
         initGetAaiAR(mex)
@@ -138,7 +138,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
     @Test
     @Ignore
     public void getAaiAR_NoStatus() {
-        MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
+        MockGetAllottedResource(wireMockRule, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceTXC/getArTxc.xml")
 
         ExecutionEntity mex = setupMock()
         initGetAaiAR(mex)
@@ -177,7 +177,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 
         when(mex.getVariable("PSI_resourceLink")).thenReturn(null)
 
-        MockPutAllottedResource(CUST, SVC, INST, ARID)
+        MockPutAllottedResource(wireMockRule, CUST, SVC, INST, ARID)
 
         DoCreateAllottedResourceTXC DoCreateAllottedResourceTXC = new DoCreateAllottedResourceTXC()
 
@@ -189,7 +189,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initCreateAaiAr(mex)
 
-        MockPutAllottedResource_500(CUST, SVC, INST, ARID)
+        MockPutAllottedResource_500(wireMockRule, CUST, SVC, INST, ARID)
 
         DoCreateAllottedResourceTXC DoCreateAllottedResourceTXC = new DoCreateAllottedResourceTXC()
 
@@ -203,7 +203,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 
         when(mex.getVariable("aai.endpoint")).thenThrow(new BpmnError("expected exception"))
 
-        MockPutAllottedResource(CUST, SVC, INST, ARID)
+        MockPutAllottedResource(wireMockRule, CUST, SVC, INST, ARID)
 
         DoCreateAllottedResourceTXC DoCreateAllottedResourceTXC = new DoCreateAllottedResourceTXC()
 
@@ -217,7 +217,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
 
         when(mex.getVariable("aai.endpoint")).thenThrow(new RuntimeException("expected exception"))
 
-        MockPutAllottedResource(CUST, SVC, INST, ARID)
+        MockPutAllottedResource(wireMockRule, CUST, SVC, INST, ARID)
 
         DoCreateAllottedResourceTXC DoCreateAllottedResourceTXC = new DoCreateAllottedResourceTXC()
 
@@ -559,7 +559,7 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
     @Test
     @Ignore
     public void updateAaiAROrchStatus() {
-        MockPatchAllottedResource(CUST, SVC, INST, ARID)
+        MockPatchAllottedResource(wireMockRule, CUST, SVC, INST, ARID)
 
         ExecutionEntity mex = setupMock()
         initUpdateAaiAROrchStatus(mex)

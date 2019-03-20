@@ -21,10 +21,11 @@
 package org.onap.so.bpmn.mock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Stub response class for Database stubs
@@ -37,54 +38,54 @@ public class StubResponseDatabase {
 
 	}
 
-	public static void MockUpdateRequestDB(String fileName){
-		stubFor(post(urlEqualTo("/services/RequestsDbAdapter"))
+	public static void MockUpdateRequestDB(WireMockServer wireMockServer, String fileName){
+		wireMockServer.stubFor(post(urlEqualTo("/services/RequestsDbAdapter"))
 				.willReturn(aResponse()
 				.withStatus(200)
 			    .withHeader("Content-Type", "text/xml")
 				.withBodyFile(fileName)));
 	}	
 	
-	public static void mockUpdateRequestDB(int statusCode, String reponseFile) {
-		stubFor(post(urlEqualTo("/services/RequestsDbAdapter"))
+	public static void mockUpdateRequestDB(WireMockServer wireMockServer, int statusCode, String reponseFile) {
+		wireMockServer.stubFor(post(urlEqualTo("/services/RequestsDbAdapter"))
 				.willReturn(aResponse()
 				.withStatus(statusCode)
 			    .withHeader("Content-Type", "text/xml")
 				.withBodyFile(reponseFile)));
 	}
 
-	public static void MockGetAllottedResourcesByModelInvariantId(String modelInvariantId, String responseFile){
-		stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
+	public static void MockGetAllottedResourcesByModelInvariantId(WireMockServer wireMockServer, String modelInvariantId, String responseFile){
+		wireMockServer.stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
 				.willReturn(aResponse()
 				.withStatus(200)
 			    .withHeader("Content-Type", "application/json")
 				.withBodyFile(responseFile)));
 	}
 
-	public static void MockGetAllottedResourcesByModelInvariantId_500(String modelInvariantId, String responseFile){
-		stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
+	public static void MockGetAllottedResourcesByModelInvariantId_500(WireMockServer wireMockServer, String modelInvariantId, String responseFile){
+		wireMockServer.stubFor(get(urlEqualTo("/v1/serviceAllottedResources?serviceModelInvariantUuid=" + modelInvariantId))
 				.willReturn(aResponse()
 				.withStatus(500)));
 	}
 	
-	public static void MockGetVnfCatalogDataCustomizationUuid(String vnfModelCustomizationUuid,  String responseFile){
-		stubFor(get(urlEqualTo("/v2/serviceVnfs?vnfModelCustomizationUuid=" + vnfModelCustomizationUuid))
+	public static void MockGetVnfCatalogDataCustomizationUuid(WireMockServer wireMockServer, String vnfModelCustomizationUuid,  String responseFile){
+		wireMockServer.stubFor(get(urlEqualTo("/v2/serviceVnfs?vnfModelCustomizationUuid=" + vnfModelCustomizationUuid))
 				  .willReturn(aResponse()
 				  .withStatus(200)
 				  .withHeader("Content-Type", "application/json")
 				  .withBodyFile(responseFile)));
 	}
 
-	public static void MockGetVfModuleByModelNameCatalogData(String vfModuleModelName, String responseFile){
-		stubFor(get(urlEqualTo("/v2/vfModules?vfModuleModelName=" + vfModuleModelName))
+	public static void MockGetVfModuleByModelNameCatalogData(WireMockServer wireMockServer, String vfModuleModelName, String responseFile){
+		wireMockServer.stubFor(get(urlEqualTo("/v2/vfModules?vfModuleModelName=" + vfModuleModelName))
 				  .willReturn(aResponse()
 				  .withStatus(200)
 				  .withHeader("Content-Type", "application/json")
 				  .withBodyFile(responseFile)));
 	}
 	
-	public static void MockGetServiceResourcesCatalogData(String serviceModelInvariantUuid, String serviceModelVersion, String responseFile){
-		stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelInvariantUuid=" +
+	public static void MockGetServiceResourcesCatalogData(WireMockServer wireMockServer, String serviceModelInvariantUuid, String serviceModelVersion, String responseFile){
+		wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelInvariantUuid=" +
 				serviceModelInvariantUuid + 
 				"&serviceModelVersion=" + serviceModelVersion))
 				  .willReturn(aResponse()
@@ -93,24 +94,24 @@ public class StubResponseDatabase {
 				  .withBodyFile(responseFile)));
 	}
 	
-	public static void MockGetServiceResourcesCatalogData(String serviceModelInvariantUuid, String responseFile){
-		stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid))
+	public static void MockGetServiceResourcesCatalogData(WireMockServer wireMockServer, String serviceModelInvariantUuid, String responseFile){
+		wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelInvariantUuid=" + serviceModelInvariantUuid))
 				  .willReturn(aResponse()
 				  .withStatus(200)
 				  .withHeader("Content-Type", "application/json")
 				  .withBodyFile(responseFile)));
 	}	
 	
-    public static void MockGetServiceResourcesCatalogDataByModelUuid(String serviceModelUuid, String responseFile){
-        stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelUuid=" + serviceModelUuid))
+    public static void MockGetServiceResourcesCatalogDataByModelUuid(WireMockServer wireMockServer, String serviceModelUuid, String responseFile){
+        wireMockServer.stubFor(get(urlEqualTo("/v2/serviceResources?serviceModelUuid=" + serviceModelUuid))
                   .willReturn(aResponse()
                   .withStatus(200)
                   .withHeader("Content-Type", "application/json")
                   .withBodyFile(responseFile)));
     }	
 	
-	public static void MockPostRequestDB(){
-		stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
+	public static void MockPostRequestDB(WireMockServer wireMockServer){
+		wireMockServer.stubFor(post(urlEqualTo("/dbadapters/RequestsDbAdapter"))
 				.willReturn(aResponse()
 				.withStatus(200)
 			    .withHeader("Content-Type", "text/xml")));

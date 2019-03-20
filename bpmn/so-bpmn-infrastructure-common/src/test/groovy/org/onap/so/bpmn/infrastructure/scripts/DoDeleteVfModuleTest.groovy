@@ -61,9 +61,6 @@ class DoDeleteVfModuleTest extends MsoGroovyTest{
     @Spy
     DoDeleteVfModule doDeleteVfModule
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090);
-
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 

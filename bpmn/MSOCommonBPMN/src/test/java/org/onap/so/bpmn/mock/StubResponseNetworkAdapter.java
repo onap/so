@@ -22,11 +22,12 @@ package org.onap.so.bpmn.mock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Please describe the StubResponseNetwork.java class
@@ -41,28 +42,28 @@ public class StubResponseNetworkAdapter {
 	}
 
 
-	public static void MockNetworkAdapter() {
-		stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
+	public static void MockNetworkAdapter(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
 			.willReturn(aResponse()
 			.withStatus(200)));
 	}
 
-	public static void MockNetworkAdapter(String response) {
-		stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
+	public static void MockNetworkAdapter(WireMockServer wireMockServer, String response) {
+		wireMockServer.stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
 			.willReturn(aResponse()
 			.withStatus(200)
 			.withHeader("Content-Type", "text/xml")
 			.withBodyFile(response)));
 	}
 
-	public static void MockNetworkAdapter_500() {
-		stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
+	public static void MockNetworkAdapter_500(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
 			.willReturn(aResponse()
 			.withStatus(500)));
 	}
 
-	public static void MockNetworkAdapterPost(String responseFile, String requestContaining) {
-		stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
+	public static void MockNetworkAdapterPost(WireMockServer wireMockServer, String responseFile, String requestContaining) {
+		wireMockServer.stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
 			.withRequestBody(containing(requestContaining))				
 			.willReturn(aResponse()
 			.withStatus(200)
@@ -70,16 +71,16 @@ public class StubResponseNetworkAdapter {
 			.withBodyFile(responseFile)));
 	}	
 	
-	public static void MockNetworkAdapter(String networkId, int statusCode, String responseFile) {
-		stubFor(delete(urlEqualTo("/networks/NetworkAdapter/" + networkId))
+	public static void MockNetworkAdapter(WireMockServer wireMockServer, String networkId, int statusCode, String responseFile) {
+		wireMockServer.stubFor(delete(urlEqualTo("/networks/NetworkAdapter/" + networkId))
 				  .willReturn(aResponse()
 				  .withStatus(statusCode)
 				  .withHeader("Content-Type", "application/xml")
 				  .withBodyFile(responseFile)));
 	}
 	
-	public static void MockNetworkAdapterContainingRequest(String requestContaining, int statusCode, String responseFile) {
-		stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
+	public static void MockNetworkAdapterContainingRequest(WireMockServer wireMockServer, String requestContaining, int statusCode, String responseFile) {
+		wireMockServer.stubFor(post(urlEqualTo("/networks/NetworkAdapter"))
 				  .withRequestBody(containing(requestContaining))
 				  .willReturn(aResponse()
 				  .withStatus(statusCode)
@@ -87,8 +88,8 @@ public class StubResponseNetworkAdapter {
 				  .withBodyFile(responseFile)));
 	}
 	
-	public static void MockPutNetworkAdapter(String networkId, String requestContaining, int statusCode, String responseFile) {
-		stubFor(put(urlEqualTo("/networks/NetworkAdapter/" + networkId))
+	public static void MockPutNetworkAdapter(WireMockServer wireMockServer, String networkId, String requestContaining, int statusCode, String responseFile) {
+		wireMockServer.stubFor(put(urlEqualTo("/networks/NetworkAdapter/" + networkId))
 				  .withRequestBody(containing(requestContaining))
 				  .willReturn(aResponse()
 				  .withStatus(statusCode)
@@ -96,16 +97,16 @@ public class StubResponseNetworkAdapter {
 				  .withBodyFile(responseFile)));
 	}
 	
-	public static void MockNetworkAdapterRestRollbackDelete(String responseFile, String networkId) {
-		stubFor(delete(urlEqualTo("/networks/NetworkAdapter/"+networkId+"/rollback"))
+	public static void MockNetworkAdapterRestRollbackDelete(WireMockServer wireMockServer, String responseFile, String networkId) {
+		wireMockServer.stubFor(delete(urlEqualTo("/networks/NetworkAdapter/"+networkId+"/rollback"))
 			.willReturn(aResponse()
 			.withStatus(200)
 			.withHeader("Content-Type", "text/xml")
 			.withBodyFile(responseFile)));
 	}	
 
-	public static void MockNetworkAdapterRestPut(String responseFile, String networkId) {
-		stubFor(put(urlEqualTo("/networks/NetworkAdapter/"+networkId))
+	public static void MockNetworkAdapterRestPut(WireMockServer wireMockServer, String responseFile, String networkId) {
+		wireMockServer.stubFor(put(urlEqualTo("/networks/NetworkAdapter/"+networkId))
 			.willReturn(aResponse()
 			.withStatus(200)
 			.withHeader("Content-Type", "text/xml")

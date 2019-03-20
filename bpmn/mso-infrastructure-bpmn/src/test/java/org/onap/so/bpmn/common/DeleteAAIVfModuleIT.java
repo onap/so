@@ -20,18 +20,10 @@
 
 package org.onap.so.bpmn.common;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.camunda.bpm.engine.RuntimeService;
-import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
@@ -52,9 +44,9 @@ public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 	public void  TestDeleteGenericVnfSuccess_200() {
 		// delete the Base Module and Generic Vnf
 		// vnf-id=a27ce5a9-29c4-4c22-a017-6615ac73c721, vf-module-id=973ed047-d251-4fb9-bf1a-65b8949e0a73
-		new MockAAIGenericVnfSearch();
-		new MockAAIDeleteGenericVnf();
-		new MockAAIDeleteVfModule();
+		new MockAAIGenericVnfSearch(wireMockServer);
+		new MockAAIDeleteGenericVnf(wireMockServer);
+		new MockAAIDeleteVfModule(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -86,9 +78,9 @@ public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 			"  <vnf-params xmlns:tns=\"http://openecomp.org/mso/infra/vnf-request/v1\"/>" + EOL +
 			"</vnf-request>" + EOL;
 
-		new MockAAIGenericVnfSearch();
-		new MockAAIDeleteGenericVnf();
-		new MockAAIDeleteVfModule();
+		new MockAAIGenericVnfSearch(wireMockServer);
+		new MockAAIDeleteGenericVnf(wireMockServer);
+		new MockAAIDeleteVfModule(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -119,9 +111,9 @@ public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 			"  </vnf-inputs>" + EOL +
 			"  <vnf-params xmlns:tns=\"http://openecomp.org/mso/infra/vnf-request/v1\"/>" + EOL +
 			"</vnf-request>" + EOL;
-		new MockAAIGenericVnfSearch();
-		new MockAAIDeleteGenericVnf();
-		new MockAAIDeleteVfModule();
+		new MockAAIGenericVnfSearch(wireMockServer);
+		new MockAAIDeleteGenericVnf(wireMockServer);
+		new MockAAIDeleteVfModule(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -152,9 +144,9 @@ public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 			"  </vnf-inputs>" + EOL +
 			"  <vnf-params xmlns:tns=\"http://openecomp.org/mso/infra/vnf-request/v1\"/>" + EOL +
 			"</vnf-request>" + EOL;
-		new MockAAIGenericVnfSearch();
-		new MockAAIDeleteGenericVnf();
-		new MockAAIDeleteVfModule();
+		new MockAAIGenericVnfSearch(wireMockServer);
+		new MockAAIDeleteGenericVnf(wireMockServer);
+		new MockAAIDeleteVfModule(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -185,9 +177,9 @@ public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 			"  </vnf-inputs>" + EOL +
 			"  <vnf-params xmlns:tns=\"http://openecomp.org/mso/infra/vnf-request/v1\"/>" + EOL +
 			"</vnf-request>" + EOL;
-		new MockAAIGenericVnfSearch();
-		new MockAAIDeleteGenericVnf();
-		new MockAAIDeleteVfModule();
+		new MockAAIGenericVnfSearch(wireMockServer);
+		new MockAAIDeleteGenericVnf(wireMockServer);
+		new MockAAIDeleteVfModule(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -218,9 +210,9 @@ public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 			"  </vnf-inputs>" + EOL +
 			"  <vnf-params xmlns:tns=\"http://openecomp.org/mso/infra/vnf-request/v1\"/>" + EOL +
 			"</vnf-request>" + EOL;
-		new MockAAIGenericVnfSearch();
-		new MockAAIDeleteGenericVnf();
-		new MockAAIDeleteVfModule();
+		new MockAAIGenericVnfSearch(wireMockServer);
+		new MockAAIDeleteGenericVnf(wireMockServer);
+		new MockAAIDeleteVfModule(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -251,9 +243,9 @@ public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 			"  </vnf-inputs>" + EOL +
 			"  <vnf-params xmlns:tns=\"http://openecomp.org/mso/infra/vnf-request/v1\"/>" + EOL +
 			"</vnf-request>" + EOL;
-		new MockAAIGenericVnfSearch();
-		new MockAAIDeleteGenericVnf();
-		new MockAAIDeleteVfModule();
+		new MockAAIGenericVnfSearch(wireMockServer);
+		new MockAAIDeleteGenericVnf(wireMockServer);
+		new MockAAIDeleteVfModule(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");
@@ -270,9 +262,9 @@ public class DeleteAAIVfModuleIT extends BaseIntegrationTest {
 	public void  TestDeleteVfModuleFailure_1002_2() {
 		// failure attempting to delete a Vf Module that does not exist (A&AI returns 404)
 		// vnf-id=a27ce5a9-29c4-4c22-a017-6615ac73c720, vf-module-id=973ed047-d251-4fb9-bf1a-65b8949e0a76
-		new MockAAIGenericVnfSearch();
-		new MockAAIDeleteGenericVnf();
-		new MockAAIDeleteVfModule();
+		new MockAAIGenericVnfSearch(wireMockServer);
+		new MockAAIDeleteGenericVnf(wireMockServer);
+		new MockAAIDeleteVfModule(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");

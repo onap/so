@@ -50,9 +50,6 @@ class UpdateAAIVfModuleTest  extends MsoGroovyTest {
     @Spy
     UpdateAAIVfModule updateAAIVfModule;
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
-
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 

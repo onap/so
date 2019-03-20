@@ -31,6 +31,7 @@ import org.onap.so.client.orchestration.SDNOHealthCheckResources;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sniro.SniroClient;
 import org.onap.so.db.catalog.client.CatalogDbClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,7 +41,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -69,10 +70,13 @@ public abstract class BaseIntegrationTest extends TestDataSetup {
 
 	@MockBean
 	protected CatalogDbClient catalogDbClient;
+	
+	@Autowired
+	protected WireMockServer wireMockServer;
 
 	@Before
 	public void baseTestBefore() {
-		WireMock.reset();
+		wireMockServer.resetAll();
 	}
 	public String readResourceFile(String fileName) {
 		InputStream stream;

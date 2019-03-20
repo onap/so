@@ -22,7 +22,6 @@ package org.onap.so.asdc.client.test.rest;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
@@ -98,7 +97,7 @@ public class ASDCRestInterfaceTest extends BaseTest {
 	@Transactional
 	public void testAllottedResourceService() throws Exception {
 		
-		stubFor(post(urlPathMatching("/aai/.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
 				  .willReturn(aResponse()
 				  .withStatus(200)
 				  .withHeader("Content-Type", "application/json")));

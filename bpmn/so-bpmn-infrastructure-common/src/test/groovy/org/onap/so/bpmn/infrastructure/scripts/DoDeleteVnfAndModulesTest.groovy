@@ -50,9 +50,6 @@ import static org.mockito.Mockito.*
 @RunWith(MockitoJUnitRunner.class)
 public class DoDeleteVnfAndModulesTest extends MsoGroovyTest{
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090);
-
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 

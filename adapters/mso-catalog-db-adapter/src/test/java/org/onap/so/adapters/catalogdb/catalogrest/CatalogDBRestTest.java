@@ -20,7 +20,8 @@
 
 package org.onap.so.adapters.catalogdb.catalogrest;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.onap.so.logger.MdcConstants.ENDTIME;
 import static org.onap.so.logger.MdcConstants.INVOCATION_ID;
 import static org.onap.so.logger.MdcConstants.PARTNERNAME;
@@ -29,45 +30,29 @@ import static org.onap.so.logger.MdcConstants.RESPONSEDESC;
 import static org.onap.so.logger.MdcConstants.SERVICE_NAME;
 import static org.onap.so.logger.MdcConstants.STATUSCODE;
 
-
 import java.io.IOException;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-
 import org.json.JSONException;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.so.adapters.catalogdb.CatalogDBApplication;
-
+import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.annotation.DirtiesContext.ClassMode;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class CatalogDBRestTest {
+public class CatalogDBRestTest extends CatalogDbAdapterBaseTest {
 
 	private static final String ECOMP_MSO_CATALOG_V2_VF_MODULES = "ecomp/mso/catalog/v2/vfModules";
 
@@ -80,9 +65,6 @@ public class CatalogDBRestTest {
 	private static final String ECOMP_MSO_CATALOG_V2_SERVICE_VNFS = "ecomp/mso/catalog/v2/serviceVnfs";
 
 	private static final String ECOMP_MSO_CATALOG_V2_SERVICE_RESOURCES = "ecomp/mso/catalog/v2/serviceResources";
-
-	@LocalServerPort
-	private int port;
 
 	TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 

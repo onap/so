@@ -46,7 +46,7 @@ public class DecomposeServiceIT extends BaseIntegrationTest {
 
 	@Test	
 	public void testDecomposeService_success() throws Exception{
-		MockGetServiceResourcesCatalogData("cmw-123-456-789", "1.0", "/getCatalogServiceResourcesDataWithConfig.json");
+		MockGetServiceResourcesCatalogData(wireMockServer, "cmw-123-456-789", "1.0", "/getCatalogServiceResourcesDataWithConfig.json");
 
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -62,7 +62,7 @@ public class DecomposeServiceIT extends BaseIntegrationTest {
 	//@Test
 	@Test
 	public void testDecomposeService_success_partial() throws Exception{
-		MockGetServiceResourcesCatalogData("cmw-123-456-789", "1.0", "/getCatalogServiceResourcesDataNoNetwork.json");
+		MockGetServiceResourcesCatalogData(wireMockServer, "cmw-123-456-789", "1.0", "/getCatalogServiceResourcesDataNoNetwork.json");
 
 
 		String businessKey = UUID.randomUUID().toString();

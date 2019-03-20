@@ -20,12 +20,21 @@
 
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.put;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertThat;
+
 import java.util.UUID;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -44,8 +53,8 @@ import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class CreateEcompOperationalEnvironmentTest extends BaseTest{
@@ -73,9 +82,9 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 	
 	@Test
 	public void testProcess() throws ApiException, JsonProcessingException {
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(post(urlPathMatching("/events/.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/events/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		InfraActiveRequests iar = new InfraActiveRequests();
@@ -84,11 +93,11 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/123"))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/123"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
 				.withRequestBody(containing("{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"rollbackStatusMessage\":null,\"flowStatus\":null,\"retryStatusMessage\":null,\"progress\":100"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
@@ -98,9 +107,9 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 	
 	@Test
 	public void testProcessException() throws JsonProcessingException {
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(post(urlPathMatching("/events/.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/events/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
         ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
         ValidateException expectedException = new ValidateException.Builder("Could not publish DMaap", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER)
@@ -113,11 +122,11 @@ public class CreateEcompOperationalEnvironmentTest extends BaseTest{
 		iar.setRequestScope("create");
 		iar.setRequestStatus("PENDING");
 		iar.setRequestAction("UNKNOWN");
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+uuid))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+uuid))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
 				.withRequestBody(containing("{\"requestId\":\""+uuid+ "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message:"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));

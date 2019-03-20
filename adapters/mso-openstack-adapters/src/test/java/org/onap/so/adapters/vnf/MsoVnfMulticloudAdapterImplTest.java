@@ -20,31 +20,25 @@
 
 package org.onap.so.adapters.vnf;
 
-import org.apache.http.HttpStatus;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.onap.so.adapters.openstack.MsoOpenstackAdaptersApplication;
-import org.onap.so.adapters.vnf.exceptions.VnfException;
-import org.onap.so.cloud.CloudConfig;
-import org.onap.so.db.catalog.beans.CloudSite;
-import org.onap.so.entity.MsoRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.server.LocalServerPort;
-
-import javax.xml.ws.Holder;
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.xml.ws.Holder;
+
+import org.apache.http.HttpStatus;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.onap.so.cloud.CloudConfig;
+import org.onap.so.entity.MsoRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
     @Rule
@@ -76,19 +70,19 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/vfname")).willReturn(aResponse()
+        wireMockServer.stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/vfname")).willReturn(aResponse()
                 //.withHeader()
                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+        wireMockServer.stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
                 //.withHeader()
                 .withBodyFile("MulticloudResponse_Stack.json")
                 .withStatus(HttpStatus.SC_OK)));
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/vfname/outputs")).willReturn(aResponse()
+        wireMockServer.stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/vfname/outputs")).willReturn(aResponse()
                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 
-        stubFor(post(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload")).willReturn(aResponse()
+        wireMockServer.stubFor(post(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload")).willReturn(aResponse()
                 .withBodyFile("MulticloudResponse_Stack_Create.json")
                 .withStatus(HttpStatus.SC_CREATED)));
 
@@ -101,11 +95,11 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+        wireMockServer.stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
                 .withBodyFile("MulticloudResponse_Stack.json")
                 .withStatus(HttpStatus.SC_OK)));
 
-        stubFor(delete(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+        wireMockServer.stubFor(delete(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
                 .withStatus(HttpStatus.SC_NO_CONTENT)));
 
         instance.deleteVfModule("MTN13", "CloudOwner", "123", "workload-id", msoRequest, new Holder<>());
@@ -117,7 +111,7 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+        wireMockServer.stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
                 .withBodyFile("MulticloudResponse_Stack.json")
                 .withStatus(HttpStatus.SC_OK)));
 

@@ -24,12 +24,15 @@ import org.junit.After;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = SDNCAdapterApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -38,7 +41,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 public abstract class BaseTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
+    
+    @Autowired
+    protected WireMockServer wireMockServer;
+    
     protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
     @Value("${wiremock.server.port}")

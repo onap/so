@@ -107,13 +107,13 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 
 		CreateVfModuleRequest request = populateCreateVfModuleRequest();
 
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackVfModule_404();
+		mockOpenStackGetStackVfModule_404(wireMockServer);
 
-		mockOpenStackPostStacks_200();
+		mockOpenStackPostStacks_200(wireMockServer);
 
-		mockOpenStackGetStackVfModule_200();
+		mockOpenStackGetStackVfModule_200(wireMockServer);
 
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<CreateVfModuleRequest> entity = new HttpEntity<CreateVfModuleRequest>(request, headers);
@@ -141,10 +141,10 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		CreateVfModuleRequest request = populateCreateVfModuleRequest();
 		request.setNotificationUrl( createURLWithPort("/mso/WorkflowMesssage"));
 		
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_404();
-		mockOpenStackPostStacks_200();
-		mockOpenStackGetStackVfModule_200();
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_404(wireMockServer);
+		mockOpenStackPostStacks_200(wireMockServer);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<CreateVfModuleRequest> entity = new HttpEntity<CreateVfModuleRequest>(request, headers);
@@ -204,13 +204,13 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		request.setVfModuleParams(vfModuleParams);
 		request.setMessageId(MESSAGE_ID);
 
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackVfModule_404();
+		mockOpenStackGetStackVfModule_404(wireMockServer);
 
-		mockOpenStackPostStacks_200();
+		mockOpenStackPostStacks_200(wireMockServer);
 
-		mockOpenStackGetStackVfModule_200();
+		mockOpenStackGetStackVfModule_200(wireMockServer);
 
 
 		headers.add("Accept", MediaType.APPLICATION_JSON);
@@ -272,15 +272,15 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		request.setVfModuleParams(vfModuleParams);
 		request.setMessageId(MESSAGE_ID);
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackVfModule_404();
+		mockOpenStackGetStackVfModule_404(wireMockServer);
 
-		mockOpenStackGetStacks_404();
+		mockOpenStackGetStacks_404(wireMockServer);
 		
-		mockOpenStackPostStacks_200();
+		mockOpenStackPostStacks_200(wireMockServer);
 
-		mockOpenStackGetStackVfModule_200();
+		mockOpenStackGetStackVfModule_200(wireMockServer);
 
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<CreateVfModuleRequest> entity = new HttpEntity<CreateVfModuleRequest>(request, headers);
@@ -291,7 +291,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 
 		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
 		
-		mockOpenStackGetStacksWithBody_200("DELETE_IN_PROGRESS");
+		mockOpenStackGetStacksWithBody_200(wireMockServer, "DELETE_IN_PROGRESS");
 		
 		response = restTemplate.exchange(
 				createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules"), HttpMethod.POST,
@@ -299,7 +299,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		
 		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
 		
-		mockOpenStackGetStacksWithBody_200("DELETE_FAILED");
+		mockOpenStackGetStacksWithBody_200(wireMockServer, "DELETE_FAILED");
 		
 		response = restTemplate.exchange(
 				createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules"), HttpMethod.POST,
@@ -307,7 +307,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		
 		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
 		
-		mockOpenStackGetStacksWithBody_200("UPDATE_COMPLETE");
+		mockOpenStackGetStacksWithBody_200(wireMockServer, "UPDATE_COMPLETE");
 		
 		response = restTemplate.exchange(
 				createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules"), HttpMethod.POST,
@@ -315,7 +315,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		
 		assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), response.getStatusCode().value());
 		
-		mockOpenStackGetStacksWithBody_404();
+		mockOpenStackGetStacksWithBody_404(wireMockServer);
 		
 		response = restTemplate.exchange(
 				createURLWithPort("/services/rest/v1/vnfs/" + AAI_VNF_ID + "/vf-modules"), HttpMethod.POST,
@@ -341,15 +341,15 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		request.setVnfId(AAI_VNF_ID);
 		request.setMsoRequest(msoRequest);
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 		
-		mockOpenStackPostStacks_200();
+		mockOpenStackPostStacks_200(wireMockServer);
 		
-		mockOpenStackGetStacksStackId_404();
+		mockOpenStackGetStacksStackId_404(wireMockServer);
 		
-		mockOpenStackGetPublicUrlStackByNameAndID_200(wireMockPort);
+		mockOpenStackGetPublicUrlStackByNameAndID_200(wireMockServer, wireMockPort);
 		
-		mockOpenStackDeletePublicUrlStackByNameAndID_204();
+		mockOpenStackDeletePublicUrlStackByNameAndID_204(wireMockServer);
 		
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);
@@ -408,15 +408,15 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		request.setBackout(backout);
 		request.setVfModuleParams(vfModuleParams);
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetStacksVfModuleWithLocationHeader_200(wireMockPort);
+		mockOpenStackGetStacksVfModuleWithLocationHeader_200(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetStacksVfModule_200(wireMockPort);
+		mockOpenStackGetStacksVfModule_200(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetStacksBaseStack_200(wireMockPort);
+		mockOpenStackGetStacksBaseStack_200(wireMockServer, wireMockPort);
 		
-		mockOpenStackPutStacks_200();
+		mockOpenStackPutStacks_200(wireMockServer);
 		
 		UpdateVfModuleResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
 				new File("src/test/resources/__files/UpdateVfModuleResponse.json"), UpdateVfModuleResponse.class);
@@ -455,13 +455,13 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 		RollbackVfModuleRequest request = new RollbackVfModuleRequest();
 		request.setVfModuleRollback(vfModuleRollback);
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetStacksStackId_200(wireMockPort);
+		mockOpenStackGetStacksStackId_200(wireMockServer, wireMockPort);
 		
-		mockOpenStackDeleteStacks();
+		mockOpenStackDeleteStacks(wireMockServer);
 		
-		mockOpenStackGetStacksVUSP_404();
+		mockOpenStackGetStacksVUSP_404(wireMockServer);
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<RollbackVfModuleRequest> entity = new HttpEntity<RollbackVfModuleRequest>(request, headers);
@@ -489,7 +489,7 @@ public class VnfAdapterRestTest extends BaseRestTestUtils {
 				.build().toString();
 		System.out.println(testUri);
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 		
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);

@@ -50,12 +50,12 @@ public class DoDeleteAllottedResourceTXCIT extends AbstractTestBase {
 	@Test
 	public void testDoDeleteAllottedResourceTXC_Success() throws Exception {
 		logStart();
-		MockQueryAllottedResourceById(ARID, "GenericFlows/getARUrlById.xml");
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockQueryAllottedResourceById(wireMockServer, ARID, "GenericFlows/getARUrlById.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables);
@@ -78,12 +78,12 @@ public class DoDeleteAllottedResourceTXCIT extends AbstractTestBase {
 	@Test
 	public void testDoDeleteAllottedResourceTXC_ARNotInSDNC() throws Exception {
 		logStart();
-		MockQueryAllottedResourceById(ARID, "GenericFlows/getARUrlById.xml");
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockQueryAllottedResourceById(wireMockServer, ARID, "GenericFlows/getARUrlById.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables);
@@ -104,13 +104,13 @@ public class DoDeleteAllottedResourceTXCIT extends AbstractTestBase {
 	@Test
 	public void testDoDeleteAllottedResourceTXC_SubProcessError() throws Exception {
 		logStart();
-		MockQueryAllottedResourceById(ARID, "GenericFlows/getARUrlById.xml");
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockQueryAllottedResourceById(wireMockServer, ARID, "GenericFlows/getARUrlById.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceTXC/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
-		mockSDNCAdapter(500);
+		mockSDNCAdapter(wireMockServer, 500);
 		
 		Map<String, Object> variables = new HashMap<>();
 		setVariablesSuccess(variables);

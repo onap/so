@@ -167,7 +167,7 @@ class OofHoming extends AbstractServiceTaskProcessor {
 				Response httpResponse = httpClient.post(oofRequest)
 
 				int responseCode = httpResponse.getStatus()
-				logDebug("OOF sync response code is: " + responseCode)
+				logger.debug("OOF sync response code is: " + responseCode)
 
 
                 logger.debug( "*** Completed Homing Call OOF ***")

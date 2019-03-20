@@ -27,7 +27,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 
@@ -37,428 +36,430 @@ import java.io.IOException;
 
 import org.apache.http.HttpStatus;
 
+import com.github.tomakehurst.wiremock.WireMockServer;
+
 public class StubOpenStack {
 	private static final String NETWORK_NAME = "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0";
 	private static final String NETWORK_ID = "da886914-efb2-4917-b335-c8381528d90b";
 	private static final String NETWORK_NAME_2 = "stackname";
 	private static final String NETWORK_ID_2 = "stackId";
 	
-	public static void mockOpenStackResponseAccess(int port) throws IOException {
-		stubFor(post(urlPathEqualTo("/v2.0/tokens")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+	public static void mockOpenStackResponseAccess(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(post(urlPathEqualTo("/v2.0/tokens")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 			.withBody(getBodyFromFile("OpenstackResponse_Access.json", port, "/mockPublicUrl"))
 				.withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackResponseAccessMulticloud(int port) throws IOException {
-		stubFor(post(urlPathEqualTo("/v2.0/tokens")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+	public static void mockOpenStackResponseAccessMulticloud(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(post(urlPathEqualTo("/v2.0/tokens")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody(getBodyFromFile("OpenstackResponse_AccessMulticloud.json", port, "/mockPublicUrl"))
 				.withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackResponseAccessQueryNetwork(int port) throws IOException {
-		stubFor(post(urlPathEqualTo("/v2.0/tokens"))
+	public static void mockOpenStackResponseAccessQueryNetwork(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(post(urlPathEqualTo("/v2.0/tokens"))
 				.withRequestBody(containing("tenantId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody(getBodyFromFile("OpenstackResponse_Access_queryNetwork.json", port, "/mockPublicUrl"))
 				.withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackResponseAccessAdmin(int port) throws IOException {
-		stubFor(post(urlPathEqualTo("/v2.0/tokens")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+	public static void mockOpenStackResponseAccessAdmin(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(post(urlPathEqualTo("/v2.0/tokens")).willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody(getBodyFromFile("OpenstackResponse_Access_Admin.json", port, "/mockPublicUrl"))
 					.withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackPublicUrlStackByName_200(int port) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME)).willReturn(aResponse()
+	public static void mockOpenStackPublicUrlStackByName_200(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME)).willReturn(aResponse()
 			.withHeader("X-Openstack-Request-Id", "openstackRquest")
 				.withHeader("location", "http://localhost:" + port + "/mockPublicUrl/stacks/"+NETWORK_NAME)
 					.withBody(getBodyFromFile("OpenstackResponse_StackId.json", port, "/mockPublicUrl/stacks/" + NETWORK_NAME))
 						.withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackPublicUrlStackByID_200(int port) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_ID)).willReturn(aResponse()
+	public static void mockOpenStackPublicUrlStackByID_200(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_ID)).willReturn(aResponse()
 			.withHeader("X-Openstack-Request-Id", "openstackRquest")
 				.withHeader("location", "http://localhost:" + port + "/mockPublicUrl/stacks/"+NETWORK_NAME)
 					.withBody(getBodyFromFile("OpenstackResponse_StackId.json", port, "/mockPublicUrl/stacks/" + NETWORK_NAME))
 						.withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetPublicUrlStackByNameAndID_200(int port) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)).willReturn(aResponse()
+	public static void mockOpenStackGetPublicUrlStackByNameAndID_200(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)).willReturn(aResponse()
 			.withHeader("X-Openstack-Request-Id", "openstackRquest")
 				.withHeader("location", "http://localhost:" + port + "/mockPublicUrl/stacks/"+NETWORK_NAME)
 					.withBody(getBodyFromFile("OpenstackResponse_StackId.json", port, "/mockPublicUrl/stacks/" + NETWORK_NAME))
 						.withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetPublicUrlStackByNameAndID_204(int port) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)).willReturn(aResponse()
+	public static void mockOpenStackGetPublicUrlStackByNameAndID_204(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)).willReturn(aResponse()
 			.withHeader("X-Openstack-Request-Id", "openstackRquest")
 				.withHeader("location", "http://localhost:" + port + "/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)
 					.withBody(getBodyFromFile("OpenstackResponse_StackId.json", port, "/mockPublicUrl/stacks/" + NETWORK_NAME))
 						.withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackPutPublicUrlStackByNameAndID_200() {
-		stubFor(put(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)).willReturn(aResponse()
+	public static void mockOpenStackPutPublicUrlStackByNameAndID_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)).willReturn(aResponse()
 			.withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackPutPublicUrlStackByNameAndID_NETWORK2_200() {
-		stubFor(put(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME_2+"/"+NETWORK_ID_2)).willReturn(aResponse()
+	public static void mockOpenStackPutPublicUrlStackByNameAndID_NETWORK2_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME_2+"/"+NETWORK_ID_2)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackDeletePublicUrlStackByNameAndID_204() {
-		stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)).willReturn(aResponse()
+	public static void mockOpenStackDeletePublicUrlStackByNameAndID_204(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/"+NETWORK_NAME+"/"+NETWORK_ID)).willReturn(aResponse()
 			.withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NO_CONTENT)));
 	}
 	
-	public static void mockOpenStackPostPublicUrlWithBodyFile_200() {
-		stubFor(post(urlPathEqualTo("/mockPublicUrl/stacks"))
+	public static void mockOpenStackPostPublicUrlWithBodyFile_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/stacks"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("OpenstackResponse_Stack.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetStackCreatedAppC_200() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_3/stackId"))
+	public static void mockOpenStackGetStackCreatedAppC_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_3/stackId"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("OpenstackResponse_Stack_Created.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetStackAppC_404() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_3"))
+	public static void mockOpenStackGetStackAppC_404(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_3"))
 			.willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackGetStackCreatedVUSP_200() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0/stackId"))
+	public static void mockOpenStackGetStackCreatedVUSP_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0/stackId"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("OpenstackResponse_Stack_Created.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetStackVUSP_404() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0"))
+	public static void mockOpenStackGetStackVUSP_404(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0"))
 			.willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackPostStack_200(String filename) {
-		stubFor(post(urlPathEqualTo("/mockPublicUrl/stacks")).willReturn(aResponse()
+	public static void mockOpenStackPostStack_200(WireMockServer wireMockServer, String filename) {
+		wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/stacks")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile(filename).withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackPostNeutronNetwork_200(String filename) {
-		stubFor(post(urlPathEqualTo("/mockPublicUrl/v2.0/networks")).willReturn(aResponse()
+	public static void mockOpenStackPostNeutronNetwork_200(WireMockServer wireMockServer, String filename) {
+		wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/v2.0/networks")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile(filename).withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackPutNeutronNetwork_200(String filename,String networkId) {
-		stubFor(put(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+networkId)).willReturn(aResponse()
+	public static void mockOpenStackPutNeutronNetwork_200(WireMockServer wireMockServer, String filename,String networkId) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+networkId)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile(filename).withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackPutNeutronNetwork(String networkId, int responseCode) {
-		stubFor(put(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+networkId)).willReturn(aResponse()
+	public static void mockOpenStackPutNeutronNetwork(WireMockServer wireMockServer, String networkId, int responseCode) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+networkId)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withStatus(responseCode)));
 	}
 
-	public static void mockOpenStackGetAllNeutronNetworks_200(String filename){
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks")).willReturn(aResponse()
+	public static void mockOpenStackGetAllNeutronNetworks_200(WireMockServer wireMockServer, String filename){
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile(filename).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetNeutronNetwork_404(String networkName) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+networkName)).willReturn(aResponse()
+	public static void mockOpenStackGetNeutronNetwork_404(WireMockServer wireMockServer, String networkName) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+networkName)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 
-	public static void mockOpenStackGetAllNeutronNetworks_404() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks")).willReturn(aResponse()
+	public static void mockOpenStackGetAllNeutronNetworks_404(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 
-	public static void mockOpenstackGetWithResponse(String url,int responseCode, String responseFile) {
-		stubFor(get(urlPathEqualTo(url)).willReturn(aResponse()
+	public static void mockOpenstackGetWithResponse(WireMockServer wireMockServer, String url,int responseCode, String responseFile) {
+		wireMockServer.stubFor(get(urlPathEqualTo(url)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile(responseFile)
 				.withStatus(responseCode)));
 	}
 	
-	public static void mockOpenstackPostWithResponse(String url,int responseCode, String responseFile) {
-		stubFor(post(urlPathEqualTo(url)).willReturn(aResponse()
+	public static void mockOpenstackPostWithResponse(WireMockServer wireMockServer, String url,int responseCode, String responseFile) {
+		wireMockServer.stubFor(post(urlPathEqualTo(url)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile(responseFile)
 				.withStatus(responseCode)));
 	}
 
-	public static void mockOpenstackGet(String url,int responseCode) {
-		stubFor(get(urlPathEqualTo(url)).willReturn(aResponse()
+	public static void mockOpenstackGet(WireMockServer wireMockServer, String url,int responseCode) {
+		wireMockServer.stubFor(get(urlPathEqualTo(url)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withStatus(responseCode)));
 	}
 
-	public static void mockOpenstackPost(String url,int responseCode) {
-		stubFor(post(urlPathEqualTo(url)).willReturn(aResponse()
+	public static void mockOpenstackPost(WireMockServer wireMockServer, String url,int responseCode) {
+		wireMockServer.stubFor(post(urlPathEqualTo(url)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withStatus(responseCode)));
 	}
 
-	public static void mockOpenStackGetStackVfModule_200() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
+	public static void mockOpenStackGetStackVfModule_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("OpenstackResponse_Stack_Created_VfModule.json")
 					.withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetStackVfModule_404() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001"))
+	public static void mockOpenStackGetStackVfModule_404(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackPostStacks_200() {
-		stubFor(post(urlPathEqualTo("/mockPublicUrl/stacks"))
+	public static void mockOpenStackPostStacks_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/stacks"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("OpenstackResponse_Stack.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetStacks_404() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/3d7ff7b4-720b-4604-be0a-1974fc58ed96"))
+	public static void mockOpenStackGetStacks_404(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/3d7ff7b4-720b-4604-be0a-1974fc58ed96"))
 			.willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackGetStacksWithBody_200(String replaceWith) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001"))
+	public static void mockOpenStackGetStacksWithBody_200(WireMockServer wireMockServer, String replaceWith) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody(getBodyFromFileVnfAdapter(replaceWith))
 					.withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackGetStackWithBody_200(String replaceWith) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
+	public static void mockOpenStackGetStackWithBody_200(WireMockServer wireMockServer, String replaceWith) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(getBodyFromFileVnfAdapter(replaceWith))
 						.withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetStacksWithBody_404() throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001"))
+	public static void mockOpenStackGetStacksWithBody_404(WireMockServer wireMockServer) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001"))
 			.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBody(getBodyFromFileVnfAdapter(null))
 					.withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackGetStacksStackId_404() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/stackId"))
+	public static void mockOpenStackGetStacksStackId_404(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/stackId"))
 			.willReturn(aResponse().withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackGetStacksVfModule_200(int port) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001")).willReturn(aResponse()
+	public static void mockOpenStackGetStacksVfModule_200(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001")).willReturn(aResponse()
 			.withHeader("X-Openstack-Request-Id", "openstackRquest")
 				.withBody(getBodyFromFile("OpenstackResponse_VnfStackId.json", port, "/mockPublicUrl/stacks/stackId")).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetStacksVfModuleWithLocationHeader_200(int port) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001")).willReturn(aResponse()
+	public static void mockOpenStackGetStacksVfModuleWithLocationHeader_200(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001")).willReturn(aResponse()
 			.withHeader("X-Openstack-Request-Id", "openstackRquest")
 				.withHeader("location", "http://localhost:" + port + "/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001")
 					.withBody(getBodyFromFile("OpenstackResponse_VnfStackId.json", port, "/mockPublicUrl/stacks/stackId")).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetStacksBaseStack_200(int port) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfModuleStackId")).willReturn(aResponse()
+	public static void mockOpenStackGetStacksBaseStack_200(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/baseVfModuleStackId")).willReturn(aResponse()
 			.withHeader("X-Openstack-Request-Id", "openstackRquest")
 				.withHeader("location", "http://localhost:" + port + "/mockPublicUrl/stacks/baseVfModuleStackId")
 					.withBody(getBodyFromFile("OpenstackResponse_VnfBaseStackId.json", port, "/mockPublicUrl/stacks/stackId")).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackPutStacks_200() {
-		stubFor(put(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001")).willReturn(aResponse()
+	public static void mockOpenStackPutStacks_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001")).willReturn(aResponse()
 			.withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackPutStack(String networkId,int responseCode) {
-		stubFor(put(urlPathEqualTo("/mockPublicUrl/stacks/"+networkId))
+	public static void mockOpenStackPutStack(WireMockServer wireMockServer, String networkId,int responseCode) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/mockPublicUrl/stacks/"+networkId))
 				.willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 				.withStatus(responseCode)));
 	}
 	
-	public static void mockOpenStackGetStacksStackId_200(int port) throws IOException {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/StackId")).willReturn(aResponse()
+	public static void mockOpenStackGetStacksStackId_200(WireMockServer wireMockServer, int port) throws IOException {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/StackId")).willReturn(aResponse()
 			.withHeader("X-Openstack-Request-Id", "openstackRquest")
 				.withHeader("location", "http://localhost:" + port + "/mockPublicUrl/stacks/stackId")
 					.withBody(getBodyFromFile("OpenstackResponse_StackId.json", port, "/mockPublicUrl/stacks/stackId")).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackDeleteStacks() {
-		stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0/da886914-efb2-4917-b335-c8381528d90b"))
+	public static void mockOpenStackDeleteStacks(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0/da886914-efb2-4917-b335-c8381528d90b"))
 			.willReturn(aResponse().withHeader("X-Openstack-Request-Id", "openstackRquest")));
 	}
 	
-	public static void mockOpenStackGetStacksVUSP_404() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0/da886914-efb2-4917-b335-c8381528d90b"))
+	public static void mockOpenStackGetStacksVUSP_404(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0/da886914-efb2-4917-b335-c8381528d90b"))
 			.willReturn(aResponse()
 				.withHeader("X-Openstack-Request-Id", "openstackRquest")
 					.withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackGetStackCreated_200(String filename, String networkName) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/" + networkName))
+	public static void mockOpenStackGetStackCreated_200(WireMockServer wireMockServer, String filename, String networkName) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/" + networkName))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile(filename).withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackGetStack_404(String networkName) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/" + networkName))
+	public static void mockOpenStackGetStack_404(WireMockServer wireMockServer, String networkName) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/" + networkName))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 
-	public static void mockOpenStackGetStack_500(String networkName) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/" + networkName))
+	public static void mockOpenStackGetStack_500(WireMockServer wireMockServer, String networkName) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/" + networkName))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 	}
 
-	public static void mockOpenStackGetStackDeleteOrUpdateComplete_200(String filename) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/" + NETWORK_NAME_2 + "/" + NETWORK_ID_2))
+	public static void mockOpenStackGetStackDeleteOrUpdateComplete_200(WireMockServer wireMockServer, String filename) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/" + NETWORK_NAME_2 + "/" + NETWORK_ID_2))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile(filename).withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackGetNeutronNetwork(String filename,String networkId,int status) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+ networkId))
+	public static void mockOpenStackGetNeutronNetwork(WireMockServer wireMockServer, String filename,String networkId,int status) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+ networkId))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBodyFile(filename).withStatus(status)));
 	}
 
-	public static void mockOpenStackGetNeutronNetwork(String networkId,int status) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+ networkId))
+	public static void mockOpenStackGetNeutronNetwork(WireMockServer wireMockServer, String networkId,int status) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/v2.0/networks/"+ networkId))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withStatus(status)));
 	}
 	
-	public static void mockOpenStackDeleteStack_200() {
-		stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/" + NETWORK_NAME_2 + "/" + NETWORK_ID_2))
+	public static void mockOpenStackDeleteStack_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/" + NETWORK_NAME_2 + "/" + NETWORK_ID_2))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_OK)));
 	}
 
-	public static void mockOpenStackDeleteStack_500() {
-		stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/" + NETWORK_NAME_2 + "/" + NETWORK_ID_2))
+	public static void mockOpenStackDeleteStack_500(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/" + NETWORK_NAME_2 + "/" + NETWORK_ID_2))
 				.willReturn(aResponse().withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
 	}
 
-	public static void mockOpenStackDeleteNeutronNetwork(String networkId,int responseCode) {
-		stubFor(delete(urlPathEqualTo("/mockPublicUrl/v2.0/networks/" + networkId))
+	public static void mockOpenStackDeleteNeutronNetwork(WireMockServer wireMockServer, String networkId,int responseCode) {
+		wireMockServer.stubFor(delete(urlPathEqualTo("/mockPublicUrl/v2.0/networks/" + networkId))
 				.willReturn(aResponse().withStatus(responseCode)));
 	}
 	
-	public static void mockOpenStackPostMetadata_200() {
-		stubFor(post(urlPathEqualTo("/mockPublicUrl/tenants/tenantId/metadata")).willReturn(aResponse()
+	public static void mockOpenStackPostMetadata_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/tenants/tenantId/metadata")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Metadata.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetMetadata_200() {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/tenants/tenantId/metadata")).willReturn(aResponse()
+	public static void mockOpenStackGetMetadata_200(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/tenants/tenantId/metadata")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Metadata.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackPostTenantWithBodyFile_200() throws IOException {
-		stubFor(post(urlPathEqualTo("/mockPublicUrl/tenants"))
+	public static void mockOpenStackPostTenantWithBodyFile_200(WireMockServer wireMockServer) throws IOException {
+		wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/tenants"))
 				.withRequestBody(equalToJson(readFile("src/test/resources/__files/OpenstackRequest_Tenant.json"))).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Tenant.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackPostTenant_200() throws IOException {
-		stubFor(post(urlPathEqualTo("/mockPublicUrl/tenants")).willReturn(aResponse()
+	public static void mockOpenStackPostTenant_200(WireMockServer wireMockServer) throws IOException {
+		wireMockServer.stubFor(post(urlPathEqualTo("/mockPublicUrl/tenants")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetTenantByName_200(String tenantName) {
-		stubFor(get(urlEqualTo("/mockPublicUrl/tenants/?name=" + tenantName)).willReturn(aResponse()
+	public static void mockOpenStackGetTenantByName_200(WireMockServer wireMockServer, String tenantName) {
+		wireMockServer.stubFor(get(urlEqualTo("/mockPublicUrl/tenants/?name=" + tenantName)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Tenant.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetTenantByName_404(String tenantName) {
-		stubFor(get(urlEqualTo("/mockPublicUrl/tenants/?name=" + tenantName)).willReturn(aResponse()
+	public static void mockOpenStackGetTenantByName_404(WireMockServer wireMockServer, String tenantName) {
+		wireMockServer.stubFor(get(urlEqualTo("/mockPublicUrl/tenants/?name=" + tenantName)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackGetTenantById_200(String tenantId) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/tenants/" + tenantId)).willReturn(aResponse()
+	public static void mockOpenStackGetTenantById_200(WireMockServer wireMockServer, String tenantId) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/tenants/" + tenantId)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Tenant.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetTenantById_404(String tenantId) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/tenants/" + tenantId)).willReturn(aResponse()
+	public static void mockOpenStackGetTenantById_404(WireMockServer wireMockServer, String tenantId) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/tenants/" + tenantId)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
 	}
 	
-	public static void mockOpenStackDeleteTenantById_200(String tenantId) {
-		stubFor(delete(urlPathEqualTo("/mockPublicUrl/tenants/" + tenantId)).willReturn(aResponse()
+	public static void mockOpenStackDeleteTenantById_200(WireMockServer wireMockServer, String tenantId) {
+		wireMockServer.stubFor(delete(urlPathEqualTo("/mockPublicUrl/tenants/" + tenantId)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetUser_200(String user) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/users/" + user)).willReturn(aResponse()
+	public static void mockOpenStackGetUser_200(WireMockServer wireMockServer, String user) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/users/" + user)).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_User.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackGetRoles_200(String roleFor) {
-		stubFor(get(urlPathEqualTo("/mockPublicUrl/" + roleFor + "/roles")).willReturn(aResponse()
+	public static void mockOpenStackGetRoles_200(WireMockServer wireMockServer, String roleFor) {
+		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/" + roleFor + "/roles")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 						.withBodyFile("OpenstackResponse_Roles.json").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockOpenStackPutRolesAdmin_200(String roleFor) {
-		stubFor(put(urlPathEqualTo("/mockPublicUrl/tenants/tenantId/users/msoId/roles/" + roleFor + "/admin")).willReturn(aResponse()
+	public static void mockOpenStackPutRolesAdmin_200(WireMockServer wireMockServer, String roleFor) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/mockPublicUrl/tenants/tenantId/users/msoId/roles/" + roleFor + "/admin")).willReturn(aResponse()
 				.withHeader("Content-Type", "application/json")
 						.withBody("").withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockValetCreatePostResponse_200(String requestId, String body) {
-		stubFor(post(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId))
+	public static void mockValetCreatePostResponse_200(WireMockServer wireMockServer, String requestId, String body) {
+		wireMockServer.stubFor(post(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 		.withBody(body).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockValetCreatePutResponse_200(String requestId, String body) {
-		stubFor(put(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId))
+	public static void mockValetCreatePutResponse_200(WireMockServer wireMockServer, String requestId, String body) {
+		wireMockServer.stubFor(put(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId))
               .willReturn(aResponse().withHeader("Content-Type", "application/json")
             		  .withBody(body).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockValetDeleteDeleteResponse_200(String requestId, String body) {
-		stubFor(delete(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId))
+	public static void mockValetDeleteDeleteResponse_200(WireMockServer wireMockServer, String requestId, String body) {
+		wireMockServer.stubFor(delete(urlEqualTo("/api/valet/placement/v1/?requestId=" + requestId))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 		.withBody(body).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockValetConfirmPutRequest_200(String requestId, String body) {
-		stubFor(put(urlPathEqualTo("/api/valet/placement/v1/" + requestId + "/confirm/"))
+	public static void mockValetConfirmPutRequest_200(WireMockServer wireMockServer, String requestId, String body) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/api/valet/placement/v1/" + requestId + "/confirm/"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 		.withBody(body).withStatus(HttpStatus.SC_OK)));
 	}
 	
-	public static void mockValetRollbackPutRequest_200(String requestId, String body) {
-		stubFor(put(urlPathEqualTo("/api/valet/placement/v1/" + requestId + "/rollback/"))
+	public static void mockValetRollbackPutRequest_200(WireMockServer wireMockServer, String requestId, String body) {
+		wireMockServer.stubFor(put(urlPathEqualTo("/api/valet/placement/v1/" + requestId + "/rollback/"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 		.withBody(body).withStatus(HttpStatus.SC_OK)));
 	}

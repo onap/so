@@ -23,9 +23,10 @@ package org.onap.so.bpmn.mock;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Please describe the StubResponseSDNC.java class
@@ -36,43 +37,43 @@ public class StubResponseSDNCAdapter {
 
 	}
 
-	public static void mockSDNCAdapter_500() {
-		stubFor(post(urlEqualTo("/SDNCAdapter"))
+	public static void mockSDNCAdapter_500(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter"))
 				.willReturn(aResponse()
 						.withStatus(500)));
 	}		
 	
-	public static void mockSDNCAdapter_500(String requestContaining) {
-		stubFor(post(urlEqualTo("/SDNCAdapter"))
+	public static void mockSDNCAdapter_500(WireMockServer wireMockServer, String requestContaining) {
+		wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter"))
 		  .withRequestBody(containing(requestContaining))
 		  .willReturn(aResponse()
 		  .withStatus(500)));
 	}		
 	
-	public static void mockSDNCAdapter(int statusCode) {
-		stubFor(post(urlMatching(".*/SDNCAdapter"))
+	public static void mockSDNCAdapter(WireMockServer wireMockServer, int statusCode) {
+		wireMockServer.stubFor(post(urlMatching(".*/SDNCAdapter"))
 				.willReturn(aResponse()
 						.withStatus(statusCode)));
 	}
 	
-	public static void mockSDNCAdapter(String endpoint, int statusCode, String responseFile) {
-		stubFor(post(urlEqualTo(endpoint))	
+	public static void mockSDNCAdapter(WireMockServer wireMockServer, String endpoint, int statusCode, String responseFile) {
+		wireMockServer.stubFor(post(urlEqualTo(endpoint))	
 				  .willReturn(aResponse()
 				  .withStatus(statusCode)
 				  .withHeader("Content-Type", "text/xml")
 				  .withBodyFile(responseFile)));
 	}
 
-	public static void mockSDNCAdapter(String responseFile) {
-		stubFor(post(urlEqualTo("/SDNCAdapter"))
+	public static void mockSDNCAdapter(WireMockServer wireMockServer, String responseFile) {
+		wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter"))
 				  .willReturn(aResponse()
 				  .withStatus(200)
 				  .withHeader("Content-Type", "text/xml")
 				  .withBodyFile(responseFile)));
 	}
 	
-	public static void mockSDNCAdapter(String endpoint, String requestContaining, int statusCode, String responseFile) {
-		stubFor(post(urlEqualTo(endpoint))
+	public static void mockSDNCAdapter(WireMockServer wireMockServer, String endpoint, String requestContaining, int statusCode, String responseFile) {
+		wireMockServer.stubFor(post(urlEqualTo(endpoint))
 				.withRequestBody(containing(requestContaining))
 				.willReturn(aResponse()
 					.withStatus(statusCode)
@@ -80,30 +81,30 @@ public class StubResponseSDNCAdapter {
 					.withBodyFile(responseFile)));
 	}
 
-	public static void mockSDNCAdapterRest() {
-		stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
+	public static void mockSDNCAdapterRest(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
 				.willReturn(aResponse()
 						.withStatus(202)
 						.withHeader("Content-Type", "application/json")));
 	}
 
-	public static void mockSDNCAdapterRest_500() {
-		stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
+	public static void mockSDNCAdapterRest_500(WireMockServer wireMockServer) {
+		wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
 				.willReturn(aResponse()
 						.withStatus(500)
 						.withHeader("Content-Type", "application/json")));
 	}
 
-	public static void mockSDNCAdapterRest(String requestContaining) {
-		stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
+	public static void mockSDNCAdapterRest(WireMockServer wireMockServer, String requestContaining) {
+		wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
 				.withRequestBody(containing(requestContaining))
 				.willReturn(aResponse()
 						.withStatus(202)
 						.withHeader("Content-Type", "application/json")));
 	}
 
-	public static void mockSDNCAdapterRest_500(String requestContaining) {
-		stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
+	public static void mockSDNCAdapterRest_500(WireMockServer wireMockServer, String requestContaining) {
+		wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
 				.withRequestBody(containing(requestContaining))
 				.willReturn(aResponse()
 						.withStatus(500)

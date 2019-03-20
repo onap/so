@@ -20,10 +20,17 @@
 
 package org.onap.so.adapters.vnf;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,25 +44,19 @@ import org.onap.so.db.catalog.beans.ServerType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.ws.rs.core.MediaType;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.reset;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = MsoOpenstackAdaptersApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,6 +65,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 public abstract class BaseRestTestUtils {
 	@Value("${wiremock.server.port}")
     protected int wireMockPort;
+	
+	@Autowired
+	protected WireMockServer wireMockServer;
+	
 	@Autowired
 	CloudConfig cloudConfig;
 
@@ -112,7 +117,7 @@ public abstract class BaseRestTestUtils {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		reset();
+		wireMockServer.resetAll();
 		mapper = new ObjectMapper();
 		CloudIdentity identity = new CloudIdentity();
 		identity.setId("MTN13");
@@ -134,15 +139,15 @@ public abstract class BaseRestTestUtils {
 		identity.setIdentityServerType(ServerType.KEYSTONE);
 		cloudSite.setIdentityService(identity);
 
-		stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/cloudIdentity/MTN13")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/cloudIdentity/MTN13")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(identity),wireMockPort, ""))
 				.withHeader(org.apache.http.HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
