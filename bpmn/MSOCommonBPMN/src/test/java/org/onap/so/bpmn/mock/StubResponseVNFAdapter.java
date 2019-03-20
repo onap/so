@@ -53,29 +53,6 @@ public class StubResponseVNFAdapter {
 				.willReturn(aResponse()
 						.withStatus(500)));
 	}
-
-	public static void mockVNFAdapterTransformer(String transformer, String responseFile) {
-		MockResource mockResource = new MockResource();
-		mockResource.updateProperties("vnf_delay", "300");
-		stubFor(post(urlEqualTo("/vnfs/VnfAdapterAsync"))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "application/soap+xml")
-						.withTransformers(transformer)
-						.withBodyFile(responseFile)));
-	}
-
-	public static void mockVNFAdapterTransformer(String transformer, String responseFile, String requestContaining) {
-		MockResource mockResource = new MockResource();
-		mockResource.updateProperties("vnf_delay", "300");
-		stubFor(post(urlEqualTo("/vnfs/VnfAdapterAsync"))
-				.withRequestBody(containing(requestContaining))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "application/soap+xml")
-						.withTransformers(transformer)
-						.withBodyFile(responseFile)));
-	}
 	
 	public static void mockVNFPost(String vfModuleId, int statusCode, String vnfId) {
 		stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
