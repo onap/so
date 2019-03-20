@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "43c22656_f511bdd5",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T09:59:33Z",
+      "side": 1,
+      "message": "Why Swagger?? can we use spring boot annotations?",
+      "range": {
+        "startLine": 55,
+        "startChar": 12,
+        "endLine": 55,
+        "endChar": 22
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c1ed72f4_189164ff",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T09:59:33Z",
+      "side": 1,
+      "message": "Add some error handling for vnfId i.e. null and empty",
+      "range": {
+        "startLine": 56,
+        "startChar": 73,
+        "endLine": 56,
+        "endChar": 78
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b624a33f_7b43ac77",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T09:59:33Z",
+      "side": 1,
+      "message": "add error handling",
+      "range": {
+        "startLine": 58,
+        "startChar": 57,
+        "endLine": 58,
+        "endChar": 97
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d0a693f2_58230ef1",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T09:59:33Z",
+      "side": 1,
+      "message": "don\u0027t enforce this should be require false, it is only used for logging",
+      "range": {
+        "startLine": 61,
+        "startChar": 80,
+        "endLine": 61,
+        "endChar": 95
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a42b30d6_47566c81",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T09:59:33Z",
+      "side": 1,
+      "message": "Same here why enforce it, it is only used for logging",
+      "range": {
+        "startLine": 65,
+        "startChar": 28,
+        "endLine": 65,
+        "endChar": 43
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
