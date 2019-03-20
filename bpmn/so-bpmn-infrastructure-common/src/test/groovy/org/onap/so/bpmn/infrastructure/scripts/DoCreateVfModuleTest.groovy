@@ -47,9 +47,6 @@ import static org.mockito.Mockito.*
 class DoCreateVfModuleTest {
     def prefix = "DCVFM_"
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090)
-
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 

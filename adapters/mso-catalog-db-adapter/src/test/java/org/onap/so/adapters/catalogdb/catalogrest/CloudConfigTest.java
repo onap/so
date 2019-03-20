@@ -27,6 +27,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.catalogdb.CatalogDBApplication;
+import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
@@ -44,10 +45,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class CloudConfigTest {
+public class CloudConfigTest extends CatalogDbAdapterBaseTest {
 
     protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 

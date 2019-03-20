@@ -47,9 +47,6 @@ class DoUpdateVnfAndModulesTest {
     @Captor
     static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090);
-
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this)

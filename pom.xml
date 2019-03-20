@@ -434,6 +434,8 @@
 							<so.log.level>DEBUG</so.log.level>
 						</systemPropertyVariables>
 						<rerunFailingTestsCount>2</rerunFailingTestsCount>
+						<parallel>classes</parallel>
+						<useUnlimitedThreads>true</useUnlimitedThreads>
 					</configuration>
 				</plugin>
 				<plugin>
