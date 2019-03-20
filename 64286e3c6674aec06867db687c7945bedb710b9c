@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "8d50de89_261b54a8",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-20T11:53:38Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "85610bb8_33cc678e",
+      "revId": "64286e3c6674aec06867db687c7945bedb710b9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "2a69b190_1ad92aeb",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
         "patchSetId": 7
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-19T12:42:28Z",
       "side": 1,
       "message": "Do you really need to save individual variables to the database like this?  realize this is semi expensive as every time the process persists it will require writing a row per variable.",
+      "revId": "64286e3c6674aec06867db687c7945bedb710b9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e89826a0_ca216e86",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-20T11:53:38Z",
+      "side": 1,
+      "message": "AbstractCDSProcessingBB BPMN is supposed to be called for VNF (ConfigAssignVnfBB.bpmn) as well as PNF(workflow name not known). PNF workflows is not using BuildingBlock design, it does not have BuildingBlockExecution object, they are using DelegateExecution.   Hence as a work around, am getting required data from BuildingBlockExecution and setting it back to DelegateExecution.",
+      "parentUuid": "2a69b190_1ad92aeb",
       "revId": "64286e3c6674aec06867db687c7945bedb710b9c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
