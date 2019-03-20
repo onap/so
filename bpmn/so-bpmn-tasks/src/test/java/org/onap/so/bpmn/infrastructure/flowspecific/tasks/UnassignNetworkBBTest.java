@@ -72,7 +72,7 @@ public class UnassignNetworkBBTest extends BaseTaskTest {
 		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(aaiResponse); 
 		Optional<org.onap.aai.domain.yang.L3Network> l3network = aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
 		
-		doReturn(network).when(extractPojosForBB).extractByKey(execution, ResourceKey.NETWORK_ID, "testNetworkId1");
+		doReturn(network).when(extractPojosForBB).extractByKey(execution, ResourceKey.NETWORK_ID);
 		doReturn(aaiResultWrapper).when(aaiNetworkResources).queryNetworkWrapperById(network);
 		
 		doReturn(true).when(networkBBUtils).isRelationshipRelatedToExists(any(Optional.class), eq("vf-module"));

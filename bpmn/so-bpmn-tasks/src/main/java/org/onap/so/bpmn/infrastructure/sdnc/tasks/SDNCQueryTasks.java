@@ -50,8 +50,8 @@ public class SDNCQueryTasks {
 	private ExtractPojosForBB extractPojosForBB;
 	
 	public void queryVnf(BuildingBlockExecution execution) throws Exception {	
-		ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-		GenericVnf genericVnf =  extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+		ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+		GenericVnf genericVnf =  extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 				
 		String selfLink = "restconf/config/GENERIC-RESOURCE-API:services/service/"
 							+ serviceInstance.getServiceInstanceId() + "/service-data/vnfs/vnf/"
@@ -69,9 +69,9 @@ public class SDNCQueryTasks {
 
 	
 	public void queryVfModule(BuildingBlockExecution execution) throws Exception {		
-		ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-		GenericVnf genericVnf =  extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-		VfModule vfModule =  extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));		
+		ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+		GenericVnf genericVnf =  extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+		VfModule vfModule =  extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);		
 		String selfLink = "restconf/config/GENERIC-RESOURCE-API:services/service/"
 				+ serviceInstance.getServiceInstanceId() + "/service-data/vnfs/vnf/"
 				+ genericVnf.getVnfId() + "/vnf-data/vf-modules/vf-module/"
@@ -94,7 +94,7 @@ public class SDNCQueryTasks {
 	
 	public void queryVfModuleForVolumeGroup(BuildingBlockExecution execution) {
 		try {
-			VfModule vfModule =  extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			VfModule vfModule =  extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			if(vfModule.getSelflink() != null && !vfModule.getSelflink().isEmpty()) {
 				String response = sdncVfModuleResources.queryVfModule(vfModule);
 				execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), response);

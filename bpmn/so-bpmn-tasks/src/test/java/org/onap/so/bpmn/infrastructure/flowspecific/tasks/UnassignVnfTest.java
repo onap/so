@@ -68,7 +68,7 @@ public class UnassignVnfTest extends BaseTaskTest{
 		instanceGroup2.setId("test-002");
 		instanceGroup2.setModelInfoInstanceGroup(modelVnfc);
 		genericVnf.getInstanceGroups().add(instanceGroup2);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);		
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);		
 		unassignVnf.deleteInstanceGroups(execution);
 		verify(aaiInstanceGroupResources, times(1)).deleteInstanceGroup(eq(instanceGroup1));
 		verify(aaiInstanceGroupResources, times(1)).deleteInstanceGroup(eq(instanceGroup2));	

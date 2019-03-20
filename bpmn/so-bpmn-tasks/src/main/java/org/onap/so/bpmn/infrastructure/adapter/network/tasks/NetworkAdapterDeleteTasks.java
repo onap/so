@@ -46,8 +46,8 @@ public class NetworkAdapterDeleteTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			
-			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			
 			DeleteNetworkRequest deleteNetworkRequest = networkAdapterObjectMapper.deleteNetworkRequestMapper(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, l3Network);	
 			

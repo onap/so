@@ -71,7 +71,7 @@ public class AuditTasks {
 			AuditInventory auditInventory = new AuditInventory();
 
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 
 			auditInventory.setCloudOwner(cloudRegion.getCloudOwner());

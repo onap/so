@@ -55,8 +55,8 @@ public class CreateNetwork {
 	public void buildCreateNetworkRequest(BuildingBlockExecution execution) throws Exception {
 		try{
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			L3Network l3Network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			L3Network l3Network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			Map<String, String> userInput = gBBInput.getUserInput();
 			String cloudRegionPo = execution.getVariable("cloudRegionPo");
 			

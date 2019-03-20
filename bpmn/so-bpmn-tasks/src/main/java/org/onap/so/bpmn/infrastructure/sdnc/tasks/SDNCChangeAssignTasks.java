@@ -63,7 +63,7 @@ public class SDNCChangeAssignTasks {
 	public void changeModelServiceInstance(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			GenericResourceApiServiceOperationInformation req = sdncServiceInstanceResources.changeModelServiceInstance(serviceInstance, gBBInput.getCustomer(), gBBInput.getRequestContext());
 			SDNCRequest sdncRequest = new SDNCRequest();
 			sdncRequest.setSDNCPayload(req);
@@ -77,8 +77,8 @@ public class SDNCChangeAssignTasks {
 	public void changeModelVnf(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			GenericResourceApiVnfOperationInformation req = sdncVnfResources.changeModelVnf(genericVnf, serviceInstance, gBBInput.getCustomer(), gBBInput.getCloudRegion(), gBBInput.getRequestContext());
 			SDNCRequest sdncRequest = new SDNCRequest();
 			sdncRequest.setSDNCPayload(req);
@@ -92,8 +92,8 @@ public class SDNCChangeAssignTasks {
 	public void changeAssignNetwork(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			GenericResourceApiNetworkOperationInformation req = sdncNetworkResources.changeAssignNetwork(network, serviceInstance, gBBInput.getCustomer(), gBBInput.getRequestContext(), gBBInput.getCloudRegion());
 			SDNCRequest sdncRequest = new SDNCRequest();
 			sdncRequest.setSDNCPayload(req);
@@ -109,9 +109,9 @@ public class SDNCChangeAssignTasks {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			RequestContext requestContext = gBBInput.getRequestContext();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			Customer customer = gBBInput.getCustomer();
 			GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.changeAssignVfModule(vfModule, vnf, serviceInstance, customer, cloudRegion, requestContext);
 			SDNCRequest sdncRequest = new SDNCRequest();

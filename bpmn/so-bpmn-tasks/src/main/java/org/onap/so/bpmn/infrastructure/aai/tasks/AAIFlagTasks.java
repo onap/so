@@ -47,7 +47,7 @@ public class AAIFlagTasks {
 	public void checkVnfInMaintFlag(BuildingBlockExecution execution) {
 		boolean inMaint = false;
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			String vnfId = vnf.getVnfId();
 			inMaint = aaiVnfResources.checkInMaintFlag(vnfId);
 		} catch (Exception ex) {
@@ -60,7 +60,7 @@ public class AAIFlagTasks {
 	
 	public void modifyVnfInMaintFlag(BuildingBlockExecution execution, boolean inMaint) {
 		try {
-			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
 			GenericVnf copiedGenericVnf = genericVnf.shallowCopyId();
 

@@ -69,9 +69,9 @@ public class SDNCDeactivateTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			RequestContext requestContext = gBBInput.getRequestContext();
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			Customer customer = gBBInput.getCustomer();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.deactivateVfModule(vfModule, vnf, serviceInstance, customer,
@@ -95,8 +95,8 @@ public class SDNCDeactivateTasks {
 			RequestContext requestContext = gBBInput.getRequestContext();
 			ServiceInstance serviceInstance = null;
 			GenericVnf vnf = null;
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			Customer customer = gBBInput.getCustomer();
 			GenericResourceApiVnfOperationInformation req = sdncVnfResources.deactivateVnf(vnf, serviceInstance, customer, cloudRegion, requestContext);
@@ -118,8 +118,7 @@ public class SDNCDeactivateTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			RequestContext requestContext = gBBInput.getRequestContext();
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID,
-					execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Customer customer = gBBInput.getCustomer();
 			GenericResourceApiServiceOperationInformation req = sdncSIResources.deactivateServiceInstance(serviceInstance, customer, requestContext);
 			SDNCRequest sdncRequest = new SDNCRequest();
@@ -139,8 +138,8 @@ public class SDNCDeactivateTasks {
 	public void deactivateNetwork(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Customer customer = gBBInput.getCustomer();
 			RequestContext requestContext = gBBInput.getRequestContext();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();

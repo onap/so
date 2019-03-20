@@ -60,7 +60,7 @@ public class GenericVnfHealthCheck {
 
 		try {
 			ControllerSelectionReference controllerSelectionReference;
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			String vnfId = vnf.getVnfId();
 			String vnfName = vnf.getVnfName();	
 			String vnfType = vnf.getVnfType();

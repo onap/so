@@ -82,7 +82,7 @@ public class AppcRunTasks {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			GenericVnf vnf = null;
 			try {
-				vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			} catch (BBObjectNotFoundException e) {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "No valid VNF exists");
 			}
@@ -110,7 +110,7 @@ public class AppcRunTasks {
 			String vfModuleId = null;
 			VfModule vfModule = null;
 			try {
-				vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+				vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			} catch (BBObjectNotFoundException e) {
 			}
 			if (vfModule != null) {

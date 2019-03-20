@@ -65,7 +65,7 @@ public class AAIFlagTasksTest extends BaseTaskTest {
 	public void before() throws BBObjectNotFoundException {
 		genericVnf = setGenericVnf();
 		doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-		when(extractPojosForBB.extractByKey(any(),any(), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),any())).thenReturn(genericVnf);
 	}
 
 	@Test

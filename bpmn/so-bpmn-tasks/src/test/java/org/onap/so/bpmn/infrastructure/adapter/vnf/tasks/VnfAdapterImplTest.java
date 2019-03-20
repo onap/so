@@ -78,10 +78,10 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 		volumeGroup.setHeatStackId(null);
         doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
         doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
-    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID), any())).thenReturn(volumeGroup);
-    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
-    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID))).thenReturn(volumeGroup);
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
+    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
 	}
 
 	@Test
@@ -209,7 +209,7 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 	@Test
 	public void preProcessVnfAdapterExceptionTest() throws BBObjectNotFoundException {
 		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any());
+		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID));
 		
 		vnfAdapterImpl.preProcessVnfAdapter(execution);
 	}
@@ -263,7 +263,7 @@ public class VnfAdapterImplTest extends BaseTaskTest {
 
 	@Test
 	public void postProcessVnfAdapterExceptionTest() throws BBObjectNotFoundException {	
-		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any());
+		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID));
 
 		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_CREATE_RESPONSE);
 		expectedException.expect(BpmnError.class);

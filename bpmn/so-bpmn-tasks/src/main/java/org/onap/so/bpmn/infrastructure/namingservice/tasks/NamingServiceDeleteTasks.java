@@ -42,7 +42,7 @@ public class NamingServiceDeleteTasks {
 	private NamingServiceResources namingServiceResources;
 	
 	public void deleteInstanceGroupName(BuildingBlockExecution execution) throws Exception {		
-		InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, execution.getLookupMap().get(ResourceKey.INSTANCE_GROUP_ID));
+		InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
 		
 		try {
 			namingServiceResources.deleteInstanceGroupName(instanceGroup);			

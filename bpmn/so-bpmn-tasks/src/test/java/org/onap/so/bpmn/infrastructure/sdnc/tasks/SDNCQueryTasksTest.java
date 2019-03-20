@@ -63,11 +63,11 @@ public class SDNCQueryTasksTest extends BaseTaskTest{
 		vfModule = setVfModule();
 		
 		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID), any())).thenReturn(serviceInstance);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
 		
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
 
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any())).thenReturn(vfModule);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
 
 	}
 	
@@ -124,7 +124,7 @@ public class SDNCQueryTasksTest extends BaseTaskTest{
 	@Test
 	public void queryVfModuleForVolumeGroupVfObjectExceptionTest() throws Exception {
 		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID), any());	
+		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID));	
 		sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
 		
 		verify(sdncVfModuleResources, times(0)).queryVfModule(any(VfModule.class));
