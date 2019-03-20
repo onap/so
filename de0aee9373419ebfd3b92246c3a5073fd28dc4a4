@@ -94,6 +94,52 @@
     },
     {
       "key": {
+        "uuid": "b55fd121_5042d1c3",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T14:47:33Z",
+      "side": 1,
+      "message": "use ONAPLogConstants.Headers.REQUEST_ID property",
+      "range": {
+        "startLine": 61,
+        "startChar": 60,
+        "endLine": 61,
+        "endChar": 78
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d59c62f0_32052d7e",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-20T14:47:33Z",
+      "side": 1,
+      "message": "use ONAPLogConstants.Headers.INVOCATION_ID",
+      "range": {
+        "startLine": 64,
+        "startChar": 60,
+        "endLine": 64,
+        "endChar": 76
+      },
+      "revId": "de0aee9373419ebfd3b92246c3a5073fd28dc4a4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a42b30d6_47566c81",
         "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
         "patchSetId": 2
