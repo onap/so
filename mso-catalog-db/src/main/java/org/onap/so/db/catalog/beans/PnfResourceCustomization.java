@@ -85,6 +85,9 @@ public class PnfResourceCustomization implements Serializable {
     @Column(name = "CDS_BLUEPRINT_VERSION")
     private String blueprintVersion;
 
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
+    private Boolean skipPostInstConf;
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
@@ -215,6 +218,14 @@ public class PnfResourceCustomization implements Serializable {
 
     public void setBlueprintVersion(String blueprintVersion) {
         this.blueprintVersion = blueprintVersion;
+    }
+
+    public Boolean isSkipPostInstConf() {
+        return skipPostInstConf;
+    }
+
+    public void setSkipPostInstConf(Boolean skipPostInstConf) {
+        this.skipPostInstConf = skipPostInstConf;
     }
 
 }
