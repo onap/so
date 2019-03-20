@@ -240,9 +240,9 @@ public class ActivateVnfStatusOperationalEnvironmentTest extends BaseTest{
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
 		
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		stubFor(get(urlPathEqualTo("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/operational-environment/VNF_operationalEnvironmentId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		stubFor(put(urlPathEqualTo("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/operational-environment/VNF_operationalEnvironmentId"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		activateVnfStatus.execute(requestId, request);		

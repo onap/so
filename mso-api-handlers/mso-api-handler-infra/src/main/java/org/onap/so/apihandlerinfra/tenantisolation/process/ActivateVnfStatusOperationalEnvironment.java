@@ -116,10 +116,11 @@ public class ActivateVnfStatusOperationalEnvironment {
 	    
 			// Update AAI to ACTIVE if Overall success
 			if (isOverallSuccess) {
-				OperationalEnvironment aaiOpEnv = getAAIOperationalEnvironment(this.queryServiceModelResponse.getVnfOperationalEnvId());
+				String vnfOperationalEnvironmentId = this.queryServiceModelResponse.getVnfOperationalEnvId();
+				OperationalEnvironment aaiOpEnv = getAAIOperationalEnvironment(vnfOperationalEnvironmentId);
 				if (aaiOpEnv != null) {
 					aaiOpEnv.setOperationalEnvironmentStatus("ACTIVE");
-					aaiHelper.updateAaiOperationalEnvironment(operationalEnvironmentId, aaiOpEnv);
+					aaiHelper.updateAaiOperationalEnvironment(vnfOperationalEnvironmentId, aaiOpEnv);
 				}else {
 					requestDb.updateInfraFailureCompletion("Unable to update ACTIVATE status in AAI. ", this.origRequestId, this.queryServiceModelResponse.getVnfOperationalEnvId());
 				}
