@@ -143,12 +143,14 @@ class ExternalAPIUtil {
 			String uuid = utils.getRequestID()
 			logger.debug( "Generated uuid is: " + uuid)
 			logger.debug( "URL to be used is: " + url)
+			logger.debug("URL to be passed in header is: " + execution.getVariable("SPPartnerUrl"))
 
 			HttpClient client = httpClientFactory.newJsonClient(new URL(url), TargetEntity.EXTERNAL)
 			client.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			client.addAdditionalHeader("X-FromAppId", "MSO")
 			client.addAdditionalHeader(ONAPLogConstants.Headers.REQUEST_ID, uuid)
 			client.addAdditionalHeader("Accept", MediaType.APPLICATION_JSON)
+			client.addAdditionalHeader("Target",execution.getVariable("SPPartnerUrl"))
 
 			apiResponse = client.get()
 
@@ -179,11 +181,13 @@ class ExternalAPIUtil {
 			String uuid = utils.getRequestID()
 			logger.debug( "Generated uuid is: " + uuid)
 			logger.debug( "URL to be used is: " + url)
+			logger.debug("URL to be passed in header is: " + execution.getVariable("SPPartnerUrl"))
 
 			HttpClient httpClient = httpClientFactory.newJsonClient(new URL(url), TargetEntity.AAI)
 			httpClient.addBasicAuthHeader(execution.getVariable("URN_externalapi_auth"), execution.getVariable("URN_mso_msoKey"))
 			httpClient.addAdditionalHeader("X-FromAppId", "MSO")
 			httpClient.addAdditionalHeader("X-TransactionId", uuid)
+			httpClient.addAdditionalHeader("Target",execution.getVariable("SPPartnerUrl"))
 
 			apiResponse = httpClient.post(payload)
 

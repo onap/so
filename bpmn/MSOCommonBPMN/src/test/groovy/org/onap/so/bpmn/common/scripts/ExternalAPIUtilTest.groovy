@@ -146,6 +146,7 @@ class ExternalAPIUtilTest {
         DelegateExecution delegateExecution = mock(DelegateExecution.class)
         given(delegateExecution.getVariable("URN_externalapi_auth")).willReturn("value_externalapi_auth")
         given(delegateExecution.getVariable("URN_mso_msoKey")).willReturn("value_mso_msoKey")
+		given(delegateExecution.getVariable("SPPartnerUrl")).willReturn("http://LocalExtAPIURL:8080")
         return delegateExecution
     }
 
