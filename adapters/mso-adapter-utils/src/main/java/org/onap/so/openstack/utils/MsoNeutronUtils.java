@@ -23,21 +23,11 @@
 package org.onap.so.openstack.utils;
 
 
-import com.woorea.openstack.base.client.OpenStackBaseException;
-import com.woorea.openstack.base.client.OpenStackConnectException;
-import com.woorea.openstack.base.client.OpenStackRequest;
-import com.woorea.openstack.base.client.OpenStackResponseException;
-import com.woorea.openstack.keystone.Keystone;
-import com.woorea.openstack.keystone.model.Access;
-import com.woorea.openstack.keystone.model.Authentication;
-import com.woorea.openstack.keystone.utils.KeystoneUtils;
-import com.woorea.openstack.quantum.Quantum;
-import com.woorea.openstack.quantum.model.Network;
-import com.woorea.openstack.quantum.model.Networks;
-import com.woorea.openstack.quantum.model.Segment;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
+
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.cloud.authentication.AuthenticationMethodFactory;
 import org.onap.so.cloud.authentication.KeystoneAuthHolder;
@@ -61,6 +51,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.woorea.openstack.base.client.OpenStackBaseException;
+import com.woorea.openstack.base.client.OpenStackConnectException;
+import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.base.client.OpenStackResponseException;
+import com.woorea.openstack.keystone.Keystone;
+import com.woorea.openstack.keystone.model.Access;
+import com.woorea.openstack.keystone.model.Authentication;
+import com.woorea.openstack.keystone.utils.KeystoneUtils;
+import com.woorea.openstack.quantum.Quantum;
+import com.woorea.openstack.quantum.model.Network;
+import com.woorea.openstack.quantum.model.Networks;
+import com.woorea.openstack.quantum.model.Port;
+import com.woorea.openstack.quantum.model.Segment;
 
 @Component
 public class MsoNeutronUtils extends MsoCommonUtils
@@ -209,6 +213,24 @@ public class MsoNeutronUtils extends MsoCommonUtils
 			// Catch-all
 			MsoException me = runtimeExceptionToMsoException(e, "QueryNetwork");
 			throw me;
+		}
+	}
+    
+    public Optional<Port> getNeutronPort(String neutronPortId, String tenantId, String cloudSiteId)
+	{
+		try {
+			  CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+		                () -> new MsoCloudSiteNotFound(cloudSiteId));
+				Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
+			Port port = findPortById (neutronClient, neutronPortId);
+			if (port == null) {				
+				return Optional.empty();
+			}
+			return Optional.of(port);
+		}
+		catch (RuntimeException | MsoException e) {
+			logger.error("Error retrieving neutron port", e);
+			return Optional.empty();
 		}
 	}
 
@@ -485,6 +507,29 @@ public class MsoNeutronUtils extends MsoCommonUtils
           logger.error("{} {} Openstack Error, GET Network By ID ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,
               ErrorCode.DataError.getValue(), networkId, e);
           throw e;
+			}
+		}
+	}
+	
+	
+	private Port findPortById (Quantum neutronClient, String neutronPortId)
+	{
+		if (neutronPortId == null) {
+            return null;
+        }
+
+		try {
+			OpenStackRequest<Port> request = neutronClient.ports().show(neutronPortId);
+			Port port = executeAndRecordOpenstackRequest(request);
+			return port;
+		}
+		catch (OpenStackResponseException e) {
+			if (e.getStatus() == 404) {
+				return null;
+			} else {
+				logger.error("{} {} Openstack Error, GET Neutron Port By ID ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,
+					ErrorCode.DataError.getValue(), neutronPortId, e);
+				throw e;
 			}
 		}
 	}
