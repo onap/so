@@ -89,7 +89,7 @@ public class CvnfcCatalogDbQueryTest {
 		CvnfcCustomization found = foundCvnfcCustomization.get(0);
 		
 		CvnfcCustomization templateCvnfcCustomization = new CvnfcCustomization();
-		BeanUtils.copyProperties(found, templateCvnfcCustomization, "vnfVfmoduleCvnfcConfigurationCustomization");
+		BeanUtils.copyProperties(found, templateCvnfcCustomization, "vnfVfmoduleCvnfcConfigurationCustomization", "vfModuleCustomization", "vnfcCustomization", "vnfResourceCustomization");
 		
         assertThat(cvnfcCustomization, sameBeanAs(templateCvnfcCustomization)
         		.ignoring("id")
@@ -99,86 +99,23 @@ public class CvnfcCatalogDbQueryTest {
 	}
 	
 	@Test
-	public void getLinkedVnfVfmoduleCvnfcConfigurationCustomizationTest() {
+	public void cVnfcByCustomizationUUID_Test() {
 		
-    	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization("0c042562-2bac-11e9-b210-d663bd873d93");
-    	
-    	VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
-    	vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
-    	cvnfcCustomization.setVnfcCustomization(vnfcCustomization);
-    	
-		ConfigurationResource configurationResource = new ConfigurationResource();
-		configurationResource.setToscaNodeType("FabricConfiguration");
-		configurationResource.setModelInvariantUUID("modelInvariantUUID");
-		configurationResource.setModelUUID("modelUUID");
-		configurationResource.setModelName("modelName");
-		configurationResource.setModelVersion("modelVersion");
-		configurationResource.setDescription("description");
-		configurationResource.setToscaNodeType("toscaNodeTypeFC");
-		
-		VnfResource vnfResource = new VnfResource();
-		vnfResource.setModelUUID("6f19c5fa-2b19-11e9-b210-d663bd873d93");
-		vnfResource.setModelVersion("modelVersion");
-		vnfResource.setOrchestrationMode("orchestrationMode");
-		
-		VfModule vfModule = new VfModule();
-		vfModule.setModelUUID("98aa2a6e-2b18-11e9-b210-d663bd873d93");
-		vfModule.setModelInvariantUUID("9fe57860-2b18-11e9-b210-d663bd873d93");
-		vfModule.setIsBase(true);
-		vfModule.setModelName("modelName");
-		vfModule.setModelVersion("modelVersion");
-		vfModule.setVnfResources(vnfResource);
-		
-    	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
-    	vfModuleCustomization.setModelCustomizationUUID("bdbf984a-2b16-11e9-b210-d663bd873d93");
-    	vfModuleCustomization.setVfModule(vfModule);
-    	cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
-    	
-    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
-    	vnfResourceCustomization.setModelCustomizationUUID("6912dd02-2b16-11e9-b210-d663bd873d93"); 
-    	vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
-    	vnfResourceCustomization.setVnfResources(vnfResource);
-    	cvnfcCustomization.setVnfResourceCustomization(vnfResourceCustomization);
-    	
-    	VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new VnfVfmoduleCvnfcConfigurationCustomization();
-    	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationFunction("configurationFunction");
-    	vnfVfmoduleCvnfcConfigurationCustomization.setModelCustomizationUUID("64627fec-2b1b-11e9-b210-d663bd873d93");
-    	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(configurationResource);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setCvnfcCustomization(cvnfcCustomization);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setModelInstanceName("modelInstanceName");
-    	vnfVfmoduleCvnfcConfigurationCustomization.setVfModuleCustomization(vfModuleCustomization);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setVnfResourceCustomization(vnfResourceCustomization);
-    	
-    	Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomizationSet = new HashSet<VnfVfmoduleCvnfcConfigurationCustomization>();
-    	vnfVfmoduleCvnfcConfigurationCustomizationSet.add(vnfVfmoduleCvnfcConfigurationCustomization);
-    	cvnfcCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(vnfVfmoduleCvnfcConfigurationCustomizationSet);
-    	
-    	vnfVfmoduleCvnfcConfigurationCustomization.setCvnfcCustomization(cvnfcCustomization);
-    	
-    	cvnfcCustomizationRepository.save(cvnfcCustomization);
+    	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization("dadc2c8c-2bab-11e9-b210-d663bd873d93");
    	
-		List<CvnfcCustomization> foundCvnfcCustomization = client.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID("6912dd02-2b16-11e9-b210-d663bd873d93","bdbf984a-2b16-11e9-b210-d663bd873d93");
-		assertNotNull(foundCvnfcCustomization);
-		assertTrue(foundCvnfcCustomization.size() > 0);
-		CvnfcCustomization found = foundCvnfcCustomization.get(0);
-
-        Set<VnfVfmoduleCvnfcConfigurationCustomization>  vnfVfmoduleCvnfcConfigurationCustomizations =  found.getVnfVfmoduleCvnfcConfigurationCustomization();
-        if (vnfVfmoduleCvnfcConfigurationCustomizations.size() > 0){
-        	for(VnfVfmoduleCvnfcConfigurationCustomization customization : vnfVfmoduleCvnfcConfigurationCustomizations) {
-        		Assert.assertTrue(customization.getConfigurationResource().getToscaNodeType().equalsIgnoreCase("toscaNodeTypeFC"));
-        	}
-        } else {
-        	Assert.fail("No linked VnfVfmoduleCvnfcConfigurationCustomization found for CvnfcCustomization");
-        }
-        
-        VnfVfmoduleCvnfcConfigurationCustomization  vnfVfmoduleCvnfcConfigurationCustomizationFound = client.
-        		getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(
-        							"6912dd02-2b16-11e9-b210-d663bd873d93", 
-        							"bdbf984a-2b16-11e9-b210-d663bd873d93", 
-        							"0c042562-2bac-11e9-b210-d663bd873d93");
-        assertNotNull(vnfVfmoduleCvnfcConfigurationCustomizationFound);
-        System.out.println(vnfVfmoduleCvnfcConfigurationCustomizationFound.getModelCustomizationUUID());
+		CvnfcCustomization found = client.getCvnfcCustomizationByCustomizationUUID("dadc2c8c-2bab-11e9-b210-d663bd873d93");
+		assertNotNull(found);
+		
+		CvnfcCustomization templateCvnfcCustomization = new CvnfcCustomization();
+		BeanUtils.copyProperties(found, templateCvnfcCustomization, "vnfVfmoduleCvnfcConfigurationCustomization", "vfModuleCustomization", "vnfcCustomization", "vnfResourceCustomization");
+		
+        assertThat(cvnfcCustomization, sameBeanAs(templateCvnfcCustomization)
+        		.ignoring("id")
+        		.ignoring("created")
+        		.ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
+        		.ignoring("vnfResourceCusteModelCustomizationUUID"));
 	}
+
 	
     protected CvnfcCustomization setUpCvnfcCustomization(String id){
     	CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
