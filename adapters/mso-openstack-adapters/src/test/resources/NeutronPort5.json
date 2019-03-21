@@ -1,0 +1,41 @@
+{
+  "port": {
+    "admin_state_up": true, 
+    "allowed_address_pairs": [
+      {
+        "ip_address": "192.168.1.1", 
+        "mac_address": ""
+      }
+    ], 
+    "binding:host_id": "cool.host.com", 
+    "binding:vif_details": {
+      "vhostuser_mode": "client", 
+      "vhostuser_socket": "/var/run/asdfasdf/asdfasfd-3d", 
+      "vhostuser_vrouter_plug": true
+    }, 
+    "binding:vif_type": "vhostuser", 
+    "binding:vnic_type": "normal", 
+    "device_id": "92272b67-d23f-42ca-87fa-7b06a9ec81f3", 
+    "device_owner": "compute:ddd-daa-ddd", 
+    "fixed_ips": [
+      {
+        "ip_address": "2001:1890:1001:264d::2d:2b", 
+        "subnet_id": "1327b4d5-e0f7-4e95-b019-60caaac751d1"
+      }, 
+      {
+        "ip_address": "192.168.1.1", 
+        "subnet_id": "05f0a2e9-e9d9-4cc0-8635-b82d3de2d700"
+      }
+    ], 
+    "id": "0594a2f2-7ea4-42eb-abc2-48ea49677fca", 
+    "mac_address": "02:7e:e0:6d:9d:3d", 
+    "name": "ibcx0026v_ibcx0026vm003_untrusted_port", 
+    "network_id": "cee81fae-28b9-40a0-985f-181796ae0df6", 
+    "port_security_enabled": true, 
+    "security_groups": [
+      "ee45e4fd-b00c-4396-85ee-18d82bd03ef6"
+    ], 
+    "status": "ACTIVE", 
+    "tenant_id": "a9442388264e4a198e68484e676404e9"
+  }
+}
