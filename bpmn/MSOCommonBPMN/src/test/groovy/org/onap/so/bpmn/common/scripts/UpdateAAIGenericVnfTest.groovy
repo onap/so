@@ -37,7 +37,6 @@ import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
-import org.onap.so.bpmn.mock.StubResponseAAI
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.ArgumentMatchers.any

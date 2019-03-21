@@ -80,29 +80,6 @@ public class StubResponseSDNCAdapter {
 					.withBodyFile(responseFile)));
 	}
 
-	public static void mockSDNCAdapterSimulator(String responseFile) {
-		MockResource mockResource = new MockResource();
-		mockResource.updateProperties("sdnc_delay", "300");
-		stubFor(post(urlEqualTo("/SDNCAdapter"))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "application/soap+xml")
-						.withTransformers("sdnc-adapter-transformer")
-						.withBodyFile(responseFile)));
-	}
-
-	public static void mockSDNCAdapterSimulator(String responseFile, String requestContaining) {
-		MockResource mockResource = new MockResource();
-		mockResource.updateProperties("sdnc_delay", "300");
-		stubFor(post(urlEqualTo("/SDNCAdapter"))
-				.withRequestBody(containing(requestContaining))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "application/soap+xml")
-						.withTransformers("sdnc-adapter-transformer")
-						.withBodyFile(responseFile)));
-	}
-
 	public static void mockSDNCAdapterRest() {
 		stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc/services"))
 				.willReturn(aResponse()
@@ -133,17 +110,4 @@ public class StubResponseSDNCAdapter {
 						.withHeader("Content-Type", "application/json")));
 	}
 
-	public static void mockSDNCAdapterTopology(String responseFile, String requestContaining) {
-		MockResource mockResource = new MockResource();
-		mockResource.updateProperties("sdnc_delay", "300");		
-		stubFor(post(urlEqualTo("/SDNCAdapter"))
-				.withRequestBody(containing(requestContaining))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "text/xml")
-						.withTransformers("network-topology-operation-transformer")
-						.withBodyFile(responseFile)));
-	}
-
-	
 }

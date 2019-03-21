@@ -34,7 +34,6 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
-import org.onap.so.bpmn.mock.StubResponseAAI
 
 import static org.mockito.Mockito.*
 
