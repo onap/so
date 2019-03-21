@@ -42,7 +42,6 @@ import org.springframework.stereotype.Component;
 public class SDNCClient {
 
 	private static final Logger logger = LoggerFactory.getLogger(SDNCClient.class);
-	private BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
 
 	@Autowired
 	private SDNCProperties properties;
@@ -61,6 +60,8 @@ public class SDNCClient {
 	public String post(Object request, SDNCTopology topology) throws MapperException, BadResponseException {
 		String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
 		String targetUrl = properties.getHost() + properties.getPath() + ":" + topology.toString() + "/";
+		BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
+
 		STOClient.setTargetUrl(targetUrl);
 		HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 		STOClient.setHttpHeader(httpHeader);
@@ -70,7 +71,8 @@ public class SDNCClient {
 	
 	
 	public String post(Object request, String url) throws MapperException, BadResponseException {
-		String jsonRequest = sdnCommonTasks.buildJsonRequest(request);	
+		String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
+		BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
 		STOClient.setTargetUrl(url);
 		HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 		STOClient.setHttpHeader(httpHeader);
@@ -91,7 +93,8 @@ public class SDNCClient {
 	public String get(String queryLink) throws MapperException, BadResponseException {
 		String request = "";
 		String jsonRequest = sdnCommonTasks.buildJsonRequest(request);
-		String targetUrl = UriBuilder.fromUri(properties.getHost()).path(queryLink).build().toString();			
+		String targetUrl = UriBuilder.fromUri(properties.getHost()).path(queryLink).build().toString();
+		BaseClient<String, LinkedHashMap<String, Object>> STOClient = new BaseClient<>();
 		STOClient.setTargetUrl(targetUrl);
 		HttpHeaders httpHeader = sdnCommonTasks.getHttpHeaders(properties.getAuth());
 		STOClient.setHttpHeader(httpHeader);
