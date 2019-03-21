@@ -26,6 +26,7 @@ import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlElement;
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.beans.InstanceNfvoMapping;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 
 /**
@@ -52,6 +53,20 @@ public interface MsoRequestsDbAdapter {
             @WebParam(name = "configurationId") @XmlElement(required = false) String configurationId,
             @WebParam(name = "configurationName") @XmlElement(required = false) String configurationName,
             @WebParam(name = "vfModuleName") @XmlElement(required = false) String vfModuleName)
+            throws MsoRequestsDbException;
+
+    @WebMethod
+    public void setInstanceNfvoMappingRepository(
+            @WebParam(name = "instanceId") @XmlElement(required = true) String instanceId,
+            @WebParam(name = "nfvoName") @XmlElement(required = true) String nfvoName,
+            @WebParam(name = "endpoint") @XmlElement(required = true) String endpoint,
+            @WebParam(name = "username") @XmlElement(required = true) String username,
+            @WebParam(name = "password") @XmlElement(required = true) String password,
+            @WebParam(name = "apiRoot") @XmlElement(required = false) String apiRoot) throws MsoRequestsDbException;
+
+    @WebMethod
+    public InstanceNfvoMapping getInstanceNfvoMapping(
+            @WebParam(name = "instanceId") @XmlElement(required = true) String instanceId)
             throws MsoRequestsDbException;
 
     @WebMethod
