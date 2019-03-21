@@ -31,12 +31,14 @@ import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
+import org.onap.so.db.request.beans.InstanceNfvoMapping;
 import org.onap.so.db.request.beans.ResourceOperationStatusId;
 import org.onap.so.db.request.beans.SiteStatus;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.onap.so.db.request.data.repository.SiteStatusRepository;
+import org.onap.so.db.request.data.repository.InstanceNfvoMappingRepository;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;
@@ -58,80 +60,114 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     private InfraActiveRequestsRepository infraActive;
 
     @Autowired
+	private InstanceNfvoMappingRepository instanceNfvoMappingRepository;
+
+	@Autowired
     private SiteStatusRepository siteRepo;
 
-    @Autowired
-    private OperationStatusRepository operationStatusRepository;
+	@Autowired
+	private OperationStatusRepository operationStatusRepository;
 
-    @Autowired
-    private ResourceOperationStatusRepository resourceOperationStatusRepository;
+	@Autowired
+	private ResourceOperationStatusRepository resourceOperationStatusRepository;
 
-    @Transactional
-    @Override
-    public void updateInfraRequest(String requestId, String lastModifiedBy, String statusMessage, String responseBody,
-            RequestStatusType requestStatus, String progress, String vnfOutputs, String serviceInstanceId,
-            String networkId, String vnfId, String vfModuleId, String volumeGroupId, String serviceInstanceName,
-            String configurationId, String configurationName, String vfModuleName) throws MsoRequestsDbException {
-        try {
-            InfraActiveRequests request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
-            if (request == null) {
-                String error = "Entity not found. Unable to retrieve MSO Infra Requests DB for Request ID " + requestId;
-                throw new MsoRequestsDbException(error);
-            }
-            if (statusMessage != null) {
-                request.setStatusMessage(statusMessage);
-            }
-            if (responseBody != null) {
-                request.setResponseBody(responseBody);
-            }
-            if (requestStatus != null) {
-                request.setRequestStatus(requestStatus.toString());
-            }
-            if (progress != null) {
-                setProgress(progress, request);
-            }
-            if (vnfOutputs != null) {
-                request.setVnfOutputs(vnfOutputs);
-            }
-            if (serviceInstanceId != null) {
-                request.setServiceInstanceId(serviceInstanceId);
-            }
-            if (networkId != null) {
-                request.setNetworkId(networkId);
-            }
-            if (vnfId != null) {
-                request.setVnfId(vnfId);
-            }
-            if (vfModuleId != null) {
-                request.setVfModuleId(vfModuleId);
-            }
-            if (volumeGroupId != null) {
-                request.setVolumeGroupId(volumeGroupId);
-            }
-            if (serviceInstanceName != null) {
-                request.setServiceInstanceName(serviceInstanceName);
-            }
-            if (vfModuleName != null) {
-                request.setVfModuleName(vfModuleName);
-            }
-            if (configurationId != null) {
-                request.setConfigurationId(configurationId);
-            }
-            if (configurationName != null) {
-                request.setConfigurationName(configurationName);
-            }
-            if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
-                Timestamp nowTimeStamp = new Timestamp(System.currentTimeMillis());
-                request.setEndTime(nowTimeStamp);
-            }
-            request.setLastModifiedBy(lastModifiedBy);
-            infraActive.save(request);
-        } catch (Exception e) {
-            String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
-            logger.error(error, e);
-            throw new MsoRequestsDbException(error, ErrorCode.BusinessProcesssError, e);
-        }
-    }
+	@Transactional
+	@Override
+	public void setInstanceNfvoMappingRepository(String instanceId,String nfvoName,String endpoint,String username,String password,String apiRoot)
+	{
+		InstanceNfvoMapping instanceNfvoMapping = new InstanceNfvoMapping();
+		if (apiRoot!=null) {
+			instanceNfvoMapping.setApiRoot(apiRoot);
+		}
+		if (endpoint!=null){
+			instanceNfvoMapping.setEndpoint(endpoint);
+		}
+		if (instanceId!=null)
+		{
+			instanceNfvoMapping.setInstanceId(instanceId);
+		}
+		if (nfvoName!=null)
+		{
+			instanceNfvoMapping.setNfvoName(nfvoName);
+		}
+		if (username!=null)
+		{
+			instanceNfvoMapping.setUsername(username);
+		}
+		if (password!=null)
+		{
+			instanceNfvoMapping.setPassword(password);
+		}
+
+		instanceNfvoMappingRepository.save(instanceNfvoMapping);
+	}
+
+	@Transactional
+	@Override
+	public void updateInfraRequest(String requestId, String lastModifiedBy, String statusMessage, String responseBody,
+								   RequestStatusType requestStatus, String progress, String vnfOutputs, String serviceInstanceId,
+								   String networkId, String vnfId, String vfModuleId, String volumeGroupId, String serviceInstanceName,
+								   String configurationId, String configurationName, String vfModuleName) throws MsoRequestsDbException {
+		try {
+			InfraActiveRequests request = infraActive.findOneByRequestIdOrClientRequestId(requestId, requestId);
+			if (request == null) {
+				String error = "Entity not found. Unable to retrieve MSO Infra Requests DB for Request ID " + requestId;
+				throw new MsoRequestsDbException(error);
+			}
+			if (statusMessage != null) {
+				request.setStatusMessage(statusMessage);
+			}
+			if (responseBody != null) {
+				request.setResponseBody(responseBody);
+			}
+			if (requestStatus != null) {
+				request.setRequestStatus(requestStatus.toString());
+			}
+			if (progress != null) {
+				setProgress(progress, request);
+			}
+			if (vnfOutputs != null) {
+				request.setVnfOutputs(vnfOutputs);
+			}
+			if (serviceInstanceId != null) {
+				request.setServiceInstanceId(serviceInstanceId);
+			}
+			if (networkId != null) {
+				request.setNetworkId(networkId);
+			}
+			if (vnfId != null) {
+				request.setVnfId(vnfId);
+			}
+			if (vfModuleId != null) {
+				request.setVfModuleId(vfModuleId);
+			}
+			if (volumeGroupId != null) {
+				request.setVolumeGroupId(volumeGroupId);
+			}
+			if (serviceInstanceName != null) {
+				request.setServiceInstanceName(serviceInstanceName);
+			}
+			if (vfModuleName != null) {
+				request.setVfModuleName(vfModuleName);
+			}
+			if (configurationId != null) {
+				request.setConfigurationId(configurationId);
+			}
+			if (configurationName != null) {
+				request.setConfigurationName(configurationName);
+			}
+			if (requestStatus == RequestStatusType.COMPLETE || requestStatus == RequestStatusType.FAILED) {
+				Timestamp nowTimeStamp = new Timestamp(System.currentTimeMillis());
+				request.setEndTime(nowTimeStamp);
+			}
+			request.setLastModifiedBy(lastModifiedBy);
+			infraActive.save(request);
+		} catch (Exception e) {
+			String error = "Error retrieving MSO Infra Requests DB for Request ID " + requestId;
+			logger.error(error, e);
+			throw new MsoRequestsDbException(error, ErrorCode.BusinessProcesssError, e);
+		}
+	}
 
     private void setProgress(String progress, InfraActiveRequests request) {
         try {
@@ -183,7 +219,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param operationType
@@ -253,7 +289,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * init the operation status of all the resources <br>
-     * 
+     *
      * @param serviceId the service Id
      * @param operationId the operation Id
      * @param operationType the operationType
@@ -284,7 +320,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * get resource operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param resourceTemplateUUID
@@ -304,7 +340,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update resource operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param resourceTemplateUUID
@@ -340,7 +376,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update service operation status when a operation resource status updated <br>
-     * 
+     *
      * @param operStatus the resource operation status
      * @since ONAP Amsterdam Release
      */

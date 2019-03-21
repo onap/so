@@ -26,6 +26,7 @@ import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlElement;
 import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
+import org.onap.so.db.request.beans.InstanceNfvoMapping;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 
 /**
@@ -34,24 +35,36 @@ import org.onap.so.db.request.beans.ResourceOperationStatus;
 @WebService(name = "RequestsDbAdapter", targetNamespace = "http://org.onap.so/requestsdb")
 public interface MsoRequestsDbAdapter {
 
-    @WebMethod
-    public void updateInfraRequest(@WebParam(name = "requestId") @XmlElement(required = true) String requestId,
-            @WebParam(name = "lastModifiedBy") @XmlElement(required = true) String lastModifiedBy,
-            @WebParam(name = "statusMessage") @XmlElement(required = false) String statusMessage,
-            @WebParam(name = "responseBody") @XmlElement(required = false) String responseBody,
-            @WebParam(name = "requestStatus") @XmlElement(required = false) RequestStatusType requestStatus,
-            @WebParam(name = "progress") @XmlElement(required = false) String progress,
-            @WebParam(name = "vnfOutputs") @XmlElement(required = false) String vnfOutputs,
-            @WebParam(name = "serviceInstanceId") @XmlElement(required = false) String serviceInstanceId,
-            @WebParam(name = "networkId") @XmlElement(required = false) String networkId,
-            @WebParam(name = "vnfId") @XmlElement(required = false) String vnfId,
-            @WebParam(name = "vfModuleId") @XmlElement(required = false) String vfModuleId,
-            @WebParam(name = "volumeGroupId") @XmlElement(required = false) String volumeGroupId,
-            @WebParam(name = "serviceInstanceName") @XmlElement(required = false) String serviceInstanceName,
-            @WebParam(name = "configurationId") @XmlElement(required = false) String configurationId,
-            @WebParam(name = "configurationName") @XmlElement(required = false) String configurationName,
-            @WebParam(name = "vfModuleName") @XmlElement(required = false) String vfModuleName)
-            throws MsoRequestsDbException;
+	@WebMethod
+	public void updateInfraRequest(@WebParam(name = "requestId") @XmlElement(required = true) String requestId,
+			@WebParam(name = "lastModifiedBy") @XmlElement(required = true) String lastModifiedBy,
+			@WebParam(name = "statusMessage") @XmlElement(required = false) String statusMessage,
+			@WebParam(name = "responseBody") @XmlElement(required = false) String responseBody,
+			@WebParam(name = "requestStatus") @XmlElement(required = false) RequestStatusType requestStatus,
+			@WebParam(name = "progress") @XmlElement(required = false) String progress,
+			@WebParam(name = "vnfOutputs") @XmlElement(required = false) String vnfOutputs,
+			@WebParam(name = "serviceInstanceId") @XmlElement(required = false) String serviceInstanceId,
+			@WebParam(name = "networkId") @XmlElement(required = false) String networkId,
+			@WebParam(name = "vnfId") @XmlElement(required = false) String vnfId,
+			@WebParam(name = "vfModuleId") @XmlElement(required = false) String vfModuleId,
+			@WebParam(name = "volumeGroupId") @XmlElement(required = false) String volumeGroupId,
+			@WebParam(name = "serviceInstanceName") @XmlElement(required = false) String serviceInstanceName,
+			@WebParam(name = "configurationId") @XmlElement(required = false) String configurationId,
+			@WebParam(name = "configurationName") @XmlElement(required = false) String configurationName,
+			@WebParam(name = "vfModuleName") @XmlElement(required = false) String vfModuleName)
+			throws MsoRequestsDbException;
+
+	@WebMethod
+	public void setInstanceNfvoMappingRepository(@WebParam(name = "instanceId") @XmlElement(required = true) String instanceId,
+												 @WebParam(name = "nfvoName") @XmlElement(required = true) String nfvoName,
+												 @WebParam(name = "endpoint") @XmlElement(required = true) String endpoint,
+												 @WebParam(name = "username") @XmlElement(required = true) String username,
+												 @WebParam(name = "password") @XmlElement(required = true) String password,
+												 @WebParam(name = "apiRoot") @XmlElement(required = false)String apiRoot)
+												 throws MsoRequestsDbException;
+	@WebMethod
+	public InstanceNfvoMapping getInstanceNfvoMapping(@WebParam(name = "instanceId") @XmlElement(required = true) String instanceId)
+		throws MsoRequestsDbException;
 
     @WebMethod
     public InfraActiveRequests getInfraRequest(

@@ -1,0 +1,12 @@
+use requestdb;
+
+CREATE TABLE `instance_nfvo_mapping` (
+  `INSTANCE_ID` varchar(256) NOT NULL,
+  `NFVO_NAME` varchar(256) DEFAULT NULL,
+  `ENDPOINT` varchar(256) DEFAULT NULL,
+  `USERNAME` varchar(256) DEFAULT NULL,
+  `PASSWORD` varchar(256) DEFAULT NULL,
+  `API_ROOT` varchar(256) DEFAULT NULL,
+  `JOB_ID` varchar(256) DEFAULT NULL,
+  PRIMARY KEY (`INSTANCE_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
