@@ -31,12 +31,14 @@ import org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbException;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.beans.OperationStatus;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
+import org.onap.so.db.request.beans.InstanceNfvoMapping;
 import org.onap.so.db.request.beans.ResourceOperationStatusId;
 import org.onap.so.db.request.beans.SiteStatus;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
 import org.onap.so.db.request.data.repository.OperationStatusRepository;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.onap.so.db.request.data.repository.SiteStatusRepository;
+import org.onap.so.db.request.data.repository.InstanceNfvoMappingRepository;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.requestsdb.RequestsDbConstant;
 import org.slf4j.Logger;
@@ -58,6 +60,9 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
     private InfraActiveRequestsRepository infraActive;
 
     @Autowired
+    private InstanceNfvoMappingRepository instanceNfvoMappingRepository;
+
+    @Autowired
     private SiteStatusRepository siteRepo;
 
     @Autowired
@@ -65,6 +70,40 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     @Autowired
     private ResourceOperationStatusRepository resourceOperationStatusRepository;
+
+    @Transactional
+    @Override
+    public void setInstanceNfvoMappingRepository(String instanceId, String nfvoName, String endpoint, String username,
+            String password, String apiRoot) {
+        InstanceNfvoMapping instanceNfvoMapping = new InstanceNfvoMapping();
+        if (apiRoot != null) {
+            instanceNfvoMapping.setApiRoot(apiRoot);
+        }
+        if (endpoint != null) {
+            instanceNfvoMapping.setEndpoint(endpoint);
+        }
+        if (instanceId != null) {
+            instanceNfvoMapping.setInstanceId(instanceId);
+        }
+        if (nfvoName != null) {
+            instanceNfvoMapping.setNfvoName(nfvoName);
+        }
+        if (username != null) {
+            instanceNfvoMapping.setUsername(username);
+        }
+        if (password != null) {
+            instanceNfvoMapping.setPassword(password);
+        }
+
+        instanceNfvoMappingRepository.save(instanceNfvoMapping);
+    }
+
+    @Transactional
+    @Override
+    public InstanceNfvoMapping getInstanceNfvoMapping(String instanceId) {
+        InstanceNfvoMapping instanceNfvoMapping = instanceNfvoMappingRepository.findOneByInstanceId(instanceId);
+        return instanceNfvoMapping;
+    }
 
     @Transactional
     @Override
@@ -183,7 +222,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param operationType
@@ -253,7 +292,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * init the operation status of all the resources <br>
-     * 
+     *
      * @param serviceId the service Id
      * @param operationId the operation Id
      * @param operationType the operationType
@@ -284,7 +323,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * get resource operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param resourceTemplateUUID
@@ -304,7 +343,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update resource operation status <br>
-     * 
+     *
      * @param serviceId
      * @param operationId
      * @param resourceTemplateUUID
@@ -340,7 +379,7 @@ public class MsoRequestsDbAdapterImpl implements MsoRequestsDbAdapter {
 
     /**
      * update service operation status when a operation resource status updated <br>
-     * 
+     *
      * @param operStatus the resource operation status
      * @since ONAP Amsterdam Release
      */
