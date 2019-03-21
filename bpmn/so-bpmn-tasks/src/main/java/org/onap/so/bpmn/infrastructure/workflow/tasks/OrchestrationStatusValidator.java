@@ -80,36 +80,36 @@ public class OrchestrationStatusValidator {
 			
 			switch(buildingBlockDetail.getResourceType()) {
 			case SERVICE:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 				orchestrationStatus = serviceInstance.getOrchestrationStatus();
 				break;
 			case VNF:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 				orchestrationStatus = genericVnf.getOrchestrationStatus();
 				break;
 			case VF_MODULE:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 				orchestrationStatus = vfModule.getOrchestrationStatus();
 				break;
 			case VOLUME_GROUP:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 				orchestrationStatus = volumeGroup.getOrchestrationStatus();
 				break;
 			case NETWORK:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 				orchestrationStatus = network.getOrchestrationStatus();
 				break;
 			case NETWORK_COLLECTION:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInst = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInst = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 				org.onap.so.bpmn.servicedecomposition.bbobjects.Collection networkCollection = serviceInst.getCollection();
 				orchestrationStatus = networkCollection.getOrchestrationStatus();
 				break;
 			case CONFIGURATION:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
 				orchestrationStatus = configuration.getOrchestrationStatus();
 				break;
 			case INSTANCE_GROUP:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, execution.getLookupMap().get(ResourceKey.INSTANCE_GROUP_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
 				orchestrationStatus = instanceGroup.getOrchestrationStatus();
 				break;				
 			case NO_VALIDATE:
@@ -128,7 +128,7 @@ public class OrchestrationStatusValidator {
 			
 			if(aLaCarte && ResourceType.VF_MODULE.equals(buildingBlockDetail.getResourceType()) && OrchestrationAction.CREATE.equals(buildingBlockDetail.getTargetAction()) &&
 					OrchestrationStatus.PENDING_ACTIVATION.equals(orchestrationStatus)) {				
-				org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 				orchestrationStatusStateTransitionDirective = processPossibleSecondStageofVfModuleCreate(execution, previousOrchestrationStatusValidationResult,
 						genericVnf, orchestrationStatusStateTransitionDirective);	
 			}

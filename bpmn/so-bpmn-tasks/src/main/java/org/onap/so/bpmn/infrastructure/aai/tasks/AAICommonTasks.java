@@ -41,7 +41,7 @@ public class AAICommonTasks {
 	
 	public Optional<String> getServiceType(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID)); 
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID); 
 
 			ModelInfoServiceInstance model = serviceInstance.getModelInfoServiceInstance();
 			if (model != null) {

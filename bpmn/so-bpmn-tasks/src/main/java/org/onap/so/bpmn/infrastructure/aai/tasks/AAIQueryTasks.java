@@ -71,8 +71,7 @@ public class AAIQueryTasks {
 
 	public void queryNetworkVpnBinding(BuildingBlockExecution execution) {
 		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
-					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
 			if (!networkRelationships.isPresent()) {
@@ -106,8 +105,7 @@ public class AAIQueryTasks {
 	public void getNetworkVpnBinding(BuildingBlockExecution execution) {
 
 		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
-					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			CreateNetworkRequest createNetworkRequest = execution.getVariable("createNetworkRequest");
 
@@ -162,8 +160,7 @@ public class AAIQueryTasks {
 	 */
 	public void queryNetworkPolicy(BuildingBlockExecution execution) {
 		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
-					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
 			if (!networkRelationships.isPresent()) {
@@ -193,8 +190,7 @@ public class AAIQueryTasks {
 	 */
 	public void queryNetworkTableRef(BuildingBlockExecution execution) {
 		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
-					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
 			if (!networkRelationships.isPresent()) {
@@ -229,8 +225,7 @@ public class AAIQueryTasks {
 	
 	public void querySubnet(BuildingBlockExecution execution) {
 		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
-					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			Optional<Relationships> networkRelationships = aaiResultWrapper.getRelationships();
 			if (!networkRelationships.isPresent()) {

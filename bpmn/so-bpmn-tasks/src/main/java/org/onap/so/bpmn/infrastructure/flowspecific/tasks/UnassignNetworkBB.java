@@ -67,8 +67,7 @@ public class UnassignNetworkBB {
 	
 	public void checkRelationshipRelatedTo(BuildingBlockExecution execution, String relatedToValue) throws Exception {
 		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
-				execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
 			Optional<org.onap.aai.domain.yang.L3Network> network = aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
 			if (networkBBUtils.isRelationshipRelatedToExists(network, relatedToValue)) {

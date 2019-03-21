@@ -104,7 +104,7 @@ public class AAICreateTasks {
 
 	public void createServiceInstance(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Customer customer = execution.getGeneralBuildingBlock().getCustomer();
 			aaiSIResources.createServiceInstance(serviceInstance, customer);
 		} catch (Exception ex) {
@@ -115,7 +115,7 @@ public class AAICreateTasks {
     public void createServiceSubscription(BuildingBlockExecution execution){
         try{
             ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution,
-                    ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+                    ResourceKey.SERVICE_INSTANCE_ID);
             Customer customer = execution.getGeneralBuildingBlock().getCustomer();
             if (null == customer) {
                 String errorMessage = "Exception in creating ServiceSubscription. Customer not present for ServiceInstanceID: "
@@ -135,7 +135,7 @@ public class AAICreateTasks {
 
 	public void createProject(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Project project = serviceInstance.getProject();
 			if(project != null) {
 				if (project.getProjectName() == null || "".equals(project.getProjectName())) {
@@ -151,7 +151,7 @@ public class AAICreateTasks {
 
 	public void createOwningEntity(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			OwningEntity owningEntity = serviceInstance.getOwningEntity();
 			String owningEntityId = owningEntity.getOwningEntityId();
 			String owningEntityName = owningEntity.getOwningEntityName();
@@ -187,8 +187,8 @@ public class AAICreateTasks {
 
 	public void createVnf(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			execution.setVariable("callHoming", Boolean.TRUE.equals(vnf.isCallHoming()));
 			aaiVnfResources.createVnfandConnectServiceInstance(vnf, serviceInstance);
 		} catch (Exception ex) {
@@ -198,7 +198,7 @@ public class AAICreateTasks {
 	
 	public void createPlatform(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			Platform platform = vnf.getPlatform();
 			if(platform != null) {
 				if (platform.getPlatformName() == null || "".equals(platform.getPlatformName())) {
@@ -215,7 +215,7 @@ public class AAICreateTasks {
 	
 	public void createLineOfBusiness(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			LineOfBusiness lineOfBusiness = vnf.getLineOfBusiness();
 			if(lineOfBusiness != null) {
 				if (lineOfBusiness.getLineOfBusinessName() == null || "".equals(lineOfBusiness.getLineOfBusinessName())) {
@@ -233,8 +233,8 @@ public class AAICreateTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			
-			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			aaiVolumeGroupResources.createVolumeGroup(volumeGroup, cloudRegion);
 			aaiVolumeGroupResources.connectVolumeGroupToVnf(genericVnf, volumeGroup, cloudRegion);
@@ -246,8 +246,8 @@ public class AAICreateTasks {
 	
 	public void createVfModule(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			int moduleIndex = 0;
 			if (vfModule.getModelInfoVfModule() != null && !Boolean.TRUE.equals(vfModule.getModelInfoVfModule().getIsBaseBoolean())) {
 				moduleIndex = this.getLowestUnusedVfModuleIndexFromAAIVnfResponse(vnf, vfModule);
@@ -266,11 +266,11 @@ public class AAICreateTasks {
 	 */
 	public void connectVfModuleToVolumeGroup(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			VolumeGroup volumeGroup = null;
 			try{
-				volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+				volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 			} catch (BBObjectNotFoundException e){
 				logger.info("VolumeGroup not found. Skipping Connect between VfModule and VolumeGroup");
 			}
@@ -289,8 +289,8 @@ public class AAICreateTasks {
 	 */
 	public void createNetwork(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			//set default to false. ToBe updated by SDNC
 			l3network.setIsBoundToVpn(false);
 			//define is bound to vpn flag as true if NEUTRON_NETWORK_TYPE is PROVIDER
@@ -319,7 +319,7 @@ public class AAICreateTasks {
 	 */
 	public void createNetworkCollection(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Collection networkCollection =  serviceInstance.getCollection();
 			//pass name generated for NetworkCollection/NetworkCollectionInstanceGroup in previous step of the BB flow
 			//put shell in AAI
@@ -337,7 +337,7 @@ public class AAICreateTasks {
 	 */
 	public void createNetworkCollectionInstanceGroup(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			InstanceGroup instanceGroup =  serviceInstance.getCollection().getInstanceGroup();
 			//set name generated for NetworkCollection/NetworkCollectionInstanceGroup in previous step of the BB flow
 			instanceGroup.setInstanceGroupName(execution.getVariable(NETWORK_COLLECTION_NAME));
@@ -356,7 +356,7 @@ public class AAICreateTasks {
 	 */
 	public void connectNetworkToTenant(BuildingBlockExecution execution) {
 		try {
-			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			aaiNetworkResources.connectNetworkToTenant(l3network, execution.getGeneralBuildingBlock().getCloudRegion());
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -370,7 +370,7 @@ public class AAICreateTasks {
 	 */
 	public void connectNetworkToCloudRegion(BuildingBlockExecution execution) {
 		try {
-			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			aaiNetworkResources.connectNetworkToCloudRegion(l3network, execution.getGeneralBuildingBlock().getCloudRegion());
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -390,7 +390,7 @@ public class AAICreateTasks {
 				cloudRegionsToSkip = Arrays.stream(cloudRegions).anyMatch(execution.getGeneralBuildingBlock().getCloudRegion().getLcpCloudRegionId()::equals);
 			}
 			if(!cloudRegionsToSkip) {
-				GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 				aaiVnfResources.connectVnfToCloudRegion(vnf, execution.getGeneralBuildingBlock().getCloudRegion());
 			}
 		} catch (Exception ex) {
@@ -405,7 +405,7 @@ public class AAICreateTasks {
 	 */
 	public void connectVnfToTenant(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVnfResources.connectVnfToTenant(vnf, execution.getGeneralBuildingBlock().getCloudRegion());
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -419,8 +419,8 @@ public class AAICreateTasks {
 	 */
 	public void connectNetworkToNetworkCollectionServiceInstance(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			aaiNetworkResources.connectNetworkToNetworkCollectionServiceInstance(l3network, serviceInstance);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -434,8 +434,8 @@ public class AAICreateTasks {
 	 */
 	public void connectNetworkToNetworkCollectionInstanceGroup(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			//connect network only if Instance Group / Collection objects exist
 			if (serviceInstance.getCollection() != null && serviceInstance.getCollection().getInstanceGroup() != null)
 				aaiNetworkResources.connectNetworkToNetworkCollectionInstanceGroup(l3network, serviceInstance.getCollection().getInstanceGroup());
@@ -446,7 +446,7 @@ public class AAICreateTasks {
 	
 	public void createConfiguration(BuildingBlockExecution execution){
 		try{
-			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
 			aaiConfigurationResources.createConfiguration(configuration);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -455,8 +455,8 @@ public class AAICreateTasks {
 	
 	public void createInstanceGroupVnf(BuildingBlockExecution execution){
 		try{
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, execution.getLookupMap().get(ResourceKey.INSTANCE_GROUP_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
 			aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);

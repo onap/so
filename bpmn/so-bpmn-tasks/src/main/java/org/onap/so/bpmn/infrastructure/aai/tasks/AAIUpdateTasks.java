@@ -82,7 +82,7 @@ public class AAIUpdateTasks {
 	
 	public void updateOrchestrationStatusAssignedService(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			aaiServiceInstanceResources.updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ASSIGNED);
 			execution.setVariable("aaiServiceInstanceRollback", true);
 		} catch (Exception ex) {
@@ -92,7 +92,7 @@ public class AAIUpdateTasks {
 	
 	public void updateOrchestrationStatusActiveService(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			aaiServiceInstanceResources.updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -101,7 +101,7 @@ public class AAIUpdateTasks {
 
 	public void updateOrchestrationStatusAssignedVnf(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVnfResources.updateOrchestrationStatusVnf(vnf,OrchestrationStatus.ASSIGNED);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -110,7 +110,7 @@ public class AAIUpdateTasks {
 	
 	public void updateOrchestrationStatusActiveVnf(BuildingBlockExecution execution) {
 		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVnfResources.updateOrchestrationStatusVnf(vnf,OrchestrationStatus.ACTIVE);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -121,7 +121,7 @@ public class AAIUpdateTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			volumeGroup.setHeatStackId("");
 			aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
@@ -134,7 +134,7 @@ public class AAIUpdateTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			
 			aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
@@ -147,7 +147,7 @@ public class AAIUpdateTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			
 			aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.CREATED);
@@ -163,7 +163,7 @@ public class AAIUpdateTasks {
 			if (heatStackId == null) {
 				heatStackId = "";
 			}			
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			volumeGroup.setHeatStackId(heatStackId);
 			
@@ -175,9 +175,9 @@ public class AAIUpdateTasks {
 	
 	public void updateOrchestrationStatusAssignedVfModule(BuildingBlockExecution execution) {
 		try {
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			vfModule.setHeatStackId("");
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule,vnf,OrchestrationStatus.ASSIGNED);
 		} catch (Exception ex) {			
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -186,8 +186,8 @@ public class AAIUpdateTasks {
 	
 	public void updateOrchestrationStatusPendingActivationVfModule(BuildingBlockExecution execution) {
 		try {
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule,vnf,OrchestrationStatus.PENDING_ACTIVATION);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -196,9 +196,9 @@ public class AAIUpdateTasks {
 	
 	public void updateOrchestrationStatusAssignedOrPendingActivationVfModule(BuildingBlockExecution execution) {
 		try {
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			vfModule.setHeatStackId("");
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			String multiStageDesign = MULTI_STAGE_DESIGN_OFF;
 			if (vnf.getModelInfoGenericVnf() != null) {
 				multiStageDesign = vnf.getModelInfoGenericVnf().getMultiStageDesign();
@@ -217,8 +217,8 @@ public class AAIUpdateTasks {
 	
 	public void updateOrchestrationStatusCreatedVfModule(BuildingBlockExecution execution) {		
 		try {
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule,vnf,OrchestrationStatus.CREATED);			
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -228,8 +228,8 @@ public class AAIUpdateTasks {
 	public void updateOrchestrationStatusDeactivateVfModule(BuildingBlockExecution execution) {	
 		execution.setVariable("aaiDeactivateVfModuleRollback", false);
 		try {
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule,vnf,OrchestrationStatus.CREATED);
 			execution.setVariable("aaiDeactivateVfModuleRollback", true);
 		} catch (Exception ex) {
@@ -266,7 +266,7 @@ public class AAIUpdateTasks {
 	
 	protected void updateNetwork(BuildingBlockExecution execution, OrchestrationStatus status) {
 		try {
-			L3Network l3Network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3Network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			updateNetworkAAI(l3Network, status);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -298,7 +298,7 @@ public class AAIUpdateTasks {
 	public void updateOrchestrationStatusActiveNetworkCollection(BuildingBlockExecution execution) {
 		execution.setVariable("aaiNetworkCollectionActivateRollback", false);
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Collection networkCollection = serviceInstance.getCollection();
 			Collection copiedNetworkCollection = networkCollection.shallowCopyId();
 
@@ -314,8 +314,8 @@ public class AAIUpdateTasks {
 	public void updateOrchestrationStatusActivateVfModule(BuildingBlockExecution execution) {
 		execution.setVariable("aaiActivateVfModuleRollback", false);
 		try {
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ACTIVE);
 			execution.setVariable("aaiActivateVfModuleRollback", true);
 		} catch (Exception ex) {
@@ -329,8 +329,8 @@ public class AAIUpdateTasks {
 			if (heatStackId == null) {
 				heatStackId = "";
 			}
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			vfModule.setHeatStackId(heatStackId);
 			aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);			
 		} catch (Exception ex) {
@@ -345,7 +345,7 @@ public class AAIUpdateTasks {
 	 */
 	public void updateNetworkCreated(BuildingBlockExecution execution) throws Exception {
 		execution.setVariable("aaiNetworkActivateRollback", false);
-		L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+		L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 		L3Network copiedl3network = l3network.shallowCopyId();
 		CreateNetworkResponse response = execution.getVariable("createNetworkResponse");
 		try {
@@ -386,7 +386,7 @@ public class AAIUpdateTasks {
 	 * @throws Exception
 	 */
 	public void updateNetworkUpdated(BuildingBlockExecution execution) throws Exception {
-		L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+		L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 		L3Network copiedl3network = l3network.shallowCopyId();
 		UpdateNetworkResponse response = execution.getVariable("updateNetworkResponse");
 		try {
@@ -410,7 +410,7 @@ public class AAIUpdateTasks {
 	
 	public void updateObjectNetwork(BuildingBlockExecution execution) {
 		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 			aaiNetworkResources.updateNetwork(l3network);
 		} catch(Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -423,7 +423,7 @@ public class AAIUpdateTasks {
 	 */
 	public void updateServiceInstance(BuildingBlockExecution execution) {
 		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			aaiServiceInstanceResources.updateServiceInstance(serviceInstance);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -432,7 +432,7 @@ public class AAIUpdateTasks {
 	
 	public void updateObjectVnf(BuildingBlockExecution execution) {
 		try {
-			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVnfResources.updateObjectVnf(genericVnf);
 		} catch(Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -442,9 +442,9 @@ public class AAIUpdateTasks {
 	public void updateOrchestrationStatusDeleteVfModule(BuildingBlockExecution execution) {	
 		execution.setVariable("aaiDeleteVfModuleRollback", false);
 		try {
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			vfModule.setHeatStackId("");
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 
 			VfModule copiedVfModule = vfModule.shallowCopyId();
 			copiedVfModule.setHeatStackId("");
@@ -457,8 +457,8 @@ public class AAIUpdateTasks {
 
 	public void updateModelVfModule(BuildingBlockExecution execution) {
 		try {
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			aaiVfModuleResources.changeAssignVfModule(vfModule, vnf);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -466,7 +466,7 @@ public class AAIUpdateTasks {
 	}
 	public void updateOrchestrationStatusActivateFabricConfiguration(BuildingBlockExecution execution) {
 		try {
-			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
 			aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -475,7 +475,7 @@ public class AAIUpdateTasks {
 	
 	public void updateOrchestrationStatusDeactivateFabricConfiguration(BuildingBlockExecution execution) {
 		try {
-			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID, execution.getLookupMap().get(ResourceKey.CONFIGURATION_ID));
+			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
 			aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ASSIGNED);
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
@@ -486,7 +486,7 @@ public class AAIUpdateTasks {
 		try {
 			String ipv4OamAddress = execution.getVariable("oamManagementV4Address");
 			if (ipv4OamAddress != null) {
-				GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 				GenericVnf copiedGenericVnf = genericVnf.shallowCopyId();
 			
 				genericVnf.setIpv4OamAddress(ipv4OamAddress);	
@@ -503,7 +503,7 @@ public class AAIUpdateTasks {
 		try {
 			String managementV6Address = execution.getVariable("oamManagementV6Address");
 			if (managementV6Address != null) {
-				GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 				GenericVnf copiedGenericVnf = genericVnf.shallowCopyId();
 			
 				genericVnf.setManagementV6Address(managementV6Address);	
@@ -520,8 +520,8 @@ public class AAIUpdateTasks {
 		try {
 			String contrailServiceInstanceFqdn = execution.getVariable("contrailServiceInstanceFqdn");
 			if (contrailServiceInstanceFqdn != null) {
-				VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-				GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+				VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+				GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 				vfModule.setContrailServiceInstanceFqdn(contrailServiceInstanceFqdn);
 				aaiVfModuleResources.updateContrailServiceInstanceFqdnVfModule(vfModule, vnf);
 			}

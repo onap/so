@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.namingservice.tasks;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -46,7 +45,7 @@ public class NamingServiceDeleteTasksTest extends BaseTaskTest {
 	@Before
 	public void before() throws BBObjectNotFoundException {
 		instanceGroup = setInstanceGroup();				
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID), any())).thenReturn(instanceGroup);	
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID))).thenReturn(instanceGroup);	
 	}
 	
 	@Test
@@ -62,7 +61,7 @@ public class NamingServiceDeleteTasksTest extends BaseTaskTest {
 	public void deleteInstanceGroupExceptionTest() throws Exception {
 		expectedException.expect(BBObjectNotFoundException.class);		
 		lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, "notfound");
-		doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID),eq("notfound"));	
+		doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));	
 		doReturn("").when(namingServiceResources).deleteInstanceGroupName(instanceGroup);
 		namingServiceDeleteTasks.deleteInstanceGroupName(execution);
 		verify(namingServiceResources, times(1)).deleteInstanceGroupName(instanceGroup);

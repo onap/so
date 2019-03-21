@@ -69,7 +69,7 @@ public class SDNOHealthCheckTasksTest extends TestDataSetup {
 	public void before() throws BBObjectNotFoundException {
 		genericVnf = setGenericVnf();
 		requestContext = setRequestContext();
-		when(extractPojosForBB.extractByKey(any(),any(), any())).thenReturn(genericVnf);
+		when(extractPojosForBB.extractByKey(any(),any())).thenReturn(genericVnf);
 		
 	}
 

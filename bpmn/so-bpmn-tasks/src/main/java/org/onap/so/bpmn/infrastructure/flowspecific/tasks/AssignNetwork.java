@@ -47,8 +47,7 @@ public class AssignNetwork {
 	public boolean networkFoundByName(BuildingBlockExecution execution) {
 		boolean networkFound = false;
 		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,
-					execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 
 			if (!OrchestrationStatus.PRECREATED.equals(l3network.getOrchestrationStatus())){
 				networkFound = true;

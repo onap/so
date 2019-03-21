@@ -58,8 +58,8 @@ public class VnfAdapterDeleteTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 			
 			DeleteVolumeGroupRequest deleteVolumeGroupRequest = vnfAdapterVolumeGroupResources.deleteVolumeGroupRequest(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, volumeGroup);
 			execution.setVariable(VNFREST_REQUEST, deleteVolumeGroupRequest.toXmlString());
@@ -73,9 +73,9 @@ public class VnfAdapterDeleteTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			
 			DeleteVfModuleRequest deleteVfModuleRequest = vnfAdapterVfModuleResources.deleteVfModuleRequest( gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, genericVnf, vfModule);
 			execution.setVariable(VNFREST_REQUEST, deleteVfModuleRequest.toXmlString());

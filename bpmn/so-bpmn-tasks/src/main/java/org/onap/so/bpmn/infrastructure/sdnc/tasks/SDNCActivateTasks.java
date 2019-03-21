@@ -67,8 +67,8 @@ public class SDNCActivateTasks {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
 			RequestContext requestContext = gBBInput.getRequestContext();
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			Customer customer = gBBInput.getCustomer();
 			GenericResourceApiVnfOperationInformation req = sdncVnfResources.activateVnf(vnf, serviceInstance, customer, cloudRegion, requestContext);
@@ -89,8 +89,8 @@ public class SDNCActivateTasks {
 	public void activateNetwork(BuildingBlockExecution execution) throws BBObjectNotFoundException {
 		try{
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID, execution.getLookupMap().get(ResourceKey.NETWORK_ID));
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Customer customer = gBBInput.getCustomer();
 			RequestContext requestContext = gBBInput.getRequestContext();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
@@ -111,12 +111,9 @@ public class SDNCActivateTasks {
 		GenericVnf vnf = null;
 		VfModule vfModule = null;
 		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID,
-					execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
-			vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID,
-					execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-			vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID,
-					execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+			vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+			vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			Customer customer = gBBInput.getCustomer();
 			CloudRegion cloudRegion = gBBInput.getCloudRegion();
 			GenericResourceApiVfModuleOperationInformation req = sdncVfModuleResources.activateVfModule(vfModule, vnf, serviceInstance, customer,

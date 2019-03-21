@@ -57,7 +57,7 @@ public class SDNOHealthCheckTasks {
 			Map<ResourceKey, String> lookupMap = execution.getLookupMap();
 			for (Map.Entry<ResourceKey, String> entry : lookupMap.entrySet()) {
 				if (entry.getKey().equals(ResourceKey.GENERIC_VNF_ID)) {
-					vnf = extractPojosForBB.extractByKey(execution, entry.getKey(), entry.getValue());
+					vnf = extractPojosForBB.extractByKey(execution, entry.getKey());
 				}
 			}
 			

@@ -81,7 +81,7 @@ public class ConfigurationScaleOut {
 			String configScaleOutPayloadString = null;
 			ControllerSelectionReference controllerSelectionReference;
 			ConfigScaleOutPayload configPayload = new ConfigScaleOutPayload();
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 			String vnfId = vnf.getVnfId();
 			String vnfName = vnf.getVnfName();	
 			String vnfType = vnf.getVnfType();
@@ -89,7 +89,7 @@ public class ConfigurationScaleOut {
 			controllerSelectionReference = catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory(vnfType, actionCategory);
 			String controllerName = controllerSelectionReference.getControllerName();
 			
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 			String sdncVfModuleQueryResponse = execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId());
 			
 			Map<String, String> paramsMap = new HashMap<>();

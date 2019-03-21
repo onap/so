@@ -48,14 +48,14 @@ public class AssignNetworkTest extends BaseTaskTest {
 	public void before() throws BBObjectNotFoundException {
 		network = setL3Network();
 		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));	
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID), any())).thenReturn(network);
+		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
 	}
 	
 	@Test
 	public void networkNotFoundTest() throws Exception {
 		//network status to PRECREATED - when it was NOT found by name
 		try {
-			network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 		} catch(BBObjectNotFoundException e) {
 		}
 		
@@ -67,7 +67,7 @@ public class AssignNetworkTest extends BaseTaskTest {
 	@Test
 	public void networkFoundTest() throws Exception {
 		try {
-			network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID,execution.getLookupMap().get(ResourceKey.NETWORK_ID));
+			network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
 		} catch(BBObjectNotFoundException e) {
 		}
 		boolean networkFound = assignNetwork.networkFoundByName(execution);

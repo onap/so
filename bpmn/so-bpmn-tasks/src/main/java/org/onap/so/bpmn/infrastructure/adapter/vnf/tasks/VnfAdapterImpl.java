@@ -74,7 +74,7 @@ public class VnfAdapterImpl {
 	public void preProcessVnfAdapter(BuildingBlockExecution execution) {
 		try {
 			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			execution.setVariable("mso-request-id", gBBInput.getRequestContext().getMsoRequestId());
 			execution.setVariable("mso-service-instance-id", serviceInstance.getServiceInstanceId());
 			execution.setVariable("heatStackId", null);
@@ -93,7 +93,7 @@ public class VnfAdapterImpl {
             if (!StringUtils.isEmpty( vnfAdapterResponse)) {
                 Object vnfRestResponse = unMarshal(vnfAdapterResponse);
                 if(vnfRestResponse instanceof CreateVfModuleResponse) {
-                    VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
+                    VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
                     String heatStackId = ((CreateVfModuleResponse) vnfRestResponse).getVfModuleStackId();
                     if(!StringUtils.isEmpty(heatStackId)) {
                         vfModule.setHeatStackId(heatStackId);                        
@@ -104,8 +104,8 @@ public class VnfAdapterImpl {
                     	processVfModuleOutputs(execution, vfModuleOutputs);
                     }
                 } else if(vnfRestResponse instanceof DeleteVfModuleResponse) {
-                    VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-                    GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+                    VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+                    GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
                     Boolean vfModuleDelete = ((DeleteVfModuleResponse) vnfRestResponse).getVfModuleDeleted();
                     if(null!= vfModuleDelete && vfModuleDelete) {
                         vfModule.setHeatStackId(null);
@@ -128,7 +128,7 @@ public class VnfAdapterImpl {
                         }
                     }
                 } else if(vnfRestResponse instanceof CreateVolumeGroupResponse) {
-                    VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+                    VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
                     String heatStackId = ((CreateVolumeGroupResponse) vnfRestResponse).getVolumeGroupStackId();
                     if(!StringUtils.isEmpty(heatStackId)) {
                         volumeGroup.setHeatStackId(heatStackId);
@@ -137,7 +137,7 @@ public class VnfAdapterImpl {
                         exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "HeatStackId is missing from create VolumeGroup Vnf Adapter response.");
                     }                    
                 } else if(vnfRestResponse instanceof DeleteVolumeGroupResponse) {                	
-                	VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, execution.getLookupMap().get(ResourceKey.VOLUME_GROUP_ID));
+                	VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
                 	Boolean volumeGroupDelete = ((DeleteVolumeGroupResponse) vnfRestResponse).getVolumeGroupDeleted();
                 	if(null!= volumeGroupDelete && volumeGroupDelete) {                		
                 		volumeGroup.setHeatStackId(null);
@@ -178,8 +178,8 @@ public class VnfAdapterImpl {
     		return;
     	}
     	try {
-	    	VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID, execution.getLookupMap().get(ResourceKey.VF_MODULE_ID));
-	    	GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
+	    	VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+	    	GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 	    	List<String> contrailNetworkPolicyFqdnList = new ArrayList<String>();
 	    	Iterator<String> keys = vfModuleOutputs.keySet().iterator();
 	    	while (keys.hasNext()) {

@@ -120,30 +120,29 @@ public class ExtractPojosForBBTest extends BaseTest{
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstancePend);
 		gBBInput.setCustomer(customer);
 
-		ServiceInstance extractServPend = extractPojos.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, "abc");
+		ServiceInstance extractServPend = extractPojos.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 		assertEquals(extractServPend.getServiceInstanceId(), serviceInstancePend.getServiceInstanceId());
-		GenericVnf extractVnfPend = extractPojos.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, "abc");
+		GenericVnf extractVnfPend = extractPojos.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 		assertEquals(extractVnfPend.getVnfId(), vnfPend.getVnfId());
-		L3Network extractNetworkPend = extractPojos.extractByKey(execution, ResourceKey.NETWORK_ID, "abc");
+		L3Network extractNetworkPend = extractPojos.extractByKey(execution, ResourceKey.NETWORK_ID);
 		assertEquals(extractNetworkPend.getNetworkId(), networkPend.getNetworkId());
-		VolumeGroup extractVolumeGroupPend = extractPojos.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID, "abc");
+		VolumeGroup extractVolumeGroupPend = extractPojos.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
 		assertEquals(extractVolumeGroupPend.getVolumeGroupId(), volumeGroupPend.getVolumeGroupId());
 		AllottedResource extractallotedResourcePend = extractPojos.extractByKey(execution,
-				ResourceKey.ALLOTTED_RESOURCE_ID, "abc");
+				ResourceKey.ALLOTTED_RESOURCE_ID);
 		assertEquals(extractallotedResourcePend.getId(), allotedResourcePend.getId());
-		Configuration extractConfigurationPend = extractPojos.extractByKey(execution, ResourceKey.CONFIGURATION_ID,
-				"abc");
+		Configuration extractConfigurationPend = extractPojos.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
 		assertEquals(extractConfigurationPend.getConfigurationId(), configurationPend.getConfigurationId());
-		VpnBinding extractVpnBinding = extractPojos.extractByKey(execution, ResourceKey.VPN_ID, "abc");
+		VpnBinding extractVpnBinding = extractPojos.extractByKey(execution, ResourceKey.VPN_ID);
 		assertEquals(extractVpnBinding.getVpnId(), vpnBinding.getVpnId());
 		
-		VfModule extractVfModulePend = extractPojos.extractByKey(execution, ResourceKey.VF_MODULE_ID, "abc");
+		VfModule extractVfModulePend = extractPojos.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 		assertEquals(extractVfModulePend.getVfModuleId(), vfModulePend.getVfModuleId());
 
-		VpnBondingLink extractVpnBondingLinkPend = extractPojos.extractByKey(execution, ResourceKey.VPN_BONDING_LINK_ID, "testVpnBondingLink");
+		VpnBondingLink extractVpnBondingLinkPend = extractPojos.extractByKey(execution, ResourceKey.VPN_BONDING_LINK_ID);
 		assertEquals(extractVpnBondingLinkPend.getVpnBondingLinkId(), vpnBondingLinkPend.getVpnBondingLinkId());
 		
-		InstanceGroup extractInstanceGroupPend = extractPojos.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, "test-instance-group-1");
+		InstanceGroup extractInstanceGroupPend = extractPojos.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
 		assertEquals(instanceGroupPend.getId(), extractInstanceGroupPend.getId());
 	}
 
@@ -157,7 +156,7 @@ public class ExtractPojosForBBTest extends BaseTest{
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		gBBInput.setCustomer(customer);
 
-		extractPojos.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, "abc");
+		extractPojos.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 	}
 
 	@Test
@@ -169,7 +168,7 @@ public class ExtractPojosForBBTest extends BaseTest{
 		ServiceInstance serviceInstance = new ServiceInstance();
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		gBBInput.setCustomer(customer);
-		extractPojos.extractByKey(execution, ResourceKey.GENERIC_VNF_ID, "bbb");
+		extractPojos.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
 	}
 
 	@Test
@@ -181,7 +180,7 @@ public class ExtractPojosForBBTest extends BaseTest{
 		ServiceInstance serviceInstance = new ServiceInstance();
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		gBBInput.setCustomer(customer);
-		extractPojos.extractByKey(execution, ResourceKey.VF_MODULE_ID, "bbb");
+		extractPojos.extractByKey(execution, ResourceKey.VF_MODULE_ID);
 	}
 	
 	@Test
@@ -193,7 +192,7 @@ public class ExtractPojosForBBTest extends BaseTest{
 		ServiceInstance serviceInstance = new ServiceInstance();
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		gBBInput.setCustomer(customer);
-		extractPojos.extractByKey(execution, ResourceKey.CONFIGURATION_ID, "bbb");
+		extractPojos.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
 	}
 	@Test
 	public void allotedError() throws BBObjectNotFoundException {
@@ -204,7 +203,7 @@ public class ExtractPojosForBBTest extends BaseTest{
 		ServiceInstance serviceInstance = new ServiceInstance();
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		gBBInput.setCustomer(customer);
-		extractPojos.extractByKey(execution, ResourceKey.ALLOTTED_RESOURCE_ID, "bbb");
+		extractPojos.extractByKey(execution, ResourceKey.ALLOTTED_RESOURCE_ID);
 	}
 	@Test
 	public void vpnBindingError() throws BBObjectNotFoundException {
@@ -214,7 +213,7 @@ public class ExtractPojosForBBTest extends BaseTest{
 		ServiceInstance serviceInstance = new ServiceInstance();
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		gBBInput.setCustomer(customer);
-		extractPojos.extractByKey(execution, ResourceKey.VPN_ID, "bbb");
+		extractPojos.extractByKey(execution, ResourceKey.VPN_ID);
 	}
 
 	@Test
@@ -225,6 +224,6 @@ public class ExtractPojosForBBTest extends BaseTest{
 		ServiceInstance serviceInstance = new ServiceInstance();
 		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 		gBBInput.setCustomer(customer);
-		extractPojos.extractByKey(execution, ResourceKey.VPN_BONDING_LINK_ID, "bbb");
+		extractPojos.extractByKey(execution, ResourceKey.VPN_BONDING_LINK_ID);
 	}
 }

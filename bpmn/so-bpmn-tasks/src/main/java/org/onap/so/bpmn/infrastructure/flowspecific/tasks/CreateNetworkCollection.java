@@ -54,7 +54,7 @@ public class CreateNetworkCollection {
 	 */
 	public void buildNetworkCollectionName(BuildingBlockExecution execution) throws Exception {
 		try{
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			InstanceGroup instanceGroup =  serviceInstance.getCollection().getInstanceGroup();
 			if(instanceGroup.getModelInfoInstanceGroup() != null) {
 				//Build collection name assembling SI name and IG function
@@ -84,7 +84,7 @@ public class CreateNetworkCollection {
 	public void connectCollectionToInstanceGroup(BuildingBlockExecution execution) throws Exception {
 		execution.setVariable("connectCollectionToInstanceGroupRollback", false);
 		try{
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Collection networkCollection =  serviceInstance.getCollection();
 			aaiNetworkResources.connectNetworkCollectionInstanceGroupToNetworkCollection(networkCollection.getInstanceGroup(), networkCollection);
 			execution.setVariable("connectCollectionToInstanceGroupRollback", true);
@@ -101,7 +101,7 @@ public class CreateNetworkCollection {
 	public void connectInstanceGroupToCloudRegion(BuildingBlockExecution execution) throws Exception {
 		execution.setVariable("connectInstanceGroupToCloudRegionRollback", false);
 		try{
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Collection networkCollection =  serviceInstance.getCollection();
 			aaiNetworkResources.connectInstanceGroupToCloudRegion(networkCollection.getInstanceGroup(), execution.getGeneralBuildingBlock().getCloudRegion());
 			execution.setVariable("connectInstanceGroupToCloudRegionRollback", true);
@@ -118,7 +118,7 @@ public class CreateNetworkCollection {
 	public void connectCollectionToServiceInstance(BuildingBlockExecution execution) throws Exception {
 		execution.setVariable("connectCollectionToServiceInstanceRollback", false);
 		try{
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID, execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 			Collection networkCollection =  serviceInstance.getCollection();
 			aaiNetworkResources.connectNetworkCollectionToServiceInstance(networkCollection, serviceInstance);
 			execution.setVariable("connectCollectionToServiceInstanceRollback", true);

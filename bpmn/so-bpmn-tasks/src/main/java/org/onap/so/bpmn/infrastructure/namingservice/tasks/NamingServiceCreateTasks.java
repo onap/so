@@ -42,7 +42,7 @@ public class NamingServiceCreateTasks {
 	private NamingServiceResources namingServiceResources;
 	
 	public void createInstanceGroupName(BuildingBlockExecution execution) throws Exception {		
-		InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID, execution.getLookupMap().get(ResourceKey.INSTANCE_GROUP_ID));
+		InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
 		String policyInstanceName = execution.getVariable("policyInstanceName");
 		String nfNamingCode = execution.getVariable("nfNamingCode");
 		String generatedInstanceGroupName = "";
