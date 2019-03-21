@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "f76636c7_4d2885a9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterCreateVnfTaskConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-21T17:29:24Z",
+      "side": 1,
+      "message": "This is wrapper around http client to make put and get request",
+      "parentUuid": "ebda17f0_8164f09e",
+      "revId": "902dfbb9bd124f3356d7a09ee8e29e7109bf8bc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "4b4424ce_540eb981",
         "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/configuration/rest/HttpServiceProviderConfiguration.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-21T17:08:58Z",
       "side": 1,
       "message": "why there is a code change in so monitoring package?",
+      "revId": "902dfbb9bd124f3356d7a09ee8e29e7109bf8bc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e86a7bd8_15d0da05",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/configuration/rest/HttpServiceProviderConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-21T17:29:24Z",
+      "side": 1,
+      "message": "HttpRestServiceProvider was in so-monitoring. I refactored the class and moved it to common so that it can be reusable in bpmn-task  for making http request to vnfm adapter",
+      "parentUuid": "4b4424ce_540eb981",
       "revId": "902dfbb9bd124f3356d7a09ee8e29e7109bf8bc9",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
