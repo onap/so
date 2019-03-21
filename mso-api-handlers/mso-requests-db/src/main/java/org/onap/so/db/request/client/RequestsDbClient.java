@@ -308,7 +308,7 @@ public class RequestsDbClient {
 
 	public void saveRequestProcessingData(RequestProcessingData requestProcessingData) {
 		HttpHeaders headers = getHttpHeaders();
-		URI uri = getUri(endpoint + requestProcessingDataURI);
+		URI uri = getUri(requestProcessingDataURI);
 		HttpEntity<RequestProcessingData> entity = new HttpEntity<>(requestProcessingData, headers);
 		restTemplate.postForLocation(uri, entity);
 	}

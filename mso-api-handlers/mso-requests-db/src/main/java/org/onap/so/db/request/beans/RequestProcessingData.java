@@ -33,10 +33,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.openpojo.business.annotation.BusinessKey;
 
 /**
@@ -50,6 +52,8 @@ import com.openpojo.business.annotation.BusinessKey;
  */
 
 @Entity
+
+@JsonInclude(Include.NON_NULL)
 @Table(name = "request_processing_data")
 public class RequestProcessingData implements Serializable{
 

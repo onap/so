@@ -98,7 +98,7 @@ public class AAIConfigurationResourcesTest extends TestDataSetup{
         
         aaiConfigurationResources.createConfiguration(configuration);
         
-        assertEquals(OrchestrationStatus.INVENTORIED, configuration.getOrchestrationStatus());
+        assertEquals(OrchestrationStatus.ASSIGNED, configuration.getOrchestrationStatus());
         verify(MOCK_aaiResourcesClient, times(1)).create(any(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Configuration.class));
     }
 
