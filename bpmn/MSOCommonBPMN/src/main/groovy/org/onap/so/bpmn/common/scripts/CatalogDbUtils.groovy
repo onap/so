@@ -51,13 +51,13 @@ class CatalogDbUtils {
     private static final Logger logger = LoggerFactory.getLogger( CatalogDbUtils.class);
 
 	private HttpClientFactory httpClientFactory
-	private MsoUtils msoUtils
-	private  JsonUtils jsonUtils
+	private JsonUtils jsonUtils
+	private MsoUtils utils
 	static private String defaultDbAdapterVersion = "v2"
 
-	CatalogDbUtils(HttpClientFactory httpClientFactory, MsoUtils msoUtils, JsonUtils jsonUtils) {
+	CatalogDbUtils(HttpClientFactory httpClientFactory, JsonUtils jsonUtils) {
 		this.httpClientFactory = httpClientFactory
-		this.msoUtils = msoUtils
+		this.utils = new MsoUtils()
 		this.jsonUtils = jsonUtils
 	}
 
@@ -105,7 +105,7 @@ class CatalogDbUtils {
 			}
 		}
 		catch (Exception e) {
-			msoUtils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			logger.error("Exception in Querying Catalog DB: " + e.message)
 			throw e
 		}
 
@@ -488,7 +488,7 @@ class CatalogDbUtils {
 			}
 		}
 		catch (Exception e) {
-			msoUtils.log("ERROR", "Exception in Querying Catalog DB: " + e.message)
+			logger.error("Exception in Querying Catalog DB: " + e.message)
 			throw e
 		}
 
@@ -500,13 +500,13 @@ class CatalogDbUtils {
 		String encodedString = null
 		try {
 			String basicAuthValueDB = UrnPropertiesReader.getVariable("mso.adapters.db.auth", execution)
-			msoUtils.log("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
+			logger.debug("DEBUG", " Obtained BasicAuth userid password for Catalog DB adapter: " + basicAuthValueDB)
 
-			encodedString = msoUtils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
+			encodedString = utils.getBasicAuth(basicAuthValueDB, UrnPropertiesReader.getVariable("mso.msoKey", execution))
 			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
 		} catch (IOException ex) {
 			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			msoUtils.log("ERROR", dataErrorMessage)
+			logger.error(dataErrorMessage)
 		}
 		return encodedString
 	}

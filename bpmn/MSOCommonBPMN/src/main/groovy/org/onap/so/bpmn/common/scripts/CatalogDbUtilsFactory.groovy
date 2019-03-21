@@ -26,6 +26,6 @@ import org.onap.so.client.HttpClientFactory
 public class CatalogDbUtilsFactory {
 
     CatalogDbUtils create() {
-        return new CatalogDbUtils(new HttpClientFactory(), new MsoUtils(), new JsonUtils())
+        return new CatalogDbUtils(new HttpClientFactory(), new JsonUtils())
     }
 }
