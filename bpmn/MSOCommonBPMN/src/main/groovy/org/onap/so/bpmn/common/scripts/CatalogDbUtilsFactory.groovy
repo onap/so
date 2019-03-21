@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 NOKIA.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,6 +28,6 @@ import org.onap.so.client.HttpClientFactory
 public class CatalogDbUtilsFactory {
 
     CatalogDbUtils create() {
-        return new CatalogDbUtils(new HttpClientFactory(), new MsoUtils(), new JsonUtils())
+        return new CatalogDbUtils(new HttpClientFactory(), new JsonUtils())
     }
 }

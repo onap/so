@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2018 Nokia.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,7 +53,6 @@ class CatalogDbUtilsTest {
     private static final String RESPONSE_FROM_CATALOG_DB = "{\"serviceVnfs\": [{\"name\": \"service1\"," +
             "\"vfModules\": [{\"name\": \"module1\", \"isBase\":true, \"initialCount\":1}]}]}"
     private HttpClientFactory httpClientFactoryMock
-    private MsoUtils msoUtilsMock
     private JsonUtils jsonUtilsMock
     private HttpClient httpClientMock
     private DelegateExecutionFake executionFake
@@ -61,11 +62,10 @@ class CatalogDbUtilsTest {
     @Before
     void setUp() {
         httpClientFactoryMock = mock(HttpClientFactory.class)
-        msoUtilsMock = mock(MsoUtils.class)
         jsonUtilsMock = mock(JsonUtils.class)
         httpClientMock = mock(HttpClient.class)
         executionFake = new DelegateExecutionFake()
-        testedObject = new CatalogDbUtils(httpClientFactoryMock, msoUtilsMock, jsonUtilsMock)
+        testedObject = new CatalogDbUtils(httpClientFactoryMock, jsonUtilsMock)
     }
 
     @Test
