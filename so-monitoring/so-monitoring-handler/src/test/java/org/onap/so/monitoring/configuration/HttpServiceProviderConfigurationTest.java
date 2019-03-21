@@ -23,7 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.onap.so.monitoring.configuration.rest.HttpServiceProviderConfiguration;
-import org.onap.so.monitoring.rest.service.HttpRestServiceProvider;
+import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.springframework.web.client.RestTemplate;
 
 /**
