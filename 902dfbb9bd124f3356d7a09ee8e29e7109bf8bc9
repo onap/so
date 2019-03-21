@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ebda17f0_8164f09e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterCreateVnfTaskConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 3813
+      },
+      "writtenOn": "2019-03-21T17:08:58Z",
+      "side": 1,
+      "message": "what this method do and I see this is being used in so monitoring package?",
+      "revId": "902dfbb9bd124f3356d7a09ee8e29e7109bf8bc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4b4424ce_540eb981",
+        "filename": "so-monitoring/so-monitoring-handler/src/main/java/org/onap/so/monitoring/configuration/rest/HttpServiceProviderConfiguration.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 3813
+      },
+      "writtenOn": "2019-03-21T17:08:58Z",
+      "side": 1,
+      "message": "why there is a code change in so monitoring package?",
+      "revId": "902dfbb9bd124f3356d7a09ee8e29e7109bf8bc9",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
