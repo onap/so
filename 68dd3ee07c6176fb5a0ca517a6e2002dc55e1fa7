@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "253d904a_2e86746f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/etsi/vnf/tasks/EtsiVnfInstantiateTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-03-21T12:54:13Z",
+      "side": 1,
+      "message": "consider changing to \n\norg.onap.so.bpmn.infrastructure.adapter.vnfm.tasks",
+      "range": {
+        "startLine": 21,
+        "startChar": 8,
+        "endLine": 21,
+        "endChar": 53
+      },
+      "revId": "68dd3ee07c6176fb5a0ca517a6e2002dc55e1fa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75c76ce2_d3ee920f",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/etsi/vnf/tasks/EtsiVnfInstantiateTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-03-21T12:54:13Z",
+      "side": 1,
+      "message": "Add class level javadoc",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 37
+      },
+      "revId": "68dd3ee07c6176fb5a0ca517a6e2002dc55e1fa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "8f456b81_778dba1a",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/etsi/vnf/tasks/EtsiVnfInstantiateTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-03-21T12:54:13Z",
+      "side": 1,
+      "message": "General comment: We should be consistent in the use of terminology, it is a create request in the interface so we should call it create everywhere rather than \u0027create\u0027 in some places, \u0027instantiate\u0027 in some places and \u0027create and instantate\u0027 in others\nConsider renamimg to \nVnfmAdapterCreateVnfTask and renaming other classes similarly",
+      "range": {
+        "startLine": 51,
+        "startChar": 13,
+        "endLine": 51,
+        "endChar": 35
+      },
+      "revId": "68dd3ee07c6176fb5a0ca517a6e2002dc55e1fa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "31db4bf0_bc4142e0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/etsi/vnf/tasks/EtsiVnfInstantiateTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-03-21T12:54:13Z",
+      "side": 1,
+      "message": "general comment: remove SoV2 everywhere",
+      "range": {
+        "startLine": 73,
+        "startChar": 22,
+        "endLine": 73,
+        "endChar": 26
+      },
+      "revId": "68dd3ee07c6176fb5a0ca517a6e2002dc55e1fa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "36eb7044_6390c419",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/etsi/vnf/tasks/EtsiVnfInstantiateTaskConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-03-21T12:54:13Z",
+      "side": 1,
+      "message": "change to createVnfRequest",
+      "range": {
+        "startLine": 28,
+        "startChar": 64,
+        "endLine": 28,
+        "endChar": 84
+      },
+      "revId": "68dd3ee07c6176fb5a0ca517a6e2002dc55e1fa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "05235548_61d8f6d9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/etsi/vnf/tasks/EtsiVnfInstantiateTaskConstants.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 5269
+      },
+      "writtenOn": "2019-03-21T12:54:13Z",
+      "side": 1,
+      "message": "change to createVnfResponse",
+      "range": {
+        "startLine": 29,
+        "startChar": 65,
+        "endLine": 29,
+        "endChar": 86
+      },
+      "revId": "68dd3ee07c6176fb5a0ca517a6e2002dc55e1fa7",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
