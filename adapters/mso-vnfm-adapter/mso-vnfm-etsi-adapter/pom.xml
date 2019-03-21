@@ -76,5 +76,10 @@
             <artifactId>mso-adapters-rest-interface</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.onap.so.adapters</groupId>
+            <artifactId>mso-vnfm-adapter-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>
