@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ee3af829_349af03f",
+        "filename": "adapters/mso-vnfm-adapter/mso-vnfm-etsi-adapter/src/main/java/org/onap/so/adapters/vnfmadapter/rest/VnfmAdapterController.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-21T12:05:42Z",
+      "side": 1,
+      "message": "change it to \n\nlogger.info(\"REST request vnfCreate with body: {}\", createVnfRequest);",
+      "range": {
+        "startLine": 74,
+        "startChar": 8,
+        "endLine": 74,
+        "endChar": 77
+      },
+      "revId": "3afd9f0aa15eed4254647c022dd4ac325a554c50",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
