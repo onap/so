@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,33 +22,36 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-
-import static org.mockito.Mockito.*
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkByIdWithDepth;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkCloudRegion_404;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkVpnBinding;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkTableReference;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetNetworkPolicy;
-import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutNetworkIdWithDepth;
+import com.github.tomakehurst.wiremock.client.WireMock
+import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.MockitoAnnotations
 import org.mockito.runners.MockitoJUnitRunner
+import org.onap.aai.domain.yang.*
 import org.onap.so.bpmn.common.scripts.MsoUtils
+import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
+import org.onap.so.bpmn.mock.FileUtil
+import org.onap.so.client.aai.entities.AAIResultWrapper
+import org.springframework.mock.env.MockEnvironment
 
-import com.github.tomakehurst.wiremock.client.WireMock
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.apache.commons.lang3.*
-
+import static org.mockito.ArgumentMatchers.any
+import static org.mockito.ArgumentMatchers.eq
+import static org.mockito.ArgumentMatchers.isA
+import static org.mockito.ArgumentMatchers.refEq
+import static org.mockito.Mockito.atLeast
+import static org.mockito.Mockito.mock
+import static org.mockito.Mockito.verify
+import static org.mockito.Mockito.when
+import static org.onap.so.bpmn.mock.StubResponseAAI.*
 
 @RunWith(MockitoJUnitRunner.class)
 class DoUpdateNetworkInstanceTest  {
@@ -2005,43 +2010,35 @@ String rollbackNetworkRequest =
 		}
 
 
-		@Test
-		//@Ignore
-		public void prepareUpdateNetworkRequest_NoPhysicalname() {
+    @Test
+    public void prepareUpdateNetworkRequest_NoPhysicalname() {
 
-			println "************ prepareNetworkRequest ************* "
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(NetworkRequest_noPhysicalName)
-			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse)
-			when(mockExecution.getVariable(Prefix + "cloudRegionPo")).thenReturn("RDM2WAGPLCP")
-			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("messageId_generated")
-			when(mockExecution.getVariable(Prefix + "source")).thenReturn("VID")
-			//when(mockExecution.getVariable(Prefix + "queryVpnBindingAAIResponse")).thenReturn(queryVpnBindingAAIResponse)
-			when(mockExecution.getVariable(Prefix + "routeCollection")).thenReturn("<routeTargets>13979:105757</routeTargets><routeTargets>13979:105757</routeTargets>")
-			when(mockExecution.getVariable(Prefix + "networkCollection")).thenReturn("<policyFqdns>GN_EVPN_Test</policyFqdns>")
-			when(mockExecution.getVariable(Prefix + "tableRefCollection")).thenReturn("")
-			when(mockExecution.getVariable(Prefix + "requestId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-			//when(mockExecution.getVariable("URN_?????")).thenReturn("")   // notificationUrl, //TODO - is this coming from URN? What variable/value to use?
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable(Prefix + "rollbackEnabled")).thenReturn("true")
+        println "************ prepareNetworkRequest ************* "
+        ExecutionEntity mockExecution = setupMock()
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable(Prefix + "requestId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
+        when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("messageId_generated")
+        when(mockExecution.getVariable(Prefix + "source")).thenReturn("VID")
 
-			// preProcessRequest(DelegateExecution execution)
-			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
-			DoUpdateNetworkInstance.prepareUpdateNetworkRequest(mockExecution)
+        when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(NetworkRequest_noPhysicalName)
+        when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).
+                thenReturn(getContrailL3Network())
+        when(mockExecution.getVariable(Prefix + "cloudRegionPo")).thenReturn("RDM2WAGPLCP")
+        when(mockExecution.getVariable(Prefix + "rollbackEnabled")).thenReturn("true")
 
-			// check the sequence of variable invocation
-			//MockitoDebuggerImpl preDebugger = new MockitoDebuggerImpl()
-			//preDebugger.printInvocations(mockExecution)
+        when(mockExecution.getVariable(Prefix + "routeCollection")).thenReturn("<routeTargets>13979:105757</routeTargets><routeTargets>13979:105757</routeTargets>")
+        when(mockExecution.getVariable(Prefix + "networkCollection")).thenReturn("<policyFqdns>GN_EVPN_Test</policyFqdns>")
+        when(mockExecution.getVariable(Prefix + "tableRefCollection")).thenReturn("")
 
-			// verify set prefix = Prefix + ""
-			verify(mockExecution).setVariable("prefix", Prefix + "")
+        DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
+        DoUpdateNetworkInstance.prepareUpdateNetworkRequest(mockExecution)
 
-			verify(mockExecution).setVariable(Prefix + "updateNetworkRequest", updateNetworkRequest_noPhysicalName)
+        // verify set prefix = Prefix + ""
+        verify(mockExecution).setVariable("prefix", Prefix + "")
+        verify(mockExecution).setVariable(Prefix + "updateNetworkRequest", updateNetworkRequest_noPhysicalName)
+    }
 
-		}
-
-		@Test
+    @Test
 		//@Ignore
 		public void prepareSDNCRequest() {
 
@@ -2274,42 +2271,33 @@ String rollbackNetworkRequest =
 
 		}
 
-		@Test
-		//@Ignore
-		public void callRESTQueryAAINetworkVpnBindingList_200() {
+    @Test
+    public void callRESTQueryAAINetworkVpnBindingList_200() {
 
-			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
+        println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBindingList_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBindingList_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
+        WireMock.reset();
 
-			ExecutionEntity mockExecution = setupMock()
-			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse) // v6
-			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
-			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.vpn-binding.uri")).thenReturn("/aai/v8/network/vpn-bindings/vpn-binding")
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+        prepareUrnPropertiesReader()
 
-			// preProcessRequest(DelegateExecution execution)
-			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
-			DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(
+                new AAIResultWrapper(FileUtil.readResourceFile("__files/BuildingBlocks/Network/queryAAIResponseEmptyUri.json")))
 
-			verify(mockExecution).setVariable("prefix", Prefix + "")
-			verify(mockExecution).setVariable(Prefix + "vpnCount", 2)
-			verify(mockExecution).setVariable(Prefix + "vpnBindings", ['/aai/v8/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017/', '/aai/v8/network/vpn-bindings/vpn-binding/c980a6ef-3b88-49f0-9751-dbad8608d0a6/'])
-			// the last vpnBinding value is saved.
-			verify(mockExecution).setVariable(Prefix + "queryVpnBindingAAIRequest", "http://localhost:8090/aai/v8/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017?depth=all")
-			verify(mockExecution, atLeast(2)).setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
+        DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
+        DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
 
-		}
+        verify(mockExecution).setVariable("prefix", Prefix + "")
+        verify(mockExecution).setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
+        verify(mockExecution).setVariable(Prefix + "queryVpnBindingAAIResponse",
+                """<rest:payload xmlns:rest="http://schemas.activebpel.org/REST/2007/12/01/aeREST.xsd"
+              xmlns="defaultTestNamespacev14"\n              contentType="text/xml">\n   <vpn-binding>
+      <global-route-target/>\n   </vpn-binding>\n</rest:payload>""")
+        verify(mockExecution).setVariable(Prefix + "routeCollection", "<routeTargets/>")
+    }
 
-		
-		@Test
+
+    @Test
 		//@Ignore
 		public void callRESTQueryAAINetworkVpnBinding_TestScenario01_200() {
 
@@ -2346,43 +2334,30 @@ String rollbackNetworkRequest =
 
 		}
 
-		@Test
-		//@Ignore
-		public void callRESTQueryAAINetworkVpnBinding_200_URN_Uri() {
+    @Test
+    public void callRESTQueryAAINetworkVpnBinding_200_URN_Uri() {
 
-			println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
+        println "************ callRESTQueryAAINetworkVpnBinding_200 ************* "
 
-			WireMock.reset();
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "85f015d0-2e32-4c30-96d2-87a1a27f8017");
-			MockGetNetworkVpnBinding("UpdateNetworkV2/updateNetwork_queryVpnBinding_AAIResponse_Success.xml", "c980a6ef-3b88-49f0-9751-dbad8608d0a6");
+        WireMock.reset();
+        MockGetNetworkVpnBindingWithDepth("BuildingBlocks/Network/queryAAIVpnBindingTestResponseWithRoutes.json",
+                "13e94b71-3ce1-4988-ab0e-61208fc91f1c", "2");
 
-			ExecutionEntity mockExecution = setupMock()
-			when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(queryIdAIIResponse)
-			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
-			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			when(mockExecution.getVariable("mso.workflow.global.default.aai.version")).thenReturn("8")
-			when(mockExecution.getVariable("mso.workflow.default.aai.v8.vpn-binding.uri")).thenReturn("/aai/v8/network/vpn-bindings/vpn-binding")
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+        prepareUrnPropertiesReader()
 
-			// preProcessRequest(DelegateExecution execution)
-			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
-			DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable(Prefix + "requeryIdAAIResponse")).thenReturn(
+                new AAIResultWrapper(FileUtil.readResourceFile("__files/BuildingBlocks/Network/queryAAINetworkTestResponse.json")))
 
-			// check the sequence of variable invocation
-			//MockitoDebuggerImpl preDebugger = new MockitoDebuggerImpl()
-			//preDebugger.printInvocations(mockExecution)
+        DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
+        DoUpdateNetworkInstance.callRESTQueryAAINetworkVpnBinding(mockExecution)
 
-			verify(mockExecution).setVariable("prefix", Prefix + "")
-			verify(mockExecution).setVariable(Prefix + "vpnCount", 2)
-			verify(mockExecution).setVariable(Prefix + "vpnBindings", ['/aai/v8/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017/', '/aai/v8/network/vpn-bindings/vpn-binding/c980a6ef-3b88-49f0-9751-dbad8608d0a6/'])
-			// the last vpnBinding value is saved.
-			verify(mockExecution).setVariable(Prefix + "queryVpnBindingAAIRequest", "http://localhost:8090/aai/v8/network/vpn-bindings/vpn-binding/85f015d0-2e32-4c30-96d2-87a1a27f8017?depth=all")
-			verify(mockExecution, atLeast(2)).setVariable(Prefix + "aaiQqueryVpnBindingReturnCode", "200")
-
-		}
+        verify(mockExecution).setVariable("prefix", Prefix + "")
+        verify(mockExecution).setVariable(Prefix + "routeCollection",
+                """<routeTargets>\n <routeTarget>2001:051111</routeTarget>\n <routeTargetRole>EXPORT</routeTargetRole>
+</routeTargets>\n<routeTargets>\n <routeTarget>1000:051113</routeTarget>\n <routeTargetRole>IMPORT</routeTargetRole>
+</routeTargets>\n""")
+    }
 
 		@Test
 		//@Ignore
@@ -2497,39 +2472,29 @@ String rollbackNetworkRequest =
 		}
 
 
-		@Test
-		//@Ignore
-		public void callRESTReQueryAAINetworkId_200() {
+    @Test
+    public void callRESTReQueryAAINetworkId_200() {
 
-			println "************ callRESTReQueryAAINetworkId ************* "
+        println "************ callRESTReQueryAAINetworkId ************* "
 
-			WireMock.reset();
-			MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4", "UpdateNetworkV2/updateNetwork_queryNetworkId_AAIResponse_Success.xml", "all");
+        WireMock.reset();
+        MockGetNetworkByIdWithDepth("49c86598-f766-46f8-84f8-8d1c1b10f9b4",
+                "BuildingBlocks/Network/queryAAINetworkTestResponse.json", "1");
 
-			ExecutionEntity mockExecution = setupMock()
-			when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
-			when(mockExecution.getVariable(Prefix + "changeAssignSDNCResponse")).thenReturn(sdncAdapterWorkflowFormattedResponse)
-			when(mockExecution.getVariable(Prefix + "messageId")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
-			when(mockExecution.getVariable("aai.endpoint")).thenReturn("http://localhost:8090")
-			when(mockExecution.getVariable("mso.workflow.DoUpdateNetworkInstance.aai.l3-network.uri")).thenReturn("/aai/v9/network/l3-networks/l3-network")
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn('http://org.openecomp.aai.inventory/')
-			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
-			when(mockExecution.getVariable("aai.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable(Prefix + "networkRequest")).thenReturn(expectedNetworkRequest)
 
-			// preProcessRequest(DelegateExecution execution)
-			DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
-			DoUpdateNetworkInstance.callRESTReQueryAAINetworkId(mockExecution)
+        DoUpdateNetworkInstance DoUpdateNetworkInstance = new DoUpdateNetworkInstance()
+        DoUpdateNetworkInstance.callRESTReQueryAAINetworkId(mockExecution)
 
-			// check the sequence of variable invocation
-			//MockitoDebuggerImpl preDebugger = new MockitoDebuggerImpl()
-			//preDebugger.printInvocations(mockExecution)
-
-			verify(mockExecution).setVariable("prefix", Prefix + "")
-			verify(mockExecution).setVariable(Prefix + "requeryIdAAIRequest", "http://localhost:8090/aai/v9/network/l3-networks/l3-network/49c86598-f766-46f8-84f8-8d1c1b10f9b4"+"?depth=all")
-			verify(mockExecution).setVariable(Prefix + "aaiRequeryIdReturnCode", "200")
-
-		}
+        verify(mockExecution).setVariable("prefix", Prefix + "")
+        verify(mockExecution).setVariable(Prefix + "aaiRequeryIdReturnCode", "200")
+        verify(mockExecution).setVariable(eq(Prefix + "requeryIdAAIResponse"), isA(AAIResultWrapper.class))
+        verify(mockExecution).setVariable(Prefix + "networkOutputs", """<network-outputs>
+                   <network-id>467e3349-bec1-4922-bcb1-d0bb041bce30</network-id>
+                   <network-name>vprobes_pktinternal_net_4_1806</network-name>
+                 </network-outputs>""")
+    }
 
 
 		@Test
@@ -2734,6 +2699,48 @@ String rollbackNetworkRequest =
 			verify(mockExecution).setVariable(Prefix + "Success", true)
 
 		}
+
+    private static void prepareUrnPropertiesReader() {
+        MockEnvironment mockEnvironment = mock(MockEnvironment.class)
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.version")).thenReturn("14")
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.namespace")).thenReturn("defaultTestNamespace")
+        when(mockEnvironment.getProperty("aai.endpoint")).thenReturn("http://localhost:8090")
+        UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
+        urnPropertiesReader.setEnvironment(mockEnvironment)
+    }
+
+
+    private static L3Network getContrailL3Network() {
+
+        HostRoutes routes1 = new HostRoutes()
+        routes1.getHostRoute().add(new HostRoute(routePrefix: "172.20.1.0/24", nextHop: "10.102.200.1"))
+        routes1.getHostRoute().add(new HostRoute(routePrefix: "10.102.0.0/16", nextHop: "10.102.200.1"))
+        routes1.getHostRoute().add(new HostRoute(routePrefix: "192.168.2.0/25", nextHop: "10.102.200.1"))
+
+        Subnet subnet1 = new Subnet(networkStartAddress: "107.239.52.0", cidrMask: "24", dhcpEnabled: true,
+                gatewayAddress: "107.239.52.1", ipVersion: "4", subnetId: "57e9a1ff-d14f-4071-a828-b19ae98eb2fc",
+                subnetName: "subnetName", ipAssignmentDirection: "true", hostRoutes: routes1)
+        Subnets subnets = new Subnets()
+        subnets.getSubnet().add(subnet1)
+
+        SegmentationAssignments segments = new SegmentationAssignments()
+        segments.getSegmentationAssignment().add(new SegmentationAssignment(segmentationId: "414"))
+        segments.getSegmentationAssignment().add(new SegmentationAssignment(segmentationId: "415"))
+
+        return new L3Network(
+                networkName: "MNS-25180-L-01-dmz_direct_net_1",
+                networkType: "CONTRAIL_EXTERNAL",
+                networkTechnology: "Contrail",
+                networkId: "49c86598-f766-46f8-84f8-8d1c1b10f9b4",
+                orchestrationStatus: "pending-create",
+                physicalNetworkName: "networkName",
+                heatStackId: "ST_2Bindings_6006/55288ef0-595c-47d3-819e-cf93aaac6326",
+                isSharedNetwork: true,
+                subnets: subnets,
+                segmentationAssignments: segments
+        )
+    }
+
 
 		private ExecutionEntity setupMock() {
 

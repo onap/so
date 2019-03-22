@@ -1,0 +1,196 @@
+{
+  "l3-network": [
+      {
+        "network-id": "0384d743-f69b-4cc8-9aa8-c3ae66662c44",
+        "network-name": "Dev_Bindings_1802_020118",
+        "network-type": "CONTRAIL30_BASIC",
+        "network-role": "GN_EVPN_direct",
+        "network-technology": "contrail",
+        "neutron-network-id": "1112b912-0e00-4d6d-9392-014e106399ee",
+        "is-bound-to-vpn": true,
+        "service-id": "a9a77d5a-123e-4ca2-9eb9-0b015d2ee0fb",
+        "network-role-instance": 0,
+        "resource-version": "1517496965485",
+        "orchestration-status": "pending-create",
+        "heat-stack-id": "Dev_Bindings_1802_020118/06c2445f-1ca1-4ad8-be08-454c4de443bb",
+        "contrail-network-fqdn": "default-domain:ECOMP_MSO_DND:Dev_Bindings_1802_020118",
+        "physical-network-name": "tbd",
+        "is-provider-network": false,
+        "is-shared-network": true,
+        "is-external-network": false,
+        "subnets": {
+          "subnet": [
+            {
+              "subnet-id": "209f62cf-cf0c-42f8-b13c-f038b92ef108",
+              "subnet-name": "",
+              "neutron-subnet-id": "3942ca32-5f5b-4d62-a2e4-b528b7a4318c",
+              "gateway-address": "192.168.41.1",
+              "network-start-address": "192.168.41.0",
+              "cidr-mask": "24",
+              "ip-version": "4",
+              "orchestration-status": "pending-create",
+              "dhcp-enabled": true,
+              "dhcp-start": "192.168.41.3",
+              "dhcp-end": "192.168.41.45",
+              "ip-assignment-direction": "",
+              "resource-version": "1517496965497"
+            },
+            {
+              "subnet-id": "971bc608-1aff-47c0-923d-92e43b699f01",
+              "subnet-name": "",
+              "neutron-subnet-id": "81a5ff92-7ca4-4756-a493-496479f0d10f",
+              "gateway-address": "192.168.42.1",
+              "network-start-address": "192.168.42.0",
+              "cidr-mask": "24",
+              "ip-version": "4",
+              "orchestration-status": "pending-create",
+              "dhcp-enabled": true,
+              "dhcp-start": "192.168.42.3",
+              "dhcp-end": "192.168.42.45",
+              "ip-assignment-direction": "",
+              "resource-version": "1517496965508"
+            }
+          ]
+        },
+        "relationship-list": {
+          "relationship": [
+            {
+              "related-to": "service-instance",
+              "related-link": "/aai/v11/business/customers/customer/MSO_1610_dev/service-subscriptions/service-subscription/MSO-dev-service-type/service-instances/service-instance/cc88915e-fb95-4b16-9c1e-a0abf40d1e40",
+              "relationship-data": [
+                {
+                  "relationship-key": "customer.global-customer-id",
+                  "relationship-value": "MSO_1610_dev"
+                },
+                {
+                  "relationship-key": "service-subscription.service-type",
+                  "relationship-value": "MSO-dev-service-type"
+                },
+                {
+                  "relationship-key": "service-instance.service-instance-id",
+                  "relationship-value": "cc88915e-fb95-4b16-9c1e-a0abf40d1e40"
+                }
+              ],
+              "related-to-property": [
+                {
+                  "property-key": "service-instance.service-instance-name",
+                  "property-value": "MSO-DEV-SI-1802-v6-2-01-nwk1"
+                }
+              ]
+            },
+            {
+              "related-to": "cloud-region",
+              "related-link": "/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn6",
+              "relationship-data": [
+                {
+                  "relationship-key": "cloud-region.cloud-owner",
+                  "relationship-value": "CloudOwner"
+                },
+                {
+                  "relationship-key": "cloud-region.cloud-region-id",
+                  "relationship-value": "mtn6"
+                }
+              ],
+              "related-to-property": [
+                {
+                  "property-key": "cloud-region.owner-defined-type",
+                  "property-value": "LCP"
+                }
+              ]
+            },
+            {
+              "related-to": "tenant",
+              "related-link": "/aai/v11/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/mtn6/tenants/tenant/0422ffb57ba042c0800a29dc85ca70f8",
+              "relationship-data": [
+                {
+                  "relationship-key": "cloud-region.cloud-owner",
+                  "relationship-value": "CloudOwner"
+                },
+                {
+                  "relationship-key": "cloud-region.cloud-region-id",
+                  "relationship-value": "mtn6"
+                },
+                {
+                  "relationship-key": "tenant.tenant-id",
+                  "relationship-value": "0422ffb57ba042c0800a29dc85ca70f8"
+                }
+              ],
+              "related-to-property": [
+                {
+                  "property-key": "tenant.tenant-name",
+                  "property-value": "ECOMP_MSO_DND"
+                }
+              ]
+            },
+            {
+              "related-to": "route-table-reference",
+              "related-link": "/aai/v11/network/route-table-references/route-table-reference/c87fa27e-ac15-4b3e-b7ef-866682d8ca00",
+              "relationship-data": [
+                {
+                  "relationship-key": "route-table-reference.route-table-reference-id",
+                  "relationship-value": "c87fa27e-ac15-4b3e-b7ef-866682d8ca00"
+                }
+              ],
+              "related-to-property": [
+                {
+                  "property-key": "route-table-reference.route-table-reference-fqdn",
+                  "property-value": "default-domain:ECOMP_MSO_DND:RTA"
+                }
+              ]
+            },
+            {
+              "related-to": "network-policy",
+              "related-link": "/aai/v11/network/network-policies/network-policy/0219d83f-7c4a-48e2-b8fc-9b20459356bc",
+              "relationship-data": [
+                {
+                  "relationship-key": "network-policy.network-policy-id",
+                  "relationship-value": "0219d83f-7c4a-48e2-b8fc-9b20459356bc"
+                }
+              ],
+              "related-to-property": [
+                {
+                  "property-key": "network-policy.network-policy-fqdn",
+                  "property-value": "default-domain:ECOMP_MSO_DND:MSOPolicyD"
+                }
+              ]
+            },
+            {
+              "related-to": "network-policy",
+              "related-link": "/aai/v11/network/network-policies/network-policy/e7a3560c-8b29-4611-a404-83af0b31ce64",
+              "relationship-data": [
+                {
+                  "relationship-key": "network-policy.network-policy-id",
+                  "relationship-value": "e7a3560c-8b29-4611-a404-83af0b31ce64"
+                }
+              ],
+              "related-to-property": [
+                {
+                  "property-key": "network-policy.network-policy-fqdn",
+                  "property-value": "default-domain:ECOMP_MSO_DND:MSOPolicyC"
+                }
+              ]
+            },
+            {
+              "related-to": "vpn-binding",
+              "related-link": "/aai/v11/network/vpn-bindings/vpn-binding/9a7b327d9-287aa00-82c4b0-100001",
+              "relationship-data": [
+                {
+                  "relationship-key": "vpn-binding.vpn-id",
+                  "relationship-value": "9a7b327d9-287aa00-82c4b0-100001"
+                }
+              ],
+              "related-to-property": [
+                {
+                  "property-key": "vpn-binding.vpn-name",
+                  "property-value": "MSO_VPN_TEST"
+                },
+                {
+                  "property-key": "vpn-binding.vpn-type"
+                }
+              ]
+            }
+          ]
+        }
+      }
+   ]
+}

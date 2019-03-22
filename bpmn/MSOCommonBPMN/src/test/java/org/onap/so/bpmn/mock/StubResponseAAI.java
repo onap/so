@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,12 +22,13 @@
 
 package org.onap.so.bpmn.mock;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.patch;
+import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
@@ -512,21 +515,21 @@ public class StubResponseAAI {
 						.withBodyFile(responseFile)));
 	}
 
-	public static void MockGetNetworkByName(String networkName, String responseFile) {
-		   stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name="+networkName))
-					.willReturn(aResponse()
-							.withStatus(200)
-							.withHeader("Content-Type", "text/xml")
-							.withBodyFile(responseFile)));
-	}
+    public static void MockGetNetworkByName(String networkName, String responseFile) {
+        stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks[?]network-name=" + networkName))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "text/xml")
+                .withBodyFile(responseFile)));
+    }
 
-	public static void MockGetNetworkByName_404(String responseFile, String networkName) {
- 	stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name="+networkName))
-				.willReturn(aResponse()
-						.withStatus(404)
-						.withHeader("Content-Type", "text/xml")
-						.withBodyFile(responseFile)));
-	}
+    public static void MockGetNetworkByName_404(String responseFile, String networkName) {
+        stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks[?]network-name=" + networkName))
+            .willReturn(aResponse()
+                .withStatus(404)
+                .withHeader("Content-Type", "text/xml")
+                .withBodyFile(responseFile)));
+    }
 
 	public static void MockGetNetworkCloudRegion_404(String cloudRegion) {
 		stubFor(get(urlMatching("/aai/v[0-9]+/cloud-infrastructure/cloud-regions/cloud-region/CloudOwner/"+cloudRegion))
@@ -559,12 +562,16 @@ public class StubResponseAAI {
 	}
 
 	public static void MockGetNetworkVpnBinding(String responseFile, String vpnBinding) {
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/vpn-bindings/vpn-binding/"+vpnBinding + "[?]depth=all"))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "text/xml")
-						.withBodyFile(responseFile)));
+        MockGetNetworkVpnBindingWithDepth(responseFile, vpnBinding, "all");
 	}
+
+    public static void MockGetNetworkVpnBindingWithDepth(String responseFile, String vpnBinding, String depth) {
+        stubFor(get(urlMatching("/aai/v[0-9]+/network/vpn-bindings/vpn-binding/"+vpnBinding + "[?]depth=" + depth))
+            .willReturn(aResponse()
+                .withStatus(200)
+                .withHeader("Content-Type", "text/xml")
+                .withBodyFile(responseFile)));
+    }
 
 	public static void MockGetNetworkPolicy(String responseFile, String policy) {
 		stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/"+policy + "[?]depth=all"))
@@ -833,13 +840,14 @@ public class StubResponseAAI {
 						.withBodyFile(responseFile)));
 	}
 
-	public static void MockGetVfModuleByName(String vnfId, String vfModuleName, String responseFile, int statusCode) {
-		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module[?]vf-module-name=" + vfModuleName))
-				.willReturn(aResponse()
-						.withStatus(statusCode)
-						.withHeader("Content-Type", "text/xml")
-						.withBodyFile(responseFile)));
-	}
+    public static void MockGetVfModuleByName(String vnfId, String vfModuleName, String responseFile, int statusCode) {
+        stubFor(get(urlMatching(
+            "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules[?]vf-module-name=" + vfModuleName))
+            .willReturn(aResponse()
+                .withStatus(statusCode)
+                .withHeader("Content-Type", "text/xml")
+                .withBodyFile(responseFile)));
+    }
 
 	public static void MockGetVfModuleIdNoResponse(String vnfId, String requestContaining, String vfModuleId) {
 		stubFor(get(urlMatching("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/" + vnfId + "/vf-modules/vf-module/" + vfModuleId))

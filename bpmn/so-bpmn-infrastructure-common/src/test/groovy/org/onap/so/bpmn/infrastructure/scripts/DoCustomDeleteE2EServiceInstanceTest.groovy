@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -139,16 +141,6 @@ class DoCustomDeleteE2EServiceInstanceTest extends GroovyTestBase {
         String method = "deleteE2E";
         instance.postProcessSDNCDelete(mex, response, method)
 		// following method doesn't do anything currently -> nothing to check
-    }
-
-    @Test
-    public void postProcessAAIDELTest() {
-        ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
-        initPreProcess(mex)
-        when(mex.getVariable("GENDS_SuccessIndicator")).thenReturn("true")
-        DoCustomDeleteE2EServiceInstance instance = new DoCustomDeleteE2EServiceInstance()
-        instance.postProcessAAIDEL(mex)
     }
 
     private void initPreProcess(ExecutionEntity mex) {

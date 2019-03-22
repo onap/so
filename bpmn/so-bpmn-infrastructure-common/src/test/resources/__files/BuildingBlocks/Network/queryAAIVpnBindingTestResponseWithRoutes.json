@@ -1,0 +1,903 @@
+{
+  "vpn-id": "13e94b71-3ce1-4988-ab0e-61208fc91f1c",
+  "vpn-name": "vMDNS",
+  "resource-version": "1510956324462",
+  "route-targets": {"route-target":    [
+    {
+      "global-route-target": "2001:051111",
+      "route-target-role": "EXPORT",
+      "resource-version": "1515683690360"
+    },
+    {
+      "global-route-target": "1000:051113",
+      "route-target-role": "IMPORT",
+      "resource-version": "1515683690372"
+    }
+  ]},
+  "relationship-list": {"relationship":    [
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/b3376949-5487-4a74-9029-332c07720c07",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "b3376949-5487-4a74-9029-332c07720c07"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "vEPDG-FN-26642-T-01_hsl_fn_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/d0b8ecd3-aee4-48ba-8bc5-222d3fb08162",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "d0b8ecd3-aee4-48ba-8bc5-222d3fb08162"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_Shared_oam_protected_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/34305bd0-ad54-4349-8567-6f65ea09e750",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "34305bd0-ad54-4349-8567-6f65ea09e750"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_vEPDG-FN_swu_direct_fn_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/dfa4972a-ed82-43cd-98be-ed73bb3406a9",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "dfa4972a-ed82-43cd-98be-ed73bb3406a9"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_Shared_EXN_INTERNET_NET_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/93556256-aa23-449d-a2fd-3a9c034f232a",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "93556256-aa23-449d-a2fd-3a9c034f232a"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_CORE-NSD-TOAM0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/7ce01c3a-5998-4908-85f6-ab29bc507a92",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "7ce01c3a-5998-4908-85f6-ab29bc507a92"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B-VSHAKEN_CORE-NSD-TOAM0_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/016d3722-999b-4133-b4e6-8a1088bab664",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "016d3722-999b-4133-b4e6-8a1088bab664"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND-vepdg-FN-Shared_oam_protected_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/80038196-9eae-452c-ad06-1f3fef1bef9f",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "80038196-9eae-452c-ad06-1f3fef1bef9f"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_VPMS-FN-26071-T-BE-01_cdr_direct_net420"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/f5f38447-dc62-4969-90a3-c60474f9c0ac",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "f5f38447-dc62-4969-90a3-c60474f9c0ac"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_Shared_OAM_DIRECT_NET_3"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/58b374aa-01ca-4a39-99b9-889c2f7ae908",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "58b374aa-01ca-4a39-99b9-889c2f7ae908"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_OAM_MGMT_NET_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/efe0dfca-18e7-4992-a63a-041b9f8271e0",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "efe0dfca-18e7-4992-a63a-041b9f8271e0"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_APN-dns_int_apn_dns_fn_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/dab7e704-6a6e-4c53-9a80-fb5857a43b6f",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "dab7e704-6a6e-4c53-9a80-fb5857a43b6f"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B-VSHAKEN_CORE-NSD-TOAM0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/634653b3-9084-41d9-ad6a-40863a3d666f",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "634653b3-9084-41d9-ad6a-40863a3d666f"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-01A_int_fw_dns_trusted_net_5"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/6117b35e-c029-4308-85e6-007c24014484",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "6117b35e-c029-4308-85e6-007c24014484"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-24595-D-T001_vprobes_int_mgmt_net_2"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/eb1ce51b-d10f-4b08-9166-345335b9f73b",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "eb1ce51b-d10f-4b08-9166-345335b9f73b"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_OAMP_NSD_ISBC0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/468f83be-4abb-4901-950b-e399b77a09a0",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "468f83be-4abb-4901-950b-e399b77a09a0"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_IRPR-TOAM0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/103d17dc-6575-427c-a2c1-301493e08ec0",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "103d17dc-6575-427c-a2c1-301493e08ec0"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_segw_hsl_direct_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/305214f8-64be-4209-8a0d-10b6dfb77dd1",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "305214f8-64be-4209-8a0d-10b6dfb77dd1"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_vMDS_FN_int_fw_dns_trusted_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/7989a6d2-ba10-4a5d-8f15-4520bc833090",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "7989a6d2-ba10-4a5d-8f15-4520bc833090"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02AShared_cor_direct_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/f040ebf4-76ad-4b05-a766-1deec26549ae",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "f040ebf4-76ad-4b05-a766-1deec26549ae"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "vEPDG-FN-26642-T-01_gn_untrusted_fn_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/26d6038b-4b9e-4fe5-bcff-9af7586651cc",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "26d6038b-4b9e-4fe5-bcff-9af7586651cc"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-24595-D-T001_vprobes_pktinternal_net_10"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/9e78d3f4-85b5-40b8-803e-c3a0ab6d6165",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "9e78d3f4-85b5-40b8-803e-c3a0ab6d6165"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_MNS_Shared_oam_protected_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/a2de22f9-eb91-452e-aff5-e81a1a679ef6",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "a2de22f9-eb91-452e-aff5-e81a1a679ef6"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_Shared_GN_DIRECT_NET_01"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/6d6b7254-72d2-4731-80d6-8e8375d959e9",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "6d6b7254-72d2-4731-80d6-8e8375d959e9"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_VDBE-PED-DMZ0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/21819ac4-95c4-490f-ba7c-0ad92920f805",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "21819ac4-95c4-490f-ba7c-0ad92920f805"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_FN_int_pktinternal_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/98ff6827-320a-4b71-bd2b-df2bd20b6855",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "98ff6827-320a-4b71-bd2b-df2bd20b6855"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_Shared_oam_protected_net_2"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/e229ab86-279c-4505-a08a-91e373293e20",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "e229ab86-279c-4505-a08a-91e373293e20"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_Shared_OAM_DIRECT_NET_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/bb722f93-2d1a-42a5-bd11-57ad30ff1085",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "bb722f93-2d1a-42a5-bd11-57ad30ff1085"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_segw_hsl_direct_net_2"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/0399443d-1fc6-42a6-934c-77030d751916",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "0399443d-1fc6-42a6-934c-77030d751916"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_VDBE-PED-DMZ0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/d259ec74-304d-4bd2-bbd6-93c201acba42",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "d259ec74-304d-4bd2-bbd6-93c201acba42"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A__vprobes_int_mgmt_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/f69fb458-e2bd-4d0f-9a47-430d18cbebfd",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "f69fb458-e2bd-4d0f-9a47-430d18cbebfd"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_VPMS-FN-26071-T-BE-01_cdr_direct_net4"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/0f18b91f-ee79-403b-a081-8c0a89650641",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "0f18b91f-ee79-403b-a081-8c0a89650641"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_VPMS-FN_int_pktinternal_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/90fdbbbb-42bb-41ff-9356-db245466a4fc",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "90fdbbbb-42bb-41ff-9356-db245466a4fc"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_Shared_oam_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/0e66adce-d5dd-4968-bcb2-83f0281424db",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "0e66adce-d5dd-4968-bcb2-83f0281424db"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B-VSHAKEN_VDBF-MIS-UDAT0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/db572383-dbd7-4d5e-93cb-8c7c1d209a90",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "db572383-dbd7-4d5e-93cb-8c7c1d209a90"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_TRST_VIF_ISBC0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/478b7f86-8544-48e5-95f1-568dfd18730d",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "478b7f86-8544-48e5-95f1-568dfd18730d"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_Shared_GN_DIRECT_NET_01"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/0f725895-5224-4016-b49a-d9d016eaafff",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "0f725895-5224-4016-b49a-d9d016eaafff"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_Shared_OAM_DIRECT_NET_2"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/9cd47b0c-ee58-46f0-9ec5-b4db504dd59b",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "9cd47b0c-ee58-46f0-9ec5-b4db504dd59b"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "MNS-FN-25180-T-01Shared_oam_protected_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/f95259c9-f5c6-4861-a9f4-b6eec199b33f",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "f95259c9-f5c6-4861-a9f4-b6eec199b33f"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_Shared_oam_protected_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/caf98ee4-2496-4c92-a41c-b6a50efcc29f",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "caf98ee4-2496-4c92-a41c-b6a50efcc29f"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_MGM-CORE-NSD-TOAM0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/754739cb-5371-4d5b-a02a-489587d17443",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "754739cb-5371-4d5b-a02a-489587d17443"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_Shared_OAM_DIRECT_NET_4"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/8cd7add8-0cfc-4f65-bbf8-d0f25a0dbc70",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "8cd7add8-0cfc-4f65-bbf8-d0f25a0dbc70"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_VDBE-MIS-UDAT0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/7093921f-bed8-4866-bb3c-a2b8c376ca69",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "7093921f-bed8-4866-bb3c-a2b8c376ca69"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_VIRPR-TDAT0_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/691da8b2-805e-4dd1-aaf5-b0e37414c662",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "691da8b2-805e-4dd1-aaf5-b0e37414c662"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_int_pktmirror_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/00eaa0b3-90df-4b43-a850-9d30abb7fded",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "00eaa0b3-90df-4b43-a850-9d30abb7fded"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-01AShared_oam_protected_net_5"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/6ba57200-c61a-46be-821b-88b3fa169b66",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "6ba57200-c61a-46be-821b-88b3fa169b66"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_OAM_MGMT_NET_3"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/8e32ec2c-47a1-4514-b21a-2806e23f0437",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "8e32ec2c-47a1-4514-b21a-2806e23f0437"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B-VSHAKENb_VDBF-PSD-DMZ0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/a755ddd0-512a-444d-9f38-97b3eff70f85",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "a755ddd0-512a-444d-9f38-97b3eff70f85"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_UNTR_VSE_ISBC0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/c7bde85d-1c12-467c-ae6f-57bdf5c1d380",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "c7bde85d-1c12-467c-ae6f-57bdf5c1d380"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B-VSHAKENb_VDBF-PSD-DMZ0_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/0933fcec-9e78-4045-a21a-8258e18cb78e",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "0933fcec-9e78-4045-a21a-8258e18cb78e"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_vdbe_oam_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/6a26a729-d9ce-4619-a20e-38597205ba7d",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "6a26a729-d9ce-4619-a20e-38597205ba7d"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "vEPDG-FN-26642-T-01_swu_direct_fn_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/c1a06665-518b-408b-bfe0-8f393204baf6",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "c1a06665-518b-408b-bfe0-8f393204baf6"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_OAM_MGMT_NET_2"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/fb51398b-7622-4570-9bd6-e29c82621d44",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "fb51398b-7622-4570-9bd6-e29c82621d44"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02B_OAM_MGMT_NET_4"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/92072731-1c40-45c2-a218-5e75b713b312",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "92072731-1c40-45c2-a218-5e75b713b312"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_TRST_VIF_ISBC0_net_0001"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/c6d94632-fd6b-4bfe-993e-377b0368476b",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "c6d94632-fd6b-4bfe-993e-377b0368476b"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-01AShared_int_ha_net_5"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/84516ef3-e371-4039-908e-83cd2b55a4a1",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "84516ef3-e371-4039-908e-83cd2b55a4a1"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "VPMS-FN-26071-T-BE-01_vprobes_int_mgmt_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/2c4f3adc-1a45-4484-8fb6-9eeac99eb922",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "2c4f3adc-1a45-4484-8fb6-9eeac99eb922"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_VDBE-MIS-UDAT0_net_0"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/1fea0624-dac2-4997-904d-34ca1bc12fa9",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "1fea0624-dac2-4997-904d-34ca1bc12fa9"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02AShared_cps_internal_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/8ab98982-05b7-45b2-828d-648da3d6cc0f",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "8ab98982-05b7-45b2-828d-648da3d6cc0f"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "vEPDG-FN-26642-T-01_swu_direct_fn_net_2"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/c8934d59-24a8-41cc-af9d-2026ef261843",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "c8934d59-24a8-41cc-af9d-2026ef261843"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APPC-24595-T-IST-02A_Shared_oam_protected_net_vrar_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/c741fe5b-bf27-4ad9-b30d-20518e115495",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "c741fe5b-bf27-4ad9-b30d-20518e115495"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_int_apn_dns_fn_net_PB_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/8285fbae-ec25-44f7-ac52-89a968d45a2b",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "8285fbae-ec25-44f7-ac52-89a968d45a2b"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-T2B_vEPDG-FN_swu_direct_fn_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/65e6d4b0-0c96-4bfa-bdd6-2baa16df322a",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "65e6d4b0-0c96-4bfa-bdd6-2baa16df322a"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-DND_vEPDG-FN_gn_untrusted_fn_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/38e51c7b-adc2-491a-a036-3189645b007c",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "38e51c7b-adc2-491a-a036-3189645b007c"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "vprobes_pktinternal_net_2_1806"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/4d210b09-b6ce-41b3-95a6-5e4dffea9ca2",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "4d210b09-b6ce-41b3-95a6-5e4dffea9ca2"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "vprobes_pktinternal_net_3_1806"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/c5df1c57-3c85-4abc-973f-a1ffb13e391a",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "c5df1c57-3c85-4abc-973f-a1ffb13e391a"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_1"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/467e3349-bec1-4922-bcb1-d0bb041bce30",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "467e3349-bec1-4922-bcb1-d0bb041bce30"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "vprobes_pktinternal_net_4_1806"
+      }]
+    },
+    {
+      "related-to": "l3-network",
+      "relationship-label": "org.onap.relationships.inventory.Uses",
+      "related-link": "/aai/v12/network/l3-networks/l3-network/1596f4d2-66b5-4627-96f2-c26794154530",
+      "relationship-data": [         {
+        "relationship-key": "l3-network.network-id",
+        "relationship-value": "1596f4d2-66b5-4627-96f2-c26794154530"
+      }],
+      "related-to-property": [         {
+        "property-key": "l3-network.network-name",
+        "property-value": "APP-C-24595-T-IST-04AShared_untrusted_vDBE_net_2"
+      }]
+    }
+  ]}
+}

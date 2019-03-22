@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,12 +22,12 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import static com.shazam.shazamcrest.MatcherAssert.assertThat
+import org.junit.Assert
+
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs
-import static org.mockito.Mockito.times
+import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.Mockito.when
 
-import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
 import org.junit.Test
 import org.mockito.ArgumentCaptor
@@ -46,24 +48,24 @@ class DoCreateE2EServiceInstanceTest extends MsoGroovyTest{
         super.init("DoCreateE2EServiceInstance")
     }
     @Captor
-    static ArgumentCaptor<ExecutionEntity> captor = ArgumentCaptor.forClass(ExecutionEntity.class)
+    static ArgumentCaptor<ServiceInstance> captor = ArgumentCaptor.forClass(ServiceInstance.class)
     @Test
     public void testPreProcessRequest(){
         mockData()
         ServiceInstance expectedServiceInstanceData = getExpectedServiceInstance()
         DoCreateE2EServiceInstance serviceInstance = new DoCreateE2EServiceInstance()
         serviceInstance.preProcessRequest(mockExecution)
-        Mockito.verify(mockExecution, times(7)).setVariable(captor.capture(), captor.capture())
-        assertThat(captor.getValue(), sameBeanAs(expectedServiceInstanceData))
+        Mockito.verify(mockExecution).setVariable(eq("serviceInstanceData"), captor.capture())
+        Assert.assertThat(captor.getValue(), sameBeanAs(expectedServiceInstanceData))
     }
 
     private ServiceInstance getExpectedServiceInstance() {
         ServiceInstance expectedServiceInstanceData = new ServiceInstance()
-        expectedServiceInstanceData.setServiceInstanceId("1234")
         expectedServiceInstanceData.setServiceInstanceName("volte-service")
         expectedServiceInstanceData.setServiceType("E2E Service")
         expectedServiceInstanceData.setServiceRole("E2E Service")
         expectedServiceInstanceData.setOrchestrationStatus("Created")
+        expectedServiceInstanceData.setInputParameters((String) mockExecution.getVariable("uuiRequest"))
         return expectedServiceInstanceData
     }
 
@@ -73,7 +75,8 @@ class DoCreateE2EServiceInstanceTest extends MsoGroovyTest{
         when(mockExecution.getVariable("serviceType")).thenReturn("TRANSPORT")
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("1234")
         when(mockExecution.getVariable("serviceInstanceName")).thenReturn("volte-service")
-        when(mockExecution.getVariable("uuiRequest")).thenReturn("""{"service":{"serviceDefId":"c1d4305f-cdbd-4bbe-9069-a2f4978fd89e" , "templateId" : "d4df5c27-98a1-4812-a8aa-c17f055b7a3f"}}""")
+        when(mockExecution.getVariable("uuiRequest")).
+                thenReturn("""{"service":{"serviceDefId":"c1d4305f-cdbd-4bbe-9069-a2f4978fd89e" , "templateId" : "d4df5c27-98a1-4812-a8aa-c17f055b7a3f"}}""")
         when(mockExecution.getVariable("mso.workflow.sdncadapter.callback")).thenReturn("/mso/sdncadapter/")
         when(mockExecution.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn("http://org.openecomp.aai.inventory/")
         when(mockExecution.getVariable("mso.workflow.default.aai.customer.version")).thenReturn("8")
