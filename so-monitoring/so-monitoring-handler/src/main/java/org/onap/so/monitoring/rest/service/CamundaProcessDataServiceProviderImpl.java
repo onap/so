@@ -35,14 +35,14 @@ import org.onap.so.monitoring.model.ProcessDefinitionDetail;
 import org.onap.so.monitoring.model.ProcessInstanceDetail;
 import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
 import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
+import org.onap.so.rest.service.HttpRestServiceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author waqas.ikram@ericsson.com
@@ -64,13 +64,12 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
     @Override
     public Optional<ProcessInstanceIdDetail> getProcessInstanceIdDetail(final String requestId) {
         final String url = urlProvider.getHistoryProcessInstanceUrl(requestId);
-        final Optional<ProcessInstance[]> processInstances =
-                httpRestServiceProvider.getHttpResponse(url, ProcessInstance[].class);
+        final Optional<ProcessInstance[]> processInstances = httpRestServiceProvider.get(url, ProcessInstance[].class);
 
         if (processInstances.isPresent()) {
             final ProcessInstance[] instances = processInstances.get();
-            final String message = "found process instance for request id: " + requestId + 
-                ", result size: " + instances.length;
+            final String message =
+                    "found process instance for request id: " + requestId + ", result size: " + instances.length;
             LOGGER.debug(message);
 
             if (instances.length > 0) {
@@ -79,8 +78,8 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
                     if (processInstance.getSuperProcessInstanceId() == null) {
                         return Optional.of(new ProcessInstanceIdDetail(processInstance.getId()));
                     }
-                    LOGGER.debug("found sub process instance id with super process instanceId: " +
-                            processInstance.getSuperProcessInstanceId());
+                    LOGGER.debug("found sub process instance id with super process instanceId: "
+                            + processInstance.getSuperProcessInstanceId());
                 }
             }
         }
@@ -91,8 +90,7 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
     @Override
     public Optional<ProcessInstanceDetail> getSingleProcessInstanceDetail(final String processInstanceId) {
         final String url = urlProvider.getSingleProcessInstanceUrl(processInstanceId);
-        final Optional<ProcessInstance> processInstances =
-                httpRestServiceProvider.getHttpResponse(url, ProcessInstance.class);
+        final Optional<ProcessInstance> processInstances = httpRestServiceProvider.get(url, ProcessInstance.class);
 
         if (processInstances.isPresent()) {
             final ProcessInstance processInstance = processInstances.get();
@@ -111,8 +109,7 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
     @Override
     public Optional<ProcessDefinitionDetail> getProcessDefinition(final String processDefinitionId) {
         final String url = urlProvider.getProcessDefinitionUrl(processDefinitionId);
-        final Optional<ProcessDefinition> response =
-                httpRestServiceProvider.getHttpResponse(url, ProcessDefinition.class);
+        final Optional<ProcessDefinition> response = httpRestServiceProvider.get(url, ProcessDefinition.class);
         if (response.isPresent()) {
             final ProcessDefinition processDefinition = response.get();
             final String xmlDefinition = processDefinition.getBpmn20Xml();
@@ -120,16 +117,14 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
                 return Optional.of(new ProcessDefinitionDetail(processDefinitionId, xmlDefinition));
             }
         }
-        LOGGER.error("Unable to find process definition for processDefinitionId: " + 
-                     processDefinitionId);
+        LOGGER.error("Unable to find process definition for processDefinitionId: " + processDefinitionId);
         return Optional.absent();
     }
 
     @Override
     public List<ActivityInstanceDetail> getActivityInstance(final String processInstanceId) {
         final String url = urlProvider.getActivityInstanceUrl(processInstanceId);
-        final Optional<ActivityInstance[]> response =
-                httpRestServiceProvider.getHttpResponse(url, ActivityInstance[].class);
+        final Optional<ActivityInstance[]> response = httpRestServiceProvider.get(url, ActivityInstance[].class);
         if (response.isPresent()) {
             final ActivityInstance[] activityInstances = response.get();
             final List<ActivityInstanceDetail> activityInstanceDetails = new ArrayList<>(activityInstances.length);
@@ -148,8 +143,7 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
             }
             return activityInstanceDetails;
         }
-        LOGGER.error("Unable to find activity intance detail for process instance id: " + 
-                     processInstanceId);
+        LOGGER.error("Unable to find activity intance detail for process instance id: " + processInstanceId);
         return Collections.emptyList();
     }
 
@@ -157,7 +151,7 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
     public List<ProcessInstanceVariableDetail> getProcessInstanceVariable(final String processInstanceId) {
         final String url = urlProvider.getProcessInstanceVariablesUrl(processInstanceId);
         final Optional<ProcessInstanceVariable[]> response =
-                httpRestServiceProvider.getHttpResponse(url, ProcessInstanceVariable[].class);
+                httpRestServiceProvider.get(url, ProcessInstanceVariable[].class);
         if (response.isPresent()) {
             final ProcessInstanceVariable[] instanceVariables = response.get();
             final List<ProcessInstanceVariableDetail> instanceVariableDetails =
@@ -171,8 +165,7 @@ public class CamundaProcessDataServiceProviderImpl implements CamundaProcessData
             }
             return instanceVariableDetails;
         }
-        LOGGER.error("Unable to find process intance variable details for process instance id: " 
-                     + processInstanceId);
+        LOGGER.error("Unable to find process intance variable details for process instance id: " + processInstanceId);
         return Collections.emptyList();
     }
 

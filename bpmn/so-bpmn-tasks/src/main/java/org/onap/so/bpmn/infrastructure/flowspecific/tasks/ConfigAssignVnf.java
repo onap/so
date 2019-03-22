@@ -65,10 +65,8 @@ public class ConfigAssignVnf {
     public void preProcessAbstractCDSProcessing(BuildingBlockExecution execution) {
         logger.info("Start preProcessAbstractCDSProcessing ");
         try {
-            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID,
-                    execution.getLookupMap().get(ResourceKey.GENERIC_VNF_ID));
-            ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID,
-                    execution.getLookupMap().get(ResourceKey.SERVICE_INSTANCE_ID));
+            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 
             Map<String, Object> userParams = execution.getGeneralBuildingBlock().getRequestContext().getUserParams();
 

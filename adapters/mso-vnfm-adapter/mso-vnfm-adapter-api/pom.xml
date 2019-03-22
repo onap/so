@@ -44,6 +44,7 @@
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <withXml>true</withXml>
                                 <useRxJava2>true</useRxJava2>
+                                <serializableModel>true</serializableModel>
                             </configOptions>
                         </configuration>
                     </execution>
