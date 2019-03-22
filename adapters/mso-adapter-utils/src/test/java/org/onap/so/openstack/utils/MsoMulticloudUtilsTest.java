@@ -37,6 +37,7 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.onap.so.BaseTest;
+import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
@@ -64,9 +65,9 @@ public class MsoMulticloudUtilsTest extends BaseTest {
             .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 .withBody(CREATE_STACK_RESPONSE)
                 .withStatus(HttpStatus.SC_CREATED)));
-        StackInfo result = multicloudUtils.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack",
+        StackInfo result = multicloudUtils.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
             "TEST-heat", new HashMap<>(), false, 200, "TEST-env",
-            new HashMap<>(), new HashMap<>());
+            new HashMap<>(), new HashMap<>(), false);
         assertNotNull(result);
         assertEquals("TEST-stack", result.getName());
     }
@@ -79,9 +80,9 @@ public class MsoMulticloudUtilsTest extends BaseTest {
             cloudSite.setIdentityService(new CloudIdentity());
             when(cloudConfigMock.getCloudSite("MTN13")).
                 thenReturn(Optional.of(cloudSite));
-            multicloudUtilsMock.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack",
+            multicloudUtilsMock.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
                 "TEST-heat", new HashMap<>(), false, 200, "TEST-env",
-                new HashMap<>(), new HashMap<>());
+                new HashMap<>(), new HashMap<>(), false);
         } catch (MsoException e) {
             assertEquals("0 : Multicloud client could not be initialized", e.toString());
             return;
@@ -95,9 +96,9 @@ public class MsoMulticloudUtilsTest extends BaseTest {
             stubFor(post(urlPathEqualTo("/v2.0"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                     .withStatus(HttpStatus.SC_BAD_REQUEST)));
-            multicloudUtils.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack",
+            multicloudUtils.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
                 "TEST-heat", new HashMap<>(), false, 200, "TEST-env",
-                new HashMap<>(), new HashMap<>());
+                new HashMap<>(), new HashMap<>(), false);
         } catch (MsoException e) {
             assertEquals("0 : Bad Request", e.toString());
             return;
@@ -110,9 +111,9 @@ public class MsoMulticloudUtilsTest extends BaseTest {
         stubFor(post(urlPathEqualTo("/v2.0"))
             .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 .withStatus(HttpStatus.SC_CREATED)));
-        StackInfo result = multicloudUtils.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack",
+        StackInfo result = multicloudUtils.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
             "TEST-heat", new HashMap<>(), false, 200, "TEST-env",
-            new HashMap<>(), new HashMap<>());
+            new HashMap<>(), new HashMap<>(), false);
         assertNotNull(result);
         assertEquals("TEST-stack/", result.getName());
     }

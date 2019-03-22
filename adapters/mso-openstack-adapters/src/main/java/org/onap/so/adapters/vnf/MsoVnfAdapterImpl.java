@@ -1206,6 +1206,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             		                          cloudOwner,
                                               tenantId,
                                               vfModuleName,
+                                              null,
                                               template,
                                               goldenInputs,
                                               true,

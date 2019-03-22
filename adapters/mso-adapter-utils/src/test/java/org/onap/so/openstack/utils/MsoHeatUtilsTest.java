@@ -229,7 +229,7 @@ public class MsoHeatUtilsTest extends BaseTest{
         StubOpenStack.mockOpenStackResponseAccess(wireMockPort);
         StubOpenStack.mockOpenStackPostStack_200("OpenstackResponse_Stack_Created.json");
         StubOpenStack.mockOpenStackGet("TEST-stack/stackId");
-        StackInfo stackInfo = heatUtils.createStack(cloudSite.getId(), "CloudOwner", "tenantId", "TEST-stack",
+        StackInfo stackInfo = heatUtils.createStack(cloudSite.getId(), "CloudOwner", "tenantId", "TEST-stack", null,
             "TEST-heat", new HashMap<>(), false, 1, "TEST-env",
             new HashMap<>(), new HashMap<>(), false);
         assertNotNull(stackInfo);

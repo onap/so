@@ -147,6 +147,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                  cloudOwner,
                                  tenantId,
                                  stackName,
+                                 null,
                                  heatTemplate,
                                  stackInputs,
                                  pollForCompletion,
@@ -172,6 +173,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                  cloudOwner,
                                  tenantId,
                                  stackName,
+                                 null,
                                  heatTemplate,
                                  stackInputs,
                                  pollForCompletion,
@@ -197,6 +199,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                  cloudOwner,
                                  tenantId,
                                  stackName,
+                                 null,
                                  heatTemplate,
                                  stackInputs,
                                  pollForCompletion,
@@ -223,6 +226,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                  cloudOwner,
                                  tenantId,
                                  stackName,
+                                 null,
                                  heatTemplate,
                                  stackInputs,
                                  pollForCompletion,
@@ -262,6 +266,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
      * @param cloudOwner the cloud owner of the cloud site in which to create the stack
      * @param tenantId The Openstack ID of the tenant in which to create the Stack
      * @param stackName The name of the stack to create
+     * @param vduModelInfo contains information about the vdu model (added for plugin adapter)
      * @param heatTemplate The Heat template
      * @param stackInputs A map of key/value inputs
      * @param pollForCompletion Indicator that polling should be handled in Java vs. in the client
@@ -279,6 +284,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
                                   String cloudOwner,
                                   String tenantId,
                                   String stackName,
+                                  VduModelInfo vduModel,
                                   String heatTemplate,
                                   Map <String, ?> stackInputs,
                                   boolean pollForCompletion,
@@ -1551,6 +1557,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
     	            cloudOwner,
                     tenantId,
                     instanceName,
+                    vduModel,
                     heatTemplate,
                     inputs,
                     true,	// poll for completion

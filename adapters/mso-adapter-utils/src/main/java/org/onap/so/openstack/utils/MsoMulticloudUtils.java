@@ -67,11 +67,12 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
     public static final String OOF_DIRECTIVES = "oof_directives";
     public static final String SDNC_DIRECTIVES = "sdnc_directives";
+    public static final String USER_DIRECTIVES = "user_directives";
     public static final String VNF_ID = "vnf_id";
     public static final String VF_MODULE_ID = "vf_module_id";
     public static final String TEMPLATE_TYPE = "template_type";
     public static final List<String> MULTICLOUD_INPUTS =
-            Arrays.asList(OOF_DIRECTIVES, SDNC_DIRECTIVES, TEMPLATE_TYPE);
+            Arrays.asList(OOF_DIRECTIVES, SDNC_DIRECTIVES, USER_DIRECTIVES, TEMPLATE_TYPE);
 
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
 
@@ -134,6 +135,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                                   String cloudOwner,
                                   String tenantId,
                                   String stackName,
+                                  VduModelInfo vduModel,
                                   String heatTemplate,
                                   Map <String, ?> stackInputs,
                                   boolean pollForCompletion,
@@ -148,6 +150,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         // Get the directives, if present.
         String oofDirectives = "{}";
         String sdncDirectives = "{}";
+        String userDirectives = "{}";
         String genericVnfId = "";
         String vfModuleId = "";
         String templateType = "";
@@ -158,6 +161,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                     oofDirectives = (String) stackInputs.get(key);
                 }
                 if (key == SDNC_DIRECTIVES) {
+                    sdncDirectives = (String) stackInputs.get(key);
+                }
+                if (key == USER_DIRECTIVES) {
                     sdncDirectives = (String) stackInputs.get(key);
                 }
                 if (key == TEMPLATE_TYPE) {
@@ -184,10 +190,14 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
 
         multicloudRequest.setGenericVnfId(genericVnfId);
         multicloudRequest.setVfModuleId(vfModuleId);
+        multicloudRequest.setVfModuleModelInvariantId(vduModel.getModelInvariantUUID());
+        multicloudRequest.setVfModuleModelVersionId(vduModel.getModelUUID());
+        multicloudRequest.setVfModuleModelCustomizationId(vduModel.getModelCustomizationUUID());
         multicloudRequest.setTemplateType(templateType);
         multicloudRequest.setTemplateData(stack);
         multicloudRequest.setOofDirectives(getDirectiveNode(oofDirectives));
         multicloudRequest.setSdncDirectives(getDirectiveNode(sdncDirectives));
+        multicloudRequest.setUserDirectives(getDirectiveNode(userDirectives));
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Multicloud Request is: %s", multicloudRequest.toString()));
         }
@@ -677,6 +687,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                     cloudOwner,
                     tenantId,
                     instanceName,
+                    vduModel,
                     heatTemplate,
                     inputs,
                     true,    // poll for completion
