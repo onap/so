@@ -229,7 +229,7 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initCreateAaiAr(mex)
 
-        when(mex.getVariable("aai.endpoint")).thenThrow(new BpmnError("expected exception"))
+        when(mex.getVariable("PSI_resourceLink")).thenThrow(new BpmnError("expected exception"))
 
         MockPutAllottedResource(CUST, SVC, INST, ARID)
 
@@ -243,7 +243,7 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
         ExecutionEntity mex = setupMock()
         initCreateAaiAr(mex)
 
-        when(mex.getVariable("aai.endpoint")).thenThrow(new RuntimeException("expected exception"))
+        when(mex.getVariable("PSI_resourceLink")).thenThrow(new RuntimeException("expected exception"))
 
         MockPutAllottedResource(CUST, SVC, INST, ARID)
 
@@ -841,8 +841,6 @@ class DoCreateAllottedResourceBRGTest extends GroovyTestBase {
         when(mex.getVariable("parentServiceInstanceId")).thenReturn("psii")
         when(mex.getVariable(DBGFLAG)).thenReturn("true")
         when(mex.getVariable("allottedResourceId")).thenReturn(ARID)
-        when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
-        when(mex.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.namespace"))
         when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath("/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST).build()))
         when(mex.getVariable("allottedResourceType")).thenReturn("BRGt")
         when(mex.getVariable("allottedResourceRole")).thenReturn("BRGr")

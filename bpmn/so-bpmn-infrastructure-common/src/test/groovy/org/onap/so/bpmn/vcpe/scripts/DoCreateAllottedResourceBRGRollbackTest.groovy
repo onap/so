@@ -369,7 +369,7 @@ class DoCreateAllottedResourceBRGRollbackTest extends GroovyTestBase {
         MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml")
         MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
 
-        when(mex.getVariable("aaiARPath")).thenReturn("")
+        when(mex.getVariable("aaiARPath")).thenReturn(null)
 
         DoCreateAllottedResourceBRGRollback DoCreateAllottedResourceBRGRollback = new DoCreateAllottedResourceBRGRollback()
 

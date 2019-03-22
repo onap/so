@@ -1,5 +1,6 @@
 <createVfModuleRequest>
     <cloudSiteId>RDM2WAGPLCP</cloudSiteId>
+    <cloudOwner>null</cloudOwner>
     <tenantId>fba1bd1e195a404cacb9ce17a9b2b421</tenantId>
     <vnfId>skask</vnfId>
     <vnfName>skask-test</vnfName>

@@ -787,7 +787,6 @@ class DoCreateAllottedResourceTXCTest extends GroovyTestBase {
         when(mex.getVariable(DBGFLAG)).thenReturn("true")
         when(mex.getVariable("allottedResourceId")).thenReturn(ARID)
         when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
-        when(mex.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.namespace"))
         when(mex.getVariable("PSI_resourceLink")).thenReturn(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.SERVICE_INSTANCE, UriBuilder.fromPath("/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST).build()))
         when(mex.getVariable("allottedResourceType")).thenReturn("TXCt")
         when(mex.getVariable("allottedResourceRole")).thenReturn("TXCr")

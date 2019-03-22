@@ -1,5 +1,6 @@
 <deleteVfModuleRequest>
     <cloudSiteId>null</cloudSiteId>
+    <cloudOwner>null</cloudOwner>
     <tenantId>null</tenantId>
     <vnfId>skask</vnfId>
     <vfModuleId>cb510af0-5b21-4bc7-86d9-323cb396ce32</vfModuleId>

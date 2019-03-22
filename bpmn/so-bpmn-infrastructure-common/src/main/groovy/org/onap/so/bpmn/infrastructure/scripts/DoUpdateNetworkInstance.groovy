@@ -782,7 +782,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 			String source    = execution.getVariable(Prefix + "source")
 
 			String requestInput = execution.getVariable(Prefix + "networkRequest")
-			String queryIdResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
+			L3Network queryIdResponse = execution.getVariable(Prefix + "requeryIdAAIResponse")
 			String cloudRegionId = execution.getVariable(Prefix + "cloudRegionPo")
 			String backoutOnFailure = execution.getVariable(Prefix + "rollbackEnabled")
 

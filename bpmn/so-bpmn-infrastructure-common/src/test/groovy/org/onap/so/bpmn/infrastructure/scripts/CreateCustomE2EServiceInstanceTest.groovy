@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,7 +23,6 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
@@ -33,7 +34,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 
 import static org.junit.Assert.assertNotNull
 import static org.mockito.Mockito.*
@@ -70,15 +71,7 @@ class CreateCustomE2EServiceInstanceTest {
         RepositoryService mockRepositoryService = mock(RepositoryService.class)
         when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
         when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("CreateCustomE2EServiceInstance")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
         ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-        when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("CreateCustomE2EServiceInstance")
-        when(mockExecution.getProcessInstanceId()).thenReturn("CreateCustomE2EServiceInstance")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
         return mockExecution
     }
 }

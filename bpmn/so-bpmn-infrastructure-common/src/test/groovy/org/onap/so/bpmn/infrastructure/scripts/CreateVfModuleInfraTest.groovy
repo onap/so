@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,10 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -33,7 +32,7 @@ import org.mockito.ArgumentCaptor
 import org.mockito.Captor
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
+import org.mockito.junit.MockitoJUnitRunner
 
 import static org.mockito.Mockito.mock
 import static org.mockito.Mockito.when
@@ -55,9 +54,9 @@ class CreateVfModuleInfraTest {
         MockitoAnnotations.initMocks(this);
     }
 
-   @Test
+    @Test
     void testPrepareUpdateInfraRequest() {
-        ExecutionEntity mockExecution = setupMock()
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         when(mockExecution.getVariable("prefix")).thenReturn(prefix)
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable(prefix + "vnfId")).thenReturn("12345")
@@ -68,29 +67,7 @@ class CreateVfModuleInfraTest {
 
         CreateVfModuleInfra obj = new CreateVfModuleInfra()
         obj.prepareUpdateInfraRequest(mockExecution)
-		Mockito.verify(mockExecution).setVariable(prefix + "dbAdapterEndpoint", "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
-   }
-
-   
-   
-    private static ExecutionEntity setupMock() {
-        ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-        when(mockProcessDefinition.getKey()).thenReturn("CreateVfModuleInfra")
-        RepositoryService mockRepositoryService = mock(RepositoryService.class)
-        when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-        when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("CreateVfModuleInfra")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
-
-        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-        // Initialize prerequisite variables
-        when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("CreateVfModuleInfra")
-        when(mockExecution.getProcessInstanceId()).thenReturn("CreateVfModuleInfra")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-
-        return mockExecution
+        Mockito.verify(mockExecution).setVariable(prefix + "dbAdapterEndpoint", "http://mso.mso.testlab.openecomp.org:8080/dbadapters/RequestsDbAdapter")
     }
+
 }

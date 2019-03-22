@@ -487,10 +487,6 @@ class DoDeleteAllottedResourceTXCTest extends GroovyTestBase {
         when(mex.getVariable("allottedResourceType")).thenReturn("TXC")
         when(mex.getVariable("allottedResourceRole")).thenReturn("TXC")
         when(mex.getVariable("allottedResourceId")).thenReturn(ARID)
-        when(mex.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.namespace"))
-        when(mex.getVariable("mso.workflow.global.default.aai.version")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.version"))
-        when(mex.getVariable("mso.workflow.default.aai.v8.nodes.query.uri")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.default.aai.v8.nodes-query.uri"))
-        when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
         when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST + "/allotted-resources/allotted-resource/" + ARID)
         when(mex.getVariable("aaiAROrchStatus")).thenReturn("Active")
     }

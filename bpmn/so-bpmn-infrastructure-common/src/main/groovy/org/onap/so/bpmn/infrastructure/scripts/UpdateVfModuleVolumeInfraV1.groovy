@@ -297,6 +297,7 @@ class UpdateVfModuleVolumeInfraV1 extends VfModuleBase {
     public void prepVnfAdapterRest(DelegateExecution execution, isDebugLogEnabled) {
 
         def aicCloudRegion = execution.getVariable('UPDVfModVol_aicCloudRegion')
+        def cloudOwner = execution.getVariable("UPDVfModVol_cloudRegion")
         def tenantId = execution.getVariable('UPDVfModVol_tenantId')
         def volumeGroupId = execution.getVariable('UPDVfModVol_volumeGroupId')
 
