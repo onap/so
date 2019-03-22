@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,17 +23,31 @@ package org.onap.so.adapters.vdu;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VduModelInfo {	
+public class VduModelInfo {
 	private String modelCustomizationUUID;
+	private String modelUUID;
+	private String modelInvariantUUID;
 	private int timeoutMinutes;
 	private List<VduArtifact> artifacts = new ArrayList<>();
-	
+
 	public String getModelCustomizationUUID() {
 		return modelCustomizationUUID;
 	}
 	public void setModelCustomizationUUID(String modelCustomizationUUID) {
 		this.modelCustomizationUUID = modelCustomizationUUID;
 	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
+    public String getModelInvariantUUID() {
+        return modelInvariantUUID;
+    }
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
 	public int getTimeoutMinutes() {
 		return timeoutMinutes;
 	}
@@ -46,5 +60,5 @@ public class VduModelInfo {
 	public void setArtifacts(List<VduArtifact> artifacts) {
 		this.artifacts = artifacts;
 	}
-	
+
 }

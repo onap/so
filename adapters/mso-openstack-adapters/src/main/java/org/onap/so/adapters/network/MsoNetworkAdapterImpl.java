@@ -537,6 +537,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                                                   "CloudOwner",
                                                   tenantId,
                                                   networkName,
+                                                  null,
                                                   template,
                                                   stackParams,
                                                   true,

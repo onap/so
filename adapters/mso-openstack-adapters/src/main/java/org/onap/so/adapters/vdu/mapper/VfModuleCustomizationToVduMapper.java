@@ -33,25 +33,29 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VfModuleCustomizationToVduMapper {
-	
+
 	public VduModelInfo mapVfModuleCustomizationToVdu(VfModuleCustomization vfModuleCustom)
-	{		
+	{
 		VduModelInfo vduModel = new VduModelInfo();
 		vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUUID());
-		
+		vduModel.setModelUUID(vfModuleCustom.getVfModule().getModelUUID());
+		vduModel.setModelInvariantUUID(vfModuleCustom.getVfModule().getModelInvariantUUID());
+
 		// Map the cloud templates, attached files, and environment file
 		mapCloudTemplates(vfModuleCustom.getVfModule().getModuleHeatTemplate(), vduModel);
 		mapCloudFiles(vfModuleCustom,vduModel);
 		mapEnvironment(vfModuleCustom.getHeatEnvironment(), vduModel);
-		
+
 		return vduModel;
 	}
-	
+
 	public VduModelInfo mapVfModuleCustVolumeToVdu(VfModuleCustomization vfModuleCustom)
-	{		
+	{
 		VduModelInfo vduModel = new VduModelInfo();
 		vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUUID());
-		
+		vduModel.setModelUUID(vfModuleCustom.getVfModule().getModelUUID());
+		vduModel.setModelInvariantUUID(vfModuleCustom.getVfModule().getModelInvariantUUID());
+
 		// Map the cloud templates, attached files, and environment file
 		mapCloudTemplates(vfModuleCustom.getVfModule().getVolumeHeatTemplate(), vduModel);
 		mapCloudFiles(vfModuleCustom,vduModel);
@@ -62,20 +66,20 @@ public class VfModuleCustomizationToVduMapper {
 
 	private void mapCloudTemplates(HeatTemplate heatTemplate, VduModelInfo vduModel) {
 		// TODO:  These catalog objects will be refactored to be non-Heat-specific
-		
+
 		List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
-		
+
 		// Main template.  Also set the VDU timeout based on the main template.
 		vduArtifacts.add(mapHeatTemplateToVduArtifact(heatTemplate, ArtifactType.MAIN_TEMPLATE));
 		vduModel.setTimeoutMinutes(heatTemplate.getTimeoutMinutes());
-		
+
 		// Nested templates
 		List<HeatTemplate> childTemplates = heatTemplate.getChildTemplates();
 		if (childTemplates != null) {
 			for(HeatTemplate childTemplate : childTemplates){
 				vduArtifacts.add(mapHeatTemplateToVduArtifact(childTemplate, ArtifactType.NESTED_TEMPLATE));
 			}
-		}		
+		}
 	}
 
 	private VduArtifact mapHeatTemplateToVduArtifact(HeatTemplate heatTemplate, ArtifactType artifactType) {
@@ -85,12 +89,12 @@ public class VfModuleCustomizationToVduMapper {
 		vduArtifact.setType(artifactType);
 		return vduArtifact;
 	}
-	
+
 	private void mapCloudFiles(VfModuleCustomization vfModuleCustom, VduModelInfo vduModel) {
 		// TODO:  These catalog objects will be refactored to be non-Heat-specific
-		
+
 		List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
-		
+
 		// Attached Files
 		List<HeatFiles> heatFiles = vfModuleCustom.getVfModule().getHeatFiles();
 		if (heatFiles != null) {
@@ -115,7 +119,7 @@ public class VfModuleCustomizationToVduMapper {
 			vduArtifacts.add(mapEnvironmentFileToVduArtifact(heatEnvironment));
 		}
 	}
-	
+
 	private VduArtifact mapEnvironmentFileToVduArtifact(HeatEnvironment heatEnv) {
 		VduArtifact vduArtifact = new VduArtifact();
 		vduArtifact.setName(heatEnv.getName());

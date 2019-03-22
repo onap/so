@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 Intel Corp. All rights reserved.
+ * Copyright (C) 2019 Intel Corp. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonPropertyOrder({
         "generic-vnf-id",
         "vf-module-id",
+        "vf-module-model-invariant-id",
+        "vf-module-model-version-id",
+        "vf-module-model-customization-id",
         "oof_directives",
         "sdnc_directives",
+        "user_directives",
         "template_type",
         "template_data"
 })
@@ -45,10 +49,18 @@ public class MulticloudRequest implements Serializable {
     private String genericVnfId;
     @JsonProperty("vf-module-id")
     private String vfModuleId;
+    @JsonProperty("vf-module-model-invariant-id")
+    private String vfModuleModelInvariantId;
+    @JsonProperty("vf-module-model-version-id")
+    private String vfModuleModelVersionId;
+    @JsonProperty("vf-module-model-customization-id")
+    private String vfModuleModelCustomizationId;
     @JsonProperty("oof_directives")
     private JsonNode oofDirectives;
     @JsonProperty("sdnc_directives")
     private JsonNode sdncDirectives;
+    @JsonProperty("user_directives")
+    private JsonNode userDirectives;
     @JsonProperty("template_type")
     private String templateType;
     @JsonProperty("template_data")
@@ -75,6 +87,36 @@ public class MulticloudRequest implements Serializable {
         this.vfModuleId = vfModuleId;
     }
 
+    @JsonProperty("vf-module-model-invariant-id")
+    public String getVfModuleModelInvariantId() {
+        return vfModuleModelInvariantId;
+    }
+
+    @JsonProperty("vf-module-model-invariant-id")
+    public void setVfModuleModelInvariantId(String vfModuleModelInvariantId) {
+        this.vfModuleModelInvariantId = vfModuleModelInvariantId;
+    }
+
+    @JsonProperty("vf-module-model-version-id")
+    public String getVfModuleModelVersionId() {
+        return vfModuleModelVersionId;
+    }
+
+    @JsonProperty("vf-module-model-version-id")
+    public void setVfModuleModelVersionId(String vfModuleModelVersionId) {
+        this.vfModuleModelVersionId = vfModuleModelVersionId;
+    }
+
+    @JsonProperty("vf-module-model-customization-id")
+    public String getVfModuleModelCustomizationId() {
+        return vfModuleModelCustomizationId;
+    }
+
+    @JsonProperty("vf-module-model-customization-id")
+    public void setVfModuleModelCustomizationId(String vfModuleModelCustomizationId) {
+        this.vfModuleModelCustomizationId = vfModuleModelCustomizationId;
+    }
+
     @JsonProperty("oof_directives")
     public JsonNode getOofDirectives() {
         return oofDirectives;
@@ -93,6 +135,16 @@ public class MulticloudRequest implements Serializable {
     @JsonProperty("sdnc_directives")
     public void setSdncDirectives(JsonNode sdncDirectives) {
         this.sdncDirectives = sdncDirectives;
+    }
+
+    @JsonProperty("user_directives")
+    public JsonNode getUserDirectives() {
+        return userDirectives;
+    }
+
+    @JsonProperty("user_directives")
+    public void setUserDirectives(JsonNode userDirectives) {
+        this.userDirectives = userDirectives;
     }
 
     @JsonProperty("template_type")
@@ -117,7 +169,16 @@ public class MulticloudRequest implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("genericVnfId", genericVnfId).append("vfModuleId", vfModuleId).append("oofDirectives", oofDirectives).append("sdncDirectives", sdncDirectives).append("templateType", templateType).append("templateData", templateData).toString();
+        return new ToStringBuilder(this).append("genericVnfId", genericVnfId)
+                .append("vfModuleId", vfModuleId)
+                .append("vfModuleModelInvariantId", vfModuleModelInvariantId)
+                .append("vfModuleModelVersionId", vfModuleModelVersionId)
+                .append("vfModuleModelCustomizationId", vfModuleModelCustomizationId)
+                .append("oofDirectives", oofDirectives)
+                .append("sdncDirectives", sdncDirectives)
+                .append("userDirectives", userDirectives)
+                .append("templateType", templateType)
+                .append("templateData", templateData).toString();
     }
 
 }
