@@ -290,7 +290,7 @@ class MsoUtils {
 		}
 	}
 
-	def log(logmode,logtxt,isDebugLogEnabled="false"){
+	def private log(logmode,logtxt,isDebugLogEnabled="false"){
 		if ("INFO"==logmode) {
 			logger.info(MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(), logtxt, "BPMN");
 		} else if ("WARN"==logmode) {

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -32,111 +34,15 @@ import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.client.aai.AAIResourcesClient
 import org.springframework.web.util.UriUtils
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import groovy.json.JsonSlurper
 
 public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcessor {
+	private static final Logger logger = LoggerFactory.getLogger( MsoUtils.class);
+
 	public MsoUtils utils = new MsoUtils()
-
-
-	/**
-	 * Logs a message at the ERROR level.
-	 * @param message the message
-	 */
-	public void logError(String message) {
-		log('ERROR', message, null, "true")
-	}
-
-	/**
-	 * Logs a message at the ERROR level.
-	 * @param message the message
-	 * @param cause the cause (stracktrace will be included in the output)
-	 */
-	public void logError(String message, Throwable cause) {
-		log('ERROR', message, cause, "true")
-	}
-
-	/**
-	 * Logs a message at the WARN level.
-	 * @param message the message
-	 */
-	public void logWarn(String message) {
-		log('WARN', message, null, "true")
-	}
-
-	/**
-	 * Logs a message at the WARN level.
-	 * @param message the message
-	 * @param cause the cause (stracktrace will be included in the output)
-	 */
-	public void logWarn(String message, Throwable cause) {
-		log('WARN', message, cause, "true")
-	}
-
-	/**
-	 * Logs a message at the DEBUG level.
-	 * @param message the message
-	 * @param isDebugLogEnabled a flag indicating if DEBUG level is enabled
-	 */
-	public void logDebug(String message, String isDebugLogEnabled) {
-		log('DEBUG', message, null, isDebugLogEnabled)
-	}
-
-	/**
-	 * Logs a message at the DEBUG level.
-	 * @param message the message
-	 * @param cause the cause (stracktrace will be included in the output)
-	 * @param isDebugLogEnabled a flag indicating if DEBUG level is enabled
-	 */
-	public void logDebug(String message, Throwable cause, String isDebugLogEnabled) {
-		log('DEBUG', message, cause, isDebugLogEnabled)
-	}
-
-	/**
-	 * Logs a message at the specified level.
-	 * @param level the level (DEBUG, INFO, WARN, ERROR)
-	 * @param message the message
-	 * @param isLevelEnabled a flag indicating if the level is enabled
-	 *        (used only at the DEBUG level)
-	 */
-	public void log(String level, String message, String isLevelEnabled) {
-		log(level, message,  null, isLevelEnabled)
-	}
-
-	/**
-	 * Logs a message at the specified level.
-	 * @param level the level (DEBUG, INFO, WARN, ERROR)
-	 * @param message the message
-	 * @param cause the cause (stracktrace will be included in the output)
-	 * @param isLevelEnabled a flag indicating if the level is enabled
-	 *        (used only at the DEBUG level)
-	 */
-	public void log(String level, String message, Throwable cause, String isLevelEnabled) {
-		if (cause == null) {
-			utils.log(level, message, isLevelEnabled);
-		} else {
-			StringWriter stringWriter = new StringWriter();
-			PrintWriter printWriter = new PrintWriter(stringWriter);
-			printWriter.println(message);
-			cause.printStackTrace(printWriter);
-			utils.log(level, stringWriter.toString(), isLevelEnabled);
-			printWriter.close();
-		}
-	}
-
-	/**
-	 * Logs a WorkflowException at the ERROR level with the specified message.
-	 * @param execution the execution
-	 */
-	public void logWorkflowException(DelegateExecution execution, String message) {
-		def workflowException = execution.getVariable("WorkflowException")
-
-		if (workflowException == null) {
-			logError(message);
-		} else {
-			logError(message + ": " + workflowException)
-		}
-	}
 
 	/**
 	 * Saves the WorkflowException in the execution to the specified variable,
@@ -173,7 +79,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			', requredVariables=' + requiredVariables +
 			')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		logger.debug('Entered ' + method)
 
 		String processKey = getProcessKey(execution)
 		def prefix = execution.getVariable("prefix")
@@ -236,13 +142,13 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				serviceInstanceId = (String) execution.getVariable("mso-service-instance-id")
 			}
 
-			logDebug('Incoming message: ' + System.lineSeparator() + request, isDebugLogEnabled)
-			logDebug('Exited ' + method, isDebugLogEnabled)
+			logger.debug('Incoming message: ' + System.lineSeparator() + request)
+			logger.debug('Exited ' + method)
 			return request
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			logError('Caught exception in ' + method, e)
+			logger.error('Caught exception in ' + method, e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}
@@ -258,7 +164,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				'execution=' + execution.getId() +
 				')'
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
-		logDebug('Entered ' + method, isDebugLogEnabled)
+		logger.debug('Entered ' + method)
 
 		String processKey = getProcessKey(execution);
 		def prefix = execution.getVariable("prefix")
@@ -278,8 +184,8 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		def parsed = jsonSlurper.parseText(request)
 
 
-		logDebug('Incoming message: ' + System.lineSeparator() + request, isDebugLogEnabled)
-		logDebug('Exited ' + method, isDebugLogEnabled)
+		logger.debug('Incoming message: ' + System.lineSeparator() + request)
+		logger.debug('Exited ' + method)
 		return parsed
 
 	}
@@ -309,10 +215,10 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			}
 
 			if (String.valueOf(execution.getVariable(processKey + "WorkflowResponseSent")).equals("true")) {
-					logDebug("Sync response has already been sent for " + processKey, isDebugLogEnabled)
+					logger.debug("Sync response has already been sent for " + processKey)
 			}else{
 
-				logDebug("Building " + processKey + " response ", isDebugLogEnabled)
+				logger.debug("Building " + processKey + " response ")
 
 				int intResponseCode;
 
@@ -337,11 +243,10 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				execution.setVariable(processKey + "Status", status);
 				execution.setVariable("WorkflowResponse", response)
 
-				logDebug("Sending response for " + processKey
+				logger.debug("Sending response for " + processKey
 					+ " ResponseCode=" + intResponseCode
 					+ " Status=" + status
-					+ " Response=\n" + response,
-					isDebugLogEnabled)
+					+ " Response=\n" + response)
 
 				// TODO: ensure that this flow was invoked asynchronously?
 
@@ -362,7 +267,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			}
 
 		} catch (Exception ex) {
-			logError("Unable to send workflow response to client ....", ex)
+			logger.error("Unable to send workflow response to client ....", ex)
 		}
 	}
 
@@ -432,7 +337,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		def element = utils.getNodeXml(xml, elementName, false)
 		if (element.trim().isEmpty()) {
 			def msg = 'Required element \'' + elementName + '\' is missing or empty'
-			logError(msg)
+			logger.error(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		} else {
 			return element
@@ -454,7 +359,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		def elementText = utils.getNodeText(xml, elementName)
 		if ((elementText == null) || (elementText.isEmpty())) {
 			def msg = 'Required element \'' + elementName + '\' is missing or empty'
-			logError(msg)
+			logger.error(msg)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, msg)
 		} else {
 			return elementText
@@ -569,9 +474,9 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		String prefix = execution.getVariable('prefix')
 		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 
-		logDebug('Entered SetSuccessIndicator Method', isDebugLogEnabled)
+		logger.debug('Entered SetSuccessIndicator Method')
 		execution.setVariable(prefix+'SuccessIndicator', isSuccess)
-		logDebug('Outgoing SuccessIndicator is: ' + execution.getVariable(prefix+'SuccessIndicator') + '', isDebugLogEnabled)
+		logger.debug('Outgoing SuccessIndicator is: ' + execution.getVariable(prefix+'SuccessIndicator') + '')
 	}
 
 	/**
@@ -579,14 +484,14 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	 *
 	 */
 	public void sendSyncError(DelegateExecution execution) {
-		def isDebugEnabled=execution.getVariable("isDebugLogEnabled")
+		def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 		String requestId = execution.getVariable("mso-request-id")
-		logDebug('sendSyncError, requestId: ' + requestId, isDebugEnabled)
+		logger.debug('sendSyncError, requestId: ' + requestId)
 		WorkflowException workflowExceptionObj = execution.getVariable("WorkflowException")
 		if (workflowExceptionObj != null) {
 			String errorMessage = workflowExceptionObj.getErrorMessage()
 			def errorCode = workflowExceptionObj.getErrorCode()
-			logDebug('sendSyncError, requestId: '  + requestId + ' | errorMessage: ' + errorMessage + ' | errorCode: ' + errorCode, isDebugEnabled)
+			logger.debug('sendSyncError, requestId: '  + requestId + ' | errorMessage: ' + errorMessage + ' | errorCode: ' + errorCode)
 			sendWorkflowResponse(execution, errorCode, errorMessage)
 		}
 	}
@@ -602,27 +507,27 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			DelegateExecution execution = (DelegateExecution) args[0]
 
 			def classAndMethod = getClass().getSimpleName() + '.' + methodName + '(execution=' + execution.getId() + ')'
-			def isDebugEnabled =  execution.getVariable('isDebugLogEnabled')
+			def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 
-			logDebug('Entered ' + classAndMethod, isDebugEnabled)
-			logDebug('Received parameters: ' + args, isDebugEnabled)
+			logger.debug('Entered ' + classAndMethod)
+			logger.debug('Received parameters: ' + args)
 
 			try{
 				def methodToCall = this.metaClass.getMetaMethod(methodName, args)
-				logDebug('Method to call: ' + methodToCall, isDebugEnabled)
+				logger.debug('Method to call: ' + methodToCall)
 				methodToCall?.invoke(this, args)
 			}
 			catch(BpmnError bpmnError) {
-				logDebug('Rethrowing BpmnError ' + bpmnError.getMessage(), isDebugEnabled)
+				logger.debug('Rethrowing BpmnError ' + bpmnError.getMessage())
 				throw bpmnError
 			}
 			catch(Exception e) {
 				e.printStackTrace()
-				logDebug('Unexpected error encountered - ' + e.getMessage(), isDebugEnabled)
+				logger.debug('Unexpected error encountered - ' + e.getMessage())
 				(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 			}
 			finally {
-				logDebug('Exited ' + classAndMethod, isDebugEnabled)
+				logger.debug('Exited ' + classAndMethod)
 			}
 		}
 	}
@@ -718,8 +623,8 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		def disableRollback = execution.getVariable("disableRollback")
 		def defaultRollback = UrnPropertiesReader.getVariable("mso.rollback", execution).toBoolean()
 
-		logDebug('disableRollback: ' + disableRollback, isDebugLogEnabled)
-		logDebug('defaultRollback: ' + defaultRollback, isDebugLogEnabled)
+		logger.debug('disableRollback: ' + disableRollback)
+		logger.debug('defaultRollback: ' + defaultRollback)
 
 		def rollbackEnabled
 
@@ -727,7 +632,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			// get from default urn settings for mso_rollback
 			disableRollback = !defaultRollback
 			rollbackEnabled = defaultRollback
-			logDebug('disableRollback is null or empty!', isDebugLogEnabled)
+			logger.debug('disableRollback is null or empty!')
 		}
 		else {
 			if(disableRollback == true) {
@@ -742,7 +647,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		}
 		
 		execution.setVariable(prefix+"backoutOnFailure", rollbackEnabled)
-		logDebug('rollbackEnabled (aka backoutOnFailure): ' + rollbackEnabled, isDebugLogEnabled)
+		logger.debug('rollbackEnabled (aka backoutOnFailure): ' + rollbackEnabled)
 	}
 
 	public void setBasicDBAuthHeader(DelegateExecution execution, isDebugLogEnabled) {
@@ -752,7 +657,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 			execution.setVariable("BasicAuthHeaderValueDB",encodedString)
 		} catch (IOException ex) {
 			String dataErrorMessage = " Unable to encode Catalog DB user/password string - " + ex.getMessage()
-			utils.log("DEBUG", dataErrorMessage, isDebugLogEnabled)
+			logger.debug(dataErrorMessage)
 			(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 2500, dataErrorMessage)
 		}
 	}
