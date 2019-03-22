@@ -30,7 +30,7 @@ import org.onap.so.monitoring.camunda.model.SoActiveInfraRequests;
 import org.onap.so.monitoring.configuration.database.DatabaseUrlProvider;
 import org.onap.so.monitoring.model.SoInfraRequest;
 import org.onap.so.monitoring.model.SoInfraRequestBuilder;
-import org.onap.so.monitoring.rest.service.HttpRestServiceProvider;
+import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -60,7 +60,7 @@ public class DatabaseServiceProviderImpl implements DatabaseServiceProvider {
         final String url = urlProvider.getSearchUrl(startTime, endTime, maxResult);
 
         final Optional<SoActiveInfraRequests[]> optionalRequests =
-                httpRestServiceProvider.postHttpRequest(filters, url, SoActiveInfraRequests[].class);
+                httpRestServiceProvider.post(filters, url, SoActiveInfraRequests[].class);
         if (optionalRequests.isPresent()) {
             return getSoInfraRequest(optionalRequests.get());
         }

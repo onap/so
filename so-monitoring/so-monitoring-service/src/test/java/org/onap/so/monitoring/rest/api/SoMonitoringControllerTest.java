@@ -22,8 +22,8 @@ package org.onap.so.monitoring.rest.api;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.onap.so.monitoring.configuration.rest.RestTemplateConfiguration.CAMUNDA_REST_TEMPLATE;
-import static org.onap.so.monitoring.configuration.rest.RestTemplateConfiguration.DATABASE_REST_TEMPLATE;
+import static org.onap.so.client.RestTemplateConfig.MULTI_THREADED_REST_TEMPLATE;
+import static org.onap.so.configuration.rest.BasicHttpHeadersProvider.AUTHORIZATION_HEADER;
 import static org.onap.so.monitoring.rest.api.Constants.ACTIVITY_INSTANCE_RESPONSE_JSON_FILE;
 import static org.onap.so.monitoring.rest.api.Constants.EMPTY_ARRAY_RESPONSE;
 import static org.onap.so.monitoring.rest.api.Constants.EMPTY_STRING;
@@ -37,6 +37,7 @@ import static org.onap.so.monitoring.rest.api.Constants.PROCRESS_DEF_ID;
 import static org.onap.so.monitoring.rest.api.Constants.SEARCH_RESULT_RESPONSE_JSON_FILE;
 import static org.onap.so.monitoring.rest.api.Constants.SINGLE_PROCCESS_INSTANCE_RESPONSE_JSON_FILE;
 import static org.onap.so.monitoring.rest.api.Constants.START_TIME_IN_MS;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -81,14 +82,14 @@ import org.springframework.web.client.RestTemplate;
 @ActiveProfiles("test")
 @SpringBootTest
 public class SoMonitoringControllerTest {
+    private static final String CAMUNDA_BASIC_AUTH =
+            "Basic YWRtaW46S3A4Yko0U1hzek0wV1hsaGFrM2VIbGNzZTJnQXc4NHZhb0dHbUp2VXkyVQ==";
+
+    private static final String DATABASE_BASIC_AUTH = "Basic YnBlbDpwYXNzd29yZDEk";
 
     @Autowired
-    @Qualifier(CAMUNDA_REST_TEMPLATE)
+    @Qualifier(MULTI_THREADED_REST_TEMPLATE)
     private RestTemplate restTemplate;
-
-    @Autowired
-    @Qualifier(DATABASE_REST_TEMPLATE)
-    private RestTemplate dataBaseRestTemplate;
 
     @Autowired
     private CamundaRestUrlProvider urlProvider;
@@ -96,23 +97,22 @@ public class SoMonitoringControllerTest {
     @Autowired
     private DatabaseUrlProvider databaseUrlProvider;
 
-    private MockRestServiceServer camundaMockServer;
+    private MockRestServiceServer mockRestServiceServer;
 
-    private MockRestServiceServer databaseMockServer;
 
     @Autowired
     private SoMonitoringController objUnderTest;
 
     @Before
     public void setUp() throws Exception {
-        camundaMockServer = MockRestServiceServer.bindTo(restTemplate).build();
-        databaseMockServer = MockRestServiceServer.bindTo(dataBaseRestTemplate).build();
+        mockRestServiceServer = MockRestServiceServer.bindTo(restTemplate).build();
     }
 
     @Test
     public void test_GetProcessInstance_SuccessResponseWithDataFromCamunda() throws Exception {
         final String jsonString = getJsonResponse(PROCCESS_INSTANCE_RESPONSE_JSON_FILE);
-        this.camundaMockServer.expect(requestTo(urlProvider.getHistoryProcessInstanceUrl(ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getHistoryProcessInstanceUrl(ID)))
+                .andExpect(header(AUTHORIZATION_HEADER, CAMUNDA_BASIC_AUTH))
                 .andRespond(withSuccess(jsonString, MediaType.APPLICATION_JSON));
 
         final Response response = objUnderTest.getProcessInstanceId(ID);
@@ -125,7 +125,7 @@ public class SoMonitoringControllerTest {
     @Test
     public void test_GetProcessInstance_SuccessResponseWithEmptyDataFromCamunda() throws Exception {
         final String jsonString = EMPTY_ARRAY_RESPONSE;
-        this.camundaMockServer.expect(requestTo(urlProvider.getHistoryProcessInstanceUrl(ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getHistoryProcessInstanceUrl(ID)))
                 .andRespond(withSuccess(jsonString, MediaType.APPLICATION_JSON));
 
         final Response response = objUnderTest.getProcessInstanceId(ID);
@@ -135,7 +135,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetProcessInstance_FailureResponseWithEmptyDataFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getHistoryProcessInstanceUrl(ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getHistoryProcessInstanceUrl(ID)))
                 .andRespond(withBadRequest());
 
         final Response response = objUnderTest.getProcessInstanceId(ID);
@@ -144,7 +144,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetProcessInstance_UnauthorizedRequestFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getHistoryProcessInstanceUrl(ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getHistoryProcessInstanceUrl(ID)))
                 .andRespond(withUnauthorizedRequest());
 
         final Response response = objUnderTest.getProcessInstanceId(ID);
@@ -155,7 +155,7 @@ public class SoMonitoringControllerTest {
     @Test
     public void test_GetSinlgeProcessInstance_SuccessResponseWithDataFromCamunda() throws Exception {
         final String jsonString = getJsonResponse(SINGLE_PROCCESS_INSTANCE_RESPONSE_JSON_FILE);
-        this.camundaMockServer.expect(requestTo(urlProvider.getSingleProcessInstanceUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getSingleProcessInstanceUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withSuccess(jsonString, MediaType.APPLICATION_JSON));
 
         final Response response = objUnderTest.getSingleProcessInstance(PROCESS_INSTACE_ID);
@@ -171,7 +171,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetSingleProcessInstance_WithBadRequestResponseFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getSingleProcessInstanceUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getSingleProcessInstanceUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withBadRequest());
 
         final Response response = objUnderTest.getSingleProcessInstance(PROCESS_INSTACE_ID);
@@ -181,7 +181,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetSingleProcessInstance_WithUnauthorizedRequestResponseFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getSingleProcessInstanceUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getSingleProcessInstanceUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withUnauthorizedRequest());
 
         final Response response = objUnderTest.getSingleProcessInstance(PROCESS_INSTACE_ID);
@@ -216,7 +216,7 @@ public class SoMonitoringControllerTest {
     @Test
     public void test_GetProcessDefinitionXml_SuccessResponseWithDataFromCamunda() throws Exception {
         final String jsonString = getJsonResponse(PROCESS_DEF_RESPONSE_JSON_FILE);
-        this.camundaMockServer.expect(requestTo(urlProvider.getProcessDefinitionUrl(PROCRESS_DEF_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getProcessDefinitionUrl(PROCRESS_DEF_ID)))
                 .andRespond(withSuccess(jsonString, MediaType.APPLICATION_JSON));
 
         final Response response = objUnderTest.getProcessDefinitionXml(PROCRESS_DEF_ID);
@@ -228,7 +228,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetProcessDefinitionXml_BadRequestResponseFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getProcessDefinitionUrl(PROCRESS_DEF_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getProcessDefinitionUrl(PROCRESS_DEF_ID)))
                 .andRespond(withBadRequest());
 
         final Response response = objUnderTest.getProcessDefinitionXml(PROCRESS_DEF_ID);
@@ -238,7 +238,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetProcessDefinitionXml_UnauthorizedRequestFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getProcessDefinitionUrl(PROCRESS_DEF_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getProcessDefinitionUrl(PROCRESS_DEF_ID)))
                 .andRespond(withUnauthorizedRequest());
 
         final Response response = objUnderTest.getProcessDefinitionXml(PROCRESS_DEF_ID);
@@ -260,7 +260,7 @@ public class SoMonitoringControllerTest {
     @Test
     public void test_GetActivityInstanceDetail_SuccessResponseWithDataFromCamunda() throws Exception {
         final String jsonString = getJsonResponse(ACTIVITY_INSTANCE_RESPONSE_JSON_FILE);
-        this.camundaMockServer.expect(requestTo(urlProvider.getActivityInstanceUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getActivityInstanceUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withSuccess(jsonString, MediaType.APPLICATION_JSON));
 
         final Response response = objUnderTest.getActivityInstanceDetail(PROCESS_INSTACE_ID);
@@ -287,7 +287,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetActivityInstanceDetail_SuccessResponseWithEmptyDataFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getActivityInstanceUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getActivityInstanceUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withSuccess(EMPTY_ARRAY_RESPONSE, MediaType.APPLICATION_JSON));
 
         final Response response = objUnderTest.getActivityInstanceDetail(PROCESS_INSTACE_ID);
@@ -297,7 +297,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetActivityInstanceDetail_UnauthorizedRequestFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getActivityInstanceUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getActivityInstanceUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withUnauthorizedRequest());
 
         final Response response = objUnderTest.getActivityInstanceDetail(PROCESS_INSTACE_ID);
@@ -307,7 +307,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetActivityInstanceDetail_BadRequestFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getActivityInstanceUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getActivityInstanceUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withBadRequest());
 
         final Response response = objUnderTest.getActivityInstanceDetail(PROCESS_INSTACE_ID);
@@ -329,7 +329,7 @@ public class SoMonitoringControllerTest {
     @Test
     public void test_GetProcessInstanceVariables_SuccessResponseWithDataFromCamunda() throws Exception {
         final String jsonString = getJsonResponse(PROCESS_INSTANCE_VARIABLES_RESPONSE_JSON_FILE);
-        this.camundaMockServer.expect(requestTo(urlProvider.getProcessInstanceVariablesUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getProcessInstanceVariablesUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withSuccess(jsonString, MediaType.APPLICATION_JSON));
 
         final Response response = objUnderTest.getProcessInstanceVariables(PROCESS_INSTACE_ID);
@@ -347,7 +347,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetProcessInstanceVariables_SuccessResponseWithEmptyDataFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getProcessInstanceVariablesUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getProcessInstanceVariablesUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withSuccess(EMPTY_ARRAY_RESPONSE, MediaType.APPLICATION_JSON));
 
         final Response response = objUnderTest.getProcessInstanceVariables(PROCESS_INSTACE_ID);
@@ -358,7 +358,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetProcessInstanceVariables_BadRequestFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getProcessInstanceVariablesUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getProcessInstanceVariablesUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withBadRequest());
 
         final Response response = objUnderTest.getProcessInstanceVariables(PROCESS_INSTACE_ID);
@@ -369,7 +369,7 @@ public class SoMonitoringControllerTest {
 
     @Test
     public void test_GetProcessInstanceVariables_UnauthorizedRequestFromCamunda() throws Exception {
-        this.camundaMockServer.expect(requestTo(urlProvider.getProcessInstanceVariablesUrl(PROCESS_INSTACE_ID)))
+        this.mockRestServiceServer.expect(requestTo(urlProvider.getProcessInstanceVariablesUrl(PROCESS_INSTACE_ID)))
                 .andRespond(withUnauthorizedRequest());
 
         final Response response = objUnderTest.getProcessInstanceVariables(PROCESS_INSTACE_ID);
@@ -396,8 +396,9 @@ public class SoMonitoringControllerTest {
     @Test
     public void test_GetInfraActiveRequests_SuccessResponseWithSoInfraRequestList() throws Exception {
         final String jsonString = getJsonResponse(SEARCH_RESULT_RESPONSE_JSON_FILE);
-        this.databaseMockServer
+        this.mockRestServiceServer
                 .expect(requestTo(databaseUrlProvider.getSearchUrl(START_TIME_IN_MS, END_TIME_IN_MS, null)))
+                .andExpect(header(AUTHORIZATION_HEADER, DATABASE_BASIC_AUTH))
                 .andRespond(withSuccess(jsonString, MediaType.APPLICATION_JSON));
 
         final Response response =

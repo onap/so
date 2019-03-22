@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_0x13ohc" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3">
+  <bpmn:process id="EtsiVnfInstantiateBB" name="&#10;EtsiVnfInstantiateBB" isExecutable="true">
+    <bpmn:serviceTask id="ServiceTask_02e82t2" name="Create &#10;CreateVnfRequest&#10;" camunda:expression="${VnfmAdapterCreateVnfTask.buildCreateVnfRequest(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_016sgof</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0f0vsnv</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="StartEvent_0ru3x55">
+      <bpmn:outgoing>SequenceFlow_016sgof</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_016sgof" sourceRef="StartEvent_0ru3x55" targetRef="ServiceTask_02e82t2" />
+    <bpmn:endEvent id="EndEvent_001k15i">
+      <bpmn:incoming>SequenceFlow_0cik89t</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0f0vsnv" sourceRef="ServiceTask_02e82t2" targetRef="ServiceTask_06ao4xu" />
+    <bpmn:serviceTask id="ServiceTask_06ao4xu" name="&#10;Invoke VNFM Adaptor&#10;" camunda:asyncAfter="true" camunda:expression="${VnfmAdapterCreateVnfTask.invokeVnfmAdapter(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0f0vsnv</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0cik89t</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0cik89t" sourceRef="ServiceTask_06ao4xu" targetRef="EndEvent_001k15i" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EtsiVnfInstantiateBB">
+      <bpmndi:BPMNShape id="ServiceTask_02e82t1_di" bpmnElement="ServiceTask_02e82t2">
+        <dc:Bounds x="353" y="227" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_0ru3x55_di" bpmnElement="StartEvent_0ru3x55">
+        <dc:Bounds x="232" y="249" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_016sgof_di" bpmnElement="SequenceFlow_016sgof">
+        <di:waypoint x="268" y="267" />
+        <di:waypoint x="353" y="267" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_001k15i_di" bpmnElement="EndEvent_001k15i">
+        <dc:Bounds x="703" y="249" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0f0vsnv_di" bpmnElement="SequenceFlow_0f0vsnv">
+        <di:waypoint x="453" y="267" />
+        <di:waypoint x="522" y="267" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_06ao4xu_di" bpmnElement="ServiceTask_06ao4xu">
+        <dc:Bounds x="522" y="227" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0cik89t_di" bpmnElement="SequenceFlow_0cik89t">
+        <di:waypoint x="622" y="267" />
+        <di:waypoint x="703" y="267" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
