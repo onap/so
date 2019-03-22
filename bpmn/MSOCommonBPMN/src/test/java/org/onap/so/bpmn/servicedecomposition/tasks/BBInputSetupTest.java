@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,6 +45,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -2712,5 +2715,24 @@ public class BBInputSetupTest {
 		assertEquals("Lookup Key Map populated with VfModule Id", vfModuleId, lookupKeyMap.get(ResourceKey.VF_MODULE_ID));
 		assertEquals("Lookup Key Map populated with VolumeGroup Id", volumeGroupId, lookupKeyMap.get(ResourceKey.VOLUME_GROUP_ID));
 	}
+
+	@Test
+	public void testGettingVnfcToConfiguration() throws Exception {
+
+		String vnfcName = "vnfcName";
+		org.onap.aai.domain.yang.Configuration expectedAAI = new org.onap.aai.domain.yang.Configuration();
+		AAIResourceUri aaiResourceUri = AAIUriFactory.createResourceUri(AAIObjectType.VNFC, vnfcName);
+		AAIResultWrapper configurationWrapper =
+			new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(expectedAAI));
+
+		doReturn(new AAIResultWrapper(null)).when(SPY_bbInputSetupUtils).getAAIResourceDepthOne(aaiResourceUri);
+		Vnfc vnfc = SPY_bbInputSetup.getVnfcToConfiguration(vnfcName);
+		Assert.assertNull(vnfc);
+
+		doReturn(configurationWrapper).when(SPY_bbInputSetupUtils).getAAIResourceDepthOne(aaiResourceUri);
+		vnfc = SPY_bbInputSetup.getVnfcToConfiguration(vnfcName);
+		Assert.assertNotNull(vnfc);
+	}
+
 	
 }
