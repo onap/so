@@ -331,6 +331,31 @@
 								</assembly>
 							</build>
 						</image>
+						<image>
+							<name>${docker.image.prefix}/vnfm-simulator</name>
+							<build>
+								<cleanup>try</cleanup>
+								<dockerFileDir>docker-files</dockerFileDir>
+								<dockerFile>Dockerfile.so-app</dockerFile>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>${project.version}-${maven.build.timestamp}</tag>
+									<tag>${project.docker.latesttag.version}</tag>
+								</tags>
+								<assembly>
+									<inline>
+										<dependencySets>
+											<dependencySet>
+												<includes>
+													<include>org.onap.so.vnfm:vnfm-service</include>
+												</includes>
+												<outputFileNameMapping>app.jar</outputFileNameMapping>
+											</dependencySet>
+										</dependencySets>
+									</inline>
+								</assembly>
+							</build>
+						</image>
 					</images>
 				</configuration>
 
@@ -362,7 +387,7 @@
 							<goal>push</goal>
 						</goals>
 						<configuration>
-							<image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring</image>
+							<image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring,${docker.image.prefix}/vnfm-simulator</image>
 						</configuration>
 					</execution>
 				</executions>
@@ -428,6 +453,11 @@
 		<dependency>
 			<groupId>org.onap.so.monitoring</groupId>
 			<artifactId>so-monitoring-service</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so.vnfm</groupId>
+			<artifactId>vnfm-service</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

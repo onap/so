@@ -52,6 +52,10 @@ if [ ${APP} = "so-monitoring" ]; then
 	ln -s ${LOG_PATH} MONITORING
 fi
 
+if [ ${APP} = "vnfm-simulator" ]; then
+	ln -s ${LOG_PATH} SIMULATOR
+fi
+
 if [ ${APP} = "openstack-adapter" ]; then
 	export DISABLE_SNI="-Djsse.enableSNIExtension=false"
 fi
