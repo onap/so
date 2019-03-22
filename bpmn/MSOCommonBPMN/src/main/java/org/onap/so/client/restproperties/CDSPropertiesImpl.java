@@ -30,6 +30,7 @@ public class CDSPropertiesImpl implements CDSProperties {
     private static final String ENDPOINT = "cds.endpoint";
     private static final String PORT = "cds.port";
     private static final String AUTH = "cds.auth";
+    private static final String TIMEOUT = "cds.timeout";
 
     public CDSPropertiesImpl() {
         // Needed for service loader
@@ -74,4 +75,9 @@ public class CDSPropertiesImpl implements CDSProperties {
     public boolean mapNotFoundToEmpty() {
         return false;
     }
+    
+    @Override
+	public int getTimeout() {
+		return Integer.parseInt(Objects.requireNonNull(UrnPropertiesReader.getVariable(TIMEOUT)));
+	}
 }
