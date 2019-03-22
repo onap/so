@@ -57,6 +57,7 @@ public class SpringClientFilter implements ClientHttpRequestInterceptor {
     }
  
     private void processRequest(HttpRequest request, byte[] body) throws IOException {
+     setInvocationId();
     	setupHeaders(request);
     	setupMDC(request);
         if (log.isDebugEnabled()) {
@@ -89,7 +90,6 @@ public class SpringClientFilter implements ClientHttpRequestInterceptor {
         MDC.put(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP, ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
         MDC.put(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME, clientRequest.getURI().toString());       
         MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
-        setInvocationId();
         MDC.put(ONAPLogConstants.MDCs.TARGET_ENTITY,extractTargetEntity(clientRequest));
     }
     

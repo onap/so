@@ -1,29 +1,36 @@
 /*-
  * ============LICENSE_START=======================================================
- *  Copyright (C) 2018 Ericsson. All rights reserved.
+ *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- * 
+ *
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
-package org.onap.so.monitoring.configuration.rest;
+
+package org.onap.so.configuration.rest;
 
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+/**
+ * This class is used configure the parameters needed for
+ * {@link org.apache.http.impl.client.CloseableHttpClient}
+ * 
+ * @author waqas.ikram@est.tech
+ */
 @Service
 public class HttpClientConnectionConfiguration {
 
@@ -43,45 +50,38 @@ public class HttpClientConnectionConfiguration {
     private int maxConnectionsPerRoute;
 
     /**
-     * @return the socketTimeOut
+     * @return the socket connection time out in milliseconds
      */
     public int getSocketTimeOutInMiliSeconds() {
         return (int) TimeUnit.SECONDS.toMillis(socketTimeOutInSeconds);
     }
 
     /**
-     * @return the maxConnections
+     * @return the maximum total connection value.
      */
     public int getMaxConnections() {
         return maxConnections;
     }
 
     /**
-     * @return the maxConnectionsPerRoute
+     * @return the maximum connection per route value.
      */
     public int getMaxConnectionsPerRoute() {
         return maxConnectionsPerRoute;
     }
 
     /**
-     * @return the connectionTimeOut
+     * @return the connect time out value in milliseconds.
      */
     public int getConnectionTimeOutInMilliSeconds() {
         return (int) TimeUnit.SECONDS.toMillis(connectionTimeOutInSeconds);
     }
 
     /**
-     * @return the timeToLive
+     * @return the connection time to live value in mintues.
      */
     public int getTimeToLiveInMins() {
         return (int) TimeUnit.SECONDS.toMinutes(timeToLiveInSeconds);
-    }
-
-    @Override
-    public String toString() {
-        return "HttpClientConnectionConfiguration [connectionTimeOutInSeconds=" + connectionTimeOutInSeconds
-                + ", socketTimeOutInSeconds=" + socketTimeOutInSeconds + ", timeToLiveInSeconds=" + timeToLiveInSeconds
-                + ", maxConnections=" + maxConnections + ", maxConnectionsPerRoute=" + maxConnectionsPerRoute + "]";
     }
 
 }
