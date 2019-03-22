@@ -36,6 +36,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.catalogdb.CatalogDBApplication;
+import org.onap.so.adapters.catalogdb.CatalogDbAdapterBaseTest;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.VfModule;
@@ -56,10 +57,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import org.springframework.beans.BeanUtils;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class CvnfcCatalogDbQueryTest {
+public class CvnfcCatalogDbQueryTest extends CatalogDbAdapterBaseTest {
 
     @Autowired
     private CvnfcCustomizationRepository cvnfcCustomizationRepository;
