@@ -20,11 +20,12 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
+import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.camunda.bpm.engine.ProcessEngineServices
 import org.camunda.bpm.engine.RepositoryService
+import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.camunda.bpm.engine.delegate.DelegateExecution
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -32,20 +33,18 @@ import org.mockito.MockitoAnnotations
 import org.onap.so.bpmn.common.scripts.MsoUtils
 import org.onap.so.bpmn.core.WorkflowException
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
-
 class CreateNetworkInstanceTest  {
-	
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(8090);
-	
-		String Prefix="CRENI_"
-		def utils = new MsoUtils()
-	
-		String createDBRequestError =
+
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(8090);
+
+    String Prefix = "CRENI_"
+    def utils = new MsoUtils()
+    private String processDefinitionKey = "CreateNetworkInstance"
+
+    String createDBRequestError =
 """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
 						<soapenv:Header/>
 						<soapenv:Body>
@@ -74,9 +73,9 @@ class CreateNetworkInstanceTest  {
 							<aetgt:ErrorCode>5300</aetgt:ErrorCode>
 						</aetgt:WorkflowException>
 					</aetgt:FalloutHandlerRequest>"""
-					   
-	   String completeMsoProcessRequest =
-					   """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+
+    String completeMsoProcessRequest =
+            """<aetgt:MsoCompletionRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
                             xmlns:ns="http://org.onap/so/request/types/v1"
                             xmlns="http://org.onap/so/infra/vnf-request/v1">
    <request-info>
@@ -132,250 +131,209 @@ String jsonIncomingRequest =
 			   }
             ]
 		  }
-  }}"""	
+  }}"""
 
-	    @Before
-		public void init()
-		{
-			MockitoAnnotations.initMocks(this)
-		}
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this)
+    }
 
-		public void initializeVariables(DelegateExecution mockExecution) {
-			
-			verify(mockExecution).setVariable(Prefix + "Success", false)
-			
-			verify(mockExecution).setVariable(Prefix + "CompleteMsoProcessRequest", "")
-			verify(mockExecution).setVariable(Prefix + "FalloutHandlerRequest", "")
-			verify(mockExecution).setVariable(Prefix + "isSilentSuccess", false)
-				
-		}
-				
-		@Test
-		//@Ignore  
-		public void preProcessRequest() {
-			
-			println "************ preProcessRequest() ************* " 
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest)
-			
-									
-			// preProcessRequest(DelegateExecution execution)						
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.preProcessRequest(mockExecution)
+    public void initializeVariables(DelegateExecution mockExecution) {
 
-			//verify(mockExecution).getVariable("isDebugLogEnabled")
-			verify(mockExecution).setVariable("prefix", Prefix)
-			
-			initializeVariables(mockExecution)
-			//verify(mockExecution).setVariable(Prefix + "Success", false)
-							
-		}
-		
-		
-		@Test
-		//@Ignore
-		public void getNetworkModelInfo() {
-			
-			println "************ getNetworkModelInfo() ************* "
-			
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-									
-			// preProcessRequest(DelegateExecution execution)
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.getNetworkModelInfo(mockExecution)
+        verify(mockExecution).setVariable(Prefix + "Success", false)
 
-			//verify(mockExecution).getVariable("isDebugLogEnabled")
-			verify(mockExecution).setVariable("prefix", Prefix)
-							
-		}
-		
-		@Test
-		//@Ignore
-		public void sendSyncResponse() {
-			
-			println "************ sendSyncResponse ************* "
-			
-			ExecutionEntity mockExecution = setupMock()
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("isAsyncProcess")).thenReturn(true)
-			when(mockExecution.getVariable("mso-request-id")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
-			when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
-			
-			// preProcessRequest(DelegateExecution execution)
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.sendSyncResponse(mockExecution)
+        verify(mockExecution).setVariable(Prefix + "CompleteMsoProcessRequest", "")
+        verify(mockExecution).setVariable(Prefix + "FalloutHandlerRequest", "")
+        verify(mockExecution).setVariable(Prefix + "isSilentSuccess", false)
+    }
 
-			verify(mockExecution).setVariable("prefix", Prefix)
-			verify(mockExecution).setVariable("CreateNetworkInstanceResponseCode", "202")
-			
-		}
+    @Test
+    public void preProcessRequest() {
 
-		@Test
-		//@Ignore
-		public void sendSyncError() {
-			
-			println "************ sendSyncError ************* "
-			
-			ExecutionEntity mockExecution = setupMock()
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("isAsyncProcess")).thenReturn(true)
-			when(mockExecution.getVariable("mso-request-id")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
-			when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
-			
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.sendSyncError(mockExecution)
+        println "************ preProcessRequest() ************* "
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("bpmnRequest")).thenReturn(jsonIncomingRequest)
 
-			verify(mockExecution).setVariable("prefix", Prefix)
-			verify(mockExecution).setVariable("CreateNetworkInstanceResponseCode", "500")
-			
-		}
-		
-		@Test
-		//@Ignore
-		public void prepareDBRequestError() {
-			
-			println "************ prepareDBRequestError ************* "
-			
-			WorkflowException sndcWorkflowException = new WorkflowException("CreateNetworkInstance", 500, "Received error from SDN-C: No availability zone available")
-			
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowException)
-			//when(mockExecution.getVariable("msoRequestId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-			when(mockExecution.getVariable(Prefix + "requestId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-			when(mockExecution.getVariable("networkId")).thenReturn("")
-			when(mockExecution.getVariable("networkName")).thenReturn("")
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("mso.adapters.db.auth")).thenReturn("757A94191D685FD2092AC1490730A4FC")
-			when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7")
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.preProcessRequest(mockExecution)
 
-			// preProcessRequest(DelegateExecution execution)
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.prepareDBRequestError(mockExecution)
-			
-			verify(mockExecution).setVariable("prefix", Prefix)
-			verify(mockExecution).setVariable(Prefix + "createDBRequest", createDBRequestError)
-		
-		}
-		
+        verify(mockExecution).setVariable("prefix", Prefix)
 
-		@Test
-		//@Ignore
-		public void prepareCompletion() {
-			
-			println "************ postProcessResponse ************* "
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
-			when(mockExecution.getVariable(Prefix + "dbReturnCode")).thenReturn("200")
-			when(mockExecution.getVariable("networkId")).thenReturn("fb03f6f0-9012-41c4-87d8-1dbf3c22b889")
-			
-			// postProcessResponse(DelegateExecution execution)
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.prepareCompletion(mockExecution)
+        initializeVariables(mockExecution)
+    }
 
-			// check the sequence of variable invocation
-			//MockitoDebuggerImpl preDebugger = new MockitoDebuggerImpl()
-			//preDebugger.printInvocations(mockExecution)
 
-			verify(mockExecution).setVariable("prefix", Prefix)
-			verify(mockExecution).setVariable(Prefix + "Success", true)
-			verify(mockExecution).setVariable(Prefix + "CompleteMsoProcessRequest", completeMsoProcessRequest)
-		
-		}
+    @Test
+    public void getNetworkModelInfo() {
 
-		@Test
-		//@Ignore
-		public void buildErrorResponse() {
-			
-			println "************ buildErrorResponse ************* "
-			
-			
-			WorkflowException sndcWorkflowException = new WorkflowException("CreateNetworkInstance", 5300, "Received error from SDN-C: No availability zone available.")
-			
-			ExecutionEntity mockExecution = setupMock()
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("mso-request-id")).thenReturn("b69c9054-da09-4a2c-adf5-51042b62bfac")
-			//when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowException)
-			when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowException)
-			
-			// buildErrorResponse(DelegateExecution execution)
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.buildErrorResponse(mockExecution)
-			
-			verify(mockExecution, atLeast(1)).setVariable("prefix", "CRENI_")
-			verify(mockExecution).setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
-			
-			//MockitoDebuggerImpl debugger = new MockitoDebuggerImpl()
-			//debugger.printInvocations(mockExecution)
+        println "************ getNetworkModelInfo() ************* "
 
-		}
-		
-		@Test
-		//@Ignore
-		public void postProcessResponse() {
-			
-			println "************ postProcessResponse() ************* "
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-			when(mockExecution.getVariable("CMSO_ResponseCode")).thenReturn("200")
-			
-			// postProcessResponse(DelegateExecution execution)						
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.postProcessResponse(mockExecution)
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
 
-			//verify(mockExecution).getVariable("isDebugLogEnabled")
-			//verify(mockExecution).setVariable("prefix", Prefix)
+        // preProcessRequest(DelegateExecution execution)
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.getNetworkModelInfo(mockExecution)
 
-			verify(mockExecution).setVariable(Prefix + "Success", true)
-		
-		}
-		
-		@Test
-		//@Ignore
-		public void processRollbackData() {
-			
-			println "************ callDBCatalog() ************* "
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			// Initialize prerequisite variables
-			when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-									
-			// preProcessRequest(DelegateExecution execution)
-			CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
-			CreateNetworkInstance.processRollbackData(mockExecution)
+        verify(mockExecution).setVariable("prefix", Prefix)
+    }
 
-//			verify(mockExecution).getVariable("isDebugLogEnabled")
-			verify(mockExecution).setVariable("prefix", Prefix)
-							
-		}
-		
-		private ExecutionEntity setupMock() {
-			
-			ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-			when(mockProcessDefinition.getKey()).thenReturn("CreateNetworkInstance")
-			RepositoryService mockRepositoryService = mock(RepositoryService.class)
-			when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-			when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("CreateNetworkInstance")
-			when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-			ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-			when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
-			
-			ExecutionEntity mockExecution = mock(ExecutionEntity.class)
-			// Initialize prerequisite variables
-			
-			when(mockExecution.getId()).thenReturn("100")
-			when(mockExecution.getProcessDefinitionId()).thenReturn("CreateNetworkInstance")
-			when(mockExecution.getProcessInstanceId()).thenReturn("CreateNetworkInstance")
-			when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-			when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-			
-			return mockExecution
-		}
-		
+    @Test
+    public void sendSyncResponse() {
+
+        println "************ sendSyncResponse ************* "
+
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("isAsyncProcess")).thenReturn(true)
+        when(mockExecution.getVariable("mso-request-id")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
+        when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
+
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.sendSyncResponse(mockExecution)
+
+        verify(mockExecution).setVariable("prefix", Prefix)
+        verify(mockExecution).setVariable("CreateNetworkInstanceResponseCode", "202")
+    }
+
+    @Test
+    public void sendSyncError() {
+
+        println "************ sendSyncError ************* "
+
+        ExecutionEntity mockExecution = setupMock()
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("isAsyncProcess")).thenReturn(true)
+        when(mockExecution.getVariable("mso-request-id")).thenReturn("e8ebf6a0-f8ea-4dc0-8b99-fe98a87722d6")
+        when(mockExecution.getVariable("serviceInstanceId")).thenReturn("f70e927b-6087-4974-9ef8-c5e4d5847ca4")
+
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.sendSyncError(mockExecution)
+
+        verify(mockExecution).setVariable("prefix", Prefix)
+        verify(mockExecution).setVariable("CreateNetworkInstanceResponseCode", "500")
+    }
+
+    @Test
+    public void prepareDBRequestError() {
+
+        println "************ prepareDBRequestError ************* "
+
+        WorkflowException sndcWorkflowException = new WorkflowException(processDefinitionKey, 500, "Received error from SDN-C: No availability zone available")
+
+        ExecutionEntity mockExecution = setupMock()
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowException)
+        when(mockExecution.getVariable(Prefix + "requestId")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
+        when(mockExecution.getVariable("networkId")).thenReturn("")
+        when(mockExecution.getVariable("networkName")).thenReturn("")
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("mso.adapters.db.auth")).
+                thenReturn("5E12ACACBD552A415E081E29F2C4772F9835792A51C766CCFDD7433DB5220B59969CB2798C");
+        when(mockExecution.getVariable("mso.msoKey")).thenReturn("07a7159d3bf51a0e53be7a8f89699be7");
+
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.prepareDBRequestError(mockExecution)
+
+        verify(mockExecution).setVariable("prefix", Prefix)
+        verify(mockExecution).setVariable(Prefix + "createDBRequest", createDBRequestError)
+    }
+
+
+    @Test
+    public void prepareCompletion() {
+
+        println "************ postProcessResponse ************* "
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("mso-request-id")).thenReturn("88f65519-9a38-4c4b-8445-9eb4a5a5af56")
+        when(mockExecution.getVariable(Prefix + "dbReturnCode")).thenReturn("200")
+        when(mockExecution.getVariable("networkId")).thenReturn("fb03f6f0-9012-41c4-87d8-1dbf3c22b889")
+
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.prepareCompletion(mockExecution)
+
+        verify(mockExecution).setVariable("prefix", Prefix)
+        verify(mockExecution).setVariable(Prefix + "Success", true)
+        verify(mockExecution).setVariable(Prefix + "CompleteMsoProcessRequest", completeMsoProcessRequest)
+    }
+
+    @Test
+    public void buildErrorResponse() {
+
+        println "************ buildErrorResponse ************* "
+
+        WorkflowException sndcWorkflowException = new WorkflowException(processDefinitionKey, 5300, "Received error from SDN-C: No availability zone available.")
+
+        ExecutionEntity mockExecution = setupMock()
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("mso-request-id")).thenReturn("b69c9054-da09-4a2c-adf5-51042b62bfac")
+        when(mockExecution.getVariable("WorkflowException")).thenReturn(sndcWorkflowException)
+
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.buildErrorResponse(mockExecution)
+
+        verify(mockExecution, atLeast(1)).setVariable("prefix", "CRENI_")
+        verify(mockExecution).setVariable(Prefix + "FalloutHandlerRequest", falloutHandlerRequest)
+    }
+
+    @Test
+    public void postProcessResponse() {
+
+        println "************ postProcessResponse() ************* "
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+        when(mockExecution.getVariable("CMSO_ResponseCode")).thenReturn("200")
+
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.postProcessResponse(mockExecution)
+
+        verify(mockExecution).setVariable(Prefix + "Success", true)
+
+    }
+
+    @Test
+    public void processRollbackData() {
+
+        println "************ callDBCatalog() ************* "
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+        // Initialize prerequisite variables
+        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
+
+        // preProcessRequest(DelegateExecution execution)
+        CreateNetworkInstance CreateNetworkInstance = new CreateNetworkInstance()
+        CreateNetworkInstance.processRollbackData(mockExecution)
+
+        verify(mockExecution).setVariable("prefix", Prefix)
+
+    }
+
+    private ExecutionEntity setupMock() {
+
+        ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
+        when(mockProcessDefinition.getKey()).thenReturn(processDefinitionKey)
+        RepositoryService mockRepositoryService = mock(RepositoryService.class)
+        when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
+        when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn(processDefinitionKey)
+        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
+        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
+        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
+
+        ExecutionEntity mockExecution = mock(ExecutionEntity.class)
+        // Initialize prerequisite variables
+
+        when(mockExecution.getId()).thenReturn("100")
+        when(mockExecution.getProcessDefinitionId()).thenReturn(processDefinitionKey)
+        when(mockExecution.getProcessInstanceId()).thenReturn(processDefinitionKey)
+        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
+        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
+
+        return mockExecution
+    }
+
 }

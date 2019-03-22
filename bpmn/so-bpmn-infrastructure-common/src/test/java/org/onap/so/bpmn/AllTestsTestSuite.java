@@ -29,8 +29,7 @@ import com.googlecode.junittoolbox.WildcardPatternSuite;
 
 @RunWith(WildcardPatternSuite.class)
 @SuiteClasses({"!**/service/*Test.class", "!**/subprocess/*Test.class", "!**/process/*Test.class", 
-	"!**/tasks/*Test.class", "!**/infrastructure/aai/*Test.class",
-	"!**/infrastructure/scripts/*Test.class", "**/*Test.class"})
+	"!**/tasks/*Test.class", "!**/infrastructure/aai/*Test.class", "**/*Test.class"})
 public class AllTestsTestSuite {
 	// the class remains empty,
 	// used only as a holder for the above annotations

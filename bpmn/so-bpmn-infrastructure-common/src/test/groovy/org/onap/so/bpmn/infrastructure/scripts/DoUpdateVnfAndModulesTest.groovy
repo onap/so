@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,11 +23,7 @@
 package org.onap.so.bpmn.infrastructure.scripts
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule
-import org.camunda.bpm.engine.ProcessEngineServices
-import org.camunda.bpm.engine.RepositoryService
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
-import org.camunda.bpm.engine.repository.ProcessDefinition
-import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -33,10 +31,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
+import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
-import org.mockito.runners.MockitoJUnitRunner
-import org.onap.so.bpmn.core.WorkflowException
+import org.mockito.junit.MockitoJUnitRunner
+import org.onap.so.bpmn.core.UrnPropertiesReader
+import org.springframework.core.env.Environment
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*
 import static org.mockito.Mockito.*
@@ -50,6 +50,9 @@ class DoUpdateVnfAndModulesTest {
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(28090);
 
+    @Mock
+    Environment mockEnvironment
+
     @Before
     public void init() {
         MockitoAnnotations.initMocks(this)
@@ -58,6 +61,8 @@ class DoUpdateVnfAndModulesTest {
     @Test
     void testQueryAAIVfModule() {
         ExecutionEntity mockExecution = setupMock()
+
+
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("vnfId")).thenReturn("12345")
         when(mockExecution.getVariable("mso.workflow.default.aai.generic-vnf.version")).thenReturn("8")
@@ -72,7 +77,7 @@ class DoUpdateVnfAndModulesTest {
     }
 
     @Test
-	@Ignore
+    @Ignore
     void testQueryAAIVfModuleEndpointNull() {
         ExecutionEntity mockExecution = setupMock()
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
@@ -89,30 +94,18 @@ class DoUpdateVnfAndModulesTest {
         } catch (Exception ex) {
             println " Test End - Handle catch-throw BpmnError()! "
         }
-        Mockito.verify(mockExecution, atLeastOnce()).setVariable(captor.capture(), captor.capture())
-        WorkflowException workflowException = captor.getValue()
-        Assert.assertEquals(1002, workflowException.getErrorCode())
-        Assert.assertEquals("AAI GET Failed:org.apache.http.client.ClientProtocolException", workflowException.getErrorMessage())
     }
 
-    private static ExecutionEntity setupMock() {
-        ProcessDefinition mockProcessDefinition = mock(ProcessDefinition.class)
-        when(mockProcessDefinition.getKey()).thenReturn("DoUpdateVfModule")
-        RepositoryService mockRepositoryService = mock(RepositoryService.class)
-        when(mockRepositoryService.getProcessDefinition()).thenReturn(mockProcessDefinition)
-        when(mockRepositoryService.getProcessDefinition().getKey()).thenReturn("DoUpdateVfModule")
-        when(mockRepositoryService.getProcessDefinition().getId()).thenReturn("100")
-        ProcessEngineServices mockProcessEngineServices = mock(ProcessEngineServices.class)
-        when(mockProcessEngineServices.getRepositoryService()).thenReturn(mockRepositoryService)
+    private ExecutionEntity setupMock() {
+        UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader()
+        urnPropertiesReader.setEnvironment(mockEnvironment)
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.version")).thenReturn("14")
+        when(mockEnvironment.getProperty("mso.workflow.global.default.aai.namespace")).thenReturn("defaultTestNamespace")
+        when(mockEnvironment.getProperty("aai.endpoint")).thenReturn("http://localhost:28090")
 
         ExecutionEntity mockExecution = mock(ExecutionEntity.class)
         // Initialize prerequisite variables
         when(mockExecution.getId()).thenReturn("100")
-        when(mockExecution.getProcessDefinitionId()).thenReturn("DoUpdateVfModule")
-        when(mockExecution.getProcessInstanceId()).thenReturn("DoUpdateVfModule")
-        when(mockExecution.getProcessEngineServices()).thenReturn(mockProcessEngineServices)
-        when(mockExecution.getProcessEngineServices().getRepositoryService().getProcessDefinition(mockExecution.getProcessDefinitionId())).thenReturn(mockProcessDefinition)
-
         return mockExecution
     }
 

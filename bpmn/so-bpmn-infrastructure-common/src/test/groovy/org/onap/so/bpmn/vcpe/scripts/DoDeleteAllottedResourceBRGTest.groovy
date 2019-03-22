@@ -120,6 +120,7 @@ class DoDeleteAllottedResourceBRGTest extends GroovyTestBase {
     public void getAaiAR_EmptyResponse() {
         ExecutionEntity mex = setupMock()
         initGetAaiAR(mex)
+        when(doDeleteAllottedResourceBRG.getAllottedResourceUtils()).thenReturn(allottedResourceUtils_MOCK)
         doReturn(false).when(allottedResourceUtils_MOCK).ifExistsAR(eq(mex), eq(ARID))
         assertTrue(doBpmnError({ _ -> doDeleteAllottedResourceBRG.getAaiAR(mex) }))
     }
@@ -427,7 +428,7 @@ class DoDeleteAllottedResourceBRGTest extends GroovyTestBase {
         MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoDeleteAllottedResourceBRG/arGetById.xml")
         MockDeleteAllottedResource(CUST, SVC, INST, ARID, VERS)
 
-        when(mex.getVariable("aaiARPath")).thenReturn("")
+        when(mex.getVariable("aaiARPath")).thenReturn(null)
 
         DoDeleteAllottedResourceBRG DoDeleteAllottedResourceBRG = new DoDeleteAllottedResourceBRG()
 
@@ -487,10 +488,6 @@ class DoDeleteAllottedResourceBRGTest extends GroovyTestBase {
         when(mex.getVariable("allottedResourceType")).thenReturn("BRG")
         when(mex.getVariable("allottedResourceRole")).thenReturn("BRG")
         when(mex.getVariable("allottedResourceId")).thenReturn(ARID)
-        when(mex.getVariable("mso.workflow.global.default.aai.namespace")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.namespace"))
-        when(mex.getVariable("mso.workflow.global.default.aai.version")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.global.default.aai.version"))
-        when(mex.getVariable("mso.workflow.default.aai.v8.nodes.query.uri")).thenReturn(UrnPropertiesReader.getVariable("mso.workflow.default.aai.v8.nodes-query.uri"))
-        when(mex.getVariable("aai.endpoint")).thenReturn(aaiUriPfx)
         when(mex.getVariable("aaiARPath")).thenReturn("/business/customers/customer/" + CUST + "/service-subscriptions/service-subscription/" + SVC + "/service-instances/service-instance/" + INST + "/allotted-resources/allotted-resource/" + ARID)
         when(mex.getVariable("aaiAROrchStatus")).thenReturn("Active")
     }

@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -99,7 +101,7 @@ class DoCreateServiceInstanceTest extends MsoGroovyTest{
         StubResponseAAI.MockGetCustomer("12345", "")
         DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
         when(obj.getAAIClient()).thenReturn(client)
-        when(client.exists(isA(AAIResourceUri.class))).thenReturn(true)
+        when(client.exists((AAIResourceUri) isA(AAIResourceUri.class))).thenReturn(true)
         obj.getAAICustomerById(mockExecution)
     }
 
@@ -114,7 +116,7 @@ class DoCreateServiceInstanceTest extends MsoGroovyTest{
         StubResponseAAI.MockGetCustomer("12345", "")
         DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
         when(obj.getAAIClient()).thenReturn(client)
-        when(client.exists(isA(AAIResourceUri.class))).thenReturn(false)
+        when(client.exists((AAIResourceUri) isA(AAIResourceUri.class))).thenReturn(false)
         thrown.expect(BpmnError.class)
         obj.getAAICustomerById(mockExecution)
     }
@@ -130,8 +132,8 @@ class DoCreateServiceInstanceTest extends MsoGroovyTest{
         StubResponseAAI.MockGetCustomer("12345", "")
         DoCreateServiceInstance obj = spy(DoCreateServiceInstance.class)
         when(obj.getAAIClient()).thenReturn(client)
-        when(client.exists(isA(AAIResourceUri.class))).thenThrow(Exception.class)
-        thrown.expect(Exception.class)
+        when(client.exists((AAIResourceUri) isA(AAIResourceUri.class))).thenThrow(NullPointerException.class)
+        thrown.expect(BpmnError.class)
         obj.getAAICustomerById(mockExecution)
     }
 }

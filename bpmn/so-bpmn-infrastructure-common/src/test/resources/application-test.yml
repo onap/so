@@ -176,6 +176,8 @@ mso:
       default:
         aai:
           namespace: http://org.openecomp.aai.inventory/
+          version: 14
+          namespace: defaultTestNamespace
     l3ToHigherLayerAddBonding:
       model:
         invariantid: 50359538-066f-4a8d-807f-f2bc8eaa79dc

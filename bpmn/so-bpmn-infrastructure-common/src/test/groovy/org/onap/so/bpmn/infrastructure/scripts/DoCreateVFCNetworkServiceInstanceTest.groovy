@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,11 +22,9 @@
 
 package org.onap.so.bpmn.infrastructure.scripts
 
-import com.github.tomakehurst.wiremock.junit.WireMockRule
 import org.camunda.bpm.engine.delegate.BpmnError
 import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.mockito.ArgumentCaptor
 import org.mockito.Captor
@@ -63,10 +63,12 @@ class DoCreateVFCNetworkServiceInstanceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("globalSubscriberId")).thenReturn("MSO_dev")
         when(mockExecution.getVariable("serviceType")).thenReturn("MSO-dev-service-type")
         when(mockExecution.getVariable("serviceId")).thenReturn("SER12345")
-        doNothing().when(client).connect(isA(AAIResourceUri.class),isA(AAIResourceUri.class))
+        doNothing().when(client).connect((AAIResourceUri) isA(AAIResourceUri.class),(AAIResourceUri) isA(AAIResourceUri.class))
         doCreateVFCNetworkServiceInstance.addNSRelationship(mockExecution);
-        AAIResourceUri nsUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,"MSO_dev","MSO-dev-service-type","NS12345")
-        AAIResourceUri relatedServiceUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,"MSO_dev","MSO-dev-service-type","SER12345")
+        AAIResourceUri nsUri = AAIUriFactory.createResourceUri(
+                AAIObjectType.SERVICE_INSTANCE,"MSO_dev","MSO-dev-service-type","NS12345")
+        AAIResourceUri relatedServiceUri = AAIUriFactory.createResourceUri(
+                AAIObjectType.SERVICE_INSTANCE,"MSO_dev","MSO-dev-service-type","SER12345")
         Mockito.verify(client).connect(nsUri,relatedServiceUri)
     }
 
@@ -76,7 +78,8 @@ class DoCreateVFCNetworkServiceInstanceTest extends MsoGroovyTest {
         when(mockExecution.getVariable("serviceType")).thenReturn("serviceType")
         when(mockExecution.getVariable("serviceInstanceId")).thenReturn("serviceInstanceId")
         when(mockExecution.getVariable("nsInstanceId")).thenReturn("nsInstanceId")
-        doThrow(new NotFoundException("Error creating relationship")).when(client).connect(isA(AAIResourceUri.class),isA(AAIResourceUri.class))
+        doThrow(new NotFoundException("Error creating relationship")).
+                when(client).connect((AAIResourceUri) isA(AAIResourceUri.class),(AAIResourceUri) isA(AAIResourceUri.class))
         try {
             doCreateVFCNetworkServiceInstance.addNSRelationship(mockExecution)
         } catch (BpmnError ex) {

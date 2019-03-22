@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,15 +27,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExpectedException
-import org.onap.aai.domain.yang.VolumeGroup
-import org.onap.aai.domain.yang.VolumeGroups
 import org.onap.so.bpmn.common.scripts.MsoGroovyTest
-import org.onap.so.client.aai.AAIObjectPlurals
-import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
-import org.onap.so.client.aai.entities.uri.AAIUriFactory
-import org.onap.so.constants.Defaults
 
+import static org.mockito.ArgumentMatchers.eq
 import static org.mockito.ArgumentMatchers.isA
 import static org.mockito.Mockito.doThrow
 import static org.mockito.Mockito.spy
@@ -55,8 +52,8 @@ public class DoDeleteVFCNetworkServiceInstanceTest extends MsoGroovyTest {
     @Test
     void callRESTDeleteAAIVolumeGroupTest(){
         String resourceInstanceId = "resourceInstanceId"
-        when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
-        when(mockExecution.getVariable("resourceInstanceId")).thenReturn(resourceInstanceId)
+        when(mockExecution.getVariable(eq("isDebugLogEnabled"))).thenReturn("true")
+        when(mockExecution.getVariable(eq("resourceInstanceId"))).thenReturn(resourceInstanceId)
         doDeleteVFCNetworkServiceInstance.deleteNSRelationship(mockExecution)
     }
 
@@ -65,7 +62,8 @@ public class DoDeleteVFCNetworkServiceInstanceTest extends MsoGroovyTest {
         String resourceInstanceId = "resourceInstanceId"
         when(mockExecution.getVariable("isDebugLogEnabled")).thenReturn("true")
         when(mockExecution.getVariable("resourceInstanceId")).thenReturn(resourceInstanceId)
-        doThrow(Exception.class).when(client).disconnect(isA(AAIResourceUri.class),isA(AAIResourceUri.class))
+        doThrow(NullPointerException.class).when(client).disconnect(
+                (AAIResourceUri) isA(AAIResourceUri.class),(AAIResourceUri) isA(AAIResourceUri.class))
         thrown.expect(BpmnError.class)
         doDeleteVFCNetworkServiceInstance.deleteNSRelationship(mockExecution)
     }

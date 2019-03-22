@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,6 +29,7 @@ import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 import org.mockito.MockitoAnnotations
+import org.onap.so.bpmn.core.WorkflowException
 import org.onap.so.bpmn.mock.FileUtil
 import org.onap.so.bpmn.vcpe.scripts.GroovyTestBase
 
@@ -41,7 +44,6 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
     public WireMockRule wireMockRule = new WireMockRule(GroovyTestBase.PORT)
 
     String Prefix = "CVRCS_"
-    String RbType = "DCRENI_"
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -60,29 +62,25 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
     @Test
     public void preProcessRequestTest () {
         ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
+        setupMap(mex)
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
         mex.setVariable("isDebugLogEnabled","true")
         instance.preProcessRequest(mex);
-
-        verify(mex).getVariable(GroovyTestBase.DBGFLAG)
 
         Map<String,String> userParams = new HashMap<>()
         userParams.put("someUserParam","someValue")
 
         verify(mex).setVariable("prefix", "DELSI_")
         verify(mex).setVariable("msoRequestId", "mri")
-        verify(mex).setVariable("source", "CCD")
+        verify(mex).setVariable(DBGFLAG, "true")
         verify(mex).setVariable("operationType", "DELETE")
-        verify(mex).setVariable("globalSubscriberId", "38829939920000")
-        verify(mex).setVariable("serviceInputParams",userParams)
     }
 
     @Test
     public void sendSyncResponseTest() {
         ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
+        setupMap(mex)
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
         instance.sendSyncResponse(mex)
@@ -92,18 +90,18 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
     @Test
     public void prepareCompletionRequestTest(){
         ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
+        setupMap(mex)
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
         instance.prepareCompletionRequest(mex)
         String msoComplitionRequest = FileUtil.readResourceFile("__files/GenericFlows/MsoCompletionRequest.xml")
-        //verify(mex).setVariable("completionRequest", msoComplitionRequest)
+        verify(mex).setVariable("completionRequest", msoComplitionRequest)
     }
 
     @Test
     public void sendSyncErrorTest(){
         ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
+        setupMap(mex)
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
         instance.sendSyncError(mex)
@@ -113,23 +111,33 @@ class DeleteCustomE2EServiceInstanceTest extends GroovyTestBase {
     @Test
     public void prepareFalloutRequest(){
         ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
+        setupMap(mex)
         initPreProcess(mex)
+        when(mex.getVariable("source")).thenReturn("CCD")
+        when(mex.getVariable("WorkflowException")).thenReturn(new WorkflowException("", 7000, ""))
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
         instance.prepareFalloutRequest(mex)
         String requestInfo =
-                """<request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
+                """<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
+					                             xmlns:ns="http://org.onap/so/request/types/v1"
+					                             xmlns:wfsch="http://org.onap/so/workflow/schema/v1">
+					   <request-info xmlns="http://org.onap/so/infra/vnf-request/v1">
 					<request-id>null</request-id>
 					<action>DELETE</action>
-					<source>null</source>
-				   </request-info>"""
-        //verify(mex).setVariable("falloutRequest", requestInfo)
+					<source>CCD</source>
+				   </request-info>
+						<aetgt:WorkflowException xmlns:aetgt="http://org.onap/so/workflow/schema/v1">
+							<aetgt:ErrorMessage></aetgt:ErrorMessage>
+							<aetgt:ErrorCode>7000</aetgt:ErrorCode>
+						</aetgt:WorkflowException>
+					</aetgt:FalloutHandlerRequest>"""
+        verify(mex).setVariable("falloutRequest", requestInfo)
     }
 
     @Test
     public void processJavaExceptionTest(){
         ExecutionEntity mex = setupMock()
-        def map = setupMap(mex)
+        setupMap(mex)
         initPreProcess(mex)
         DeleteCustomE2EServiceInstance instance = new DeleteCustomE2EServiceInstance()
         instance.processJavaException()
