@@ -72,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "054f98a8_9343b456",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-22T12:09:17Z",
+      "side": 1,
+      "message": "I am stating why can\u0027 t you serialize a larger bean that saves all the parameters here.  This is only a single hit to the database, here you are doing \u003e 5 inserts,updates, etc.",
+      "parentUuid": "e89826a0_ca216e86",
+      "revId": "64286e3c6674aec06867db687c7945bedb710b9c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6e4ce3d0_302e0aa7",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigAssignVnf.java",
         "patchSetId": 7
