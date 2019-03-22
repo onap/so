@@ -38,6 +38,7 @@ import org.onap.so.monitoring.model.ActivityInstanceDetail;
 import org.onap.so.monitoring.model.ProcessDefinitionDetail;
 import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
 import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
+import org.onap.so.rest.service.HttpRestServiceProvider;
 
 import com.google.common.base.Optional;
 
@@ -65,7 +66,7 @@ public class CamundaProcessDataServiceProviderTest {
     public void test_GetProcessInstanceDetail_EmptyResponse() {
         final Optional<ProcessInstance[]> response = Optional.<ProcessInstance[]>absent();
         final String url = CAMUNDA_REST_API_URL + DEFAULT + "/history/process-instance?variables=requestId_eq_" + ID;
-        when(httpRestServiceProvider.getHttpResponse(url, ProcessInstance[].class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ProcessInstance[].class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
@@ -77,7 +78,7 @@ public class CamundaProcessDataServiceProviderTest {
     public void test_GetProcessInstanceDetail_NonEmptyResponseWithSuperProcessIdNull() {
         final Optional<ProcessInstance[]> response = Optional.of(getProcessInstance());
         final String url = CAMUNDA_REST_API_URL + DEFAULT + "/history/process-instance?variables=requestId_eq_" + ID;
-        when(httpRestServiceProvider.getHttpResponse(url, ProcessInstance[].class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ProcessInstance[].class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
@@ -92,7 +93,7 @@ public class CamundaProcessDataServiceProviderTest {
     public void test_GetProcessInstanceDetail_NonEmptyResponseWithSuperProcessIdNotNull() {
         final Optional<ProcessInstance[]> response = Optional.of(getProcessInstance(SUPER_PROCESS_ID));
         final String url = CAMUNDA_REST_API_URL + DEFAULT + "/history/process-instance?variables=requestId_eq_" + ID;
-        when(httpRestServiceProvider.getHttpResponse(url, ProcessInstance[].class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ProcessInstance[].class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
@@ -105,7 +106,7 @@ public class CamundaProcessDataServiceProviderTest {
     public void test_GetProcessDefinition_EmptyResponse() {
         final Optional<ProcessDefinition> response = Optional.<ProcessDefinition>absent();
         final String url = CAMUNDA_REST_API_URL + DEFAULT + "/process-definition/" + ID + "/xml";
-        when(httpRestServiceProvider.getHttpResponse(url, ProcessDefinition.class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ProcessDefinition.class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
@@ -117,7 +118,7 @@ public class CamundaProcessDataServiceProviderTest {
     public void test_GetProcessDefinition_NonEmptyResponse() {
         final Optional<ProcessDefinition> response = getProcessDefinition();
         final String url = CAMUNDA_REST_API_URL + DEFAULT + "/process-definition/" + PROCESS_ID + "/xml";
-        when(httpRestServiceProvider.getHttpResponse(url, ProcessDefinition.class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ProcessDefinition.class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
@@ -132,7 +133,7 @@ public class CamundaProcessDataServiceProviderTest {
         final Optional<ActivityInstance[]> response = Optional.<ActivityInstance[]>absent();
         final String url = CAMUNDA_REST_API_URL + DEFAULT + "/history/activity-instance?processInstanceId=" + PROCESS_ID
                 + "&sortBy=startTime&sortOrder=asc";
-        when(httpRestServiceProvider.getHttpResponse(url, ActivityInstance[].class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ActivityInstance[].class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
@@ -146,7 +147,7 @@ public class CamundaProcessDataServiceProviderTest {
         final Optional<ActivityInstance[]> response = getActivityInstance();
         final String url = CAMUNDA_REST_API_URL + DEFAULT + "/history/activity-instance?processInstanceId=" + PROCESS_ID
                 + "&sortBy=startTime&sortOrder=asc";
-        when(httpRestServiceProvider.getHttpResponse(url, ActivityInstance[].class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ActivityInstance[].class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
@@ -164,7 +165,7 @@ public class CamundaProcessDataServiceProviderTest {
         final Optional<ProcessInstanceVariable[]> response = Optional.<ProcessInstanceVariable[]>absent();
         final String url =
                 CAMUNDA_REST_API_URL + DEFAULT + "/history/variable-instance?processInstanceId=" + PROCESS_ID;
-        when(httpRestServiceProvider.getHttpResponse(url, ProcessInstanceVariable[].class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ProcessInstanceVariable[].class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
@@ -178,7 +179,7 @@ public class CamundaProcessDataServiceProviderTest {
         final Optional<ProcessInstanceVariable[]> response = getProcessInstanceVariable();
         final String url =
                 CAMUNDA_REST_API_URL + DEFAULT + "/history/variable-instance?processInstanceId=" + PROCESS_ID;
-        when(httpRestServiceProvider.getHttpResponse(url, ProcessInstanceVariable[].class)).thenReturn(response);
+        when(httpRestServiceProvider.get(url, ProcessInstanceVariable[].class)).thenReturn(response);
         final CamundaProcessDataServiceProvider objUnderTest =
                 new CamundaProcessDataServiceProviderImpl(camundaRestUrlProvider, httpRestServiceProvider);
 
