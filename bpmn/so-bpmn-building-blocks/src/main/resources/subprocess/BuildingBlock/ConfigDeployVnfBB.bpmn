@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1556kf5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4">
+  <bpmn:process id="ConfigDeployVnfBB" name="ConfigDeployVnfBB" isExecutable="true">
+    <bpmn:startEvent id="Start" name="Start">
+      <bpmn:outgoing>SequenceFlow_0pd4jka</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="UpdateAAIConfigured" name="Update AAI Configured" camunda:expression="${ConfigDeployVnf.updateAAIConfigured(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_1tb7fs1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_00u29dm</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End" name="End">
+      <bpmn:incoming>SequenceFlow_00u29dm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0pd4jka" sourceRef="Start" targetRef="UpdateAAIConfigure" />
+    <bpmn:sequenceFlow id="SequenceFlow_03xbj4e" sourceRef="AbstractCDSBB" targetRef="ExclusiveGateway_0duh80v" />
+    <bpmn:sequenceFlow id="SequenceFlow_00u29dm" sourceRef="UpdateAAIConfigured" targetRef="End" />
+    <bpmn:callActivity id="AbstractCDSBB" name="Abstract CDS (CDS Call)" calledElement="AbstractCDSProcessingBB">
+      <bpmn:extensionElements>
+        <camunda:out source="WorkflowException" />
+        <camunda:in source="requestId " />
+        <camunda:in source="originatorId" />
+        <camunda:in source="subRequestId" />
+        <camunda:in source="actionName" />
+        <camunda:in source="mode" />
+        <camunda:in source="blueprintName" />
+        <camunda:in source="blueprintVersion" />
+        <camunda:in source="requestObject " />
+        <camunda:out source="CDSStatus" target="CDSStatus" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0kruy8t</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_03xbj4e</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:serviceTask id="UpdateAAIConfigure" name="Update AAI Configure" camunda:expression="${ConfigDeployVnf.updateAAIConfigure(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0pd4jka</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0moyu92</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0moyu92" sourceRef="UpdateAAIConfigure" targetRef="PreProcessAbstractCDSProcessing" />
+    <bpmn:sequenceFlow id="SequenceFlow_0kruy8t" sourceRef="PreProcessAbstractCDSProcessing" targetRef="AbstractCDSBB" />
+    <bpmn:serviceTask id="PreProcessAbstractCDSProcessing" name="PreProcess Abstract CDS Processing" camunda:expression="${ConfigDeployVnf.preProcessAbstractCDSProcessing(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0moyu92</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0kruy8t</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0duh80v" default="SequenceFlow_0o50k2d">
+      <bpmn:incoming>SequenceFlow_03xbj4e</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1tb7fs1</bpmn:outgoing>
+      <bpmn:outgoing>SequenceFlow_0o50k2d</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1tb7fs1" name="success" sourceRef="ExclusiveGateway_0duh80v" targetRef="UpdateAAIConfigured">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("CDSStatus").equals("Success")}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="SequenceFlow_0o50k2d" sourceRef="ExclusiveGateway_0duh80v" targetRef="EndEvent_0wwnq4u" />
+    <bpmn:endEvent id="EndEvent_0wwnq4u">
+      <bpmn:incoming>SequenceFlow_0o50k2d</bpmn:incoming>
+      <bpmn:errorEventDefinition errorRef="Error_0zsv500" />
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:error id="Error_0zsv500" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ConfigDeployVnfBB">
+      <bpmndi:BPMNEdge id="SequenceFlow_0pd4jka_di" bpmnElement="SequenceFlow_0pd4jka">
+        <di:waypoint x="542" y="248" />
+        <di:waypoint x="607" y="248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03xbj4e_di" bpmnElement="SequenceFlow_03xbj4e">
+        <di:waypoint x="1039" y="248" />
+        <di:waypoint x="1089" y="248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_00u29dm_di" bpmnElement="SequenceFlow_00u29dm">
+        <di:waypoint x="1327" y="248" />
+        <di:waypoint x="1399" y="248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Start">
+        <dc:Bounds x="506" y="230" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="512" y="273" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_0c9apxl_di" bpmnElement="UpdateAAIConfigured">
+        <dc:Bounds x="1227" y="208" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_0p7ssqo_di" bpmnElement="End">
+        <dc:Bounds x="1399" y="230" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1407" y="273" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_0vg7uiv_di" bpmnElement="AbstractCDSBB">
+        <dc:Bounds x="939" y="208" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_05zt0do_di" bpmnElement="UpdateAAIConfigure">
+        <dc:Bounds x="607" y="208" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0moyu92_di" bpmnElement="SequenceFlow_0moyu92">
+        <di:waypoint x="707" y="248" />
+        <di:waypoint x="770" y="248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kruy8t_di" bpmnElement="SequenceFlow_0kruy8t">
+        <di:waypoint x="870" y="248" />
+        <di:waypoint x="939" y="248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0m4kmps_di" bpmnElement="PreProcessAbstractCDSProcessing">
+        <dc:Bounds x="770" y="208" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0duh80v_di" bpmnElement="ExclusiveGateway_0duh80v" isMarkerVisible="true">
+        <dc:Bounds x="1089" y="223" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1tb7fs1_di" bpmnElement="SequenceFlow_1tb7fs1">
+        <di:waypoint x="1139" y="248" />
+        <di:waypoint x="1227" y="248" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1163" y="230" width="41" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0o50k2d_di" bpmnElement="SequenceFlow_0o50k2d">
+        <di:waypoint x="1114" y="273" />
+        <di:waypoint x="1114" y="348" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1p3d0t4_di" bpmnElement="EndEvent_0wwnq4u">
+        <dc:Bounds x="1096" y="348" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
