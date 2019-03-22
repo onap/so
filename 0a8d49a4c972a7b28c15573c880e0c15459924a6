@@ -107,6 +107,24 @@
     },
     {
       "key": {
+        "uuid": "3b33d0d9_33b975ec",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterServiceProviderImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-22T12:51:08Z",
+      "side": 1,
+      "message": "Other Successful cases are not expected",
+      "parentUuid": "c0a8b3ec_ffde20a7",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9fc8d53c_7ec552cb",
         "filename": "common/src/main/java/org/onap/so/client/RestTemplateConfig.java",
         "patchSetId": 5
