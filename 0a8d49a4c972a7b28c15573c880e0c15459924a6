@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "01aaf68a_35c2f253",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterCreateVnfTask.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-22T12:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "dba72ffe_888ee153",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1125a124_a7c13e2e",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterServiceProviderImpl.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2019-03-22T12:20:29Z",
       "side": 1,
       "message": "The rest template and interceptor should already log request/response and url.  This logging seems to just duplicate what is already in place.",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dee9500a_c5466a60",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterServiceProviderImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-22T12:46:52Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1125a124_a7c13e2e",
       "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "c0a8b3ec_ffde20a7",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterServiceProviderImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-22T12:46:52Z",
+      "side": 1,
+      "message": "I can\u0027t use Family.familyOf(Family.SUCCESSFUL) as SOL 003 requires an ACCEPTED or OK response\n\nhttps://www.etsi.org/deliver/etsi_gs/NFV-SOL/001_099/003/02.03.01_60/gs_nfv-sol003v020301p.pdf",
+      "parentUuid": "f1cbd81c_bf2f0aa9",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9fc8d53c_7ec552cb",
         "filename": "common/src/main/java/org/onap/so/client/RestTemplateConfig.java",
         "patchSetId": 5
@@ -64,6 +118,24 @@
       "writtenOn": "2019-03-22T12:20:29Z",
       "side": 1,
       "message": "What differs here? that we needed a new rest template?",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30d10aae_c3c3b578",
+        "filename": "common/src/main/java/org/onap/so/client/RestTemplateConfig.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-22T12:46:52Z",
+      "side": 1,
+      "message": "configurableRestTemplate() allow user to configure properties using HttpClientConnectionConfiguration and other one uses default properties",
+      "parentUuid": "9fc8d53c_7ec552cb",
       "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
