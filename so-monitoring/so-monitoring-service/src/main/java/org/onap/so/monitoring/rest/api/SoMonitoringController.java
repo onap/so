@@ -33,8 +33,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.onap.so.monitoring.db.service.DatabaseServiceProvider;
-import org.onap.so.monitoring.exception.InvalidRestRequestException;
-import org.onap.so.monitoring.exception.RestProcessingException;
 import org.onap.so.monitoring.model.ActivityInstanceDetail;
 import org.onap.so.monitoring.model.ProcessDefinitionDetail;
 import org.onap.so.monitoring.model.ProcessInstanceDetail;
@@ -42,13 +40,14 @@ import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
 import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
 import org.onap.so.monitoring.model.SoInfraRequest;
 import org.onap.so.monitoring.rest.service.CamundaProcessDataServiceProvider;
+import org.onap.so.rest.exceptions.InvalidRestRequestException;
+import org.onap.so.rest.exceptions.RestProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author waqas.ikram@ericsson.com
@@ -134,8 +133,7 @@ public class SoMonitoringController {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getProcessDefinitionXml(final @PathParam("processDefinitionId") String processDefinitionId) {
         if (processDefinitionId == null || processDefinitionId.isEmpty()) {
-            return Response.status(Status.BAD_REQUEST).entity("Invalid process definition id: " + 
-                                                              processDefinitionId)
+            return Response.status(Status.BAD_REQUEST).entity("Invalid process definition id: " + processDefinitionId)
                     .build();
         }
         try {
@@ -145,18 +143,15 @@ public class SoMonitoringController {
                 final ProcessDefinitionDetail definitionDetail = response.get();
                 return Response.status(Status.OK).entity(definitionDetail).build();
             }
-            LOGGER.error("Unable to find process definition xml for processDefinitionId: " + 
-                         processDefinitionId);
+            LOGGER.error("Unable to find process definition xml for processDefinitionId: " + processDefinitionId);
             return Response.status(Status.NO_CONTENT).build();
 
         } catch (final InvalidRestRequestException extensions) {
             final String message =
-                    "Unable to find process definition xml for processDefinitionId: {}" + 
-                processDefinitionId;
+                    "Unable to find process definition xml for processDefinitionId: {}" + processDefinitionId;
             return Response.status(Status.BAD_REQUEST).entity(message).build();
         } catch (final RestProcessingException restProcessingException) {
-            final String message = "Unable to get process definition xml for id: " + 
-                processDefinitionId;
+            final String message = "Unable to get process definition xml for id: " + processDefinitionId;
             LOGGER.error(message);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(message).build();
         }
@@ -175,13 +170,11 @@ public class SoMonitoringController {
                     camundaProcessDataServiceProvider.getActivityInstance(processInstanceId);
             return Response.status(Status.OK).entity(activityInstanceDetails).build();
         } catch (final InvalidRestRequestException extensions) {
-            final String message = "Unable to find activity instance for processInstanceId: " + 
-                processInstanceId;
+            final String message = "Unable to find activity instance for processInstanceId: " + processInstanceId;
             LOGGER.error(message);
             return Response.status(Status.BAD_REQUEST).entity(message).build();
         } catch (final RestProcessingException restProcessingException) {
-            final String message = "Unable to get activity instance detail for id: " + 
-                processInstanceId;
+            final String message = "Unable to get activity instance detail for id: " + processInstanceId;
             LOGGER.error(message);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(message).build();
         }
@@ -201,13 +194,11 @@ public class SoMonitoringController {
             return Response.status(Status.OK).entity(processInstanceVariable).build();
         } catch (final InvalidRestRequestException extensions) {
             final String message =
-                    "Unable to find process instance variables for processInstanceId: " + 
-                processInstanceId;
+                    "Unable to find process instance variables for processInstanceId: " + processInstanceId;
             LOGGER.error(message);
             return Response.status(Status.BAD_REQUEST).entity(message).build();
         } catch (final RestProcessingException restProcessingException) {
-            final String message = "Unable to get process instance variables for id: " + 
-                processInstanceId;
+            final String message = "Unable to get process instance variables for id: " + processInstanceId;
             LOGGER.error(message);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(message).build();
         }
@@ -230,13 +221,13 @@ public class SoMonitoringController {
             return Response.status(Status.OK).entity(requests).build();
 
         } catch (final InvalidRestRequestException extensions) {
-            final String message = "Unable to search request for filters: " + filters + ", from: " + 
-                startTime + ", to: " + endTime + ", maxResult: " + maxResult;
+            final String message = "Unable to search request for filters: " + filters + ", from: " + startTime
+                    + ", to: " + endTime + ", maxResult: " + maxResult;
             LOGGER.error(message);
             return Response.status(Status.BAD_REQUEST).entity(message).build();
         } catch (final RestProcessingException restProcessingException) {
-            final String message = "Unable to search request for filters: " + filters + ", from: " + 
-                startTime + ", to: " + endTime + ", maxResult: " + maxResult;
+            final String message = "Unable to search request for filters: " + filters + ", from: " + startTime
+                    + ", to: " + endTime + ", maxResult: " + maxResult;
             LOGGER.error(message);
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(message).build();
         }

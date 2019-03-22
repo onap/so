@@ -17,8 +17,8 @@
  * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
- 
-package org.onap.so.monitoring.configuration.rest;
+
+package org.onap.so.configuration.rest;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,35 +27,23 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.client.RestTemplate;
 
 /**
- * @author waqas.ikram@ericsson.com
+ * Allow user to configure {@link org.apache.http.client.HttpClient}
+ * 
+ * @author waqas.ikram@est.tech
  */
 @Configuration
-public class RestTemplateConfiguration {
+public class HttpComponentsClientConfiguration {
 
-    public static final String DATABASE_REST_TEMPLATE = "databaseRestTemplate";
-
-    public static final String CAMUNDA_REST_TEMPLATE = "camundaRestTemplate";
+    private final HttpClientConnectionConfiguration clientConnectionConfiguration;
 
     @Autowired
-    private HttpClientConnectionConfiguration clientConnectionConfiguration;
-
-    @Bean
-    @Qualifier(CAMUNDA_REST_TEMPLATE)
-    public RestTemplate camundaRestTemplate() {
-        return new RestTemplate(httpComponentsClientHttpRequestFactory());
-    }
-
-    @Bean
-    @Qualifier(DATABASE_REST_TEMPLATE)
-    public RestTemplate dataBasecamundaRestTemplate() {
-        return new RestTemplate(httpComponentsClientHttpRequestFactory());
+    public HttpComponentsClientConfiguration(final HttpClientConnectionConfiguration clientConnectionConfiguration) {
+        this.clientConnectionConfiguration = clientConnectionConfiguration;
     }
 
     @Bean

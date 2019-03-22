@@ -38,7 +38,7 @@ import org.onap.so.monitoring.configuration.database.DatabaseUrlProvider;
 import org.onap.so.monitoring.db.service.DatabaseServiceProvider;
 import org.onap.so.monitoring.db.service.DatabaseServiceProviderImpl;
 import org.onap.so.monitoring.model.SoInfraRequest;
-import org.onap.so.monitoring.rest.service.HttpRestServiceProvider;
+import org.onap.so.rest.service.HttpRestServiceProvider;
 
 import com.google.common.base.Optional;
 
@@ -57,8 +57,8 @@ public class DatabaseServiceProviderTest {
         final String searchUrl = URL_PROVIDER.getSearchUrl(0, 0, null);
         final Optional<SoActiveInfraRequests[]> response = Optional.of(new SoActiveInfraRequests[] {});
 
-        when(mockServiceProvider.postHttpRequest(eq(Collections.emptyMap()), eq(searchUrl),
-                eq(SoActiveInfraRequests[].class))).thenReturn(response);
+        when(mockServiceProvider.post(eq(Collections.emptyMap()), eq(searchUrl), eq(SoActiveInfraRequests[].class)))
+                .thenReturn(response);
 
         final DatabaseServiceProvider objUnderTest = new DatabaseServiceProviderImpl(URL_PROVIDER, mockServiceProvider);
 
@@ -71,8 +71,8 @@ public class DatabaseServiceProviderTest {
         final String searchUrl = URL_PROVIDER.getSearchUrl(0, 0, null);
         final Optional<SoActiveInfraRequests[]> response = Optional.absent();
 
-        when(mockServiceProvider.postHttpRequest(eq(Collections.emptyMap()), eq(searchUrl),
-                eq(SoActiveInfraRequests[].class))).thenReturn(response);
+        when(mockServiceProvider.post(eq(Collections.emptyMap()), eq(searchUrl), eq(SoActiveInfraRequests[].class)))
+                .thenReturn(response);
 
         final DatabaseServiceProvider objUnderTest = new DatabaseServiceProviderImpl(URL_PROVIDER, mockServiceProvider);
 
@@ -94,7 +94,7 @@ public class DatabaseServiceProviderTest {
 
         final HttpRestServiceProvider mockServiceProvider = mock(HttpRestServiceProvider.class);
 
-        when(mockServiceProvider.postHttpRequest(eq(filters), eq(searchUrl), eq(SoActiveInfraRequests[].class)))
+        when(mockServiceProvider.post(eq(filters), eq(searchUrl), eq(SoActiveInfraRequests[].class)))
                 .thenReturn(response);
 
         final DatabaseServiceProvider objUnderTest = new DatabaseServiceProviderImpl(URL_PROVIDER, mockServiceProvider);

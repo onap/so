@@ -20,7 +20,10 @@
 
 package org.onap.so.client;
 
+import org.onap.so.configuration.rest.HttpComponentsClientConfiguration;
 import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.BufferingClientHttpRequestFactory;
@@ -30,11 +33,28 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestTemplateConfig {
 
-	@Bean
-	public RestTemplate restTemplate() {
-		RestTemplate restTemplate = new RestTemplate();		
-		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-		restTemplate.getInterceptors().add(new SpringClientFilter());
-		return restTemplate;
-	}
+    public static final String CONFIGURABLE_REST_TEMPLATE = "configurableRestTemplate";
+
+    @Autowired
+    private HttpComponentsClientConfiguration httpComponentsClientConfiguration;
+
+    @Bean
+    public RestTemplate restTemplate() {
+        final RestTemplate restTemplate = new RestTemplate();
+        restTemplate
+                .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
+        restTemplate.getInterceptors().add(new SpringClientFilter());
+        return restTemplate;
+    }
+
+    @Bean
+    @Qualifier(CONFIGURABLE_REST_TEMPLATE)
+    public RestTemplate configurableRestTemplate() {
+        final HttpComponentsClientHttpRequestFactory clientHttpRequestFactory =
+                httpComponentsClientConfiguration.httpComponentsClientHttpRequestFactory();
+        final RestTemplate restTemplate =
+                new RestTemplate(new BufferingClientHttpRequestFactory(clientHttpRequestFactory));
+        restTemplate.getInterceptors().add(new SpringClientFilter());
+        return restTemplate;
+    }
 }
