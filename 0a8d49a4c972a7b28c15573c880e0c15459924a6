@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dba72ffe_888ee153",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterCreateVnfTask.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-22T12:20:29Z",
+      "side": 1,
+      "message": "Is this really needed to be static?  I\u0027d much rather avoid using static in this fashion",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1125a124_a7c13e2e",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterServiceProviderImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-22T12:20:29Z",
+      "side": 1,
+      "message": "The rest template and interceptor should already log request/response and url.  This logging seems to just duplicate what is already in place.",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f1cbd81c_bf2f0aa9",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterServiceProviderImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-22T12:20:29Z",
+      "side": 1,
+      "message": "Did you consider using the Family.familyOf(Family.Success) here? instead of comparing individual codes?",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9fc8d53c_7ec552cb",
+        "filename": "common/src/main/java/org/onap/so/client/RestTemplateConfig.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-22T12:20:29Z",
+      "side": 1,
+      "message": "What differs here? that we needed a new rest template?",
+      "revId": "0a8d49a4c972a7b28c15573c880e0c15459924a6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
