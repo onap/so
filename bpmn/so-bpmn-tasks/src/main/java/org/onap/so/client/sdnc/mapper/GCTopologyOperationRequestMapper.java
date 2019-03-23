@@ -85,6 +85,7 @@ public class GCTopologyOperationRequestMapper {
         GenericResourceApiConfigurationinformationConfigurationInformation configurationInformation =
                 new GenericResourceApiConfigurationinformationConfigurationInformation();
         configurationInformation.setConfigurationId(vnrConfiguration.getConfigurationId());
+        configurationInformation.setConfigurationType(vnrConfiguration.getConfigurationType());
         req.setRequestInformation(requestInformation);
         req.setSdncRequestHeader(sdncRequestHeader);
         req.setServiceInformation(serviceInformation);

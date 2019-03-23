@@ -62,6 +62,7 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
         serviceInstance.setServiceInstanceId("ServiceInstanceId");
         Configuration Configuration = new Configuration();
         Configuration.setConfigurationId("ConfigurationId");
+        Configuration.setConfigurationType("VLAN-NETWORK-RECEPTOR");
         GenericResourceApiGcTopologyOperationInformation genericInfo = genObjMapper.deactivateOrUnassignVnrReqMapper
                 (SDNCSvcAction.UNASSIGN, serviceInstance, requestContext, Configuration,"uuid",new URI("http://localhost"));
 
@@ -70,6 +71,8 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
         Assert.assertNotNull(genericInfo.getSdncRequestHeader());
         Assert.assertNotNull(genericInfo.getClass());
         Assert.assertNotNull(genericInfo.getServiceInformation());
+        Assert.assertEquals("ConfigurationId", genericInfo.getConfigurationInformation().getConfigurationId());
+        Assert.assertEquals("VLAN-NETWORK-RECEPTOR", genericInfo.getConfigurationInformation().getConfigurationType());
         Assert.assertEquals("uuid",genericInfo.getSdncRequestHeader().getSvcRequestId()); 
         Assert.assertEquals("http://localhost",genericInfo.getSdncRequestHeader().getSvcNotificationUrl());
     }
