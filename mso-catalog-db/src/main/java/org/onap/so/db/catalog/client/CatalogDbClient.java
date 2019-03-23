@@ -808,10 +808,12 @@ public class CatalogDbClient {
     public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(
             String vnfCustomizationUuid, String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
         CvnfcCustomization cvnfc = getCvnfcCustomizationByCustomizationUUID(cvnfcCustomizationUuid);
-        for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfModuleCvnfcCust: cvnfc.getVnfVfmoduleCvnfcConfigurationCustomization()){
-            if(vnfVfModuleCvnfcCust.getVnfResourceCustomization().getModelCustomizationUUID().equals(vnfCustomizationUuid) &&
+        if (cvnfc != null) {
+            for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfModuleCvnfcCust: cvnfc.getVnfVfmoduleCvnfcConfigurationCustomization()){
+                if(vnfVfModuleCvnfcCust.getVnfResourceCustomization().getModelCustomizationUUID().equals(vnfCustomizationUuid) &&
                     vnfVfModuleCvnfcCust.getVfModuleCustomization().getModelCustomizationUUID().equals(vfModuleCustomizationUuid)){
                 return vnfVfModuleCvnfcCust;
+                }
             }
         }
         return null;
