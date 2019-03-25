@@ -220,7 +220,7 @@ public class DoDeleteNetworkInstanceRollback extends AbstractServiceTaskProcesso
 				rollbackSDNCReturnCode = execution.getVariable(Prefix + "rollbackSDNCReturnCode")
 				String rollbackSDNCResponse = execution.getVariable(Prefix + "rollbackSDNCResponse")
 				String rollbackSDNCReturnInnerCode = ""
-				SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+				SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 				rollbackSDNCResponse = rollbackSDNCResponse.replace('$', '').replace('<?xml version="1.0" encoding="UTF-8"?>', "")
 				if (rollbackSDNCReturnCode == "200") {
 					if (utils.nodeExists(rollbackSDNCResponse, "response-code")) {

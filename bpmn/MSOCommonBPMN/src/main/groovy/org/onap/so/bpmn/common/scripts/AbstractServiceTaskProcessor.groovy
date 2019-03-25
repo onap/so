@@ -416,7 +416,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 	*@param name
 	*@return
 	**/
-	public String getVariable(DelegateExecution execution, String name) {
+	public static String getVariable(DelegateExecution execution, String name) {
 		def myObj = execution.getVariable(name)
 		if(myObj instanceof VariableMap){
 			VariableMap serializedObjectMap = (VariableMap) myObj

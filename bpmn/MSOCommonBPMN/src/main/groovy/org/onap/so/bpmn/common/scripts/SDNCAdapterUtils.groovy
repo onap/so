@@ -47,22 +47,19 @@ class SDNCAdapterUtils {
 
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
+	MsoUtils  msoUtils = new MsoUtils()
 
-	private AbstractServiceTaskProcessor taskProcessor
-
-	public SDNCAdapterUtils(AbstractServiceTaskProcessor taskProcessor) {
-		this.taskProcessor = taskProcessor
+	public SDNCAdapterUtils() {
 	}
 
 	String SDNCAdapterFeatureRequest(DelegateExecution execution, String requestName, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
-		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
-		def request = taskProcessor.getVariable(execution, requestName)
-		def requestInformation = utils.getNodeXml(request, 'request-information', false)
-		def serviceInformation = utils.getNodeXml(request, 'service-information', false)
-		def featureInformation = utils.getNodeXml(request, 'feature-information', false)
-		def featureParameters = utils.getNodeXml(request, 'feature-parameters', false)
+		def request = AbstractServiceTaskProcessor.getVariable(execution, requestName)
+		def requestInformation = msoUtils.getNodeXml(request, 'request-information', false)
+		def serviceInformation = msoUtils.getNodeXml(request, 'service-information', false)
+		def featureInformation = msoUtils.getNodeXml(request, 'feature-information', false)
+		def featureParameters = msoUtils.getNodeXml(request, 'feature-parameters', false)
 
 		def requestId = execution.getVariable('testReqId') // for junits
 		if(requestId==null){
@@ -71,10 +68,10 @@ class SDNCAdapterUtils {
 
 		def svcInstanceId = execution.getVariable("mso-service-instance-id")
 
-		def nnsRequestInformation = utils.removeXmlNamespaces(requestInformation)
-		def nnsServiceInformation = utils.removeXmlNamespaces(serviceInformation)
-		def nnsFeatureInformation = utils.removeXmlNamespaces(featureInformation)
-		def nnsFeatureParameters = utils.removeXmlNamespaces(featureParameters)
+		def nnsRequestInformation = msoUtils.removeXmlNamespaces(requestInformation)
+		def nnsServiceInformation = msoUtils.removeXmlNamespaces(serviceInformation)
+		def nnsFeatureInformation = msoUtils.removeXmlNamespaces(featureInformation)
+		def nnsFeatureParameters = msoUtils.removeXmlNamespaces(featureParameters)
 
 		String sdncAdapterFeatureRequest = """
 				<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:sdncadapterworkflow="http://openecomp.com/mso/workflow/schema/v1"
@@ -95,18 +92,17 @@ class SDNCAdapterUtils {
 					<sdncadapterworkflow:SDNCTimeOutValueInMinutes>${MsoUtils.xmlEscape(timeoutValueInMinutes)}</sdncadapterworkflow:SDNCTimeOutValueInMinutes>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>
 			"""
-		sdncAdapterFeatureRequest = utils.removeXmlPreamble(utils.formatXML(sdncAdapterFeatureRequest))
+		sdncAdapterFeatureRequest = msoUtils.removeXmlPreamble(msoUtils.formatXml(sdncAdapterFeatureRequest))
 		return sdncAdapterFeatureRequest
 	}
 
 	String SDNCAdapterActivateVnfRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String msoAction, String timeoutValueInMinutes) {
-		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
-		def request = taskProcessor.getVariable(execution, prefix+'Request')
-		def requestInformation = utils.getNodeXml(request, 'request-information', false)
-		def serviceInformation = utils.getNodeXml(request, 'service-information', false)
-		def vnfInformationList = utils.getNodeXml(request, 'vnf-information-list', false)
+		def request = AbstractServiceTaskProcessor.getVariable(execution, prefix+'Request')
+		def requestInformation = msoUtils.getNodeXml(request, 'request-information', false)
+		def serviceInformation = msoUtils.getNodeXml(request, 'service-information', false)
+		def vnfInformationList = msoUtils.getNodeXml(request, 'vnf-information-list', false)
 
 		def requestId = execution.getVariable('testReqId') // for junits
 		if(requestId==null){
@@ -115,9 +111,9 @@ class SDNCAdapterUtils {
 
 		def svcInstanceId = execution.getVariable("mso-service-instance-id")
 
-		def nnsRequestInformation = utils.removeXmlNamespaces(requestInformation)
-		def nnsServiceInformation = utils.removeXmlNamespaces(serviceInformation)
-		def nnsVnfInformationList = utils.removeXmlNamespaces(vnfInformationList)
+		def nnsRequestInformation = msoUtils.removeXmlNamespaces(requestInformation)
+		def nnsServiceInformation = msoUtils.removeXmlNamespaces(serviceInformation)
+		def nnsVnfInformationList = msoUtils.removeXmlNamespaces(vnfInformationList)
 
 		String sdncAdapterActivateVnfRequest = """
 				<sdncadapterworkflow:SDNCAdapterWorkflowRequest xmlns:sdncadapterworkflow="http://openecomp.com/mso/workflow/schema/v1"
@@ -138,15 +134,14 @@ class SDNCAdapterUtils {
 					<sdncadapterworkflow:SDNCTimeOutValueInMinutes>${MsoUtils.xmlEscape(timeoutValueInMinutes)}</sdncadapterworkflow:SDNCTimeOutValueInMinutes>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>
 			"""
-		sdncAdapterActivateVnfRequest = utils.removeXmlPreamble(utils.formatXML(sdncAdapterActivateVnfRequest))
+		sdncAdapterActivateVnfRequest = msoUtils.removeXmlPreamble(msoUtils.formatXml(sdncAdapterActivateVnfRequest))
 		return sdncAdapterActivateVnfRequest
 	}
 
 	String SDNCAdapterL3ToHigherLayerRequest(DelegateExecution execution, String action, String callbackURL, String serviceOperation, String timeoutValueInMinutes) {
-		def utils=new MsoUtils()
 
 		def prefix = execution.getVariable('prefix')
-		def request = taskProcessor.getVariable(execution, prefix+'Request')
+		def request = AbstractServiceTaskProcessor.getVariable(execution, prefix+'Request')
 
 		String requestInformation = """<request-information>
 										<request-id>${MsoUtils.xmlEscape(execution.getVariable("mso-request-id"))}</request-id>
@@ -164,8 +159,8 @@ class SDNCAdapterUtils {
 		}else if("delete".equalsIgnoreCase(action)){
 			xml.'request-action'.replaceBody('deleteTrinityBonding')
 		}
-		requestInformation = utils.removeXmlPreamble(groovy.xml.XmlUtil.serialize(xml))
-		def nnsRequestInformation = utils.removeXmlNamespaces(requestInformation)
+		requestInformation = msoUtils.removeXmlPreamble(groovy.xml.XmlUtil.serialize(xml))
+		def nnsRequestInformation = msoUtils.removeXmlNamespaces(requestInformation)
 
 		def requestId = execution.getVariable('testReqId') // for junits
 		if(requestId==null){
@@ -234,7 +229,7 @@ class SDNCAdapterUtils {
 					<sdncadapterworkflow:SDNCTimeOutValueInMinutes>${MsoUtils.xmlEscape(timeoutValueInMinutes)}</sdncadapterworkflow:SDNCTimeOutValueInMinutes>
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>
 			"""
-		sdncAdapterL3ToHLRequest = utils.removeXmlPreamble(utils.formatXML(sdncAdapterL3ToHLRequest))
+		sdncAdapterL3ToHLRequest = msoUtils.removeXmlPreamble(msoUtils.formatXml(sdncAdapterL3ToHLRequest))
 
 		return sdncAdapterL3ToHLRequest
 	}
@@ -243,13 +238,12 @@ class SDNCAdapterUtils {
 
 	private void SDNCAdapterActivateRequest(DelegateExecution execution, String resultVar, String svcAction,
 			String svcOperation, String additionalData) {
-			def utils=new MsoUtils()
 
 			def prefix = execution.getVariable('prefix')
-			def request = taskProcessor.getVariable(execution, prefix+'Request')
-			def requestInformation = utils.getNodeXml(request, 'request-information', false)
-			def serviceInformation = utils.getNodeXml(request, 'service-information', false)
-			def serviceParameters = utils.getNodeXml(request, 'service-parameters', false)
+			def request = AbstractServiceTaskProcessor.getVariable(execution, prefix+'Request')
+			def requestInformation = msoUtils.getNodeXml(request, 'request-information', false)
+			def serviceInformation = msoUtils.getNodeXml(request, 'service-information', false)
+			def serviceParameters = msoUtils.getNodeXml(request, 'service-parameters', false)
 
 			def requestId = execution.getVariable('testReqId') // for junits
 			if(requestId==null){
@@ -269,18 +263,18 @@ class SDNCAdapterUtils {
 				workflowException(execution, 'Internal Error', 9999) // TODO: what message and error code?
 			}
 
-			def l2HomingInformation = utils.getNodeXml(serviceParameters, 'l2-homing-information', false)
-			def internetEvcAccessInformation = utils.getNodeXml(serviceParameters, 'internet-evc-access-information', false)
-			def vrLan = utils.getNodeXml(serviceParameters, 'vr-lan', false)
-			def upceVmsServiceInformation = utils.getNodeXml(serviceParameters, 'ucpe-vms-service-information', false)
+			def l2HomingInformation = msoUtils.getNodeXml(serviceParameters, 'l2-homing-information', false)
+			def internetEvcAccessInformation = msoUtils.getNodeXml(serviceParameters, 'internet-evc-access-information', false)
+			def vrLan = msoUtils.getNodeXml(serviceParameters, 'vr-lan', false)
+			def upceVmsServiceInformation = msoUtils.getNodeXml(serviceParameters, 'ucpe-vms-service-information', false)
 
 
-			def nnsRequestInformation = utils.removeXmlNamespaces(requestInformation)
-			def nnsServiceInformation = utils.removeXmlNamespaces(serviceInformation)
-			def nnsl2HomingInformation = utils.removeXmlNamespaces(l2HomingInformation)
-			def nnsInternetEvcAccessInformation = utils.removeXmlNamespaces(internetEvcAccessInformation)
-			def nnsVrLan = utils.removeXmlNamespaces(vrLan)
-			def nnsUpceVmsServiceInformation = utils.removeXmlNamespaces(upceVmsServiceInformation)
+			def nnsRequestInformation = msoUtils.removeXmlNamespaces(requestInformation)
+			def nnsServiceInformation = msoUtils.removeXmlNamespaces(serviceInformation)
+			def nnsl2HomingInformation = msoUtils.removeXmlNamespaces(l2HomingInformation)
+			def nnsInternetEvcAccessInformation = msoUtils.removeXmlNamespaces(internetEvcAccessInformation)
+			def nnsVrLan = msoUtils.removeXmlNamespaces(vrLan)
+			def nnsUpceVmsServiceInformation = msoUtils.removeXmlNamespaces(upceVmsServiceInformation)
 
 			if (additionalData == null) {
 				additionalData = ""
@@ -319,7 +313,7 @@ class SDNCAdapterUtils {
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>
 			"""
 
-			content = utils.removeXmlPreamble(utils.formatXML(content))
+			content = msoUtils.removeXmlPreamble(msoUtils.formatXml(content))
 			execution.setVariable(resultVar, content)
 	}
 
@@ -343,7 +337,7 @@ class SDNCAdapterUtils {
 	 * @param isAic3 boolean to indicate whether request is for AIC3.0
 	 */
 	public void sdncReservePrep(DelegateExecution execution, String action, String resultVar, boolean isAic3) {
-		sdncPrep(execution, resultVar, action , 'service-configuration-operation', null, isAic3, this.taskProcessor)
+		sdncPrep(execution, resultVar, action , 'service-configuration-operation', null, isAic3)
 	}
 
 	/**
@@ -356,8 +350,8 @@ class SDNCAdapterUtils {
 	 *        RequestData element (may be null)
 	 */
 	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
-		String svcOperation, String additionalData, AbstractServiceTaskProcessor taskProcessor) {
-		sdncPrep(execution, resultVar, svcAction, svcOperation, additionalData, false, taskProcessor)
+		String svcOperation, String additionalData) {
+		sdncPrep(execution, resultVar, svcAction, svcOperation, additionalData, false)
 	}
 
 	/**
@@ -370,7 +364,7 @@ class SDNCAdapterUtils {
 	 * @param isAic3 boolean to indicate whether request is for AIC3.0
 	 */
 	public void sdncPrep(DelegateExecution execution, String resultVar, String svcAction,
-			String svcOperation, String additionalData, boolean isAic3, AbstractServiceTaskProcessor taskProcessor) {
+			String svcOperation, String additionalData, boolean isAic3) {
 		def method = getClass().getSimpleName() + '.sdncPrep(' +
 			'execution=' + execution.getId() +
 			', resultVar=' + resultVar +
@@ -380,14 +374,14 @@ class SDNCAdapterUtils {
 			')'
 
 		logger.trace('Entered ' + method)
-		MsoUtils utils = taskProcessor.utils
+
 		try {
 			def prefix = execution.getVariable('prefix')
-			def request = taskProcessor.getVariable(execution, prefix+'Request')
-			def requestInformation = utils.getNodeXml(request, 'request-information', false)
-			def serviceInformation = utils.getNodeXml(request, 'service-information', false)
-			def serviceParameters = utils.getChildNodes(request, 'service-parameters')
-			def requestAction = utils.getNodeText(request, 'request-action')
+			def request = AbstractServiceTaskProcessor.getVariable(execution, prefix+'Request')
+			def requestInformation = msoUtils.getNodeXml(request, 'request-information', false)
+			def serviceInformation = msoUtils.getNodeXml(request, 'service-information', false)
+			def serviceParameters = msoUtils.getChildNodes(request, 'service-parameters')
+			def requestAction = msoUtils.getNodeText(request, 'request-action')
 
 			def timeoutInMinutes = UrnPropertiesReader.getVariable('mso.sdnc.timeout.firewall.minutes',execution)
 
@@ -407,23 +401,23 @@ class SDNCAdapterUtils {
 				exceptionUtil.buildAndThrowWorkflowException(execution, 500, "Internal Error - During PreProcess Request")
 			}
 
-			def l2HomingInformation = utils.getNodeXml(request, 'l2-homing-information', false)
-			def internetEvcAccessInformation = utils.getNodeXml(request, 'internet-evc-access-information', false)
-			def vrLan = utils.getNodeXml(request, 'vr-lan', false)
-			def upceVmsServiceInfo = utils.getNodeXml(request, 'ucpe-vms-service-information', false)
-			def vnfInformationList = utils.getNodeXml(request, 'vnf-information-list', false)
+			def l2HomingInformation = msoUtils.getNodeXml(request, 'l2-homing-information', false)
+			def internetEvcAccessInformation = msoUtils.getNodeXml(request, 'internet-evc-access-information', false)
+			def vrLan = msoUtils.getNodeXml(request, 'vr-lan', false)
+			def upceVmsServiceInfo = msoUtils.getNodeXml(request, 'ucpe-vms-service-information', false)
+			def vnfInformationList = msoUtils.getNodeXml(request, 'vnf-information-list', false)
 
-			def nnsRequestInformation = utils.removeXmlNamespaces(requestInformation)
-			def nnsServiceInformation = utils.removeXmlNamespaces(serviceInformation)
-			def nnsl2HomingInformation = utils.removeXmlNamespaces(l2HomingInformation)
-			def nnsInternetEvcAccessInformation = utils.removeXmlNamespaces(internetEvcAccessInformation)
-			def nnsVrLan = utils.removeXmlNamespaces(vrLan)
-			def nnsUpceVmsServiceInfo = utils.removeXmlNamespaces(upceVmsServiceInfo)
-			def nnsVnfInformationList = utils.removeXmlNamespaces(vrLan)
+			def nnsRequestInformation = msoUtils.removeXmlNamespaces(requestInformation)
+			def nnsServiceInformation = msoUtils.removeXmlNamespaces(serviceInformation)
+			def nnsl2HomingInformation = msoUtils.removeXmlNamespaces(l2HomingInformation)
+			def nnsInternetEvcAccessInformation = msoUtils.removeXmlNamespaces(internetEvcAccessInformation)
+			def nnsVrLan = msoUtils.removeXmlNamespaces(vrLan)
+			def nnsUpceVmsServiceInfo = msoUtils.removeXmlNamespaces(upceVmsServiceInfo)
+			def nnsVnfInformationList = msoUtils.removeXmlNamespaces(vrLan)
 			def nnsinternetSvcChangeDetails = ""
 
 			if(requestAction!=null && requestAction.equals("ChangeLayer3ServiceProvRequest")){
-				def internetSvcChangeDetails = utils.removeXmlNamespaces(serviceParameters)
+				def internetSvcChangeDetails = msoUtils.removeXmlNamespaces(serviceParameters)
 				nnsinternetSvcChangeDetails = """<internet-service-change-details>
 							${internetSvcChangeDetails}
 						</internet-service-change-details>"""
@@ -466,7 +460,7 @@ class SDNCAdapterUtils {
 				</sdncadapterworkflow:SDNCAdapterWorkflowRequest>
 			"""
 
-			content = utils.removeXmlPreamble(utils.formatXML(content))
+			content = msoUtils.removeXmlPreamble(msoUtils.formatXml(content))
 			execution.setVariable(resultVar, content)
 			logger.debug(resultVar + ' = ' + System.lineSeparator() + content)
 
@@ -506,7 +500,6 @@ class SDNCAdapterUtils {
 	 *   RequestData element (may be null)
 	 */
 	 public String sdncTopologyRequestV2 (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, L3Network queryAAIResponse, String additionalData) {
-		 def utils=new MsoUtils()
 
 		 // SNDC is expecting request Id for header as unique each call.
 		 String hdrRequestId = ""
@@ -521,17 +514,17 @@ class SDNCAdapterUtils {
 		 try {
 			 requestId = execution.getVariable("mso-request-id")
 		 } catch (Exception ex) {
-			 requestId = utils.getNodeText(requestXML, "request-id")
+			 requestId = msoUtils.getNodeText(requestXML, "request-id")
 		 }
 
 		 String aicCloudRegion = cloudRegionId
 		 String tenantId = ""
-		 if (utils.nodeExists(requestXML, "tenant-id")) {
-			 tenantId = utils.getNodeText(requestXML, "tenant-id")
+		 if (msoUtils.nodeExists(requestXML, "tenant-id")) {
+			 tenantId = msoUtils.getNodeText(requestXML, "tenant-id")
 		 }
 		 String networkType = ""
-		 if (utils.nodeExists(requestXML, "network-type")) {
-			 networkType = utils.getNodeText(requestXML, "network-type")
+		 if (msoUtils.nodeExists(requestXML, "network-type")) {
+			 networkType = msoUtils.getNodeText(requestXML, "network-type")
 		 }
 
 		 // Replace/Use the value of network-type from aai query (vs input) during Delete Network flows.
@@ -540,20 +533,20 @@ class SDNCAdapterUtils {
 		 }
 
 		 String serviceId = ""
-		 if (utils.nodeExists(requestXML, "service-id")) {
-			 serviceId = utils.getNodeText(requestXML, "service-id")
+		 if (msoUtils.nodeExists(requestXML, "service-id")) {
+			 serviceId = msoUtils.getNodeText(requestXML, "service-id")
 		 }
 		 String networkName = ""
 		 // Replace/Use the value of network-name from aai query (vs input) if it was already set in AAI
 		 if (queryAAIResponse != null) {
 			 networkName = queryAAIResponse.getNetworkName()
 		 }
-		 if (networkName.isEmpty() && utils.nodeExists(requestXML, "network-name")) {
-			 networkName = utils.getNodeText(requestXML, "network-name")
+		 if (networkName.isEmpty() && msoUtils.nodeExists(requestXML, "network-name")) {
+			 networkName = msoUtils.getNodeText(requestXML, "network-name")
 		 }
 		 String source = ""
-		 if (utils.nodeExists(requestXML, "source")) {
-			 source = utils.getNodeText(requestXML, "source")
+		 if (msoUtils.nodeExists(requestXML, "source")) {
+			 source = msoUtils.getNodeText(requestXML, "source")
 		 }
 
 		 // get resourceLink from subflow execution variable
@@ -631,7 +624,6 @@ class SDNCAdapterUtils {
 	  *   RequestData element (may be null)
 	  */
 	  public String sdncTopologyRequestRsrc (DelegateExecution execution, String requestXML, String serviceInstanceId, String callbackUrl, String action, String requestAction, String cloudRegionId, networkId, String additionalData) {
-		  def utils=new MsoUtils()
 
 		  // SNDC is expecting request Id for header as unique each call.
 		  String hdrRequestId = ""
@@ -655,35 +647,35 @@ class SDNCAdapterUtils {
 
 		  String aicCloudRegion = cloudRegionId
 		  String tenantId = ""
-		  if (utils.nodeExists(requestXML, "tenant-id")) {
-			  tenantId = utils.getNodeText(requestXML, "tenant-id")
+		  if (msoUtils.nodeExists(requestXML, "tenant-id")) {
+			  tenantId = msoUtils.getNodeText(requestXML, "tenant-id")
 		  }
 		  String networkType = ""
-		  if (utils.nodeExists(requestXML, "network-type")) {
-			  networkType = utils.getNodeText(requestXML, "network-type")
+		  if (msoUtils.nodeExists(requestXML, "network-type")) {
+			  networkType = msoUtils.getNodeText(requestXML, "network-type")
 		  }
 
 		  String subscriptionServiceType = ""
-		  if (utils.nodeExists(requestXML, "subscription-service-type")) {
-			  subscriptionServiceType = utils.getNodeText(requestXML, "subscription-service-type")
+		  if (msoUtils.nodeExists(requestXML, "subscription-service-type")) {
+			  subscriptionServiceType = msoUtils.getNodeText(requestXML, "subscription-service-type")
 		  }
 
 		  String globalCustomerId = ""
-		  if (utils.nodeExists(requestXML, "global-customer-id")) {
-			  globalCustomerId = utils.getNodeText(requestXML, "global-customer-id")
+		  if (msoUtils.nodeExists(requestXML, "global-customer-id")) {
+			  globalCustomerId = msoUtils.getNodeText(requestXML, "global-customer-id")
 		  }
 
 		  String serviceId = ""
-		  if (utils.nodeExists(requestXML, "service-id")) {
-			  serviceId = utils.getNodeText(requestXML, "service-id")
+		  if (msoUtils.nodeExists(requestXML, "service-id")) {
+			  serviceId = msoUtils.getNodeText(requestXML, "service-id")
 		  }
 		  String networkName = ""
-		  if (utils.nodeExists(requestXML, "network-name")) {
-			  networkName = utils.getNodeText(requestXML, "network-name")
+		  if (msoUtils.nodeExists(requestXML, "network-name")) {
+			  networkName = msoUtils.getNodeText(requestXML, "network-name")
 		  }
 		  String source = ""
-		  if (utils.nodeExists(requestXML, "source")) {
-			  source = utils.getNodeText(requestXML, "source")
+		  if (msoUtils.nodeExists(requestXML, "source")) {
+			  source = msoUtils.getNodeText(requestXML, "source")
 		  }
 
 		  // get resourceLink from subflow execution variable
@@ -704,28 +696,28 @@ class SDNCAdapterUtils {
 		  }
 
 		  // network-information from 'networkModelInfo' // verify the DB Catalog response
-		  String networkModelInfo = utils.getNodeXml(requestXML, "networkModelInfo", false).replace("tag0:","").replace(":tag0","")
-		  String modelInvariantUuid = utils.getNodeText(networkModelInfo, "modelInvariantUuid") !=null ?
-		                              utils.getNodeText(networkModelInfo, "modelInvariantUuid") : ""
-		  String modelCustomizationUuid = utils.getNodeText(networkModelInfo, "modelCustomizationUuid")  !=null ?
-		                                  utils.getNodeText(networkModelInfo, "modelCustomizationUuid")  : ""
-		  String modelUuid = utils.getNodeText(networkModelInfo, "modelUuid") !=null ?
-		                     utils.getNodeText(networkModelInfo, "modelUuid") : ""
-		  String modelVersion = utils.getNodeText(networkModelInfo, "modelVersion") !=null ?
-		  	                    utils.getNodeText(networkModelInfo, "modelVersion") : ""
-		  String modelName = utils.getNodeText(networkModelInfo, "modelName") !=null ?
-		                     utils.getNodeText(networkModelInfo, "modelName") : ""
+		  String networkModelInfo = msoUtils.getNodeXml(requestXML, "networkModelInfo", false).replace("tag0:","").replace(":tag0","")
+		  String modelInvariantUuid = msoUtils.getNodeText(networkModelInfo, "modelInvariantUuid") !=null ?
+				  msoUtils.getNodeText(networkModelInfo, "modelInvariantUuid") : ""
+		  String modelCustomizationUuid = msoUtils.getNodeText(networkModelInfo, "modelCustomizationUuid")  !=null ?
+				  msoUtils.getNodeText(networkModelInfo, "modelCustomizationUuid")  : ""
+		  String modelUuid = msoUtils.getNodeText(networkModelInfo, "modelUuid") !=null ?
+				  msoUtils.getNodeText(networkModelInfo, "modelUuid") : ""
+		  String modelVersion = msoUtils.getNodeText(networkModelInfo, "modelVersion") !=null ?
+				  msoUtils.getNodeText(networkModelInfo, "modelVersion") : ""
+		  String modelName = msoUtils.getNodeText(networkModelInfo, "modelName") !=null ?
+				  msoUtils.getNodeText(networkModelInfo, "modelName") : ""
 
 		 // service-information from 'networkModelInfo' // verify the DB Catalog response
-		 String serviceModelInfo = utils.getNodeXml(requestXML, "serviceModelInfo", false).replace("tag0:","").replace(":tag0","")
-		 String serviceModelInvariantUuid = utils.getNodeText(serviceModelInfo, "modelInvariantUuid")  !=null ?
-										    utils.getNodeText(serviceModelInfo, "modelInvariantUuid")  : ""
-		 String serviceModelUuid = utils.getNodeText(serviceModelInfo, "modelUuid") !=null ?
-							       utils.getNodeText(serviceModelInfo, "modelUuid") : ""
-		 String serviceModelVersion = utils.getNodeText(serviceModelInfo, "modelVersion") !=null ?
-							          utils.getNodeText(serviceModelInfo, "modelVersion") : ""
-		 String serviceModelName = utils.getNodeText(serviceModelInfo, "modelName") !=null ?
-						           utils.getNodeText(serviceModelInfo, "modelName") : ""
+		 String serviceModelInfo = msoUtils.getNodeXml(requestXML, "serviceModelInfo", false).replace("tag0:","").replace(":tag0","")
+		 String serviceModelInvariantUuid = msoUtils.getNodeText(serviceModelInfo, "modelInvariantUuid")  !=null ?
+				 msoUtils.getNodeText(serviceModelInfo, "modelInvariantUuid")  : ""
+		 String serviceModelUuid = msoUtils.getNodeText(serviceModelInfo, "modelUuid") !=null ?
+				 msoUtils.getNodeText(serviceModelInfo, "modelUuid") : ""
+		 String serviceModelVersion = msoUtils.getNodeText(serviceModelInfo, "modelVersion") !=null ?
+				 msoUtils.getNodeText(serviceModelInfo, "modelVersion") : ""
+		 String serviceModelName = msoUtils.getNodeText(serviceModelInfo, "modelName") !=null ?
+				 msoUtils.getNodeText(serviceModelInfo, "modelName") : ""
 
 
 		  String content =
@@ -808,27 +800,27 @@ class SDNCAdapterUtils {
 				}else{
 
 					// we need to peer into the request data for error
-					def String sdncAdapterWorkflowResponse = taskProcessor.utils.getNodeXml(response, 'response-data', false)
+					def String sdncAdapterWorkflowResponse = msoUtils.getNodeXml(response, 'response-data', false)
 					def String decodedXml = sdncAdapterWorkflowResponse.replace('<?xml version="1.0" encoding="UTF-8"?>', "")
-					decodedXml = taskProcessor.utils.getNodeXml(response, 'RequestData')
+					decodedXml = msoUtils.getNodeXml(response, 'RequestData')
 					logger.debug("decodedXml:\n" + decodedXml)
 
 					int requestDataResponseCode = 200
 					def String requestDataResponseMessage = ''
 
 					try{
-						if (taskProcessor.utils.nodeExists(decodedXml, "response-message")) {
-							requestDataResponseMessage = taskProcessor.utils.getNodeText(decodedXml, "response-message")
-						} else if (taskProcessor.utils.nodeExists(sdncAdapterWorkflowResponse, "ResponseMessage")) {
-							requestDataResponseMessage = taskProcessor.utils.getNodeText(sdncAdapterWorkflowResponse, "ResponseMessage")
+						if (msoUtils.nodeExists(decodedXml, "response-message")) {
+							requestDataResponseMessage = msoUtils.getNodeText(decodedXml, "response-message")
+						} else if (msoUtils.nodeExists(sdncAdapterWorkflowResponse, "ResponseMessage")) {
+							requestDataResponseMessage = msoUtils.getNodeText(sdncAdapterWorkflowResponse, "ResponseMessage")
 						}
 					}catch(Exception e){
 						logger.debug('Error caught while decoding resposne ' + e.getMessage())
 					}
 
-					if(taskProcessor.utils.nodeExists(decodedXml, "response-code")) {
+					if(msoUtils.nodeExists(decodedXml, "response-code")) {
 						logger.debug("response-code node Exist ")
-						String code = taskProcessor.utils.getNodeText(decodedXml, "response-code")
+						String code = msoUtils.getNodeText(decodedXml, "response-code")
 						if(code.isEmpty() || code.equals("")){
 							// if response-code is blank then Success
 							logger.debug("response-code node is empty")
@@ -837,9 +829,9 @@ class SDNCAdapterUtils {
 							requestDataResponseCode  = code.toInteger()
 							logger.debug("response-code is: " + requestDataResponseCode)
 						}
-					}else if(taskProcessor.utils.nodeExists(sdncAdapterWorkflowResponse, "ResponseCode")){
+					}else if(msoUtils.nodeExists(sdncAdapterWorkflowResponse, "ResponseCode")){
 						logger.debug("ResponseCode node Exist ")
-						String code = taskProcessor.utils.getNodeText(sdncAdapterWorkflowResponse, "ResponseCode")
+						String code = msoUtils.getNodeText(sdncAdapterWorkflowResponse, "ResponseCode")
 						if(code.isEmpty() || code.equals("")){
 							// if ResponseCode blank then Success
 							logger.debug("ResponseCode node is empty")
@@ -918,7 +910,7 @@ class SDNCAdapterUtils {
 					if (success) {
 
 						// we need to look inside the request data for error
-						def String callbackRequestData = taskProcessor.utils.getNodeXml(response, 'RequestData', false)
+						def String callbackRequestData = msoUtils.getNodeXml(response, 'RequestData', false)
 						def String decodedXml = callbackRequestData
 						logger.debug("decodedXml:\n" + decodedXml)
 
@@ -926,17 +918,17 @@ class SDNCAdapterUtils {
 						def requestDataResponseMessage = ''
 						int intDataResponseCode = 200
 
-						if (taskProcessor.utils.nodeExists(decodedXml, "response-code")) {
+						if (msoUtils.nodeExists(decodedXml, "response-code")) {
 
-							requestDataResponseCode  = ((String) taskProcessor.utils.getNodeText(decodedXml, "response-code"))
-							if (taskProcessor.utils.nodeExists(decodedXml, "response-message")) {
-								requestDataResponseMessage  = taskProcessor.utils.getNodeText(decodedXml, "response-message")
+							requestDataResponseCode  = ((String) msoUtils.getNodeText(decodedXml, "response-code"))
+							if (msoUtils.nodeExists(decodedXml, "response-message")) {
+								requestDataResponseMessage  = msoUtils.getNodeText(decodedXml, "response-message")
 							}
-						}else if(taskProcessor.utils.nodeExists(decodedXml, "ResponseCode")){
-							requestDataResponseCode  = ((String) taskProcessor.utils.getNodeText(decodedXml, "ResponseCode")).toInteger()
-						}else if(taskProcessor.utils.nodeExists(response, "ResponseCode")){
-							requestDataResponseCode  = ((String) taskProcessor.utils.getNodeText(response, "ResponseCode")).toInteger()
-							requestDataResponseMessage  = taskProcessor.utils.getNodeText(response, "ResponseMessage")
+						}else if(msoUtils.nodeExists(decodedXml, "ResponseCode")){
+							requestDataResponseCode  = ((String) msoUtils.getNodeText(decodedXml, "ResponseCode")).toInteger()
+						}else if(msoUtils.nodeExists(response, "ResponseCode")){
+							requestDataResponseCode  = ((String) msoUtils.getNodeText(response, "ResponseCode")).toInteger()
+							requestDataResponseMessage  = msoUtils.getNodeText(response, "ResponseMessage")
 						}
 
 						logger.debug("SDNC callback response-code: " + requestDataResponseCode)
@@ -944,8 +936,8 @@ class SDNCAdapterUtils {
 
 						// Get the AAI Status to determine if rollback is needed on ASSIGN
 						def aai_status = ''
-						if (taskProcessor.utils.nodeExists(decodedXml, "aai-status")) {
-							aai_status = ((String) taskProcessor.utils.getNodeText(decodedXml, "aai-status"))
+						if (msoUtils.nodeExists(decodedXml, "aai-status")) {
+							aai_status = ((String) msoUtils.getNodeText(decodedXml, "aai-status"))
 							logger.debug("SDNC sent AAI STATUS code: " + aai_status)
 						}
 						if (aai_status != null && !aai_status.equals("")) {
@@ -955,8 +947,8 @@ class SDNCAdapterUtils {
 
 						// Get the result string to determine if rollback is needed on ASSIGN in Add Bonding flow only
 						def sdncResult = ''
-						if (taskProcessor.utils.nodeExists(decodedXml, "result")) {
-							sdncResult = ((String) taskProcessor.utils.getNodeText(decodedXml, "result"))
+						if (msoUtils.nodeExists(decodedXml, "result")) {
+							sdncResult = ((String) msoUtils.getNodeText(decodedXml, "result"))
 							logger.debug("SDNC sent result: " + sdncResult)
 						}
 						if (sdncResult != null && !sdncResult.equals("")) {

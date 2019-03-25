@@ -691,7 +691,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
 
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 		// reset variable
 		String deleteSDNCResponseDecodeXml = execution.getVariable(Prefix + "deleteSDNCResponse")
@@ -719,7 +719,7 @@ public class DoDeleteNetworkInstance extends AbstractServiceTaskProcessor {
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
 
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 		// reset variable
 		String assignSDNCResponseDecodeXml = execution.getVariable(Prefix + "deactivateSDNCResponse")

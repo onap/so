@@ -315,7 +315,7 @@ class DoCreateVnfAndModulesRollback extends AbstractServiceTaskProcessor {
 
 		logger.debug("workflowException: " + workflowException)
 
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 		String sdncResponse = response

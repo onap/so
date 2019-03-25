@@ -258,7 +258,7 @@ public class DoDeleteServiceInstance extends AbstractServiceTaskProcessor {
 			logger.debug("SDNCResponse: " + response)
 			logger.debug("workflowException: " + workflowException)
 
-			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){

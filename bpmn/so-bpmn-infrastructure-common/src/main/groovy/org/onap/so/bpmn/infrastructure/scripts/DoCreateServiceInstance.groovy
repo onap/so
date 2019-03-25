@@ -491,7 +491,7 @@ public class DoCreateServiceInstance extends AbstractServiceTaskProcessor {
 			String response = execution.getVariable("sdncAdapterResponse")
 			logger.debug("SDNCResponse: " + response)
 
-			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){
