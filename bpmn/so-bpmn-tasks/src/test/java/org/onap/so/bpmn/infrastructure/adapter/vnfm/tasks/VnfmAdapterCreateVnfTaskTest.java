@@ -29,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREATE_VNF_REQUEST_PARAM_NAME;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREATE_VNF_RESPONSE_PARAM_NAME;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.INPUT_PARAMETER;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -41,8 +42,7 @@ import org.mockito.Mock;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.exceptions.RequiredExecutionVariableExeception;
-import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmAdapterCreateVnfTask;
-import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmAdapterServiceProvider;
+import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -83,6 +83,8 @@ public class VnfmAdapterCreateVnfTaskTest extends BaseTaskTest {
     public void testBuildCreateVnfRequest_withValidValues_storesRequestInExecution() throws Exception {
 
         final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
+        stubbedxecution.setVariable(INPUT_PARAMETER,
+                new InputParameter(Collections.emptyMap(), Collections.emptyList()));
 
         when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(getGenericVnf());
         objUnderTest.buildCreateVnfRequest(stubbedxecution);

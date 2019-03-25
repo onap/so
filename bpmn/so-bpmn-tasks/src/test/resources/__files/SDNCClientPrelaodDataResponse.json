@@ -1,0 +1,127 @@
+{
+    "vnf-preload-list": [
+        {
+            "vnf-name": "GENERIC_VNF_NAME",
+            "vnf-type": "SIMPLE",
+            "preload-data": 
+            {
+                "network-topology-information": 
+                {
+                },
+                "vnf-topology-information": 
+                {
+                    "vnf-topology-identifier": 
+                    {
+                        "service-type": "vCPE",
+                        "vnf-type": "SIMPLE",
+                        "vnf-name": "GENERIC_VNF_NAME",
+                        "generic-vnf-name": "GENERIC_VNF_NAME",
+                        "generic-vnf-type": "SIMPLE"
+                    },
+                    "vnf-parameters": [
+                        {
+                            "vnf-parameter-name": "extra_console",
+                            "vnf-parameter-value": "ttyS1"
+                        },
+                        {
+                            "vnf-parameter-name": "vnfUsername",
+                            "vnf-parameter-value": "vnf_user"
+                        },
+                        {
+                            "vnf-parameter-name": "additionalParams",
+                            "vnf-parameter-value": "{\"image_id\": \"DUMMYVNF\",\"instance_type\": \"m1.small\",\"ftp_address\": \"ftp://0.0.0.0:2100/\"}"
+                        },
+                        {
+                            "vnf-parameter-name": "fsb_admin_gateway_ip_1",
+                            "vnf-parameter-value": "0.0.0.0"
+                        },
+                        {
+                            "vnf-parameter-name": "availability_zone_1"
+                        },
+                        {
+                            "vnf-parameter-name": "fsb_admin_gateway_ip_2"
+                        },
+                        {
+                            "vnf-parameter-name": "fsb_admin_prefix_length",
+                            "vnf-parameter-value": "28"
+                        },
+                        {
+                            "vnf-parameter-name": "ONAPMME_OMCN_vLC_P4_prefix_length",
+                            "vnf-parameter-value": "28"
+                        },
+                        {
+                            "vnf-parameter-name": "gpbs",
+                            "vnf-parameter-value": "2"
+                        },
+                        {
+                            "vnf-parameter-name": "fsb_admin_ip_2",
+                            "vnf-parameter-value": "192.0.0.1"
+                        },
+                        {
+                            "vnf-parameter-name": "internal_mtu",
+                            "vnf-parameter-value": "1500"
+                        },
+                        {
+                            "vnf-parameter-name": "storage_drbd_sync_rate",
+                            "vnf-parameter-value": "0"
+                        },
+                        {
+                            "vnf-parameter-name": "ONAPMME_MEDIA_vLC_P3_net_id",
+                            "vnf-parameter-value": "ONAPMME_MEDIA_vLC_P3"
+                        },
+                        {
+                            "vnf-parameter-name": "extVirtualLinks",
+                            "vnf-parameter-value": "[{\"id\":\"ac1ed33d-8dc1-4800-8ce8-309b99c38eec\",\"tenant\":{\"cloudOwner\":\"CloudOwner\",\"regionName\":\"RegionOne\",\"tenantId\":\"80c26954-2536-4bca-9e20-10f8a2c9c2ad\"},\"resourceId\":\"8ef8cd54-75fd-4372-a6dd-2e05ea8fbd9b\",\"extCps\":[{\"cpdId\":\"f449292f-2f0f-4656-baa3-a18d86bac80f\",\"cpConfig\":[{\"cpInstanceId\":\"07876709-b66f-465c-99a7-0f4d026197f2\",\"linkPortId\":null,\"cpProtocolData\":null}]}],\"extLinkPorts\":null}]"
+                        },
+                        {
+                            "vnf-parameter-name": "vnfIpAddress",
+                            "vnf-parameter-value": "127.0.0.0"
+                        },
+                        {
+                            "vnf-parameter-name": "node_type",
+                            "vnf-parameter-value": "sgsnl"
+                        },
+                        {
+                            "vnf-parameter-name": "ONAPMME_SIG_vLC_P2_net_id",
+                            "vnf-parameter-value": "ONAPMME_SIG_vLC_P2"
+                        },
+                        {
+                            "vnf-parameter-name": "updateOss",
+                            "vnf-parameter-value": "false"
+                        },
+                        {
+                            "vnf-parameter-name": "tmo",
+                            "vnf-parameter-value": "0"
+                        },
+                        {
+                            "vnf-parameter-name": "ss7",
+                            "vnf-parameter-value": "Not_Applicable"
+                        },
+                        {
+                            "vnf-parameter-name": "ONAPMME_OMCN_vLC_P4_net_id",
+                            "vnf-parameter-value": "ONAPMME_OMCN_vLC_P4"
+                        },
+                        {
+                            "vnf-parameter-name": "key_name"
+                        },
+                        {
+                            "vnf-parameter-name": "fsb_admin_dns_server_ip_2"
+                        },
+                        {
+                            "vnf-parameter-name": "time_zone",
+                            "vnf-parameter-value": "GMT"
+                        },
+                        {
+                            "vnf-parameter-name": "enableRollback",
+                            "vnf-parameter-value": "false"
+                        }
+                    ]
+                },
+                "oper-status": 
+                {
+                    "order-status": "PendingAssignment"
+                }
+            }
+        }
+    ]
+}

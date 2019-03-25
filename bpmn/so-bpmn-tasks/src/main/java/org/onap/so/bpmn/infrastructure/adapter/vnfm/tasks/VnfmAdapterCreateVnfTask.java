@@ -23,11 +23,13 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREATE_VNF_REQUEST_PARAM_NAME;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREATE_VNF_RESPONSE_PARAM_NAME;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.DOT;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.INPUT_PARAMETER;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.SPACE;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.UNDERSCORE;
 import static org.onap.so.bpmn.servicedecomposition.entities.ResourceKey.GENERIC_VNF_ID;
 
 import org.onap.so.bpmn.common.BuildingBlockExecution;
+import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -83,10 +85,14 @@ public class VnfmAdapterCreateVnfTask {
             final GenericVnf vnf = extractPojosForBB.extractByKey(execution, GENERIC_VNF_ID);
             final ModelInfoGenericVnf modelInfoGenericVnf = vnf.getModelInfoGenericVnf();
 
+            final InputParameter inputParameter = execution.getVariable(INPUT_PARAMETER);
+
             final CreateVnfRequest createVnfRequest = new CreateVnfRequest();
 
             createVnfRequest.setName(getName(vnf.getVnfName(), modelInfoGenericVnf.getModelInstanceName()));
             createVnfRequest.setTenant(getTenant(cloudRegion));
+            createVnfRequest.setAdditionalParams(inputParameter.getAdditionalParams());
+            createVnfRequest.setExternalVirtualLinks(inputParameter.getExtVirtualLinks());
 
             LOGGER.info("CreateVnfRequest : {}", createVnfRequest);
 
