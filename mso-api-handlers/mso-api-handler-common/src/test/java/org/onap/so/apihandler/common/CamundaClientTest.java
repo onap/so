@@ -5,6 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
  * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -187,6 +188,23 @@ public class CamundaClientTest{
         String responseBody ="{\"links\":[{\"method\":\"GET\",\"href\":\"http://localhost:9080/engine-rest/process-instance/2047c658-37ae-11e5-9505-7a1020524153\",\"rel\":\"self\"}],\"id\":\"2047c658-37ae-11e5-9505-7a1020524153\",\"definitionId\":\"dummy:10:73298961-37ad-11e5-9505-7a1020524153\",\"businessKey\":null,\"caseInstanceId\":null,\"ended\":true,\"suspended\":false}";
         assertNull(testClient.post(responseBody));
         
+    }
+
+    @Test
+    public void testPostWithRequestClientParameter() throws Exception {
+        CamundaClient testClient = new CamundaClient();
+        String orchestrationURI = "/engine-rest/process-definition/key/dummy/start";
+        HttpResponse mockResponse = createResponse(200, "{}");
+        mockHttpClient = Mockito.mock(HttpClient.class);
+        Mockito.when(mockHttpClient.execute(Mockito.any(HttpPost.class))).thenReturn(mockResponse);
+
+        testClient.setClient(mockHttpClient);
+        testClient.setUrl(orchestrationURI);
+
+        HttpResponse response = testClient.post(new RequestClientParameter.Builder().build());
+
+        assertEquals(HttpStatus.SC_OK, response.getStatusLine().getStatusCode());
+
     }
 
 
