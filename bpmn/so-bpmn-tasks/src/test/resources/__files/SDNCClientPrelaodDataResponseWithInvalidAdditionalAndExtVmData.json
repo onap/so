@@ -1,0 +1,47 @@
+{
+    "vnf-preload-list": [
+        {
+            "vnf-name": "GENERIC_VNF_NAME",
+            "vnf-type": "SIMPLE",
+            "preload-data": 
+            {
+                "network-topology-information": 
+                {
+                },
+                "vnf-topology-information": 
+                {
+                    "vnf-topology-identifier": 
+                    {
+                        "service-type": "vCPE",
+                        "vnf-type": "SIMPLE",
+                        "vnf-name": "GENERIC_VNF_NAME",
+                        "generic-vnf-name": "GENERIC_VNF_NAME",
+                        "generic-vnf-type": "SIMPLE"
+                    },
+                    "vnf-parameters": [
+                        {
+                            "vnf-parameter-name": "extra_console",
+                            "vnf-parameter-value": "ttyS1"
+                        },
+                        {
+                            "vnf-parameter-name": "vnfUsername",
+                            "vnf-parameter-value": "vnf_user"
+                        },
+                        {
+                            "vnf-parameter-name": "additionalParams",
+                            "vnf-parameter-value": "[\"abc\"]"
+                        },
+                        {
+                            "vnf-parameter-name": "extVirtualLinks",
+                            "vnf-parameter-value": "{\"def\":\"123\"}"
+                        }
+                    ]
+                },
+                "oper-status": 
+                {
+                    "order-status": "PendingAssignment"
+                }
+            }
+        }
+    ]
+}

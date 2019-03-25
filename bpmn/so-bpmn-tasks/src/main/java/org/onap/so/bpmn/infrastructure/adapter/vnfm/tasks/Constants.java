@@ -27,6 +27,8 @@ public class Constants {
 
     public static final String CREATE_VNF_REQUEST_PARAM_NAME = "createVnfRequest";
     public static final String CREATE_VNF_RESPONSE_PARAM_NAME = "createVnfResponse";
+    
+    public static final String INPUT_PARAMETER = "inputParameter";
 
     public static final String DOT = ".";
     public static final String UNDERSCORE = "_";
@@ -34,6 +36,9 @@ public class Constants {
 
     public static final String VNFM_ADAPTER_DEFAULT_URL = "http://so-vnfm-adapter.onap:9092/so/vnfm-adapter/v1/";
     public static final String VNFM_ADAPTER_DEFAULT_AUTH = "Basic dm5mbTpwYXNzd29yZDEk";
+    
+    public static final String FORWARD_SLASH = "/";
+    public static final String PRELOAD_VNFS_URL = "/restconf/config/VNF-API:preload-vnfs/vnf-preload-list/";
 
 
     private Constants() {}
