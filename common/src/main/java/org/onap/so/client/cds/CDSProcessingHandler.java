@@ -23,11 +23,11 @@ package org.onap.so.client.cds;
 import io.grpc.ManagedChannel;
 import io.grpc.stub.StreamObserver;
 import java.util.concurrent.CountDownLatch;
-import org.onap.ccsdk.apps.controllerblueprints.common.api.ActionIdentifiers;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc.BluePrintProcessingServiceStub;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceInput;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceOutput;
+import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc.BluePrintProcessingServiceStub;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
