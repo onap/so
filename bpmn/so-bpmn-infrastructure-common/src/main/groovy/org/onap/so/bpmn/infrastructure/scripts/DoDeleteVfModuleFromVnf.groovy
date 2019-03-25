@@ -339,7 +339,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 	
 		logger.debug("workflowException: " + workflowException)
 	
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 	
 		logger.debug("SDNCResponse: " + response)

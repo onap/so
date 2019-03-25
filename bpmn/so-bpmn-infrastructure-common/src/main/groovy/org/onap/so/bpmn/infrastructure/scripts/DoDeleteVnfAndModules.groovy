@@ -60,7 +60,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
 	VidUtils vidUtils = new VidUtils(this)
-	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 
 	/**
 	 * This method gets and validates the incoming
@@ -500,7 +500,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 
 		logger.debug("workflowException: " + workflowException)
 
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 		logger.debug("SDNCResponse: " + response)

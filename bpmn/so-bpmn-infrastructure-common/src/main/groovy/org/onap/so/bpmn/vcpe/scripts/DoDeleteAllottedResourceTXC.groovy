@@ -306,7 +306,7 @@ public class DoDeleteAllottedResourceTXC extends AbstractServiceTaskProcessor{
 			boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 			logger.debug("SDNCResponse: " + response)
 
-			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+			SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 			sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 			if(execution.getVariable(Prefix + 'sdncResponseSuccess') == true){

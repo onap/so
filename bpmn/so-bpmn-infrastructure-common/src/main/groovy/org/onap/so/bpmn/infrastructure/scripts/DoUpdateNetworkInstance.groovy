@@ -946,7 +946,7 @@ public class DoUpdateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 		// reset variable
 		String changeAssignSDNCResponseDecodeXml = execution.getVariable(Prefix + "changeAssignSDNCResponse")

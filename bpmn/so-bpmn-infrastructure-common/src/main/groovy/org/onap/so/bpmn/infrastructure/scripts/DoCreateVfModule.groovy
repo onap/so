@@ -84,7 +84,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	String Prefix="DCVFM_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
-	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+	SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 	OofInfraUtils oofInfraUtils = new OofInfraUtils()
 	CatalogDbUtils catalogDbUtils = new CatalogDbUtilsFactory().create()
 	DecomposeJsonUtil decomposeJsonUtils = new DecomposeJsonUtil()
@@ -598,7 +598,7 @@ public class DoCreateVfModule extends VfModuleBase {
 	 */
 	public void validateWorkflowResponse(DelegateExecution execution, String responseVar,
 			String responseCodeVar, String errorResponseVar) {
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, responseVar, responseCodeVar, errorResponseVar)
 	}
 
@@ -1635,7 +1635,7 @@ public class DoCreateVfModule extends VfModuleBase {
 
 		logger.debug("workflowException: " + workflowException)
 
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 
 		String sdncResponse = response

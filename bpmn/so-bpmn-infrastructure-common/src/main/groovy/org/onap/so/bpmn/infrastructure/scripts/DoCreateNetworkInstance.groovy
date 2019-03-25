@@ -1081,7 +1081,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
 
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 		// reset variable
 		String assignSDNCResponseDecodeXml = execution.getVariable(Prefix + "assignSDNCResponse")
@@ -1109,7 +1109,7 @@ public class DoCreateNetworkInstance extends AbstractServiceTaskProcessor {
 		boolean successIndicator = execution.getVariable("SDNCA_SuccessIndicator")
 		WorkflowException workflowException = execution.getVariable("WorkflowException")
 
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, response, workflowException, successIndicator)
 		// reset variable
 		String assignSDNCResponseDecodeXml = execution.getVariable(Prefix + "activateSDNCResponse")

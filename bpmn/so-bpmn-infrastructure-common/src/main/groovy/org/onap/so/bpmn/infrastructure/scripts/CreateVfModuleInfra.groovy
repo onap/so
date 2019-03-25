@@ -268,7 +268,7 @@ public class CreateVfModuleInfra extends AbstractServiceTaskProcessor {
 	 */
 	public void validateWorkflowResponse(DelegateExecution execution, String responseVar,
 			String responseCodeVar, String errorResponseVar) {
-		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils(this)
+		SDNCAdapterUtils sdncAdapterUtils = new SDNCAdapterUtils()
 		sdncAdapterUtils.validateSDNCResponse(execution, responseVar, responseCodeVar, errorResponseVar)
 	}
 

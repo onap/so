@@ -53,12 +53,7 @@ public class SDNCAdapterUtilsTest {
 		map = new HashMap<String,Object>()
 		svcex = mock(ExecutionEntity.class)
 		wfex = null
-		tp = new AbstractServiceTaskProcessor() {
-			@Override
-			public void preProcessRequest(DelegateExecution execution) {
-			}
-		};
-		utils = new SDNCAdapterUtils(tp)
+		utils = new SDNCAdapterUtils()
 		
 		// svcex gets its variables from "map"
 		when(svcex.getVariable(any())).thenAnswer(
