@@ -28,6 +28,7 @@ import org.junit.runner.RunWith;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
+import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -73,6 +74,17 @@ public class VnfmAdapterControllerTest {
         final ResponseEntity<CreateVnfResponse> response =
                 restTemplateWrongPassword.exchange(request, CreateVnfResponse.class);
         assertEquals(401, response.getStatusCode().value());
+    }
+
+    @Test
+    public void deleteVnf_ValidRequest_Returns202AndJobId() throws Exception {
+        final RequestEntity<Void> request = RequestEntity
+                .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myVnfId"))
+                .accept(MediaType.APPLICATION_JSON).header("X-ONAP-RequestId", "myRequestId")
+                .header("X-ONAP-InvocationID", "myInvocationId").header("Content-Type", "application/json").build();
+        final ResponseEntity<DeleteVnfResponse> response = restTemplate.exchange(request, DeleteVnfResponse.class);
+        assertEquals(202, response.getStatusCode().value());
+        assertNotNull(response.getBody().getJobId());
     }
 
 }

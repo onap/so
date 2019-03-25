@@ -27,12 +27,14 @@ import javax.ws.rs.core.MediaType;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
+import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,15 +60,15 @@ public class VnfmAdapterController {
                     required = true) @Valid @RequestBody final CreateVnfRequest createVnfRequest,
             @ApiParam(
                     value = "Used to track REST requests for logging purposes. Identifies a single top level invocation of ONAP",
-                    required = true) @RequestHeader(value = ONAPLogConstants.Headers.REQUEST_ID,
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.REQUEST_ID,
                             required = false) final String requestId,
             @ApiParam(
                     value = "Used to track REST requests for logging purposes. Identifies the client application user agent or user invoking the API",
-                    required = true) @RequestHeader(value = ONAPLogConstants.Headers.PARTNER_NAME,
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.PARTNER_NAME,
                             required = false) final String partnerName,
             @ApiParam(
                     value = "Used to track REST requests for logging purposes. Identifies a single invocation of a single component",
-                    required = true) @RequestHeader(value = ONAPLogConstants.Headers.INVOCATION_ID,
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.INVOCATION_ID,
                             required = false) final String invocationId) {
 
         setLoggingMDCs(requestId, partnerName, invocationId);
@@ -74,6 +76,33 @@ public class VnfmAdapterController {
         logger.info("REST request vnfCreate with body: {}", createVnfRequest);
 
         final CreateVnfResponse response = new CreateVnfResponse();
+        response.setJobId(UUID.randomUUID().toString());
+        clearLoggingMDCs();
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @DeleteMapping(value = "/vnfs/{vnfId}")
+    public ResponseEntity<DeleteVnfResponse> vnfDelete(
+            @ApiParam(value = "The identifier of the VNF. This must be the vnf-id of an existing generic-vnf in AAI.",
+                    required = true) @PathVariable("vnfId") final String vnfId,
+            @ApiParam(
+                    value = "Used to track REST requests for logging purposes. Identifies a single top level invocation of ONAP",
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.REQUEST_ID,
+                            required = false) final String requestId,
+            @ApiParam(
+                    value = "Used to track REST requests for logging purposes. Identifies the client application user agent or user invoking the API",
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.PARTNER_NAME,
+                            required = false) final String partnerName,
+            @ApiParam(
+                    value = "Used to track REST requests for logging purposes. Identifies a single invocation of a single component",
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.INVOCATION_ID,
+                            required = false) final String invocationId) {
+
+        setLoggingMDCs(requestId, partnerName, invocationId);
+
+        logger.info("REST request vnfDelete for VNF: {}", vnfId);
+
+        final DeleteVnfResponse response = new DeleteVnfResponse();
         response.setJobId(UUID.randomUUID().toString());
         clearLoggingMDCs();
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
