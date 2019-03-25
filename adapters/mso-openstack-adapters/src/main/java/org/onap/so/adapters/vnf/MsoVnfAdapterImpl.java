@@ -37,10 +37,22 @@ import java.util.concurrent.TimeUnit;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.onap.so.adapters.valet.GenericValetResponse;
+import org.onap.so.adapters.valet.ValetClient;
+import org.onap.so.adapters.valet.beans.HeatRequest;
+import org.onap.so.adapters.valet.beans.ValetConfirmResponse;
+import org.onap.so.adapters.valet.beans.ValetCreateResponse;
+import org.onap.so.adapters.valet.beans.ValetDeleteResponse;
+import org.onap.so.adapters.valet.beans.ValetRollbackResponse;
+import org.onap.so.adapters.valet.beans.ValetStatus;
+import org.onap.so.adapters.valet.beans.ValetUpdateResponse;
 import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
 import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.adapters.vnf.exceptions.VnfNotFound;
+import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.cloud.CloudConfig;
+import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
@@ -54,27 +66,26 @@ import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.utils.MavenLikeVersioning;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.heatbridge.HeatBridgeApi;
+import org.onap.so.heatbridge.HeatBridgeImpl;
+import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.logger.MessageEnum;
 
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
+import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.onap.so.openstack.exceptions.MsoHeatNotFoundException;
 import org.onap.so.openstack.utils.MsoHeatEnvironmentEntry;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.onap.so.openstack.utils.MsoHeatUtilsWithUpdate;
-import org.onap.so.adapters.valet.ValetClient;
-import org.onap.so.adapters.valet.beans.HeatRequest;
-import org.onap.so.adapters.valet.beans.ValetConfirmResponse;
-import org.onap.so.adapters.valet.beans.ValetCreateResponse;
-import org.onap.so.adapters.valet.beans.ValetDeleteResponse;
-import org.onap.so.adapters.valet.beans.ValetRollbackResponse;
-import org.onap.so.adapters.valet.beans.ValetStatus;
-import org.onap.so.adapters.valet.beans.ValetUpdateResponse;
-import org.onap.so.adapters.valet.GenericValetResponse;
+import org.openstack4j.model.compute.Flavor;
+import org.openstack4j.model.compute.Image;
+import org.openstack4j.model.compute.Server;
+import org.openstack4j.model.heat.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -507,6 +518,67 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         logger.debug(" HeatBridgeMain.py failed for unknown reasons! " + e);
         return false;
     	}
+    }
+
+    private void heatbridge(StackInfo heatStack, String cloudSiteId, String tenantId, String genericVnfName,
+        String vfModuleId) {
+        try {
+            CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
+                () -> new MsoCloudSiteNotFound(cloudSiteId));
+            CloudIdentity cloudIdentity = cloudSite.getIdentityService();
+            String heatStackId = heatStack.getCanonicalName().split("/")[1];
+
+            String cloudOwner = "CloudOwner";//cloud owner needs to come from bpmn-adapter
+            List<String> oobMgtNetNames = new ArrayList<>();
+
+            HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
+                 cloudOwner, cloudSiteId, tenantId);
+
+            OpenstackClient openstackClient = heatBridgeClient.authenticate();
+            List<Resource> stackResources = heatBridgeClient.queryNestedHeatStackResources(heatStackId);
+
+            List<Server> osServers = heatBridgeClient.getAllOpenstackServers(stackResources);
+
+            List<Image> osImages = heatBridgeClient.extractOpenstackImagesFromServers(osServers);
+
+            List<Flavor> osFlavors = heatBridgeClient.extractOpenstackFlavorsFromServers(osServers);
+
+            logger.debug("Successfully queried heat stack{} for resources.", heatStackId);
+            //os images
+            if (osImages != null && !osImages.isEmpty()) {
+                heatBridgeClient.buildAddImagesToAaiAction(osImages);
+                logger.debug("Successfully built AAI actions to add images.");
+            } else {
+                logger.debug("No images to update to AAI.");
+            }
+            //flavors
+            if (osFlavors != null && !osFlavors.isEmpty()) {
+                heatBridgeClient.buildAddFlavorsToAaiAction(osFlavors);
+                logger.debug("Successfully built AAI actions to add flavors.");
+            } else {
+                logger.debug("No flavors to update to AAI.");
+            }
+
+            //compute resources
+            heatBridgeClient.buildAddVserversToAaiAction(genericVnfName, vfModuleId, osServers);
+            logger.debug("Successfully queried compute resources and built AAI vserver actions.");
+
+            //neutron resources
+            List<String> oobMgtNetIds = new ArrayList<>();
+
+            //if no network-id list is provided, however network-name list is
+            if (!CollectionUtils.isEmpty(oobMgtNetNames)) {
+                oobMgtNetIds = heatBridgeClient.extractNetworkIds(oobMgtNetNames);
+            }
+            heatBridgeClient.buildAddVserverLInterfacesToAaiAction(stackResources, oobMgtNetIds);
+            logger.debug(
+                "Successfully queried neutron resources and built AAI actions to add l-interfaces to vservers.");
+
+            //Update AAI
+            heatBridgeClient.submitToAai();
+        } catch (Exception ex) {
+            logger.debug("Heatbrige failed for stackId: " + heatStack.getCanonicalName(), ex);
+        }
     }
 
     private String convertNode(final JsonNode node) {
@@ -1271,7 +1343,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     logger.error("Exception encountered while sending Confirm to Valet ", e);
                 }
             }
-            logger.debug("VF Module {} successfully created", vfModuleName);
+            logger.debug ("VF Module {} successfully created", vfModuleName);
+            //call heatbridge
+            heatbridge(heatStack, cloudSiteId, tenantId, genericVnfName, vfModuleId);
             return;
         } catch (Exception e) {
         	logger.debug("unhandled exception in create VF",e);
