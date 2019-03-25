@@ -15,7 +15,7 @@
         <grpc.version>1.17.1</grpc.version>
         <protobuf.version>3.6.1</protobuf.version>
         <grpc.netty.version>4.1.30.Final</grpc.netty.version>
-        <ccsdk.version>0.4.1-SNAPSHOT</ccsdk.version>
+        <ccsdk.version>0.4.2-SNAPSHOT</ccsdk.version>
     </properties>
 
     <dependencies>
@@ -143,7 +143,7 @@
 
         <!-- CDS dependencies -->
         <dependency>
-            <groupId>org.onap.ccsdk.apps.components</groupId>
+            <groupId>org.onap.ccsdk.cds.components</groupId>
             <artifactId>proto-definition</artifactId>
             <version>${ccsdk.version}</version>
         </dependency>
