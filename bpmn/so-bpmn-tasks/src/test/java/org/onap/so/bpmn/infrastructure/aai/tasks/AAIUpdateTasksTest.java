@@ -655,4 +655,16 @@ public class AAIUpdateTasksTest extends BaseTaskTest{
 		aaiUpdateTasks.updateManagementV6AddressVnf(execution);
 		verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
 	}
+	@Test
+	public void updateOrchestrationStatusVnfConfigureTest() throws Exception {
+		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CONFIGURE);
+
+		aaiUpdateTasks.updateOrchestrationStausConfigDeployConfigureVnf(execution);
+	}
+	@Test
+	public void updateOrchestrationStatusVnfConfiguredTest() throws Exception {
+		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CONFIGURED);
+
+		aaiUpdateTasks.updateOrchestrationStausConfigDeployConfiguredVnf(execution);
+	}
 }
