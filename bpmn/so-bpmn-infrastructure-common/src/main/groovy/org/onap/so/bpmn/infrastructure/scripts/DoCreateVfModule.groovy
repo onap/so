@@ -668,8 +668,7 @@ public class DoCreateVfModule extends VfModuleBase {
 			rollbackData.put("VFMODULE", "rollbackPrepareUpdateVfModule", "true")
 			execution.setVariable("rollbackData", rollbackData)
 		} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while postProcessing CreateAAIVfModule request:' + ex.getMessage())
+				logger.debug('Exception occurred while postProcessing CreateAAIVfModule request: {} {}', ex.getMessage(), ex)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Bad response from CreateAAIVfModule' + ex.getMessage())
 		}
 		logger.trace('Exited ' + method)
@@ -741,8 +740,7 @@ public class DoCreateVfModule extends VfModuleBase {
 					}
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET: {} {}', ex.getMessage(), ex)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
 			logger.trace('Exited ' + method)
@@ -822,17 +820,16 @@ public class DoCreateVfModule extends VfModuleBase {
 					}
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET: {} {}', ex.getMessage(), ex)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
 			logger.trace('Exited ' + method)
 		} catch (BpmnError e) {
 			throw e;
 		} catch (Exception e) {
-			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
+			logger.error("{} {} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 					'Caught exception in ' + method, "BPMN",
-					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e);
+					ErrorCode.UnknownError.getValue(), "Exception is:\n" + e, e);
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIVfModuleForStatus(): ' + e.getMessage())
 		}
 	}

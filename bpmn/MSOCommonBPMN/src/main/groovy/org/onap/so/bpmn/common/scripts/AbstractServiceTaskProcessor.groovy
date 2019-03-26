@@ -522,8 +522,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				throw bpmnError
 			}
 			catch(Exception e) {
-				e.printStackTrace()
-				logger.debug('Unexpected error encountered - ' + e.getMessage())
+				logger.debug('Unexpected error encountered - {} {}', e.getMessage(), e)
 				(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 			}
 			finally {

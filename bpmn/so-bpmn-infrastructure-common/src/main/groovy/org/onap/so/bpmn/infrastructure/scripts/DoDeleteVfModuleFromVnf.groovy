@@ -154,8 +154,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 					execution.setVariable('DDVMFV_getVnfResponse', "Generic Vnf not found!")
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET: {} {}', ex.getMessage(), ex)
 				execution.setVariable('DDVMFV_getVnfResponseCode', 500)
 				execution.setVariable('DDVFMV_getVnfResponse', 'AAI GET Failed:' + ex.getMessage())
 			}

@@ -331,8 +331,7 @@ class DoDeleteVnfAndModules extends AbstractServiceTaskProcessor {
 				}
 				execution.setVariable("DDVAM_vfModules", vfModulesList)
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET: {} {}', ex.getMessage(), ex)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
 			logger.trace('Exited ' + method)

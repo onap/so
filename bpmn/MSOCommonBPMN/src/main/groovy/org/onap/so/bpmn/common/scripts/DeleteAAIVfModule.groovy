@@ -112,8 +112,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("DAAIVfMod_deleteGenericVnfResponseCode", 200)
 			execution.setVariable("DAAIVfMod_deleteGenericVnfResponse", "Vnf Deleted")
 		} catch (Exception ex) {
-			ex.printStackTrace()
-			logger.debug("Exception occurred while executing AAI DELETE:" + ex.getMessage())
+			logger.debug("Exception occurred while executing AAI DELETE: {} {}", ex.getMessage(), ex)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during deleteGenericVnf")
 		}
 	}
@@ -131,8 +130,7 @@ public class DeleteAAIVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("DAAIVfMod_deleteVfModuleResponseCode", 200)
 			execution.setVariable("DAAIVfMod_deleteVfModuleResponse", "Vf Module Deleted")
 		} catch (Exception ex) {
-			ex.printStackTrace()
-			logger.debug("Exception occurred while executing AAI PUT:" + ex.getMessage())
+			logger.debug("Exception occurred while executing AAI PUT: {} {}", ex.getMessage(), ex)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured during deleteVfModule")
 		}
 	}

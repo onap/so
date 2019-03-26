@@ -219,8 +219,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("CAAIVfMod_createGenericVnfResponseCode", 201)
 			execution.setVariable("CAAIVfMod_createGenericVnfResponse", "Vnf Created")
 		} catch (Exception ex) {
-			ex.printStackTrace()
-			logger.debug("Exception occurred while executing AAI PUT:" + ex.getMessage())
+			logger.debug("Exception occurred while executing AAI PUT: {} {}", ex.getMessage(), ex)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in createGenericVnf.")
 		}
 	}

@@ -93,7 +93,9 @@ public class SDNCRestClient{
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error("{} {} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "SDNC",
+				ErrorCode.UnknownError.getValue(), "Exception processing request to SDNC", e);
+
 			Thread.currentThread().interrupt();
 		}
 

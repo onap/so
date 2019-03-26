@@ -281,8 +281,7 @@ class VidUtils {
 			return groovy.xml.XmlUtil.serialize(xmlReq.normalize().replaceAll("\t", "").replaceAll("\n", "")).replaceAll("(<\\?[^<]*\\?>\\s*[\\r\\n]*)?", "")
 
 		} catch(Exception e) {
-			logger.debug("{} {}", "Error in Vid Utils", e.getCause())
-			e.printStackTrace();
+			logger.debug("Error in Vid Utils: {} {}", e.getCause(), e)
 			throw e
 		}
 	}
