@@ -22,13 +22,17 @@ package org.onap.so.bpmn.core.domain;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
 public class VnfResourceTest {
-	
+
+	private final static String ALL_VF_MODULES_JSON =
+		"{\"ArrayList\":[{\"resourceType\":\"MODULE\",\"resourceInstance\":{},\"homingSolution\":{\"license\":{},\"rehome\":false},\"vfModuleName\":\"vfModuleName\",\"vfModuleType\":\"vfModuleType\",\"heatStackId\":\"heatStackId\",\"hasVolumeGroup\":true,\"isBase\":true,\"vfModuleLabel\":\"vfModuleLabel\",\"initialCount\":0},{\"resourceType\":\"MODULE\",\"resourceInstance\":{},\"homingSolution\":{\"license\":{},\"rehome\":false},\"vfModuleName\":\"vfModuleName\",\"vfModuleType\":\"vfModuleType\",\"heatStackId\":\"heatStackId\",\"hasVolumeGroup\":true,\"isBase\":true,\"vfModuleLabel\":\"vfModuleLabel\",\"initialCount\":0}]}";
+
 	private VnfResource vnf= new VnfResource();
 	List<ModuleResource> moduleResources;
 
@@ -61,6 +65,36 @@ public class VnfResourceTest {
 		VnfResource vnfResource = objectMapper.readValue(jsonStr, VnfResource.class);
 
 		assertTrue(vnfResource != null);
+	}
+
+	@Test
+	public void testVfModules() {
+
+		moduleResources = new ArrayList<>();
+
+		ModuleResource moduleresource = new ModuleResource();
+		moduleresource.setVfModuleName("vfModuleName");
+		moduleresource.setHeatStackId("heatStackId");
+		moduleresource.setIsBase(true);
+		moduleresource.setVfModuleLabel("vfModuleLabel");
+		moduleresource.setInitialCount(0);
+		moduleresource.setVfModuleType("vfModuleType");
+		moduleresource.setHasVolumeGroup(true);
+
+		moduleResources.add(moduleresource);
+
+		vnf.setModules(moduleResources);
+		assertEquals(vnf.getVfModules(), moduleResources);
+
+		List<ModuleResource> moduleResources = vnf.getAllVfModuleObjects();
+		assertEquals(1, moduleResources.size());
+
+		vnf.addVfModule(moduleresource);
+		moduleResources = vnf.getAllVfModuleObjects();
+		assertEquals(2, moduleResources.size());
+
+		assertEquals(ALL_VF_MODULES_JSON, vnf.getAllVfModulesJson());
+
 	}
 
 }
