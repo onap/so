@@ -27,6 +27,8 @@ public class Constants {
 
     public static final String CREATE_VNF_REQUEST_PARAM_NAME = "createVnfRequest";
     public static final String CREATE_VNF_RESPONSE_PARAM_NAME = "createVnfResponse";
+    public static final String VNFM_FLAG_PARAM_NAME = "vnfmFlag";
+    public static final String DELETE_VNF_RESPONSE_PARAM_NAME = "deleteVnfResponse";
 
     public static final String DOT = ".";
     public static final String UNDERSCORE = "_";

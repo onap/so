@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1as67q3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4">
+  <bpmn:process id="vnfmFoundCheck" name="vnfmFoundCheck" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_0i3wi1x">
+      <bpmn:outgoing>SequenceFlow_0f0xhmg</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="ServiceTask_1d5jbsa" name="&#10;Invoke VNFM Adaptor&#10;" camunda:asyncAfter="true" camunda:expression="${EtsiVnfDeleteTask.invokeVnfmAdapter(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>Found</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1064iul</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_1khf4qw">
+      <bpmn:incoming>SequenceFlow_1064iul</bpmn:incoming>
+      <bpmn:incoming>NotFound</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0f0xhmg" sourceRef="StartEvent_0i3wi1x" targetRef="ServiceTask_0zgpyyq" />
+    <bpmn:sequenceFlow id="SequenceFlow_1064iul" sourceRef="ServiceTask_1d5jbsa" targetRef="EndEvent_1khf4qw" />
+    <bpmn:serviceTask id="ServiceTask_0zgpyyq" name="&#10;CheckVNFMFlag&#10;" camunda:expression="${EtsiVnfDeleteTask.checkVnfmFlag(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn:incoming>SequenceFlow_0f0xhmg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1oeot58</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_1oeot58" sourceRef="ServiceTask_0zgpyyq" targetRef="ExclusiveGateway_024ocwo" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_024ocwo" name="Vnfm Found?">
+      <bpmn:incoming>SequenceFlow_1oeot58</bpmn:incoming>
+      <bpmn:outgoing>NotFound</bpmn:outgoing>
+      <bpmn:outgoing>Found</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="NotFound" name="No" sourceRef="ExclusiveGateway_024ocwo" targetRef="EndEvent_1khf4qw" />
+    <bpmn:sequenceFlow id="Found" name="Yes" sourceRef="ExclusiveGateway_024ocwo" targetRef="ServiceTask_1d5jbsa">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">#{execution.getVariable("vnfmFlag") == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="vnfmFoundCheck">
+      <bpmndi:BPMNShape id="StartEvent_0i3wi1x_di" bpmnElement="StartEvent_0i3wi1x">
+        <dc:Bounds x="329" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1d5jbsa_di" bpmnElement="ServiceTask_1d5jbsa">
+        <dc:Bounds x="713" y="294" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1khf4qw_di" bpmnElement="EndEvent_1khf4qw">
+        <dc:Bounds x="745" y="123" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0f0xhmg_di" bpmnElement="SequenceFlow_0f0xhmg">
+        <di:waypoint x="365" y="210" />
+        <di:waypoint x="418" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1064iul_di" bpmnElement="SequenceFlow_1064iul">
+        <di:waypoint x="763" y="294" />
+        <di:waypoint x="763" y="159" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0zgpyyq_di" bpmnElement="ServiceTask_0zgpyyq">
+        <dc:Bounds x="418" y="170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1oeot58_di" bpmnElement="SequenceFlow_1oeot58">
+        <di:waypoint x="518" y="210" />
+        <di:waypoint x="591" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_024ocwo_di" bpmnElement="ExclusiveGateway_024ocwo" isMarkerVisible="true">
+        <dc:Bounds x="591" y="185" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="633" y="223" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_19mtwe9_di" bpmnElement="NotFound">
+        <di:waypoint x="616" y="185" />
+        <di:waypoint x="616" y="141" />
+        <di:waypoint x="745" y="141" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="627" y="156" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03axn2y_di" bpmnElement="Found">
+        <di:waypoint x="616" y="235" />
+        <di:waypoint x="616" y="334" />
+        <di:waypoint x="713" y="334" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="624" y="254" width="19" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
