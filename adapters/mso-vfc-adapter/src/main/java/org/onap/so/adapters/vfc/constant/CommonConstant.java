@@ -33,16 +33,30 @@ public class CommonConstant {
     public static final String STR_EMPTY = "";
 
     public static final String NFVO_CREATE_URL = "/api/nslcm/v1/ns";
+    public static final String SOL005_NFVO_CREATE_URL = "/api/nslcm/v1/ns_instances";
 
     public static final String NFVO_INSTANTIATE_URL = "/api/nslcm/v1/ns/%s/instantiate";
+    public static final String SOL005_NFVO_INSTANTIATE_URL = "/api/nslcm/v1/ns_instances/%s/instantiate";
 
     public static final String NFVO_TERMINATE_URL = "/api/nslcm/v1/ns/%s/terminate";
+    public static final String SOL005_NFVO_TERMINATE_URL = "/api/nslcm/v1/ns_instances/%s/terminate";
 
     public static final String NFVO_DELETE_URL = "/api/nslcm/v1/ns/%s";
 
     public static final String NFVO_QUERY_URL = "/api/nslcm/v1/jobs/%s";
+    public static final String SOL005_NFVO_QUERY_URL = "/api/nslcm/v1/ns_lcm_op_occs/%s";
 
     public static final String NFVO_SCALE_URL = "/api/nslcm/v1/ns/%s/scale";
+
+    public enum operationState {
+        PROCESSING, COMPLETED, PARTIALLY_COMPLETED, FAILED_TEMP, FAILED, ROLLING_BACK, ROLLED_BACK
+    }
+    public enum lcmOperationType {
+        INSTANTIATE, SCALE, UPDATE, TERMINATE, HEAL
+    };
+    public enum cancelMode {
+        GRACEFUL, FORCEFUL
+    };
 
     /**
      * 
@@ -107,8 +121,11 @@ public class CommonConstant {
     public static final String DESC = "description";
 
     public static final String NS_INSTANCE_ID = "nsInstanceId";
+    public static final String SOL005_NS_INSTANCE_ID = "id";
+
 
     public static final String JOB_ID = "jobId";
+    public static final String JOB_URI = "Location";
 
     public static final String ADDITIONAL_PARAM_FOR_NS = "additionalParamForNs";
 
