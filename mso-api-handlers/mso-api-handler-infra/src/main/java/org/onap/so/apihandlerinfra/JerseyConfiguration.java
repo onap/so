@@ -62,6 +62,7 @@ public class JerseyConfiguration extends ResourceConfig {
 		register(RuntimeExceptionMapper.class);
 		register(RequestUriFilter.class);
 		register(E2EServiceInstances.class);
+		register(WorkflowSpecificationsHandler.class);
 		// this registration seems to be needed to get predictable
 		// execution behavior for the above JSON Exception Mappers
 		register(com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider.class);

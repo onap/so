@@ -53,6 +53,7 @@ public class BeanMultiTest {
 		test("org.onap.so.apihandlerinfra.tasksbeans");
 		test("org.onap.so.apihandlerinfra.vnfbeans");
 		test("org.onap.so.apihandlerinfra.tenantisolationbeans");
+		test("org.onap.so.apihandlerinfra.workflowspecificationbeans");
 	}
 
 	private void test(String packageName) {
