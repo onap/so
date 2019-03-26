@@ -25,13 +25,13 @@ import org.onap.so.rest.exceptions.RestProcessingException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
+import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import com.google.common.base.Optional;
 
 /**
@@ -40,50 +40,85 @@ import com.google.common.base.Optional;
 @Service
 public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(VnfmAdapterServiceProviderImpl.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(VnfmAdapterServiceProviderImpl.class);
 
-    private final VnfmAdapterUrlProvider urlProvider;
-    private final HttpRestServiceProvider httpServiceProvider;
+  private final VnfmAdapterUrlProvider urlProvider;
+  private final HttpRestServiceProvider httpServiceProvider;
 
-    @Autowired
-    public VnfmAdapterServiceProviderImpl(final VnfmAdapterUrlProvider urlProvider,
-            final HttpRestServiceProvider httpServiceProvider) {
-        this.urlProvider = urlProvider;
-        this.httpServiceProvider = httpServiceProvider;
+  @Autowired
+  public VnfmAdapterServiceProviderImpl(final VnfmAdapterUrlProvider urlProvider,
+      final HttpRestServiceProvider httpServiceProvider) {
+    this.urlProvider = urlProvider;
+    this.httpServiceProvider = httpServiceProvider;
+  }
+
+  @Override
+  public Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId,
+      final CreateVnfRequest request) {
+    try {
+      final String url = urlProvider.getCreateInstantiateUrl(vnfId);
+
+      final ResponseEntity<CreateVnfResponse> response =
+          httpServiceProvider.postHttpRequest(request, url, CreateVnfResponse.class);
+
+      final HttpStatus httpStatus = response.getStatusCode();
+      if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
+        LOGGER.error("Unable to invoke HTTP POST using URL: {}, Response Code: {}", url, httpStatus.value());
+        return Optional.absent();
+      }
+
+      if (!response.hasBody()) {
+        LOGGER.error("Received response without body: {}", response);
+        return Optional.absent();
+      }
+
+      final CreateVnfResponse createVnfResponse = response.getBody();
+
+      if (createVnfResponse.getJobId() == null || createVnfResponse.getJobId().isEmpty()) {
+        LOGGER.error("Received invalid instantiation response: {}", response);
+        return Optional.absent();
+      }
+
+      return Optional.of(createVnfResponse);
+    } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
+      LOGGER.error("Unexpected error while processing create and instantiation request", httpInvocationException);
+      return Optional.absent();
     }
 
-    @Override
-    public Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId,
-            final CreateVnfRequest request) {
-        try {
-            final String url = urlProvider.getCreateInstantiateUrl(vnfId);
+  }
 
-            final ResponseEntity<CreateVnfResponse> response =
-                    httpServiceProvider.postHttpRequest(request, url, CreateVnfResponse.class);
+  @Override
+  public Optional<DeleteVnfResponse> invokeDeleteRequest(final String vnfId) {
+    try {
+      final String url = urlProvider.getDeleteUrl(vnfId);
+      LOGGER.debug("Will send request to vnfm adapter using url: {}", url);
 
-            final HttpStatus httpStatus = response.getStatusCode();
-            if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
-                LOGGER.error("Unable to invoke HTTP POST using URL: {}, Response Code: {}", url, httpStatus.value());
-                return Optional.absent();
-            }
+      final ResponseEntity<DeleteVnfResponse> response =
+          httpServiceProvider.deleteHttpRequest(url, DeleteVnfResponse.class);
 
-            if (!response.hasBody()) {
-                LOGGER.error("Received response without body: {}", response);
-                return Optional.absent();
-            }
+      LOGGER.debug("Response received: ", response);
 
-            final CreateVnfResponse createVnfResponse = response.getBody();
+      final HttpStatus httpStatus = response.getStatusCode();
 
-            if (createVnfResponse.getJobId() == null || createVnfResponse.getJobId().isEmpty()) {
-                LOGGER.error("Received invalid instantiation response: {}", response);
-                return Optional.absent();
-            }
+      if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
+        LOGGER.error("Unable to invoke HTTP DELETE using URL: {}, Response Code: {}", url, httpStatus.value());
+        return Optional.absent();
+      }
 
-            return Optional.of(createVnfResponse);
-        } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
-            LOGGER.error("Unexpected error while processing create and instantiation request", httpInvocationException);
-            return Optional.absent();
-        }
+      if (!response.hasBody()) {
+        LOGGER.error("Received response without body: {}", response);
+        return Optional.absent();
+      }
+      final DeleteVnfResponse deleteVnfResponse = response.getBody();
 
+      if (deleteVnfResponse.getJobId() == null || deleteVnfResponse.getJobId().isEmpty()) {
+        LOGGER.error("Received invalid delete response: {}", response);
+        return Optional.absent();
+      }
+      return Optional.of(deleteVnfResponse);
+    } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
+      LOGGER.error("Unexpected error while processing delete request", httpInvocationException);
+      return Optional.absent();
     }
+  }
 }
