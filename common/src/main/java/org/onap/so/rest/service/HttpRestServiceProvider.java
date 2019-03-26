@@ -67,6 +67,15 @@ public interface HttpRestServiceProvider {
      * @return Returns the {@link ResponseEntity}.
      */
     public <T> ResponseEntity<T> postHttpRequest(final Object object, final String url, final Class<T> clazz);
+    
+  /**
+   * Execute the HTTP DELETE to the given URI template
+   * 
+   * @param url the URL
+   * @param clazz the type of the return value
+   * @return Returns the {@link ResponseEntity}.
+   */
+  public <T> ResponseEntity<T> deleteHttpRequest(final String url, final Class<T> clazz);
 
 
 }
