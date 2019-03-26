@@ -164,6 +164,7 @@ public class CatalogDbClient {
     private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
     private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
     private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
+    private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
 
 
     private String serviceURI;
@@ -297,6 +298,9 @@ public class CatalogDbClient {
         findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH
             + findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep;
         findByClliAndCloudVersion = endpoint + CLOUD_SITE + SEARCH + findByClliAndCloudVersion;
+
+        findPnfResourceCustomizationByModelUuid =
+            endpoint + PNF_RESOURCE_CUSTOMIZATION + SEARCH + findPnfResourceCustomizationByModelUuid;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
@@ -478,6 +482,12 @@ public class CatalogDbClient {
         return pnfResourceCustomization;
     }
 
+    public List<PnfResourceCustomization> getPnfResourceCustomizationByModelUuid(String modelUuid) {
+        return this.getMultipleResources(pnfResourceCustomizationClient, getUri(
+            UriBuilder.fromUri(findPnfResourceCustomizationByModelUuid).queryParam("SERVICE_MODEL_UUID", modelUuid)
+                .build().toString()));
+    }
+
     public CollectionNetworkResourceCustomization getCollectionNetworkResourceCustomizationByID(
         String modelCustomizationUUID) {
         CollectionNetworkResourceCustomization collectionNetworkResourceCustomization =
@@ -517,9 +527,10 @@ public class CatalogDbClient {
         return networkResourceCustomization;
     }
 
-    public CvnfcCustomization getCvnfcCustomizationByModelCustomizationUUID(String modelCustomizationUUID){
+    public CvnfcCustomization getCvnfcCustomizationByModelCustomizationUUID(String modelCustomizationUUID) {
         CvnfcCustomization cvnfcResourceCustomization =
-                this.getSingleResource(cvnfcCustomizationClient, getUri(cvnfcResourceCustomizationURI + modelCustomizationUUID));
+            this.getSingleResource(cvnfcCustomizationClient,
+                getUri(cvnfcResourceCustomizationURI + modelCustomizationUUID));
         if (cvnfcResourceCustomization != null) {
             cvnfcResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         }
@@ -797,26 +808,30 @@ public class CatalogDbClient {
             .queryParam("VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID", vfModuleCustomizationUUID).build().toString()));
     }
 
-    public CvnfcCustomization getCvnfcCustomizationByCustomizationUUID(String cvnfcCustomizationUuid){
-        return this.getSingleResource(cvnfcCustomizationClient,getUri(UriBuilder
-                        .fromUri(endpoint + "/cvnfcCustomization/search/findOneByModelCustomizationUUID").queryParam("modelCustomizationUuid", cvnfcCustomizationUuid)
-                        .build().toString()));
+    public CvnfcCustomization getCvnfcCustomizationByCustomizationUUID(String cvnfcCustomizationUuid) {
+        return this.getSingleResource(cvnfcCustomizationClient, getUri(UriBuilder
+            .fromUri(endpoint + "/cvnfcCustomization/search/findOneByModelCustomizationUUID")
+            .queryParam("modelCustomizationUuid", cvnfcCustomizationUuid)
+            .build().toString()));
     }
 
     //fetch all VnfVfmoduleCvnfcConfigurationCustomization underneath a vnfc
     //find the VnfVfmoduleCvnfcConfigurationCustomization that is related to our vnf and our vf-module, filter all others.
     public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(
-            String vnfCustomizationUuid, String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
+        String vnfCustomizationUuid, String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
         CvnfcCustomization cvnfc = getCvnfcCustomizationByCustomizationUUID(cvnfcCustomizationUuid);
         if (cvnfc != null) {
-            for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfModuleCvnfcCust: cvnfc.getVnfVfmoduleCvnfcConfigurationCustomization()){
-                if(vnfVfModuleCvnfcCust.getVnfResourceCustomization().getModelCustomizationUUID().equals(vnfCustomizationUuid) &&
-                    vnfVfModuleCvnfcCust.getVfModuleCustomization().getModelCustomizationUUID().equals(vfModuleCustomizationUuid)){
-                return vnfVfModuleCvnfcCust;
+            for (VnfVfmoduleCvnfcConfigurationCustomization vnfVfModuleCvnfcCust : cvnfc
+                .getVnfVfmoduleCvnfcConfigurationCustomization()) {
+                if (vnfVfModuleCvnfcCust.getVnfResourceCustomization().getModelCustomizationUUID()
+                    .equals(vnfCustomizationUuid) &&
+                    vnfVfModuleCvnfcCust.getVfModuleCustomization().getModelCustomizationUUID()
+                        .equals(vfModuleCustomizationUuid)) {
+                    return vnfVfModuleCvnfcCust;
                 }
             }
         }
         return null;
-        
+
     }
 }

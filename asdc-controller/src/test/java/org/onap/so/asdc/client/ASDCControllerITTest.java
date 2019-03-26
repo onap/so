@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
@@ -55,6 +56,8 @@ import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
+import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
+import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +106,9 @@ public class ASDCControllerITTest extends BaseTest {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    protected WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
 
     private DistributionClientEmulator distributionClient;
 
@@ -260,6 +266,18 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("PNF resource customization entity", 1, pnfCustList.size());
             assertEquals(pnfCustomizationKey, pnfCustList.get(0).getModelCustomizationUUID());
 
+            /**
+             * Check the watchdog for component distribution status
+             */
+            List<WatchdogComponentDistributionStatus> distributionList = watchdogCDStatusRepository
+                .findByDistributionId(this.distributionId);
+            assertNotNull(distributionList);
+            assertEquals(1, distributionList.size());
+            WatchdogComponentDistributionStatus distributionStatus = distributionList.get(0);
+            assertEquals("COMPONENT_DONE_OK", distributionStatus.getComponentDistributionStatus());
+            assertEquals("SO", distributionStatus.getComponentName());
+
+
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
             fail(e.getMessage());
@@ -407,6 +425,17 @@ public class ASDCControllerITTest extends BaseTest {
             List<VnfResourceCustomization> vnfCustList = service.getVnfCustomizations();
             assertEquals("VNF resource customization entity", 1, vnfCustList.size());
             assertEquals(vnfCustomizationKey, vnfCustList.get(0).getModelCustomizationUUID());
+
+            /**
+             * Check the watchdog for component distribution status
+             */
+            List<WatchdogComponentDistributionStatus> distributionList = watchdogCDStatusRepository
+                .findByDistributionId(this.distributionId);
+            assertNotNull(distributionList);
+            assertEquals(1, distributionList.size());
+            WatchdogComponentDistributionStatus distributionStatus = distributionList.get(0);
+            assertEquals("COMPONENT_DONE_OK", distributionStatus.getComponentDistributionStatus());
+            assertEquals("SO", distributionStatus.getComponentName());
         } catch (Exception e) {
             logger.info(e.getMessage(), e);
             fail(e.getMessage());

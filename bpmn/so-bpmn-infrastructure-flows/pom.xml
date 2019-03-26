@@ -8,6 +8,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>so-bpmn-infrastructure-flows</artifactId>
 	<packaging>jar</packaging>
+
+	<properties>
+		<camunda.bpm.assert.version>2.0-alpha2</camunda.bpm.assert.version>
+		<assertj.core.version>1.7.0</assertj.core.version>
+		<grpc.version>1.17.1</grpc.version>
+		<camunda.mockito.version>3.2.1</camunda.mockito.version>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -136,6 +144,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.camunda.bpm.extension.mockito</groupId>
+			<artifactId>camunda-bpm-mockito</artifactId>
+			<version>${camunda.mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -196,14 +210,27 @@
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
+			<artifactId>MSOCoreBPMN</artifactId>
+			<version>${project.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
 			<artifactId>MSOCommonBPMN</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.onap.so</groupId>
-			<artifactId>MSOCoreBPMN</artifactId>
+			<artifactId>MSOCommonBPMN</artifactId>
 			<version>${project.version}</version>
 			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>so-bpmn-building-blocks</artifactId>
+			<version>${project.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -234,6 +261,18 @@
 		<dependency>
 			<groupId>org.camunda.bpm</groupId>
 			<artifactId>camunda-engine-plugin-connect</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.camunda.bpm.extension</groupId>
+			<artifactId>camunda-bpm-assert</artifactId>
+			<version>${camunda.bpm.assert.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>${assertj.core.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -268,5 +307,12 @@
 			<version>2.2.3</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.grpc</groupId>
+			<artifactId>grpc-testing</artifactId>
+			<version>${grpc.version}</version>
+			<scope>test</scope>
+		</dependency>
+
 	</dependencies>
 </project>
