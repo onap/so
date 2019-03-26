@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8661fbeb_fb05a8ef",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigDeployVnf.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-26T06:25:45Z",
+      "side": 1,
+      "message": "Change the Project to SO example (ONAP : SO)",
+      "range": {
+        "startLine": 3,
+        "startChar": 9,
+        "endLine": 3,
+        "endChar": 13
+      },
+      "revId": "1fbcf56c8c5316bbaaa8b00408802de61f8f2931",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ec660372_865694c1",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigDeployVnfTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-26T06:25:45Z",
+      "side": 1,
+      "message": "Change to SO",
+      "range": {
+        "startLine": 4,
+        "startChar": 9,
+        "endLine": 4,
+        "endChar": 13
+      },
+      "revId": "1fbcf56c8c5316bbaaa8b00408802de61f8f2931",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "800dbf3b_37f4348f",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/flowspecific/tasks/ConfigDeployVnfTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-03-26T06:25:45Z",
+      "side": 1,
+      "message": "9",
+      "range": {
+        "startLine": 6,
+        "startChar": 15,
+        "endLine": 6,
+        "endChar": 16
+      },
+      "revId": "1fbcf56c8c5316bbaaa8b00408802de61f8f2931",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
