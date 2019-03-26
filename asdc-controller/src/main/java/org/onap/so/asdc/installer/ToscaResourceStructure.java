@@ -43,6 +43,7 @@ import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkInstanceGroup;
 import org.onap.so.db.catalog.beans.NetworkResource;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
+import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.beans.TempNetworkHeatTemplateLookup;
@@ -54,8 +55,16 @@ import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 public class ToscaResourceStructure {
+
+	protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceStructure.class);
+
+	/**
+	 * mso config path, used for the config files, like download csar files.
+	 */
+	private String msoConfigPath;
 	
 	Metadata serviceMetadata;
 	private Service catalogService;
@@ -100,6 +109,8 @@ public class ToscaResourceStructure {
 	private VfModuleCustomization vfModuleCustomization;
 
 	private VnfResourceCustomization vnfResourceCustomization;
+
+	private PnfResourceCustomization pnfResourceCustomization;
 		
 	private AllottedResource allottedResource;
 	
@@ -111,22 +122,21 @@ public class ToscaResourceStructure {
 	
 	private ToscaCsar toscaCsar;
 	
-	protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceStructure.class);
-		
-	
 	public ToscaResourceStructure(){
+		this(System.getProperty("mso.config.path"));
 	}
-	
+
+	public ToscaResourceStructure(final String msoConfigPath){
+		this.msoConfigPath = msoConfigPath;
+		logger.info("MSO config path is: {}", msoConfigPath);
+	}
+
 	public void updateResourceStructure(IArtifactInfo artifact) throws ASDCDownloadException {
-		
-				
+
 		try {
-				
 			SdcToscaParserFactory factory = SdcToscaParserFactory.getInstance();//Autoclosable
-			
-			logger.debug("MSO config path is: " + System.getProperty("mso.config.path"));
-			
-			String filePath = Paths.get(System.getProperty("mso.config.path"), "ASDC",  artifact.getArtifactVersion(), artifact.getArtifactName()).normalize().toString();
+
+			String filePath = Paths.get(msoConfigPath, "ASDC",  artifact.getArtifactVersion(), artifact.getArtifactName()).normalize().toString();
 
 			File spoolFile = new File(filePath);
 
@@ -137,7 +147,7 @@ public class ToscaResourceStructure {
 			sdcCsarHelper = factory.getSdcCsarHelper(spoolFile.getAbsolutePath(),false);
 
 		}catch(Exception e){
-			logger.info("System out {}", e.getMessage());
+			logger.debug(e.getMessage(), e);
 			logger.error("{} {} {} {} {} {}", MessageEnum.ASDC_GENERAL_EXCEPTION_ARG.toString(),
 				"Exception caught during parser *****LOOK********* " + artifact.getArtifactName(), "ASDC",
 				"processResourceNotification", ErrorCode.BusinessProcesssError.getValue(),
@@ -258,6 +268,15 @@ public class ToscaResourceStructure {
 			VnfResourceCustomization vnfResourceCustomization) {
 		this.vnfResourceCustomization = vnfResourceCustomization;
 	}
+
+	public PnfResourceCustomization getPnfResourceCustomization() {
+		return pnfResourceCustomization;
+	}
+
+	public void setPnfResourceCustomization(PnfResourceCustomization pnfResourceCustomization) {
+		this.pnfResourceCustomization = pnfResourceCustomization;
+	}
+
 
 	public VfModuleCustomization getCatalogVfModuleCustomization() {
 		return vfModuleCustomization;

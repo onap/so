@@ -14,7 +14,7 @@ spring:
     initialization-mode: always
   jpa:   
     generate-ddl: false
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: none
       naming-strategy: org.hibernate.cfg.ImprovedNamingStrategy
@@ -97,3 +97,5 @@ mso:
     enabled: false
   aai:
     endpoint: http://localhost:${wiremock.server.port}
+  config:
+    defaultpath: src/test/resources

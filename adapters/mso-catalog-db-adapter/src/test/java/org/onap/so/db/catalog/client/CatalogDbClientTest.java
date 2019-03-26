@@ -23,13 +23,9 @@ package org.onap.so.db.catalog.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.UUID;
-
-import javax.ws.rs.core.UriBuilder;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,19 +50,14 @@ import org.onap.so.db.catalog.beans.VnfComponentsRecipe;
 import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.parameters.P;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CatalogDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -201,7 +192,6 @@ public class CatalogDbClientTest {
         Assert.assertNotNull(vnfResourceCustomization.getVnfResources());
         Assert.assertNotNull(vnfResourceCustomization.getVfModuleCustomizations());
         Assert.assertEquals("vSAMP10a", vnfResourceCustomization.getVnfResources().getModelName());
-
     }
 
     @Test
@@ -659,7 +649,6 @@ public class CatalogDbClientTest {
             pnfResource.getModelInvariantUUID());
         assertEquals("PNFResource modelVersion", "1.0", pnfResource.getModelVersion());
         assertEquals("PNFResource orchestration mode", "", pnfResource.getOrchestrationMode());
-
     }
 
     @Test
