@@ -37,6 +37,8 @@ import org.onap.so.adapters.vfc.model.NsOperationKey;
 import org.onap.so.adapters.vfc.model.RestfulResponse;
 import org.onap.so.adapters.vfc.util.JsonUtil;
 import org.onap.so.adapters.vfc.util.ValidateUtil;
+import org.onap.so.db.request.beans.InstanceNfvoMapping;
+import org.onap.so.db.request.data.repository.InstanceNfvoMappingRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +60,12 @@ public class VfcAdapterRest {
     private static final String REQUEST_DEBUG_MSG = "body from request is {}";
     private static final String APPLICATION_EXCEPTION = "ApplicationException: ";
     @Autowired
+    private VfcManagerSol005 vfcManagerSol005;
+
+    @Autowired
     private VfcManager driverMgr;
+    @Autowired
+    private InstanceNfvoMappingRepository instanceNfvoMappingRepository;
 
     public VfcAdapterRest() {
 
@@ -80,7 +87,13 @@ public class VfcAdapterRest {
             ValidateUtil.assertObjectNotNull(data);
             logger.debug(REQUEST_DEBUG_MSG + data);
             NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
-            RestfulResponse rsp = driverMgr.createNs(nsInput);
+            RestfulResponse rsp;
+            if (nsInput.getNsParameters().getAdditionalParamForNs().containsKey("isSol005Interface")) {
+                rsp = vfcManagerSol005.createNs(nsInput);
+            } else {
+                rsp = driverMgr.createNs(nsInput);
+            }
+
             return buildResponse(rsp);
         } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
@@ -131,7 +144,13 @@ public class VfcAdapterRest {
             ValidateUtil.assertObjectNotNull(data);
             logger.debug(REQUEST_DEBUG_MSG + data);
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
-            RestfulResponse rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
+            RestfulResponse rsp;
+            InstanceNfvoMapping instanceNfvoMapping = instanceNfvoMappingRepository.findOneByJobId(jobId);
+            if (instanceNfvoMapping != null) {
+                rsp = vfcManagerSol005.getNsProgress(nsOperationKey, jobId);
+            } else {
+                rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
+            }
             return buildResponse(rsp);
         } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
@@ -156,7 +175,12 @@ public class VfcAdapterRest {
             ValidateUtil.assertObjectNotNull(data);
             logger.debug(REQUEST_DEBUG_MSG + data);
             NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
-            RestfulResponse rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
+            RestfulResponse rsp;
+            if (nsInput.getNsParameters().getAdditionalParamForNs().containsKey("isSol005Interface")) {
+                rsp = vfcManagerSol005.instantiateNs(nsInstanceId, nsInput);
+            } else {
+                rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
+            }
             return buildResponse(rsp);
         } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
@@ -181,7 +205,14 @@ public class VfcAdapterRest {
             ValidateUtil.assertObjectNotNull(data);
             logger.debug(REQUEST_DEBUG_MSG + data);
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
-            RestfulResponse rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
+            RestfulResponse rsp;
+            InstanceNfvoMapping instanceNfvoMapping = instanceNfvoMappingRepository.findOneByInstanceId(nsInstanceId);
+            if (instanceNfvoMapping != null) {
+                rsp = vfcManagerSol005.terminateNs(nsOperationKey, nsInstanceId);
+            } else {
+                rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
+            }
+
             return buildResponse(rsp);
         } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
