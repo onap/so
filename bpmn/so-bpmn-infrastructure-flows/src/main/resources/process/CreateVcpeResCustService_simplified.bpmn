@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="2.0.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="_MagIIMOUEeW8asg-vCEgWQ" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="2.2.4" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="CreateVcpeResCustService_simplified" name="CreateVcpeResCustService_simplified" isExecutable="true">
     <bpmn2:scriptTask id="sendSyncAckResponse_ScriptTask" name="Send Sync Ack Response" scriptFormat="groovy">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
@@ -343,7 +343,7 @@ CreateVcpeResCustService.prepareDecomposeService(execution)</bpmn2:script>
       <bpmn2:linkEventDefinition name="PnfCreateAndActivate" />
     </bpmn2:intermediateCatchEvent>
     <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_0lt5ltv" name="GoToFinishProcess">
-      <bpmn2:incoming>SequenceFlow_0clhseq</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_0ti37h1</bpmn2:incoming>
       <bpmn2:linkEventDefinition name="FinishProcess" />
     </bpmn2:intermediateThrowEvent>
     <bpmn2:scriptTask id="ScriptTask_0lpv2da" name="PostProcess&#10;Decompose&#10;Service&#10;" scriptFormat="groovy">
@@ -355,7 +355,6 @@ CreateVcpeResCustService.processDecomposition(execution)</bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:sequenceFlow id="SequenceFlow_11efpvh" sourceRef="ScriptTask_0lpv2da" targetRef="IntermediateThrowEvent_0prlju0" />
     <bpmn2:sequenceFlow id="SequenceFlow_0gj4vud" sourceRef="IntermediateCatchEvent_17pzn7m" targetRef="GeneratePnfUuid" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0clhseq" sourceRef="Task_14l19kv" targetRef="IntermediateThrowEvent_0lt5ltv" />
     <bpmn2:callActivity id="Task_14l19kv" name="Create And Activate Pnf Resource" calledElement="CreateAndActivatePnfResource">
       <bpmn2:extensionElements>
         <camunda:in source="timeoutForPnfEntryNotification" target="timeoutForPnfEntryNotification" />
@@ -365,7 +364,7 @@ CreateVcpeResCustService.processDecomposition(execution)</bpmn2:script>
         <camunda:in source="serviceInstanceId" target="serviceInstanceId" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_1yojilk</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0clhseq</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_050kuu1</bpmn2:outgoing>
     </bpmn2:callActivity>
     <bpmn2:callActivity id="CallActivity_1vc4jeh" name="Call Create &#10;ServiceInstance&#10;" calledElement="DoCreateServiceInstance">
       <bpmn2:extensionElements>
@@ -422,6 +421,12 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)</bpmn2:scri
       <bpmn2:incoming>SequenceFlow_0gj4vud</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_1yojilk</bpmn2:outgoing>
     </bpmn2:serviceTask>
+    <bpmn2:sequenceFlow id="SequenceFlow_050kuu1" sourceRef="Task_14l19kv" targetRef="Task_0k7xhmf" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0ti37h1" sourceRef="Task_0k7xhmf" targetRef="IntermediateThrowEvent_0lt5ltv" />
+    <bpmn2:callActivity id="Task_0k7xhmf" name="Configuration" calledElement="ConfigurePnfResource">
+      <bpmn2:incoming>SequenceFlow_050kuu1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0ti37h1</bpmn2:outgoing>
+    </bpmn2:callActivity>
   </bpmn2:process>
   <bpmn2:error id="Error_2" name="MSOWorkflowException" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1" name="java.lang.Exception" errorCode="java.lang.Exception" />
@@ -929,9 +934,9 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)</bpmn2:scri
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="IntermediateThrowEvent_0lt5ltv_di" bpmnElement="IntermediateThrowEvent_0lt5ltv">
-        <dc:Bounds x="725" y="1259" width="36" height="36" />
+        <dc:Bounds x="1087" y="1259" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="700" y="1306" width="85" height="27" />
+          <dc:Bounds x="1062" y="1306" width="85" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_071yaf8_di" bpmnElement="CallActivity_071yaf8">
@@ -1016,13 +1021,6 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)</bpmn2:scri
           <dc:Bounds x="134.5" y="1257" width="90" height="10" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0clhseq_di" bpmnElement="SequenceFlow_0clhseq">
-        <di:waypoint x="547" y="1277" />
-        <di:waypoint x="725" y="1277" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="366" y="1257" width="90" height="10" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_1totpg4_di" bpmnElement="Task_14l19kv">
         <dc:Bounds x="447" y="1237" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -1081,6 +1079,17 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)</bpmn2:scri
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="ServiceTask_1j71wic_di" bpmnElement="GeneratePnfUuid">
         <dc:Bounds x="256" y="1237" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_050kuu1_di" bpmnElement="SequenceFlow_050kuu1">
+        <di:waypoint x="547" y="1277" />
+        <di:waypoint x="667" y="1277" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0ti37h1_di" bpmnElement="SequenceFlow_0ti37h1">
+        <di:waypoint x="767" y="1277" />
+        <di:waypoint x="1087" y="1277" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_15ra3vr_di" bpmnElement="Task_0k7xhmf">
+        <dc:Bounds x="667" y="1237" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

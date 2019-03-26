@@ -23,6 +23,8 @@
 		<docker.skip.push>false</docker.skip.push>
 		<docker.pull.registry>nexus3.onap.org:10001</docker.pull.registry>
 		<docker.push.registry>nexus3.onap.org:10003</docker.push.registry>
+		<docker.image.prefix>onap/so</docker.image.prefix>
+		<docker.push.phase>deploy</docker.push.phase>
 	</properties>
 
 	<build>
@@ -72,7 +74,7 @@
 
 					<images>
 						<image>
-							<name>onap/so/base-image:1.0</name>
+							<name>${docker.image.prefix}/base-image:1.0</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -80,7 +82,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/vnfm-adapter</name>
+							<name>${docker.image.prefix}/vnfm-adapter</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -105,7 +107,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/catalog-db-adapter</name>
+							<name>${docker.image.prefix}/catalog-db-adapter</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -130,7 +132,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/request-db-adapter</name>
+							<name>${docker.image.prefix}/request-db-adapter</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -155,7 +157,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/sdnc-adapter</name>
+							<name>${docker.image.prefix}/sdnc-adapter</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -180,7 +182,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/openstack-adapter</name>
+							<name>${docker.image.prefix}/openstack-adapter</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -205,7 +207,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/vfc-adapter</name>
+							<name>${docker.image.prefix}/vfc-adapter</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -230,7 +232,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/sdc-controller</name>
+							<name>${docker.image.prefix}/sdc-controller</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -255,7 +257,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/bpmn-infra</name>
+							<name>${docker.image.prefix}/bpmn-infra</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -280,7 +282,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/api-handler-infra</name>
+							<name>${docker.image.prefix}/api-handler-infra</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -305,7 +307,7 @@
 							</build>
 						</image>
 						<image>
-							<name>onap/so/so-monitoring</name>
+							<name>${docker.image.prefix}/so-monitoring</name>
 							<build>
 								<cleanup>try</cleanup>
 								<dockerFileDir>docker-files</dockerFileDir>
@@ -354,13 +356,13 @@
 
 					<execution>
 						<id>push-images</id>
-						<phase>deploy</phase>
+						<phase>${docker.push.phase}</phase>
 						<goals>
 							<goal>build</goal>
 							<goal>push</goal>
 						</goals>
 						<configuration>
-							<image>onap/so/catalog-db-adapter,onap/so/request-db-adapter,onap/so/sdnc-adapter,onap/so/openstack-adapter,onap/so/vfc-adapter,onap/so/sdc-controller,onap/so/bpmn-infra,onap/so/api-handler-infra,onap/so/so-monitoring</image>
+							<image>${docker.image.prefix}/catalog-db-adapter,${docker.image.prefix}/request-db-adapter,${docker.image.prefix}/sdnc-adapter,${docker.image.prefix}/openstack-adapter,${docker.image.prefix}/vfc-adapter,${docker.image.prefix}/sdc-controller,${docker.image.prefix}/bpmn-infra,${docker.image.prefix}/api-handler-infra,${docker.image.prefix}/so-monitoring</image>
 						</configuration>
 					</execution>
 				</executions>

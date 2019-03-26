@@ -55,6 +55,7 @@ import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.ToscaCsarRepository;
 import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
+import org.onap.so.db.request.data.repository.WatchdogComponentDistributionStatusRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,6 +104,9 @@ public class ASDCControllerITTest extends BaseTest {
 
     @Autowired
     private ServiceRepository serviceRepository;
+
+    @Autowired
+    protected WatchdogComponentDistributionStatusRepository watchdogCDStatusRepository;
 
     private DistributionClientEmulator distributionClient;
 
