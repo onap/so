@@ -1,0 +1,464 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5970d3cd_6d4c9cb5",
+        "filename": "adapters/mso-sdnc-adapter/src/main/java/org/onap/so/adapters/sdnc/impl/SDNCRestClient.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 96,
+        "startChar": 29,
+        "endLine": 96,
+        "endChar": 31
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "983f6ba8_7bb8d505",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/AbstractServiceTaskProcessor.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 525,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "For printing exception stack trace \"{}\" is not needed.",
+      "range": {
+        "startLine": 525,
+        "startChar": 52,
+        "endLine": 525,
+        "endChar": 54
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2c746e01_18269c35",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Not needed",
+      "range": {
+        "startLine": 222,
+        "startChar": 64,
+        "endLine": 222,
+        "endChar": 66
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "355e4284_c5d867ae",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModuleVolumeGroup.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 124,
+        "startChar": 65,
+        "endLine": 124,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5d458e21_46eeb460",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/CreateAAIVfModuleVolumeGroup.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 176,
+        "startChar": 65,
+        "endLine": 176,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d5a9b53c_4449bba2",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/DeleteAAIVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 115,
+        "startChar": 66,
+        "endLine": 115,
+        "endChar": 69
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "37b96a15_d8a7a07e",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/DeleteAAIVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 133,
+        "startChar": 64,
+        "endLine": 133,
+        "endChar": 66
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "aa73909c_baa801cd",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/GenerateVfModuleName.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 154,
+        "startChar": 65,
+        "endLine": 154,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7c1e28fb_5c8e4f8d",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/MsoUtils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 886,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 886,
+        "startChar": 119,
+        "endLine": 886,
+        "endChar": 121
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bb019503_62c179d2",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/UpdateAAIGenericVnf.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 230,
+        "startChar": 67,
+        "endLine": 230,
+        "endChar": 69
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17c2627d_ce415a1b",
+        "filename": "bpmn/MSOCommonBPMN/src/main/groovy/org/onap/so/bpmn/common/scripts/VidUtils.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 284,
+        "startChar": 40,
+        "endLine": 284,
+        "endChar": 42
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "62809485_8b6d89db",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 671,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 671,
+        "startChar": 88,
+        "endLine": 671,
+        "endChar": 90
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "66ec6112_9271ebc0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 743,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 743,
+        "startChar": 64,
+        "endLine": 743,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf39de7a_0405c5b9",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoCreateVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 823,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 823,
+        "startChar": 65,
+        "endLine": 823,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "4c705f7f_dde55f84",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeleteVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 624,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 624,
+        "startChar": 65,
+        "endLine": 624,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f8149dd1_ab7e1937",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeleteVfModuleFromVnf.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 157,
+        "startChar": 65,
+        "endLine": 157,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "45ea3245_2288c3cf",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoDeleteVnfAndModules.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 334,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 334,
+        "startChar": 65,
+        "endLine": 334,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "21c3ce33_fe074092",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoUpdateVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1044,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 1044,
+        "startChar": 65,
+        "endLine": 1044,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6a3b1916_11849a45",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoUpdateVfModule.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 1051,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 1051,
+        "startChar": 32,
+        "endLine": 1051,
+        "endChar": 34
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c762ae74_d87f6544",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/groovy/org/onap/so/bpmn/infrastructure/scripts/DoUpdateVnfAndModules.groovy",
+        "patchSetId": 1
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-03-26T09:45:29Z",
+      "side": 1,
+      "message": "Same",
+      "range": {
+        "startLine": 268,
+        "startChar": 65,
+        "endLine": 268,
+        "endChar": 67
+      },
+      "revId": "2caa5d25370551e7ebadca51621aa9b7f0709a3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
