@@ -545,7 +545,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 		}
 		catch (Exception e) {
 			// Catch-all.  Log the message and throw the original exception
-        logger.debug("Cancel workflow {} failed for deployment : {} {}", workflowId, deploymentId, e);
+        logger.debug("Cancel workflow {} failed for deployment {} :", workflowId, deploymentId, e);
         MsoCloudifyException exception = new MsoCloudifyException (-1, "", "", savedException);
 			exception.setPendingWorkflow(true);
 			throw exception;

@@ -1295,7 +1295,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
           Set<HeatTemplateParam> paramSet = template.getParameters();
           logger.debug("paramSet has {} entries", paramSet.size());
       } catch (Exception e) {
-          logger.debug("Exception occurred in convertInputMap:" + e.getMessage(), e);
+          logger.debug("Exception occurred in convertInputMap {} :", e.getMessage(), e);
       }
 
 		for (HeatTemplateParam htp : template.getParameters()) {

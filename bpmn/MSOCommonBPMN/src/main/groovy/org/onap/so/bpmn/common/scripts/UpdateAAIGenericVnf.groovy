@@ -206,7 +206,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				// Construct payload
 				managementV6AddressEntry = updateGenericVnfNode(origRequest, 'management-v6-address')
 			}
-			
+
 			// Handle orchestration-status
 			String orchestrationStatus = execution.getVariable('UAAIGenVnf_orchestrationStatus')
 			String orchestrationStatusEntry = null
@@ -214,7 +214,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 				// Construct payload
 				orchestrationStatusEntry = updateGenericVnfNode(origRequest, 'orchestration-status')
 			}
-			
+
 			org.onap.aai.domain.yang.GenericVnf payload = new org.onap.aai.domain.yang.GenericVnf();
 			payload.setVnfId(vnfId)
 			payload.setPersonaModelVersion(personaModelVersionEntry)
@@ -227,8 +227,7 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			try {
 				getAAIClient().update(uri,payload)
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI PATCH:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI PATCH: {}', ex.getMessage(), ex)
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponseCode', 500)
 				execution.setVariable('UAAIGenVnf_updateGenericVnfResponse', 'AAI PATCH Failed:' + ex.getMessage())
 			}
@@ -258,9 +257,9 @@ public class UpdateAAIGenericVnf extends AbstractServiceTaskProcessor {
 			return ""
 		}
 		else {
-			return elementValue		
+			return elementValue
 		}
-		
+
 	}
 
 	/**

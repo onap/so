@@ -126,7 +126,7 @@ class MsoUtils {
 
 
 	/***** Utilities when using XmlParser *****/
-	
+
 	/**
 	 * Convert a Node into a String by deserializing it and formatting it.
 	 *
@@ -883,7 +883,7 @@ class MsoUtils {
 				callbackUrlToUse = callbackUrlToUse.replaceAll("(http://)(.*)(:28080*)", {orig, first, torepl, last -> "${first}${qualifiedHostName}${last}"})
 			}
 		}catch(Exception e){
-				log("DEBUG", "unable to grab qualified host name, using what's in urn properties for callbackurl. Exception was: " + e.printStackTrace())
+			logger.debug("Unable to grab qualified host name, using what's in urn properties for callbackurl. Exception was: {}", e.getMessage(), e)
 		}
 		return callbackUrlToUse
 

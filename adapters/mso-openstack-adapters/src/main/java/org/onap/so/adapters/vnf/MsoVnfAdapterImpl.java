@@ -221,7 +221,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 				}
 			} catch (Exception e) {
 				// might be ok - both are just blank
-				logger.debug("ERROR trying to parse the volumeGroupHeatStackId " + volumeGroupHeatStackId,e);
+				logger.debug("ERROR trying to parse the volumeGroupHeatStackId {}", volumeGroupHeatStackId,e);
 			}
 			this.createVfModule(cloudSiteId,
 			        cloudOwner,
@@ -586,9 +586,9 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
             return JSON_MAPPER.writeValueAsString(obj);
         } catch (JsonParseException jpe) {
-            logger.debug("Error converting json to string " + jpe.getMessage(),jpe);
+            logger.debug("Error converting json to string: {}", jpe.getMessage(),jpe);
         } catch (Exception e) {
-            logger.debug("Error converting json to string " + e.getMessage(),e);
+            logger.debug("Error converting json to string: {}", e.getMessage(),e);
         }
         return "[Error converting json to string]";
     }
@@ -1904,14 +1904,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 			jsonNode = JSON_MAPPER.readTree(jsonString);
                 		} catch (JsonParseException jpe) {
                 			//TODO - what to do here?
-                			//for now - send the error to debug, but just leave it as a String
-                			String errorMessage = jpe.getMessage();
-                			logger.debug("Json Error Converting " + parm.getParamName() + " - " + errorMessage,jpe);
+                			//for now - send the error to debug
+                			logger.debug("Json Error Converting {} - {}", parm.getParamName(), jpe.getMessage(), jpe);
                 			hasJson = false;
                 			jsonNode = null;
                 		} catch (Exception e) {
                         // or here?
-                        logger.debug("Json Error Converting " + parm.getParamName() + " " + e.getMessage(), e);
+                        logger.debug("Json Error Converting {} {}", parm.getParamName(), e.getMessage(), e);
                         hasJson = false;
                         jsonNode = null;
                     }

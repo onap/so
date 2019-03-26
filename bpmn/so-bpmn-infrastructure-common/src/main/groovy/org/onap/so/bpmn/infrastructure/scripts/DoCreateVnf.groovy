@@ -362,7 +362,7 @@ class DoCreateVnf extends AbstractServiceTaskProcessor {
 			resourceClient.connect(uri, siUri)
 
 		}catch(Exception ex) {
-			logger.debug("Error Occured in DoCreateVnf CreateGenericVnf Process ", ex)
+			logger.debug("Error Occured in DoCreateVnf CreateGenericVnf Process: {}", ex.getMessage(), ex)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2500, "Internal Error - Occured in DoCreateVnf CreateGenericVnf Process")
 		}
 		logger.trace("COMPLETED DoCreateVnf CreateGenericVnf Process")

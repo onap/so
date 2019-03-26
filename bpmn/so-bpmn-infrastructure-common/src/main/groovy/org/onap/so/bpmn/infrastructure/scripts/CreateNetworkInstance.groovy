@@ -416,7 +416,7 @@ public class CreateNetworkInstance extends AbstractServiceTaskProcessor {
 
 		} catch (Exception ex) {
 			String errorException = "  Bpmn error encountered in CreateNetworkInstance flow. FalloutHandlerRequest,  buildErrorResponse()"
-			logger.debug("Exception error in CreateNetworkInstance flow,  buildErrorResponse(): "  + ex.getMessage())
+			logger.debug("Exception error in CreateNetworkInstance flow,  buildErrorResponse(): {}", ex.getMessage(), ex)
 			falloutHandlerRequest =
 			"""<aetgt:FalloutHandlerRequest xmlns:aetgt="http://org.onap/so/workflow/schema/v1"
 					                             xmlns:ns="http://org.onap/so/request/types/v1"

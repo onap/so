@@ -85,7 +85,7 @@ public class SDNCRestClient{
 	@Async
 	public void executeRequest(SDNCAdapterRequest bpelRequest)
 	{
-		
+
 		logger.debug("BPEL Request:" + bpelRequest.toString());
 
 		// Added delay to allow completion of create request to SDNC
@@ -93,7 +93,9 @@ public class SDNCRestClient{
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION.toString(), "SDNC",
+				ErrorCode.UnknownError.getValue(), "Exception processing request to SDNC", e);
+
 			Thread.currentThread().interrupt();
 		}
 
@@ -104,12 +106,10 @@ public class SDNCRestClient{
 
 		String sdncReqBody = null;
 
-	
-
 		RequestTunables rt = new RequestTunables(bpelReqId,
 				bpelRequest.getRequestHeader().getMsoAction(),
 				bpelRequest.getRequestHeader().getSvcOperation(),
-				bpelRequest.getRequestHeader().getSvcAction());		
+				bpelRequest.getRequestHeader().getSvcAction());
 		rt = tunablesMapper.setTunables(rt);
 		rt.setSdncaNotificationUrl(env.getProperty(Constants.MY_URL_PROP));
 
@@ -176,8 +176,8 @@ public class SDNCRestClient{
 			sdncResp.setRespCode(con.getResponseCode());
 			sdncResp.setRespMsg(con.getResponseMessage());
 
-			if (con.getResponseCode()>= 200 && con.getResponseCode()<=299) { 
-				in = new BufferedReader(new InputStreamReader(con.getInputStream()));	
+			if (con.getResponseCode()>= 200 && con.getResponseCode()<=299) {
+				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 				String inputLine;
 				//Not parsing the response -it contains a responseHdr section and data section
 				while ((inputLine = in.readLine()) != null) {
@@ -185,7 +185,7 @@ public class SDNCRestClient{
 				}
 				in.close();
 			}
-			
+
 			sdncResp.setSdncRespXml(response.toString());
 			logger.info("{} :\n {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.name(), sdncResp.toString(), "SDNC");
 			return(sdncResp);
@@ -314,7 +314,7 @@ public class SDNCRestClient{
 			SDNCCallbackAdapterPortType cbPort = cbSvc.getSDNCCallbackAdapterSoapHttpPort();
 
 			BindingProvider bp = (BindingProvider)cbPort;
-			
+
 			if(null != wsdlUrl) {
 			bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, wsdlUrl.toExternalForm());
 			}

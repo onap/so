@@ -146,7 +146,7 @@ public abstract class FlowValidatorRunner<S extends FlowValidator, E extends Flo
 				result.add(klass.newInstance());
 			}
 		} catch (InstantiationException | IllegalAccessException e) {
-			logger.error("failed to build validator list for " + clazz.getName(), e);
+			logger.error("failed to build validator list for {}", clazz.getName(), e);
 			throw new RuntimeException(e);
 		}
 		

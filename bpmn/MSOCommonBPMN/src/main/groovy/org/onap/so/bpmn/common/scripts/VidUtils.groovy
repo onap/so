@@ -69,7 +69,7 @@ class VidUtils {
 	public String createXmlVolumeRequest(Map requestMap, String action, String serviceInstanceId) {
 		createXmlVolumeRequest(requestMap, action, serviceInstanceId, '')
 	}
-	
+
 
 	/**
 	 * Create a volume-request XML using a map
@@ -84,9 +84,9 @@ class VidUtils {
 		def serviceName = ''
 		def modelCustomizationName = ''
 		def asdcServiceModelVersion = ''
-		
+
 		def suppressRollback = requestMap.requestDetails.requestInfo.suppressRollback
-		
+
 		def backoutOnFailure = ""
 		if(suppressRollback != null){
 			if ( suppressRollback == true) {
@@ -95,7 +95,7 @@ class VidUtils {
 				backoutOnFailure = "true"
 			}
 		}
-		
+
 		def volGrpName = requestMap.requestDetails.requestInfo?.instanceName ?: ''
 		def serviceId = requestMap.requestDetails.requestParameters?.serviceId ?: ''
 		def relatedInstanceList = requestMap.requestDetails.relatedInstanceList
@@ -108,16 +108,16 @@ class VidUtils {
 				modelCustomizationName = it.relatedInstance.modelInfo?.modelInstanceName
 			}
 		}
-		
+
 		vnfType = serviceName + '/' + modelCustomizationName
-		
+
 		def userParams = requestMap.requestDetails?.requestParameters?.userParams
 		def userParamsNode = ''
 		if(userParams != null) {
 			userParamsNode = buildUserParams(userParams)
 		}
 		def modelCustomizationId = requestMap.requestDetails?.modelInfo?.modelCustomizationUuid ?: ''
-		
+
 		String xmlReq = """
 		<volume-request xmlns="http://www.w3.org/2001/XMLSchema">
 			<request-info>
@@ -145,9 +145,9 @@ class VidUtils {
 		// return a pretty-print of the volume-request xml without the preamble
 		return groovy.xml.XmlUtil.serialize(xmlReq.normalize().replaceAll("\t", "").replaceAll("\n", "")).replaceAll("(<\\?[^<]*\\?>\\s*[\\r\\n]*)?", "") 
 	}
-	
+
 	/**
-	 * A common method that can be used to build volume-params node from a map. 
+	 * A common method that can be used to build volume-params node from a map.
 	 * @param Map userParams
 	 * @return
 	 */
@@ -166,9 +166,9 @@ class VidUtils {
 	}
 
 	/**
-	 * A common method that can be used to extract 'requestDetails' 
+	 * A common method that can be used to extract 'requestDetails'
 	 * @param String json
-	 * @return String json requestDetails  
+	 * @return String json requestDetails
 	 */
 	@Deprecated
 	public getJsonRequestDetails(String jsonInput) {
@@ -183,10 +183,10 @@ class VidUtils {
 				return rtn
 			} else {
 			    return rtn
-			}	
+			}
 		}
 	}
-	
+
 	/**
 	 * A common method that can be used to extract 'requestDetails' in Xml
 	 * @param String json
@@ -203,17 +203,17 @@ class VidUtils {
 			return XmlTool.normalize(XML.toString(jsonObj))
 		}
 	}
-	
+
 	/**
 	 * Create a network-request XML using a map
- 	 * @param execution 
-	 * @param xmlRequestDetails - requestDetails in xml 
+ 	 * @param execution
+	 * @param xmlRequestDetails - requestDetails in xml
 	 * @return
 	 * Note: See latest version: createXmlNetworkRequestInstance()
 	 */
 
 	public String createXmlNetworkRequestInfra(execution, def networkJsonIncoming) {
-	
+
 		def requestId = execution.getVariable("requestId")
 		def serviceInstanceId = execution.getVariable("serviceInstanceId")
 		def requestAction = execution.getVariable("requestAction")
@@ -225,13 +225,13 @@ class VidUtils {
 			def instanceName =  reqMap.requestDetails.requestInfo.instanceName
 			def modelCustomizationId =  reqMap.requestDetails.modelInfo.modelCustomizationId
 			if (modelCustomizationId == null) {
-				modelCustomizationId =  reqMap.requestDetails.modelInfo.modelCustomizationUuid !=null ?  
+				modelCustomizationId =  reqMap.requestDetails.modelInfo.modelCustomizationUuid !=null ?
 				                        reqMap.requestDetails.modelInfo.modelCustomizationUuid : ""
 			}
 			def modelName = reqMap.requestDetails.modelInfo.modelName
 			def lcpCloudRegionId = reqMap.requestDetails.cloudConfiguration.lcpCloudRegionId
 			def tenantId = reqMap.requestDetails.cloudConfiguration.tenantId
-			def serviceId = reqMap.requestDetails.requestInfo.productFamilyId 
+			def serviceId = reqMap.requestDetails.requestInfo.productFamilyId
 			def suppressRollback = reqMap.requestDetails.requestInfo.suppressRollback.toString()
 			def backoutOnFailure = "true"
 			if(suppressRollback != null){
@@ -241,7 +241,7 @@ class VidUtils {
 					backoutOnFailure = "true"
 				}
 			}
-		
+
 			//def userParams = reqMap.requestDetails.requestParameters.userParams
 			//def userParamsNode = buildUserParams(userParams)
 			def userParams = reqMap.requestDetails?.requestParameters?.userParams
@@ -249,26 +249,26 @@ class VidUtils {
 			if(userParams != null) {
 				userParamsNode = buildUserParams(userParams)
 			}
-			
+
 			//'sdncVersion' = current, '1610' (non-RPC SDNC) or '1702' (RPC SDNC)
 			def sdncVersion =  execution.getVariable("sdncVersion")
-			
+
 			String xmlReq = """
-			<network-request xmlns="http://www.w3.org/2001/XMLSchema"> 
-			 <request-info> 
+			<network-request xmlns="http://www.w3.org/2001/XMLSchema">
+			 <request-info>
 	            <request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
-			 	<action>${MsoUtils.xmlEscape(requestAction)}</action> 
-			 	<source>VID</source> 
+			 	<action>${MsoUtils.xmlEscape(requestAction)}</action>
+			 	<source>VID</source>
 			 	<service-instance-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
-			 </request-info> 
+			 </request-info>
 			 <network-inputs>
-			 	<network-id>${MsoUtils.xmlEscape(networkId)}</network-id> 
-			 	<network-name>${MsoUtils.xmlEscape(instanceName)}</network-name> 
+			 	<network-id>${MsoUtils.xmlEscape(networkId)}</network-id>
+			 	<network-name>${MsoUtils.xmlEscape(instanceName)}</network-name>
 			 	<network-type>${MsoUtils.xmlEscape(modelName)}</network-type>
-				<modelCustomizationId>${MsoUtils.xmlEscape(modelCustomizationId)}</modelCustomizationId> 
-			 	<aic-cloud-region>${MsoUtils.xmlEscape(lcpCloudRegionId)}</aic-cloud-region> 
+				<modelCustomizationId>${MsoUtils.xmlEscape(modelCustomizationId)}</modelCustomizationId>
+			 	<aic-cloud-region>${MsoUtils.xmlEscape(lcpCloudRegionId)}</aic-cloud-region>
 			 	<tenant-id>${MsoUtils.xmlEscape(tenantId)}</tenant-id>
-			 	<service-id>${MsoUtils.xmlEscape(serviceId)}</service-id> 
+			 	<service-id>${MsoUtils.xmlEscape(serviceId)}</service-id>
 			 	<backout-on-failure>${MsoUtils.xmlEscape(backoutOnFailure)}</backout-on-failure>
                 <sdncVersion>${MsoUtils.xmlEscape(sdncVersion)}</sdncVersion>
 			 </network-inputs>
@@ -281,8 +281,7 @@ class VidUtils {
 			return groovy.xml.XmlUtil.serialize(xmlReq.normalize().replaceAll("\t", "").replaceAll("\n", "")).replaceAll("(<\\?[^<]*\\?>\\s*[\\r\\n]*)?", "")
 
 		} catch(Exception e) {
-			logger.debug("{} {}", "Error in Vid Utils", e.getCause())
-			e.printStackTrace();
+			logger.debug("Error in Vid Utils: {}", e.getCause(), e)
 			throw e
 		}
 	}
@@ -299,7 +298,7 @@ class VidUtils {
 		def networkModelVersion = ""
 		def networkModelCustomizationUuid = ""
 		def networkModelInvariantUuid = ""
-		
+
 		// verify the DB Catalog response JSON structure
 		def networkModelInfo = execution.getVariable("networkModelInfo")
 		def jsonSlurper = new JsonSlurper()
@@ -326,14 +325,14 @@ class VidUtils {
 			} catch (Exception ex) {
 		    	throw ex
 			}
-		}		
-		
+		}
+
 		def serviceModelUuid = ""
 		def serviceModelName = ""
 		def serviceModelVersion = ""
 		def serviceModelCustomizationUuid = ""
 		def serviceModelInvariantUuid = ""
-		
+
 		// verify the DB Catalog response JSON structure
 		def serviceModelInfo = execution.getVariable("serviceModelInfo")
 		def jsonServiceSlurper = new JsonSlurper()
@@ -361,8 +360,8 @@ class VidUtils {
 				throw ex
 			}
 		}
-		
-		
+
+
 		def subscriptionServiceType = execution.getVariable("subscriptionServiceType") != null ? execution.getVariable("subscriptionServiceType") : ""
 		def globalSubscriberId = execution.getVariable("globalSubscriberId") != null ? execution.getVariable("globalSubscriberId") : ""
 		def requestId = execution.getVariable("msoRequestId")
@@ -382,88 +381,88 @@ class VidUtils {
 				backoutOnFailure = "true"
 			}
 		}
-		
+
 		//'sdncVersion' = current, '1610' (non-RPC SDNC) or '1702' (RPC SDNC)
 		def sdncVersion =  execution.getVariable("sdncVersion")
-		
+
 		def source = "VID"
 		def action = execution.getVariable("action")
-				
+
 		def userParamsNode = ""
 		def userParams = execution.getVariable("networkInputParams")
 		if(userParams != null) {
 		   userParamsNode = buildUserParams(userParams)
 		}
-		
+
 		String xmlReq = """
-		<network-request xmlns="http://www.w3.org/2001/XMLSchema"> 
-		 <request-info> 
+		<network-request xmlns="http://www.w3.org/2001/XMLSchema">
+		 <request-info>
             <request-id>${MsoUtils.xmlEscape(requestId)}</request-id>
-		 	<action>${MsoUtils.xmlEscape(action)}</action> 
-		 	<source>${MsoUtils.xmlEscape(source)}</source> 
+		 	<action>${MsoUtils.xmlEscape(action)}</action>
+		 	<source>${MsoUtils.xmlEscape(source)}</source>
 		 	<service-instance-id>${MsoUtils.xmlEscape(serviceInstanceId)}</service-instance-id>
-		 </request-info> 
-		 <network-inputs> 
-		 	<network-id>${MsoUtils.xmlEscape(networkId)}</network-id> 
-		 	<network-name>${MsoUtils.xmlEscape(networkName)}</network-name> 
+		 </request-info>
+		 <network-inputs>
+		 	<network-id>${MsoUtils.xmlEscape(networkId)}</network-id>
+		 	<network-name>${MsoUtils.xmlEscape(networkName)}</network-name>
 		 	<network-type>${MsoUtils.xmlEscape(networkModelName)}</network-type>
 		 	<subscription-service-type>${MsoUtils.xmlEscape(subscriptionServiceType)}</subscription-service-type>
             <global-customer-id>${MsoUtils.xmlEscape(globalSubscriberId)}</global-customer-id>
-		 	<aic-cloud-region>${MsoUtils.xmlEscape(aicCloudReqion)}</aic-cloud-region> 
+		 	<aic-cloud-region>${MsoUtils.xmlEscape(aicCloudReqion)}</aic-cloud-region>
 		 	<tenant-id>${MsoUtils.xmlEscape(tenantId)}</tenant-id>
-		 	<service-id>${MsoUtils.xmlEscape(serviceId)}</service-id> 
+		 	<service-id>${MsoUtils.xmlEscape(serviceId)}</service-id>
 		 	<backout-on-failure>${MsoUtils.xmlEscape(backoutOnFailure)}</backout-on-failure>
 			<failIfExist>${MsoUtils.xmlEscape(failIfExist)}</failIfExist>
             <networkModelInfo>
               <modelName>${MsoUtils.xmlEscape(networkModelName)}</modelName>
               <modelUuid>${MsoUtils.xmlEscape(networkModelUuid)}</modelUuid>
-              <modelInvariantUuid>${MsoUtils.xmlEscape(networkModelInvariantUuid)}</modelInvariantUuid>            
+              <modelInvariantUuid>${MsoUtils.xmlEscape(networkModelInvariantUuid)}</modelInvariantUuid>
               <modelVersion>${MsoUtils.xmlEscape(networkModelVersion)}</modelVersion>
               <modelCustomizationUuid>${MsoUtils.xmlEscape(networkModelCustomizationUuid)}</modelCustomizationUuid>
 		    </networkModelInfo>
             <serviceModelInfo>
               <modelName>${MsoUtils.xmlEscape(serviceModelName)}</modelName>
               <modelUuid>${MsoUtils.xmlEscape(serviceModelUuid)}</modelUuid>
-              <modelInvariantUuid>${MsoUtils.xmlEscape(serviceModelInvariantUuid)}</modelInvariantUuid>            
+              <modelInvariantUuid>${MsoUtils.xmlEscape(serviceModelInvariantUuid)}</modelInvariantUuid>
               <modelVersion>${MsoUtils.xmlEscape(serviceModelVersion)}</modelVersion>
               <modelCustomizationUuid>${MsoUtils.xmlEscape(serviceModelCustomizationUuid)}</modelCustomizationUuid>
-             
-		    </serviceModelInfo>										      			
-            <sdncVersion>${MsoUtils.xmlEscape(sdncVersion)}</sdncVersion>                    
+
+		    </serviceModelInfo>
+            <sdncVersion>${MsoUtils.xmlEscape(sdncVersion)}</sdncVersion>
 		 </network-inputs>
 		 <network-params>
 			${userParamsNode}
-		 </network-params> 
+		 </network-params>
 		</network-request>
 		"""
 		// return a pretty-print of the volume-request xml without the preamble
 		return groovy.xml.XmlUtil.serialize(xmlReq.normalize().replaceAll("\t", "").replaceAll("\n", "")).replaceAll("(<\\?[^<]*\\?>\\s*[\\r\\n]*)?", "")
-			
+
 	}
-	
+
 	/**
 	 * Create a vnf-request XML using a map
-	 * @param requestMap - map created from VID JSON 
+	 * @param requestMap - map created from VID JSON
 	 * @param action
 	 * @return
 	 */
 	public String createXmlVfModuleRequest(execution, Map requestMap, String action, String serviceInstanceId) {
-				
+
 		//def relatedInstanceList = requestMap.requestDetails.relatedInstanceList
-		
+
 		//relatedInstanceList.each {
 		//	if (it.relatedInstance.modelInfo.modelType == 'vnf') {
 		//		vnfType = it.relatedInstance.modelInfo.modelName
 		//		vnfId = it.relatedInstance.modelInfo.modelInvariantId
 		//	}
 		//}
-		
+
 		def vnfName = ''
 		def asdcServiceModelInfo = ''
-				
+
 		def relatedInstanceList = requestMap.requestDetails?.relatedInstanceList
-		
-		
+
+
 		if (relatedInstanceList != null) {
 			relatedInstanceList.each {
 				if (it.relatedInstance.modelInfo?.modelType == 'service') {
@@ -474,30 +473,30 @@ class VidUtils {
 				}
 			}
 		}
-		
+
 		def vnfType = execution.getVariable('vnfType')
 		def vnfId = execution.getVariable('vnfId')
 
 		def vfModuleId = execution.getVariable('vfModuleId')
 		def volumeGroupId = execution.getVariable('volumeGroupId')
 		def userParams = requestMap.requestDetails?.requestParameters?.userParams
-		
-		
+
+
 		def userParamsNode = ''
 		if(userParams != null) {
 			userParamsNode = buildUserParams(userParams)
 		}
-		
+
 		def isBaseVfModule = "false"
 		if (execution.getVariable('isBaseVfModule') == true) {
 			isBaseVfModule = "true"		
 		}
-		
+
 		def requestId = execution.getVariable("mso-request-id")		
 		def vfModuleName = requestMap.requestDetails?.requestInfo?.instanceName ?: ''
 		def vfModuleModelName = requestMap.requestDetails?.modelInfo?.modelName ?: ''
 		def suppressRollback = requestMap.requestDetails?.requestInfo?.suppressRollback
-		
+
 		def backoutOnFailure = ""
 		if(suppressRollback != null){
 			if ( suppressRollback == true) {
@@ -506,14 +505,14 @@ class VidUtils {
 				backoutOnFailure = "true"
 			}
 		}
-		
+
 		def serviceId = requestMap.requestDetails?.requestParameters?.serviceId ?: ''
 		def aicCloudRegion = requestMap.requestDetails?.cloudConfiguration?.lcpCloudRegionId ?: ''
 		def tenantId = requestMap.requestDetails?.cloudConfiguration?.tenantId ?: ''
 		def personaModelId = requestMap.requestDetails?.modelInfo?.modelInvariantUuid ?: ''
 		def personaModelVersion = requestMap.requestDetails?.modelInfo?.modelUuid ?: ''
 		def modelCustomizationId = requestMap.requestDetails?.modelInfo?.modelCustomizationUuid ?: ''
-		
+
 		String xmlReq = """
 		<vnf-request>
 			<request-info>
@@ -524,17 +523,17 @@ class VidUtils {
 			</request-info>
 			<vnf-inputs>
 				<!-- not in use in 1610 -->
-				<vnf-name>${MsoUtils.xmlEscape(vnfName)}</vnf-name>					
+				<vnf-name>${MsoUtils.xmlEscape(vnfName)}</vnf-name>
 				<vnf-type>${MsoUtils.xmlEscape(vnfType)}</vnf-type>
 				<vnf-id>${MsoUtils.xmlEscape(vnfId)}</vnf-id>
 				<volume-group-id>${MsoUtils.xmlEscape(volumeGroupId)}</volume-group-id>
 				<vf-module-id>${MsoUtils.xmlEscape(vfModuleId)}</vf-module-id>
-				<vf-module-name>${MsoUtils.xmlEscape(vfModuleName)}</vf-module-name>				
+				<vf-module-name>${MsoUtils.xmlEscape(vfModuleName)}</vf-module-name>
 				<vf-module-model-name>${MsoUtils.xmlEscape(vfModuleModelName)}</vf-module-model-name>
 				<model-customization-id>${MsoUtils.xmlEscape(modelCustomizationId)}</model-customization-id>
 				<is-base-vf-module>${MsoUtils.xmlEscape(isBaseVfModule)}</is-base-vf-module>
 				<asdc-service-model-version>${MsoUtils.xmlEscape(asdcServiceModelInfo)}</asdc-service-model-version>
-				<aic-cloud-region>${MsoUtils.xmlEscape(aicCloudRegion)}</aic-cloud-region>				
+				<aic-cloud-region>${MsoUtils.xmlEscape(aicCloudRegion)}</aic-cloud-region>
 				<tenant-id>${MsoUtils.xmlEscape(tenantId)}</tenant-id>
 				<service-id>${MsoUtils.xmlEscape(serviceId)}</service-id>
 				<backout-on-failure>${MsoUtils.xmlEscape(backoutOnFailure)}</backout-on-failure>
@@ -546,10 +545,10 @@ class VidUtils {
 			</vnf-params>
 		</vnf-request>
 		"""
-	
+
 		// return a pretty-print of the volume-request xml without the preamble
 		return groovy.xml.XmlUtil.serialize(xmlReq.normalize().replaceAll("\t", "").replaceAll("\n", "")).replaceAll("(<\\?[^<]*\\?>\\s*[\\r\\n]*)?", "") 
 	}
-	
+
 
 }

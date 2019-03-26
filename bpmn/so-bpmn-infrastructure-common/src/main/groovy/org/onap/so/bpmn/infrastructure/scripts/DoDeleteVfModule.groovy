@@ -621,8 +621,7 @@ public class DoDeleteVfModule extends AbstractServiceTaskProcessor{
                     logger.debug("Received orchestration status from A&AI: " + orchestrationStatus)
                 }
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET: {}', ex.getMessage(), ex)
 				exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'AAI GET Failed:' + ex.getMessage())
 			}
 			logger.trace('Exited ' + method)

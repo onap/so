@@ -166,7 +166,7 @@ public class SDNCAdapter extends AbstractServiceTaskProcessor {
 
 			logger.debug(UrnPropertiesReader.getVariable("mso.adapters.sdnc.endpoint", execution))
 		}catch(Exception e){
-			logger.debug('Internal Error occured during PreProcess Method: ', e)
+			logger.debug('Internal Error occured during PreProcess Method: {}', e.getMessage(), e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 9999, 'Internal Error occured during PreProcess Method') // TODO: what message and error code?
 		}
 		logger.trace("End pre Process SDNCRequestScript ")

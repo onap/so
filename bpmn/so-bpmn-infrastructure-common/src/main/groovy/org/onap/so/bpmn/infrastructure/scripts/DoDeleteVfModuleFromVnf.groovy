@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory
 
 public class DoDeleteVfModuleFromVnf extends VfModuleBase {
     private static final Logger logger = LoggerFactory.getLogger( DoDeleteVfModuleFromVnf.class);
-	
+
 	def Prefix="DDVFMV_"
 	ExceptionUtil exceptionUtil = new ExceptionUtil()
 	JsonUtils jsonUtil = new JsonUtils()
@@ -66,7 +66,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 		initProcessVariables(execution)
 
 		try {
-			
+
 				// Building Block-type request
 
 				// Set mso-request-id to request-id for VNF Adapter interface
@@ -75,7 +75,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 				execution.setVariable("requestId", requestId)
 				logger.debug("msoRequestId: " + requestId)
 				String tenantId = execution.getVariable("tenantId")
-				logger.debug("tenantId: " + tenantId)				
+				logger.debug("tenantId: " + tenantId)
 				String cloudSiteId = execution.getVariable("lcpCloudRegionId")
 				execution.setVariable("cloudSiteId", cloudSiteId)
 				logger.debug("cloudSiteId: " + cloudSiteId)
@@ -102,15 +102,15 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 				}
 				else {
 					execution.setVariable(Prefix + "serviceInstanceIdToSdnc", serviceInstanceId)
-				}				
+				}
 				
 				String sdncVersion = execution.getVariable("sdncVersion")
 				if (sdncVersion == null) {
 					sdncVersion = "1707"
 				}
 				execution.setVariable(Prefix + "sdncVersion", sdncVersion)
-				logger.debug("Incoming Sdnc Version is: " + sdncVersion)				
-				
+				logger.debug("Incoming Sdnc Version is: " + sdncVersion)
+
 				String sdncCallbackUrl = (String) UrnPropertiesReader.getVariable("mso.workflow.sdncadapter.callback",execution)
 				if (sdncCallbackUrl == null || sdncCallbackUrl.trim().isEmpty()) {
 					def msg = 'Required variable \'mso.workflow.sdncadapter.callback\' is missing'
@@ -122,8 +122,6 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 				logger.debug("SDNC Callback URL: " + sdncCallbackUrl)
 				logger.debug("SDNC Callback URL is: " + sdncCallbackUrl)
 
-			
-			
 		}catch(BpmnError b){
 			throw b
 		}catch(Exception e){
@@ -131,7 +129,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 2000, "Internal Error encountered in PreProcess method!")
 		}
 	}
-	
+
 	public void queryAAIForVfModule(DelegateExecution execution) {
 		def method = getClass().getSimpleName() + '.queryAAIForVfModule(' +
 			'execution=' + execution.getId() +
@@ -154,8 +152,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 					execution.setVariable('DDVMFV_getVnfResponse', "Generic Vnf not found!")
 				}
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET: {}', ex.getMessage(), ex)
 				execution.setVariable('DDVMFV_getVnfResponseCode', 500)
 				execution.setVariable('DDVFMV_getVnfResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
@@ -169,7 +166,7 @@ public class DoDeleteVfModuleFromVnf extends VfModuleBase {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, 'Error in queryAAIForVfModule(): ' + e.getMessage())
 		}
 	}
-	
+
 	/**
 	 * Validate the VF Module.  That is, confirm that a VF Module with the input VF Module ID
 	 * exists in the retrieved Generic VNF.  Then, check to make sure that if that VF Module

@@ -165,7 +165,7 @@ class SDNCAdapterRestV1 extends AbstractServiceTaskProcessor {
 					logger.debug(getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter")
 					logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for SDNCAdapter",
-							"BPMN", ErrorCode.UnknownError.getValue());
+							"BPMN", ErrorCode.UnknownError.getValue(), ex);
 				}
 			}
 

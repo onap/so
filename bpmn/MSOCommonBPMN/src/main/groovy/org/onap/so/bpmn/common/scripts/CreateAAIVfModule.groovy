@@ -63,8 +63,8 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("CAAIVfMod_moduleExists",false)
 		execution.setVariable("CAAIVfMod_baseModuleConflict", false)
 		execution.setVariable("CAAIVfMod_vnfNameFromAAI", null)
-		
-		
+
+
 		// CreateAAIVfModule workflow response variable placeholders
 		execution.setVariable("CAAIVfMod_queryGenericVnfResponseCode",null)
 		execution.setVariable("CAAIVfMod_queryGenericVnfResponse","")
@@ -80,14 +80,14 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 		execution.setVariable("CreateAAIVfModuleResponse","")
 		execution.setVariable("RollbackData", null)
 
-	}	
-	
+	}
+
 	// parse the incoming CREATE_VF_MODULE request and store the Generic VNF
 	// and VF Module data in the flow DelegateExecution
 	public void preProcessRequest(DelegateExecution execution) {
 		initProcessVariables(execution)
 
-		def vnfId = execution.getVariable("vnfId")		
+		def vnfId = execution.getVariable("vnfId")
 		if (vnfId == null || vnfId.isEmpty()) {
 			execution.setVariable("CAAIVfMod_newGenericVnf", true)
 			execution.setVariable("CAAIVfMod_vnfId","")
@@ -96,14 +96,14 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("CAAIVfMod_vnfId",vnfId)
 		}
 
-		def vnfName = execution.getVariable("vnfName")		
+		def vnfName = execution.getVariable("vnfName")
 		execution.setVariable("CAAIVfMod_vnfName", vnfName)
 
 		String vnfType = execution.getVariable("vnfType")
         execution.setVariable("CAAIVfMod_vnfType", StringUtils.defaultString(vnfType))
 
 		execution.setVariable("CAAIVfMod_serviceId", execution.getVariable("serviceId"))
-		
+
 		String personaModelId = execution.getVariable("personaModelId")
         execution.setVariable("CAAIVfMod_personaId",StringUtils.defaultString(personaModelId))
 
@@ -219,8 +219,7 @@ public class CreateAAIVfModule extends AbstractServiceTaskProcessor{
 			execution.setVariable("CAAIVfMod_createGenericVnfResponseCode", 201)
 			execution.setVariable("CAAIVfMod_createGenericVnfResponse", "Vnf Created")
 		} catch (Exception ex) {
-			ex.printStackTrace()
-			logger.debug("Exception occurred while executing AAI PUT:" + ex.getMessage())
+			logger.debug("Exception occurred while executing AAI PUT: {}", ex.getMessage(), ex)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 5000, "Internal Error - Occured in createGenericVnf.")
 		}
 	}

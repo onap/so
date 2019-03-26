@@ -148,7 +148,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 		} catch (BpmnError e) {
 			throw e
 		} catch (Exception e) {
-			logger.error('Caught exception in ' + method, e)
+			logger.error('Caught exception in {}: {}', method, e.getMessage(), e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 1002, "Invalid Message")
 		}
 	}
@@ -522,8 +522,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				throw bpmnError
 			}
 			catch(Exception e) {
-				e.printStackTrace()
-				logger.debug('Unexpected error encountered - ' + e.getMessage())
+				logger.debug('Unexpected error encountered - {}', e.getMessage(), e)
 				(new ExceptionUtil()).buildAndThrowWorkflowException(execution, 9999, e.getMessage())
 			}
 			finally {
@@ -645,7 +644,7 @@ public abstract class AbstractServiceTaskProcessor implements ServiceTaskProcess
 				rollbackEnabled = defaultRollback
 			}
 		}
-		
+
 		execution.setVariable(prefix+"backoutOnFailure", rollbackEnabled)
 		logger.debug('rollbackEnabled (aka backoutOnFailure): ' + rollbackEnabled)
 	}

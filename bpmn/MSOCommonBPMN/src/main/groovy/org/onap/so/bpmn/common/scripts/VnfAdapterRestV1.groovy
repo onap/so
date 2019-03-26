@@ -294,7 +294,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				} catch (IOException ex) {
 					logger.error("{} {} {} {}", MessageEnum.BPMN_GENERAL_EXCEPTION_ARG.toString(),
 							getProcessKey(execution) + ": Unable to encode BasicAuth credentials for VnfAdapter",
-							"BPMN", ErrorCode.UnknownError.getValue());
+							"BPMN", ErrorCode.UnknownError.getValue(), ex);
 				}
 			}
 
@@ -398,7 +398,7 @@ class VnfAdapterRestV1 extends AbstractServiceTaskProcessor {
 				vnfAdapterWorkflowException(execution, callback)
 			}
 		} catch (Exception e) {
-			logger.debug("Error encountered within VnfAdapterRest ProcessCallback method", e)
+			logger.debug("Error encountered within VnfAdapterRest ProcessCallback method: {}", e.getMessage(), e)
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7020, "Error encountered within VnfAdapterRest ProcessCallback method")
 		}
 	}

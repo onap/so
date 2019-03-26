@@ -121,8 +121,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 					execution.setVariable('CAAIVfModVG_getVfModuleResponse', "VF-Module Not found!!")
 				}
 			}catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI GET:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI GET: {}', ex.getMessage(), ex)
 				execution.setVariable('CAAIVfModVG_getVfModuleResponseCode', 500)
 				execution.setVariable('CAAIVfModVG_getVfModuleResponse', 'AAI GET Failed:' + ex.getMessage())
 			}
@@ -174,8 +173,7 @@ public class CreateAAIVfModuleVolumeGroup extends AbstractServiceTaskProcessor {
 				logger.debug("CreateAAIVfModule Response code: " + 200)
 				logger.debug("CreateAAIVfModule Response: " + "Success")
 			} catch (Exception ex) {
-				ex.printStackTrace()
-				logger.debug('Exception occurred while executing AAI PUT:' + ex.getMessage())
+				logger.debug('Exception occurred while executing AAI PUT: {}', ex.getMessage(), ex)
 				execution.setVariable('CAAIVfModVG_updateVfModuleResponseCode', 500)
 				execution.setVariable('CAAIVfModVG_updateVfModuleResponse', 'AAI PUT Failed:' + ex.getMessage())
 			}

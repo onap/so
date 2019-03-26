@@ -415,21 +415,21 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
             		String str = "" + stackOutputs.get(key);
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		logger.debug("Unable to add " + key + " to outputs", e);
+            		logger.debug("Unable to add {} to outputs", key, e);
             	}
             } else if (stackOutputs.get(key) instanceof JsonNode) {
             	try {
             		String str = this.convertNode((JsonNode) stackOutputs.get(key));
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-            		logger.debug("Unable to add " + key + " to outputs - exception converting JsonNode", e);
+            		logger.debug("Unable to add {} to outputs - exception converting JsonNode", key, e);
             	}
             } else if (stackOutputs.get(key) instanceof java.util.LinkedHashMap) {
             	try {
 					String str = JSON_MAPPER.writeValueAsString(stackOutputs.get(key));
             		stringOutputs.put(key, str);
             	} catch (Exception e) {
-                  logger.debug("Unable to add " + key + " to outputs - exception converting LinkedHashMap", e);
+                  logger.debug("Unable to add {} to outputs - exception converting LinkedHashMap", key, e);
               }
             } else {
             	try {
