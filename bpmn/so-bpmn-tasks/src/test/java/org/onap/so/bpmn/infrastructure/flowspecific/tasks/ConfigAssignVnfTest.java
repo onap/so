@@ -59,6 +59,8 @@ public class ConfigAssignVnfTest extends BaseTaskTest {
         requestContext.setMsoRequestId(msoRequestId);
         gBBInput.setRequestContext(requestContext);
 
+        genericVnf.setSkipPostInstConf(true);
+        
         doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
                 .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
         when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
@@ -75,4 +77,11 @@ public class ConfigAssignVnfTest extends BaseTaskTest {
         assertTrue(true);
     }
 
+    @Test
+    public void configurationCheckerTest() throws Exception {
+
+        configAssignVnf.configurationChecker(execution);
+
+        assertTrue(true);
+    }
 }
