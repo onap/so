@@ -1,0 +1,360 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f020185_fe03afea",
+        "filename": "asdc-controller/src/test/java/org/onap/so/asdc/client/ASDCControllerITTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "not used, please remove",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "55bcc965_acce918e",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "Inject the beans via constructor, this makes the testing easier. \nI also put comments in test classes that relates to this issue.",
+      "range": {
+        "startLine": 53,
+        "startChar": 4,
+        "endLine": 53,
+        "endChar": 14
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3fd13ede_b62cddd5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "remove throws declaration, it is not needed",
+      "range": {
+        "startLine": 57,
+        "startChar": 61,
+        "endLine": 57,
+        "endChar": 77
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "47c152a9_8147cd2a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "remove throws declaration, it is not needed",
+      "range": {
+        "startLine": 54,
+        "startChar": 61,
+        "endLine": 54,
+        "endChar": 77
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3eb4fca4_5c71452a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "remove throws declaration, it is not needed",
+      "range": {
+        "startLine": 67,
+        "startChar": 116,
+        "endLine": 67,
+        "endChar": 132
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "172fe793_f3b50503",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "throws declaration not needed, please remove it",
+      "range": {
+        "startLine": 50,
+        "startChar": 8,
+        "endLine": 50,
+        "endChar": 24
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6ed7fc1a_156010a0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "This piece of code is duplicated on both subclasses. I would add a method to PrepareCdsCallDelegate class like:\n\n    protected AbstractCDSPropertiesBean prepareCDSPropertiesBean(DelegateExecution delegateExecution,\n            PnfResourceCustomization pnfResourceCustomization, String action, String jsonRequest) {\n        AbstractCDSPropertiesBean cdsPropertiesBean \u003d new AbstractCDSPropertiesBean();\n        cdsPropertiesBean.setBlueprintName(pnfResourceCustomization.getBlueprintName());\n        cdsPropertiesBean.setBlueprintVersion(pnfResourceCustomization.getBlueprintVersion());\n        cdsPropertiesBean.setOriginatorId(ORIGINATOR_ID);\n        cdsPropertiesBean.setActionName(action);\n        cdsPropertiesBean.setMode(MODE);\n        cdsPropertiesBean.setRequestId((String) delegateExecution.getVariable(MSO_REQUEST_ID));\n        cdsPropertiesBean.setSubRequestId((String) delegateExecution.getVariable(PNF_UUID));\n        cdsPropertiesBean.setRequestObject(jsonRequest);\n        return cdsPropertiesBean;\n    }\n\nAnd then just invoke the method here:\n\nreturn prepareCDSPropertiesBean(delegateExecution,\n                pnfResourceCustomization, ACTION_NAME, configAssignRequest.toString());",
+      "range": {
+        "startLine": 68,
+        "startChar": 8,
+        "endLine": 77,
+        "endChar": 33
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f8f41400_abffeeee",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "throws declaration not needed, please remove it",
+      "range": {
+        "startLine": 50,
+        "startChar": 8,
+        "endLine": 50,
+        "endChar": 24
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "297f6454_648095b7",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "This piece of code is duplicated on both subclasses. I would add a method to PrepareCdsCallDelegate class like:\n\n    protected AbstractCDSPropertiesBean prepareCDSPropertiesBean(DelegateExecution delegateExecution,\n            PnfResourceCustomization pnfResourceCustomization, String action, String jsonRequest) {\n        AbstractCDSPropertiesBean cdsPropertiesBean \u003d new AbstractCDSPropertiesBean();\n        cdsPropertiesBean.setBlueprintName(pnfResourceCustomization.getBlueprintName());\n        cdsPropertiesBean.setBlueprintVersion(pnfResourceCustomization.getBlueprintVersion());\n        cdsPropertiesBean.setOriginatorId(ORIGINATOR_ID);\n        cdsPropertiesBean.setActionName(action);\n        cdsPropertiesBean.setMode(MODE);\n        cdsPropertiesBean.setRequestId((String) delegateExecution.getVariable(MSO_REQUEST_ID));\n        cdsPropertiesBean.setSubRequestId((String) delegateExecution.getVariable(PNF_UUID));\n        cdsPropertiesBean.setRequestObject(jsonRequest);\n        return cdsPropertiesBean;\n    }\n\nAnd then just invoke the method here:\n\nreturn prepareCDSPropertiesBean(delegateExecution,\n                pnfResourceCustomization, ACTION_NAME, configDeployRequest.toString());",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 33
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "48ef8e17_16848640",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "I think there is no need to run this test with SpringJUnit4ClassRunner, these tests take more time. Look at the other testing class of delegate objects in this package, they run without spring env. \n\nMake a constructor injection in ConfigCheckerDelegate class to test it easier.\n\nexample: CreateRelationTest",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bf1b8611_8b822819",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "the same issue as in ConfigCheckerDelegateTest, there is no need to run it with SpringJUnit4ClassRunner",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 39
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "11fae88a_38679329",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "not used, please remove",
+      "range": {
+        "startLine": 65,
+        "startChar": 4,
+        "endLine": 65,
+        "endChar": 87
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "980b82db_6b142874",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "declaration not needed, please remove",
+      "range": {
+        "startLine": 84,
+        "startChar": 24,
+        "endLine": 84,
+        "endChar": 40
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "cf8353d1_5642dc76",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "the same issue as in ConfigCheckerDelegateTest, there is no need to run it with SpringJUnit4ClassRunner.",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 39
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b82ed54e_3b75b542",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "not used, please remove",
+      "range": {
+        "startLine": 65,
+        "startChar": 4,
+        "endLine": 65,
+        "endChar": 87
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "88e59005_fbebe409",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-03-27T16:43:32Z",
+      "side": 1,
+      "message": "declaration not needed, please remove",
+      "range": {
+        "startLine": 84,
+        "startChar": 24,
+        "endLine": 84,
+        "endChar": 40
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
