@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "79cce2e9_4467e59d",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.8__AddConfiguration_VNF_MacroData.sql",
+        "patchSetId": 3
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-27T13:13:20Z",
+      "side": 1,
+      "message": "Can we create a new Macro flow version 2 that includes configuration, so version 1 is not impacted by this change?",
+      "range": {
+        "startLine": 3,
+        "startChar": 78,
+        "endLine": 3,
+        "endChar": 90
+      },
+      "revId": "8ed22ff2c4e3f58804329a6412f8dc4b0e521643",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
