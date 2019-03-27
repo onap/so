@@ -15,7 +15,6 @@
  */
 package org.onap.so.client.cds;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public class TestCDSPropertiesImpl implements CDSProperties {

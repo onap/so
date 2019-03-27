@@ -20,7 +20,7 @@
 
 package org.onap.so.client.cds;
 
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceOutput;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
 
 public interface CDSProcessingListener {
 

@@ -25,11 +25,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.onap.ccsdk.apps.controllerblueprints.common.api.ActionIdentifiers;
-import org.onap.ccsdk.apps.controllerblueprints.common.api.CommonHeader;
-import org.onap.ccsdk.apps.controllerblueprints.common.api.EventType;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceInput;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceOutput;
+import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
+import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
+import org.onap.ccsdk.cds.controllerblueprints.common.api.EventType;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
 import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.client.RestPropertiesLoader;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;

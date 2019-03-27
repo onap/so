@@ -25,7 +25,7 @@ import io.grpc.internal.DnsNameResolverProvider;
 import io.grpc.internal.PickFirstLoadBalancerProvider;
 import io.grpc.netty.NettyChannelBuilder;
 import java.util.concurrent.CountDownLatch;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceInput;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
 import org.onap.so.client.PreconditionFailedException;
 import org.onap.so.client.RestPropertiesLoader;
 import org.slf4j.Logger;

@@ -21,7 +21,7 @@
 package org.onap.so.client.cds;
 
 import io.grpc.Status;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceOutput;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

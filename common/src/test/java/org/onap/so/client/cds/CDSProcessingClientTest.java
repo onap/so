@@ -42,10 +42,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
-import org.onap.ccsdk.apps.controllerblueprints.common.api.ActionIdentifiers;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc.BluePrintProcessingServiceImplBase;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceInput;
-import org.onap.ccsdk.apps.controllerblueprints.processing.api.ExecutionServiceOutput;
+import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.BluePrintProcessingServiceGrpc.BluePrintProcessingServiceImplBase;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceInput;
+import org.onap.ccsdk.cds.controllerblueprints.processing.api.ExecutionServiceOutput;
 
 @RunWith(JUnit4.class)
 public class CDSProcessingClientTest {
