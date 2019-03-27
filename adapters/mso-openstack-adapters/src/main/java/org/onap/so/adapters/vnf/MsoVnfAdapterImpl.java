@@ -520,7 +520,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
     	}
     }
 
-    private void heatbridge(StackInfo heatStack, String cloudSiteId, String tenantId, String genericVnfName,
+    private void heatbridge(StackInfo heatStack, String cloudOwner, String cloudSiteId, String tenantId, String genericVnfName,
         String vfModuleId) {
         try {
             CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
@@ -528,7 +528,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             CloudIdentity cloudIdentity = cloudSite.getIdentityService();
             String heatStackId = heatStack.getCanonicalName().split("/")[1];
 
-            String cloudOwner = "CloudOwner";//cloud owner needs to come from bpmn-adapter
             List<String> oobMgtNetNames = new ArrayList<>();
 
             HeatBridgeApi heatBridgeClient = new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity,
@@ -1345,7 +1344,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             }
             logger.debug ("VF Module {} successfully created", vfModuleName);
             //call heatbridge
-            heatbridge(heatStack, cloudSiteId, tenantId, genericVnfName, vfModuleId);
+            heatbridge(heatStack, cloudOwner, cloudSiteId, tenantId, genericVnfName, vfModuleId);
             return;
         } catch (Exception e) {
         	logger.debug("unhandled exception in create VF",e);
