@@ -65,6 +65,23 @@
     },
     {
       "key": {
+        "uuid": "cd40832a_d4dd7dd0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-27T18:31:40Z",
+      "side": 1,
+      "message": "config-deploy should use \"async\" mode, so may have to move constant from base class to child classes.",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "47c152a9_8147cd2a",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
         "patchSetId": 1
@@ -134,6 +151,40 @@
     },
     {
       "key": {
+        "uuid": "b82b222c_2d13af0b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-27T18:31:40Z",
+      "side": 1,
+      "message": "This value shall not be taken from the model. It shall be the PNF name in AAI. This custom workflow will use correlation-ID as the PNF name.",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "95feb50d_43894804",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-27T18:31:40Z",
+      "side": 1,
+      "message": "Correlation-ID is the PNF name. pnf-id shall match AAI entry for this PNF, it is UUID.",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6ed7fc1a_156010a0",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
         "patchSetId": 1
@@ -174,6 +225,40 @@
         "endLine": 50,
         "endChar": 24
       },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b97fb050_26a7ab0f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-27T18:31:40Z",
+      "side": 1,
+      "message": "PNF name shall not be taken from model. It shall match AAI entry. Currently correlation-ID is used to assign PNF name.",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1c33d62a_f5234b9f",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5279
+      },
+      "writtenOn": "2019-03-27T18:31:40Z",
+      "side": 1,
+      "message": "pnf-id shall match AAI entry, it is UUID.",
       "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
