@@ -11,7 +11,7 @@ ENV https_proxy=$HTTPS_PROXY
 RUN apk update && apk upgrade
 
 # Install commonly needed tools
-RUN apk --no-cache add curl netcat-openbsd sudo
+RUN apk --no-cache add curl netcat-openbsd sudo nss
 
 # Create 'so' user
 RUN addgroup -g 1000 so && adduser -S -u 1000 -G so -s /bin/sh so
