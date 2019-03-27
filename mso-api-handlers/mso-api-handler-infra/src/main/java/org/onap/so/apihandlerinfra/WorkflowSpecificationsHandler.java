@@ -39,7 +39,7 @@ import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
 import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowSpecifications;
 import org.onap.so.logger.MessageEnum;
 
-import org.onap.so.logger.MsoLogger;
+import org.onap.so.logger.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -79,7 +79,7 @@ public class WorkflowSpecificationsHandler {
 			jsonResponse = mapper.writeValueAsString(workflowSpecifications);
 		}
 		catch (JsonProcessingException e) {
-			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, MsoLogger.ErrorCode.SchemaError).build();
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).build();
 			ValidateException validateException = new ValidateException.Builder("Mapping of request to JSON object failed : " + e.getMessage(),
 					HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
 			throw validateException;
