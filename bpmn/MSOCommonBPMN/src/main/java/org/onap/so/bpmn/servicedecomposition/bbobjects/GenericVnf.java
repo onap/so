@@ -147,7 +147,8 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 	private String blueprintName;
 	@JsonProperty("CDS_BLUEPRINT_VERSION")
 	private String blueprintVersion;
-
+	@JsonProperty("SKIP_POST_INSTANTIATION_CONFIGURATION")
+	private Boolean skipPostInstConf;
 
 	public String getBlueprintName() {
 		return blueprintName;
@@ -164,6 +165,14 @@ public class GenericVnf implements Serializable, ShallowCopy<GenericVnf> {
 	public void setBlueprintVersion(String blueprintVersion) {
 		this.blueprintVersion = blueprintVersion;
 	}
+
+	public Boolean isSkipPostInstConf() {
+        return skipPostInstConf;
+    }
+
+    public void setSkipPostInstConf(Boolean skipPostInstConf) {
+        this.skipPostInstConf = skipPostInstConf;
+    }
 
 	public String getNfFunction() {
 		return nfFunction;

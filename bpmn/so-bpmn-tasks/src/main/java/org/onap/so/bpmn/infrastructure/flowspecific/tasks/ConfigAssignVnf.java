@@ -72,10 +72,8 @@ public class ConfigAssignVnf {
 
             ConfigAssignPropertiesForVnf configAssignPropertiesForVnf = new ConfigAssignPropertiesForVnf();
             configAssignPropertiesForVnf.setServiceInstanceId(serviceInstance.getServiceInstanceId());
-            configAssignPropertiesForVnf
-                    .setServiceModelUuid(serviceInstance.getModelInfoServiceInstance().getModelUuid());
-            configAssignPropertiesForVnf
-                    .setVnfCustomizationUuid(vnf.getModelInfoGenericVnf().getModelCustomizationUuid());
+            configAssignPropertiesForVnf.setServiceModelUuid(serviceInstance.getModelInfoServiceInstance().getModelUuid());
+            configAssignPropertiesForVnf.setVnfCustomizationUuid(vnf.getModelInfoGenericVnf().getModelCustomizationUuid());
             configAssignPropertiesForVnf.setVnfId(vnf.getVnfId());
             configAssignPropertiesForVnf.setVnfName(vnf.getVnfName());
 
@@ -107,6 +105,24 @@ public class ConfigAssignVnf {
 
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    /**
+     * This implementation is used to check the SO catalogdb for PNF config flag.
+     * 
+     * @param execution
+     */
+    public void configurationChecker(BuildingBlockExecution execution) {
+        logger.info("Start configurationChecker ");
+        try {
+            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+
+            boolean skipPostInstantiationConfiguration = vnf.isSkipPostInstConf();
+            execution.setVariable("SkipPostInstantiationConfiguration", skipPostInstantiationConfiguration);
+
+        } catch (Exception e) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e);
         }
     }
 
