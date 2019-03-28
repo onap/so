@@ -59,11 +59,15 @@ public class VnfTopologyOperationRequestMapper {
 			GenericResourceApiRequestActionEnumeration requestAction, GenericVnf vnf, ServiceInstance serviceInstance,
 			Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing) {
 		String sdncReqId = UUID.randomUUID().toString();
+		String msoRequestId = UUID.randomUUID().toString();
+		if (requestContext != null && requestContext.getMsoRequestId() != null) {
+			msoRequestId = requestContext.getMsoRequestId();
+		} 
 		GenericResourceApiVnfOperationInformation req = new GenericResourceApiVnfOperationInformation();
 		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = generalTopologyObjectMapper
 				.buildSdncRequestHeader(svcAction, sdncReqId);
 		GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper
-				.buildGenericResourceApiRequestinformationRequestInformation(sdncReqId, requestAction);
+				.buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, requestAction);
 		GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper
 				.buildServiceInformation(serviceInstance, requestContext, customer, true);
 		GenericResourceApiVnfinformationVnfInformation vnfInformation = generalTopologyObjectMapper
@@ -84,7 +88,7 @@ public class VnfTopologyOperationRequestMapper {
 		req.setVnfInformation(vnfInformation);
 
 		GenericResourceApiParam vnfInputParameters = new GenericResourceApiParam();
-		if (requestContext.getUserParams() != null) {
+		if (requestContext != null && requestContext.getUserParams() != null) {
 			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
 				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
 				paramItem.setName(entry.getKey());

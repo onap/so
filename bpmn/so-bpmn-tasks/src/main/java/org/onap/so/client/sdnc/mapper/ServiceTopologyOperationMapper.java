@@ -49,9 +49,13 @@ public class ServiceTopologyOperationMapper{
 			SDNCSvcAction svcAction, GenericResourceApiRequestActionEnumeration resourceAction,ServiceInstance serviceInstance, Customer customer, RequestContext requestContext) {
 
 		String sdncReqId = UUID.randomUUID().toString();
+		String msoRequestId = UUID.randomUUID().toString();
+		if (requestContext != null && requestContext.getMsoRequestId() != null) {
+			msoRequestId = requestContext.getMsoRequestId();
+		} 
 		GenericResourceApiServiceOperationInformation servOpInput = new GenericResourceApiServiceOperationInformation();
 		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId);
-		GenericResourceApiRequestinformationRequestInformation reqInfo = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(sdncReqId, resourceAction);
+		GenericResourceApiRequestinformationRequestInformation reqInfo = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, resourceAction);
 		GenericResourceApiServiceinformationServiceInformation servInfo = generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, true);
 		GenericResourceApiServicerequestinputServiceRequestInput servReqInfo = new GenericResourceApiServicerequestinputServiceRequestInput();
 	
@@ -62,7 +66,7 @@ public class ServiceTopologyOperationMapper{
 		servOpInput.setServiceInformation(servInfo);
 		servOpInput.setServiceRequestInput(servReqInfo);
 		
-		if(requestContext.getUserParams()!=null){
+		if(requestContext != null && requestContext.getUserParams()!=null){
 			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
 				GenericResourceApiServicerequestinputServiceRequestInput serviceRequestInput = new GenericResourceApiServicerequestinputServiceRequestInput(); 
 				serviceRequestInput.setServiceInstanceName(serviceInstance.getServiceInstanceName()); 

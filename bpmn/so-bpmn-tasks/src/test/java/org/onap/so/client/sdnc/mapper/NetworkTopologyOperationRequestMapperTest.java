@@ -23,6 +23,7 @@ package org.onap.so.client.sdnc.mapper;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
@@ -109,6 +110,7 @@ public class NetworkTopologyOperationRequestMapperTest {
 		userParams.put("key1", "value1");
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
+		requestContext.setMsoRequestId("MsoRequestId");
 
 		network = new L3Network();
 		network.setNetworkId("TEST_NETWORK_ID");
@@ -138,8 +140,24 @@ public class NetworkTopologyOperationRequestMapperTest {
 
 		assertThat(networkSDNCrequest, sameBeanAs(reqMapper1).ignoring("sdncRequestHeader.svcRequestId")
 				.ignoring("requestInformation.requestId"));
+		assertEquals("MsoRequestId", networkSDNCrequest.getRequestInformation().getRequestId());
 	}
+	
+	@Test
+	public void createGenericResourceApiNetworkOperationInformationReqContextNullTest() throws Exception {
 
+		RequestContext rc = new RequestContext();
+		rc.setMsoRequestId(null);
+		GenericResourceApiNetworkOperationInformation networkSDNCrequest = mapper.reqMapper(
+				SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
+				rc, cloudRegion);
+		assertNotNull(networkSDNCrequest.getRequestInformation().getRequestId());
+		GenericResourceApiNetworkOperationInformation networkSDNCrequest2 = mapper.reqMapper(
+				SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
+				null, cloudRegion);
+		assertNotNull(networkSDNCrequest2.getRequestInformation().getRequestId());
+	}
+	
 	@Test
 	public void reqMapperTest() throws Exception {
 
@@ -175,7 +193,8 @@ public class NetworkTopologyOperationRequestMapperTest {
 
 		assertThat(reqMapperUnassign, sameBeanAs(networkSDNCrequestUnassign).ignoring("sdncRequestHeader.svcRequestId")
 				.ignoring("requestInformation.requestId"));
-
+		assertEquals("MsoRequestId", networkSDNCrequestUnassign.getRequestInformation().getRequestId());
+		
  	}
 	
 	@Test

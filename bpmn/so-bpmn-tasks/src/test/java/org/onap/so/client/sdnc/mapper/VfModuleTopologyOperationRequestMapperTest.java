@@ -23,6 +23,7 @@ package org.onap.so.client.sdnc.mapper;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.nio.file.Files;
@@ -102,6 +103,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		RequestParameters requestParameters = new RequestParameters();
 		requestParameters.setUsePreload(true);
 		requestContext.setRequestParameters(requestParameters);
+		requestContext.setMsoRequestId("MsoRequestId");
 
 		GenericVnf vnf = new GenericVnf();
 		vnf.setVnfId("testVnfId");
@@ -148,6 +150,7 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
 		assertThat(reqMapper1, sameBeanAs(vfModuleSDNCrequest).ignoring("sdncRequestHeader.svcRequestId")
 				.ignoring("requestInformation.requestId"));
+		assertEquals("MsoRequestId", vfModuleSDNCrequest.getRequestInformation().getRequestId());
 	}
 
 	@Test
@@ -168,10 +171,13 @@ public class VfModuleTopologyOperationRequestMapperTest {
 		VfModule vfModule = new VfModule();
 		vfModule.setVfModuleId("testVfModuleId");
 		vfModule.setVfModuleName("testVfModuleName");
+		
+		RequestContext requestContext = new RequestContext();
+		requestContext.setMsoRequestId("MsoRequestId");
 
 		GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest = mapper.reqMapper(
 				SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null,
-				null, null, null);
+				null, requestContext, null);
 
 		String jsonToCompare = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "genericResourceApiVfModuleOperationInformationUnassign.json")));
 
@@ -182,6 +188,35 @@ public class VfModuleTopologyOperationRequestMapperTest {
 
 		assertThat(reqMapper1, sameBeanAs(vfModuleSDNCrequest).ignoring("sdncRequestHeader.svcRequestId")
 				.ignoring("requestInformation.requestId"));
+		assertEquals("MsoRequestId", vfModuleSDNCrequest.getRequestInformation().getRequestId());
+	}
+	
+	@Test
+	public void unassignGenericResourceApiVfModuleInformationNullMsoReqIdTest() throws Exception {
+
+		// prepare and set service instance
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setServiceInstanceId("serviceInstanceId");
+
+		// prepare and set vnf instance
+
+		GenericVnf vnf = new GenericVnf();
+		vnf.setVnfId("testVnfId");
+		vnf.setVnfType("testVnfType");
+
+		// prepare and set vf module instance
+
+		VfModule vfModule = new VfModule();
+		vfModule.setVfModuleId("testVfModuleId");
+		vfModule.setVfModuleName("testVfModuleName");
+		
+		RequestContext requestContext = new RequestContext();
+
+		GenericResourceApiVfModuleOperationInformation vfModuleSDNCrequest = mapper.reqMapper(
+				SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null, vnf, serviceInstance, null,
+				null, requestContext, null);
+
+		assertNotNull(vfModuleSDNCrequest.getRequestInformation().getRequestId());
 	}
 
 	@Test
