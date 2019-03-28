@@ -51,9 +51,10 @@ import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
 import org.onap.so.adapters.nwrest.DeleteNetworkResponse;
-import org.onap.so.adapters.nwrest.NetworkTechnology;
 import org.onap.so.adapters.nwrest.QueryNetworkError;
 import org.onap.so.adapters.nwrest.QueryNetworkResponse;
+import org.onap.so.adapters.nwrest.RollbackNetworkRequest;
+import org.onap.so.adapters.nwrest.RollbackNetworkResponse;
 import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 import org.onap.so.adapters.vnf.BaseRestTestUtils;
@@ -190,6 +191,40 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 		assertThat(response.getBody(), sameBeanAs(expectedResponse));
 		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 		
+	}
+
+	@Test
+	public void testRollbackNetwork() throws IOException {
+
+		RollbackNetworkRequest request = new RollbackNetworkRequest();
+
+		MsoRequest msoReq = new MsoRequest();
+
+		msoReq.setRequestId(MSO_REQUEST_ID);
+		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
+
+		mockOpenStackResponseAccess(wireMockPort);
+
+		mockOpenStackPublicUrlStackByID_200(wireMockPort);
+
+		mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockPort);
+
+		mockOpenStackDeletePublicUrlStackByNameAndID_204();
+
+		headers.add("Accept", MediaType.APPLICATION_JSON);
+
+		HttpEntity<RollbackNetworkRequest> entity = new HttpEntity<>(request, headers);
+
+		ResponseEntity<RollbackNetworkResponse> response = restTemplate
+			.exchange(createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b/rollback"),
+				HttpMethod.DELETE, entity, RollbackNetworkResponse.class);
+
+		RollbackNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
+			.readValue(new File("src/test/resources/__files/RollbackNetworkResponse.json"), RollbackNetworkResponse.class);
+
+		assertThat(response.getBody(), sameBeanAs(expectedResponse));
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
 	}
 
 	@Test
