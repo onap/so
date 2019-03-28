@@ -150,7 +150,7 @@ public class AAIResourcesClientTest {
 		AAIResourceUri path = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test2");
 		AAIResourceUri path2 = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "test3");
 		
-		wireMockRule.stubFor(post(
+		wireMockRule.stubFor(delete(
 				urlPathEqualTo("/aai/" + AAIVersion.LATEST + path.build() + "/relationship-list/relationship"))
 				.willReturn(
 					aResponse()

@@ -21,6 +21,7 @@
 package org.onap.so.client.adapter.network;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -104,7 +105,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 		DeleteNetworkResponse mockResponse = new DeleteNetworkResponse();
 		mockResponse.setNetworkDeleted(true);
 
-		stubFor(post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -119,7 +120,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 
 		DeleteNetworkError mockResponse = new DeleteNetworkError();
 		mockResponse.setMessage("Error in delete network");
-		stubFor(post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
 
@@ -136,7 +137,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 		RollbackNetworkResponse mockResponse = new RollbackNetworkResponse();
 		mockResponse.setNetworkRolledBack(true);
 
-		stubFor(post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -154,7 +155,7 @@ public class NetworkAdapterClientIT extends BaseIntegrationTest{
 		RollbackNetworkError mockResponse = new RollbackNetworkError();
 		mockResponse.setMessage("Error in rollback network");
 
-		stubFor(post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
+		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_NETWORK_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
 
