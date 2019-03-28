@@ -1,0 +1,116 @@
+{
+  "workflowSpecificationList": [
+    {
+      "workflowSpecification": {
+        "artifactInfo": {
+          "artifactType": "workflow",
+          "artifactUuid": "ab6478e4-ea33-3346-ac12-ab121484a333",
+          "artifactName": "inPlaceSoftwareUpdate-1_0.bpmn",
+          "artifactVersion": "1.0",
+          "artifactDescription": "xyz xyz",
+          "workflowName": "inPlaceSoftwareUpdate",
+          "operationName": "inPlaceSoftwareUpdate",
+          "workflowSource": "sdc",
+          "workflowResourceTarget": "vnf"
+        },
+        "activitySequence": [
+          {
+            "name": "VNFQuiesceTrafficActivity",
+            "description": "Activity to QuiesceTraffic on VNF"
+          },
+          {
+            "name": "VNFHealthCheckActivity",
+            "description": "Activity to HealthCheck VNF"
+          },
+          {
+            "name": "FlowCompleteActivity",
+            "description": "Activity to Complete the BPMN Flow"
+          }
+        ],
+        "workflowInputParameters": [
+          {
+            "label": "Cloud Owner",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "7",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "cloudOwner",
+            "soPayloadLocation": "cloudConfiguration"
+          },
+          {
+            "label": "Cloud Region ID",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "7",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "lcpCloudRegionId",
+            "soPayloadLocation": "cloudConfiguration"
+          },
+          {
+            "label": "Tenant/Project ID",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "36",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "tenantId",
+            "soPayloadLocation": "cloudConfiguration"
+          },
+          {
+            "label": "Operations Timeout",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "50",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "operations_timeout",
+            "soPayloadLocation": "userParams"
+          },
+          {
+            "label": "Existing Software Version",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "50",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "existing_software_version",
+            "soPayloadLocation": "userParams"
+          },
+          {
+            "label": "New Software Version",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "50",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "new_software_version",
+            "soPayloadLocation": "userParams"
+          }
+        ]
+      }
+    },
+    {
+      "workflowSpecification": {}
+    }
+  ]
+}
