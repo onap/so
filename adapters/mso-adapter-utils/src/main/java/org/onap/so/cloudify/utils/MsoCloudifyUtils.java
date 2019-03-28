@@ -104,7 +104,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 
-    private static final String CLOUDIFY_ERROR = "CloudifyError";
     private static final String CLOUDIFY = "Cloudify";
     private static final String CREATE_DEPLOYMENT = "CreateDeployment";
     private static final String DELETE_DEPLOYMENT = "DeleteDeployment";
@@ -258,11 +257,10 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         	if (installWorkflow.getStatus().equals(TERMINATED)) {
 	        	//  Success!
 	        	//  Create and return a DeploymentInfo structure.  Include the Runtime outputs
-                DeploymentOutputs outputs = getDeploymentOutputs (cloudify, deploymentId);
 				return new DeploymentInfoBuilder()
 					.withId(deployment.getId())
 					.withDeploymentInputs(deployment.getInputs())
-					.withDeploymentOutputs(outputs.getOutputs())
+					.withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get())
 					.fromExecution(installWorkflow)
 					.build();
 	        }
@@ -352,16 +350,21 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
      * Get the runtime Outputs of a deployment.
      * Return the Map of tag/value outputs.
      */
-    private DeploymentOutputs getDeploymentOutputs (Cloudify cloudify, String deploymentId)
+    private Optional<Map<String, Object>> getDeploymentOutputs (Cloudify cloudify, String deploymentId)
         throws MsoException
     {
     	// Build and send the Cloudify request
-		DeploymentOutputs deploymentOutputs = null;
+		DeploymentOutputs deploymentOutputs;
     	try {
     		GetDeploymentOutputs queryDeploymentOutputs = cloudify.deployments().outputsById(deploymentId);
           logger.debug(queryDeploymentOutputs.toString());
 
     		deploymentOutputs = executeAndRecordCloudifyRequest(queryDeploymentOutputs);
+			if (deploymentOutputs != null) {
+				return Optional.ofNullable(deploymentOutputs.getOutputs());
+			} else {
+				return Optional.empty();
+			}
     	}
     	catch (CloudifyConnectException ce) {
     		// Couldn't connect to Cloudify
@@ -372,7 +375,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	catch (CloudifyResponseException re) {
             if (re.getStatus () == 404) {
             	// No Outputs
-            	return null;
+            	return Optional.empty();
             }
             throw new MsoCloudifyException (re.getStatus(), re.getMessage(), re.getLocalizedMessage(), re);
     	}
@@ -380,8 +383,6 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     		// Catch-all
     		throw new MsoAdapterException (e.getMessage(), e);
     	}
-
-    	return deploymentOutputs;
     }
 
     /*
@@ -579,15 +580,10 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 
     	// Build and send the Cloudify request
 		Deployment deployment = new Deployment();
-		DeploymentOutputs outputs = null;
     	try {
     		GetDeployment queryDeployment = cloudify.deployments().byId(deploymentId);
           logger.debug(queryDeployment.toString());
-
-//    		deployment = queryDeployment.execute();
     		deployment = executeAndRecordCloudifyRequest(queryDeployment);
-
-            outputs = getDeploymentOutputs (cloudify, deploymentId);
 
     		//  Next look for the latest execution
     		ListExecutions listExecutions = cloudify.executions().listFiltered ("deployment_id=" + deploymentId, "-created_at");
@@ -604,7 +600,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 				return new DeploymentInfoBuilder()
 					.withId(deployment.getId())
 					.withDeploymentInputs(deployment.getInputs())
-					.withDeploymentOutputs(outputs.getOutputs())
+					.withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get())
 					.fromExecution(executions.getItems().get(0))
 					.build();
     		}
@@ -623,7 +619,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 					return new DeploymentInfoBuilder()
 						.withId(deployment.getId())
 						.withDeploymentInputs(deployment.getInputs())
-						.withDeploymentOutputs(outputs.getOutputs())
+						.withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get())
 						.build();
             	} else {
             		// Deployment not found.  Default status of a DeploymentInfo object is NOTFOUND
@@ -670,12 +666,11 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         logger.debug ("Ready to Uninstall/Delete Deployment ({})", deploymentId);
 
         // Query first to save the trouble if deployment not found
-    	Deployment deployment = null;
-    	try {
+		try {
     		GetDeployment queryDeploymentRequest = cloudify.deployments().byId(deploymentId);
           logger.debug(queryDeploymentRequest.toString());
 
-    		deployment = executeAndRecordCloudifyRequest (queryDeploymentRequest);
+    	//	deployment = executeAndRecordCloudifyRequest (queryDeploymentRequest);
     	}
     	catch (CloudifyResponseException e) {
             // Since this came on the 'Create Deployment' command, nothing was changed
@@ -707,7 +702,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
     	/*
     	 *  Query the outputs before deleting so they can be returned as well
     	 */
-    	DeploymentOutputs outputs = getDeploymentOutputs (cloudify, deploymentId);
+    	//DeploymentOutputs outputs = getDeploymentOutputs (cloudify, deploymentId);
     	
     	/*
     	 * Next execute the "uninstall" workflow.
@@ -745,6 +740,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
         
         // At this point, the deployment has been successfully uninstalled.
         // Next step is to delete the deployment itself
+		Deployment deployment;
         try {
         	DeleteDeployment deleteRequest = cloudify.deployments().deleteByName(deploymentId);
             logger.debug(deleteRequest.toString());
@@ -781,7 +777,7 @@ public class MsoCloudifyUtils extends MsoCommonUtils implements VduPlugin{
 		return new DeploymentInfoBuilder()
 			.withId(deployment.getId())
 			.withDeploymentInputs(deployment.getInputs())
-			.withDeploymentOutputs(outputs.getOutputs())
+			.withDeploymentOutputs(getDeploymentOutputs(cloudify, deploymentId).get())
 			.fromExecution(uninstallWorkflow)
 			.build();
     }

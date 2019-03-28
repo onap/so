@@ -149,6 +149,12 @@ public class DeploymentInfoBuilderTest {
         verifyDeploymentInfoConstruction(workflowIdLastAction, status, expectedDeploymentStatus);
     }
 
+    @Test
+    public void shouldSetEmptyOutputsMapWhenInputIsNull() {
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withDeploymentOutputs(null).build();
+        assertThat(deploymentInfo.getOutputs()).isEmpty();
+    }
+
     private void verifyDeploymentInfoConstruction(String workflowIdLastAction, String actionStatus,
         DeploymentStatus expectedDeploymentStatus) {
 

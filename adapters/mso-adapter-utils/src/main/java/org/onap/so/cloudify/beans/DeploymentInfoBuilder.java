@@ -44,7 +44,9 @@ public final class DeploymentInfoBuilder {
     }
 
     public DeploymentInfoBuilder withDeploymentOutputs(Map<String, Object> deploymentOutputs) {
-        this.deploymentOutputs = deploymentOutputs;
+        if (deploymentOutputs != null) {
+            this.deploymentOutputs = deploymentOutputs;
+        }
         return this;
     }
 
