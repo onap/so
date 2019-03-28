@@ -22,17 +22,19 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
-
+import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
 import com.google.common.base.Optional;
 
 
 /**
  * Provide a service which interacts with VNFM adapter for instantiating, monitoring VNF
- * 
+ *
  * @author waqas.ikram@est.tech
  */
 public interface VnfmAdapterServiceProvider {
 
-    Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId, final CreateVnfRequest request);
+  Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId, final CreateVnfRequest request);
+
+  Optional<DeleteVnfResponse> invokeDeleteRequest(final String vnfId);
 
 }

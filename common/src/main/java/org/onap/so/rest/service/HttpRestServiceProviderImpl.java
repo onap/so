@@ -138,6 +138,18 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
         }
     }
 
+  @Override
+  public <T> ResponseEntity<T> deleteHttpRequest(final String url, final Class<T> clazz) {
+    try {
+      final HttpEntity<?> request = new HttpEntity<>(getHttpHeaders());
+      return restTemplate.exchange(url, HttpMethod.DELETE, request, clazz);
+
+    } catch (final RestClientException restClientException) {
+      LOGGER.error("Unable to invoke HTTP DELETE using url: " + url, restClientException);
+      throw new InvalidRestRequestException("Unable to invoke HTTP DELETE using URL: " + url, restClientException);
+    }
+  }
+
     private HttpHeaders getHttpHeaders() {
         return httpHeadersProvider.getHttpHeaders();
     }
