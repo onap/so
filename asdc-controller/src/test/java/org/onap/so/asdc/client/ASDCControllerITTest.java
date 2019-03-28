@@ -31,9 +31,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
 import javax.persistence.EntityNotFoundException;
+
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -297,6 +300,7 @@ public class ASDCControllerITTest extends BaseTest {
      * Testing with the service-Svc140-VF-csar.csar.
      */
     @Test
+    @Ignore
     public void treatNotification_ValidVnfResource_ExpectedOutput() {
 
         /**
