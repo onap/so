@@ -1,0 +1,456 @@
+swagger: "2.0"
+info:
+  description: |
+
+    [Differences versus the previous schema version](apidocs/aai_swagger_v16.diff)
+
+    Copyright &copy; 2017-18 AT&amp;T Intellectual Property. All rights reserved.
+
+    Licensed under the Creative Commons License, Attribution 4.0 Intl. (the &quot;License&quot;); you may not use this documentation except in compliance with the License.
+
+    You may obtain a copy of the License at
+
+    (https://creativecommons.org/licenses/by/4.0/)
+
+    Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+    This document is best viewed with Firefox or Chrome. Nodes can be found by appending /#/definitions/node-type-to-find to the path to this document. Edge definitions can be found with the node definitions.
+  version: "v16"
+  title: Active and Available Inventory REST API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  contact:
+    name:
+    url:
+    email:
+host:
+basePath: /aai/v16
+schemes:
+  - https
+paths:
+  /network/generic-vnfs/generic-vnf/{vnf-id}:
+    get:
+      tags:
+        - Network
+      summary: returns generic-vnf
+      description: returns generic-vnf
+      operationId: getNetworkGenericVnfsGenericVnf
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        "200":
+          description: successful operation
+          schema:
+              $ref: "#/definitions/generic-vnf"
+        "default":
+          description: Response codes found in [response codes](https://wiki.web.att.com/pages/viewpage.action?pageId=607391054).
+      parameters:
+        - name: vnf-id
+          in: path
+          description: Unique id of VNF.  This is unique across the graph.
+          required: true
+          type: string
+          example: __VNF-ID__
+definitions:
+  generic-vnf:
+    description: |
+      General purpose VNF
+      ###### Related Nodes
+      - TO availability-zone( generic-vnf Uses availability-zone, MANY2MANY)
+      - TO cloud-region( generic-vnf LocatedIn cloud-region, MANY2ONE)
+      - TO complex( generic-vnf LocatedIn complex, MANY2MANY)
+      - TO configuration( generic-vnf Uses configuration, ONE2MANY)(2)
+      - TO ctag-pool( generic-vnf Uses ctag-pool, MANY2MANY)
+      - TO instance-group( generic-vnf MemberOf instance-group, MANY2MANY)
+      - TO instance-group( generic-vnf Uses instance-group, ONE2MANY)
+      - TO ipsec-configuration( generic-vnf Uses ipsec-configuration, MANY2ONE)
+      - TO l3-network( generic-vnf Uses l3-network, MANY2MANY)
+      - TO nos-server( generic-vnf HostedOn nos-server, MANY2ONE)
+      - TO pnf( generic-vnf HostedOn pnf, MANY2MANY)
+      - TO pserver( generic-vnf HostedOn pserver, MANY2MANY)
+      - TO tenant( generic-vnf BelongsTo tenant, MANY2ONE)
+      - TO virtual-data-center( generic-vnf LocatedIn virtual-data-center, MANY2MANY)
+      - TO vnf-image( generic-vnf Uses vnf-image, MANY2ONE)
+      - TO volume-group( generic-vnf DependsOn volume-group, ONE2MANY)
+      - TO vserver( generic-vnf HostedOn vserver, ONE2MANY)
+      - FROM allotted-resource( allotted-resource PartOf generic-vnf, MANY2MANY)
+      - FROM contact( contact supports generic-vnf, MANY2MANY)
+      - FROM device( device Uses generic-vnf, ONE2MANY)
+      For CCVPN Usecase
+      - FROM entitlement (CHILD of generic-vnf, entitlement BelongsTo generic-vnf, MANY2ONE)(1)
+      - FROM forwarder( forwarder AppliesTo generic-vnf, MANY2MANY)
+      Points to the generic-vnf(s) involved in this forwarding step.
+      - FROM instance-group( instance-group BelongsTo generic-vnf, MANY2ONE)(1)
+      - FROM l-interface (CHILD of generic-vnf, l-interface BelongsTo generic-vnf, MANY2ONE)(1)
+      - FROM lag-interface (CHILD of generic-vnf, lag-interface BelongsTo generic-vnf, MANY2ONE)(1)
+      - FROM license (CHILD of generic-vnf, license BelongsTo generic-vnf, MANY2ONE)(1)
+      - FROM line-of-business( line-of-business Uses generic-vnf, MANY2MANY)
+      - FROM logical-link( logical-link BridgedTo generic-vnf, MANY2MANY)
+      - FROM network-profile( network-profile AppliesTo generic-vnf, MANY2MANY)
+      - FROM platform( platform Uses generic-vnf, MANY2MANY)
+      - FROM service-instance( service-instance ComposedOf generic-vnf, ONE2MANY)
+      - FROM site-pair-set( site-pair-set AppliesTo generic-vnf, MANY2MANY)
+      - FROM vf-module (CHILD of generic-vnf, vf-module BelongsTo generic-vnf, MANY2ONE)(1)
+      - FROM vnfc( vnfc BelongsTo generic-vnf, MANY2ONE)(1)
+
+      -(1) IF this GENERIC-VNF node is deleted, this FROM node is DELETED also
+      -(2) IF this GENERIC-VNF node is deleted, this TO node is DELETED also
+    required:
+    - vnf-id
+    - vnf-type
+    - in-maint
+    - is-closed-loop-disabled
+    properties:
+      vnf-id:
+        type: string
+        description: Unique id of VNF.  This is unique across the graph.
+      vnf-instance-id:
+        type: string
+        description: vnf instance id.
+      vnf-name:
+        type: string
+        description: Name of VNF.
+      vnf-name2:
+        type: string
+        description: Alternate name of VNF.
+      vnf-type:
+        type: string
+        description: String capturing type of vnf, that was intended to identify the ASDC resource.  This field has been overloaded in service-specific ways and clients should expect changes to occur in the future to this field as ECOMP matures.
+      service-id:
+        type: string
+        description: Unique identifier of service, does not necessarily map to ASDC service models.  SOON TO BE DEPRECATED
+      regional-resource-zone:
+        type: string
+        description: Regional way of organizing pservers, source of truth should define values
+      prov-status:
+        type: string
+        description: Trigger for operational monitoring of this resource by Service Assurance systems.
+      operational-status:
+        type: string
+        description: Indicator for whether the resource is considered operational.  Valid values are in-service-path and out-of-service-path.
+      license-key:
+        type: string
+        description: OBSOLETE -  do not use
+      equipment-role:
+        type: string
+        description: Client should send valid enumerated value
+      orchestration-status:
+        type: string
+        description: Orchestration status of this VNF, used by MSO.
+      vnf-package-name:
+        type: string
+      vnf-discriptor-name:
+        type: string
+        description: vnf discriptor name
+      job-id:
+        type: string
+        description: job id corresponding to vnf
+      heat-stack-id:
+        type: string
+        description: Heat stack id corresponding to this instance, managed by MSO
+      mso-catalog-key:
+        type: string
+        description: Corresponds to the SDN-C catalog id used to configure this VCE
+      management-option:
+        type: string
+        description: identifier of managed by ATT or customer
+      ipv4-oam-address:
+        type: string
+        description: Address tail-f uses to configure generic-vnf, also used for troubleshooting and is IP used for traps generated by generic-vnf.
+      ipv4-loopback0-address:
+        type: string
+        description: v4 Loopback0 address
+      nm-lan-v6-address:
+        type: string
+        description: v6 Loopback address
+      management-v6-address:
+        type: string
+        description: v6 management address
+      vcpu:
+        type: integer
+        format: int64
+        description: number of vcpus ordered for this instance of VNF, used for VNFs with no vservers/flavors, to be used only by uCPE
+      vcpu-units:
+        type: string
+        description: units associated with vcpu, used for VNFs with no vservers/flavors, to be used only by uCPE
+      vmemory:
+        type: integer
+        format: int64
+        description: number of GB of memory ordered for this instance of VNF, used for VNFs with no vservers/flavors, to be used only by uCPE
+      vmemory-units:
+        type: string
+        description: units associated with vmemory, used for VNFs with no vservers/flavors, to be used only by uCPE
+      vdisk:
+        type: integer
+        format: int64
+        description: number of vdisks ordered for this instance of VNF, used for VNFs with no vservers/flavors, to be used only uCPE
+      vdisk-units:
+        type: string
+        description: units associated with vdisk, used for VNFs with no vservers/flavors, to be used only by uCPE
+      nshd:
+        type: integer
+        format: int64
+        description: number of associated SHD in vnf.
+      nvm:
+        type: integer
+        format: int64
+        description: number of vms in vnf.
+      nnet:
+        type: integer
+        format: int64
+        description: number of network in vnf.
+      in-maint:
+        type: boolean
+        description: used to indicate whether or not this object is in maintenance mode (maintenance mode = true). This field (in conjunction with prov-status) is used to suppress alarms and vSCL on VNFs/VMs.
+      is-closed-loop-disabled:
+        type: boolean
+        description: used to indicate whether closed loop function is enabled on this node
+      resource-version:
+        type: string
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+      summary-status:
+        type: string
+        description: details regarding the generic-vnf operation, PLEASE DISCONTINUE USE OF THIS FIELD.
+      encrypted-access-flag:
+        type: boolean
+        description: indicates whether generic-vnf access uses SSH
+      entitlement-assignment-group-uuid:
+        type: string
+        description: UUID of the Entitlement group used for licensing VNFs, OBSOLETE -  See child relationships.
+      entitlement-resource-uuid:
+        type: string
+        description: UUID of the specific entitlement resource.  OBSOLETE -  See child relationships.
+      license-assignment-group-uuid:
+        type: string
+        description: UUID of the license assignment group.  OBSOLETE -  See child relationships.
+      license-key-uuid:
+        type: string
+        description: UUID of the actual license resource.  OBSOLETE -  See child relationships.
+      model-invariant-id:
+        type: string
+        description: the ASDC model id for this resource or service model.
+        also requires: model-version-id
+      model-version-id:
+        type: string
+        description: the ASDC model version for this resource or service model.
+        also requires: model-invariant-id
+      persona-model-version:
+        type: string
+        description: the ASDC model version for this resource or service model.
+      model-customization-id:
+        type: string
+        description: captures the id of all the configuration used to customize the resource for the service.
+      widget-model-id:
+        type: string
+        description: the ASDC data dictionary widget model. This maps directly to the A&AI widget.
+      widget-model-version:
+        type: string
+        description: the ASDC data dictionary version of the widget model.This maps directly to the A&AI version of the widget.
+      as-number:
+        type: string
+        description: as-number of the VNF
+      regional-resource-subzone:
+        type: string
+        description: represents sub zone of the rr plane
+      nf-type:
+        type: string
+        description: Generic description of the type of NF
+      nf-function:
+        type: string
+        description: English description of Network function that the specific VNF deployment is providing
+      nf-role:
+        type: string
+        description: role in the network that this model will be providing
+      nf-naming-code:
+        type: string
+        description: string assigned to this model used for naming purposes
+      selflink:
+        type: string
+        description: Path to the controller object.
+      ipv4-oam-gateway-address:
+        type: string
+        description: Gateway address
+      ipv4-oam-gateway-address-prefix-length:
+        type: integer
+        format: int32
+        description: Prefix length for oam-address
+      vlan-id-outer:
+        type: integer
+        format: int64
+        description: Temporary location for S-TAG to get to VCE
+      nm-profile-name:
+        type: string
+        description: Network Management profile of this VNF
+      relationship-list:
+        properties:
+          relationship:
+            type: array
+            items:
+              $ref: "#/definitions/relationship"
+  related-to-property:
+    properties:
+      property-key:
+        type: string
+        description: Key part of a key/value pair
+      property-value:
+        type: string
+        description: Value part of a key/value pair
+  relationship-data:
+    required:
+    - relationship-key
+    - relationship-value
+    properties:
+      relationship-key:
+        type: string
+        description: A keyword provided by A&AI to indicate an attribute.
+      relationship-value:
+        type: string
+        description: Value of the attribute.
+  relationship:
+    properties:
+      related-to:
+        type: string
+        description: A keyword provided by A&AI to indicate type of node.
+      relationship-label:
+        type: string
+        description: The edge label for this relationship.
+      related-link:
+        type: string
+        description: URL to the object in A&AI.
+      relationship-data:
+        type: array
+        items:          
+          $ref: "#/definitions/relationship-data"
+      related-to-property:
+        type: array
+        items:          
+          $ref: "#/definitions/related-to-property"
+  esr-vnfm:
+    description: |
+      Persist VNFM address information used by VF-C.
+      ###### Related Nodes
+      - FROM esr-system-info (CHILD of esr-vnfm, esr-system-info BelongsTo esr-vnfm, ONE2ONE)(1)
+
+      -(1) IF this ESR-VNFM node is deleted, this FROM node is DELETED also
+    required:
+    - vnfm-id
+    properties:
+      vnfm-id:
+        type: string
+        description: Unique ID of VNFM.
+      vim-id:
+        type: string
+        description: indecate the VIM to deploy VNF.
+      certificate-url:
+        type: string
+        description: certificate url of VNFM.
+      resource-version:
+        type: string
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+      esr-system-info-list:
+        properties:
+          esr-system-info:
+            type: array
+            items:
+              $ref: "#/definitions/esr-system-info"
+      relationship-list:
+        properties:
+          relationship:
+            type: array
+            items:
+              $ref: "#/definitions/relationship"
+  esr-vnfm-list:
+    properties:
+      esr-vnfm:
+        type: array
+        items:          
+          $ref: "#/definitions/esr-vnfm"
+  esr-system-info:
+    description: |
+      Persist common address information of external systems.
+      ###### Related Nodes
+      - TO cloud-region (PARENT of esr-system-info, esr-system-info BelongsTo cloud-region, MANY2ONE)(4)
+      - TO esr-ems (PARENT of esr-system-info, esr-system-info BelongsTo esr-ems, MANY2ONE)(4)
+      - TO esr-thirdparty-sdnc (PARENT of esr-system-info, esr-system-info BelongsTo esr-thirdparty-sdnc, ONE2ONE)(4)
+      - TO esr-vnfm (PARENT of esr-system-info, esr-system-info BelongsTo esr-vnfm, ONE2ONE)(4)
+      - FROM ext-aai-network (PARENT of esr-system-info, ext-aai-network Uses esr-system-info, ONE2MANY)
+      For CCVPN Usecase(3)
+
+      -(3) IF this FROM node is deleted, this ESR-SYSTEM-INFO is DELETED also
+      -(4) IF this TO node is deleted, this ESR-SYSTEM-INFO is DELETED also
+      -ESR-SYSTEM-INFO cannot be deleted if related to EXT-AAI-NETWORK
+    required:
+    - esr-system-info-id
+    - user-name
+    - password
+    - system-type
+    properties:
+      esr-system-info-id:
+        type: string
+        description: Unique ID of esr system info.
+      system-name:
+        type: string
+        description: name of external system.
+      type:
+        type: string
+        description: type of external systems.
+      vendor:
+        type: string
+        description: vendor of external systems.
+      version:
+        type: string
+        description: version of external systems.
+      service-url:
+        type: string
+        description: url used to access external systems.
+      user-name:
+        type: string
+        description: username used to access external systems.
+      password:
+        type: string
+        description: password used to access external systems.
+      system-type:
+        type: string
+        description: it could be vim/vnfm/thirdparty-sdnc/ems-resource/ems-performance/ems-alarm.
+      protocol:
+        type: string
+        description: protocol of third party SDNC, for example netconf/snmp.
+      ssl-cacert:
+        type: string
+        description: ca file content if enabled ssl on auth-url.
+      ssl-insecure:
+        type: boolean
+        description: Whether to verify VIM's certificate.
+      ip-address:
+        type: string
+        description: service IP of ftp server.
+      port:
+        type: string
+        description: service port of ftp server.
+      cloud-domain:
+        type: string
+        description: domain info for authentication.
+      default-tenant:
+        type: string
+        description: default tenant of VIM.
+      passive:
+        type: boolean
+        description: ftp passive mode or not.
+      remote-path:
+        type: string
+        description: resource or performance data file path.
+      system-status:
+        type: string
+        description: the status of external system.
+      openstack-region-id:
+        type: string
+        description: OpenStack region ID used by MultiCloud plugin to interact with an OpenStack instance.
+      resource-version:
+        type: string
+        description: Used for optimistic concurrency.  Must be empty on create, valid on update and delete.
+      relationship-list:
+        type: array
+        items:
+          $ref: "#/definitions/relationship"

@@ -27,7 +27,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
+import com.google.common.base.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -41,8 +41,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
-import com.google.common.base.Optional;
 
 
 /**
@@ -180,6 +178,43 @@ public class HttpRestServiceProviderImplTest {
                 eq(String.class));
     }
 
+    @Test
+    public void test_put_returnOptionalPresentIfResponseIsOKAndHasBody() {
+
+        final HttpRestServiceProvider objUnderTest = new HttpRestServiceProviderImpl(mockRestTemplate);
+
+        when(mockRestTemplate.exchange(eq(DUMMY_URL), eq(HttpMethod.PUT), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(mockEntity);
+
+        when(mockEntity.getStatusCode()).thenReturn(HttpStatus.OK);
+        when(mockEntity.hasBody()).thenReturn(true);
+        when(mockEntity.getBody()).thenReturn(BODY);
+
+        final Optional<String> actual = objUnderTest.put(BODY, DUMMY_URL, String.class);
+
+        assertTrue(actual.isPresent());
+        verify(mockRestTemplate, atLeastOnce()).exchange(eq(DUMMY_URL), eq(HttpMethod.PUT), any(HttpEntity.class),
+                eq(String.class));
+    }
+
+    @Test
+    public void test_put_returnOptionalPresentIfResponseIsOKAndHasNoBody() {
+
+        final HttpRestServiceProvider objUnderTest = new HttpRestServiceProviderImpl(mockRestTemplate);
+
+        when(mockRestTemplate.exchange(eq(DUMMY_URL), eq(HttpMethod.PUT), any(HttpEntity.class), eq(String.class)))
+                .thenReturn(mockEntity);
+
+        when(mockEntity.getStatusCode()).thenReturn(HttpStatus.OK);
+        when(mockEntity.hasBody()).thenReturn(false);
+
+        final Optional<String> actual = objUnderTest.put(BODY, DUMMY_URL, String.class);
+
+        assertFalse(actual.isPresent());
+        verify(mockRestTemplate, atLeastOnce()).exchange(eq(DUMMY_URL), eq(HttpMethod.PUT), any(HttpEntity.class),
+                eq(String.class));
+    }
+
 
     @Test
     public void test_post_returnOptionalPresentIfResponseIsNotOKAndHasBody() {
@@ -197,7 +232,7 @@ public class HttpRestServiceProviderImplTest {
         verify(mockRestTemplate, atLeastOnce()).exchange(eq(DUMMY_URL), eq(HttpMethod.POST), any(HttpEntity.class),
                 eq(String.class));
     }
-    
+
     @Test(expected = InvalidRestRequestException.class)
     public void test_post_ThrowsInvalidRestRequestExceptionifHttpClientErrorExceptionWithHttpStatusBadRequest() {
         assertPostErrorScenario(HttpStatus.BAD_REQUEST);
@@ -208,7 +243,7 @@ public class HttpRestServiceProviderImplTest {
     public void test_post_ThrowsInvalidRestRequestExceptionifHttpClientErrorExceptionWithHttpStatusNotFoundHttpStatus() {
         assertPostErrorScenario(HttpStatus.NOT_FOUND);
     }
-    
+
     @Test(expected = RestProcessingException.class)
     public void test_post_ThrowsInvalidRestRequestExceptionifHttpClientErrorExceptionOccured() {
         final HttpRestServiceProvider objUnderTest = new HttpRestServiceProviderImpl(mockRestTemplate);
