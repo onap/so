@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8558fd32_ec9d2ddb",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/MsoRequest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-29T14:51:49Z",
+      "side": 1,
+      "message": "I really would prefer we do not inline if statements.",
+      "revId": "401be64fac8fcc94e1297d2d447e854308c8324e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a5630075_7802d722",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/ServiceInstances.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 698,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-29T14:51:49Z",
+      "side": 1,
+      "message": "Do we really need to bloat this class more? its already well over its limit.  The current pattern is not sustainable, please move this endpoint and its related logic to another class.",
+      "revId": "401be64fac8fcc94e1297d2d447e854308c8324e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a559703b_eda4bdfe",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/validation/CustomWorkflowValidation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-03-29T14:51:49Z",
+      "side": 1,
+      "message": "There are plenty of open source libraries that already do this, this method is not needed.  Guava has an isEmptyOrNull library.",
+      "revId": "401be64fac8fcc94e1297d2d447e854308c8324e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
