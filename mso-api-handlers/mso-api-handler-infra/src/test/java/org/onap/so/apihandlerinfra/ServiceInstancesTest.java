@@ -2568,7 +2568,31 @@ public class ServiceInstancesTest extends BaseTest{
         RequestError realResponse = errorMapper.readValue(response.getBody(), RequestError.class);
         assertEquals(realResponse.getServiceException().getText(), "No valid modelCustomizationId for networkResourceCustomization lookup is specified");
     }
-    
+    @Test
+    public void executeCustomWorkflow() throws IOException {
+        stubFor(post(urlPathEqualTo("/mso/async/services/VnfInPlaceUpdate"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
+        
+        stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]" +
+                "nfRole=GR-API-DEFAULT&action=inPlaceSoftwareUpdate"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("vnfRecipeInPlaceUpdate_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+
+        //expected response
+        ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
+        RequestReferences requestReferences = new RequestReferences();
+        requestReferences.setInstanceId("1882939");
+        requestReferences.setRequestSelfLink(createExpectedSelfLink("v1","32807a28-1a14-4b88-b7b3-2950918aa76d"));        
+        expectedResponse.setRequestReferences(requestReferences);
+        uri = servInstanceuri + "instanceManagement/v1" + "/serviceInstances/f7ce78bb-423b-11e7-93f8-0050569a7968/vnfs/ff305d54-75b4-431b-adb2-eb6b9e5ff000/workflows/71526781-e55c-4cb7-adb3-97e09d9c76be";
+        ResponseEntity<String> response = sendRequest(inputStream("/ExecuteCustomWorkflow.json"), uri, HttpMethod.POST, headers);
+
+        assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
+        ServiceInstancesResponse realResponse = mapper.readValue(response.getBody(), ServiceInstancesResponse.class);
+        assertThat(realResponse, sameBeanAs(expectedResponse).ignoring("requestReferences.requestId"));	
+    }
     @Test
     public void setServiceTypeTestALaCarte() throws JsonProcessingException{
     	String requestScope = ModelType.service.toString();

@@ -688,6 +688,22 @@ public class ServiceInstances {
 		instanceIdMap.put(CommonConstants.INSTANCE_GROUP_INSTANCE_ID, instanceGroupId);
 		return serviceInstances(request, Action.removeMembers, instanceIdMap, version, requestId, getRequestUri(requestContext));
 	}
+	
+	@POST
+	@Path("/instanceManagement/{version:[vV][1]}/serviceInstances/{serviceInstanceId}/vnfs/{vnfInstanceId}/workflows/{workflowUuid}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@ApiOperation(value="Execute custom workflow",response=Response.class)
+	@Transactional
+	public Response executeCustomWorkflow(String request, @PathParam("version") String version, @PathParam("serviceInstanceId") String serviceInstanceId,
+                                          @PathParam("vnfInstanceId") String vnfInstanceId, @PathParam("workflowUuid") String workflowUuid, @Context ContainerRequestContext requestContext) throws ApiException {
+		String requestId = getRequestId(requestContext);
+		HashMap<String, String> instanceIdMap = new HashMap<>();
+		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
+		instanceIdMap.put("vnfInstanceId", vnfInstanceId);
+		instanceIdMap.put("workflowUuid", workflowUuid);
+		return serviceInstances(request, Action.inPlaceSoftwareUpdate, instanceIdMap, version, requestId, getRequestUri(requestContext));
+	}
 
 	public String getRequestUri(ContainerRequestContext context){
 		String requestUri = context.getUriInfo().getPath();
@@ -727,7 +743,10 @@ public class ServiceInstances {
 		setInstanceId(currentActiveReq, requestScope, null, instanceIdMap);
 		 
 		int requestVersion = Integer.parseInt(version.substring(1));
-		String instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
+		String instanceName = null;
+		if (sir.getRequestDetails().getRequestInfo() != null) {
+			instanceName = sir.getRequestDetails().getRequestInfo().getInstanceName();
+		}
 		boolean alaCarteFlag = msoRequest.getAlacarteFlag(sir);
 		String vnfType = msoRequest.getVnfType(sir,requestScope,action,requestVersion);
 		String networkType = msoRequest.getNetworkType(sir,requestScope);
@@ -760,8 +779,10 @@ public class ServiceInstances {
 
 		serviceResponse.setRequestReferences(referencesResponse);
 		Boolean isBaseVfModule = false;
+		
+		String workflowUuid = (instanceIdMap ==null)? null:instanceIdMap.get("workflowUuid");
 
-        RecipeLookupResult recipeLookupResult = getServiceInstanceOrchestrationURI(sir, action, alaCarteFlag, currentActiveReq);
+        RecipeLookupResult recipeLookupResult = getServiceInstanceOrchestrationURI(sir, action, alaCarteFlag, currentActiveReq, workflowUuid);
         String serviceInstanceType = getServiceType(requestScope, sir, alaCarteFlag);						
 			ModelType modelType;
 			ModelInfo modelInfo =  sir.getRequestDetails().getModelInfo();
@@ -1264,13 +1285,15 @@ public class ServiceInstances {
 	}
 
     private RecipeLookupResult getServiceInstanceOrchestrationURI(ServiceInstancesRequest sir, Actions action, boolean alaCarteFlag, 
-    																InfraActiveRequests currentActiveReq) throws ApiException {
+    																InfraActiveRequests currentActiveReq, String workflowUuid) throws ApiException {
 		RecipeLookupResult recipeLookupResult = null;
         //if the aLaCarte flag is set to TRUE, the API-H should choose the VID_DEFAULT recipe for the requested action
 		ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
 		// Query MSO Catalog DB
 		
-		if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
+		if (workflowUuid != null) {
+			recipeLookupResult = getCustomWorkflowUri(workflowUuid);
+		}else if (action == Action.applyUpdatedConfig || action == Action.inPlaceSoftwareUpdate) {
 			recipeLookupResult = getDefaultVnfUri(sir, action);
         }else if(action == Action.addMembers || action == Action.removeMembers){
         	recipeLookupResult = new RecipeLookupResult("/mso/async/services/WorkflowActionBB", 180);
@@ -1914,6 +1937,12 @@ public class ServiceInstances {
 		}
 				
 			return postBPELRequest(currentActiveReq, requestClientParameter, orchestrationUri, requestScope);
+	}
+    
+    private RecipeLookupResult getCustomWorkflowUri(String workflowUuid) {
+    	
+		RecipeLookupResult recipeLookupResult = new RecipeLookupResult("/mso/async/services/VnfInPlaceUpdate", 180);
+		return recipeLookupResult;		
 	}
 
 	public String getRequestId(ContainerRequestContext requestContext) throws ValidateException {

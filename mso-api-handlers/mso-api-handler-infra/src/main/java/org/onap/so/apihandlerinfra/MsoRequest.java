@@ -50,6 +50,7 @@ import org.onap.so.apihandlerinfra.validation.MembersValidation;
 import org.onap.so.apihandlerinfra.validation.ApplyUpdatedConfigValidation;
 import org.onap.so.apihandlerinfra.validation.CloudConfigurationValidation;
 import org.onap.so.apihandlerinfra.validation.ConfigurationParametersValidation;
+import org.onap.so.apihandlerinfra.validation.CustomWorkflowValidation;
 import org.onap.so.apihandlerinfra.validation.InPlaceSoftwareUpdateValidation;
 import org.onap.so.apihandlerinfra.validation.InstanceIdMapValidation;
 import org.onap.so.apihandlerinfra.validation.ModelInfoValidation;
@@ -175,7 +176,11 @@ public class MsoRequest {
         
         rules.add(new InstanceIdMapValidation());
         
-        if(reqVersion >= 6 && action == Action.inPlaceSoftwareUpdate){
+        String workflowUuid = (instanceIdMap ==null)? null:instanceIdMap.get("workflowUuid");
+        
+        if (workflowUuid != null) {
+        	rules.add(new CustomWorkflowValidation());
+        }else if(reqVersion >= 6 && action == Action.inPlaceSoftwareUpdate){
         	rules.add(new InPlaceSoftwareUpdateValidation());
         }else if(reqVersion >= 6 && action == Action.applyUpdatedConfig){
         	rules.add(new ApplyUpdatedConfigValidation());
@@ -361,7 +366,9 @@ public class MsoRequest {
 	            	aq.setInstanceGroupName(requestInfo.getInstanceName());
 	            }
 	            if(ModelType.vnf.name().equalsIgnoreCase(requestScope)){
-	              	aq.setVnfName(requestInfo.getInstanceName());
+	            	if (requestInfo != null) {
+	            		aq.setVnfName(requestInfo.getInstanceName());
+	            	}
 					if (null != servInsReq.getRequestDetails()) {
 						RelatedInstanceList[] instanceList = servInsReq.getRequestDetails().getRelatedInstanceList();
 	
