@@ -42,7 +42,7 @@ public class HealthCheckTest {
     @LocalServerPort
     private int port;
 
-    private final TestRestTemplate restTemplate = new TestRestTemplate();
+    private final TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
     @Test
     public void testHealthcheck() throws Exception {

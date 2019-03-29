@@ -21,15 +21,16 @@
 package org.onap.so.adapters.vnfmadapter.rest;
 
 import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
-import java.util.UUID;
 import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.adapters.vnfmadapter.lifecycle.LifecycleManager;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -49,6 +50,12 @@ import io.swagger.annotations.ApiParam;
 public class VnfmAdapterController {
 
     private static final Logger logger = LoggerFactory.getLogger(VnfmAdapterController.class);
+    private final LifecycleManager lifecycleManager;
+
+    @Autowired
+    VnfmAdapterController(final LifecycleManager lifecycleManager) {
+        this.lifecycleManager = lifecycleManager;
+    }
 
     @PostMapping(value = "/vnfs/{vnfId}")
     public ResponseEntity<CreateVnfResponse> vnfCreate(
@@ -73,10 +80,9 @@ public class VnfmAdapterController {
 
         logger.info("REST request vnfCreate with body: {}", createVnfRequest);
 
-        final CreateVnfResponse response = new CreateVnfResponse();
-        response.setJobId(UUID.randomUUID().toString());
+        final CreateVnfResponse createVnfResponse = lifecycleManager.createVnf(vnfId, createVnfRequest);
         clearLoggingMDCs();
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(createVnfResponse, HttpStatus.ACCEPTED);
     }
 
     private void setLoggingMDCs(final String requestId, final String partnerName, final String invocationId) {
