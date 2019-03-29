@@ -72,6 +72,7 @@ import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfModuleArtifact;
 import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
+import org.onap.so.asdc.util.CreateVFModuleResourceParams;
 import org.onap.so.asdc.util.YamlEditor;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
@@ -968,9 +969,16 @@ public class ToscaResourceInstaller {
                             .equals(vfMetadata.getVfModuleModelCustomizationUUID()))
                         .findFirst();
                     if (matchingObject.isPresent()) {
-                        VfModuleCustomization vfModuleCustomization = createVFModuleResource(matchingObject.get(),
-                            nodeTemplate, toscaResourceStruct,
-                            vfResourceStructure, vfMetadata, vnfResource, service, existingCvnfcSet, existingVnfcSet);
+                        VfModuleCustomization vfModuleCustomization = createVFModuleResource(new CreateVFModuleResourceParams()
+                            .withGroup(matchingObject.get())
+                            .withVfTemplate(nodeTemplate)
+                            .withToscaResourceStructure(toscaResourceStruct)
+                            .withVfResourceStructure(vfResourceStructure)
+                            .withVfModuleData(vfMetadata)
+                            .withVnfResource(vnfResource)
+                            .withService(service)
+                            .withExistingCvnfcSet(existingCvnfcSet)
+                            .withExistingVnfcSet(existingVnfcSet));
                         vfModuleCustomization.getVfModule().setVnfResources(vnfResource.getVnfResources());
                     } else {
                         throw new Exception(
@@ -1710,29 +1718,26 @@ public class ToscaResourceInstaller {
 
     }
 
-    protected VfModuleCustomization createVFModuleResource(Group group, NodeTemplate vfTemplate,
-        ToscaResourceStructure toscaResourceStructure, VfResourceStructure vfResourceStructure,
-        IVfModuleData vfModuleData, VnfResourceCustomization vnfResource, Service service,
-        Set<CvnfcCustomization> existingCvnfcSet, Set<VnfcCustomization> existingVnfcSet) {
+    protected VfModuleCustomization createVFModuleResource(CreateVFModuleResourceParams params) {
 
-        VfModuleCustomization vfModuleCustomization = findExistingVfModuleCustomization(vnfResource,
-            vfModuleData.getVfModuleModelCustomizationUUID());
+        VfModuleCustomization vfModuleCustomization = findExistingVfModuleCustomization(params.getVnfResource(),
+            params.getVfModuleData().getVfModuleModelCustomizationUUID());
         if (vfModuleCustomization == null) {
-            VfModule vfModule = findExistingVfModule(vnfResource,
-                vfTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID));
-            Metadata vfMetadata = group.getMetadata();
+            VfModule vfModule = findExistingVfModule(params.getVnfResource(),
+                params.getVfTemplate().getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID));
+            Metadata vfMetadata = params.getGroup().getMetadata();
             if (vfModule == null) {
-                vfModule = createVfModule(group, toscaResourceStructure, vfModuleData, vfMetadata);
+                vfModule = createVfModule(params.getGroup(), params.getToscaResourceStructure(), params.getVfModuleData(), vfMetadata);
             }
 
-            vfModuleCustomization = createVfModuleCustomization(group, toscaResourceStructure, vfModule, vfModuleData);
-            setHeatInformationForVfModule(toscaResourceStructure, vfResourceStructure, vfModule, vfModuleCustomization,
+            vfModuleCustomization = createVfModuleCustomization(params.getGroup(), params.getToscaResourceStructure(), vfModule, params.getVfModuleData());
+            setHeatInformationForVfModule(params.getToscaResourceStructure(), params.getVfResourceStructure(), vfModule, vfModuleCustomization,
                 vfMetadata);
             vfModuleCustomization.setVfModule(vfModule);
             vfModule.getVfModuleCustomization().add(vfModuleCustomization);
-            vnfResource.getVfModuleCustomizations().add(vfModuleCustomization);
+            params.getVnfResource().getVfModuleCustomizations().add(vfModuleCustomization);
         } else {
-            vfResourceStructure.setAlreadyDeployed(true);
+            params.getVfResourceStructure().setAlreadyDeployed(true);
         }
 
         //******************************************************************************************************************
@@ -1744,8 +1749,8 @@ public class ToscaResourceInstaller {
         Set<VnfcCustomization> vnfcCustomizations = new HashSet<VnfcCustomization>();
 
         // Only set the CVNFC if this vfModule group is a member of it.
-        List<NodeTemplate> groupMembers = toscaResourceStructure.getSdcCsarHelper()
-            .getMembersOfVfModule(vfTemplate, group);
+        List<NodeTemplate> groupMembers = params.getToscaResourceStructure().getSdcCsarHelper()
+            .getMembersOfVfModule(params.getVfTemplate(), params.getGroup());
         String vfModuleMemberName = null;
 
         for (NodeTemplate node : groupMembers) {
@@ -1753,18 +1758,18 @@ public class ToscaResourceInstaller {
         }
 
         // Extract CVFC lists
-        List<NodeTemplate> cvfcList = toscaResourceStructure.getSdcCsarHelper()
-            .getNodeTemplateBySdcType(vfTemplate, SdcTypes.CVFC);
+        List<NodeTemplate> cvfcList = params.getToscaResourceStructure().getSdcCsarHelper()
+            .getNodeTemplateBySdcType(params.getVfTemplate(), SdcTypes.CVFC);
 
         for (NodeTemplate cvfcTemplate : cvfcList) {
 
-            CvnfcCustomization existingCvnfcCustomization = findExistingCvfc(existingCvnfcSet,
+            CvnfcCustomization existingCvnfcCustomization = findExistingCvfc(params.getExistingCvnfcSet(),
                 cvfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 
             if (vfModuleMemberName != null && vfModuleMemberName.equalsIgnoreCase(cvfcTemplate.getName())) {
 
                 //Extract associated VFC - Should always be just one
-                List<NodeTemplate> vfcList = toscaResourceStructure.getSdcCsarHelper()
+                List<NodeTemplate> vfcList = params.getToscaResourceStructure().getSdcCsarHelper()
                     .getNodeTemplateBySdcType(cvfcTemplate, SdcTypes.VFC);
 
                 for (NodeTemplate vfcTemplate : vfcList) {
@@ -1772,7 +1777,7 @@ public class ToscaResourceInstaller {
                     VnfcCustomization vnfcCustomization = new VnfcCustomization();
                     VnfcCustomization existingVnfcCustomization = null;
 
-                    existingVnfcCustomization = findExistingVfc(existingVnfcSet,
+                    existingVnfcCustomization = findExistingVfc(params.getExistingVnfcSet(),
                         vfcTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
 
                     if (existingVnfcCustomization == null) {
@@ -1801,7 +1806,7 @@ public class ToscaResourceInstaller {
                         vnfcCustomization.setToscaNodeType(testNull(vfcTemplate.getType()));
 
                         vnfcCustomizations.add(vnfcCustomization);
-                        existingVnfcSet.add(vnfcCustomization);
+                        params.getExistingVnfcSet().add(vnfcCustomization);
                     }
 
                     // This check is needed incase the VFC subcategory is something other than Abstract.  In that case we want to skip adding that record to our DB.
@@ -1837,42 +1842,42 @@ public class ToscaResourceInstaller {
                                 cvnfcCustomization.setVnfcCustomization(vnfcCustomization);
                             }
 
-                            cvnfcCustomization.setNfcFunction(toscaResourceStructure.getSdcCsarHelper()
+                            cvnfcCustomization.setNfcFunction(params.getToscaResourceStructure().getSdcCsarHelper()
                                 .getNodeTemplatePropertyLeafValue(cvfcTemplate, "nfc_function"));
-                            cvnfcCustomization.setNfcNamingCode(toscaResourceStructure.getSdcCsarHelper()
+                            cvnfcCustomization.setNfcNamingCode(params.getToscaResourceStructure().getSdcCsarHelper()
                                 .getNodeTemplatePropertyLeafValue(cvfcTemplate, "nfc_naming_code"));
                             cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
-                            cvnfcCustomization.setVnfResourceCustomization(vnfResource);
+                            cvnfcCustomization.setVnfResourceCustomization(params.getVnfResource());
 
                             cvnfcCustomizations.add(cvnfcCustomization);
-                            existingCvnfcSet.add(cvnfcCustomization);
+                            params.getExistingCvnfcSet().add(cvnfcCustomization);
                         }
 
                         //*****************************************************************************************************************************************
                         //* Extract Fabric Configuration
                         //*****************************************************************************************************************************************
 
-                        List<NodeTemplate> fabricConfigList = toscaResourceStructure.getSdcCsarHelper()
-                            .getNodeTemplateBySdcType(vfTemplate, SdcTypes.CONFIGURATION);
+                        List<NodeTemplate> fabricConfigList = params.getToscaResourceStructure().getSdcCsarHelper()
+                            .getNodeTemplateBySdcType(params.getVfTemplate(), SdcTypes.CONFIGURATION);
 
                         for (NodeTemplate fabricTemplate : fabricConfigList) {
 
                             ConfigurationResource fabricConfig = null;
 
-                            ConfigurationResource existingConfig = findExistingConfiguration(service,
+                            ConfigurationResource existingConfig = findExistingConfiguration(params.getService(),
                                 fabricTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 
                             if (existingConfig == null) {
 
-                                fabricConfig = createFabricConfiguration(fabricTemplate, toscaResourceStructure);
+                                fabricConfig = createFabricConfiguration(fabricTemplate, params.getToscaResourceStructure());
 
                             } else {
                                 fabricConfig = existingConfig;
                             }
 
                             VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = createVfCnvfConfigCustomization(
-                                fabricTemplate, toscaResourceStructure,
-                                vnfResource, vfModuleCustomization, cvnfcCustomization, fabricConfig, vfTemplate,
+                                fabricTemplate, params.getToscaResourceStructure(),
+                                params.getVnfResource(), vfModuleCustomization, cvnfcCustomization, fabricConfig, params.getVfTemplate(),
                                 vfModuleMemberName);
 
                             vnfVfmoduleCvnfcConfigurationCustomizations.add(vnfVfmoduleCvnfcConfigurationCustomization);

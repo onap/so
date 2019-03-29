@@ -20,21 +20,23 @@
 
 package org.onap.so.asdc.installer.heat;
 
-import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import org.hibernate.exception.LockAcquisitionException;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,6 +45,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.onap.sdc.api.notification.INotificationData;
 import org.onap.sdc.api.notification.IResourceInstance;
 import org.onap.sdc.tosca.parser.api.ISdcCsarHelper;
 import org.onap.sdc.tosca.parser.impl.SdcCsarHelperImpl;
@@ -53,13 +56,18 @@ import org.onap.sdc.toscaparser.api.elements.Metadata;
 import org.onap.sdc.toscaparser.api.elements.StatefulEntityType;
 import org.onap.sdc.utils.DistributionStatusEnum;
 import org.onap.so.asdc.BaseTest;
+import org.onap.so.asdc.client.ResourceInstance;
 import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 import org.onap.so.asdc.client.test.emulators.ArtifactInfoImpl;
 import org.onap.so.asdc.client.test.emulators.JsonStatusData;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
+import org.onap.so.asdc.installer.IVfModuleData;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
+import org.onap.so.asdc.installer.VfModuleStructure;
+import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.db.catalog.beans.ConfigurationResource;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
+import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
@@ -363,7 +371,59 @@ public class ToscaResourceInstallerTest extends BaseTest {
 		assertTrue(vnrResourceCustomization.isPresent());
 		assertEquals(ToscaResourceInstaller.VLAN_NETWORK_RECEPTOR, entityType.getType());
 	}
-	
+
+    @Test
+    public void processVfModulesTest() throws Exception {
+        prepareConfigurationResourceCustomization();
+        doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(csarHelper)
+            .getMetadataPropertyValue(metadata, SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
+        mockVfModuleGroups();
+        doReturn(Collections.singletonList(getVfModuleStructure())).when(vfResourceStructure).getVfModuleStructure();
+        ResourceInstance instance = mock(ResourceInstance.class);
+        doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(instance).getResourceCustomizationUUID();
+        when(vfResourceStructure.getResourceInstance()).thenReturn(instance);
+
+        Service service = new Service();
+
+        toscaInstaller.processVfModules(
+            toscaResourceStructure,
+            vfResourceStructure,
+            service,
+            nodeTemplate,
+            metadata,
+            "category");
+
+        assertEquals(service.getVnfCustomizations().size(), 1);
+    }
+
+    private void mockVfModuleGroups() {
+        Group group = mock(Group.class);
+        Metadata groupMetadata = mock(Metadata.class);
+        doReturn(groupMetadata).when(group).getMetadata();
+        doReturn(MockConstants.MODEL_CUSTOMIZATIONUUID).when(groupMetadata).getValue("vfModuleModelCustomizationUUID");
+        doReturn(Collections.singletonList(group)).when(csarHelper).getVfModulesByVf(MockConstants.MODEL_CUSTOMIZATIONUUID);
+        doReturn("0").when(csarHelper).getGroupPropertyLeafValue(group, SdcPropertyNames.PROPERTY_NAME_INITIALCOUNT);
+        doReturn(MockConstants.MODEL_UUID).when(csarHelper)
+            .getMetadataPropertyValue(groupMetadata, SdcPropertyNames.PROPERTY_NAME_VFMODULEMODELUUID);
+    }
+
+    private VfModuleStructure getVfModuleStructure() throws ArtifactInstallerException {
+
+        INotificationData notificationData = Mockito.mock(INotificationData.class);
+        IResourceInstance resourceInstance = Mockito.mock(IResourceInstance.class);
+        when(resourceInstance.getResourceInstanceName()).thenReturn("Resource 1");
+        when(resourceInstance.getResourceInvariantUUID()).thenReturn("121212121212");
+        VfResourceStructure vfResourceStructure = new VfResourceStructure(notificationData, resourceInstance);
+
+        IVfModuleData moduleMetadata = Mockito.mock(IVfModuleData.class);
+        when(moduleMetadata.getVfModuleModelName()).thenReturn("IV Module Data Name");
+        when(moduleMetadata.getVfModuleModelUUID()).thenReturn(MockConstants.MODEL_UUID);
+        when(moduleMetadata.getVfModuleModelCustomizationUUID()).thenReturn(MockConstants.MODEL_CUSTOMIZATIONUUID);
+        when(moduleMetadata.getArtifacts()).thenReturn(Collections.<String> emptyList());
+
+        return new VfModuleStructure(vfResourceStructure, moduleMetadata);
+    }
+
 	class MockConstants{
 		public final static String MODEL_NAME = "VLAN Network Receptor Configuration";
 		public final static String MODEL_INVARIANT_UUID = "1608eef4-de53-4334-a8d2-ba79cab4bde0";
