@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b0f0976c_8b560d91",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/EtsiVnfDeleteTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 3237
+      },
+      "writtenOn": "2019-03-29T09:10:45Z",
+      "side": 1,
+      "message": "this code is used in VnfmAdapterCreateVnfTaskTest as well,  extracted out to its own class and remove this code duplication",
+      "range": {
+        "startLine": 125,
+        "startChar": 2,
+        "endLine": 179,
+        "endChar": 3
+      },
+      "revId": "1b0a7fb52f6582ec1fecdfd7335126ab722eb4aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
