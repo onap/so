@@ -1,0 +1,18 @@
+{
+  "requestDetails": {
+    "cloudConfiguration": {
+      "cloudOwner": "att-aic",
+      "lcpCloudRegionId": "mdt1",
+      "tenantId": "88a6ca3ee0394ade9403f075db23167e"
+    },
+    "requestParameters": {
+      "userParams": [
+        {
+          "existing_software_version": "3.1",
+          "new_software_version": "3.2",
+          "operations_timeout": "3600"
+        }
+      ]
+    }
+  }
+}

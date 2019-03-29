@@ -29,9 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.onap.so.logger.HttpHeadersConstants.ONAP_REQUEST_ID;
@@ -63,20 +61,14 @@ import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.so.apihandlerinfra.exceptions.ContactCamundaException;
-import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
-import org.onap.so.serviceinstancebeans.ModelInfo;
-import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.RequestError;
-import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
@@ -108,7 +100,7 @@ public class ServiceInstancesTest extends BaseTest{
 	
     @Autowired
     private ServiceInstances servInstances;
-
+  
 	@Value("${wiremock.server.port}")
 	private String wiremockPort;
 
@@ -190,39 +182,7 @@ public class ServiceInstancesTest extends BaseTest{
     public ResponseEntity<String> sendRequest(String requestJson, String uriPath, HttpMethod reqMethod){
     	return sendRequest(requestJson, uriPath, reqMethod, new HttpHeaders());
     }
-
-    @Test
-    public void test_mapJSONtoMSOStyle() throws IOException{
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
-        String testRequest= inputStream("/ServiceInstanceDefault.json");
-        String resultString = servInstances.mapJSONtoMSOStyle(testRequest, null, false, null);
-        ServiceInstancesRequest sir = mapper.readValue(resultString, ServiceInstancesRequest.class);
-        ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
-        assertEquals("f7ce78bb-423b-11e7-93f8-0050569a796",modelInfo.getModelCustomizationUuid());
-        assertEquals("modelInstanceName",modelInfo.getModelInstanceName());
-        assertEquals("f7ce78bb-423b-11e7-93f8-0050569a7965",modelInfo.getModelInvariantUuid());
-        assertEquals("10",modelInfo.getModelUuid());
-
-    }
-    
-    
-    @Test
-    public void test_mapJSONtoMSOStyleUsePreload() throws IOException{
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
-        String testRequest= inputStream("/ServiceInstanceDefault.json");
-        ServiceInstancesRequest sir = new ServiceInstancesRequest();
-        RequestDetails rd = new RequestDetails();
-        RequestParameters rp = new RequestParameters();
-        rp.setUsePreload(true);
-        rd.setRequestParameters(rp);
-        sir.setRequestDetails(rd);
-        String resultString = servInstances.mapJSONtoMSOStyle(testRequest, sir, false, null);
-        ServiceInstancesRequest sir1 = mapper.readValue(resultString, ServiceInstancesRequest.class);
-        assertTrue(sir1.getRequestDetails().getRequestParameters().getUsePreload());
-    }
-    
+   
     @Test
     public void createServiceInstanceVIDDefault() throws IOException{
         TestAppender.events.clear();
@@ -2569,160 +2529,5 @@ public class ServiceInstancesTest extends BaseTest{
         assertEquals(realResponse.getServiceException().getText(), "No valid modelCustomizationId for networkResourceCustomization lookup is specified");
     }
     
-    @Test
-    public void setServiceTypeTestALaCarte() throws JsonProcessingException{
-    	String requestScope = ModelType.service.toString();
-    	Boolean aLaCarteFlag = true;
-    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
-    	RequestDetails requestDetails = new RequestDetails();
-    	RequestInfo requestInfo = new RequestInfo();
-    	requestInfo.setSource("VID");
-    	requestDetails.setRequestInfo(requestInfo);
-    	sir.setRequestDetails(requestDetails);
-		Service defaultService = new Service();
-		defaultService.setServiceType("testServiceTypeALaCarte");
-    	
-    	stubFor(get(urlMatching(".*/service/search/.*"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService))
-                        .withStatus(HttpStatus.SC_OK)));
-    	
-    	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
-    	assertEquals(serviceType, "testServiceTypeALaCarte");
-    }
-    @Test
-    public void setServiceTypeTest() throws JsonProcessingException{
-    	String requestScope = ModelType.service.toString();
-    	Boolean aLaCarteFlag = false;
-    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
-    	RequestDetails requestDetails = new RequestDetails();
-    	RequestInfo requestInfo = new RequestInfo();
-    	ModelInfo modelInfo = new ModelInfo();
-    	modelInfo.setModelVersionId("0dd91181-49da-446b-b839-cd959a96f04a");
-    	requestInfo.setSource("VID");
-    	requestDetails.setModelInfo(modelInfo);
-    	requestDetails.setRequestInfo(requestInfo);
-    	sir.setRequestDetails(requestDetails);
-		Service defaultService = new Service();
-		defaultService.setServiceType("testServiceType");
-    	
-    	stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService))
-                        .withStatus(HttpStatus.SC_OK)));
-    	
-    	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
-    	assertEquals(serviceType, "testServiceType");
-    }
-    @Test
-    public void setServiceTypeTestDefault() throws JsonProcessingException{
-    	String requestScope = ModelType.service.toString();
-    	Boolean aLaCarteFlag = false;
-    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
-    	RequestDetails requestDetails = new RequestDetails();
-    	RequestInfo requestInfo = new RequestInfo();
-    	ModelInfo modelInfo = new ModelInfo();
-    	modelInfo.setModelVersionId("0dd91181-49da-446b-b839-cd959a96f04a");
-    	requestInfo.setSource("VID");
-    	requestDetails.setModelInfo(modelInfo);
-    	requestDetails.setRequestInfo(requestInfo);
-    	sir.setRequestDetails(requestDetails);
-		Service defaultService = new Service();
-		defaultService.setServiceType("testServiceType");
-    	
-    	stubFor(get(urlMatching(".*/service/0dd91181-49da-446b-b839-cd959a96f04a"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withStatus(HttpStatus.SC_NOT_FOUND)));
-    	stubFor(get(urlMatching(".*/service/search/.*"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(mapper.writeValueAsString(defaultService))
-                        .withStatus(HttpStatus.SC_OK)));
-    	
-    	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
-    	assertEquals(serviceType, "testServiceType");
-    }
-    @Test
-    public void setServiceTypeTestNetwork() throws JsonProcessingException{
-    	String requestScope = ModelType.network.toString();
-    	Boolean aLaCarteFlag = null;
-    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
-    	RequestDetails requestDetails = new RequestDetails();
-    	RequestInfo requestInfo = new RequestInfo();
-    	ModelInfo modelInfo = new ModelInfo();
-    	modelInfo.setModelName("networkModelName");
-    	requestInfo.setSource("VID");
-    	requestDetails.setModelInfo(modelInfo);
-    	requestDetails.setRequestInfo(requestInfo);
-    	sir.setRequestDetails(requestDetails);
-    	
-    	String serviceType = servInstances.getServiceType(requestScope, sir, aLaCarteFlag);
-    	assertEquals(serviceType, "networkModelName");
-    }
-    @Test
-    public void setServiceInstanceIdInstanceGroupTest() throws JsonParseException, JsonMappingException, IOException{
-    	String requestScope = "instanceGroup";
-    	ServiceInstancesRequest sir = mapper.readValue(inputStream("/CreateInstanceGroup.json"), ServiceInstancesRequest.class);
-    	assertEquals("ddcbbf3d-f2c1-4ca0-8852-76a807285efc", servInstances.setServiceInstanceId(requestScope, sir));
-    }
-    @Test
-    public void setServiceInstanceIdTest(){
-    	String requestScope = "vnf";
-    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
-    	sir.setServiceInstanceId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
-    	assertEquals("f0a35706-efc4-4e27-80ea-a995d7a2a40f", servInstances.setServiceInstanceId(requestScope, sir));
-    }
-    @Test
-    public void setServiceInstanceIdReturnNullTest(){
-    	String requestScope = "vnf";
-    	ServiceInstancesRequest sir = new ServiceInstancesRequest();
-    	assertNull(servInstances.setServiceInstanceId(requestScope, sir));
-    }
-    @Test
-    public void camundaHistoryCheckTest() throws ContactCamundaException, RequestDbFailureException{
-    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/HistoryCheckResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-    	
-    	InfraActiveRequests duplicateRecord = new InfraActiveRequests();
-    	duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
-    	boolean inProgress = false;
-    	inProgress = servInstances.camundaHistoryCheck(duplicateRecord, null);
-    	assertTrue(inProgress);
-    }
-    @Test
-    public void camundaHistoryCheckNoneFoundTest() throws ContactCamundaException, RequestDbFailureException{
-    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody("[]").withStatus(org.apache.http.HttpStatus.SC_OK)));
-    	
-    	InfraActiveRequests duplicateRecord = new InfraActiveRequests();
-    	duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
-    	boolean inProgress = false;
-    	inProgress = servInstances.camundaHistoryCheck(duplicateRecord, null);
-    	assertFalse(inProgress);
-    }
-    @Test
-    public void camundaHistoryCheckNotInProgressTest()throws ContactCamundaException, RequestDbFailureException{
-    	stubFor(get(("/sobpmnengine/history/process-instance?variables=mso-request-id_eq_f0a35706-efc4-4e27-80ea-a995d7a2a40f"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBodyFile("Camunda/HistoryCheckResponseCompleted.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
-    	
-    	InfraActiveRequests duplicateRecord = new InfraActiveRequests();
-    	duplicateRecord.setRequestId("f0a35706-efc4-4e27-80ea-a995d7a2a40f");
-    	boolean inProgress = false;
-    	inProgress = servInstances.camundaHistoryCheck(duplicateRecord, null);
-    	assertFalse(inProgress);
-    }
-    @Test
-    public void setCamundaHeadersTest()throws ContactCamundaException, RequestDbFailureException{
-    	String encryptedAuth   = "015E7ACF706C6BBF85F2079378BDD2896E226E09D13DC2784BA309E27D59AB9FAD3A5E039DF0BB8408"; // user:password
-    	String key = "07a7159d3bf51a0e53be7a8f89699be7";
-    	HttpHeaders headers = servInstances.setCamundaHeaders(encryptedAuth, key);
-    	List<org.springframework.http.MediaType> acceptedType = headers.getAccept();
-    	String expectedAcceptedType = "application/json";
-    	assertEquals(expectedAcceptedType, acceptedType.get(0).toString());
-    	String basicAuth = headers.getFirst(HttpHeaders.AUTHORIZATION);
-    	String expectedBasicAuth = "Basic dXNlcjpwYXNzd29yZA==";    	
-    	assertEquals(expectedBasicAuth, basicAuth);
-    }  
+   
 }
