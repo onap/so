@@ -22,6 +22,30 @@
       "revId": "1b0a7fb52f6582ec1fecdfd7335126ab722eb4aa",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "64b83fc6_d89704da",
+        "filename": "bpmn/so-bpmn-tasks/src/test/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/EtsiVnfDeleteTaskTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 3813
+      },
+      "writtenOn": "2019-03-30T16:42:26Z",
+      "side": 1,
+      "message": "Fixed",
+      "parentUuid": "b0f0976c_8b560d91",
+      "range": {
+        "startLine": 125,
+        "startChar": 2,
+        "endLine": 179,
+        "endChar": 3
+      },
+      "revId": "1b0a7fb52f6582ec1fecdfd7335126ab722eb4aa",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
