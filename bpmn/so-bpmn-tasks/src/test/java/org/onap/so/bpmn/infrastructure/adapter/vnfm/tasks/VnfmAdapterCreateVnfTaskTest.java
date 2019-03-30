@@ -30,28 +30,19 @@ import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREATE_VNF_REQUEST_PARAM_NAME;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREATE_VNF_RESPONSE_PARAM_NAME;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.INPUT_PARAMETER;
-
-import java.io.Serializable;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-
 import org.junit.Test;
 import org.mockito.Mock;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.onap.so.bpmn.common.exceptions.RequiredExecutionVariableExeception;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
-import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
-import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.onap.vnfmadapter.v1.model.Tenant;
-
 import com.google.common.base.Optional;
 
 
@@ -60,191 +51,131 @@ import com.google.common.base.Optional;
  */
 public class VnfmAdapterCreateVnfTaskTest extends BaseTaskTest {
 
-    private static final String MODEL_INSTANCE_NAME = "MODEL_INSTANCE_NAME";
+  private static final String MODEL_INSTANCE_NAME = "MODEL_INSTANCE_NAME";
 
-    private static final String CLOUD_OWNER = "CLOUD_OWNER";
+  private static final String CLOUD_OWNER = "CLOUD_OWNER";
 
-    private static final String LCP_CLOUD_REGIONID = "RegionOnce";
+  private static final String LCP_CLOUD_REGIONID = "RegionOnce";
 
-    private static final String TENANT_ID = UUID.randomUUID().toString();
+  private static final String VNF_ID = UUID.randomUUID().toString();
 
-    private static final String VNF_ID = UUID.randomUUID().toString();
+  private static final String VNF_NAME = "VNF_NAME";
 
-    private static final String VNF_NAME = "VNF_NAME";
+  private static final String JOB_ID = UUID.randomUUID().toString();
 
-    private static final String JOB_ID = UUID.randomUUID().toString();
+  @Mock
+  private VnfmAdapterServiceProvider mockedVnfmAdapterServiceProvider;
 
-    @Mock
-    private VnfmAdapterServiceProvider mockedVnfmAdapterServiceProvider;
+  private final BuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
 
-    private final BuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
+  @Test
+  public void testBuildCreateVnfRequest_withValidValues_storesRequestInExecution() throws Exception {
 
-    @Test
-    public void testBuildCreateVnfRequest_withValidValues_storesRequestInExecution() throws Exception {
+    final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
+    stubbedxecution.setVariable(INPUT_PARAMETER, new InputParameter(Collections.emptyMap(), Collections.emptyList()));
 
-        final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
-        stubbedxecution.setVariable(INPUT_PARAMETER,
-                new InputParameter(Collections.emptyMap(), Collections.emptyList()));
+    when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(getGenericVnf());
+    objUnderTest.buildCreateVnfRequest(stubbedxecution);
 
-        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(getGenericVnf());
-        objUnderTest.buildCreateVnfRequest(stubbedxecution);
+    final CreateVnfRequest actual = stubbedxecution.getVariable(CREATE_VNF_REQUEST_PARAM_NAME);
+    assertNotNull(actual);
+    assertEquals(VNF_NAME + "." + MODEL_INSTANCE_NAME, actual.getName());
 
-        final CreateVnfRequest actual = stubbedxecution.getVariable(CREATE_VNF_REQUEST_PARAM_NAME);
-        assertNotNull(actual);
-        assertEquals(VNF_NAME + "." + MODEL_INSTANCE_NAME, actual.getName());
+    final Tenant actualTenant = actual.getTenant();
+    assertEquals(CLOUD_OWNER, actualTenant.getCloudOwner());
+    assertEquals(LCP_CLOUD_REGIONID, actualTenant.getRegionName());
+    assertEquals(StubbedBuildingBlockExecution.getTenantId(), actualTenant.getTenantId());
 
-        final Tenant actualTenant = actual.getTenant();
-        assertEquals(CLOUD_OWNER, actualTenant.getCloudOwner());
-        assertEquals(LCP_CLOUD_REGIONID, actualTenant.getRegionName());
-        assertEquals(TENANT_ID, actualTenant.getTenantId());
+  }
 
-    }
+  @Test
+  public void testBuildCreateVnfRequest_extractPojosForBBThrowsException_exceptionBuilderCalled() throws Exception {
 
-    @Test
-    public void testBuildCreateVnfRequest_extractPojosForBBThrowsException_exceptionBuilderCalled() throws Exception {
+    final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
 
-        final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
+    when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenThrow(RuntimeException.class);
 
-        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenThrow(RuntimeException.class);
+    objUnderTest.buildCreateVnfRequest(stubbedxecution);
 
-        objUnderTest.buildCreateVnfRequest(stubbedxecution);
+    final CreateVnfRequest actual = stubbedxecution.getVariable(CREATE_VNF_REQUEST_PARAM_NAME);
 
-        final CreateVnfRequest actual = stubbedxecution.getVariable(CREATE_VNF_REQUEST_PARAM_NAME);
+    assertNull(actual);
+    verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1200),
+        any(Exception.class));
 
-        assertNull(actual);
-        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1200),
-                any(Exception.class));
+  }
 
-    }
+  @Test
+  public void testInvokeVnfmAdapter_validValues_storesResponseInExecution() throws Exception {
 
-    @Test
-    public void testInvokeVnfmAdapter_validValues_storesResponseInExecution() throws Exception {
+    final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
 
-        final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
+    stubbedxecution.setVariable(CREATE_VNF_REQUEST_PARAM_NAME, new CreateVnfRequest());
 
-        stubbedxecution.setVariable(CREATE_VNF_REQUEST_PARAM_NAME, new CreateVnfRequest());
+    when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(getGenericVnf());
+    when(mockedVnfmAdapterServiceProvider.invokeCreateInstantiationRequest(eq(VNF_ID), any(CreateVnfRequest.class)))
+        .thenReturn(getCreateVnfResponse());
 
-        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(getGenericVnf());
-        when(mockedVnfmAdapterServiceProvider.invokeCreateInstantiationRequest(eq(VNF_ID), any(CreateVnfRequest.class)))
-                .thenReturn(getCreateVnfResponse());
+    objUnderTest.invokeVnfmAdapter(stubbedxecution);
 
-        objUnderTest.invokeVnfmAdapter(stubbedxecution);
+    assertNotNull(stubbedxecution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME));
+  }
 
-        assertNotNull(stubbedxecution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME));
-    }
+  @Test
+  public void testInvokeVnfmAdapter_invalidValues_storesResponseInExecution() throws Exception {
 
-    @Test
-    public void testInvokeVnfmAdapter_invalidValues_storesResponseInExecution() throws Exception {
+    final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
 
-        final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
+    stubbedxecution.setVariable(CREATE_VNF_REQUEST_PARAM_NAME, new CreateVnfRequest());
 
-        stubbedxecution.setVariable(CREATE_VNF_REQUEST_PARAM_NAME, new CreateVnfRequest());
+    when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(getGenericVnf());
+    when(mockedVnfmAdapterServiceProvider.invokeCreateInstantiationRequest(eq(VNF_ID), any(CreateVnfRequest.class)))
+        .thenReturn(Optional.absent());
 
-        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(getGenericVnf());
-        when(mockedVnfmAdapterServiceProvider.invokeCreateInstantiationRequest(eq(VNF_ID), any(CreateVnfRequest.class)))
-                .thenReturn(Optional.absent());
+    objUnderTest.invokeVnfmAdapter(stubbedxecution);
 
-        objUnderTest.invokeVnfmAdapter(stubbedxecution);
-
-        assertNull(stubbedxecution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME));
-        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1202),
-                any(Exception.class));
-    }
+    assertNull(stubbedxecution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME));
+    verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1202),
+        any(Exception.class));
+  }
 
 
-    @Test
-    public void testInvokeVnfmAdapter_extractPojosForBBThrowsException_exceptionBuilderCalled() throws Exception {
+  @Test
+  public void testInvokeVnfmAdapter_extractPojosForBBThrowsException_exceptionBuilderCalled() throws Exception {
 
-        final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
+    final VnfmAdapterCreateVnfTask objUnderTest = getEtsiVnfInstantiateTask();
 
-        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenThrow(RuntimeException.class);
+    when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenThrow(RuntimeException.class);
 
-        objUnderTest.invokeVnfmAdapter(stubbedxecution);
+    objUnderTest.invokeVnfmAdapter(stubbedxecution);
 
-        assertNull(stubbedxecution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME));
-        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1202),
-                any(Exception.class));
+    assertNull(stubbedxecution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME));
+    verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1202),
+        any(Exception.class));
 
-    }
+  }
 
-    private Optional<CreateVnfResponse> getCreateVnfResponse() {
-        final CreateVnfResponse response = new CreateVnfResponse();
-        response.setJobId(JOB_ID);
-        return Optional.of(response);
-    }
+  private Optional<CreateVnfResponse> getCreateVnfResponse() {
+    final CreateVnfResponse response = new CreateVnfResponse();
+    response.setJobId(JOB_ID);
+    return Optional.of(response);
+  }
 
-    private GenericVnf getGenericVnf() {
-        final GenericVnf genericVnf = new GenericVnf();
-        genericVnf.setVnfId(VNF_ID);
-        genericVnf.setModelInfoGenericVnf(getModelInfoGenericVnf());
-        genericVnf.setVnfName(VNF_NAME);
-        return genericVnf;
-    }
+  private GenericVnf getGenericVnf() {
+    final GenericVnf genericVnf = new GenericVnf();
+    genericVnf.setVnfId(VNF_ID);
+    genericVnf.setModelInfoGenericVnf(getModelInfoGenericVnf());
+    genericVnf.setVnfName(VNF_NAME);
+    return genericVnf;
+  }
 
-    private ModelInfoGenericVnf getModelInfoGenericVnf() {
-        final ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-        modelInfoGenericVnf.setModelInstanceName(MODEL_INSTANCE_NAME);
-        return modelInfoGenericVnf;
-    }
+  private ModelInfoGenericVnf getModelInfoGenericVnf() {
+    final ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+    modelInfoGenericVnf.setModelInstanceName(MODEL_INSTANCE_NAME);
+    return modelInfoGenericVnf;
+  }
 
-    private VnfmAdapterCreateVnfTask getEtsiVnfInstantiateTask() {
-        return new VnfmAdapterCreateVnfTask(exceptionUtil, extractPojosForBB, mockedVnfmAdapterServiceProvider);
-    }
-
-    private class StubbedBuildingBlockExecution implements BuildingBlockExecution {
-
-        private final Map<String, Serializable> execution = new HashMap<>();
-        private final GeneralBuildingBlock generalBuildingBlock;
-
-        StubbedBuildingBlockExecution() {
-            generalBuildingBlock = getGeneralBuildingBlockValue();
-        }
-
-        @Override
-        public GeneralBuildingBlock getGeneralBuildingBlock() {
-            return generalBuildingBlock;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public <T> T getVariable(final String key) {
-            return (T) execution.get(key);
-        }
-
-        @Override
-        public <T> T getRequiredVariable(final String key) throws RequiredExecutionVariableExeception {
-            return null;
-        }
-
-        @Override
-        public void setVariable(final String key, final Serializable value) {
-            execution.put(key, value);
-        }
-
-        @Override
-        public Map<ResourceKey, String> getLookupMap() {
-            return Collections.emptyMap();
-        }
-
-        @Override
-        public String getFlowToBeCalled() {
-            return null;
-        }
-
-        private GeneralBuildingBlock getGeneralBuildingBlockValue() {
-            final GeneralBuildingBlock buildingBlock = new GeneralBuildingBlock();
-            buildingBlock.setCloudRegion(getCloudRegion());
-            return buildingBlock;
-        }
-
-        private CloudRegion getCloudRegion() {
-            final CloudRegion cloudRegion = new CloudRegion();
-            cloudRegion.setCloudOwner(CLOUD_OWNER);
-            cloudRegion.setLcpCloudRegionId(LCP_CLOUD_REGIONID);
-            cloudRegion.setTenantId(TENANT_ID);
-            return cloudRegion;
-        }
-
-    }
-
+  private VnfmAdapterCreateVnfTask getEtsiVnfInstantiateTask() {
+    return new VnfmAdapterCreateVnfTask(exceptionUtil, extractPojosForBB, mockedVnfmAdapterServiceProvider);
+  }
 }
