@@ -76,19 +76,19 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/vfname")).willReturn(aResponse()
+        stubFor(get(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/vfname")).willReturn(aResponse()
                 //.withHeader()
                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+        stubFor(get(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/workload-id")).willReturn(aResponse()
                 //.withHeader()
                 .withBodyFile("MulticloudResponse_Stack.json")
                 .withStatus(HttpStatus.SC_OK)));
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/vfname/outputs")).willReturn(aResponse()
+        stubFor(get(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/vfname/outputs")).willReturn(aResponse()
                 .withStatus(HttpStatus.SC_NOT_FOUND)));
 
-        stubFor(post(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload")).willReturn(aResponse()
+        stubFor(post(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload")).willReturn(aResponse()
                 .withBodyFile("MulticloudResponse_Stack_Create.json")
                 .withStatus(HttpStatus.SC_CREATED)));
 
@@ -101,11 +101,11 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+        stubFor(get(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/workload-id")).willReturn(aResponse()
                 .withBodyFile("MulticloudResponse_Stack.json")
                 .withStatus(HttpStatus.SC_OK)));
 
-        stubFor(delete(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+        stubFor(delete(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/workload-id")).willReturn(aResponse()
                 .withStatus(HttpStatus.SC_NO_CONTENT)));
 
         instance.deleteVfModule("MTN13", "CloudOwner", "123", "workload-id", msoRequest, new Holder<>());
@@ -117,7 +117,7 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils{
         msoRequest.setRequestId("12345");
         msoRequest.setServiceInstanceId("12345");
 
-        stubFor(get(urlPathEqualTo("/api/multicloud/v1/cloud_owner/cloud_region_id/infra_workload/workload-id")).willReturn(aResponse()
+        stubFor(get(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/workload-id")).willReturn(aResponse()
                 .withBodyFile("MulticloudResponse_Stack.json")
                 .withStatus(HttpStatus.SC_OK)));
 

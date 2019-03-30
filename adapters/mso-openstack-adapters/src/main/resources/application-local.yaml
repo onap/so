@@ -52,6 +52,8 @@ mso:
   msoKey: 07a7159d3bf51a0e53be7a8f89699be7
   auth: 6B466C603A260F3655DBF91E53CE54667041C01406D10E8CAF9CC24D8FA5388D06F90BFE4C852052B436
   logPath: logs
+  msb-ip: localhost
+  msb-port: ${wiremock.server.port}
   workflow:
     endpoint: http://bpmn-infra:8081/sobpmnengine
     topics:
