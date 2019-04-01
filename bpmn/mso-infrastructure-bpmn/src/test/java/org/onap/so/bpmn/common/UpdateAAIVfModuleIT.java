@@ -61,9 +61,9 @@ public class UpdateAAIVfModuleIT extends BaseIntegrationTest {
 		logStart();
 		
 		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml"); 
-		MockGetGenericVnfByIdWithPriority("/skask/vf-modules/vf-module/supercool", 200, "VfModularity/VfModule-supercool.xml");
-		MockPutGenericVnf("/skask/vf-modules/vf-module/supercool", "PCRF", 200);
-		MockPatchVfModuleId("skask", "supercool");
+		MockGetGenericVnfByIdWithPriority(wireMockServer, "/skask/vf-modules/vf-module/supercool", 200, "VfModularity/VfModule-supercool.xml");
+		MockPutGenericVnf(wireMockServer, "/skask/vf-modules/vf-module/supercool", "PCRF", 200);
+		MockPatchVfModuleId(wireMockServer, "skask", "supercool");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -92,7 +92,7 @@ public class UpdateAAIVfModuleIT extends BaseIntegrationTest {
 		logStart();
 		
 		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml"); 
-		MockGetGenericVnfById("/skask/vf-modules/vf-module/.*", "VfModularity/VfModule-supercool.xml", 404);
+		MockGetGenericVnfById(wireMockServer, "/skask/vf-modules/vf-module/.*", "VfModularity/VfModule-supercool.xml", 404);
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -121,9 +121,9 @@ public class UpdateAAIVfModuleIT extends BaseIntegrationTest {
 		logStart();
 		
 		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIVfModuleRequest.xml"); 
-		MockGetGenericVnfById_404("/skask/vf-modules/vf-module/supercool");
-		MockGetGenericVnfById("/skask/vf-modules/vf-module/supercool", "VfModularity/VfModule-supercool.xml", 200);
-		MockAAIVfModuleBadPatch("/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool", 404);
+		MockGetGenericVnfById_404(wireMockServer, "/skask/vf-modules/vf-module/supercool");
+		MockGetGenericVnfById(wireMockServer, "/skask/vf-modules/vf-module/supercool", "VfModularity/VfModule-supercool.xml", 200);
+		MockAAIVfModuleBadPatch(wireMockServer, "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask/vf-modules/vf-module/supercool", 404);
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();

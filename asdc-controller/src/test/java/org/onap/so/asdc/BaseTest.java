@@ -29,6 +29,7 @@ import org.onap.so.asdc.installer.VfResourceStructure;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
 import org.onap.so.spring.SpringContextHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +39,8 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -53,6 +56,8 @@ public abstract class BaseTest {
 	protected WatchdogDistribution watchdogDistributionSpy;
 	@SpyBean
 	protected ToscaResourceInstaller toscaInstaller;
+	@Autowired
+	protected WireMockServer wireMockServer;
 	
 	@Value("${wiremock.server.port}")
     protected String wireMockPort;

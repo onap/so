@@ -41,11 +41,11 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.test.categories.SpringAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
@@ -54,7 +54,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -77,6 +77,9 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 
 	@Autowired
 	private RepositoryService repositoryService;
+	
+	@Autowired
+	protected WireMockServer wireMockServer;
 	/*
 	 * Mocked for injection via autowiring
 	 */
@@ -118,7 +121,7 @@ public abstract class BaseTest extends BuildingBlockTestDataSetup {
 	
 	@Before
 	public void baseTestBefore() {
-		WireMock.reset();
+		wireMockServer.resetAll();
 		variables.put("gBuildingBlockExecution", execution);
 	}
 

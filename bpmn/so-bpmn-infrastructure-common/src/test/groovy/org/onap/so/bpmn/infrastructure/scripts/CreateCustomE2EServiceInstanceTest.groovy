@@ -41,9 +41,6 @@ import static org.mockito.Mockito.*
 @RunWith(MockitoJUnitRunner.class)
 class CreateCustomE2EServiceInstanceTest {
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(28090);
-
     @Before
     public void init() throws IOException {
         MockitoAnnotations.initMocks(this);

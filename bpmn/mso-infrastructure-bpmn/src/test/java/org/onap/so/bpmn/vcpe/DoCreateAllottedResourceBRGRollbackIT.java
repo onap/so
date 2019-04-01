@@ -56,11 +56,11 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
 	@Test
 	public void testDoCreateAllottedResourceBRGRollback_Success() throws Exception {
         logStart();
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -86,11 +86,11 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
 	@Test
 	public void testDoCreateAllottedResourceBRGRollback_skipRollback() throws Exception {
 		logStart();
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -115,9 +115,9 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
 	@Test
 	public void testDoCreateAllottedResourceBRGRollback_DoNotRollBack() throws Exception {
 		logStart();
-	    MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+	    MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -142,11 +142,11 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
 	@Test
 	public void testDoCreateAllottedResourceBRGRollback_NoDeactivate() throws Exception {
 		logStart();
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -173,11 +173,11 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
 	@Test
 	public void testDoCreateAllottedResourceBRGRollback_NoDelete() throws Exception {
 		logStart();
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -204,11 +204,11 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
 	@Test
 	public void testDoCreateAllottedResourceBRGRollback_NoUnassign() throws Exception {
 		logStart();
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -238,12 +238,12 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
 	@Test
 	public void testDoCreateAllottedResourceBRGRollback_SubProcessError() throws Exception {
 		logStart();
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 
-		mockSDNCAdapter(404);
+		mockSDNCAdapter(wireMockServer, 404);
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();
@@ -265,11 +265,11 @@ public class DoCreateAllottedResourceBRGRollbackIT extends AbstractTestBase {
 	@Test
 	public void testDoCreateAllottedResourceBRGRollback_JavaException() throws Exception {
 		logStart();
-		MockGetAllottedResource(CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
-		MockPatchAllottedResource(CUST, SVC, INST, ARID);
-		MockDeleteAllottedResource(CUST, SVC, INST, ARID, ARVERS);
-		mockSDNCAdapter(200);
-		mockUpdateRequestDB(200, "Database/DBUpdateResponse.xml");
+		MockGetAllottedResource(wireMockServer, CUST, SVC, INST, ARID, "VCPE/DoCreateAllottedResourceBRGRollback/arGetById.xml");
+		MockPatchAllottedResource(wireMockServer, CUST, SVC, INST, ARID);
+		MockDeleteAllottedResource(wireMockServer, CUST, SVC, INST, ARID, ARVERS);
+		mockSDNCAdapter(wireMockServer, 200);
+		mockUpdateRequestDB(wireMockServer, 200, "Database/DBUpdateResponse.xml");
 		
 		String businessKey = UUID.randomUUID().toString();
 		Map<String, Object> variables = new HashMap<>();

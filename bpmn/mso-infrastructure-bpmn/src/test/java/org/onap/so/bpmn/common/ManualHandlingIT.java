@@ -46,7 +46,7 @@ public class ManualHandlingIT extends BaseIntegrationTest {
 	
 	@Test
 	public void  TestManualHandlingSuccess() {
-		MockPostRequestDB();
+		MockPostRequestDB(wireMockServer);
 		
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("isDebugLogEnabled","true");

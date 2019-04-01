@@ -52,9 +52,6 @@ import org.apache.commons.lang3.*
 @RunWith(MockitoJUnitRunner.class)
 class DoUpdateNetworkInstanceRollbackTest  {
 
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(28090);
-
 		def utils = new MsoUtils()
 		String Prefix="UPDNETIR_"
 

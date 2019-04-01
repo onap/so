@@ -21,15 +21,11 @@
 package org.onap.so.bpmn.mock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
-import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.patch;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
+
+import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
  * Reusable Mock StubResponses for Policy
@@ -42,14 +38,14 @@ public class StubResponseAPPC {
 	}
 
 	// start of Policy mocks
-	public static void MockAppcError() {		
-		stubFor(get(urlMatching("/events/.*"))
+	public static void MockAppcError(WireMockServer wireMockServer) {		
+		wireMockServer.stubFor(get(urlMatching("/events/.*"))
 		//	.withRequestBody(containing("APPC"))
 			.willReturn(aResponse()
 				.withStatus(200)
 				.withHeader("Content-Type", "application/json")
 				.withBodyFile("APPC/appc_error.json")));
-		stubFor(put(urlMatching("/events/.*"))
+		wireMockServer.stubFor(put(urlMatching("/events/.*"))
 				//	.withRequestBody(containing("APPC"))
 					.willReturn(aResponse()
 						.withStatus(200)

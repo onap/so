@@ -22,7 +22,6 @@ package org.onap.so.client.oof;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import org.junit.Test;
@@ -44,7 +43,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_success() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"status\", \"requestStatus\": \"accepted\"}";
 
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(mockResponse)));
@@ -56,7 +55,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
     public void testAsyncResponse_success() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"status\", \"requestStatus\": \"accepted\"}";
 
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(mockResponse)));
@@ -68,7 +67,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_failed() throws JsonProcessingException, BadResponseException {
         String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": \"failed\"}";
 
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(mockResponse)));
@@ -84,7 +83,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_noMessage() throws JsonProcessingException, BadResponseException {
         String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"\", \"requestStatus\": \"failed\"}";
 
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(mockResponse)));
@@ -98,7 +97,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_noStatus() throws JsonProcessingException, BadResponseException {
         String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": null}";
 
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(mockResponse)));
@@ -112,7 +111,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_empty() throws JsonProcessingException, BadResponseException {
         String mockResponse = "{ }";
 
-        stubFor(post(urlEqualTo("/api/oof/v1/placement"))
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(mockResponse)));

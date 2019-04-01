@@ -10,8 +10,7 @@ def statusCode = execution.getVariable('VNFREST_vnfAdapterStatusCode')
 String response = String.valueOf(execution.getVariable('VNFREST_vnfAdapterResponse'))
 def isDebugLogEnabled = execution.getVariable('isDebugLogEnabled')
 def processKey = vnfAdapterRestV1.getProcessKey(execution)
-vnfAdapterRestV1.logDebug(processKey + " received response from VnfAdapter: statusCode=" + statusCode +
-	" response=" + (response.isEmpty() ? "" : "\n") + response, isDebugLogEnabled)]]></bpmn2:script>
+vnfAdapterRestV1.getLogger().debug("{} received response from VnfAdapter: statusCode= {} response={}", processKey, statusCode, (response.isEmpty() ? "" : "\n" + response))]]></bpmn2:script>
     </bpmn2:scriptTask>
     <bpmn2:scriptTask id="ScriptTask_3" name="Workflow Exception (no connection)">
       <bpmn2:incoming>SequenceFlow_17</bpmn2:incoming>

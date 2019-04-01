@@ -23,7 +23,6 @@ package org.onap.so.client.namingservice;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertTrue;
 
@@ -55,7 +54,7 @@ public class NamingClientTest extends BaseIntegrationTest{
 	
 	@Test
 	public void assignNameGenRequest() throws BadResponseException, IOException{
-		stubFor(post(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("NamingClient/AssignResponse.json")
 				.withStatus(HttpStatus.SC_ACCEPTED)));
@@ -66,7 +65,7 @@ public class NamingClientTest extends BaseIntegrationTest{
 	}
 	@Test
 	public void assignNameGenRequestError() throws BadResponseException, IOException{
-		stubFor(post(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("NamingClient/ErrorResponse.json")
 				.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
@@ -78,7 +77,7 @@ public class NamingClientTest extends BaseIntegrationTest{
 	}
 	@Test
 	public void unassignNameGenRequest() throws BadResponseException, IOException{
-		stubFor(delete(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
+		wireMockServer.stubFor(delete(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("NamingClient/UnassignResponse.json")
 				.withStatus(HttpStatus.SC_ACCEPTED)));
@@ -88,7 +87,7 @@ public class NamingClientTest extends BaseIntegrationTest{
 	}
 	@Test
 	public void unassignNameGenRequestError() throws BadResponseException, IOException{
-		stubFor(delete(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
+		wireMockServer.stubFor(delete(urlPathEqualTo("/web/service/v1/genNetworkElementName"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 				.withBodyFile("NamingClient/ErrorResponse.json")
 				.withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));

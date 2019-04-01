@@ -24,7 +24,6 @@ package org.onap.so.bpmn.common;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import java.io.IOException;
@@ -115,7 +114,7 @@ public class SDNCAdapterRestV2IT extends BaseIntegrationTest {
 	 * Defines WireMock stubs needed by these tests.
 	 */
 	private void mocks() {
-		stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc"))
+		wireMockServer.stubFor(post(urlEqualTo("/SDNCAdapter/v1/sdnc"))
 			.willReturn(aResponse()
 				.withStatus(202)
 				.withHeader("Content-Type", "application/json")));

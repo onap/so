@@ -22,7 +22,6 @@ package org.onap.so.client.sniro;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 
 import org.junit.Test;
@@ -45,7 +44,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_success() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"corys cool\", \"requestStatus\": \"accepted\"}";
 
-        stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+        wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
         			.willReturn(aResponse().withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(mockResponse)));
@@ -58,7 +57,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_failed() throws JsonProcessingException, BadResponseException {
     	String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": \"failed\"}";
 
-    	stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+    	wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
     					.withHeader("Content-Type", "application/json")
     					.withBody(mockResponse)));
@@ -74,7 +73,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_noMessage() throws JsonProcessingException, BadResponseException {
     	String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"\", \"requestStatus\": \"failed\"}";
 
-    	stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+    	wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
     					.withHeader("Content-Type", "application/json")
     					.withBody(mockResponse)));
@@ -88,7 +87,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_noStatus() throws JsonProcessingException, BadResponseException {
     	String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": null}";
 
-    	stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+    	wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
     					.withHeader("Content-Type", "application/json")
     					.withBody(mockResponse)));
@@ -102,7 +101,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_empty() throws JsonProcessingException, BadResponseException {
     	String mockResponse = "{ }";
 
-    	stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
+    	wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2"))
     			.willReturn(aResponse().withStatus(200)
     					.withHeader("Content-Type", "application/json")
     					.withBody(mockResponse)));
@@ -115,7 +114,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostRelease_success() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"status\": \"success\", \"message\": \"corys cool\"}";
 
-        stubFor(post(urlEqualTo("/v1/release-orders"))
+        wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders"))
         			.willReturn(aResponse().withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(mockResponse)));
@@ -127,7 +126,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostRelease_error_failed() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"status\": \"failure\", \"message\": \"corys cool\"}";
 
-        stubFor(post(urlEqualTo("/v1/release-orders"))
+        wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders"))
         			.willReturn(aResponse().withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(mockResponse)));
@@ -139,7 +138,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostRelease_error_noStatus() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"status\": \"\", \"message\": \"corys cool\"}";
 
-        stubFor(post(urlEqualTo("/v1/release-orders"))
+        wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders"))
         			.willReturn(aResponse().withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(mockResponse)));
@@ -152,7 +151,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostRelease_error_noMessage() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"status\": \"failure\", \"message\": null}";
 
-        stubFor(post(urlEqualTo("/v1/release-orders"))
+        wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders"))
         			.willReturn(aResponse().withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(mockResponse)));
@@ -165,7 +164,7 @@ public class SniroClientTestIT extends BaseIntegrationTest {
     public void testPostRelease_error_empty() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{ }";
 
-        stubFor(post(urlEqualTo("/v1/release-orders"))
+        wireMockServer.stubFor(post(urlEqualTo("/v1/release-orders"))
         			.willReturn(aResponse().withStatus(200)
                     .withHeader("Content-Type", "application/json")
                     .withBody(mockResponse)));

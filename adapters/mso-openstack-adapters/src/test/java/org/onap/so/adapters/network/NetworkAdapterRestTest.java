@@ -102,13 +102,13 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 		request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
 		request.setNetworkTechnology(networkTechnology);
 
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPostPublicUrlWithBodyFile_200();
+		mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
 
-		mockOpenStackGetStackCreatedVUSP_200();
+		mockOpenStackGetStackCreatedVUSP_200(wireMockServer);
 
-		mockOpenStackGetStackVUSP_404();
+		mockOpenStackGetStackVUSP_404(wireMockServer);
 
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<CreateNetworkRequest> entity = new HttpEntity<CreateNetworkRequest>(request, headers);
@@ -127,13 +127,13 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 		
 
 
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPostPublicUrlWithBodyFile_200();
+		mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
 
-		mockOpenStackGetStackCreatedAppC_200();
+		mockOpenStackGetStackCreatedAppC_200(wireMockServer);
 		
-		mockOpenStackGetStackAppC_404();
+		mockOpenStackGetStackAppC_404(wireMockServer);
 		
 		headers.add("Content-Type", MediaType.APPLICATION_JSON);
 		headers.add("Accept", MediaType.APPLICATION_JSON);
@@ -170,13 +170,13 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 		request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
 		request.setNetworkStackId(NETWORK_ID);
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 		
-		mockOpenStackPublicUrlStackByID_200(wireMockPort);
+		mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockPort);
+		mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockServer, wireMockPort);
 		
-		mockOpenStackDeletePublicUrlStackByNameAndID_204();
+		mockOpenStackDeletePublicUrlStackByNameAndID_204(wireMockServer);
 		
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		
@@ -203,13 +203,13 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 		msoReq.setRequestId(MSO_REQUEST_ID);
 		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
 
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPublicUrlStackByID_200(wireMockPort);
+		mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
 
-		mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockPort);
+		mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockServer, wireMockPort);
 
-		mockOpenStackDeletePublicUrlStackByNameAndID_204();
+		mockOpenStackDeletePublicUrlStackByNameAndID_204(wireMockServer);
 
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 
@@ -247,8 +247,8 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testQueryNetwork() throws IOException{
 
-		mockOpenStackResponseAccess(wireMockPort);
-		mockOpenStackGetStackVfModule_200();
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+		mockOpenStackGetStackVfModule_200(wireMockServer);
 
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		HttpEntity<DeleteNetworkRequest> entity = new HttpEntity<DeleteNetworkRequest>(headers);
@@ -280,15 +280,15 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 		request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
 		request.setNetworkStackId(NETWORK_ID);
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPublicUrlStackByName_200(wireMockPort);
+		mockOpenStackPublicUrlStackByName_200(wireMockServer, wireMockPort);
 		
-		mockOpenStackPublicUrlStackByID_200(wireMockPort);
+		mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
 		
-		mockOpenStackGetPublicUrlStackByNameAndID_200(wireMockPort);
+		mockOpenStackGetPublicUrlStackByNameAndID_200(wireMockServer, wireMockPort);
 
-		mockOpenStackPutPublicUrlStackByNameAndID_200();
+		mockOpenStackPutPublicUrlStackByNameAndID_200(wireMockServer);
 
 		headers.add("Accept", MediaType.APPLICATION_JSON);
 		
@@ -307,13 +307,13 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testCreateNetworkCNRC_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPostPublicUrlWithBodyFile_200();
+		mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
 
-		mockOpenStackGetStackCreatedAppC_200();
+		mockOpenStackGetStackCreatedAppC_200(wireMockServer);
 		
-		mockOpenStackGetStackAppC_404();
+		mockOpenStackGetStackAppC_404(wireMockServer);
 		
 		headers.add("Content-Type", MediaType.APPLICATION_JSON);
 		headers.add("Accept", MediaType.APPLICATION_JSON);
@@ -334,13 +334,13 @@ public class NetworkAdapterRestTest extends BaseRestTestUtils {
 	@Test
 	public void testCreateNetworkNC_Shared_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
 		
-		mockOpenStackResponseAccess(wireMockPort);
+		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPostPublicUrlWithBodyFile_200();
+		mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
 
-		mockOpenStackGetStackCreatedAppC_200();
+		mockOpenStackGetStackCreatedAppC_200(wireMockServer);
 		
-		mockOpenStackGetStackAppC_404();
+		mockOpenStackGetStackAppC_404(wireMockServer);
 		
 		headers.add("Content-Type", MediaType.APPLICATION_JSON);
 		headers.add("Accept", MediaType.APPLICATION_JSON);

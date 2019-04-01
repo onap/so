@@ -21,21 +21,21 @@
 package org.onap.so.apihandlerinfra.tenantisolation.process;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.containing;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -48,18 +48,18 @@ import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.onap.so.apihandlerinfra.tenantisolation.helpers.AAIClientHelper;
+import org.onap.so.apihandlerinfra.tenantisolationbeans.Manifest;
+import org.onap.so.apihandlerinfra.tenantisolationbeans.RecoveryAction;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestDetails;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestParameters;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.ServiceModelList;
-import org.onap.so.apihandlerinfra.tenantisolationbeans.RecoveryAction;
-import org.onap.so.apihandlerinfra.tenantisolationbeans.Manifest;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
@@ -86,11 +86,11 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
 
 	@Before
 	public void init(){
-		stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvServiceModelStatus/"))
 				.withRequestBody(equalTo("{\"requestId\":\"TEST_requestId\",\"operationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e55d\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"serviceModelVersionDistrStatus\":\"SENT\",\"recoveryAction\":\"RETRY\",\"retryCount\":3,\"workloadContext\":\"PVT\",\"createTime\":null,\"modifyTime\":null,\"vnfOperationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e66d\"}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/operationalEnvDistributionStatus/"))
 				.withRequestBody(equalTo("{\"distributionId\":\"TEST_distributionId\",\"operationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e55d\",\"serviceModelVersionId\":\"TEST_serviceModelVersionId\",\"requestId\":\"TEST_requestId\",\"distributionIdStatus\":\"SENT\",\"distributionIdErrorReason\":\"\",\"createTime\":null,\"modifyTime\":null}"))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));
@@ -102,7 +102,7 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
 
 		OperationalEnvironment aaiOpEnv;
 
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/ecompOperationalEnvironmentWithRelationship.json").withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		AAIResultWrapper wrapper = clientHelper.getAaiOperationalEnvironment("EMOE-001");
@@ -139,9 +139,9 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
 		jsonObject.put("message", "Success");
 		jsonObject.put("distributionId", sdcDistributionId);
 		
-		stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBodyFile("vnfoperenv/activateOperationalEnvironmentWithRelationship.json").withStatus(HttpStatus.SC_ACCEPTED)));
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 		activateVnf.execute(requestId, request);
 	}			
@@ -163,7 +163,7 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
 		serviceModelList1.setServiceModelVersionId(serviceModelVersionId);
 		serviceModelVersionIdList.add(serviceModelList1);
 		
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
 		
 		activateVnf.processActivateSDCRequest(requestId, operationalEnvironmentId, serviceModelVersionIdList, workloadContext, vnfOperationalEnvironmentId);
@@ -193,13 +193,13 @@ public class ActivateVnfOperationalEnvironmentTest extends BaseTest{
 		InfraActiveRequests iar = new InfraActiveRequests();
 		iar.setRequestId(requestId);
 		iar.setRequestStatus("PENDING");
-		stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
+		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withBody(mapper.writeValueAsString(iar))
 						.withStatus(HttpStatus.SC_OK)));
-		stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
+		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_serviceModelVersionId/distr.*"))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonErrorResponse.toString()).withStatus(HttpStatus.SC_CONFLICT)));
-		stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
 				.withRequestBody(containing("operationalEnvId\":\"1dfe7154-eae0-44f2-8e7a-8e5e7882e55d\""))
 				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 						.withStatus(HttpStatus.SC_OK)));

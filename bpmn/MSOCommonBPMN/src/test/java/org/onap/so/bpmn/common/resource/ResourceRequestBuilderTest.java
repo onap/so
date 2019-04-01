@@ -19,23 +19,17 @@
  */
 package org.onap.so.bpmn.common.resource;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.ok;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.onap.so.BaseTest;
-import org.onap.so.bpmn.core.UrnPropertiesReader;
-import org.springframework.core.env.Environment;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
 
 
 public class ResourceRequestBuilderTest extends BaseTest {
@@ -45,7 +39,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
 
 
 
-        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
                 .willReturn(ok("{ \"serviceResources\"    : {\n" +
                         "\t\"modelInfo\"       : {\n" +
                         "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
@@ -137,7 +131,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     @Test
     public void getResourceInputDefaultValueTest() throws Exception {
 
-        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
                 .willReturn(ok("{ \"serviceResources\"    : {\n" +
                         "\t\"modelInfo\"       : {\n" +
                         "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
@@ -228,7 +222,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     @Test
     public void getResourceInputValueNoDefaultTest() throws Exception {
 
-        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
                 .willReturn(ok("{ \"serviceResources\"    : {\n" +
                         "\t\"modelInfo\"       : {\n" +
                         "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
@@ -319,7 +313,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     @Test
     public void getResourceSequenceTest() throws Exception {
 
-        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
                 .willReturn(ok("{ \"serviceResources\"    : {\n" +
                         "\t\"modelInfo\"       : {\n" +
                         "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
@@ -409,7 +403,7 @@ public class ResourceRequestBuilderTest extends BaseTest {
     @Test
     public void getResourceInputWithEmptyServiceResourcesTest() throws Exception {
 
-        stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+        wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
             .willReturn(ok("{ \"serviceResources\"    : {\n" +
                 "\t\"modelInfo\"       : {\n" +
                 "\t\t\"modelName\"          : \"demoVFWCL\",\n" +

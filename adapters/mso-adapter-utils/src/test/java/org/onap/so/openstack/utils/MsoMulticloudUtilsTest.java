@@ -22,7 +22,6 @@ package org.onap.so.openstack.utils;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +31,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
+
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -61,7 +61,7 @@ public class MsoMulticloudUtilsTest extends BaseTest {
 
     @Test
     public void createStackSuccess() throws MsoException, IOException {
-        stubFor(post(urlPathEqualTo("/v2.0"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/v2.0"))
             .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 .withBody(CREATE_STACK_RESPONSE)
                 .withStatus(HttpStatus.SC_CREATED)));
@@ -93,7 +93,7 @@ public class MsoMulticloudUtilsTest extends BaseTest {
     @Test
     public void createStackBadRequest() {
         try {
-            stubFor(post(urlPathEqualTo("/v2.0"))
+            wireMockServer.stubFor(post(urlPathEqualTo("/v2.0"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                     .withStatus(HttpStatus.SC_BAD_REQUEST)));
             multicloudUtils.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
@@ -108,7 +108,7 @@ public class MsoMulticloudUtilsTest extends BaseTest {
 
     @Test
     public void createStackEmptyResponseEntity() throws MsoException {
-        stubFor(post(urlPathEqualTo("/v2.0"))
+        wireMockServer.stubFor(post(urlPathEqualTo("/v2.0"))
             .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 .withStatus(HttpStatus.SC_CREATED)));
         StackInfo result = multicloudUtils.createStack("MTN13", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),

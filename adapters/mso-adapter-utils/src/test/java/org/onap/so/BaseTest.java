@@ -23,7 +23,16 @@
 package org.onap.so;
 
 
-import com.github.tomakehurst.wiremock.client.WireMock;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+import javax.ws.rs.core.MediaType;
+
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.After;
@@ -33,20 +42,15 @@ import org.onap.so.db.catalog.beans.AuthenticationType;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.ServerType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.ws.rs.core.MediaType;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import com.github.tomakehurst.wiremock.WireMockServer;
+import com.github.tomakehurst.wiremock.client.WireMock;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -56,10 +60,12 @@ public abstract class BaseTest extends TestDataSetup {
 
 	@Value("${wiremock.server.port}")
 	protected int wireMockPort;
+	@Autowired
+	protected WireMockServer wireMockServer;
 	
 	@After
 	public void after() {
-		WireMock.reset();
+		wireMockServer.resetAll();
 	}
 
 	protected static String getBody(String body, int port, String urlPath) throws IOException {
@@ -74,15 +80,15 @@ public abstract class BaseTest extends TestDataSetup {
 	}
 
 	private void mockCloud(CloudIdentity identity, CloudSite cloudSite) throws IOException {
-		stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
 				.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
 				.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
-		stubFor(get(urlPathEqualTo("/cloudIdentity/mtn13")).willReturn(aResponse()
+		wireMockServer.stubFor(get(urlPathEqualTo("/cloudIdentity/mtn13")).willReturn(aResponse()
 				.withBody(getBody(mapper.writeValueAsString(identity),wireMockPort, ""))
 				.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
 				.withStatus(HttpStatus.SC_OK)));
