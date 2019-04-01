@@ -57,8 +57,12 @@ public class NetworkTopologyOperationRequestMapper {
 			Customer customer, RequestContext requestContext, CloudRegion cloudRegion) {
 		GenericResourceApiNetworkOperationInformation req = new GenericResourceApiNetworkOperationInformation();
 		String sdncReqId = UUID.randomUUID().toString();
+		String msoRequestId = UUID.randomUUID().toString();
+		if (requestContext != null && requestContext.getMsoRequestId() != null) {
+			msoRequestId = requestContext.getMsoRequestId();
+		} 
 		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId);
-		GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(sdncReqId, reqAction);
+		GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, reqAction);
 		GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, true);
 		GenericResourceApiNetworkinformationNetworkInformation networkInformation = generalTopologyObjectMapper.buildNetworkInformation(network);
 		GenericResourceApiNetworkrequestinputNetworkRequestInput networkRequestInput = buildNetworkRequestInput(network, serviceInstance, cloudRegion);
@@ -68,7 +72,7 @@ public class NetworkTopologyOperationRequestMapper {
 		req.setServiceInformation(serviceInformation);
 		req.setNetworkInformation(networkInformation);
 
-		if (requestContext.getUserParams() != null) {
+		if (requestContext != null && requestContext.getUserParams() != null) {
 			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
 				GenericResourceApiParam networkInputParameters = new GenericResourceApiParam();
 				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();

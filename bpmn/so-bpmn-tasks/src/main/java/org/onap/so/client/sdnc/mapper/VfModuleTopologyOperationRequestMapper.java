@@ -96,8 +96,12 @@ public class VfModuleTopologyOperationRequestMapper {
 		}		
 		
 		String sdncReqId = UUID.randomUUID().toString();
+		String msoRequestId = UUID.randomUUID().toString();
+		if (requestContext != null && requestContext.getMsoRequestId() != null) {
+			msoRequestId = requestContext.getMsoRequestId();
+		} 
 		
-		GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(sdncReqId, 
+		GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, 
 				requestAction);
 		GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, includeModelInformation);
 				GenericResourceApiVnfinformationVnfInformation vnfInformation = generalTopologyObjectMapper.buildVnfInformation(vnf, serviceInstance, includeModelInformation);

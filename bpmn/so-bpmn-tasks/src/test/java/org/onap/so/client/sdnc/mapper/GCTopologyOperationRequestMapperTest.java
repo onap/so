@@ -75,6 +75,7 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
         Assert.assertEquals("VLAN-NETWORK-RECEPTOR", genericInfo.getConfigurationInformation().getConfigurationType());
         Assert.assertEquals("uuid",genericInfo.getSdncRequestHeader().getSvcRequestId()); 
         Assert.assertEquals("http://localhost",genericInfo.getSdncRequestHeader().getSvcNotificationUrl());
+        Assert.assertEquals("MsoRequestId",genericInfo.getRequestInformation().getRequestId()); 
     }
 
 

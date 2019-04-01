@@ -60,10 +60,10 @@ public class GeneralTopologyObjectMapper {
 	/*
 	 * Build GenericResourceApiRequestinformationRequestInformation
 	 */
-	public GenericResourceApiRequestinformationRequestInformation buildGenericResourceApiRequestinformationRequestInformation(String sdncReqId, GenericResourceApiRequestActionEnumeration requestAction){
+	public GenericResourceApiRequestinformationRequestInformation buildGenericResourceApiRequestinformationRequestInformation(String msoReqId, GenericResourceApiRequestActionEnumeration requestAction){
 
 		GenericResourceApiRequestinformationRequestInformation requestInformation = new GenericResourceApiRequestinformationRequestInformation();
-		requestInformation.setRequestId(sdncReqId);
+		requestInformation.setRequestId(msoReqId);
 		requestInformation.setRequestAction(requestAction);
 		requestInformation.setSource("MSO");
 		return requestInformation;

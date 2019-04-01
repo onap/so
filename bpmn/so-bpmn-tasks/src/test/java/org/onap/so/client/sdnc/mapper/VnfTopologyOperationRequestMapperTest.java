@@ -21,6 +21,7 @@
 package org.onap.so.client.sdnc.mapper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
@@ -122,12 +123,16 @@ public class VnfTopologyOperationRequestMapperTest {
 		userParams.put("key1", "value1");
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
+		requestContext.setMsoRequestId("MsoRequestId");
 
 		CloudRegion cloudRegion = new CloudRegion();
 
 		GenericResourceApiVnfOperationInformation vnfOpInformation = mapper.reqMapper(
 				SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
 				cloudRegion, requestContext,true);
+		GenericResourceApiVnfOperationInformation vnfOpInformationNullReqContext = mapper.reqMapper(
+				SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
+				cloudRegion, null,true);
 
 		assertNull(vnfOpInformation.getServiceInformation().getOnapModelInformation().getModelCustomizationUuid());
 		assertEquals("vnfModelCustomizationUUID", vnfOpInformation.getVnfInformation().getOnapModelInformation().getModelCustomizationUuid());
@@ -136,5 +141,7 @@ public class VnfTopologyOperationRequestMapperTest {
 		assertEquals("l3-network-ig-222", vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().get(1).getVnfNetworkInstanceGroupId());
 		assertEquals("entitlementPoolUuid", vnfOpInformation.getVnfRequestInput().getVnfInputParameters().getParam().get(1).getValue());
 		assertEquals("licenseKeyGroupUuid", vnfOpInformation.getVnfRequestInput().getVnfInputParameters().getParam().get(2).getValue());
+		assertEquals("MsoRequestId", vnfOpInformation.getRequestInformation().getRequestId());
+		assertNotNull(vnfOpInformationNullReqContext.getRequestInformation().getRequestId());
 	}
 }

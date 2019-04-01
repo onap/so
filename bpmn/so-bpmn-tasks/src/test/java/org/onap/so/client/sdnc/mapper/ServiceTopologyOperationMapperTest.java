@@ -22,6 +22,8 @@ package org.onap.so.client.sdnc.mapper;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -80,10 +82,14 @@ public class ServiceTopologyOperationMapperTest {
 		userParams.put("key1", "value1");
 		requestContext.setUserParams(userParams);
 		requestContext.setProductFamilyId("productFamilyId");
+		requestContext.setMsoRequestId("MsoRequestId");
 
 		GenericResourceApiServiceOperationInformation serviceOpInformation = mapper.reqMapper(
 				SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
 				requestContext);
+		GenericResourceApiServiceOperationInformation serviceOpInformationNullReqContext = mapper.reqMapper(
+				SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
+				null);
 
 		String jsonToCompare = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/BuildingBlocks/genericResourceApiEcompModelInformation.json")));
 
@@ -92,5 +98,7 @@ public class ServiceTopologyOperationMapperTest {
 				GenericResourceApiOnapmodelinformationOnapModelInformation.class);
 
 		assertThat(reqMapper1, sameBeanAs(serviceOpInformation.getServiceInformation().getOnapModelInformation()));
+		assertEquals("MsoRequestId", serviceOpInformation.getRequestInformation().getRequestId());
+		assertNotNull(serviceOpInformationNullReqContext.getRequestInformation().getRequestId());
 	}
 }
