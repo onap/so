@@ -28,23 +28,18 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.DUMMY_GENERIC_VND_ID;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.getVnfmBasicHttpConfigProvider;
-
 import java.util.UUID;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmAdapterServiceProvider;
-import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmAdapterServiceProviderImpl;
-import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmAdapterUrlProvider;
 import org.onap.so.rest.exceptions.RestProcessingException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
+import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import com.google.common.base.Optional;
 
 
@@ -65,6 +60,9 @@ public class VnfmAdapterServiceProviderImplTest {
 
     @Mock
     private ResponseEntity<CreateVnfResponse> mockedResponseEntity;
+
+    @Mock
+    private ResponseEntity<DeleteVnfResponse> deleteVnfResponse;
 
     @Test
     public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusAcceptedWithBody_validResponse() {
@@ -120,6 +118,67 @@ public class VnfmAdapterServiceProviderImplTest {
 
     }
 
+  @Test
+  public void testInvokeDeleteRequest() {
+    when(mockedHttpServiceProvider.deleteHttpRequest(anyString(), eq(DeleteVnfResponse.class)))
+        .thenReturn(deleteVnfResponse);
+    when(deleteVnfResponse.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+    when(deleteVnfResponse.hasBody()).thenReturn(true);
+    final DeleteVnfResponse response = getDeleteVnfResponse(DUMMY_JOB_ID);
+    when(deleteVnfResponse.getBody()).thenReturn(response);
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+    final Optional<DeleteVnfResponse> actual = objUnderTest.invokeDeleteRequest(DUMMY_GENERIC_VND_ID);
+    assertTrue(actual.isPresent());
+  }
+
+  @Test
+  public void testInvokeDeleteRequestNotAccepted() {
+    when(mockedHttpServiceProvider.deleteHttpRequest(anyString(), eq(DeleteVnfResponse.class)))
+        .thenReturn(deleteVnfResponse);
+    when(deleteVnfResponse.getStatusCode()).thenReturn(HttpStatus.BAD_GATEWAY);
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+    final Optional<DeleteVnfResponse> actual = objUnderTest.invokeDeleteRequest(DUMMY_GENERIC_VND_ID);
+    assertFalse(actual.isPresent());
+  }
+
+  @Test
+  public void testInvokeDeleteRequestNoBody() {
+    when(mockedHttpServiceProvider.deleteHttpRequest(anyString(), eq(DeleteVnfResponse.class)))
+        .thenReturn(deleteVnfResponse);
+    when(deleteVnfResponse.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+    when(deleteVnfResponse.hasBody()).thenReturn(false);
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+    final Optional<DeleteVnfResponse> actual = objUnderTest.invokeDeleteRequest(DUMMY_GENERIC_VND_ID);
+    assertFalse(actual.isPresent());
+  }
+
+  @Test
+  public void testInvokeDeleteRequestNoJobId() {
+    when(mockedHttpServiceProvider.deleteHttpRequest(anyString(), eq(DeleteVnfResponse.class)))
+        .thenReturn(deleteVnfResponse);
+    when(deleteVnfResponse.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+    when(deleteVnfResponse.hasBody()).thenReturn(true);
+    final DeleteVnfResponse response = getDeleteVnfResponse("");
+    when(deleteVnfResponse.getBody()).thenReturn(response);
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+    final Optional<DeleteVnfResponse> actual = objUnderTest.invokeDeleteRequest(DUMMY_GENERIC_VND_ID);
+    assertFalse(actual.isPresent());
+  }
+
+  @Test
+  public void testInvokeDeleteRequestException() {
+    when(mockedHttpServiceProvider.deleteHttpRequest(anyString(), eq(DeleteVnfResponse.class)))
+        .thenThrow(RestProcessingException.class);
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+    final Optional<DeleteVnfResponse> actual = objUnderTest.invokeDeleteRequest(DUMMY_GENERIC_VND_ID);
+    assertFalse(actual.isPresent());
+  }
+
 
     private void assertWithJobId(final String jobId) {
         when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(),
@@ -159,6 +218,12 @@ public class VnfmAdapterServiceProviderImplTest {
         response.setJobId(jobId);
         return response;
     }
+
+    private DeleteVnfResponse getDeleteVnfResponse(final String jobId) {
+      final DeleteVnfResponse response = new DeleteVnfResponse();
+      response.setJobId(jobId);
+      return response;
+  }
 
 
     private VnfmAdapterUrlProvider getVnfmAdapterUrlProvider() {
