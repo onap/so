@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 Samsung Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,6 +27,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
@@ -37,10 +40,15 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.onap.so.BaseTest;
+import org.onap.so.adapters.vdu.CloudInfo;
+import org.onap.so.adapters.vdu.VduException;
+import org.onap.so.adapters.vdu.VduInstance;
 import org.onap.so.adapters.vdu.VduModelInfo;
+import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.cloud.CloudConfig;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
+import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +78,33 @@ public class MsoMulticloudUtilsTest extends BaseTest {
             new HashMap<>(), new HashMap<>(), false);
         assertNotNull(result);
         assertEquals("TEST-stack", result.getName());
+    }
+
+    @Test
+    public void deleteStack() throws MsoException {
+        StackInfo result = multicloudUtils.deleteStack("MTN13", "CloudOwner", "TEST-tenant", "instanceId");
+        assertNotNull(result);
+        assertTrue(HeatStatus.NOTFOUND == result.getStatus());
+    }
+
+    @Test
+    public void queryStack() throws MsoException {
+        StackInfo result = multicloudUtils.queryStack("MTN13", "CloudOwner", "TEST-tenant", "instanceId");
+        assertTrue(HeatStatus.NOTFOUND == result.getStatus());
+    }
+
+    @Test(expected = VduException.class)
+    public void updateVdu() throws MsoException {
+        multicloudUtils.updateVdu(new CloudInfo(), "instanceId", new HashMap<>(), new  VduModelInfo(),
+            false);
+    }
+
+    @Test
+    public void deleteVdu() throws VduException {
+        CloudInfo cloudInfo = new CloudInfo("cloudSiteId", "cloudOwner", "tenantId", "tenantName");
+        VduInstance vduInstance = multicloudUtils.deleteVdu(cloudInfo, "instanceId", 3);
+        assertNotNull(vduInstance);
+        assertTrue(VduStateType.DELETED == vduInstance.getStatus().getState());
     }
 
     @Test
