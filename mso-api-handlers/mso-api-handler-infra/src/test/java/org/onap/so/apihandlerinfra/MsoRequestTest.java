@@ -153,6 +153,27 @@ public class MsoRequestTest extends BaseTest {
 		});
 	}
 	@Test
+	@Parameters(method = "customWorkflowSuccessParameters")
+	public void customWorkflowSuccessTest(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMapTest, Action action, int reqVersion) throws ValidationException, IOException{
+		this.sir = sir;
+		this.instanceIdMapTest = instanceIdMapTest;
+		this.action = action;
+		this.reqVersion = reqVersion;
+		this.version = "v" + reqVersion;
+		this.instanceIdMapTest.put("serviceInstanceId", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");
+		this.instanceIdMapTest.put("vnfInstanceId", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");
+		this.instanceIdMapTest.put("workflowUuid", "ff305d54-75b4-431b-adb2-eb6b9e5ff000");		
+		this.msoRequest = new MsoRequest();
+		this.msoRequest.parse(sir, instanceIdMapTest, action, version, originalRequestJSON, reqVersion, false);
+	}
+	@Parameters
+	private Collection<Object[]> customWorkflowSuccessParameters() throws JsonParseException, JsonMappingException, IOException{
+		return Arrays.asList(new Object[][]{
+			{mapper.readValue(inputStream("/SuccessfulValidation/v1ExecuteCustomWorkflow.json"), ServiceInstancesRequest.class), instanceIdMapTest, Action.inPlaceSoftwareUpdate, "1"}
+			
+		});
+	}
+	@Test
 	@Parameters(method = "aLaCarteParameters")
 	public void aLaCarteFlagTest(boolean expected, ServiceInstancesRequest sir) throws JsonParseException, IOException, ValidationException{
 		this.expected = expected;
