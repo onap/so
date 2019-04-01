@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b4ff154e_420bd737",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfPluginAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-01T13:29:34Z",
+      "side": 1,
+      "message": "isn\u0027t this a breaking change here?  how would this be backward compatible? we are assuming if nothing is present it must be multi cloud but that really isn\u0027t true.",
+      "revId": "4f4fd92d9688f6b6dadf3ad2e7a6023cd740d0dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
