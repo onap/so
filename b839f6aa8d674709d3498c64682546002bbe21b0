@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "41bce1e9_2fa98a3a",
+        "filename": "asdc-controller/src/test/java/org/onap/so/asdc/client/ASDCControllerITTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "I need this to check the watchdog component distribution table. didn\u0027t have time to write code. Now it\u0027s added.",
+      "parentUuid": "6f020185_fe03afea",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "55bcc965_acce918e",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegate.java",
         "patchSetId": 1
@@ -30,6 +48,30 @@
       "writtenOn": "2019-03-27T16:43:32Z",
       "side": 1,
       "message": "Inject the beans via constructor, this makes the testing easier. \nI also put comments in test classes that relates to this issue.",
+      "range": {
+        "startLine": 53,
+        "startChar": 4,
+        "endLine": 53,
+        "endChar": 14
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ed821cbf_2335c4fd",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Try the spring testing, IMO, it\u0027s better to standard junit and mockito.",
+      "parentUuid": "55bcc965_acce918e",
       "range": {
         "startLine": 53,
         "startChar": 4,
@@ -65,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "76f1ef12_0795d9b5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "check my comments regarding throws runtimeexception.",
+      "parentUuid": "3fd13ede_b62cddd5",
+      "range": {
+        "startLine": 57,
+        "startChar": 61,
+        "endLine": 57,
+        "endChar": 77
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "cd40832a_d4dd7dd0",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
         "patchSetId": 1
@@ -82,6 +148,24 @@
     },
     {
       "key": {
+        "uuid": "8e89e378_ebebaa72",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cd40832a_d4dd7dd0",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "47c152a9_8147cd2a",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
         "patchSetId": 1
@@ -93,6 +177,30 @@
       "writtenOn": "2019-03-27T16:43:32Z",
       "side": 1,
       "message": "remove throws declaration, it is not needed",
+      "range": {
+        "startLine": 54,
+        "startChar": 61,
+        "endLine": 54,
+        "endChar": 77
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "62bec259_5d3622d3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "47c152a9_8147cd2a",
       "range": {
         "startLine": 54,
         "startChar": 61,
@@ -128,6 +236,30 @@
     },
     {
       "key": {
+        "uuid": "955365cb_1273bb0a",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareCdsCallDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3eb4fca4_5c71452a",
+      "range": {
+        "startLine": 67,
+        "startChar": 116,
+        "endLine": 67,
+        "endChar": 132
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "172fe793_f3b50503",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
         "patchSetId": 1
@@ -139,6 +271,30 @@
       "writtenOn": "2019-03-27T16:43:32Z",
       "side": 1,
       "message": "throws declaration not needed, please remove it",
+      "range": {
+        "startLine": 50,
+        "startChar": 8,
+        "endLine": 50,
+        "endChar": 24
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "2803354a_8c8cb262",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "I removed some of the throws exception. I understand there is no need to throw runtimeexception, but some times I prefer to explicitly use it so developers are aware of it by reading the code.",
+      "parentUuid": "172fe793_f3b50503",
       "range": {
         "startLine": 50,
         "startChar": 8,
@@ -168,6 +324,24 @@
     },
     {
       "key": {
+        "uuid": "c2091f8a_715467e5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b82b222c_2d13af0b",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "95feb50d_43894804",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
         "patchSetId": 1
@@ -185,6 +359,24 @@
     },
     {
       "key": {
+        "uuid": "b5f1369b_a42b41ab",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "95feb50d_43894804",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6ed7fc1a_156010a0",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
         "patchSetId": 1
@@ -196,6 +388,30 @@
       "writtenOn": "2019-03-27T16:43:32Z",
       "side": 1,
       "message": "This piece of code is duplicated on both subclasses. I would add a method to PrepareCdsCallDelegate class like:\n\n    protected AbstractCDSPropertiesBean prepareCDSPropertiesBean(DelegateExecution delegateExecution,\n            PnfResourceCustomization pnfResourceCustomization, String action, String jsonRequest) {\n        AbstractCDSPropertiesBean cdsPropertiesBean \u003d new AbstractCDSPropertiesBean();\n        cdsPropertiesBean.setBlueprintName(pnfResourceCustomization.getBlueprintName());\n        cdsPropertiesBean.setBlueprintVersion(pnfResourceCustomization.getBlueprintVersion());\n        cdsPropertiesBean.setOriginatorId(ORIGINATOR_ID);\n        cdsPropertiesBean.setActionName(action);\n        cdsPropertiesBean.setMode(MODE);\n        cdsPropertiesBean.setRequestId((String) delegateExecution.getVariable(MSO_REQUEST_ID));\n        cdsPropertiesBean.setSubRequestId((String) delegateExecution.getVariable(PNF_UUID));\n        cdsPropertiesBean.setRequestObject(jsonRequest);\n        return cdsPropertiesBean;\n    }\n\nAnd then just invoke the method here:\n\nreturn prepareCDSPropertiesBean(delegateExecution,\n                pnfResourceCustomization, ACTION_NAME, configAssignRequest.toString());",
+      "range": {
+        "startLine": 68,
+        "startChar": 8,
+        "endLine": 77,
+        "endChar": 33
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bac23761_42846bc9",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6ed7fc1a_156010a0",
       "range": {
         "startLine": 68,
         "startChar": 8,
@@ -231,6 +447,30 @@
     },
     {
       "key": {
+        "uuid": "ea715080_e7f60802",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f8f41400_abffeeee",
+      "range": {
+        "startLine": 50,
+        "startChar": 8,
+        "endLine": 50,
+        "endChar": 24
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b97fb050_26a7ab0f",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
         "patchSetId": 1
@@ -248,6 +488,24 @@
     },
     {
       "key": {
+        "uuid": "92867b7f_4ac5e70c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b97fb050_26a7ab0f",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1c33d62a_f5234b9f",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
         "patchSetId": 1
@@ -259,6 +517,24 @@
       "writtenOn": "2019-03-27T18:31:40Z",
       "side": 1,
       "message": "pnf-id shall match AAI entry, it is UUID.",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f4dad0ed_0f32791b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1c33d62a_f5234b9f",
       "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
@@ -288,6 +564,30 @@
     },
     {
       "key": {
+        "uuid": "98f1ea08_44e03d8c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "297f6454_648095b7",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 33
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "48ef8e17_16848640",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegateTest.java",
         "patchSetId": 1
@@ -305,6 +605,24 @@
     },
     {
       "key": {
+        "uuid": "744c5a80_542dd59d",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/ConfigCheckerDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Try to use SpringJunit4classRunner to refactor the CreateRelationTest and you can see some performance improvement. If not mistake, I can see at least 3x faster. But use the full applicationContext, just use the classes required for testing.",
+      "parentUuid": "48ef8e17_16848640",
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "bf1b8611_8b822819",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegateTest.java",
         "patchSetId": 1
@@ -316,6 +634,30 @@
       "writtenOn": "2019-03-27T16:43:32Z",
       "side": 1,
       "message": "the same issue as in ConfigCheckerDelegateTest, there is no need to run it with SpringJUnit4ClassRunner",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 39
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d5780b09_edcdcc9c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Check previous comment.",
+      "parentUuid": "bf1b8611_8b822819",
       "range": {
         "startLine": 59,
         "startChar": 0,
@@ -351,6 +693,30 @@
     },
     {
       "key": {
+        "uuid": "2f857880_9fe1e220",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "11fae88a_38679329",
+      "range": {
+        "startLine": 65,
+        "startChar": 4,
+        "endLine": 65,
+        "endChar": 87
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "980b82db_6b142874",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegateTest.java",
         "patchSetId": 1
@@ -362,6 +728,30 @@
       "writtenOn": "2019-03-27T16:43:32Z",
       "side": 1,
       "message": "declaration not needed, please remove",
+      "range": {
+        "startLine": 84,
+        "startChar": 24,
+        "endLine": 84,
+        "endChar": 40
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "899dc656_518fe68b",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Check previous comment regarding throws runtime exception.",
+      "parentUuid": "980b82db_6b142874",
       "range": {
         "startLine": 84,
         "startChar": 24,
@@ -397,6 +787,30 @@
     },
     {
       "key": {
+        "uuid": "eb05073c_ada378e3",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Check previous comment.",
+      "parentUuid": "cf8353d1_5642dc76",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 39
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b82ed54e_3b75b542",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
         "patchSetId": 1
@@ -420,6 +834,30 @@
     },
     {
       "key": {
+        "uuid": "d18228b2_96e9a85c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b82ed54e_3b75b542",
+      "range": {
+        "startLine": 65,
+        "startChar": 4,
+        "endLine": 65,
+        "endChar": 87
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "88e59005_fbebe409",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
         "patchSetId": 1
@@ -431,6 +869,30 @@
       "writtenOn": "2019-03-27T16:43:32Z",
       "side": 1,
       "message": "declaration not needed, please remove",
+      "range": {
+        "startLine": 84,
+        "startChar": 24,
+        "endLine": 84,
+        "endChar": 40
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d730cdce_bbfef606",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-01T13:59:13Z",
+      "side": 1,
+      "message": "check previous comment.",
+      "parentUuid": "88e59005_fbebe409",
       "range": {
         "startLine": 84,
         "startChar": 24,
