@@ -16,6 +16,24 @@
       "revId": "4f4fd92d9688f6b6dadf3ad2e7a6023cd740d0dc",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "f9bde2d4_9a113d83",
+        "filename": "adapters/mso-openstack-adapters/src/main/java/org/onap/so/adapters/vnf/MsoVnfPluginAdapterImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 712,
+      "author": {
+        "id": 1603
+      },
+      "writtenOn": "2019-04-01T20:34:11Z",
+      "side": 1,
+      "message": "Here\u0027s my thought process:\n1. I\u0027m not aware that the plugin vnf adapter is being used (at the moment) except by the multicloud plugin - so absence of the cloud_site entry defaulting to using multicloud seemed ok.  (the regular openstack-adapter shouldn\u0027t be affected)\n2. If there \u0027are\u0027 other plugin adapters being utilized, they can still use the records in the cloud_site table.\n\nBasically, it seems to me that Multicloud plugin adapter doesn\u0027t really \u0027need\u0027 records in the cloud_site table to work - so tried it out in code to see what it would look like.  If needs be, then I can change the patch to expect a cloud_site record.",
+      "parentUuid": "b4ff154e_420bd737",
+      "revId": "4f4fd92d9688f6b6dadf3ad2e7a6023cd740d0dc",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
