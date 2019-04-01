@@ -42,6 +42,7 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -90,6 +91,29 @@ public class WorkflowActionBBTasks {
 		execution.setVariable("MacroRollback", false);
 		int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
 		ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
+		
+		if(ebb.getBuildingBlock().getBpmnFlowName().equals("ConfigAssignVnfBB")) {
+		    String vnfId = ebb.getWorkflowResourceIds().getVnfId();
+		    String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
+		    VnfResourceCustomization vrc = catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(vnfCustomizationUUID);
+		    boolean skipConfigVNF = vrc.isSkipPostInstConf(); //waiting for 83379 to get merged
+		    if(skipConfigVNF) {
+		        currentSequence++;
+		        ebb = flowsToExecute.get(currentSequence);
+		    }
+		}
+		
+		if(ebb.getBuildingBlock().getBpmnFlowName().equals("ConfigDeployVnfBB")) {
+            String vnfId = ebb.getWorkflowResourceIds().getVnfId();
+            String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
+            VnfResourceCustomization vrc = catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(vnfCustomizationUUID);
+            boolean skipConfigVNF = vrc.isSkipPostInstConf();
+            if(skipConfigVNF) {
+                currentSequence++;
+                ebb = flowsToExecute.get(currentSequence);
+            }
+        }
+		
 		boolean homing = (boolean) execution.getVariable("homing");
 		boolean calledHoming = (boolean) execution.getVariable("calledHoming");
 		if (homing && !calledHoming) {
