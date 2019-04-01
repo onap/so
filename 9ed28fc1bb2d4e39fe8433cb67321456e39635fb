@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fd6bf1c2_cee759e1",
+        "filename": "adapters/mso-vfc-adapter/src/main/java/org/onap/so/adapters/vfc/rest/VfcAdapterRest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-04-01T12:21:25Z",
+      "side": 1,
+      "message": "should be done as similar to other, non sol005 case VfcManager should handle it.",
+      "range": {
+        "startLine": 125,
+        "startChar": 12,
+        "endLine": 125,
+        "endChar": 90
+      },
+      "revId": "9ed28fc1bb2d4e39fe8433cb67321456e39635fb",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
