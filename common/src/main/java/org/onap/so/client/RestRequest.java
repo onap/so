@@ -25,6 +25,7 @@ package org.onap.so.client;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Response;
@@ -60,8 +61,8 @@ public class RestRequest implements Callable<Response> {
 				response = this.client.getBuilder().accept(this.client.getAccept()).delete();
 
 			} else {
-				response = this.client.getBuilder().header("X-HTTP-Method-Override", "DELETE").accept(this.client.getAccept())
-						.post(Entity.entity(entity, this.client.getContentType()));
+				response = this.client.getBuilder().accept(this.client.getAccept())
+						.build(HttpMethod.DELETE, Entity.entity(entity, this.client.getContentType())).invoke();
 			}
 		} else if ("PUT".equals(method)) {
 			response = this.client.getBuilder().accept(this.client.getAccept()).put(Entity.entity(entity, this.client.getContentType()));

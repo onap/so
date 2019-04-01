@@ -21,6 +21,7 @@
 package org.onap.so.client.adapter.vnf;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -102,7 +103,7 @@ public class VnfAdapterClientIT extends BaseIntegrationTest{
 		RollbackVfModuleResponse mockResponse = new RollbackVfModuleResponse();
 		mockResponse.setVfModuleRolledback(true);
 		stubFor(
-				post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID + "/rollback"))
+				delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID + "/rollback"))
 						.willReturn(aResponse().withHeader("Content-Type", "application/json")
 								.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -120,7 +121,7 @@ public class VnfAdapterClientIT extends BaseIntegrationTest{
 		VfModuleExceptionResponse mockResponse = new VfModuleExceptionResponse();
 		mockResponse.setMessage("Error in rollback Vf module");
 		stubFor(
-				post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID + "/rollback"))
+				delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID + "/rollback"))
 						.willReturn(aResponse().withHeader("Content-Type", "application/json")
 								.withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
 
@@ -134,7 +135,7 @@ public class VnfAdapterClientIT extends BaseIntegrationTest{
 
 		DeleteVfModuleResponse mockResponse = new DeleteVfModuleResponse();
 		mockResponse.setVfModuleDeleted(true);
-		stubFor(post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
+		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(200)));
 
@@ -149,7 +150,7 @@ public class VnfAdapterClientIT extends BaseIntegrationTest{
 
 		VfModuleExceptionResponse mockResponse = new VfModuleExceptionResponse();
 		mockResponse.setMessage("Error in delete Vf module");
-		stubFor(post(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
+		stubFor(delete(urlPathEqualTo(REST_ENDPOINT + "/" + AAI_VNF_ID + "/vf-modules/" + AAI_VF_MODULE_ID))
 				.willReturn(aResponse().withHeader("Content-Type", "application/json")
 						.withBody(mapper.writeValueAsString(mockResponse)).withStatus(500)));
 
