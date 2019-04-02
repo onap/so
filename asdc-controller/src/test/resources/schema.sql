@@ -1114,6 +1114,7 @@ CREATE TABLE `vnf_resource_customization` (
   `RESOURCE_INPUT` varchar(20000) DEFAULT NULL,
   `CDS_BLUEPRINT_NAME` varchar(200) default null,
   `CDS_BLUEPRINT_VERSION` varchar(20) default null,
+  `SKIP_POST_INSTANTIATION_CONFIGURATION` boolean default true,
   `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `VNF_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
   `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
@@ -1195,6 +1196,7 @@ CREATE TABLE IF NOT EXISTS `pnf_resource_customization` (
   `RESOURCE_INPUT` varchar(2000) DEFAULT NULL,
   `CDS_BLUEPRINT_NAME` varchar(200) DEFAULT NULL,
   `CDS_BLUEPRINT_VERSION` varchar(20) DEFAULT NULL,
+  `SKIP_POST_INSTANTIATION_CONFIGURATION` boolean default true,
   PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
   KEY `fk_pnf_resource_customization__pnf_resource1_idx` (`PNF_RESOURCE_MODEL_UUID`),
   CONSTRAINT `fk_pnf_resource_customization__pnf_resource1` FOREIGN KEY (`PNF_RESOURCE_MODEL_UUID`) REFERENCES `pnf_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
