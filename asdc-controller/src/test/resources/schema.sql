@@ -401,6 +401,7 @@ create table `vnf_resource_customization` (
   `resource_input` varchar(20000) default null,
   `cds_blueprint_name` varchar(200) default null,
   `cds_blueprint_version` varchar(20) default null,
+  `skip_post_instantiation_configuration` boolean default true,
   primary key (`model_customization_uuid`),
   key `fk_vnf_resource_customization__vnf_resource1_idx` (`vnf_resource_model_uuid`),
   constraint `fk_vnf_resource_customization__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade
@@ -835,7 +836,6 @@ CREATE TABLE IF NOT EXISTS vnf_vfmodule_cvnfc_configuration_customization (
         ON DELETE CASCADE ON UPDATE CASCADE
 )  ENGINE=INNODB AUTO_INCREMENT=20654 DEFAULT CHARACTER SET=LATIN1;
 
-
 CREATE TABLE IF NOT EXISTS `pnf_resource` (
   `ORCHESTRATION_MODE` varchar(20) DEFAULT NULL,
   `DESCRIPTION` varchar(1200) DEFAULT NULL,
@@ -863,6 +863,7 @@ CREATE TABLE IF NOT EXISTS `pnf_resource_customization` (
   `RESOURCE_INPUT` varchar(2000) DEFAULT NULL,
   `CDS_BLUEPRINT_NAME` varchar(200) DEFAULT NULL,
   `CDS_BLUEPRINT_VERSION` varchar(20) DEFAULT NULL,
+  `SKIP_POST_INSTANTIATION_CONFIGURATION` boolean default true,
   PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
   KEY `fk_pnf_resource_customization__pnf_resource1_idx` (`PNF_RESOURCE_MODEL_UUID`),
   CONSTRAINT `fk_pnf_resource_customization__pnf_resource1` FOREIGN KEY (`PNF_RESOURCE_MODEL_UUID`) REFERENCES `pnf_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
