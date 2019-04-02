@@ -1,8 +1,6 @@
 /*-
  * ============LICENSE_START=======================================================
- * ONAP - SO
- * ================================================================================
- * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
+ *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,17 +13,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.client.aai;
+package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
-public class AAINamespaceConstants {
+import org.onap.so.client.aai.AAIResourcesClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-    public static final String CLOUD_INFRASTRUCTURE = "/cloud-infrastructure";
-    public static final String NETWORK = "/network";
-    public static final String BUSINESS = "/business";
-    public static final String SERVICE_DESIGN_AND_CREATION = "/service-design-and-creation";
-    public static final String EXTERNAL_SYSTEM = "/external-system";
+@Configuration
+public class AaiClientProvider {
 
+    @Bean
+    public AAIResourcesClient getAaiClient() {
+        return new AAIResourcesClient();
+    }
 }

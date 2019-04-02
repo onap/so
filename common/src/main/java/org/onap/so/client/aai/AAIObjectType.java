@@ -37,6 +37,9 @@ import org.onap.aai.domain.yang.Configuration;
 import org.onap.aai.domain.yang.Connector;
 import org.onap.aai.domain.yang.Customer;
 import org.onap.aai.domain.yang.Device;
+import org.onap.aai.domain.yang.EsrSystemInfoList;
+import org.onap.aai.domain.yang.EsrVnfm;
+import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.ExtAaiNetwork;
 import org.onap.aai.domain.yang.Flavor;
 import org.onap.aai.domain.yang.GenericVnf;
@@ -139,6 +142,10 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 	public static final AAIObjectType FLAVOR = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Flavor.class);
 	public static final AAIObjectType UNKNOWN = new AAIObjectType("", "", "unknown");
 	public static final AAIObjectType DSL = new AAIObjectType("/dsl", "", "dsl");
+    public static final AAIObjectType VNFM = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM + "/esr-vnfm-list/esr-vnfm/{vnfm-id}", EsrVnfm.class);
+    public static final AAIObjectType VNFM_LIST = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM, "/esr-vnfm-list", "vnfm-list");
+    public static final AAIObjectType VNFM_ESR_SYSTEM_INFO_LIST = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM + "/esr-vnfm-list", "/esr-vnfm/{vnfm-id}/esr-system-info-list", "vnfm-esr-system-info-list");
+
 
 	private final String uriTemplate;
 	private final String parentUri;
