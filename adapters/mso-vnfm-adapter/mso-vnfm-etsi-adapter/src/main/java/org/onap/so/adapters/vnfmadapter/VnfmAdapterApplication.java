@@ -29,8 +29,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 /**
  * The spring boot application for the VNFM (Virtual Network Function Manager) Adapter.
  * <p>
- * The VNFM Adapter receives requests through its REST API {@link VnfmAdapterController} which it adapts
- * into ETSI SOL003 compliant LCM (Life Cycle Management) calls towards an ETSI compliant VNFM.
+ * The VNFM Adapter receives requests through its REST API {@link VnfmAdapterController} which it
+ * adapts into ETSI SOL003 compliant LCM (Life Cycle Management) calls towards an ETSI compliant
+ * VNFM.
  *
  * @see <a href=
  *      "https://www.etsi.org/deliver/etsi_gs/NFV-SOL/001_099/003/02.05.01_60/gs_nfv-sol003v020501p.pdf">ETSI
