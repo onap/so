@@ -10,7 +10,7 @@
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="SequenceFlow_016sgof" sourceRef="StartEvent_0ru3x55" targetRef="ServiceTask_1jf7hlc" />
     <bpmn:endEvent id="EndEvent_001k15i">
-      <bpmn:incoming>SequenceFlow_0hp0ka1</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1owx4yu</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_0f0vsnv" sourceRef="ServiceTask_02e82t2" targetRef="ServiceTask_06ao4xu" />
     <bpmn:serviceTask id="ServiceTask_06ao4xu" name="&#10;Invoke VNFM Adaptor&#10;" camunda:asyncAfter="true" camunda:expression="${VnfmAdapterCreateVnfTask.invokeVnfmAdapter(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
@@ -22,7 +22,18 @@
       <bpmn:outgoing>SequenceFlow_18fsqzd</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="SequenceFlow_18fsqzd" sourceRef="ServiceTask_1jf7hlc" targetRef="ServiceTask_02e82t2" />
-    <bpmn:sequenceFlow id="SequenceFlow_0hp0ka1" sourceRef="ServiceTask_06ao4xu" targetRef="EndEvent_001k15i" />
+    <bpmn:sequenceFlow id="SequenceFlow_0hp0ka1" sourceRef="ServiceTask_06ao4xu" targetRef="CallActivity_0fuqfru" />
+    <bpmn:callActivity id="CallActivity_0fuqfru" name="Monitor Instantiation Job" calledElement="MonitorVnfmCreateJob">
+      <bpmn:extensionElements>
+        <camunda:in source="SDNCRequest" target="SDNCRequest" />
+        <camunda:out source="SDNCResponse" target="SDNCResponse" />
+        <camunda:out source="WorkflowException" target="WorkflowException" />
+        <camunda:in source="mso-request-id" target="mso-request-id" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0hp0ka1</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1owx4yu</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_1owx4yu" sourceRef="CallActivity_0fuqfru" targetRef="EndEvent_001k15i" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EtsiVnfInstantiateBB">
@@ -37,7 +48,7 @@
         <di:waypoint x="332" y="267" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_001k15i_di" bpmnElement="EndEvent_001k15i">
-        <dc:Bounds x="783" y="249" width="36" height="36" />
+        <dc:Bounds x="913" y="249" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0f0vsnv_di" bpmnElement="SequenceFlow_0f0vsnv">
         <di:waypoint x="580" y="267" />
@@ -55,7 +66,14 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0hp0ka1_di" bpmnElement="SequenceFlow_0hp0ka1">
         <di:waypoint x="729" y="267" />
-        <di:waypoint x="783" y="267" />
+        <di:waypoint x="770" y="267" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0fuqfru_di" bpmnElement="CallActivity_0fuqfru">
+        <dc:Bounds x="770" y="227" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1owx4yu_di" bpmnElement="SequenceFlow_1owx4yu">
+        <di:waypoint x="870" y="267" />
+        <di:waypoint x="913" y="267" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

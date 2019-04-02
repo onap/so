@@ -26,6 +26,7 @@ import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
+import org.onap.vnfmadapter.v1.model.QueryJobResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,6 +119,32 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
       return Optional.of(deleteVnfResponse);
     } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
       LOGGER.error("Unexpected error while processing delete request", httpInvocationException);
+      return Optional.absent();
+    }
+  }
+
+  @Override
+  public Optional<QueryJobResponse> getInstantiateOperationJobStatus(final String jobId) {
+    try {
+      final String url = urlProvider.getJobStatusUrl(jobId);
+
+      final ResponseEntity<QueryJobResponse> response =
+          httpServiceProvider.getHttpResponse(url, QueryJobResponse.class);
+
+      final HttpStatus httpStatus = response.getStatusCode();
+
+      if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
+        LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: ", url, httpStatus.value());
+        return Optional.absent();
+      }
+
+      if (!response.hasBody()) {
+        LOGGER.error("Received response without body: {}", response);
+        return Optional.absent();
+      }
+      return Optional.of(response.getBody());
+    } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
+      LOGGER.error("Unexpected error while processing job request", httpInvocationException);
       return Optional.absent();
     }
   }

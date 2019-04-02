@@ -22,11 +22,12 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.DUMMY_GENERIC_VND_ID;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.DUMMY_JOB_ID;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.EXPECTED_URL;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.JOB_STATUS_EXPECTED_URL;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.getVnfmBasicHttpConfigProvider;
 
 import org.junit.Test;
-import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmAdapterUrlProvider;
 
 
 /**
@@ -41,9 +42,16 @@ public class VnfmAdapterUrlProviderTest {
         final VnfmAdapterUrlProvider objUnderTest = new VnfmAdapterUrlProvider(getVnfmBasicHttpConfigProvider());
 
         final String actual = objUnderTest.getCreateInstantiateUrl(DUMMY_GENERIC_VND_ID);
-
         assertEquals(EXPECTED_URL, actual);
     }
 
+    @Test
+    public void testGetJobStatuUrl_returnValidCreationInstantiationRequest() {
+        final VnfmAdapterUrlProvider objUnderTest = new VnfmAdapterUrlProvider(getVnfmBasicHttpConfigProvider());
+
+        final String actual = objUnderTest.getJobStatusUrl(DUMMY_JOB_ID);
+        assertEquals(JOB_STATUS_EXPECTED_URL, actual);
+
+    }
 
 }

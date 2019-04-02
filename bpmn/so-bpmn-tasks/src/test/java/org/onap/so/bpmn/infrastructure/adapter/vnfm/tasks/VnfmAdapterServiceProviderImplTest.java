@@ -22,13 +22,14 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.DUMMY_GENERIC_VND_ID;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.DUMMY_JOB_ID;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.getVnfmBasicHttpConfigProvider;
-import java.util.UUID;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -38,6 +39,8 @@ import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
+import org.onap.vnfmadapter.v1.model.OperationStateEnum;
+import org.onap.vnfmadapter.v1.model.QueryJobResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.google.common.base.Optional;
@@ -49,74 +52,70 @@ import com.google.common.base.Optional;
 @RunWith(MockitoJUnitRunner.class)
 public class VnfmAdapterServiceProviderImplTest {
 
-    private static final String EMPTY_JOB_ID = "";
+  private static final String EMPTY_JOB_ID = "";
 
-    private static final CreateVnfRequest CREATE_VNF_REQUEST = new CreateVnfRequest();
+  private static final CreateVnfRequest CREATE_VNF_REQUEST = new CreateVnfRequest();
 
-    private static final String DUMMY_JOB_ID = UUID.randomUUID().toString();
+  @Mock
+  private HttpRestServiceProvider mockedHttpServiceProvider;
 
-    @Mock
-    private HttpRestServiceProvider mockedHttpServiceProvider;
+  @Mock
+  private ResponseEntity<CreateVnfResponse> mockedResponseEntity;
 
-    @Mock
-    private ResponseEntity<CreateVnfResponse> mockedResponseEntity;
+  @Mock
+  private ResponseEntity<DeleteVnfResponse> deleteVnfResponse;
+  @Mock
+  private ResponseEntity<QueryJobResponse> mockedQueryJobResponseResponseEntity;
 
-    @Mock
-    private ResponseEntity<DeleteVnfResponse> deleteVnfResponse;
+  @Test
+  public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusAcceptedWithBody_validResponse() {
 
-    @Test
-    public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusAcceptedWithBody_validResponse() {
+    when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(), eq(CreateVnfResponse.class)))
+        .thenReturn(mockedResponseEntity);
+    when(mockedResponseEntity.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+    when(mockedResponseEntity.hasBody()).thenReturn(true);
+    final CreateVnfResponse response = getCreateVnfResponse(DUMMY_JOB_ID);
+    when(mockedResponseEntity.getBody()).thenReturn(response);
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+    final Optional<CreateVnfResponse> actual =
+        objUnderTest.invokeCreateInstantiationRequest(DUMMY_GENERIC_VND_ID, CREATE_VNF_REQUEST);
+    assertTrue(actual.isPresent());
+    assertEquals(actual.get(), response);
+  }
 
-        when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(),
-                eq(CreateVnfResponse.class))).thenReturn(mockedResponseEntity);
-        when(mockedResponseEntity.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
-        when(mockedResponseEntity.hasBody()).thenReturn(true);
-        final CreateVnfResponse response = getCreateVnfResponse(DUMMY_JOB_ID);
-        when(mockedResponseEntity.getBody()).thenReturn(response);
+  @Test
+  public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusAcceptedWithNoBody_noResponse() {
+    assertWithStatuCode(HttpStatus.ACCEPTED);
+  }
 
-
-        final VnfmAdapterServiceProvider objUnderTest =
-                new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
-
-        final Optional<CreateVnfResponse> actual =
-                objUnderTest.invokeCreateInstantiationRequest(DUMMY_GENERIC_VND_ID, CREATE_VNF_REQUEST);
-        assertTrue(actual.isPresent());
-        assertEquals(actual.get(), response);
-
-    }
-
-    @Test
-    public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusAcceptedWithNoBody_noResponse() {
-        assertWithStatuCode(HttpStatus.ACCEPTED);
-    }
-
-    @Test
-    public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusNotOkWithNoBody_noResponse() {
-        assertWithStatuCode(HttpStatus.UNAUTHORIZED);
-    }
+  @Test
+  public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusNotOkWithNoBody_noResponse() {
+    assertWithStatuCode(HttpStatus.UNAUTHORIZED);
+  }
 
 
-    @Test
-    public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusAcceptedWithBodyWithInvalidJobId_noResponse() {
-        assertWithJobId(null);
-        assertWithJobId(EMPTY_JOB_ID);
-    }
+  @Test
+  public void testInvokeCreateInstantiationRequest_httpServiceProviderReturnsStatusAcceptedWithBodyWithInvalidJobId_noResponse() {
+    assertWithJobId(null);
+    assertWithJobId(EMPTY_JOB_ID);
+  }
 
-    @Test
-    public void testInvokeCreateInstantiationRequest_httpServiceProviderThrowException_httpRestServiceProviderNotNull() {
+  @Test
+  public void testInvokeCreateInstantiationRequest_httpServiceProviderThrowException_httpRestServiceProviderNotNull() {
 
-        when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(),
-                eq(CreateVnfResponse.class))).thenThrow(RestProcessingException.class);
+    when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(), eq(CreateVnfResponse.class)))
+        .thenThrow(RestProcessingException.class);
 
 
-        final VnfmAdapterServiceProvider objUnderTest =
-                new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
 
-        final Optional<CreateVnfResponse> actual =
-                objUnderTest.invokeCreateInstantiationRequest(DUMMY_GENERIC_VND_ID, CREATE_VNF_REQUEST);
-        assertFalse(actual.isPresent());
+    final Optional<CreateVnfResponse> actual =
+        objUnderTest.invokeCreateInstantiationRequest(DUMMY_GENERIC_VND_ID, CREATE_VNF_REQUEST);
+    assertFalse(actual.isPresent());
 
-    }
+  }
 
   @Test
   public void testInvokeDeleteRequest() {
@@ -179,54 +178,116 @@ public class VnfmAdapterServiceProviderImplTest {
     assertFalse(actual.isPresent());
   }
 
+  @Test
+  public void testGetInstantiateOperationJobStatus_httpServiceProviderReturnsStatusOkWithBody_validResponse() {
 
-    private void assertWithJobId(final String jobId) {
-        when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(),
-                eq(CreateVnfResponse.class))).thenReturn(mockedResponseEntity);
-        when(mockedResponseEntity.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
-        when(mockedResponseEntity.hasBody()).thenReturn(true);
-        final CreateVnfResponse response = getCreateVnfResponse(jobId);
-        when(mockedResponseEntity.getBody()).thenReturn(response);
+    when(mockedQueryJobResponseResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
+    when(mockedQueryJobResponseResponseEntity.hasBody()).thenReturn(true);
+    when(mockedQueryJobResponseResponseEntity.getBody()).thenReturn(getQueryJobResponse());
 
+    when(mockedHttpServiceProvider.getHttpResponse(eq(TestConstants.JOB_STATUS_EXPECTED_URL),
+        eq(QueryJobResponse.class))).thenReturn(mockedQueryJobResponseResponseEntity);
 
-        final VnfmAdapterServiceProvider objUnderTest =
-                new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
 
-        final Optional<CreateVnfResponse> actual =
-                objUnderTest.invokeCreateInstantiationRequest(DUMMY_GENERIC_VND_ID, CREATE_VNF_REQUEST);
-        assertFalse(actual.isPresent());
-    }
-
-    private void assertWithStatuCode(final HttpStatus status) {
-        when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(),
-                eq(CreateVnfResponse.class))).thenReturn(mockedResponseEntity);
-        when(mockedResponseEntity.getStatusCode()).thenReturn(status);
-        when(mockedResponseEntity.hasBody()).thenReturn(false);
-
-        final VnfmAdapterServiceProvider objUnderTest =
-                new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
-
-        final Optional<CreateVnfResponse> actual =
-                objUnderTest.invokeCreateInstantiationRequest(DUMMY_GENERIC_VND_ID, CREATE_VNF_REQUEST);
-        assertFalse(actual.isPresent());
-    }
-
-
-
-    private CreateVnfResponse getCreateVnfResponse(final String jobId) {
-        final CreateVnfResponse response = new CreateVnfResponse();
-        response.setJobId(jobId);
-        return response;
-    }
-
-    private DeleteVnfResponse getDeleteVnfResponse(final String jobId) {
-      final DeleteVnfResponse response = new DeleteVnfResponse();
-      response.setJobId(jobId);
-      return response;
+    final Optional<QueryJobResponse> actual = objUnderTest.getInstantiateOperationJobStatus(DUMMY_JOB_ID);
+    assertTrue(actual.isPresent());
+    final QueryJobResponse actualQueryJobResponse = actual.get();
+    assertNotNull(actualQueryJobResponse);
   }
 
+  @Test
+  public void testGetInstantiateOperationJobStatus_httpServiceProviderReturnsStatusOkWithOutBody_invalidResponse() {
 
-    private VnfmAdapterUrlProvider getVnfmAdapterUrlProvider() {
-        return new VnfmAdapterUrlProvider(getVnfmBasicHttpConfigProvider());
-    }
+    when(mockedQueryJobResponseResponseEntity.getStatusCode()).thenReturn(HttpStatus.OK);
+    when(mockedQueryJobResponseResponseEntity.hasBody()).thenReturn(false);
+
+    when(mockedHttpServiceProvider.getHttpResponse(eq(TestConstants.JOB_STATUS_EXPECTED_URL),
+        eq(QueryJobResponse.class))).thenReturn(mockedQueryJobResponseResponseEntity);
+
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+
+    final Optional<QueryJobResponse> actual = objUnderTest.getInstantiateOperationJobStatus(DUMMY_JOB_ID);
+    assertFalse(actual.isPresent());
+  }
+
+  @Test
+  public void testGetInstantiateOperationJobStatus_httpServiceProviderReturnsStatusNotOkWithOutBody_invalidResponse() {
+
+    when(mockedQueryJobResponseResponseEntity.getStatusCode()).thenReturn(HttpStatus.INTERNAL_SERVER_ERROR);
+
+    when(mockedHttpServiceProvider.getHttpResponse(eq(TestConstants.JOB_STATUS_EXPECTED_URL),
+        eq(QueryJobResponse.class))).thenReturn(mockedQueryJobResponseResponseEntity);
+
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+
+    final Optional<QueryJobResponse> actual = objUnderTest.getInstantiateOperationJobStatus(DUMMY_JOB_ID);
+    assertFalse(actual.isPresent());
+  }
+  
+  @Test
+  public void testGetInstantiateOperationJobStatus_Exception() {
+
+    when(mockedHttpServiceProvider.getHttpResponse(eq(TestConstants.JOB_STATUS_EXPECTED_URL),
+        eq(QueryJobResponse.class))).thenThrow(RestProcessingException.class);
+
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+
+    final Optional<QueryJobResponse> actual = objUnderTest.getInstantiateOperationJobStatus(DUMMY_JOB_ID);
+    assertFalse(actual.isPresent());
+  }
+
+  private QueryJobResponse getQueryJobResponse() {
+    return new QueryJobResponse().id(DUMMY_JOB_ID).operationState(OperationStateEnum.COMPLETED);
+
+  }
+
+  private void assertWithJobId(final String jobId) {
+    when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(), eq(CreateVnfResponse.class)))
+        .thenReturn(mockedResponseEntity);
+    when(mockedResponseEntity.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+    when(mockedResponseEntity.hasBody()).thenReturn(true);
+    final CreateVnfResponse response = getCreateVnfResponse(jobId);
+    when(mockedResponseEntity.getBody()).thenReturn(response);
+
+
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+
+    final Optional<CreateVnfResponse> actual =
+        objUnderTest.invokeCreateInstantiationRequest(DUMMY_GENERIC_VND_ID, CREATE_VNF_REQUEST);
+    assertFalse(actual.isPresent());
+  }
+
+  private void assertWithStatuCode(final HttpStatus status) {
+    when(mockedHttpServiceProvider.postHttpRequest(eq(CREATE_VNF_REQUEST), anyString(), eq(CreateVnfResponse.class)))
+        .thenReturn(mockedResponseEntity);
+    when(mockedResponseEntity.getStatusCode()).thenReturn(status);
+    when(mockedResponseEntity.hasBody()).thenReturn(false);
+
+    final VnfmAdapterServiceProvider objUnderTest =
+        new VnfmAdapterServiceProviderImpl(getVnfmAdapterUrlProvider(), mockedHttpServiceProvider);
+
+    final Optional<CreateVnfResponse> actual =
+        objUnderTest.invokeCreateInstantiationRequest(DUMMY_GENERIC_VND_ID, CREATE_VNF_REQUEST);
+    assertFalse(actual.isPresent());
+  }
+
+  private CreateVnfResponse getCreateVnfResponse(final String jobId) {
+    return new CreateVnfResponse().jobId(jobId);
+  }
+
+  private DeleteVnfResponse getDeleteVnfResponse(final String jobId) {
+    final DeleteVnfResponse response = new DeleteVnfResponse();
+    response.setJobId(jobId);
+    return response;
+  }
+
+  private VnfmAdapterUrlProvider getVnfmAdapterUrlProvider() {
+    return new VnfmAdapterUrlProvider(getVnfmBasicHttpConfigProvider());
+  }
 }
