@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +32,13 @@ import org.springframework.stereotype.Service;
 public class VnfmServiceProviderImpl implements VnfmServiceProvider {
 
     private final HttpRestServiceProvider httpServiceProvider;
+    private final VnfmUrlProvider urlProvider;
 
     @Autowired
-    public VnfmServiceProviderImpl(
+    public VnfmServiceProviderImpl(final VnfmUrlProvider urlProvider,
             @Qualifier("vnfmServiceProvider") final HttpRestServiceProvider httpServiceProvider) {
         this.httpServiceProvider = httpServiceProvider;
+        this.urlProvider = urlProvider;
     }
 
     @Override
@@ -43,5 +46,9 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
         return httpServiceProvider.get(vnfSelfLink, InlineResponse201.class);
     }
 
-
+    @Override
+    public Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId) {
+        final String url = urlProvider.getOperationUrl(vnfmId, operationId);
+        return httpServiceProvider.get(url, InlineResponse200.class);
+    }
 }

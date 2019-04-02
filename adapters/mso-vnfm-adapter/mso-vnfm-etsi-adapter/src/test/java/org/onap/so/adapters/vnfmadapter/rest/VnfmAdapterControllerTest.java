@@ -33,6 +33,7 @@ import java.net.URI;
 import java.util.Optional;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.hamcrest.core.StringStartsWith;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,7 @@ import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -54,6 +56,9 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
+import org.onap.vnfmadapter.v1.model.OperationEnum;
+import org.onap.vnfmadapter.v1.model.OperationStateEnum;
+import org.onap.vnfmadapter.v1.model.QueryJobResponse;
 import org.onap.vnfmadapter.v1.model.Tenant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -70,6 +75,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.OffsetDateTime;
+import org.threeten.bp.ZoneOffset;
 
 
 @RunWith(SpringRunner.class)
@@ -77,6 +85,11 @@ import org.springframework.web.client.RestTemplate;
 @ActiveProfiles("test")
 
 public class VnfmAdapterControllerTest {
+
+    private static final OffsetDateTime JAN_1_2019_12_00 =
+            OffsetDateTime.of(LocalDateTime.of(2019, 1, 1, 12, 0), ZoneOffset.UTC);
+    private static final OffsetDateTime JAN_1_2019_1_00 =
+            OffsetDateTime.of(LocalDateTime.of(2019, 1, 1, 1, 0), ZoneOffset.UTC);
 
     @LocalServerPort
     private int port;
@@ -144,16 +157,28 @@ public class VnfmAdapterControllerTest {
         doReturn(Optional.of(esrSystemInfoList1)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/external-system/esr-vnfm-list/esr-vnfm/vnfm1/esr-system-info-list")));
-
         doReturn(Optional.of(esrSystemInfoList2)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/external-system/esr-vnfm-list/esr-vnfm/vnfm2/esr-system-info-list")));
 
+        final InlineResponse200 firstOperationQueryResponse = createOperationQueryResponse(
+                org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum.INSTANTIATE,
+                org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationStateEnum.PROCESSING);
+        mockRestServer.expect(requestTo(new StringStartsWith("http://vnfm2:8080/vnf_lcm_op_occs")))
+                .andRespond(withSuccess(gson.toJson(firstOperationQueryResponse), MediaType.APPLICATION_JSON));
 
-        final ResponseEntity<CreateVnfResponse> response =
+        final InlineResponse200 secondOperationQueryReponse = createOperationQueryResponse(
+                org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum.INSTANTIATE,
+                org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationStateEnum.COMPLETED);
+        mockRestServer.expect(requestTo(new StringStartsWith("http://vnfm2:8080/vnf_lcm_op_occs")))
+                .andRespond(withSuccess(gson.toJson(secondOperationQueryReponse), MediaType.APPLICATION_JSON));
+
+        // Invoke the create request
+
+        final ResponseEntity<CreateVnfResponse> createVnfResponse =
                 controller.vnfCreate("myTestVnfId", createVnfRequest, "asadas", "so", "1213");
-        assertEquals(HttpStatus.ACCEPTED, response.getStatusCode());
-        assertNotNull(response.getBody().getJobId());
+        assertEquals(HttpStatus.ACCEPTED, createVnfResponse.getStatusCode());
+        assertNotNull(createVnfResponse.getBody().getJobId());
 
         final ArgumentCaptor<GenericVnf> genericVnfArgument = ArgumentCaptor.forClass(GenericVnf.class);
         final ArgumentCaptor<AAIResourceUri> uriArgument = ArgumentCaptor.forClass(AAIResourceUri.class);
@@ -169,6 +194,22 @@ public class VnfmAdapterControllerTest {
         assertEquals("esr-vnfm", createdRelationship.getRelatedTo());
         assertEquals("tosca.relationships.DependsOn", createdRelationship.getRelationshipLabel());
         assertEquals("/aai/v15/external-system/esr-vnfm-list/esr-vnfm/vnfm2", createdRelationship.getRelatedLink());
+
+        // check the job status
+
+        final ResponseEntity<QueryJobResponse> firstJobQueryResponse =
+                controller.jobQuery(createVnfResponse.getBody().getJobId(), "", "so", "1213");
+        assertEquals(OperationEnum.INSTANTIATE, firstJobQueryResponse.getBody().getOperation());
+        assertEquals(OperationStateEnum.PROCESSING, firstJobQueryResponse.getBody().getOperationState());
+        assertEquals(JAN_1_2019_12_00, firstJobQueryResponse.getBody().getStartTime());
+        assertEquals(JAN_1_2019_1_00, firstJobQueryResponse.getBody().getStateEnteredTime());
+
+        final ResponseEntity<QueryJobResponse> secondJobQueryResponse =
+                controller.jobQuery(createVnfResponse.getBody().getJobId(), "", "so", "1213");
+        assertEquals(OperationEnum.INSTANTIATE, secondJobQueryResponse.getBody().getOperation());
+        assertEquals(OperationStateEnum.COMPLETED, secondJobQueryResponse.getBody().getOperationState());
+        assertEquals(JAN_1_2019_12_00, secondJobQueryResponse.getBody().getStartTime());
+        assertEquals(JAN_1_2019_1_00, secondJobQueryResponse.getBody().getStateEnteredTime());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -336,9 +377,62 @@ public class VnfmAdapterControllerTest {
                 .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myVnfId"))
                 .accept(MediaType.APPLICATION_JSON).header("X-ONAP-RequestId", "myRequestId")
                 .header("X-ONAP-InvocationID", "myInvocationId").header("Content-Type", "application/json").build();
-        final ResponseEntity<DeleteVnfResponse> response = restTemplate.exchange(request, DeleteVnfResponse.class);
-        assertEquals(202, response.getStatusCode().value());
-        assertNotNull(response.getBody().getJobId());
+        final ResponseEntity<DeleteVnfResponse> deleteVnfResponse =
+                restTemplate.exchange(request, DeleteVnfResponse.class);
+        assertEquals(202, deleteVnfResponse.getStatusCode().value());
+        assertNotNull(deleteVnfResponse.getBody().getJobId());
+
+
+        final EsrSystemInfo esrSystemInfo = new EsrSystemInfo();
+        esrSystemInfo.setServiceUrl("http://vnfm:8080");
+        esrSystemInfo.setType("vnfmType");
+        esrSystemInfo.setSystemType("VNFM");
+        final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
+        esrSystemInfoList.getEsrSystemInfo().add(esrSystemInfo);
+
+        doReturn(Optional.of(esrSystemInfoList)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/...")));
+
+        final InlineResponse200 firstOperationQueryResponse = createOperationQueryResponse(
+                org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum.TERMINATE,
+                org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationStateEnum.PROCESSING);
+        mockRestServer.expect(requestTo(new StringStartsWith("http://vnfm:8080/vnf_lcm_op_occs")))
+                .andRespond(withSuccess(gson.toJson(firstOperationQueryResponse), MediaType.APPLICATION_JSON));
+
+
+        final InlineResponse200 secondOperationQueryReponse = createOperationQueryResponse(
+                org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum.TERMINATE,
+                org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationStateEnum.COMPLETED);
+        mockRestServer.expect(requestTo(new StringStartsWith("http://vnfm:8080/vnf_lcm_op_occs")))
+                .andRespond(withSuccess(gson.toJson(secondOperationQueryReponse), MediaType.APPLICATION_JSON));
+
+
+        final ResponseEntity<QueryJobResponse> firstJobQueryResponse =
+                controller.jobQuery(deleteVnfResponse.getBody().getJobId(), "", "so", "1213");
+        assertEquals(OperationEnum.TERMINATE, firstJobQueryResponse.getBody().getOperation());
+        assertEquals(OperationStateEnum.PROCESSING, firstJobQueryResponse.getBody().getOperationState());
+        assertEquals(JAN_1_2019_12_00, firstJobQueryResponse.getBody().getStartTime());
+        assertEquals(JAN_1_2019_1_00, firstJobQueryResponse.getBody().getStateEnteredTime());
+
+        final ResponseEntity<QueryJobResponse> secondJobQueryResponse =
+                controller.jobQuery(deleteVnfResponse.getBody().getJobId(), "", "so", "1213");
+        assertEquals(OperationEnum.TERMINATE, secondJobQueryResponse.getBody().getOperation());
+        assertEquals(OperationStateEnum.PROCESSING, secondJobQueryResponse.getBody().getOperationState());
+        assertEquals(JAN_1_2019_12_00, secondJobQueryResponse.getBody().getStartTime());
+        assertEquals(JAN_1_2019_1_00, secondJobQueryResponse.getBody().getStateEnteredTime());
+    }
+
+    private InlineResponse200 createOperationQueryResponse(
+            final org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum operation,
+            final org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationStateEnum operationState) {
+        final InlineResponse200 response = new InlineResponse200();
+        response.setId("9876");
+        response.setOperation(operation);
+        response.setOperationState(operationState);
+        response.setStartTime(JAN_1_2019_12_00);
+        response.setStateEnteredTime(JAN_1_2019_1_00);
+        response.setVnfInstanceId("myVnfInstanceId");
+        return response;
     }
 
     private class AaiResourceUriMatcher extends BaseMatcher<AAIResourceUri> {
@@ -352,6 +446,10 @@ public class VnfmAdapterControllerTest {
         @Override
         public boolean matches(final Object item) {
             if (item instanceof AAIResourceUri) {
+                if (uriAsString.endsWith("...")) {
+                    return ((AAIResourceUri) item).build().toString()
+                            .startsWith(uriAsString.substring(0, uriAsString.indexOf("...")));
+                }
                 return ((AAIResourceUri) item).build().toString().equals(uriAsString);
             }
             return false;

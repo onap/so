@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import java.util.Iterator;
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.configuration.rest.HttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;
@@ -29,6 +30,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -45,7 +49,18 @@ public class VnfmServiceProviderConfiguration {
 
     private HttpRestServiceProvider getHttpRestServiceProvider(final RestTemplate restTemplate,
             final HttpHeadersProvider httpHeadersProvider) {
+        setGsonMessageConverter(restTemplate);
         return new HttpRestServiceProviderImpl(restTemplate, httpHeadersProvider);
+    }
+
+    private void setGsonMessageConverter(final RestTemplate restTemplate) {
+        final Iterator<HttpMessageConverter<?>> iterator = restTemplate.getMessageConverters().iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next() instanceof MappingJackson2HttpMessageConverter) {
+                iterator.remove();
+            }
+        }
+        restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
     }
 
 }

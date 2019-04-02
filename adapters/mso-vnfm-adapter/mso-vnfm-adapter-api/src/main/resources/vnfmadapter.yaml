@@ -241,7 +241,7 @@ definitions:
     required:
       - operationStatusRetrievalStatus
   OperationStatusRetrievalStatusEnum:
-    description: The status of the attempt to retrrieve the operation from the VNFM
+    description: The status of the attempt to retrieve the operation from the VNFM
     type: string
     enum:
       - STATUS_FOUND

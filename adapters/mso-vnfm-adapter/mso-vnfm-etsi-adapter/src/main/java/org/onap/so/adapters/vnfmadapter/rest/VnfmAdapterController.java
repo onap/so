@@ -21,14 +21,15 @@
 package org.onap.so.adapters.vnfmadapter.rest;
 
 import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
-import java.util.UUID;
 import javax.validation.Valid;
 import javax.ws.rs.core.MediaType;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
 import org.onap.so.adapters.vnfmadapter.lifecycle.LifecycleManager;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
+import org.onap.vnfmadapter.v1.model.QueryJobResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -37,6 +38,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,10 +56,12 @@ public class VnfmAdapterController {
 
     private static final Logger logger = LoggerFactory.getLogger(VnfmAdapterController.class);
     private final LifecycleManager lifecycleManager;
+    private final JobManager jobManager;
 
     @Autowired
-    VnfmAdapterController(final LifecycleManager lifecycleManager) {
+    VnfmAdapterController(final LifecycleManager lifecycleManager, final JobManager jobManager) {
         this.lifecycleManager = lifecycleManager;
+        this.jobManager = jobManager;
     }
 
     @PostMapping(value = "/vnfs/{vnfId}")
@@ -109,11 +113,37 @@ public class VnfmAdapterController {
 
         logger.info("REST request vnfDelete for VNF: {}", vnfId);
 
-        final DeleteVnfResponse response = new DeleteVnfResponse();
-        response.setJobId(UUID.randomUUID().toString());
+        final DeleteVnfResponse response = lifecycleManager.deleteVnf(vnfId);
         clearLoggingMDCs();
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
+
+    @GetMapping(value = "/jobs/{jobId}")
+    public ResponseEntity<QueryJobResponse> jobQuery(
+            @ApiParam(value = "The identifier of the Job.", required = true) @PathVariable("jobId") final String jobId,
+            @ApiParam(
+                    value = "Used to track REST requests for logging purposes. Identifies a single top level invocation of ONAP",
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.REQUEST_ID,
+                            required = false) final String requestId,
+            @ApiParam(
+                    value = "Used to track REST requests for logging purposes. Identifies the client application user agent or user invoking the API",
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.PARTNER_NAME,
+                            required = false) final String partnerName,
+            @ApiParam(
+                    value = "Used to track REST requests for logging purposes. Identifies a single invocation of a single component",
+                    required = false) @RequestHeader(value = ONAPLogConstants.Headers.INVOCATION_ID,
+                            required = false) final String invocationId) {
+
+        setLoggingMDCs(requestId, partnerName, invocationId);
+
+        final QueryJobResponse response = jobManager.getVnfmOperation(jobId);
+        if (response == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
+
+    }
+
 
     private void setLoggingMDCs(final String requestId, final String partnerName, final String invocationId) {
         MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, requestId);

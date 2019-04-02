@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 
 /**
@@ -35,5 +36,14 @@ public interface VnfmServiceProvider {
      * @return the VNF from the VNFM
      */
     Optional<InlineResponse201> getVnf(final String vnfSelfLink);
+
+    /**
+     * Invoke a get request for a VNFM operation.
+     *
+     * @param vnfmId the id of the VNFM in AAI
+     * @param operationId the id of the operation on the VNFM
+     * @return the operation from the VNFM
+     */
+    Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId);
 
 }
