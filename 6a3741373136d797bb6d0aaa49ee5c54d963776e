@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2b9dcef9_909b75e0",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/VnfmAdapterServiceProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2019-04-02T12:07:55Z",
+      "side": 1,
+      "message": "can you put the try and catch like other functions?",
+      "range": {
+        "startLine": 145,
+        "startChar": 3,
+        "endLine": 146,
+        "endChar": 1
+      },
+      "revId": "6a3741373136d797bb6d0aaa49ee5c54d963776e",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
