@@ -51,6 +51,8 @@ tomcat:
   max-threads: 50
 mso:
   logPath: logs
+  msb-ip: localhost
+  msb-port: ${wiremock.server.port}
   catalog:
     db:
       spring:

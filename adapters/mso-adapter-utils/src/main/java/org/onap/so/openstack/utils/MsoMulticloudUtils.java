@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
 import org.onap.so.adapters.vdu.CloudInfo;
 import org.onap.so.adapters.vdu.PluginAction;
@@ -46,7 +47,6 @@ import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
 import org.onap.so.client.HttpClientFactory;
 import org.onap.so.client.RestClient;
-import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
@@ -77,6 +77,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final Integer DEFAULT_MSB_PORT = 80;
+    private static final String DEFAULT_MSB_IP = "127.0.0.1";
+    private static final String ONAP_IP = "ONAP_IP";
     private final HttpClientFactory httpClientFactory = new HttpClientFactory();
 
     @Autowired
@@ -594,10 +597,15 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     }
 
     private String getMulticloudEndpoint(String cloudSiteId, String cloudOwner, String workloadId) throws MsoCloudSiteNotFound {
+        String msbIp = System.getenv().get(ONAP_IP);
+        if (null == msbIp || msbIp.isEmpty()) {
+            msbIp = environment.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
+        }
+        Integer msbPort = environment.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
 
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-        String endpoint = cloudSite.getIdentityService().getIdentityUrl();
+        String path = "/api/multicloud/v1/" + cloudOwner + "/" + cloudSiteId + "/infra_workload";
 
+        String endpoint = UriBuilder.fromPath(path).host(msbIp).port(msbPort).scheme("http").build().toString();
         if (workloadId != null) {
             if (logger.isDebugEnabled()) {
                 logger.debug(String.format("Multicloud Endpoint is: %s/%s", endpoint, workloadId));

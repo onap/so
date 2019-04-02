@@ -707,29 +707,32 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
         //  Perform a version check against cloudSite
         // Obtain the cloud site information where we will create the VF Module
+        Boolean usingMulticloud = false;
         Optional<CloudSite> cloudSiteOp = cloudConfig.getCloudSite (cloudSiteId);
         if (!cloudSiteOp.isPresent()) {
-            throw new VnfException (new MsoCloudSiteNotFound (cloudSiteId));
-        }
-        CloudSite cloudSite = cloudSiteOp.get();
-		MavenLikeVersioning aicV = new MavenLikeVersioning();
-		aicV.setVersion(cloudSite.getCloudVersion());
-		Boolean usingMulticloud = getUsingMulticloud(cloudSite);
+            // If cloudSiteId is not present in the catalog DB, then default to multicloud
+            usingMulticloud = true;
+        } else {
+            CloudSite cloudSite = cloudSiteOp.get();
+    		MavenLikeVersioning aicV = new MavenLikeVersioning();
+    		aicV.setVersion(cloudSite.getCloudVersion());
+    		usingMulticloud = getUsingMulticloud(cloudSite);
 
-		String vnfMin = vnfResource.getAicVersionMin();
-		String vnfMax = vnfResource.getAicVersionMax();
+    		String vnfMin = vnfResource.getAicVersionMin();
+    		String vnfMax = vnfResource.getAicVersionMax();
 
-        if ((vnfMin != null && !(aicV.isMoreRecentThan(vnfMin) || aicV.isTheSameVersion(vnfMin))) || (vnfMax != null
-            && aicV.isMoreRecentThan(vnfMax))) {
-            // ERROR
-            String error =
-                "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID()
-                    + " VersionMin=" + vnfMin + " VersionMax:" + vnfMax + " NOT supported on Cloud: " + cloudSiteId
-                    + " with AIC_Version:" + cloudSite.getCloudVersion();
-            logger.error("{} {} {} {} {}", MessageEnum.RA_CONFIG_EXC.toString(), error, "OpenStack",
-                ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
-            logger.debug(error);
-            throw new VnfException(error, MsoExceptionCategory.USERDATA);
+            if ((vnfMin != null && !(aicV.isMoreRecentThan(vnfMin) || aicV.isTheSameVersion(vnfMin))) || (vnfMax != null
+                && aicV.isMoreRecentThan(vnfMax))) {
+                // ERROR
+                String error =
+                    "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid=" + vnfResource.getModelUUID()
+                        + " VersionMin=" + vnfMin + " VersionMax:" + vnfMax + " NOT supported on Cloud: " + cloudSiteId
+                        + " with AIC_Version:" + cloudSite.getCloudVersion();
+                logger.error("{} {} {} {} {}", MessageEnum.RA_CONFIG_EXC.toString(), error, "OpenStack",
+                    ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
+                logger.debug(error);
+                throw new VnfException(error, MsoExceptionCategory.USERDATA);
+            }
         }
         // End Version check
 
@@ -1261,12 +1264,16 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     		else if (orchestrator.equalsIgnoreCase("HEAT")) {
     			return heatUtils;
     		}
-            if (orchestrator.equalsIgnoreCase("MULTICLOUD")) {
-                logger.debug ("Got MulticloudUtils for vduPlugin");
-                return multicloudUtils; }
+            else if (orchestrator.equalsIgnoreCase("MULTICLOUD")) {
+                return multicloudUtils;
+            }
+            else {
+                // Default if cloudSite record exists - return HEAT plugin - will fail later
+    			return heatUtils;
+            }
     	}
-        // Default - return HEAT plugin, though will fail later
-    	return heatUtils;
+        // Default if no cloudSite record exists - return multicloud plugin
+    	return multicloudUtils;
     }
 
     private Boolean getUsingMulticloud (CloudSite cloudSite) {
