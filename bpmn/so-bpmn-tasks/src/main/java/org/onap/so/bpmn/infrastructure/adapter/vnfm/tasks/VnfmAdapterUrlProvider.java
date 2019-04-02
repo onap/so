@@ -64,5 +64,14 @@ public class VnfmAdapterUrlProvider {
     return UriComponentsBuilder.fromUri(baseUri).pathSegment("vnfs").pathSegment(vnfId).build().toString();
   }
 
+    /**
+     * Get job status URL
+     * 
+     * @param jobId The instantiation job identifier
+     * @return job status URL
+     */
+    public String getJobStatusUrl(final String jobId) {
+        return UriComponentsBuilder.fromUri(baseUri).pathSegment("jobs").pathSegment(jobId).build().toString();
+    }
 
 }
