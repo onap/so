@@ -952,6 +952,19 @@ public class ToscaResourceInstaller {
 						throw new Exception("Cannot find matching VFModule Customization in Csar for Vf_Modules_Metadata: " + vfMetadata.getVfModuleModelCustomizationUUID());
 					
 				}
+				
+				
+				// Check for VNFC Instance Group info and add it if there is
+				List<Group> groupList = toscaResourceStruct.getSdcCsarHelper()
+						.getGroupsOfOriginOfNodeTemplateByToscaGroupType(nodeTemplate,
+								"org.openecomp.groups.VfcInstanceGroup");
+					
+				for (Group group : groupList) { 
+						VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(nodeTemplate, group, vnfResource, toscaResourceStruct);
+						vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);				
+				}			
+				
+				
 				service.getVnfCustomizations().add(vnfResource);
 			} else{
 				logger.debug("Notification VF ResourceCustomizationUUID: " + vfNotificationResource.getResourceCustomizationUUID() + " doesn't match " +
@@ -1288,6 +1301,7 @@ public class ToscaResourceInstaller {
 		
 		if(vnfcCustomization==null)
 			vnfcCustomization = vnfcCustomizationRepo.findOneByModelCustomizationUUID(customizationUUID);
+			//vnfcCustomization = new VnfcCustomization();
 		
 		return vnfcCustomization;
 	}
@@ -1706,7 +1720,7 @@ public class ToscaResourceInstaller {
 				SdcTypes.CVFC);
 
 		for (NodeTemplate cvfcTemplate : cvfcList) {
-boolean cvnfcVfModuleNameMatch = false;
+			boolean cvnfcVfModuleNameMatch = false;
 			
 			for(NodeTemplate node : groupMembers){		
 				vfModuleMemberName = node.getName();
@@ -2094,15 +2108,6 @@ boolean cvnfcVfModuleNameMatch = false;
 			vnfResourceCustomization.setService(service);
 			vnfResource.getVnfResourceCustomizations().add(vnfResourceCustomization);
 			
-			// Fetch VNFC Instance Group Info
-			List<Group> groupList = toscaResourceStructure.getSdcCsarHelper()
-					.getGroupsOfOriginOfNodeTemplateByToscaGroupType(vfNodeTemplate,
-							"org.openecomp.groups.VfcInstanceGroup");
-				
-			for (Group group : groupList) { 
-					VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = createVNFCInstanceGroup(vfNodeTemplate, group, vnfResourceCustomization, toscaResourceStructure);
-					vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);				
-			}			
 		}
 		return vnfResourceCustomization;
 	}
