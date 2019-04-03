@@ -174,6 +174,7 @@ public class ToscaResourceInstaller {
 
 	private static String CUSTOMIZATION_UUID = "customizationUUID";
 
+	protected static final String SKIP_POST_INST_CONF = "skip_post_instantiation_configuration";
 
 	@Autowired
 	protected ServiceRepository serviceRepo;
@@ -887,10 +888,21 @@ public class ToscaResourceInstaller {
 		pnfResourceCustomization.setMultiStageDesign(getStringValue(properties.get(MULTI_STAGE_DESIGN)));
 		pnfResourceCustomization.setBlueprintName(getStringValue(properties.get(SDNC_MODEL_NAME)));
 		pnfResourceCustomization.setBlueprintVersion(getStringValue(properties.get(SDNC_MODEL_VERSION)));
-
+		pnfResourceCustomization.setSkipPostInstConf(getBooleanValue(properties.get(SKIP_POST_INST_CONF)));
 		pnfResourceCustomization.setPnfResources(pnfResource);
 
 		return pnfResourceCustomization;
+	}
+
+	/**
+	 * Get value from {@link Property} and cast to boolean value. Return true if property is null.
+	 */
+	private boolean getBooleanValue(Property property) {
+		if (null == property) {
+			return true;
+		}
+		Object value = property.getValue();
+		return new Boolean(String.valueOf(value));
 	}
 
 	/**
@@ -2150,6 +2162,11 @@ public class ToscaResourceInstaller {
 
 		vnfResourceCustomization.setBlueprintVersion(testNull(toscaResourceStructure.getSdcCsarHelper()
 			.getNodeTemplatePropertyLeafValue(vfNodeTemplate, SDNC_MODEL_VERSION)));
+
+		String skipPostInstConfText = toscaResourceStructure.getSdcCsarHelper().getNodeTemplatePropertyLeafValue(vfNodeTemplate, SKIP_POST_INST_CONF);
+		if (skipPostInstConfText != null){
+			vnfResourceCustomization.setSkipPostInstConf(Boolean.parseBoolean(skipPostInstConfText));
+		}
 
 		vnfResourceCustomization.setVnfResources(vnfResource);
 		vnfResourceCustomization.setAvailabilityZoneMaxCount(Integer.getInteger(

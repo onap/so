@@ -23,6 +23,7 @@ package org.onap.so.db.catalog.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.UUID;
@@ -190,6 +191,7 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         Assert.assertNotNull(vnfResourceCustomization.getVnfResources());
         Assert.assertNotNull(vnfResourceCustomization.getVfModuleCustomizations());
         Assert.assertEquals("vSAMP10a", vnfResourceCustomization.getVnfResources().getModelName());
+        assertTrue("skip post instantiation configuration", vnfResourceCustomization.isSkipPostInstConf());
     }
 
     @Test
@@ -639,9 +641,9 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         assertEquals("modelInstanceName", "PNF routing", pnfResourceCustomization.getModelInstanceName());
         assertEquals("blueprintName", "test_configuration_restconf", pnfResourceCustomization.getBlueprintName());
         assertEquals("blueprintVersion", "1.0.0", pnfResourceCustomization.getBlueprintVersion());
+        assertTrue("skip post instantiation configuration", pnfResourceCustomization.isSkipPostInstConf());
         PnfResource pnfResource = pnfResourceCustomization.getPnfResources();
         assertNotNull(pnfResource);
-
         assertEquals("PNFResource modelUUID", "ff2ae348-214a-11e7-93ae-92361f002680", pnfResource.getModelUUID());
         assertEquals("PNFResource modelInvariantUUID", "2fff5b20-214b-11e7-93ae-92361f002680",
             pnfResource.getModelInvariantUUID());

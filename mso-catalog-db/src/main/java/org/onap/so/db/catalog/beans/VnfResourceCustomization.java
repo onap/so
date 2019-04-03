@@ -122,6 +122,9 @@ public class VnfResourceCustomization implements Serializable {
     @Column(name = "CDS_BLUEPRINT_VERSION")
     private String blueprintVersion;
 
+    @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
+    private Boolean skipPostInstConf;
+
     @Override
     public boolean equals(final Object other) {
         if (!(other instanceof VnfResourceCustomization)) {
@@ -318,4 +321,11 @@ public class VnfResourceCustomization implements Serializable {
         this.blueprintVersion = blueprintVersion;
     }
 
+    public Boolean isSkipPostInstConf() {
+        return skipPostInstConf;
+    }
+
+    public void setSkipPostInstConf(Boolean skipPostInstConf) {
+        this.skipPostInstConf = skipPostInstConf;
+    }
 }
