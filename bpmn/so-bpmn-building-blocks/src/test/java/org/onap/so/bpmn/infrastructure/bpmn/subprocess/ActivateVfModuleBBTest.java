@@ -40,6 +40,7 @@ public class ActivateVfModuleBBTest extends BaseBPMNTest{
 	public void before() {
 		variables.put("vfModuleActivateTimerDuration", "PT2S");
 		variables.put("auditInventoryNeeded", "true");
+		variables.put("auditIsSuccessful", "true");	
 	}
 
 	@Test

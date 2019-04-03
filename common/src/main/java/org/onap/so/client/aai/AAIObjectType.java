@@ -138,6 +138,7 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 	public static final AAIObjectType EXT_AAI_NETWORK = new AAIObjectType(AAINamespaceConstants.NETWORK, ExtAaiNetwork.class);
 	public static final AAIObjectType AGGREGATE_ROUTE = new AAIObjectType(AAINamespaceConstants.NETWORK, AggregateRoute.class);
 	public static final AAIObjectType L_INTERFACE = new AAIObjectType(AAIObjectType.VSERVER.uriTemplate(), LInterface.class);
+	public static final AAIObjectType SUB_L_INTERFACE = new AAIObjectType(AAIObjectType.L_INTERFACE.uriTemplate(), "/l-interfaces/l-interface/{sub-interface-name}", "sub-l-interface");
 	public static final AAIObjectType IMAGE = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Image.class);
 	public static final AAIObjectType FLAVOR = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), Flavor.class);
 	public static final AAIObjectType UNKNOWN = new AAIObjectType("", "", "unknown");

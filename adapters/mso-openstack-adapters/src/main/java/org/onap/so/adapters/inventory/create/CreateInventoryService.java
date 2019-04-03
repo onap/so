@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.adapters.audit;
+package org.onap.so.adapters.inventory.create;
 
 import java.security.GeneralSecurityException;
 
@@ -38,15 +38,15 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Profile("!test")
-public class AuditStackService {
+public class CreateInventoryService {
 
-	private static final Logger logger = LoggerFactory.getLogger(AuditStackService.class);
+	private static final Logger logger = LoggerFactory.getLogger(CreateInventoryService.class);
 
 	@Autowired
 	public Environment env;
 
 	@Autowired
-	private AuditStackServiceData auditStack;
+	private CreateInventoryTask createInventory;
 
 	@PostConstruct
 	public void auditAAIInventory() {
@@ -61,8 +61,8 @@ public class AuditStackService {
 		ExternalTaskClient client = ExternalTaskClient.create()
 				.baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
 				.asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(10000, 2, 120000)).build();
-		client.subscribe("InventoryAudit").lockDuration(60000)
-				.handler(auditStack::executeExternalTask).open();
+		client.subscribe("InventoryCreate").lockDuration(60000)
+				.handler(createInventory::executeExternalTask).open();
 	}
 
 }

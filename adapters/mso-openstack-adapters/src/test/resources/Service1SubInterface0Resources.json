@@ -4,23 +4,23 @@
     "resources": [
         {
             "parent_resource": "0",
-            "resource_name": "ssc_subint_mis_vmi_0",
+            "resource_name": "ssc_subint_svc1_vmi_0",
             "links": [
                 {
-                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources/ssc_subint_mis_vmi_0",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_svc1_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources/ssc_subint_svc1_vmi_0",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_svc1_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
                     "rel": "stack"
                 }
             ],
-            "logical_resource_id": "ssc_subint_mis_vmi_0",
+            "logical_resource_id": "ssc_subint_svc1_vmi_0",
             "resource_status": "CREATE_COMPLETE",
             "updated_time": "2019-01-23T19:34:56Z",
             "required_by": [
-                "ssc_subint_mis_vmi_0_v6_ip_0",
-                "ssc_subint_mis_vmi_0_ip_0"
+                "ssc_subint_svc1_vmi_0_v6_ip_0",
+                "ssc_subint_svc1_vmi_0_ip_0"
             ],
             "resource_status_reason": "state changed",
             "physical_resource_id": "d54dfd09-75c6-4e04-b204-909455b8f933",
@@ -28,18 +28,18 @@
         },
         {
             "parent_resource": "0",
-            "resource_name": "ssc_subint_mis_vmi_0_v6_ip_0",
+            "resource_name": "ssc_subint_svc1_vmi_0_v6_ip_0",
             "links": [
                 {
-                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources/ssc_subint_mis_vmi_0_v6_ip_0",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_svc1_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources/ssc_subint_svc1_vmi_0_v6_ip_0",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_svc1_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
                     "rel": "stack"
                 }
             ],
-            "logical_resource_id": "ssc_subint_mis_vmi_0_v6_ip_0",
+            "logical_resource_id": "ssc_subint_svc1_vmi_0_v6_ip_0",
             "resource_status": "CREATE_COMPLETE",
             "updated_time": "2019-01-23T19:34:56Z",
             "required_by": [],
@@ -49,18 +49,18 @@
         },
         {
             "parent_resource": "0",
-            "resource_name": "ssc_subint_mis_vmi_0_ip_0",
+            "resource_name": "ssc_subint_svc1_vmi_0_ip_0",
             "links": [
                 {
-                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources/ssc_subint_mis_vmi_0_ip_0",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_svc1_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81/resources/ssc_subint_svc1_vmi_0_ip_0",
                     "rel": "self"
                 },
                 {
-                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_mis_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
+                    "href": "https://orchestration.com:8004/v1/ea2d13cc98b44d60a6f94bdcb2738f9e/stacks/tsbc0005vm002ssc001-ssc_1_subint_svc1_port_0_subinterfaces-hlzdigtimzst-0-upfi5nhurk7y/f711be16-2654-4a09-b89d-0511fda20e81",
                     "rel": "stack"
                 }
             ],
-            "logical_resource_id": "ssc_subint_mis_vmi_0_ip_0",
+            "logical_resource_id": "ssc_subint_svc1_vmi_0_ip_0",
             "resource_status": "CREATE_COMPLETE",
             "updated_time": "2019-01-23T19:34:56Z",
             "required_by": [],

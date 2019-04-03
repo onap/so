@@ -1,0 +1,167 @@
+{
+  "auditList": [
+    {
+      "aaiObject": {
+        "vserverId": "3a4c2ca5-27b3-4ecc-98c5-06804867c4db"
+      }, 
+      "aaiObjectType": "vserver", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "dec8bdc7-5718-41dc-bfbb-561ff6eeb81c", 
+        "interfaceName": "ssc_1_trusted_port_0", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_trusted_port_0"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "1c56a24b-5f03-435a-850d-31cd4252de56", 
+        "interfaceName": "ssc_1_service1_port_0", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": [], 
+        "linterfaces": {
+          "linterface": [
+            {
+              "interfaceId": "0d9cd813-2ae1-46c0-9ebb-48081f6cffbb", 
+              "interfaceName": "service1_sub_interface_1", 
+              "l3InterfaceIpv4AddressList": [], 
+              "l3InterfaceIpv6AddressList": []
+            }, 
+            {
+              "interfaceId": "b7019dd0-2ee9-4447-bdef-ac25676b205a", 
+              "interfaceName": "service1_sub_interface_2", 
+              "l3InterfaceIpv4AddressList": [], 
+              "l3InterfaceIpv6AddressList": []
+            }
+          ]
+        }
+      }, 
+      "aaiObjectType": "l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_service1_port_0"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "0d9cd813-2ae1-46c0-9ebb-48081f6cffbb", 
+        "interfaceName": "service1_sub_interface_1", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "sub-l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_service1_port_0/l-interfaces/l-interface/service1_sub_interface_1"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "b7019dd0-2ee9-4447-bdef-ac25676b205a", 
+        "interfaceName": "service1_sub_interface_2", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "sub-l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_service1_port_0/l-interfaces/l-interface/service1_sub_interface_2"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "12afcd28-929f-4d80-8a5a-0833bfd5e20b", 
+        "interfaceName": "ssc_1_mgmt_port_1", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_mgmt_port_1"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "80baec42-ffae-425f-ad8c-3f7b2c24bfff", 
+        "interfaceName": "ssc_1_mgmt_port_0", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_mgmt_port_0"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "13eddf95-4cf3-45f2-823a-2d890a6549b4", 
+        "interfaceName": "ssc_1_service2_port_0", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": [], 
+        "linterfaces": {
+          "linterface": [
+            {
+              "interfaceId": "f711be16-2654-4a09-b89d-0511fda20e81", 
+              "interfaceName": "service2_sub_interface_1", 
+              "l3InterfaceIpv4AddressList": [], 
+              "l3InterfaceIpv6AddressList": []
+            }
+          ]
+        }
+      }, 
+      "aaiObjectType": "l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_service2_port_0"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "f711be16-2654-4a09-b89d-0511fda20e81", 
+        "interfaceName": "service2_sub_interface_1", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "sub-l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_service2_port_0/l-interfaces/l-interface/service2_sub_interface_1"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "9cab2903-70f7-44fd-b681-491d6ae2adb8", 
+        "interfaceName": "ssc_1_int_ha_port_0", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4db/l-interfaces/l-interface/ssc_1_int_ha_port_0"
+    }, 
+    {
+      "aaiObject": {
+        "vserverId": "3a4c2ca5-27b3-4ecc-98c5-06804867c4dz"
+      }, 
+      "aaiObjectType": "vserver", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4dz"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "9cab2903-70f7-44fd-b681-491d6ae2adz1", 
+        "interfaceName": "test_port_1", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "l-interface", 
+      "doesObjectExist": true, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4dz/l-interfaces/l-interface/test_port_1"
+    }, 
+    {
+      "aaiObject": {
+        "interfaceId": "9cab2903-70f7-44fd-b681-491d6ae2adz2", 
+        "interfaceName": "test_port_2", 
+        "l3InterfaceIpv4AddressList": [], 
+        "l3InterfaceIpv6AddressList": []
+      }, 
+      "aaiObjectType": "l-interface", 
+      "doesObjectExist": false, 
+      "resourceURI": "/cloud-infrastructure/cloud-regions/cloud-region/cloudOwner/cloudRegion/tenants/tenant/tenantId/vservers/vserver/3a4c2ca5-27b3-4ecc-98c5-06804867c4dz/l-interfaces/l-interface/test_port_2"
+    }
+  ]
+}

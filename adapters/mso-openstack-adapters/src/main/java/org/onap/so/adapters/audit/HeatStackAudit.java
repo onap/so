@@ -21,6 +21,7 @@
 package org.onap.so.adapters.audit;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +33,8 @@ import java.util.stream.Stream;
 
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.LInterfaces;
+import org.onap.aai.domain.yang.Vlan;
+import org.onap.aai.domain.yang.Vlans;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.onap.so.openstack.utils.MsoNeutronUtils;
@@ -55,60 +58,37 @@ public class HeatStackAudit {
 
 	@Autowired
 	protected MsoHeatUtils heat;
-
+	
 	@Autowired
 	protected MsoNeutronUtils neutron;
 
 	@Autowired
 	protected AuditVServer auditVservers;
 
-	public boolean auditHeatStackCreate(String cloudRegion, String cloudOwner, String tenantId, String heatStackName) {
+	public Optional<AAIObjectAuditList> auditHeatStack(String cloudRegion, String cloudOwner, String tenantId, String heatStackName) {
 		try {
-			return auditStack(cloudRegion,cloudOwner,tenantId,heatStackName,true);
-		} catch (Exception e) {
-			logger.error("Error during auditing stack resources", e);
-			return false;
-		}
-	}
-	
-	public boolean auditHeatStackDeleted(String cloudRegion, String cloudOwner, String tenantId, String heatStackName) {
-		try {
-			return auditStack(cloudRegion,cloudOwner,tenantId,heatStackName,false);
-		} catch (Exception e) {
-			logger.error("Error during auditing stack resources", e);
-			return false;
-		}
-	}
-	
-	private boolean auditStack(String cloudRegion, String cloudOwner, String tenantId, String heatStackName,boolean isCreateAudit) throws Exception{
-		logger.debug("Fetching Top Level Stack Information");
-		Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName);
-		List<Resource> novaResources = extractNovaResources(resources);
-		if(novaResources.isEmpty())
-			return true;
-		else{
-			List<Optional<Port>> neutronPortDetails = retrieveNeutronPortDetails(resources,cloudRegion,tenantId);
-			List<Resource> resourceGroups = extractResourceGroups(resources);
-			Set<Vserver> vserversToAudit = createVserverSet(resources, novaResources,neutronPortDetails);
-			Set<Vserver> vserversWithSubInterfaces = processSubInterfaces(cloudRegion, tenantId, resourceGroups,
-				vserversToAudit);
-			if(isCreateAudit){
-				return auditVservers.auditAllVserversDoExist(vserversWithSubInterfaces, tenantId, cloudOwner, cloudRegion);
-			}else{
-				return auditVservers.auditAllVserversDoNotExist(vserversWithSubInterfaces, tenantId, cloudOwner, cloudRegion);
+			logger.debug("Fetching Top Level Stack Information");
+			Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName);
+			List<Resource> novaResources = resources.getList().stream()
+					.filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
+			List<Resource> resourceGroups = resources.getList().stream()
+					.filter(p -> "OS::Heat::ResourceGroup".equals(p.getType()) && p.getName().contains("subinterfaces"))
+					.collect(Collectors.toList());
+			List<Optional<Port>> neutronPortDetails = retrieveNeutronPortDetails(resources, cloudRegion, tenantId);
+			if (novaResources.isEmpty())
+				return Optional.of(new AAIObjectAuditList());
+			else {
+				Set<Vserver> vserversToAudit = createVserverSet(resources, novaResources, neutronPortDetails);
+				Set<Vserver> vserversWithSubInterfaces = processSubInterfaces(cloudRegion, tenantId, resourceGroups,
+						vserversToAudit);
+				 return auditVservers.auditVservers(vserversWithSubInterfaces,
+						tenantId, cloudOwner, cloudRegion);
 			}
+		} catch (Exception e) {
+			logger.error("Error during auditing stack resources", e);
+			return Optional.empty();
 		}
 	}
-
-	private List<Resource> extractResourceGroups(Resources resources) {
-		return resources.getList().stream()
-				.filter(p -> "OS::Heat::ResourceGroup".equals(p.getType()) && p.getName().contains("subinterfaces")).collect(Collectors.toList());
-	}
-
-	private List<Resource> extractNovaResources(Resources resources) {
-		return resources.getList().stream()
-				.filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
-	} 
 
 	protected Set<Vserver> processSubInterfaces(String cloudRegion, String tenantId, List<Resource> resourceGroups,
 			Set<Vserver> vServersToAudit) throws Exception {
@@ -137,7 +117,6 @@ public class HeatStackAudit {
 				logger.error("Error Parsing Link to obtain Path", e);
 				throw new Exception("Error finding Path from Self Link");
 			}
-
 		}
 	}
 
@@ -182,7 +161,24 @@ public class HeatStackAudit {
 					}
 					LInterface subInterface = new LInterface();
 					subInterface.setInterfaceId(contrailVm.getPhysicalResourceId());
+					subInterface.setIsPortMirrored(false);
+					subInterface.setInMaint(false);
+					subInterface.setIsIpUnnumbered(false);
+					String macAddr = (String) subinterfaceStack.getParameters().get("mac_address");
+					subInterface.setMacaddr(macAddr);
 					
+					String namePrefix = (String) subinterfaceStack.getParameters().get("subinterface_name_prefix");
+					Integer vlanIndex = Integer.parseInt((String) subinterfaceStack.getParameters().get("counter"));
+					String vlanTagList = (String) subinterfaceStack.getParameters().get("vlan_tag");
+					List<String> subInterfaceVlanTagList = Arrays.asList(vlanTagList.split(","));
+					subInterface.setInterfaceName(namePrefix+"_"+subInterfaceVlanTagList.get(vlanIndex));
+					subInterface.setVlans(new Vlans());
+					Vlan vlan = new Vlan();
+					vlan.setInMaint(false);
+					vlan.setIsIpUnnumbered(false);
+					vlan.setVlanIdInner(Long.parseLong(subInterfaceVlanTagList.get(vlanIndex)));
+					vlan.setVlanInterface(namePrefix+"_"+subInterfaceVlanTagList.get(vlanIndex));
+					subInterface.getVlans().getVlan().add(vlan);
 					if(lInterface.getLInterfaces() == null)
 						lInterface.setLInterfaces(new LInterfaces());
 					
@@ -197,11 +193,12 @@ public class HeatStackAudit {
 		for (Resource novaResource : novaResources) {
 			Vserver auditVserver = new Vserver();
 			auditVserver.setLInterfaces(new LInterfaces());
-			auditVserver.setVserverId(novaResource.getPhysicalResourceId());
+			auditVserver.setVserverId(novaResource.getPhysicalResourceId());			
 			Stream<Port> filteredNeutronPorts = filterNeutronPorts(novaResource, neutronPortDetails);
 			filteredNeutronPorts.forEach(port -> {
 				LInterface lInterface = new LInterface();
 				lInterface.setInterfaceId(port.getId());
+				lInterface.setInterfaceName(port.getName());
 				auditVserver.getLInterfaces().getLInterface().add(lInterface);
 			});
 			vserversToAudit.add(auditVserver);
@@ -228,9 +225,9 @@ public class HeatStackAudit {
 	 * @return List of optional neutron ports found within the cloud site and tenant
 	 */
 	protected List<Optional<Port>> retrieveNeutronPortDetails(Resources resources,String cloudSiteId,String tenantId){
-		return resources.getList().stream()	
+		return resources.getList().parallelStream()	
 				.filter(resource -> "OS::Neutron::Port".equals(resource.getType()))
-				.map(resource -> neutron.getNeutronPort(resource.getPhysicalResourceId(),cloudSiteId,tenantId)).collect(Collectors.toList());
+				.map(resource -> neutron.getNeutronPort(resource.getPhysicalResourceId(),tenantId,cloudSiteId)).collect(Collectors.toList());
 
 	}
 
@@ -261,6 +258,7 @@ public class HeatStackAudit {
 		}
 		return Optional.empty();
 	}
+	
 	
 }
 

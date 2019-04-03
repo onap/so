@@ -20,16 +20,24 @@
 
 package org.onap.so.adapters.audit;
 
+import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -39,48 +47,76 @@ import org.onap.so.audit.beans.AuditInventory;
 import org.springframework.core.env.Environment;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AuditCreateStackServiceTest extends AuditCreateStackService {
+public class AuditStackServiceDataTest extends AuditStackServiceData {
 
 	@InjectMocks
-	AuditCreateStackService auditStackService = new AuditCreateStackService();
+	private AuditStackServiceData auditStackService = new AuditStackServiceData();
 
 	@Mock
-	HeatStackAudit heatStackAuditMock;
+	private HeatStackAudit heatStackAuditMock;
 
 	@Mock
-	Environment mockEnv;
+	private Environment mockEnv;
 
 	@Mock
-	ExternalTask mockExternalTask;
+	private ExternalTask mockExternalTask;
 
 	@Mock
-	ExternalTaskService mockExternalTaskService;
+	private ExternalTaskService mockExternalTaskService;
 
-	AuditInventory auditInventory = new AuditInventory();
+	private ObjectMapper objectMapper = new ObjectMapper();
+	
+	private AuditInventory auditInventory = new AuditInventory();
 
+	Optional<AAIObjectAuditList> auditListOptSuccess;
+	
+	Optional<AAIObjectAuditList> auditListOptFailure;
+	
 	@Before
-	public void setup() {
+	public void setup() throws JsonParseException, JsonMappingException, IOException {
 		auditInventory.setCloudOwner("cloudOwner");
 		auditInventory.setCloudRegion("cloudRegion");
 		auditInventory.setTenantId("tenantId");
 		auditInventory.setHeatStackName("stackName");
 		MockitoAnnotations.initMocks(this);
+		
+		AAIObjectAuditList auditListSuccess = objectMapper.readValue(new File("src/test/resources/ExpectedVServerFound.json"), AAIObjectAuditList.class);
+		auditListOptSuccess = Optional.of(auditListSuccess);
+		
+		AAIObjectAuditList auditListFailure = objectMapper.readValue(new File("src/test/resources/Vserver2_Found_VServer1_Not_Found.json"), AAIObjectAuditList.class);
+		auditListOptFailure = Optional.of(auditListFailure);
+		String[] retrySequence = new String[8];
+		retrySequence[0] = "1";
+		retrySequence[1] = "1";
+		retrySequence[2] = "2";
+		retrySequence[3] = "3";
+		retrySequence[4] = "5";
+		retrySequence[5] = "8";
+		retrySequence[6] = "13";
+		retrySequence[7] = "20";
 		doReturn(auditInventory).when(mockExternalTask).getVariable("auditInventory");
 		doReturn("6000").when(mockEnv).getProperty("mso.workflow.topics.retryMultiplier","6000");
+		doReturn(retrySequence).when(mockEnv).getProperty("mso.workflow.topics.retrySequence",String[].class);
 		doReturn("aasdfasdf").when(mockExternalTask).getId();
 	}
 
 	@Test
 	public void execute_external_task_audit_success_Test() {
-		doReturn(true).when(heatStackAuditMock).auditHeatStackCreate("cloudRegion", "cloudOwner", "tenantId", "stackName");
+		doReturn(auditListOptSuccess).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
-		Mockito.verify(mockExternalTaskService).complete(mockExternalTask);
+		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+		ArgumentCaptor<ExternalTask> taskCaptor = ArgumentCaptor.forClass(ExternalTask.class);
+		Mockito.verify(mockExternalTaskService).complete(taskCaptor.capture(),captor.capture());
+		Map actualMap = captor.getValue();
+		assertEquals(true,actualMap.get("auditIsSuccessful"));
+		assertNotNull(actualMap.get("auditInventoryResult"));
 	}
 
 	@Test
 	public void execute_external_task_audit_first_failure_Test() {
-		doReturn(false).when(heatStackAuditMock).auditHeatStackCreate("cloudRegion", "cloudOwner", "tenantId", "stackName");
+		doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
 		doReturn(null).when(mockExternalTask).getRetries();
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
 		Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
@@ -90,7 +126,7 @@ public class AuditCreateStackServiceTest extends AuditCreateStackService {
 
 	@Test
 	public void execute_external_task_audit_intermediate_failure_Test() {
-		doReturn(false).when(heatStackAuditMock).auditHeatStackCreate("cloudRegion", "cloudOwner", "tenantId", "stackName");
+		doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
 		doReturn(6).when(mockExternalTask).getRetries();
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);		
 		Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
@@ -101,11 +137,15 @@ public class AuditCreateStackServiceTest extends AuditCreateStackService {
 
 	@Test
 	public void execute_external_task_audit_final_failure_Test() {
-		doReturn(false).when(heatStackAuditMock).auditHeatStackCreate("cloudRegion", "cloudOwner", "tenantId", "stackName");
+		doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
 		doReturn(1).when(mockExternalTask).getRetries();
 		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);		
-		Mockito.verify(mockExternalTaskService).handleBpmnError(mockExternalTask,
-				"AuditAAIInventoryFailure", "Number of Retries Exceeded auditing inventory");
+		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+		ArgumentCaptor<ExternalTask> taskCaptor = ArgumentCaptor.forClass(ExternalTask.class);
+		Mockito.verify(mockExternalTaskService).complete(taskCaptor.capture(),captor.capture());
+		Map actualMap = captor.getValue();
+		assertEquals(false,actualMap.get("auditIsSuccessful"));
+		assertNotNull(actualMap.get("auditInventoryResult"));
 	}
 
 	@Test
@@ -146,5 +186,18 @@ public class AuditCreateStackServiceTest extends AuditCreateStackService {
 		assertEquals(78000L, seventhRetry);
 		long eigthRetry = auditStackService.calculateRetryDelay(1);
 		assertEquals(120000L, eigthRetry);
+	}
+	
+
+	@Test
+	public void determineAuditResult_Test() throws Exception{		
+		boolean actual = auditStackService.didAuditFail(auditListOptSuccess);
+		assertEquals(false, actual);
+	}
+	
+	@Test
+	public void determineAuditResult_Failure_Test() throws Exception{
+		boolean actual = auditStackService.didAuditFail(auditListOptFailure);
+		assertEquals(true, actual);
 	}
 }
