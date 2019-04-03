@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.List;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
 import org.onap.so.db.catalog.beans.PnfResource;
@@ -41,6 +42,14 @@ public class PnfCustomizationRepositoryTest extends BaseTest {
             .findById("68dc9a92-214c-11e7-93ae-92361f002680")
             .orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
         checkPnfResourceCustomization(pnfResourceCustomization);
+    }
+
+    @Test
+    public void findPnfResourceCustomizationByModelUuid_ValidServiceUuidAndCustomizationUuid_ExpectedOutput() {
+        List<PnfResourceCustomization> pnfResourceCustomizationList = pnfCustomizationRepository
+            .findPnfResourceCustomizationByModelUuid("5df8b6de-2083-11e7-93ae-92361f002676");
+        assertEquals("Found the matching resource entity", 1, pnfResourceCustomizationList.size());
+        checkPnfResourceCustomization(pnfResourceCustomizationList.get(0));
     }
 
     private void checkPnfResourceCustomization(PnfResourceCustomization pnfResourceCustomization) {

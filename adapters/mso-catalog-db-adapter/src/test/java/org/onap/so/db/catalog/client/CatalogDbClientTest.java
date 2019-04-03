@@ -658,4 +658,31 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         Assert.assertNull(pnfResourceCustomization);
     }
 
+    @Test
+    public void getPnfResourceCustomizationFromJoinTable_validServiceUuid_expectedOutput() {
+        List<PnfResourceCustomization> pnfResourceCustomizationList = client
+            .getPnfResourceCustomizationByModelUuid("5df8b6de-2083-11e7-93ae-92361f002676");
+        assertEquals(1, pnfResourceCustomizationList.size());
+
+        PnfResourceCustomization pnfResourceCustomization= pnfResourceCustomizationList.get(0);
+        assertEquals("modelInstanceName", "PNF routing", pnfResourceCustomization.getModelInstanceName());
+        assertEquals("blueprintName", "test_configuration_restconf", pnfResourceCustomization.getBlueprintName());
+        assertEquals("blueprintVersion", "1.0.0", pnfResourceCustomization.getBlueprintVersion());
+        PnfResource pnfResource = pnfResourceCustomization.getPnfResources();
+        assertNotNull(pnfResource);
+
+        assertEquals("PNFResource modelUUID", "ff2ae348-214a-11e7-93ae-92361f002680", pnfResource.getModelUUID());
+        assertEquals("PNFResource modelInvariantUUID", "2fff5b20-214b-11e7-93ae-92361f002680",
+            pnfResource.getModelInvariantUUID());
+        assertEquals("PNFResource modelVersion", "1.0", pnfResource.getModelVersion());
+        assertEquals("PNFResource orchestration mode", "", pnfResource.getOrchestrationMode());
+    }
+
+    @Test
+    public void getPnfResourceCustomizationFromJoinTable_invalidServiceUuid_nullOutput() {
+        List<PnfResourceCustomization> pnfResourceCustomizationList = client
+            .getPnfResourceCustomizationByModelUuid(UUID.randomUUID().toString());
+        assertEquals(0, pnfResourceCustomizationList.size());
+    }
+
 }
