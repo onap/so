@@ -64,7 +64,7 @@ import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -792,8 +792,8 @@ public class WorkflowAction {
 												vfModuleCustomizationUUID = vfModule.getModelInfo().getModelCustomizationUuid();
 											}
 											if(!vnfCustomizationUUID.equals("")&&!vfModuleCustomizationUUID.equals("")){
-												List<VnfVfmoduleCvnfcConfigurationCustomization> configs = traverseCatalogDbForConfiguration(vnfCustomizationUUID,vfModuleCustomizationUUID);
-												for(VnfVfmoduleCvnfcConfigurationCustomization config : configs){
+												List<CvnfcConfigurationCustomization> configs = traverseCatalogDbForConfiguration(validate.getModelInfo().getModelVersionId(),vnfCustomizationUUID,vfModuleCustomizationUUID);
+												for(CvnfcConfigurationCustomization config : configs){
 													Resource configResource = new Resource(WorkflowType.CONFIGURATION,config.getConfigurationResource().getModelUUID(),false);
 													resource.setVnfCustomizationId(vnf.getModelInfo().getModelCustomizationId());
 													resource.setVfModuleCustomizationId(vfModule.getModelInfo().getModelCustomizationId());
@@ -829,18 +829,18 @@ public class WorkflowAction {
 		return foundRelated;
 	}
 
-	protected List<VnfVfmoduleCvnfcConfigurationCustomization> traverseCatalogDbForConfiguration(String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
-		List<VnfVfmoduleCvnfcConfigurationCustomization> configurations = new ArrayList<>();
+	protected List<CvnfcConfigurationCustomization> traverseCatalogDbForConfiguration(String serviceModelUUID, String vnfCustomizationUUID, String vfModuleCustomizationUUID) {
+		List<CvnfcConfigurationCustomization> configurations = new ArrayList<>();
 		try{
-			List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(vnfCustomizationUUID, vfModuleCustomizationUUID);
+			List<CvnfcCustomization> cvnfcCustomizations = catalogDbClient.getCvnfcCustomization(serviceModelUUID,vnfCustomizationUUID, vfModuleCustomizationUUID);
 			for(CvnfcCustomization cvnfc : cvnfcCustomizations){
-				for(VnfVfmoduleCvnfcConfigurationCustomization customization : cvnfc.getVnfVfmoduleCvnfcConfigurationCustomization()){
+				for(CvnfcConfigurationCustomization customization : cvnfc.getCvnfcConfigurationCustomization()){
 					if(customization.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)){
 						configurations.add(customization);
 					}
 				}
 			}
-			logger.debug("found {} configuration(s)" , configurations.size() );
+			logger.debug("found {} fabric configuration(s)" , configurations.size() );
 			return configurations;
 		} catch (Exception ex){
 			logger.error("Error in finding configurations", ex);

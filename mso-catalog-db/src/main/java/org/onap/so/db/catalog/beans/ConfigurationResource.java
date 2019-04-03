@@ -81,7 +81,7 @@ public class ConfigurationResource implements Serializable {
 	private Set<ConfigurationResourceCustomization> configurationResourceCustomization;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "configurationResource")
-	private Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization;
+	private Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization;
 
 	@PrePersist
 	protected void onCreate() {
@@ -151,15 +151,14 @@ public class ConfigurationResource implements Serializable {
 	}
 
 	@LinkedResource
-	public Set<VnfVfmoduleCvnfcConfigurationCustomization> getVnfVfmoduleCvnfcConfigurationCustomization() {
-		return vnfVfmoduleCvnfcConfigurationCustomization;
+	public Set<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
+		return cvnfcConfigurationCustomization;
 	}
-	
-	public void setVnfVfmoduleCvnfcConfigurationCustomization(
-			Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization) {
-		this.vnfVfmoduleCvnfcConfigurationCustomization = vnfVfmoduleCvnfcConfigurationCustomization;
+
+	public void setCvnfcConfigurationCustomization(Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization) {
+		this.cvnfcConfigurationCustomization = cvnfcConfigurationCustomization;
 	}
-	
+
 	@Override
 	public String toString() {
 		return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)

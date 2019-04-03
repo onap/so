@@ -1,32 +1,39 @@
 {
-  "modelCustomizationUUID": "68dc9a92-214c-11e7-93ae-92361f002674",
-  "modelInstanceName": "test",
-  "created": "2017-05-26 09:38:24.000",
-  "minInstances": 0,
-  "maxInstances": 0,
-  "availabilityZoneMaxCount": 0,
-  "nfFunction": "",
-  "nfType": "",
-  "nfRole": "TEST",
-  "nfNamingCode": "",
-  "multiStageDesign": null,
-  "creationTimestamp": "2017-05-26T09:38:24.000+0000",
-  "_links": {
-    "self": {
-      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674"
-    },
-    "vnfResourceCustomization": {
-      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674{?projection}",
-      "templated": true
-    },
-    "vnfcInstanceGroupCustomizations": {
-      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674/vnfcInstanceGroupCustomizations"
-    },
-    "vnfResources": {
-      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674/vnfResources"
-    },
-    "vfModuleCustomizations": {
-      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002674/vfModuleCustomizations"
-    }
+  "_embedded": {
+    "vnfResourceCustomization": [
+      {
+        "_links": {
+          "self": {
+            "href": "http://localhost:8090/vnfResourceCustomization/4"
+          }, 
+          "vfModuleCustomizations": {
+            "href": "http://localhost:8090/vnfResourceCustomization/4/vfModuleCustomizations"
+          }, 
+          "vnfResourceCustomization": {
+            "href": "http://localhost:8090/vnfResourceCustomization/4{?projection}", 
+            "templated": true
+          }, 
+          "vnfResources": {
+            "href": "http://localhost:8090/vnfResourceCustomization/4/vnfResources"
+          }, 
+          "vnfcInstanceGroupCustomizations": {
+            "href": "http://localhost:8090/vnfResourceCustomization/4/vnfcInstanceGroupCustomizations"
+          }
+        }, 
+        "availabilityZoneMaxCount": 0, 
+        "created": "2017-05-26 09:38:24.000", 
+        "creationTimestamp": "2017-05-26T09:38:24.000+0000", 
+        "id": 4, 
+        "maxInstances": 0, 
+        "minInstances": 0, 
+        "modelCustomizationUUID": "68dc9a92-214c-11e7-93ae-92361f002674", 
+        "modelInstanceName": "test", 
+        "multiStageDesign": null, 
+        "nfFunction": "", 
+        "nfNamingCode": "", 
+        "nfRole": "TEST", 
+        "nfType": ""
+      }
+    ]
   }
 }

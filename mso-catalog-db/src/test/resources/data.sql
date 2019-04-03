@@ -44,8 +44,9 @@ insert into heat_environment(artifact_uuid, name, version, description, body, ar
 insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
 ('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002671', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '1.0', 'vSAMP10a', 'VF', null);
 
-insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design, cds_blueprint_name, cds_blueprint_version) values
-('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null, "test_configuration_restconf", "1.0.0");
+insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design,SERVICE_MODEL_UUID) values
+('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null,'5df8b6de-2083-11e7-93ae-92361f002671');
+
 
 insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
 
@@ -56,11 +57,6 @@ insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_nam
 insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid) values
 ('cb82ffd8-252a-11e7-93ae-92361f002671', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002671'),
 ('b4ea86b4-253f-11e7-93ae-92361f002671', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002671');
-
-
-insert into vnf_res_custom_to_vf_module_custom(vnf_resource_cust_model_customization_uuid, vf_module_cust_model_customization_uuid, creation_timestamp) values
-('68dc9a92-214c-11e7-93ae-92361f002671', 'cb82ffd8-252a-11e7-93ae-92361f002671', '2017-05-26 15:08:24'),
-('68dc9a92-214c-11e7-93ae-92361f002671', 'b4ea86b4-253f-11e7-93ae-92361f002671', '2017-05-26 15:08:24');
 
 insert into allotted_resource(model_uuid, model_invariant_uuid, model_version, model_name, tosca_node_type, subcategory, description, creation_timestamp) values
 ('f6b7d4c6-e8a4-46e2-81bc-31cad5072842', 'b7a1b78e-6b6b-4b36-9698-8c9530da14af', '1.0', 'Tunnel_Xconn', '', '', '', '2017-05-26 15:08:24');
@@ -104,8 +100,8 @@ insert into vnf_resource(orchestration_mode, description, creation_timestamp, mo
 ('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002672', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '2.0', 'vSAMP10a', 'VF', null);
 
 
-insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design) values
-('68dc9a92-214c-11e7-93ae-92361f002672', 'vSAMP10a 2', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002672', null);
+insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design,SERVICE_MODEL_UUID) values
+('68dc9a92-214c-11e7-93ae-92361f002672', 'vSAMP10a 2', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002672', null,'5df8b6de-2083-11e7-93ae-92361f002672');
 
 
 
@@ -126,9 +122,6 @@ insert into vf_module_customization(model_customization_uuid, label, initial_cou
 ('b4ea86b4-253f-11e7-93ae-92361f002672', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002672');
 
 
-insert into vnf_res_custom_to_vf_module_custom(vnf_resource_cust_model_customization_uuid, vf_module_cust_model_customization_uuid, creation_timestamp) values
-('68dc9a92-214c-11e7-93ae-92361f002672', 'cb82ffd8-252a-11e7-93ae-92361f002672', '2017-05-26 15:08:24'),
-('68dc9a92-214c-11e7-93ae-92361f002672', 'b4ea86b4-253f-11e7-93ae-92361f002672', '2017-05-26 15:08:24');
 
 
 
@@ -141,10 +134,6 @@ insert into network_resource_customization_to_service(service_model_uuid, resour
 ('5df8b6de-2083-11e7-93ae-92361f002671', '3bdbb104-476c-483e-9f8b-c095b3d308ac'),
 ('5df8b6de-2083-11e7-93ae-92361f002672', '3bdbb104-476c-483e-9f8b-c095b3d308ac');
 
-
-insert into vnf_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
-('5df8b6de-2083-11e7-93ae-92361f002671', '68dc9a92-214c-11e7-93ae-92361f002671'),
-('5df8b6de-2083-11e7-93ae-92361f002672', '68dc9a92-214c-11e7-93ae-92361f002672');
 
 insert into allotted_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
 ('5df8b6de-2083-11e7-93ae-92361f002671', '367a8ba9-057a-4506-b106-fbae818597c6' ),
@@ -213,27 +202,31 @@ insert into network_recipe(id, model_name, action, description, orchestration_ur
 ('176', 'NEUTRON_BASIC', 'DELETE', '', '/mso/async/services/DeleteNetworkV2', '', '180', '', '2017-09-22 18:47:31', '1'),
 ('177', 'NEUTRON_BASIC', 'UPDATE', '', '/mso/async/services/UpdateNetworkV2', '', '180', '', '2017-09-22 18:47:31', '1');
 
-INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, IS_TOPLEVELFLOW, MIN_API_VERSION, MAX_API_VERSION) VALUES
-('Service-Create', 'createInstance', 'Service', true, true, '7','7'),
-('Service-Delete', 'deleteInstance', 'Service', true, true, '7','7'),
-('Service-Macro-Assign', 'assignInstance', 'Service', false, true, '7','7'),
-('Service-Macro-Activate', 'activateInstance', 'Service', false, true, '7','7'),
-('Service-Macro-Unassign', 'unassignInstance', 'Service', false, true, '7','7'),
-('Service-Macro-Create', 'createInstance', 'Service', false, true, '7','7'),
-('Service-Macro-Delete', 'deleteInstance', 'Service', false, true, '7','7'),
-('Network-Create', 'createInstance', 'Network', true, true, '7','7'),
-('Network-Delete', 'deleteInstance', 'Network', true, true, '7','7'),
-('VNF-Macro-Recreate', 'replaceInstance', 'Vnf', false, false, '7','7'),
-('VNF-Macro-Replace', 'internalReplace', 'Vnf', false, false, '7','7'),
-('VNF-Create', 'createInstance', 'Vnf', true, true, '7', '7'),
-('VNF-Delete', 'deleteInstance', 'Vnf', true, true, '7', '7'),
-('VolumeGroup-Create', 'createInstance', 'VolumeGroup', true, true, '7','7'),
-('VolumeGroup-Delete', 'deleteInstance', 'VolumeGroup', true, true, '7','7'),
-('VFModule-Create', 'createInstance', 'VfModule', true, true, '7','7'),
-('VFModule-Delete', 'deleteInstance', 'VfModule', true, true, '7','7'),
-('VFModule-DeactivateAndCloudDelete', 'deactivateAndCloudDelete', 'VfModule', true, true, '7','7'),
-('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false, true, '7','7'),
-('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false, true, '7','7');
+INSERT INTO northbound_request_ref_lookup(MACRO_ACTION, ACTION, REQUEST_SCOPE, IS_ALACARTE, IS_TOPLEVELFLOW, MIN_API_VERSION, MAX_API_VERSION,cloud_owner) VALUES
+('Service-Create', 'createInstance', 'Service', true, true, '7','7','cloudOwner'),
+('Service-Delete', 'deleteInstance', 'Service', true, true, '7','7','cloudOwner'),
+('Service-Macro-Assign', 'assignInstance', 'Service', false, true, '7','7','cloudOwner'),
+('Service-Macro-Activate', 'activateInstance', 'Service', false, true, '7','7','cloudOwner'),
+('Service-Macro-Unassign', 'unassignInstance', 'Service', false, true, '7','7','cloudOwner'),
+('Service-Macro-Create', 'createInstance', 'Service', false, true, '7','7','cloudOwner'),
+('Service-Macro-Delete', 'deleteInstance', 'Service', false, true, '7','7','cloudOwner'),
+('Network-Create', 'createInstance', 'Network', true, true, '7','7','cloudOwner'),
+('Network-Delete', 'deleteInstance', 'Network', true, true, '7','7','cloudOwner'),
+('VNF-Macro-Recreate', 'replaceInstance', 'Vnf', false, false, '7','7','cloudOwner'),
+('VNF-Macro-Replace', 'internalReplace', 'Vnf', false, false, '7','7','cloudOwner'),
+('VNF-Create', 'createInstance', 'Vnf', true, true, '7', '7','cloudOwner'),
+('VNF-Delete', 'deleteInstance', 'Vnf', true, true, '7', '7','cloudOwner'),
+('VolumeGroup-Create', 'createInstance', 'VolumeGroup', true, true, '7','7','cloudOwner'),
+('VolumeGroup-Delete', 'deleteInstance', 'VolumeGroup', true, true, '7','7','cloudOwner'),
+('VFModule-Create', 'createInstance', 'VfModule', true, true, '7','7','cloudOwner'),
+('VFModule-Delete', 'deleteInstance', 'VfModule', true, true, '7','7','cloudOwner'),
+('VFModule-DeactivateAndCloudDelete', 'deactivateAndCloudDelete', 'VfModule', true, true, '7','7','cloudOwner'),
+('NetworkCollection-Macro-Create', 'createInstance', 'NetworkCollection', false, true, '7','7','cloudOwner'),
+('NetworkCollection-Macro-Delete', 'deleteInstance', 'NetworkCollection', false, true, '7','7','cloudOwner'),
+('InstanceGroup-Create', 'createInstance', 'InstanceGroup', true, true, '7','7','cloudOwner'),
+('InstanceGroup-Delete', 'deleteInstance', 'InstanceGroup', true, true, '7','7','cloudOwner'),
+('InstanceGroupMembers-Add', 'addMembers', 'InstanceGroupMembers', true, true, '7','7','cloudOwner'),
+('InstanceGroupMembers-Remove', 'removeMembers', 'InstanceGroupMembers', true, true, '7','7','cloudOwner');
 
 INSERT INTO building_block_detail (BUILDING_BLOCK_NAME, RESOURCE_TYPE, TARGET_ACTION)
 VALUES
@@ -379,7 +372,12 @@ INSERT INTO orchestration_flow_reference(COMPOSITE_ACTION, SEQ_NO, FLOW_NAME, FL
 ('NetworkCollection-Macro-Delete', '1', 'DeactivateNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete')),
 ('NetworkCollection-Macro-Delete', '2', 'DeleteNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete')),
 ('NetworkCollection-Macro-Delete', '3', 'UnassignNetworkBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete')),
-('NetworkCollection-Macro-Delete', '4', 'DeleteNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete'));
+('NetworkCollection-Macro-Delete', '4', 'DeleteNetworkCollectionBB',1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'NetworkCollection-Macro-Delete')),
+('InstanceGroup-Create', '1', 'CreateInstanceGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'InstanceGroup-Create')),
+('InstanceGroup-Delete', '1', 'DeleteInstanceGroupBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'InstanceGroup-Delete')),
+('InstanceGroupMembers-Add', '1', 'AddInstanceGroupMembersBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'InstanceGroupMembers-Add')),
+('InstanceGroupmembers-Remove', '1', 'RemoveInstanceGroupMembersBB', 1.0,(SELECT id from northbound_request_ref_lookup WHERE MACRO_ACTION = 'InstanceGroupMembers-Remove'));
+
 
 INSERT INTO orchestration_status_state_transition_directive (RESOURCE_TYPE, ORCHESTRATION_STATUS, TARGET_ACTION, FLOW_DIRECTIVE)
 VALUES
@@ -714,8 +712,6 @@ INSERT INTO `cvnfc_customization`
              `nfc_function`,
              `nfc_naming_code`,
              `creation_timestamp`,
-             `vnf_resource_cust_model_customization_uuid`,
-             `vf_module_cust_model_customization_uuid`,
              `vnfc_cust_model_customization_uuid`)
 VALUES      ( '1',
               '9bcce658-9b37-11e8-98d0-529269fb1459',
@@ -729,31 +725,7 @@ VALUES      ( '1',
               'testNfcFunction',
               'testNfcNamingCode',
               '2018-07-17 14:05:08',
-              '68dc9a92-214c-11e7-93ae-92361f002671',
-              'cb82ffd8-252a-11e7-93ae-92361f002671',
               '9bcce658-9b37-11e8-98d0-529269fb1459');
-
-INSERT INTO vnf_vfmodule_cvnfc_configuration_customization
-            (id,
-             model_customization_uuid,
-             CVNFC_CUSTOMIZATION_ID,
-             model_instance_name,
-             configuration_type,
-             configuration_role,
-             configuration_function,
-             policy_name,
-             creation_timestamp,
-             configuration_model_uuid)
-VALUES      ( '1',
-              '7bcce658-9b37-11e8-98d0-529269fb1450',
-              '1',
-              'testModelInstanceName',
-              'testConfigurationType',
-              'testConfigurationRole',
-              'testConfigurationFunction',
-              'testPolicyName',
-              '2018-07-17 14:05:08',
-              'c59a41ca-9b3b-11e8-98d0-529269fb1459');
 
 insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
 ('5df8b6de-2083-11e7-93ae-92361f002676', 'PNF_routing_service', '9647dfc4-2083-11e7-93ae-92361f002676', '1.0', 'PNF service', '2019-03-08 12:00:29', null, 'NA', 'NA', 'Luna', 'Oxygen');

@@ -1315,7 +1315,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 					networkResource = nrc.getNetworkResource();
 				}
 			}
-
             String mode = "";
             if (networkResource != null) {
                 logger.debug("Got Network definition from Catalog: {}", networkResource.toString());

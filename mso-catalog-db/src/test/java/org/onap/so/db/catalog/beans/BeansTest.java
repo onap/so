@@ -29,6 +29,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Temporal;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.openpojo.rules.CustomSetterMustExistRule;
 import org.onap.so.openpojo.rules.EqualsAndHashCodeTester;

@@ -72,13 +72,13 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResource;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
@@ -413,15 +413,15 @@ public class BBInputSetup implements JavaDelegate {
 
 	protected void mapCatalogConfiguration(Configuration configuration, ModelInfo modelInfo, Service service, ConfigurationResourceKeys configurationResourceKeys) {
 		ConfigurationResourceCustomization configurationResourceCustomization = findConfigurationResourceCustomization(modelInfo, service);
-		VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = 
-				findVnfVfmoduleCvnfcConfigurationCustomization(configurationResourceKeys.getVfModuleCustomizationUUID(),
+		CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = 
+				findVnfVfmoduleCvnfcConfigurationCustomization(service.getModelUUID(),configurationResourceKeys.getVfModuleCustomizationUUID(),
 						configurationResourceKeys.getVnfResourceCustomizationUUID(), configurationResourceKeys.getCvnfcCustomizationUUID(), configurationResourceCustomization);
 		if (configurationResourceCustomization != null && vnfVfmoduleCvnfcConfigurationCustomization != null) {
 			configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(configurationResourceCustomization
 					, vnfVfmoduleCvnfcConfigurationCustomization));
 		} else {
 			logger.debug("for Fabric configuration mapping by VF MODULE CUST UUID: " + configurationResourceKeys.getVfModuleCustomizationUUID());
-			vnfVfmoduleCvnfcConfigurationCustomization = findVnfVfmoduleCvnfcConfigurationCustomization(configurationResourceKeys.getVnfResourceCustomizationUUID(),
+			vnfVfmoduleCvnfcConfigurationCustomization = findVnfVfmoduleCvnfcConfigurationCustomization(service.getModelUUID(),configurationResourceKeys.getVnfResourceCustomizationUUID(),
 					configurationResourceKeys.getVfModuleCustomizationUUID(), configurationResourceKeys.getCvnfcCustomizationUUID());
 			if (vnfVfmoduleCvnfcConfigurationCustomization != null){
 				configuration.setModelInfoConfiguration(this.mapperLayer.mapCatalogConfigurationToConfiguration(vnfVfmoduleCvnfcConfigurationCustomization));
@@ -429,18 +429,9 @@ public class BBInputSetup implements JavaDelegate {
 		}
 	}
 
-	protected VnfVfmoduleCvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String vfModuleCustomizationUUID, 
+	protected CvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String serviceModelUUID, String vfModuleCustomizationUUID, 
 			String vnfResourceCustomizationUUID, String cvnfcCustomizationUUID, ConfigurationResourceCustomization configurationResourceCustomization) {
-		if(configurationResourceCustomization != null && configurationResourceCustomization.getConfigurationResource() != null)
-			for(VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization : 
-				configurationResourceCustomization.getConfigurationResource().getVnfVfmoduleCvnfcConfigurationCustomization()) {
-				if(vnfVfmoduleCvnfcConfigurationCustomization.getVfModuleCustomization().getModelCustomizationUUID().equalsIgnoreCase(vfModuleCustomizationUUID)
-						&& vnfVfmoduleCvnfcConfigurationCustomization.getVnfResourceCustomization().getModelCustomizationUUID().equalsIgnoreCase(vnfResourceCustomizationUUID)
-						&& vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization().getModelCustomizationUUID().equalsIgnoreCase(cvnfcCustomizationUUID)) {
-					return vnfVfmoduleCvnfcConfigurationCustomization;
-				}
-			}
-		return null;
+		return bbInputSetupUtils.getCvnfcConfigurationCustomization(serviceModelUUID, vnfResourceCustomizationUUID, vfModuleCustomizationUUID, cvnfcCustomizationUUID);
 	}
 
 	protected ConfigurationResourceCustomization findConfigurationResourceCustomization(ModelInfo modelInfo, Service service) {
@@ -452,11 +443,9 @@ public class BBInputSetup implements JavaDelegate {
 		return null;
 	}
 	
-	protected VnfVfmoduleCvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String vnfResourceCustomizationUUID,
+	protected CvnfcConfigurationCustomization findVnfVfmoduleCvnfcConfigurationCustomization(String serviceModelUUID, String vnfResourceCustomizationUUID,
 			String vfModuleCustomizationUUID, String cvnfcCustomizationUUID) {
-		return bbInputSetupUtils.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationIdnAndVfModuleCustomizationIdAndCvnfcCustomizationId(vnfResourceCustomizationUUID,
-				vfModuleCustomizationUUID, cvnfcCustomizationUUID);
-
+		return bbInputSetupUtils.getCvnfcConfigurationCustomization(serviceModelUUID, vnfResourceCustomizationUUID, vfModuleCustomizationUUID, cvnfcCustomizationUUID);
 	}
 
 	protected void populateVfModule(ModelInfo modelInfo, Service service, String bbName,
@@ -730,7 +719,7 @@ public class BBInputSetup implements JavaDelegate {
 				.getVnfcInstanceGroupCustomizations();
 		for (VnfcInstanceGroupCustomization vnfcInstanceGroupCust : vnfcInstanceGroups) {
 			InstanceGroup instanceGroup = this.createInstanceGroup();
-			org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup = bbInputSetupUtils.getCatalogInstanceGroup(vnfcInstanceGroupCust.getModelUUID());
+			org.onap.so.db.catalog.beans.InstanceGroup catalogInstanceGroup = bbInputSetupUtils.getCatalogInstanceGroup(vnfcInstanceGroupCust.getInstanceGroup().getModelUUID());
 			instanceGroup.setModelInfoInstanceGroup(this.mapperLayer
 					.mapCatalogInstanceGroupToInstanceGroup(null, catalogInstanceGroup));
 			instanceGroup.getModelInfoInstanceGroup().setFunction(vnfcInstanceGroupCust.getFunction());

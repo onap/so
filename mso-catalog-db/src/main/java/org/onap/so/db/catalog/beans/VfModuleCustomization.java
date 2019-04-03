@@ -29,6 +29,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -54,8 +56,12 @@ public class VfModuleCustomization implements Serializable {
 
 	public static final long serialVersionUID = -1322322139926390329L;
 
-	@BusinessKey
 	@Id
+	@BusinessKey
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	
 	@Column(name = "MODEL_CUSTOMIZATION_UUID")
 	private String modelCustomizationUUID;
 
@@ -91,15 +97,27 @@ public class VfModuleCustomization implements Serializable {
 	@JoinColumn(name = "VF_MODULE_MODEL_UUID")
 	private VfModule vfModule;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
-	private Set<VnfcCustomization> vnfcCustomization;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "VNF_RESOURCE_CUSTOMIZATION_ID")
+	private VnfResourceCustomization vnfCustomization;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "vfModuleCustomization")
 	private Set<CvnfcCustomization> cvnfcCustomization;
-
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "modelCustomizationUUID")
-	private Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization;
 	
+	@Override
+	public boolean equals(final Object other) {
+		if (!(other instanceof VfModuleCustomization)) {
+			return false;
+		}
+		VfModuleCustomization castOther = (VfModuleCustomization) other;
+		return new EqualsBuilder().append(id, castOther.id).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder().append(id).toHashCode();
+	}
+
 	@PrePersist
 	protected void onCreate() {
 		this.created = new Date();
@@ -113,19 +131,23 @@ public class VfModuleCustomization implements Serializable {
 				.append("created", created).append("volumeHeatEnv", volumeHeatEnv)
 				.append("heatEnvironment", heatEnvironment).append("vfModule", vfModule).toString();
 	}
+	
+	
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VfModuleCustomization)) {
-			return false;
-		}
-		VfModuleCustomization castOther = (VfModuleCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+	public Integer getId() {
+		return id;
 	}
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public VnfResourceCustomization getVnfCustomization() {
+		return vnfCustomization;
+	}
+
+	public void setVnfCustomization(VnfResourceCustomization vnfCustomization) {
+		this.vnfCustomization = vnfCustomization;
 	}
 
 	public VfModuleCustomization() {
@@ -209,28 +231,6 @@ public class VfModuleCustomization implements Serializable {
 
 	public void setVfModule(VfModule vfModule) {
 		this.vfModule = vfModule;
-	}
-	
-	@LinkedResource
-	public Set<VnfVfmoduleCvnfcConfigurationCustomization> getVnfVfmoduleCvnfcConfigurationCustomization() {
-		if (vnfVfmoduleCvnfcConfigurationCustomization == null)
-			vnfVfmoduleCvnfcConfigurationCustomization = new HashSet<>();
-		return vnfVfmoduleCvnfcConfigurationCustomization;
-	}
-	
-	public void setVnfVfmoduleCvnfcConfigurationCustomization(
-			Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization) {
-		this.vnfVfmoduleCvnfcConfigurationCustomization = vnfVfmoduleCvnfcConfigurationCustomization;
-	}
-	
-	@LinkedResource
-	public Set<VnfcCustomization> getVnfcCustomization() {
-		return vnfcCustomization;
-	}
-	
-	public void setVnfcCustomization(
-			Set<VnfcCustomization> vnfcCustomization) {
-		this.vnfcCustomization = vnfcCustomization;
 	}
 	
 	@LinkedResource

@@ -74,6 +74,7 @@ import org.onap.so.db.catalog.beans.CollectionResource;
 import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.ConfigurationResourceCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.InstanceGroup;
 import org.onap.so.db.catalog.beans.InstanceGroupType;
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
@@ -81,7 +82,6 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.slf4j.Logger;
@@ -489,24 +489,24 @@ public class BBInputSetupMapperLayer {
 
 	protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
 			ConfigurationResourceCustomization configurationResourceCustomization, 
-			VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization) {
+			CvnfcConfigurationCustomization cvnfcConfigurationCustomization) {
 		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
 		modelInfoConfiguration.setModelVersionId(configurationResourceCustomization.getConfigurationResource().getModelUUID());
 		modelInfoConfiguration.setModelCustomizationId(configurationResourceCustomization.getModelCustomizationUUID());
 		modelInfoConfiguration.setModelInvariantId(configurationResourceCustomization.getConfigurationResource().getModelInvariantUUID());
-		modelInfoConfiguration.setPolicyName(vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName());
+		modelInfoConfiguration.setPolicyName(cvnfcConfigurationCustomization.getPolicyName());
 		return modelInfoConfiguration;
 	}
 	
 	protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
-			VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization) {
+			CvnfcConfigurationCustomization cvnfcConfigurationCustomization) {
 		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
-		modelInfoConfiguration.setModelVersionId(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationResource().getModelUUID());
-		modelInfoConfiguration.setModelCustomizationId(vnfVfmoduleCvnfcConfigurationCustomization.getModelCustomizationUUID());
-		modelInfoConfiguration.setModelInvariantId(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationResource().getModelInvariantUUID());
-		modelInfoConfiguration.setPolicyName(vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName());
-		modelInfoConfiguration.setConfigurationType(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationType());
-		modelInfoConfiguration.setConfigurationRole(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationRole());
+		modelInfoConfiguration.setModelVersionId(cvnfcConfigurationCustomization.getConfigurationResource().getModelUUID());
+		modelInfoConfiguration.setModelCustomizationId(cvnfcConfigurationCustomization.getModelCustomizationUUID());
+		modelInfoConfiguration.setModelInvariantId(cvnfcConfigurationCustomization.getConfigurationResource().getModelInvariantUUID());
+		modelInfoConfiguration.setPolicyName(cvnfcConfigurationCustomization.getPolicyName());
+		modelInfoConfiguration.setConfigurationType(cvnfcConfigurationCustomization.getConfigurationType());
+		modelInfoConfiguration.setConfigurationRole(cvnfcConfigurationCustomization.getConfigurationRole());
 		return modelInfoConfiguration;
 	}
 

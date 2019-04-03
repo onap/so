@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class VnfVfmoduleCvnfcConfigurationCustomizationTest {
+public class CvnfcConfigurationCustomizationTest {
 	
 	private static final String CONFIGURATION_FUNCTION = "testconfigurationFunction";
 	private static final String CONFIGURATION_ROLE = "testconfigurationRole";
@@ -37,7 +37,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomizationTest {
 	
     @Test
     public final void testVnfVfmoduleCvnfcConfigurationCustomization () {
-    	VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new VnfVfmoduleCvnfcConfigurationCustomization();
+    	CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new CvnfcConfigurationCustomization();
     	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationFunction(CONFIGURATION_FUNCTION);
     	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(setupConfigurationResource());
     	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationRole(CONFIGURATION_ROLE);
@@ -50,9 +50,6 @@ public class VnfVfmoduleCvnfcConfigurationCustomizationTest {
     	vnfVfmoduleCvnfcConfigurationCustomization.setModelInstanceName(MODEL_INSTANCE_NAME);
     	vnfVfmoduleCvnfcConfigurationCustomization.setPolicyName(POLICY_NAME);
 
-    	vnfVfmoduleCvnfcConfigurationCustomization.setVfModuleCustomization(setupVfModuleCustomization());
-    	vnfVfmoduleCvnfcConfigurationCustomization.setVnfResourceCustomization(setupVnfResourceCustomization());
-
         assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getId().equals (new Integer(1)));
         assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationFunction().equals (CONFIGURATION_FUNCTION));
         assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationRole().equals (CONFIGURATION_ROLE));
@@ -61,21 +58,8 @@ public class VnfVfmoduleCvnfcConfigurationCustomizationTest {
         assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getModelInstanceName().equals (MODEL_INSTANCE_NAME));
         assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName().equals (POLICY_NAME));
         assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization().getModelCustomizationUUID().equals (MODEL_CUSTOMIZATION_UUID));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getVnfResourceCustomization().getModelCustomizationUUID().equals (MODEL_CUSTOMIZATION_UUID));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getVfModuleCustomization().getModelCustomizationUUID().equals (MODEL_CUSTOMIZATION_UUID));
     }
-    
-    private VfModuleCustomization setupVfModuleCustomization(){
-    	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
-    	vfModuleCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
-    	return vfModuleCustomization;
-    }
-    
-    private VnfResourceCustomization setupVnfResourceCustomization(){
-    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
-    	vnfResourceCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
-    	return vnfResourceCustomization;
-    }
+
     
     private ConfigurationResource setupConfigurationResource(){
     	ConfigurationResource configurationResource = new ConfigurationResource();

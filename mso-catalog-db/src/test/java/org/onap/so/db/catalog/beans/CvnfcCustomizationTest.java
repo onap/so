@@ -56,11 +56,9 @@ public class CvnfcCustomizationTest {
     	cvnfcCustomization.setNfcNamingCode(NFC_NAMING_CODE);
     	cvnfcCustomization.setToscaNodeType(TOSCA_NODE_TYPE);
     	cvnfcCustomization.setVfModuleCustomization(setupVfModuleCustomization());
-    	cvnfcCustomization.setVnfcCustomization(setupVnfcCustomization());
-    	cvnfcCustomization.setVnfResourceCustomization(setupVnfResourceCustomization());
-    	Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomizationSet = new HashSet();
-    	vnfVfmoduleCvnfcConfigurationCustomizationSet.add(setupVnfVfmoduleCvnfcConfigurationCustomization());
-    	cvnfcCustomization.setVnfVfmoduleCvnfcConfigurationCustomization(vnfVfmoduleCvnfcConfigurationCustomizationSet);
+    	Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomizationSet = new HashSet();
+    	cvnfcConfigurationCustomizationSet.add(setupCvnfcConfigurationCustomization());
+    	cvnfcCustomization.setCvnfcConfigurationCustomization(cvnfcConfigurationCustomizationSet);
 
         assertTrue (cvnfcCustomization.getId().equals (new Integer(1)));
         assertTrue (cvnfcCustomization.getDescription().equals (DESCRIPTION));
@@ -73,7 +71,6 @@ public class CvnfcCustomizationTest {
         assertTrue (cvnfcCustomization.getNfcFunction().equals (NFC_FUNCTION));
         assertTrue (cvnfcCustomization.getNfcNamingCode().equals (NFC_NAMING_CODE));
         assertTrue (cvnfcCustomization.getToscaNodeType().equals (TOSCA_NODE_TYPE));
-        assertTrue (cvnfcCustomization.getVnfcCustomization().getModelCustomizationUUID().equals (MODEL_CUSTOMIZATION_UUID));
         assertTrue (cvnfcCustomization.getVfModuleCustomization().getModelCustomizationUUID().equals (MODEL_CUSTOMIZATION_UUID));
     }
     
@@ -82,22 +79,11 @@ public class CvnfcCustomizationTest {
     	vfModuleCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
     	return vfModuleCustomization;
     }
+
     
-    private VnfcCustomization setupVnfcCustomization(){
-    	VnfcCustomization vnfcCustomization = new VnfcCustomization();
-    	vnfcCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
-    	return vnfcCustomization;
-    }
-    
-    private VnfResourceCustomization setupVnfResourceCustomization(){
-    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
-    	vnfResourceCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
-    	return vnfResourceCustomization;
-    }
-    
-    private VnfVfmoduleCvnfcConfigurationCustomization setupVnfVfmoduleCvnfcConfigurationCustomization(){
-    	VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new VnfVfmoduleCvnfcConfigurationCustomization();
-    	vnfVfmoduleCvnfcConfigurationCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
-    	return vnfVfmoduleCvnfcConfigurationCustomization;
+    private CvnfcConfigurationCustomization setupCvnfcConfigurationCustomization(){
+    	CvnfcConfigurationCustomization cvnfcConfigurationCustomization = new CvnfcConfigurationCustomization();
+    	cvnfcConfigurationCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
+    	return cvnfcConfigurationCustomization;
     }
 }

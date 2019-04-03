@@ -56,10 +56,10 @@ public class CvnfcCustomization implements Serializable {
 
 	@Id
 	@Column(name = "ID")
+	@BusinessKey
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@BusinessKey
 	@Column(name = "MODEL_CUSTOMIZATION_UUID")
 	private String modelCustomizationUUID;
 	
@@ -96,19 +96,15 @@ public class CvnfcCustomization implements Serializable {
 	private Date created;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID")
-	private VfModuleCustomization vfModuleCustomization;	
+	@JoinColumn(name = "VF_MODULE_CUSTOMIZATION_ID")
+	private VfModuleCustomization vfModuleCustomization;
 	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "VNFC_CUST_MODEL_CUSTOMIZATION_UUID")
 	private VnfcCustomization vnfcCustomization;
 	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID")
-	private VnfResourceCustomization vnfResourceCustomization;
-	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cvnfcCustomization")
-	private Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization;
+	private Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization;
 
 	@Override
 	public boolean equals(final Object other) {
@@ -116,12 +112,12 @@ public class CvnfcCustomization implements Serializable {
 			return false;
 		}
 		CvnfcCustomization castOther = (CvnfcCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+		return new EqualsBuilder().append(id, castOther.id).isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).append(vfModuleCustomization).append(vnfcCustomization).append(vnfResourceCustomization).toHashCode();
+		return new HashCodeBuilder().append(id).toHashCode();
 	}
 
 	@Override
@@ -132,10 +128,17 @@ public class CvnfcCustomization implements Serializable {
 				.append("modelName", modelName).append("toscaNodeType", toscaNodeType)
 				.append("description", description).append("nfcFunction", nfcFunction)
 				.append("nfcNamingCode", nfcNamingCode).append("created", created)
-				.append("vfModuleCustomization", vfModuleCustomization).append("vnfcCustomization", vnfcCustomization)
-				.append("vnfResourceCustomization", vnfResourceCustomization)
-				.append("vnfVfmoduleCvnfcConfigurationCustomization", vnfVfmoduleCvnfcConfigurationCustomization)
+				.append("vnfVfmoduleCvnfcConfigurationCustomization", cvnfcConfigurationCustomization)
 				.toString();
+	}
+
+	@LinkedResource
+	public VnfcCustomization getVnfcCustomization() {
+		return vnfcCustomization;
+	}
+
+	public void setVnfcCustomization(VnfcCustomization vnfcCustomization) {
+		this.vnfcCustomization = vnfcCustomization;
 	}
 
 	@PrePersist
@@ -144,15 +147,14 @@ public class CvnfcCustomization implements Serializable {
 	}
 	
 	@LinkedResource
-	public Set<VnfVfmoduleCvnfcConfigurationCustomization> getVnfVfmoduleCvnfcConfigurationCustomization() {
-		return vnfVfmoduleCvnfcConfigurationCustomization;
+	public Set<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
+		return cvnfcConfigurationCustomization;
 	}
 
-	public void setVnfVfmoduleCvnfcConfigurationCustomization(
-			Set<VnfVfmoduleCvnfcConfigurationCustomization> vnfVfmoduleCvnfcConfigurationCustomization) {
-		this.vnfVfmoduleCvnfcConfigurationCustomization = vnfVfmoduleCvnfcConfigurationCustomization;
+	public void setCvnfcConfigurationCustomization(Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization) {
+		this.cvnfcConfigurationCustomization = cvnfcConfigurationCustomization;
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -258,21 +260,4 @@ public class CvnfcCustomization implements Serializable {
 		this.vfModuleCustomization = vfModuleCustomization;
 	}
 
-	@LinkedResource
-	public VnfcCustomization getVnfcCustomization() {
-		return vnfcCustomization;
-	}
-
-	public void setVnfcCustomization(VnfcCustomization vnfcCustomization) {
-		this.vnfcCustomization = vnfcCustomization;
-	}
-
-	@LinkedResource
-	public VnfResourceCustomization getVnfResourceCustomization() {
-		return vnfResourceCustomization;
-	}
-
-	public void setVnfResourceCustomization(VnfResourceCustomization vnfResourceCustomization) {
-		this.vnfResourceCustomization = vnfResourceCustomization;
-	}
 }

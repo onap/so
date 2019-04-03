@@ -318,7 +318,12 @@ public class ServiceInstances {
 		String requestId = requestHandlerUtils.getRequestId(requestContext);
 		HashMap<String, String> instanceIdMap = new HashMap<>();
 		instanceIdMap.put("serviceInstanceId", serviceInstanceId);
-		return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId, requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+		try{
+			return serviceInstances(request, Action.createInstance, instanceIdMap, version, requestId, requestHandlerUtils.getRequestUri(requestContext, uriPrefix));
+		}catch (Exception e){
+			logger.error("Error in vnf", e);
+			throw e;
+		}
 	}
 	
 	@POST

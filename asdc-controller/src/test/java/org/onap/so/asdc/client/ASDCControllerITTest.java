@@ -29,6 +29,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.persistence.EntityNotFoundException;
@@ -387,8 +388,8 @@ public class ASDCControllerITTest extends BaseTest {
              * global metadata in the resource-Testservice140-template.yml
              */
             String vnfCustomizationKey = "ca1c8455-8ce2-4a76-a037-3f4cf01cffa0";
-            VnfResourceCustomization vnfCustomization = vnfCustomizationRepository
-                .findById(vnfCustomizationKey).orElseThrow(
+            VnfResourceCustomization vnfCustomization = Optional.ofNullable(vnfCustomizationRepository
+                .findOneByModelCustomizationUUID(vnfCustomizationKey)).orElseThrow(
                     () -> new EntityNotFoundException(
                         "VNF resource customization: " + vnfCustomizationKey + " not found"));
             assertEquals("model customizationUUID", vnfCustomizationKey, vnfCustomization.getModelCustomizationUUID());

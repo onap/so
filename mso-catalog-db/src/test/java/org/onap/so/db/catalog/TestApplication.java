@@ -26,7 +26,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = { "org.onap.so.db.catalog"})
+@SpringBootApplication(scanBasePackages = { "org.onap.so.db.catalog","org.onap.so.client", "org.onap.so.configuration"})
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
 @EntityScan("org.onap.so.db.catalog")
 @Profile("test")

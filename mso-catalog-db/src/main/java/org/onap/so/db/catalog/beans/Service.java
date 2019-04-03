@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,10 +25,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -99,8 +101,7 @@ public class Service implements Serializable {
     @JoinTable(name = "network_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<NetworkResourceCustomization> networkCustomizations;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "vnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     private List<VnfResourceCustomization> vnfCustomizations;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -114,11 +115,11 @@ public class Service implements Serializable {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "service_proxy_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<ServiceProxyResourceCustomization> serviceProxyCustomizations;
-
+    
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "configuration_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<ConfigurationResourceCustomization> configurationCustomizations;
-
+    
     @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "pnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<PnfResourceCustomization> pnfCustomizations;
@@ -126,7 +127,7 @@ public class Service implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     @MapKey(name = "action")
     private Map<String, ServiceRecipe> recipes;
-
+    
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
     private ToscaCsar csar;
@@ -134,18 +135,18 @@ public class Service implements Serializable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("modelName", modelName).append("description", description)
-            .append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-            .append("created", created).append("modelVersion", modelVersion).append("serviceType", serviceType)
-            .append("serviceRole", serviceRole).append("environmentContext", environmentContext)
-            .append("workloadContext", workloadContext).append("category", category)
-            .append("networkCustomizations", networkCustomizations).append("vnfCustomizations", vnfCustomizations)
-            .append("allottedCustomizations", allottedCustomizations)
-            .append("collectionResourceCustomizations", collectionResourceCustomizations)
-            .append("serviceProxyCustomizations", serviceProxyCustomizations)
+                .append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+                .append("created", created).append("modelVersion", modelVersion).append("serviceType", serviceType)
+                .append("serviceRole", serviceRole).append("environmentContext", environmentContext)
+                .append("workloadContext", workloadContext).append("category", category)
+                .append("networkCustomizations", networkCustomizations).append("vnfCustomizations", vnfCustomizations)
+                .append("allottedCustomizations", allottedCustomizations)
+                .append("collectionResourceCustomizations", collectionResourceCustomizations)
+                .append("serviceProxyCustomizations", serviceProxyCustomizations)
             .append("configurationCustomizations", configurationCustomizations)
             .append("pnfCustomizations", pnfCustomizations)
             .append("recipes", recipes)
-            .append("csar", csar).toString();
+                .append("csar", csar).toString();
     }
 
     @PrePersist
@@ -221,7 +222,7 @@ public class Service implements Serializable {
     }
 
     public void setCollectionResourceCustomizations(
-        List<CollectionResourceCustomization> collectionResourceCustomizations) {
+            List<CollectionResourceCustomization> collectionResourceCustomizations) {
         this.collectionResourceCustomizations = collectionResourceCustomizations;
     }
 

@@ -1,4 +1,4 @@
-
+set foreign_key_checks=0;
 insert into heat_files(artifact_uuid, name, version, description, body, artifact_checksum, creation_timestamp) values
 ('00535bdd-0878-4478-b95a-c575c742bfb0', 'nimbus-ethernet-gw', '1', 'created from csar', 'DEVICE=$dev\nBOOTPROTO=none\nNM_CONTROLLED=no\nIPADDR=$ip\nNETMASK=$netmask\nGATEWAY=$gateway\n', 'MANUAL RECORD', '2017-01-21 23:56:43');
 
@@ -29,23 +29,18 @@ insert into heat_environment(artifact_uuid, name, version, description, body, ar
 insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
 ('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002671', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '1.0', 'vSAMP10a', 'VF', null);
 
-insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design) values
-('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null);
+insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design,service_model_uuid) values
+('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null,'5df8b6de-2083-11e7-93ae-92361f002671');
 
 
 insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
-
 ('20c4431c-246d-11e7-93ae-92361f002671', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
 ('066de97e-253e-11e7-93ae-92361f002671', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
 
-insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid) values
-('cb82ffd8-252a-11e7-93ae-92361f002671', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002671'),
-('b4ea86b4-253f-11e7-93ae-92361f002671', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002671');
+insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid,VNF_RESOURCE_CUSTOMIZATION_ID) values
+('cb82ffd8-252a-11e7-93ae-92361f002671', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002671',2),
+('b4ea86b4-253f-11e7-93ae-92361f002671', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002671',2);
 
-
-insert into vnf_res_custom_to_vf_module_custom(vnf_resource_cust_model_customization_uuid, vf_module_cust_model_customization_uuid, creation_timestamp) values
-('68dc9a92-214c-11e7-93ae-92361f002671', 'cb82ffd8-252a-11e7-93ae-92361f002671', '2017-05-26 15:08:24'),
-('68dc9a92-214c-11e7-93ae-92361f002671', 'b4ea86b4-253f-11e7-93ae-92361f002671', '2017-05-26 15:08:24');
 
 insert into allotted_resource(model_uuid, model_invariant_uuid, model_version, model_name, tosca_node_type, subcategory, description, creation_timestamp) values
 ('f6b7d4c6-e8a4-46e2-81bc-31cad5072842', 'b7a1b78e-6b6b-4b36-9698-8c9530da14af', '1.0', 'Tunnel_Xconn', '', '', '', '2017-05-26 15:08:24'); 
@@ -88,22 +83,15 @@ insert into collection_network_resource_customization(model_customization_uuid, 
 insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
 ('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002672', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '2.0', 'vSAMP10a', 'VF', null);
 
-insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design) values
-('68dc9a92-214c-11e7-93ae-92361f002672', 'vSAMP10a 2', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002672', null);
 
 insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
 
 ('20c4431c-246d-11e7-93ae-92361f002672', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
 ('066de97e-253e-11e7-93ae-92361f002672', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
 
-insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid) values
-('cb82ffd8-252a-11e7-93ae-92361f002672', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002672'),
-('b4ea86b4-253f-11e7-93ae-92361f002672', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002672');
-
-
-insert into vnf_res_custom_to_vf_module_custom(vnf_resource_cust_model_customization_uuid, vf_module_cust_model_customization_uuid, creation_timestamp) values
-('68dc9a92-214c-11e7-93ae-92361f002672', 'cb82ffd8-252a-11e7-93ae-92361f002672', '2017-05-26 15:08:24'),
-('68dc9a92-214c-11e7-93ae-92361f002672', 'b4ea86b4-253f-11e7-93ae-92361f002672', '2017-05-26 15:08:24');
+insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid,VNF_RESOURCE_CUSTOMIZATION_ID) values
+('cb82ffd8-252a-11e7-93ae-92361f002672', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002672',2),
+('b4ea86b4-253f-11e7-93ae-92361f002672', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002672',2);
 
 
 insert into vf_module_to_heat_files(vf_module_model_uuid, heat_files_artifact_uuid) values
@@ -116,12 +104,8 @@ insert into network_resource_customization_to_service(service_model_uuid, resour
 ('5df8b6de-2083-11e7-93ae-92361f002672', '3bdbb104-476c-483e-9f8b-c095b3d308ac');
 
 
-insert into vnf_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
-('5df8b6de-2083-11e7-93ae-92361f002671', '68dc9a92-214c-11e7-93ae-92361f002671'),
-('5df8b6de-2083-11e7-93ae-92361f002672', '68dc9a92-214c-11e7-93ae-92361f002672');
-
 insert into allotted_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
-('5df8b6de-2083-11e7-93ae-92361f002671', '367a8ba9-057a-4506-b106-fbae818597c6' ),
+('5df8b6de-2083-11e7-93ae-92361f002671', '367a8ba9-057a-4506-b106-fbae818597c6'),
 ('5df8b6de-2083-11e7-93ae-92361f002672', '367a8ba9-057a-4506-b106-fbae818597c6');
 
 
@@ -140,7 +124,7 @@ VALUES ('97b73b0f-2860-49e5-b9c5-b6f91e4ee4a8', 'fsb_volume_image_name_0', b'1',
 ('97b73b0f-2860-49e5-b9c5-b6f91e4ee4a8', 'fsb_volume_size_0', b'1', 'number', NULL),
  ('97b73b0f-2860-49e5-b9c5-b6f91e4ee4a8', 'fsb_volume_type_0', b'1', 'string', NULL);
 
-  INSERT INTO `vf_module` (`MODEL_UUID`, `MODEL_INVARIANT_UUID`, `MODEL_VERSION`, `MODEL_NAME`, `DESCRIPTION`, `IS_BASE`, `HEAT_TEMPLATE_ARTIFACT_UUID`, `VOL_HEAT_TEMPLATE_ARTIFACT_UUID`, `CREATION_TIMESTAMP`, `VNF_RESOURCE_MODEL_UUID`)
+INSERT INTO `vf_module` (`MODEL_UUID`, `MODEL_INVARIANT_UUID`, `MODEL_VERSION`, `MODEL_NAME`, `DESCRIPTION`, `IS_BASE`, `HEAT_TEMPLATE_ARTIFACT_UUID`, `VOL_HEAT_TEMPLATE_ARTIFACT_UUID`, `CREATION_TIMESTAMP`, `VNF_RESOURCE_MODEL_UUID`)
  VALUES ('207fe0dc-4c89-4e5d-9a78-345e99ef7fbe', '547e9ac6-0489-41b6-8289-a7705f6e5c9d', '1', 'TestVnfType::TestModule-0', NULL, 1, 'd187c228-71c6-4c6d-8f33-cd1243442d0a', '97b73b0f-2860-49e5-b9c5-b6f91e4ee4a8', '2018-05-13 12:12:09', 'c5efeb55-4ade-49b8-815c-6a6391f6c46b');
 INSERT INTO `heat_environment` (`ARTIFACT_UUID`, `NAME`, `VERSION`, `DESCRIPTION`, `BODY`, `ARTIFACT_CHECKSUM`, `CREATION_TIMESTAMP`) VALUES ('f4a21b58-5654-4cf6-9c50-de42004fe2b4', 'base_vmme.env', '2', 'Auto-generated HEAT Environment deployment artifact', 'parameters:\n  Internal1_allow_transit: "True"\n  Internal1_dhcp: "False"\n  Internal1_forwarding_mode: "l2"\n  Internal1_net_cidr: "169.253.0.0"\n  Internal1_net_cidr_len: "17"\n  Internal1_net_gateway: "169.253.0.3"\n  Internal1_rpf: "disable"\n  Internal1_shared: "False"\n  Internal2_allow_transit: "True"\n  Internal2_dhcp: "False"\n  Internal2_forwarding_mode: "l2"\n  Internal2_net_cidr: "169.255.0.0"\n  Internal2_net_cidr_len: "17"\n  Internal2_net_gateway: "169.255.0.3"\n  Internal2_rpf: "disable"\n  Internal2_shared: "False"\n  domain_name: "default-domain"\n  fsb1_Internal1_mac: "00:80:37:0E:0B:12"\n  fsb1_Internal2_mac: "00:80:37:0E:0B:12"\n  fsb2_Internal1_mac: "00:80:37:0E:0D:12"\n  fsb2_Internal2_mac: "00:80:37:0E:0D:12"\n  fsb_flavor_name: "nv.c20r64d1"\n  gtp_sec_group_name: "gtp-sec-group"\n  int1_sec_group_name: "int1-sec-group"\n  int2_sec_group_name: "int2-sec-group"\n  ncb1_Internal1_mac: "00:80:37:0E:09:12"\n  ncb1_Internal2_mac: "00:80:37:0E:09:12"\n  ncb2_Internal1_mac: "00:80:37:0E:0F:12"\n  ncb2_Internal2_mac: "00:80:37:0E:0F:12"\n  ncb_flavor_name: "nv.c20r64d1"\n  oam_sec_group_name: "oam-sec-group"\n  pxe_image_name: "MME_PXE-Boot_16ACP04_GA.qcow2"\n  sctp-a-IPv6_ethertype: "IPv6"\n  sctp-a-display_name: "epc-sctp-a-ipv4v6-sec-group"\n  sctp-a-dst_subnet_prefix_v6: "::"\n  sctp-a-egress-dst_end_port: 65535\n  sctp-a-egress-dst_start_port: 0\n  sctp-a-egress-src_end_port: 65535\n  sctp-a-egress-src_start_port: 0\n  sctp-a-egress_action: "pass"\n  sctp-a-egress_dst_subnet_prefix: "0.0.0.0"\n  sctp-a-egress_dst_subnet_prefix_len: 0\n  sctp-a-egress_ethertype: "IPv4"\n  sctp-a-egress_rule_application: "any"\n  sctp-a-egress_rule_protocol: "icmp"\n  sctp-a-egress_src_addresses: "local"\n  sctp-a-ingress-dst_end_port: 65535\n  sctp-a-ingress-dst_start_port: 0\n  sctp-a-ingress-src_end_port: 65535\n  sctp-a-ingress-src_start_port: 0\n  sctp-a-ingress-src_subnet_prefix: "0.0.0.0"\n  sctp-a-ingress-src_subnet_prefix_len: 0\n  sctp-a-ingress_action: "pass"\n  sctp-a-ingress_dst_addresses: "local"\n  sctp-a-ingress_ethertype: "IPv4"\n  sctp-a-ingress_rule_application: "any"\n  sctp-a-ingress_rule_protocol: "icmp"\n  sctp-a-ipv6-egress-dst_start_port: "0"\n  sctp-a-ipv6-egress_action: "pass"\n  sctp-a-ipv6-egress_dst_end_port: "65535"\n  sctp-a-ipv6-egress_dst_subnet_prefix: "0.0.0.0"\n  sctp-a-ipv6-egress_dst_subnet_prefix_len: "0"\n  sctp-a-ipv6-egress_ethertype: "IPv4"\n  sctp-a-ipv6-egress_rule_application: "any"\n  sctp-a-ipv6-egress_rule_protocol: "any"\n  sctp-a-ipv6-egress_src_addresses: "local"\n  sctp-a-ipv6-egress_src_end_port: "65535"\n  sctp-a-ipv6-egress_src_start_port: "0"\n  sctp-a-ipv6-ingress-dst_end_port: "65535"\n  sctp-a-ipv6-ingress-dst_start_port: "0"\n  sctp-a-ipv6-ingress-src_end_port: 65535\n  sctp-a-ipv6-ingress-src_start_port: 0\n  sctp-a-ipv6-ingress_action: "pass"\n  sctp-a-ipv6-ingress_dst_addresses: "local"\n  sctp-a-ipv6-ingress_ethertype: "IPv4"\n  sctp-a-ipv6-ingress_rule_application: "any"\n  sctp-a-ipv6-ingress_rule_protocol: "any"\n  sctp-a-ipv6-ingress_src_subnet_prefix: "0.0.0.0"\n  sctp-a-ipv6-ingress_src_subnet_prefix_len: "0"\n  sctp-a-name: "epc-sctp-a-ipv4v6-sec-group"\n  sctp-a-src_subnet_prefix_v6: "::"\n  sctp-b-IPv6_ethertype: "IPv6"\n  sctp-b-display_name: "epc-sctp-b-ipv4v6-sec-group"\n  sctp-b-dst_subnet_prefix_v6: "::"\n  sctp-b-egress-dst_end_port: 65535\n  sctp-b-egress-dst_start_port: 0\n  sctp-b-egress-src_end_port: 65535\n  sctp-b-egress-src_start_port: 0\n  sctp-b-egress_action: "pass"\n  sctp-b-egress_dst_subnet_prefix: "0.0.0.0"\n  sctp-b-egress_dst_subnet_prefix_len: 0\n  sctp-b-egress_ethertype: "IPv4"\n  sctp-b-egress_rule_application: "any"\n  sctp-b-egress_rule_protocol: "icmp"\n  sctp-b-egress_src_addresses: "local"\n  sctp-b-ingress-dst_end_port: 65535\n  sctp-b-ingress-dst_start_port: 0\n  sctp-b-ingress-src_end_port: 65535\n  sctp-b-ingress-src_start_port: 0\n  sctp-b-ingress-src_subnet_prefix: "0.0.0.0"\n  sctp-b-ingress-src_subnet_prefix_len: 0\n  sctp-b-ingress_action: "pass"\n  sctp-b-ingress_dst_addresses: "local"\n  sctp-b-ingress_ethertype: "IPv4"\n  sctp-b-ingress_rule_application: "any"\n  sctp-b-ingress_rule_protocol: "icmp"\n  sctp-b-ipv6-egress-dst_start_port: "0"\n  sctp-b-ipv6-egress_action: "pass"\n  sctp-b-ipv6-egress_dst_end_port: "65535"\n  sctp-b-ipv6-egress_dst_subnet_prefix: "0.0.0.0"\n  sctp-b-ipv6-egress_dst_subnet_prefix_len: "0"\n  sctp-b-ipv6-egress_ethertype: "IPv4"\n  sctp-b-ipv6-egress_rule_application: "any"\n  sctp-b-ipv6-egress_rule_protocol: "any"\n  sctp-b-ipv6-egress_src_addresses: "local"\n  sctp-b-ipv6-egress_src_end_port: "65535"\n  sctp-b-ipv6-egress_src_start_port: "0"\n  sctp-b-ipv6-ingress-dst_end_port: "65535"\n  sctp-b-ipv6-ingress-dst_start_port: "0"\n  sctp-b-ipv6-ingress-src_end_port: 65535\n  sctp-b-ipv6-ingress-src_start_port: 0\n  sctp-b-ipv6-ingress_action: "pass"\n  sctp-b-ipv6-ingress_dst_addresses: "local"\n  sctp-b-ipv6-ingress_ethertype: "IPv4"\n  sctp-b-ipv6-ingress_rule_application: "any"\n  sctp-b-ipv6-ingress_rule_protocol: "any"\n  sctp-b-ipv6-ingress_src_subnet_prefix: "0.0.0.0"\n  sctp-b-ipv6-ingress_src_subnet_prefix_len: "0"\n  sctp-b-name: "epc-sctp-b-ipv4v6-sec-group"\n  sctp-b-src_subnet_prefix_v6: "::"\n  sctp_rule_protocol: "132"\n  vlc_st_availability_zone: "True"\n  vlc_st_interface_type_gtp: "other0"\n  vlc_st_interface_type_int1: "other1"\n  vlc_st_interface_type_int2: "other2"\n  vlc_st_interface_type_oam: "management"\n  vlc_st_interface_type_sctp_a: "left"\n  vlc_st_interface_type_sctp_b: "right"\n  vlc_st_service_mode: "in-network-nat"\n  vlc_st_service_type: "firewall"\n  vlc_st_version: "2"\n  vlc_st_virtualization_type: "virtual-machine"\n  availability_zone_0: \n  availability_zone_1: \n  availability_zone_2: \n  availability_zone_3: \n  fsb_name_0: \n  fsb_name_1: \n  fsb_oam_ip_0: \n  fsb_oam_ip_1: \n  fsb_volume_id_0: \n  fsb_volume_id_1: \n  gtp_net_fqdn: \n  gtp_net_name: \n  ncb_name_0: \n  ncb_name_1: \n  oam_net_fqdn: \n  oam_net_name: \n  sctp_a_net_fqdn: \n  sctp_a_net_name: \n  sctp_b_net_fqdn: \n  sctp_b_net_name: \n  vf_module_id: \n  vlc_gtp_route_prefixes: \n  vlc_oam_route_prefixes: \n  vlc_sctp_a_route_prefixes: \n  vlc_sctp_b_route_prefixes: \n  vnf_id: \n  vnf_name: \n', 'MGJjYzM2ZWY1ODBjYzc1MzBiMGQxZmI4N2MyZmFkY2E=', '2018-05-13 12:12:09');
 
@@ -148,7 +132,8 @@ INSERT INTO `heat_environment` (`ARTIFACT_UUID`, `NAME`, `VERSION`, `DESCRIPTION
 
 
 
- INSERT INTO `vf_module_customization` (`MODEL_CUSTOMIZATION_UUID`, `LABEL`, `INITIAL_COUNT`, `MIN_INSTANCES`, `MAX_INSTANCES`, `AVAILABILITY_ZONE_COUNT`, `HEAT_ENVIRONMENT_ARTIFACT_UUID`, `VOL_ENVIRONMENT_ARTIFACT_UUID`, `CREATION_TIMESTAMP`, `VF_MODULE_MODEL_UUID`) VALUES ('9b339a61-69ca-465f-86b8-1c72c582b8e8', 'base_vmme', 1, 1, 1, NULL, 'f4a21b58-5654-4cf6-9c50-de42004fe2b4', '3375f64b-4709-4802-8713-7a164763f9cd', '2018-05-13 12:12:09', '207fe0dc-4c89-4e5d-9a78-345e99ef7fbe');
+INSERT INTO `vf_module_customization` (`MODEL_CUSTOMIZATION_UUID`, `LABEL`, `INITIAL_COUNT`, `MIN_INSTANCES`, `MAX_INSTANCES`, `AVAILABILITY_ZONE_COUNT`, `HEAT_ENVIRONMENT_ARTIFACT_UUID`, `VOL_ENVIRONMENT_ARTIFACT_UUID`, `CREATION_TIMESTAMP`, `VF_MODULE_MODEL_UUID`,VNF_RESOURCE_CUSTOMIZATION_ID) 
+VALUES ('9b339a61-69ca-465f-86b8-1c72c582b8e8', 'base_vmme', 1, 1, 1, NULL, 'f4a21b58-5654-4cf6-9c50-de42004fe2b4', '3375f64b-4709-4802-8713-7a164763f9cd', '2018-05-13 12:12:09', '207fe0dc-4c89-4e5d-9a78-345e99ef7fbe',2);
 
 INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `LAST_UPDATED_BY`, `CREATION_TIMESTAMP`, `UPDATE_TIMESTAMP`) VALUES ('mtn13', 'http://localhost:28090/v2.0', 'm93945', '93937EA01B94A10A49279D4572B48369', NULL, 'MSO_USER', '2018-07-17 14:05:08', '2018-07-17 14:05:08');
 
@@ -157,7 +142,7 @@ INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `PR
 INSERT INTO `cloud_sites` (`ID`, `region_id`, `identity_service_id`, `cloud_version`, `clli`, `cloudify_id`, `platform`, `orchestrator`, `CREATION_TIMESTAMP`, `UPDATE_TIMESTAMP`) VALUES ('MTN13', 'mtn13', 'MTN13', '3.0', 'MDT13', 'mtn13', null, 'orchestrator', '2018-07-17 14:06:28', '2018-07-17 14:06:28');
 
 
-
+set foreign_key_checks=1;
 
 
 

@@ -20,11 +20,11 @@
 
 package org.onap.so.db.catalog.data.repository;
 
-import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "vnfVfmoduleCvnfcConfigurationCustomization", path = "vnfVfmoduleCvnfcConfigurationCustomization")
-public interface VnfVfmoduleCvnfcConfigurationCustomizationRepository extends JpaRepository<VnfVfmoduleCvnfcConfigurationCustomization, Integer> {
+@RepositoryRestResource(collectionResourceRel = "cvnfcConfigurationCustomization", path = "cvnfcConfigurationCustomization")
+public interface CvnfcConfigurationCustomizationRepository extends JpaRepository<CvnfcConfigurationCustomization, Integer> {
 
 }

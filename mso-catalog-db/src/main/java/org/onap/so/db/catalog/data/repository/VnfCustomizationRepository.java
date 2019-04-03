@@ -24,17 +24,16 @@ import java.util.List;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "vnfResourceCustomization", path = "vnfResourceCustomization")
-public interface VnfCustomizationRepository extends JpaRepository<VnfResourceCustomization, String> {
-
-    List<VnfResourceCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
+public interface VnfCustomizationRepository extends JpaRepository<VnfResourceCustomization, Integer> {
+    List<VnfResourceCustomization> findByModelCustomizationUUID(@Param("MODEL_CUSTOMIZATION_UUID")String modelCustomizationUUID);
 
     VnfResourceCustomization findOneByModelCustomizationUUID(String modelCustomizationUuid);
 
     @Query(value = "SELECT * FROM vnf_resource_customization WHERE MODEL_INSTANCE_NAME = ?1 AND VNF_RESOURCE_MODEL_UUID = ?2 LIMIT 1;", nativeQuery = true)
-    VnfResourceCustomization findByModelInstanceNameAndVnfResources(String modelInstanceName,
-        String vnfResourceModelUUID);
+    VnfResourceCustomization findByModelInstanceNameAndVnfResources(@Param("MODEL_INSTANCE_NAME")String modelInstanceName, @Param("VNF_RESOURCE_MODEL_UUID")String vnfResourceModelUUID);
 
 }

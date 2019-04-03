@@ -29,5 +29,4 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "vnfcInstanceGroupCustomization", path = "vnfcInstanceGroupCustomization")
 public interface VnfcInstanceGroupCustomizationRepository
 		extends JpaRepository<VnfcInstanceGroupCustomization, String> {
-	List<VnfcInstanceGroupCustomization> findByModelCustomizationUUID(String modelCustomizationlUUID);
 }

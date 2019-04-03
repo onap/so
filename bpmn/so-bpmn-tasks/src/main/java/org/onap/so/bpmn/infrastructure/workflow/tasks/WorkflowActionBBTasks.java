@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -36,13 +35,8 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
 import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.entities.AAIResultWrapper;
-import org.onap.so.client.aai.entities.Relationships;
-import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.so.db.catalog.beans.CvnfcCustomization;
-import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -367,16 +361,21 @@ public class WorkflowActionBBTasks {
 	protected void postProcessingExecuteBBActivateVfModule(DelegateExecution execution, 
 			ExecuteBuildingBlock ebb, List<ExecuteBuildingBlock> flowsToExecute) {
 		try {
+			String serviceInstanceId = ebb.getWorkflowResourceIds().getServiceInstanceId();
 			String vnfId = ebb.getWorkflowResourceIds().getVnfId();
 			String vfModuleId = ebb.getResourceId();
 			ebb.getWorkflowResourceIds().setVfModuleId(vfModuleId);
+			String serviceModelUUID = bbInputSetupUtils.getAAIServiceInstanceById(serviceInstanceId).getModelVersionId();
 			String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
 			String vfModuleCustomizationUUID = bbInputSetupUtils.getAAIVfModule(vnfId, vfModuleId).getModelCustomizationId();
 			List<Vnfc> vnfcs = workflowAction.getRelatedResourcesInVfModule(vnfId, vfModuleId, Vnfc.class, AAIObjectType.VNFC);
+			logger.debug("Vnfc Size: {}", vnfcs.size());
 			for(Vnfc vnfc : vnfcs) {
 				String modelCustomizationId = vnfc.getModelCustomizationId();
-				VnfVfmoduleCvnfcConfigurationCustomization fabricConfig = 
-						catalogDbClient.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(vnfCustomizationUUID, vfModuleCustomizationUUID, modelCustomizationId);
+				logger.debug("Processing Vnfc: {}", modelCustomizationId);
+				CvnfcConfigurationCustomization fabricConfig = 
+						catalogDbClient.getCvnfcCustomization(serviceModelUUID,vnfCustomizationUUID,
+								vfModuleCustomizationUUID, modelCustomizationId);
 				if(fabricConfig != null && fabricConfig.getConfigurationResource() != null 
 						&& fabricConfig.getConfigurationResource().getToscaNodeType() != null 
 						&& fabricConfig.getConfigurationResource().getToscaNodeType().contains(FABRIC_CONFIGURATION)) {
@@ -390,6 +389,7 @@ public class WorkflowActionBBTasks {
 					ExecuteBuildingBlock activateConfigBB = getExecuteBBForConfig(ACTIVATE_FABRIC_CONFIGURATION_BB, ebb, configurationId, configurationResourceKeys);
 					flowsToExecute.add(assignConfigBB);
 					flowsToExecute.add(activateConfigBB);
+					flowsToExecute.stream().forEach(executeBB -> logger.info("Flows to Execute After Post Processing: {}", executeBB.getBuildingBlock().getBpmnFlowName()));
 					execution.setVariable("flowsToExecute", flowsToExecute);
 					execution.setVariable("completed", false);
 				} else {

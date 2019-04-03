@@ -22,36 +22,20 @@
 
 package org.onap.so.adapters.catalogdb.rest;
 
-/*
-Create an initial query to retrieve a VNF Resource definition (including a list of possible module types)
-within the context of a given service. Input is a vnf resource model customization ID (new field for 1702),
-or a composite key (from 1610) of service name, service version, vnf instance name
 
-Returns a structure (JSON?) containing VNF RESOURCE attributes, plus a list of VF Module structures.
 
-Query a NETWORK_RESOURCE from the MSO Catalog, based on a networkModelCustomizationUUID (new for 1702),
-a network type (unique type identifier in 1610), or based on network role within a service.
+import java.util.ArrayList;
+import java.util.List;
 
-Create Adapter framework for access to Catalog DB, including connection management,
-login/password access, transaction logic, etc. This can be modeled after the Request DB Adapter
-
-Update the MSO Catalog DB schema to include the new fields defined in this user story.
-
-Note that the resourceModelCustomizationUUID (or vfModuleModelCustomizationUUID) will be unique keys (indexes)
-on the VNF_RESOURCE and VF_MODULE tables respectively.
-The previously constructed "vnf-type" and "vf-module-type" field may continue to be populated,
-but should no longer be needed and can deprecate in future release.
-
-For migration, a new randomly generated UUID field may be generated for the *ModelCustomizationUUID" fields
-until such time that the model is redistributed from ASDC.
-
-All other fields Check with Mike Z for appropriate value for the vfModuleLabel.
-We might be able to derive it's value from the current vnf-type (using the "middle" piece that identifies the module type).
-
-min and initial counts can be 0. max can be null to indicate no maximum.
-
-Once the network-level distribution artifacts are defined, similar updates can be made to the NETWORK_RESOURCE table.
- */
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpStatus;
 import org.onap.so.adapters.catalogdb.catalogrest.CatalogQuery;
@@ -73,7 +57,6 @@ import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ToscaCsar;
 import org.onap.so.db.catalog.beans.VfModule;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.data.repository.AllottedResourceCustomizationRepository;
@@ -95,23 +78,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.GenericEntity;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.ArrayList;
-import java.util.List;
 
-/**
- * This class services calls to the REST interface for VF Modules (http://host:port/ecomp/mso/catalog/v1)
- * Both XML and JSON can be produced/consumed.  Set Accept: and Content-Type: headers appropriately.  XML is the default.
- * Requests respond synchronously only
- */
 @Path("/{version: v[0-9]+}")
 @Component
 public class CatalogDbAdapterRest {
@@ -160,7 +127,6 @@ public class CatalogDbAdapterRest {
     public Response respond(String version, int respStatus, boolean isArray, CatalogQuery qryResp) {
         return Response
                 .status(respStatus)
-                //.entity(new GenericEntity<QueryServiceVnfs>(qryResp) {})
                 .entity(qryResp.toJsonString(version, isArray))
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .build();

@@ -53,10 +53,10 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.NetworkCollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
-import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -145,10 +145,9 @@ public class BBInputSetupUtils {
 		return catalogDbClient.getVfModuleCustomizationByModelCuztomizationUUID(modelCustomizationUUID);
 	}
 	
-	public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByActionAndIsALaCarteAndRequestScopeAndCloudOwner(String vnfCustomizationUuid,
+	public CvnfcConfigurationCustomization getCvnfcConfigurationCustomization(String serviceModelUUID, String vnfCustomizationUuid,
 			String vfModuleCustomizationUuid, String cvnfcCustomizationUuid){
-		return catalogDbClient.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(vnfCustomizationUuid,
-				vfModuleCustomizationUuid, cvnfcCustomizationUuid);
+		return catalogDbClient.getCvnfcCustomization(serviceModelUUID, vnfCustomizationUuid,vfModuleCustomizationUuid, cvnfcCustomizationUuid);
 	}
 	
 	public List<VnfcInstanceGroupCustomization> getVnfcInstanceGroups(String modelCustomizationUUID) {
@@ -450,10 +449,5 @@ public class BBInputSetupUtils {
 			}
 			return Optional.of(volumeGroup);
 		}
-	}
-
-	public VnfVfmoduleCvnfcConfigurationCustomization getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationIdnAndVfModuleCustomizationIdAndCvnfcCustomizationId(
-			String vnfResourceCustomizationUUID, String vfModuleCustomizationUUID, String cvnfcCustomizationUUID) {
-		return catalogDbClient.getVnfVfmoduleCvnfcConfigurationCustomizationByVnfCustomizationUuidAndVfModuleCustomizationUuidAndCvnfcCustomizationUuid(vnfResourceCustomizationUUID, vfModuleCustomizationUUID, cvnfcCustomizationUUID);
 	}
 }

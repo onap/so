@@ -32,7 +32,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 public interface CvnfcCustomizationRepository extends JpaRepository<CvnfcCustomization, Integer> {
 	CvnfcCustomization findOneByModelCustomizationUUID(String modelCustomizationUuid);
 	List<CvnfcCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
-	
-	@Query(value = "SELECT * FROM cvnfc_customization WHERE VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID = ?1 AND VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID = ?2", nativeQuery = true)
-	List<CvnfcCustomization> findByVnfResourceCustomizationAndVfModuleCustomization (@Param("VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID") String vnfResourceCustomization,@Param("VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID") String vfModuleCustomization);
+
 }

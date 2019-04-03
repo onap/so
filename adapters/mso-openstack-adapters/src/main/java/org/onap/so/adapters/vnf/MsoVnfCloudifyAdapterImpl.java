@@ -640,7 +640,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     	VfModuleCustomization vfmc = null;
 
         try {
-            vfmc = vfModuleCustomRepo.findByModelCustomizationUUID(modelCustomizationUuid);
+            vfmc = vfModuleCustomRepo.findFirstByModelCustomizationUUIDOrderByCreatedDesc(modelCustomizationUuid);
 
             if (vfmc == null) {
                 String error = "Create vfModule error: Unable to find vfModuleCust with modelCustomizationUuid="

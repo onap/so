@@ -122,13 +122,14 @@ public class EqualsAndHashCodeTester implements Tester {
 	
 	private Set<PojoField> hasIdOrBusinessKey(PojoClass pojoClass) {
 		final Set<PojoField> fields = new HashSet<>();
-		
+
 		fields.addAll(pojoClass.getPojoFieldsAnnotatedWith(BusinessKey.class));
-		fields.addAll(pojoClass.getPojoFieldsAnnotatedWith(Id.class));
-		fields.removeAll(pojoClass.getPojoFieldsAnnotatedWith(GeneratedValue.class));
-		
+		final Set<PojoField> temp = new HashSet<>();
+		temp.addAll(pojoClass.getPojoFieldsAnnotatedWith(Id.class));
+		temp.removeAll(pojoClass.getPojoFieldsAnnotatedWith(GeneratedValue.class));
+		fields.addAll(temp);
 		return fields;
-		
+
 	}
 
 }

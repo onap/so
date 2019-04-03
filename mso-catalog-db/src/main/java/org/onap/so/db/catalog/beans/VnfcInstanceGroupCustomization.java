@@ -27,6 +27,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
@@ -45,7 +47,7 @@ import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
-@IdClass(VnfcInstanceGroupCustomizationId.class)
+
 @Table(name = "vnfc_instance_group_customization")
 public class VnfcInstanceGroupCustomization implements Serializable {
 
@@ -54,22 +56,18 @@ public class VnfcInstanceGroupCustomization implements Serializable {
 	 */
 	private static final long serialVersionUID = -8288218040186901676L;
 
-	@BusinessKey
 	@Id
-	@Column(name = "VNF_RESOURCE_CUSTOMIZATION_MODEL_UUID")
-	private String modelCustomizationUUID;
-
 	@BusinessKey
-	@Id
-	@Column(name = "INSTANCE_GROUP_MODEL_UUID")
-	private String modelUUID;
-
+	@Column(name = "ID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer id;
+	
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VNF_RESOURCE_CUSTOMIZATION_MODEL_UUID", updatable = false, insertable = false)
+	@JoinColumn(name = "VNF_RESOURCE_CUSTOMIZATION_ID")
 	private VnfResourceCustomization vnfResourceCust;
 
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "INSTANCE_GROUP_MODEL_UUID", updatable = false, insertable = false)
+	@JoinColumn(name = "INSTANCE_GROUP_MODEL_UUID")
 	private InstanceGroup instanceGroup;
 
 	@Column(name = "FUNCTION")
@@ -88,45 +86,36 @@ public class VnfcInstanceGroupCustomization implements Serializable {
 			return false;
 		}
 		VnfcInstanceGroupCustomization castOther = (VnfcInstanceGroupCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID)
-				.append(modelUUID, castOther.modelUUID).isEquals();
+		return new EqualsBuilder().append(id, castOther.id).isEquals();
 	}
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).append(modelUUID).toHashCode();
+		return new HashCodeBuilder().append(id).toHashCode();
 	}
 
 	@Override
 	public String toString() {
-		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelUUID", modelUUID).append("function", function).append("description", description)
+		return new ToStringBuilder(this)
+				.append("function", function).append("description", description)
 				.append("created", created).toString();
 	}
 	
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
 	@PrePersist
 	protected void onCreate() {
 		this.created = new Date();
 	}
 	
-	public Date getCreated() {
+	public Date getCreated(){
 		return created;
-	}
-
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
-
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
-
-	public String getModelUUID() {
-		return modelUUID;
-	}
-
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
 	}
 
 	public String getFunction() {

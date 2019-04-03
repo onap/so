@@ -21,6 +21,7 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class InstanceGroup implements Serializable {
 	private List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupCustomizations;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "instanceGroup")
-	private List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations;
+	private List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations = new ArrayList<>();
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "instanceGroup")
 	private List<CollectionNetworkResourceCustomization> collectionNetworkResourceCustomizations;

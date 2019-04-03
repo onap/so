@@ -1,959 +1,1168 @@
-
-
-CREATE TABLE IF NOT EXISTS `northbound_request_ref_lookup` (
-`id` INT(11) NOT NULL AUTO_INCREMENT,
-`REQUEST_SCOPE` VARCHAR(200) NOT NULL,
-`MACRO_ACTION` VARCHAR(200) NOT NULL,
-`ACTION` VARCHAR(200) NOT NULL,
-`IS_ALACARTE` TINYINT(1) NOT NULL DEFAULT 0,
-`IS_TOPLEVELFLOW` TINYINT(1) NOT NULL DEFAULT 0,
-`MIN_API_VERSION` DOUBLE NOT NULL,
-`MAX_API_VERSION` DOUBLE NULL,
-PRIMARY KEY (`id`),
-UNIQUE INDEX `UK_northbound_request_ref_lookup` (`MIN_API_VERSION` ASC, `REQUEST_SCOPE` ASC, `ACTION` ASC, `IS_ALACARTE` ASC, `MACRO_ACTION` ASC))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
-
-CREATE TABLE IF NOT EXISTS building_block_detail (
-id INT(11) AUTO_INCREMENT,
-BUILDING_BLOCK_NAME VARCHAR(200) NOT NULL,
-RESOURCE_TYPE VARCHAR(25) NOT NULL,
-TARGET_ACTION VARCHAR(25) NOT NULL,
-PRIMARY KEY(`id`),
-UNIQUE INDEX `UK_building_block_name`(`BUILDING_BLOCK_NAME`))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
-
-CREATE TABLE IF NOT EXISTS `orchestration_flow_reference` (
-`id` INT(11) NOT NULL AUTO_INCREMENT,
-`COMPOSITE_ACTION` VARCHAR(200) NOT NULL,
-`SEQ_NO` INT(11) NOT NULL,
-`FLOW_NAME` VARCHAR(200) NOT NULL,
-`FLOW_VERSION` DOUBLE NOT NULL,
-`NB_REQ_REF_LOOKUP_ID` INT(11) NOT NULL,
-PRIMARY KEY (`id`),
-INDEX `fk_orchestration_flow_reference__northbound_req_ref_look_idx` (`NB_REQ_REF_LOOKUP_ID` ASC),
-UNIQUE INDEX `UK_orchestration_flow_reference` (`COMPOSITE_ACTION` ASC, `FLOW_NAME` ASC, `SEQ_NO` ASC, `NB_REQ_REF_LOOKUP_ID` ASC),
-CONSTRAINT `fk_orchestration_flow_reference__northbound_request_ref_look1` 
-FOREIGN KEY (`NB_REQ_REF_LOOKUP_ID`) REFERENCES `northbound_request_ref_lookup` (`id`)
-ON DELETE CASCADE ON UPDATE CASCADE
-)
-ENGINE = InnoDB DEFAULT CHARACTER SET = latin1;
-
-create table `allotted_resource` (
-  `model_uuid` varchar(200) not null,
-  `model_invariant_uuid` varchar(200) not null,
-  `model_version` varchar(20) not null,
-  `model_name` varchar(200) not null,
-  `tosca_node_type` varchar(200) default null,
-  `subcategory` varchar(200) default null,
-  `description` varchar(1200) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`model_uuid`)
-) engine=innodb default charset=latin1;
-
-
-
-
-create table `allotted_resource_customization` (
-  `model_customization_uuid` varchar(200) not null,
-  `model_instance_name` varchar(200) not null,
-  `providing_service_model_uuid` varchar(200) default null,
-  `providing_service_model_invariant_uuid` varchar(200) default null,
-  `providing_service_model_name` varchar(200) default null,
-  `target_network_role` varchar(200) default null,
-  `nf_type` varchar(200) default null,
-  `nf_role` varchar(200) default null,
-  `nf_function` varchar(200) default null,
-  `nf_naming_code` varchar(200) default null,
-  `min_instances` int(11) default null,
-  `max_instances` int(11) default null,
-  `ar_model_uuid` varchar(200) not null,
-  `resource_input` varchar(20000) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`model_customization_uuid`),
-  key `fk_allotted_resource_customization__allotted_resource1_idx` (`ar_model_uuid`),
-  constraint `fk_allotted_resource_customization__allotted_resource1` foreign key (`ar_model_uuid`) references `allotted_resource` (`model_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-
-create table `heat_environment` (
-  `artifact_uuid` varchar(200) not null,
-  `name` varchar(100) not null,
-  `version` varchar(20) not null,
-  `description` varchar(1200) default null,
-  `body` longtext not null,
-  `artifact_checksum` varchar(200) not null default 'manual record',
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`artifact_uuid`)
-) engine=innodb default charset=latin1;
-
-
-
-create table `heat_files` (
-  `artifact_uuid` varchar(200) not null,
-  `name` varchar(200) not null,
-  `version` varchar(20) not null,
-  `description` varchar(1200) default null,
-  `body` longtext not null,
-  `artifact_checksum` varchar(200) not null default 'manual record',
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`artifact_uuid`)
-) engine=innodb default charset=latin1;
-
-
-
-
-create table `heat_template` (
-  `artifact_uuid` varchar(200) not null,
-  `name` varchar(200) not null,
-  `version` varchar(20) not null,
-  `description` varchar(1200) default null,
-  `body` longtext not null,
-  `timeout_minutes` int(11) default null,
-  `artifact_checksum` varchar(200) not null default 'manual record',
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`artifact_uuid`)
-) engine=innodb default charset=latin1;
-
-
-
-create table `heat_nested_template` (
-  `parent_heat_template_uuid` varchar(200) not null,
-  `child_heat_template_uuid` varchar(200) not null,
-  `provider_resource_file` varchar(100) default null,
-  primary key (`parent_heat_template_uuid`,`child_heat_template_uuid`),
-  key `fk_heat_nested_template__heat_template2_idx` (`child_heat_template_uuid`),
-  constraint `fk_heat_nested_template__child_heat_temp_uuid__heat_template1` foreign key (`child_heat_template_uuid`) references `heat_template` (`artifact_uuid`) on delete cascade on update cascade,
-  constraint `fk_heat_nested_template__parent_heat_temp_uuid__heat_template1` foreign key (`parent_heat_template_uuid`) references `heat_template` (`artifact_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-
-create table `heat_template_params` (
-  `heat_template_artifact_uuid` varchar(200) not null,
-  `param_name` varchar(100) not null,
-  `is_required` bit(1) not null,
-  `param_type` varchar(20) default null,
-  `param_alias` varchar(45) default null,
-  primary key (`heat_template_artifact_uuid`,`param_name`),
-  constraint `fk_heat_template_params__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-create table `network_recipe` (
-  `id` int(11) not null auto_increment,
-  `model_name` varchar(20) not null,
-  `action` varchar(50) not null,
-  `description` varchar(1200) default null,
-  `orchestration_uri` varchar(256) not null,
-  `network_param_xsd` varchar(2048) default null,
-  `recipe_timeout` int(11) default null,
-  `service_type` varchar(45) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  `version_str` varchar(20) not null,
-  primary key (`id`),
-  unique key `uk_rl4f296i0p8lyokxveaiwkayi` (`model_name`,`action`,`version_str`)
-) engine=innodb auto_increment=178 default charset=latin1;
-
-
-
-
-create table `temp_network_heat_template_lookup` (
-  `network_resource_model_name` varchar(200) not null,
-  `heat_template_artifact_uuid` varchar(200) null,
-  `aic_version_min` varchar(20) null,
-  `aic_version_max` varchar(20) default null,
-  primary key (`network_resource_model_name`),
-  key `fk_temp_network_heat_template_lookup__heat_template1_idx` (`heat_template_artifact_uuid`),
-  constraint `fk_temp_network_heat_template_lookup__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete no action on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-create table `network_resource` (
-  `model_uuid` varchar(200) not null,
-  `model_name` varchar(200) not null,
-  `model_invariant_uuid` varchar(200) default null,
-  `description` varchar(1200) default null,
-  `heat_template_artifact_uuid` varchar(200) null,
-  `neutron_network_type` varchar(20) default null,
-  `model_version` varchar(20) default null,
-  `tosca_node_type` varchar(200) default null,
-  `aic_version_min` varchar(20) null,
-  `aic_version_max` varchar(20) default null,
-  `orchestration_mode` varchar(20) default 'heat',
-  `resource_category` varchar(20) default null,
-  `resource_sub_category` varchar(20) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`model_uuid`),
-  key `fk_network_resource__temp_network_heat_template_lookup1_idx` (`model_name`),
-  key `fk_network_resource__heat_template1_idx` (`heat_template_artifact_uuid`),
-  constraint `fk_network_resource__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete no action on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-
-
-create table `network_resource_customization` (
-  `model_customization_uuid` varchar(200) not null,
-  `model_instance_name` varchar(200) not null,
-  `network_technology` varchar(45) default null,
-  `network_type` varchar(45) default null,
-  `network_role` varchar(200) default null,
-  `network_scope` varchar(45) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  `network_resource_model_uuid` varchar(200) not null,
-  `resource_input` varchar(20000) default null,
-  primary key (`model_customization_uuid`),
-  key `fk_network_resource_customization__network_resource1_idx` (`network_resource_model_uuid`),
-  constraint `fk_network_resource_customization__network_resource1` foreign key (`network_resource_model_uuid`) references `network_resource` (`model_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-
-
-create table `tosca_csar` (
-  `artifact_uuid` varchar(200) not null,
-  `name` varchar(200) not null,
-  `version` varchar(20) not null,
-  `description` varchar(1200) default null,
-  `artifact_checksum` varchar(200) not null,
-  `url` varchar(200) not null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`artifact_uuid`)
-) engine=innodb default charset=latin1;
-
-
-
-
-create table `service` (
-  `model_uuid` varchar(200) not null,
-  `model_name` varchar(200) not null,
-  `model_invariant_uuid` varchar(200) not null,
-  `model_version` varchar(20) not null,
-  `description` varchar(1200) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  `tosca_csar_artifact_uuid` varchar(200) default null,
-  `service_type` varchar(200) default null,
-  `service_role` varchar(200) default null,
-  `environment_context` varchar(200) default null,
-  `workload_context` varchar(200) default null,
-  `service_category` varchar(200) default null,
-  `resource_order` varchar(200) default null,
-  primary key (`model_uuid`),
-  key `fk_service__tosca_csar1_idx` (`tosca_csar_artifact_uuid`),
-  constraint `fk_service__tosca_csar1` foreign key (`tosca_csar_artifact_uuid`) references `tosca_csar` (`artifact_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-create table `service_recipe` (
-  `id` int(11) not null auto_increment,
-  `action` varchar(50) not null,
-  `version_str` varchar(20) default null,
-  `description` varchar(1200) default null,
-  `orchestration_uri` varchar(256) not null,
-  `service_param_xsd` varchar(2048) default null,
-  `recipe_timeout` int(11) default null,
-  `service_timeout_interim` int(11) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  `service_model_uuid` varchar(200) not null,
-  primary key (`id`),
-  unique key `uk_7fav5dkux2v8g9d2i5ymudlgc` (`service_model_uuid`,`action`),
-  key `fk_service_recipe__service1_idx` (`service_model_uuid`),
-  constraint `fk_service_recipe__service1` foreign key (`service_model_uuid`) references `service` (`model_uuid`) on delete cascade on update cascade
-) engine=innodb auto_increment=86 default charset=latin1;
-
-
-
-create table `vnf_resource` (
-  `orchestration_mode` varchar(20) not null default 'heat',
-  `description` varchar(1200) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  `model_uuid` varchar(200) not null,
-  `aic_version_min` varchar(20) default null,
-  `aic_version_max` varchar(20) default null,
-  `model_invariant_uuid` varchar(200) default null,
-  `model_version` varchar(20) not null,
-  `model_name` varchar(200) default null,
-  `tosca_node_type` varchar(200) default null,
-  `resource_category` varchar(200) default null,
-  `resource_sub_category` varchar(200) default null,
-  `heat_template_artifact_uuid` varchar(200) default null,
-  primary key (`model_uuid`),
-  key `fk_vnf_resource__heat_template1` (`heat_template_artifact_uuid`),
-  constraint `fk_vnf_resource__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-
-create table `vf_module` (
-  `model_uuid` varchar(200) not null,
-  `model_invariant_uuid` varchar(200) default null,
-  `model_version` varchar(20) not null,
-  `model_name` varchar(200) not null,
-  `description` varchar(1200) default null,
-  `is_base` int(11) not null,
-  `heat_template_artifact_uuid` varchar(200) default null,
-  `vol_heat_template_artifact_uuid` varchar(200) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  `vnf_resource_model_uuid` varchar(200) not null,
-  primary key (`model_uuid`,`vnf_resource_model_uuid`),
-  key `fk_vf_module__vnf_resource1_idx` (`vnf_resource_model_uuid`),
-  key `fk_vf_module__heat_template_art_uuid__heat_template1_idx` (`heat_template_artifact_uuid`),
-  key `fk_vf_module__vol_heat_template_art_uuid__heat_template2_idx` (`vol_heat_template_artifact_uuid`),
-  constraint `fk_vf_module__heat_template_art_uuid__heat_template1` foreign key (`heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete cascade on update cascade,
-  constraint `fk_vf_module__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade,
-  constraint `fk_vf_module__vol_heat_template_art_uuid__heat_template2` foreign key (`vol_heat_template_artifact_uuid`) references `heat_template` (`artifact_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-/*!40101 set @saved_cs_client     = @@character_set_client */;
-/*!40101 set character_set_client = utf8 */;
-create table `vf_module_customization` (
-  `model_customization_uuid` varchar(200) not null,
-  `label` varchar(200) default null,
-  `initial_count` int(11) default '0',
-  `min_instances` int(11) default '0',
-  `max_instances` int(11) default null,
-  `availability_zone_count` int(11) default null,
-  `heat_environment_artifact_uuid` varchar(200) default null,
-  `vol_environment_artifact_uuid` varchar(200) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  `vf_module_model_uuid` varchar(200) not null,
-  primary key (`model_customization_uuid`),
-  key `fk_vf_module_customization__vf_module1_idx` (`vf_module_model_uuid`),
-  key `fk_vf_module_customization__heat_env__heat_environment1_idx` (`heat_environment_artifact_uuid`),
-  key `fk_vf_module_customization__vol_env__heat_environment2_idx` (`vol_environment_artifact_uuid`),
-  constraint `fk_vf_module_customization__heat_env__heat_environment1` foreign key (`heat_environment_artifact_uuid`) references `heat_environment` (`artifact_uuid`) on delete cascade on update cascade,
-  constraint `fk_vf_module_customization__vf_module1` foreign key (`vf_module_model_uuid`) references `vf_module` (`model_uuid`) on delete cascade on update cascade,
-  constraint `fk_vf_module_customization__vol_env__heat_environment2` foreign key (`vol_environment_artifact_uuid`) references `heat_environment` (`artifact_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-/*!40101 set character_set_client = @saved_cs_client */;
+set foreign_key_checks=0;
+DROP TABLE IF EXISTS `allotted_resource`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `allotted_resource` (
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) NOT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) DEFAULT NULL,
+  `SUBCATEGORY` varchar(200) DEFAULT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`MODEL_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- table structure for table `vf_module_to_heat_files`
+-- Table structure for table `allotted_resource_customization`
 --
 
-
-/*!40101 set @saved_cs_client     = @@character_set_client */;
-/*!40101 set character_set_client = utf8 */;
-create table `vf_module_to_heat_files` (
-  `vf_module_model_uuid` varchar(200) not null,
-  `heat_files_artifact_uuid` varchar(200) not null,
-  primary key (`vf_module_model_uuid`,`heat_files_artifact_uuid`),
-  key `fk_vf_module_to_heat_files__heat_files__artifact_uuid1_idx` (`heat_files_artifact_uuid`),
-  constraint `fk_vf_module_to_heat_files__heat_files__artifact_uuid1` foreign key (`heat_files_artifact_uuid`) references `heat_files` (`artifact_uuid`) on delete cascade on update cascade,
-  constraint `fk_vf_module_to_heat_files__vf_module__model_uuid1` foreign key (`vf_module_model_uuid`) references `vf_module` (`model_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1 comment='il fait ce qu''il dit';
-/*!40101 set character_set_client = @saved_cs_client */;
-
---
--- table structure for table `vnf_components`
---
-
-
-/*!40101 set @saved_cs_client     = @@character_set_client */;
-/*!40101 set character_set_client = utf8 */;
-create table `vnf_components` (
-  `vnf_id` int(11) not null,
-  `component_type` varchar(20) not null,
-  `heat_template_id` int(11) default null,
-  `heat_environment_id` int(11) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`vnf_id`,`component_type`)
-) engine=innodb default charset=latin1;
-/*!40101 set character_set_client = @saved_cs_client */;
-
---
--- table structure for table `vnf_components_recipe`
---
-
-
-
-create table `vnf_components_recipe` (
-  `id` int(11) not null auto_increment,
-  `vnf_type` varchar(200) default null,
-  `vnf_component_type` varchar(45) not null,
-  `action` varchar(50) not null,
-  `service_type` varchar(45) default null,
-  `version` varchar(20) not null,
-  `description` varchar(1200) default null,
-  `orchestration_uri` varchar(256) not null,
-  `vnf_component_param_xsd` varchar(2048) default null,
-  `recipe_timeout` int(11) default null,
-  `creation_timestamp` datetime default current_timestamp,
-  `vf_module_model_uuid` varchar(200) default null,
-  primary key (`id`),
-  unique key `uk_4dpdwddaaclhc11wxsb7h59ma` (`vf_module_model_uuid`,`vnf_component_type`,`action`,`version`)
-) engine=innodb auto_increment=26 default charset=latin1;
-
-
-
-
-create table `vnf_recipe` (
-  `id` int(11) not null auto_increment,
-  `vnf_type` varchar(200) default null,
-  `action` varchar(50) not null,
-  `service_type` varchar(45) default null,
-  `version_str` varchar(20) not null,
-  `description` varchar(1200) default null,
-  `orchestration_uri` varchar(256) not null,
-  `vnf_param_xsd` varchar(2048) default null,
-  `recipe_timeout` int(11) default null,
-  `creation_timestamp` datetime default current_timestamp,
-  `vf_module_id` varchar(100) default null,
-  primary key (`id`),
-  unique key `uk_f3tvqau498vrifq3cr8qnigkr` (`vf_module_id`,`action`,`version_str`)
-) engine=innodb auto_increment=10006 default charset=latin1;
-
-
-
-
-
-
-
-
-create table `vnf_resource_customization` (
-  `model_customization_uuid` varchar(200) not null,
-  `model_instance_name` varchar(200) not null,
-  `min_instances` int(11) default null,
-  `max_instances` int(11) default null,
-  `availability_zone_max_count` int(11) default null,
-  `nf_type` varchar(200) default null,
-  `nf_role` varchar(200) default null,
-  `nf_function` varchar(200) default null,
-  `nf_naming_code` varchar(200) default null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  `vnf_resource_model_uuid` varchar(200) not null,
-  `multi_stage_design` varchar(20) default null,
-  `resource_input` varchar(20000) default null,
-  `cds_blueprint_name` varchar(200) default null,
-  `cds_blueprint_version` varchar(20) default null,
-  primary key (`model_customization_uuid`),
-  key `fk_vnf_resource_customization__vnf_resource1_idx` (`vnf_resource_model_uuid`),
-  constraint `fk_vnf_resource_customization__vnf_resource1` foreign key (`vnf_resource_model_uuid`) references `vnf_resource` (`model_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
-
-
-
-
-create table `vnf_res_custom_to_vf_module_custom` (
-  `vnf_resource_cust_model_customization_uuid` varchar(200) not null,
-  `vf_module_cust_model_customization_uuid` varchar(200) not null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`vnf_resource_cust_model_customization_uuid`,`vf_module_cust_model_customization_uuid`),
-  key `fk_vnf_res_custom_to_vf_module_custom__vf_module_customizat_idx` (`vf_module_cust_model_customization_uuid`),
-  constraint `fk_vnf_res_custom_to_vf_module_custom__vf_module_customization1` foreign key (`vf_module_cust_model_customization_uuid`) references `vf_module_customization` (`model_customization_uuid`) on delete cascade on update cascade,
-  constraint `fk_vnf_res_custom_to_vf_module_custom__vnf_resource_customiza1` foreign key (`vnf_resource_cust_model_customization_uuid`) references `vnf_resource_customization` (`model_customization_uuid`) on delete cascade on update cascade
-) engine=innodb default charset=latin1;
- 
-
-create table if not exists external_service_to_internal_model_mapping (
-id int(11) not null, 
-service_name varchar(200) not null,
-product_flavor varchar(200) null,
-subscription_service_type varchar(200) not null,
-service_model_uuid varchar(200) not null, 
-primary key (id), 
-unique index uk_external_service_to_internal_model_mapping
-(service_name asc, product_flavor asc, service_model_uuid asc));
-
-create table if not exists `collection_resource` (
- model_uuid varchar(200) not null,
- model_name varchar(200) not null, 
- model_invariant_uuid varchar(200) not null,
- model_version varchar(20) not null, 
- tosca_node_type varchar(200) not null,
- description varchar(200),
- creation_timestamp datetime not null default current_timestamp,
- primary key (`model_uuid`)
-)engine=innodb default charset=latin1;
-
-create table if not exists `collection_resource_customization` (
- model_customization_uuid varchar(200) not null,
- model_instance_name varchar(200) not null,
- role varchar(200) NULL,
- object_type varchar(200) not null, 
- function varchar(200) NULL,
- collection_resource_type varchar(200) NULL,
- creation_timestamp datetime not null default current_timestamp,
- cr_model_uuid varchar(200) not null,
- primary key (`model_customization_uuid`)
-)engine=innodb default charset=latin1;
-
-create table if not exists `instance_group` (
- model_uuid varchar(200) not null,
- model_name varchar(200) not null,
- model_invariant_uuid varchar(200) not null,
- model_version varchar(20) not null,
- tosca_node_type varchar(200) NULL,
- role varchar(200) not null,
- object_type varchar(200) not null,
- creation_timestamp datetime not null default current_timestamp,
- cr_model_uuid varchar(200) not null,
- instance_group_type varchar(200) not null,
-  primary key (`model_uuid`)
-)engine=innodb default charset=latin1;
-
-create table if not exists `collection_resource_instance_group_customization` (
-  `collection_resource_customization_model_uuid` varchar(200) not null,
-  `instance_group_model_uuid` varchar(200) not null,
-  `function` varchar(200) null,
-  `description` varchar(1200) null,
-  `subinterface_network_quantity` int(11) null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`collection_resource_customization_model_uuid`, `instance_group_model_uuid`),
-  index `fk_collection_resource_instance_group_customization__instan_idx` (`instance_group_model_uuid` asc),
-  constraint `fk_collection_resource_instance_group_customization__collecti1`
-    foreign key (`collection_resource_customization_model_uuid`)
-    references `collection_resource_customization` (`model_customization_uuid`)
-    on delete cascade
-    on update cascade,
-  constraint `fk_collection_resource_instance_group_customization__instance1`
-    foreign key (`instance_group_model_uuid`)
-    references `instance_group` (`model_uuid`)
-    on delete cascade
-    on update cascade)
-engine = innodb
-default character set = latin1;
-
-create table if not exists `vnfc_instance_group_customization` (
-  `vnf_resource_customization_model_uuid` varchar(200) not null,
-  `instance_group_model_uuid` varchar(200) not null,
-  `function` varchar(200) null,
-  `description` varchar(1200) null,
-  `creation_timestamp` datetime not null default current_timestamp,
-  primary key (`vnf_resource_customization_model_uuid`, `instance_group_model_uuid`),
-  index `fk_vnfc_instance_group_customization__instance_group1_idx` (`instance_group_model_uuid` asc),
-  constraint `fk_vnfc_instance_group_customization__vnf_resource_customizat1`
-    foreign key (`vnf_resource_customization_model_uuid`)
-    references `vnf_resource_customization` (`model_customization_uuid`)
-    on delete cascade
-    on update cascade,
-  constraint `fk_vnfc_instance_group_customization__instance_group1`
-    foreign key (`instance_group_model_uuid`)
-    references `instance_group` (`model_uuid`)
-    on delete cascade
-    on update cascade)
-engine = innodb
-default character set = latin1;
-
- create table if not exists `configuration` 
- ( `model_uuid` varchar(200) not null, 
- `model_invariant_uuid` varchar(200) not null, 
- `model_version` varchar(20) not null, 
- `model_name` varchar(200) not null, 
- `tosca_node_type` varchar(200) not null, 
- `description` varchar(1200) null, 
- `creation_timestamp` datetime not null default current_timestamp,
- primary key (`model_uuid`)) 
- engine = innodb auto_increment = 20654 
- default character set = latin1;
- 
- CREATE TABLE IF NOT EXISTS `service_proxy_customization` (
-  `MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL,
-  `MODEL_INSTANCE_NAME` VARCHAR(200) NOT NULL,
-  `MODEL_UUID` VARCHAR(200) NOT NULL,
-  `MODEL_INVARIANT_UUID` VARCHAR(200) NOT NULL,
-  `MODEL_VERSION` VARCHAR(20) NOT NULL,
-  `MODEL_NAME` VARCHAR(200) NOT NULL,
-  `TOSCA_NODE_TYPE` VARCHAR(200) NOT NULL,
-  `DESCRIPTION` VARCHAR(1200) NULL,
-  `SOURCE_SERVICE_MODEL_UUID` VARCHAR(200) NOT NULL,
-  `CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+DROP TABLE IF EXISTS `allotted_resource_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `allotted_resource_customization` (
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `PROVIDING_SERVICE_MODEL_UUID` varchar(200) DEFAULT NULL,
+  `PROVIDING_SERVICE_MODEL_INVARIANT_UUID` varchar(200) DEFAULT NULL,
+  `PROVIDING_SERVICE_MODEL_NAME` varchar(200) DEFAULT NULL,
+  `TARGET_NETWORK_ROLE` varchar(200) DEFAULT NULL,
+  `NF_TYPE` varchar(200) DEFAULT NULL,
+  `NF_ROLE` varchar(200) DEFAULT NULL,
+  `NF_FUNCTION` varchar(200) DEFAULT NULL,
+  `NF_NAMING_CODE` varchar(200) DEFAULT NULL,
+  `MIN_INSTANCES` int(11) DEFAULT NULL,
+  `MAX_INSTANCES` int(11) DEFAULT NULL,
+  `RESOURCE_INPUT` varchar(20000) DEFAULT NULL,
+  `AR_MODEL_UUID` varchar(200) NOT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
-  INDEX `fk_service_proxy_customization__service1_idx` (`SOURCE_SERVICE_MODEL_UUID` ASC),
-  UNIQUE INDEX `UK_service_proxy_customization` (`MODEL_CUSTOMIZATION_UUID` ASC),
-  INDEX `fk_service_proxy_customization__serv_prox_to_serv` (`MODEL_CUSTOMIZATION_UUID` ASC),
-  CONSTRAINT `fk_service_proxy_resource_customization__service1`
-    FOREIGN KEY (`SOURCE_SERVICE_MODEL_UUID`)
-    REFERENCES `service` (`MODEL_UUID`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE)
-ENGINE = InnoDB
-AUTO_INCREMENT = 20654
-DEFAULT CHARACTER SET = latin1;
-
-create table if not exists `configuration_customization` (
-`model_customization_uuid` varchar(200) not null, 
-`model_instance_name` varchar(200) not null,
-`configuration_type` varchar(200) null,
-`configuration_role` varchar(200) null,
-`configuration_function` varchar(200) null,
-`creation_timestamp` datetime not null default current_timestamp, 
-`configuration_model_uuid` varchar(200) not null,
-`service_proxy_customization_model_customization_uuid` varchar(200) null, 
-`configuration_customization_model_customization_uuid` varchar(200) null, 
-primary key (`model_customization_uuid`), 
-index `fk_configuration_customization__configuration_idx` (`configuration_model_uuid` asc), 
-index `fk_configuration_customization__service_proxy_customization_idx`
-(`service_proxy_customization_model_customization_uuid` asc), 
-index `fk_configuration_customization__configuration_customization_idx`
-(`configuration_customization_model_customization_uuid` asc), 
-constraint `fk_configuration_resource_customization__configuration_resour1`
-foreign key (`configuration_model_uuid`) references `configuration` (`model_uuid`)
-on delete cascade on update cascade, 
-constraint `fk_configuration_customization__service_proxy_customization1` foreign
-key (`service_proxy_customization_model_customization_uuid`) references
-`service_proxy_customization` (`model_customization_uuid`)
-on delete cascade on update cascade, constraint
-`fk_configuration_customization__configuration_customization1` foreign
-key (`configuration_customization_model_customization_uuid`) references
-`configuration_customization` (`model_customization_uuid`)
-on delete cascade on update cascade)
-engine = innodb
-auto_increment =20654 
-default character set = latin1;
-
-
-create table `service_proxy_customization_to_service` (
-  `service_model_uuid` varchar(200) not null,
-  `resource_model_customization_uuid` varchar(200) not null,
-  primary key (`service_model_uuid`,`resource_model_customization_uuid`)
-)engine=innodb default charset=latin1;
-
-
-create table `configuration_customization_to_service` (
-  `service_model_uuid` varchar(200) not null,
-  `resource_model_customization_uuid` varchar(200) not null,
-  primary key (`service_model_uuid`,`resource_model_customization_uuid`)
-)engine=innodb default charset=latin1;
-
-
-create table if not exists `collection_resource_customization_to_service` (
-  `service_model_uuid` varchar(200) not null,
-  `resource_model_customization_uuid` varchar(200) not null,
-  primary key (`service_model_uuid`,`resource_model_customization_uuid`)
-)engine=innodb default charset=latin1;
-
-
-create table `network_resource_customization_to_service` (
-  `service_model_uuid` varchar(200) not null,
-  `resource_model_customization_uuid` varchar(200) not null,
-  primary key (`service_model_uuid`,`resource_model_customization_uuid`)
-)engine=innodb default charset=latin1;
-
-create table `vnf_resource_customization_to_service` (
-  `service_model_uuid` varchar(200) not null,
-  `resource_model_customization_uuid` varchar(200) not null,
-  primary key (`service_model_uuid`,`resource_model_customization_uuid`)
-)engine=innodb default charset=latin1;
-
-create table `allotted_resource_customization_to_service` (
-  `service_model_uuid` varchar(200) not null,
-  `resource_model_customization_uuid` varchar(200) not null,
-  primary key (`service_model_uuid`,`resource_model_customization_uuid`)
-)engine=innodb default charset=latin1;
-
-
-
-create table ar_recipe (
-    ID INT(11) not null auto_increment,
-    MODEL_NAME VARCHAR(200) NOT NULL,
-    `ACTION` VARCHAR(200) NOT NULL,
-    VERSION_STR VARCHAR(200) NOT NULL,
-    SERVICE_TYPE VARCHAR(200),
-    DESCRIPTION VARCHAR(200),
-    ORCHESTRATION_URI VARCHAR(200) NOT NULL,
-    AR_PARAM_XSD VARCHAR(200),
-    RECIPE_TIMEOUT INT(10),
-    CREATION_TIMESTAMP DATETIME NOT NULL default current_timestamp,
-    primary key (ID),
-    unique key `uk_ar_recipe` (`model_name`,`action`,`version_str`)
+  KEY `fk_allotted_resource_customization__allotted_resource1_idx` (`AR_MODEL_UUID`),
+  CONSTRAINT `fk_allotted_resource_customization__allotted_resource1` FOREIGN KEY (`AR_MODEL_UUID`) REFERENCES `allotted_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-alter table collection_resource_customization
-add foreign key ( cr_model_uuid)
-references collection_resource(model_uuid)
-on delete cascade;
+--
+-- Table structure for table `allotted_resource_customization_to_service`
+--
 
-alter table vnf_resource_customization 
-add column 
-instance_group_model_uuid varchar(200);
-
-alter table network_resource_customization 
-add column 
-instance_group_model_uuid varchar(200);
-
-
-alter table network_resource_customization 
-add foreign key ( instance_group_model_uuid) 
-references instance_group(model_uuid)
-on delete cascade;
-
-alter table collection_resource_customization_to_service 
-add foreign key (service_model_uuid) 
-references service(model_uuid)
-on delete cascade;
-
-alter table allotted_resource_customization_to_service 
-add foreign key (service_model_uuid) 
-references service(model_uuid)
-on delete cascade;
-
-
-alter table vnf_resource_customization_to_service 
-add foreign key (service_model_uuid) 
-references service(model_uuid)
-on delete cascade;
-
-
-alter table network_resource_customization_to_service 
-add foreign key (service_model_uuid) 
-references service(model_uuid)
-on delete cascade;
-
-
-alter table network_resource_customization_to_service 
-add foreign key (resource_model_customization_uuid) 
-references network_resource_customization(model_customization_uuid)
-on delete cascade;
-
-alter table vnf_resource_customization_to_service 
-add foreign key (resource_model_customization_uuid) 
-references vnf_resource_customization(model_customization_uuid)
-on delete cascade;
-
-alter table allotted_resource_customization_to_service 
-add foreign key (resource_model_customization_uuid) 
-references allotted_resource_customization(model_customization_uuid)
-on delete cascade;  
-
-alter table collection_resource_customization_to_service 
-add foreign key (resource_model_customization_uuid) 
-references collection_resource_customization(model_customization_uuid)
-on delete cascade;
-
-
-create table if not exists `collection_network_resource_customization` (
-`model_customization_uuid` varchar(200) not null,
-`model_instance_name` varchar(200) not null,
-`network_technology` varchar(45) null,
-`network_type` varchar(45) null,
-`network_role` varchar(200) null,
-`network_scope` varchar(45) null,
-`creation_timestamp` datetime not null default current_timestamp,
-`network_resource_model_uuid` varchar(200) not null, `instance_group_model_uuid` varchar(200) null,
-`crc_model_customization_uuid` varchar(200) not null, primary key
-(`model_customization_uuid`, `crc_model_customization_uuid`),
-index `fk_collection_net_resource_customization__network_resource1_idx`
-(`network_resource_model_uuid` asc), index
-`fk_collection_net_resource_customization__instance_group1_idx`
-(`instance_group_model_uuid` asc), index
-`fk_col_net_res_customization__collection_res_customization_idx`
-(`crc_model_customization_uuid` asc), constraint
-`fk_collection_net_resource_customization__network_resource10` foreign
-key (`network_resource_model_uuid`) references
-`network_resource` (`model_uuid`) on delete cascade on
-update cascade, constraint
-`fk_collection_net_resource_customization__instance_group10` foreign key
-(`instance_group_model_uuid`) references `instance_group`
-(`model_uuid`) on delete cascade on update cascade, constraint
-`fk_collection_network_resource_customization__collection_reso1` foreign
-key (`crc_model_customization_uuid`) references
-`collection_resource_customization`
-(`model_customization_uuid`) on delete cascade on update cascade) engine
-= innodb default character set = latin1;
-
-CREATE TABLE IF NOT EXISTS `northbound_request_ref_lookup` (
-`id` INT(11) NOT NULL AUTO_INCREMENT,
-`REQUEST_SCOPE` VARCHAR(200) NOT NULL,
-`MACRO_ACTION` VARCHAR(200) NOT NULL,
-`ACTION` VARCHAR(200) NOT NULL,
-`IS_ALACARTE` TINYINT(1) NOT NULL DEFAULT 0,
-`IS_TOPLEVELFLOW` TINYINT(1) NOT NULL DEFAULT 1,
-`MIN_API_VERSION` DOUBLE NOT NULL,
-`MAX_API_VERSION` DOUBLE NULL,
-PRIMARY KEY (`id`),
-UNIQUE INDEX `UK_northbound_request_ref_lookup` (`MIN_API_VERSION` ASC, `REQUEST_SCOPE` ASC, `ACTION` ASC, `IS_ALACARTE` ASC, `MACRO_ACTION` ASC))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
-
-CREATE TABLE IF NOT EXISTS orchestration_status_state_transition_directive (
-id INT(11) AUTO_INCREMENT,
-RESOURCE_TYPE VARCHAR(25) NOT NULL,
-ORCHESTRATION_STATUS VARCHAR(25) NOT NULL,
-TARGET_ACTION VARCHAR(25) NOT NULL,
-FLOW_DIRECTIVE VARCHAR(25) NOT NULL,
-PRIMARY KEY (id),
-UNIQUE KEY UK_orchestration_status_state_transition_directive (RESOURCE_TYPE, ORCHESTRATION_STATUS, TARGET_ACTION))
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = latin1;
-
-create table if not exists model_recipe (
-	`ID` INT(11) NOT NULL AUTO_INCREMENT,
-	`MODEL_ID` INT(11),
-	`ACTION` VARCHAR(40),
-	`SCHEMA_VERSION` VARCHAR(40),
-	`DESCRIPTION` VARCHAR(40),
-	`ORCHESTRATION_URI` VARCHAR(20),
-	`MODEL_PARAM_XSD` VARCHAR(20),
-	`RECIPE_TIMEOUT` INT(11),
-	`CREATION_TIMESTAMP` datetime not null default current_timestamp,
-	PRIMARY KEY (`ID`),
-	CONSTRAINT uk1_model_recipe UNIQUE (`MODEL_ID`, `ACTION`)
+DROP TABLE IF EXISTS `allotted_resource_customization_to_service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `allotted_resource_customization_to_service` (
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`),
+  KEY `RESOURCE_MODEL_CUSTOMIZATION_UUID` (`RESOURCE_MODEL_CUSTOMIZATION_UUID`),
+  CONSTRAINT `allotted_resource_customization_to_service_ibfk_1` FOREIGN KEY (`SERVICE_MODEL_UUID`) REFERENCES `service` (`MODEL_UUID`) ON DELETE CASCADE,
+  CONSTRAINT `allotted_resource_customization_to_service_ibfk_2` FOREIGN KEY (`RESOURCE_MODEL_CUSTOMIZATION_UUID`) REFERENCES `allotted_resource_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-create table if not exists model (
-	`ID` INT(11) NOT NULL AUTO_INCREMENT,
-	`MODEL_CUSTOMIZATION_ID` VARCHAR(40),
-	`MODEL_CUSTOMIZATION_NAME` VARCHAR(40),
-	`MODEL_INVARIANT_ID` VARCHAR(40),
-	`MODEL_NAME` VARCHAR(40),
-	`MODEL_TYPE` VARCHAR(20),
-	`MODEL_VERSION` VARCHAR(20),
-	`MODEL_VERSION_ID` VARCHAR(40),
-	`CREATION_TIMESTAMP` datetime not null default current_timestamp,
-	`RECIPE` INT(11),
-	PRIMARY KEY (`ID`),
-	CONSTRAINT uk1_model UNIQUE (`MODEL_TYPE`, `MODEL_VERSION_ID`),
-	FOREIGN KEY (`RECIPE`) REFERENCES `model_recipe` (`MODEL_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+--
+-- Table structure for table `ar_recipe`
+--
+
+DROP TABLE IF EXISTS `ar_recipe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ar_recipe` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `ACTION` varchar(200) NOT NULL,
+  `VERSION_STR` varchar(200) NOT NULL,
+  `SERVICE_TYPE` varchar(200) DEFAULT NULL,
+  `DESCRIPTION` varchar(200) DEFAULT NULL,
+  `ORCHESTRATION_URI` varchar(200) NOT NULL,
+  `AR_PARAM_XSD` varchar(200) DEFAULT NULL,
+  `RECIPE_TIMEOUT` int(11) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `uk_ar_recipe` (`MODEL_NAME`,`ACTION`,`VERSION_STR`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE IF NOT EXISTS `controller_selection_reference` (
-  `VNF_TYPE` VARCHAR(50) NOT NULL,
-  `CONTROLLER_NAME` VARCHAR(100) NOT NULL,
-  `ACTION_CATEGORY` VARCHAR(15) NOT NULL,
-  PRIMARY KEY (`VNF_TYPE`, `CONTROLLER_NAME`, `ACTION_CATEGORY`)
-) ;
+--
+-- Table structure for table `building_block_detail`
+--
 
-ALTER TABLE `vnf_recipe` 
-CHANGE COLUMN `VNF_TYPE` `NF_ROLE` VARCHAR(200) NULL DEFAULT NULL ;
+DROP TABLE IF EXISTS `building_block_detail`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `building_block_detail` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `BUILDING_BLOCK_NAME` varchar(200) NOT NULL,
+  `RESOURCE_TYPE` varchar(25) NOT NULL,
+  `TARGET_ACTION` varchar(25) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_building_block_name` (`BUILDING_BLOCK_NAME`)
+) ENGINE=InnoDB AUTO_INCREMENT=104 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE IF NOT EXISTS `identity_services` (
+--
+-- Table structure for table `cloud_sites`
+--
+
+DROP TABLE IF EXISTS `cloud_sites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cloud_sites` (
   `ID` varchar(50) NOT NULL,
-  `IDENTITY_URL` varchar(200) DEFAULT NULL,
-  `MSO_ID` varchar(255) DEFAULT NULL,
-  `MSO_PASS` varchar(255) DEFAULT NULL,
-  `PROJECT_DOMAIN_NAME` varchar(255) DEFAULT NULL,
-  `USER_DOMAIN_NAME` varchar(255) DEFAULT NULL,
-  `ADMIN_TENANT` varchar(50) DEFAULT NULL,
-  `MEMBER_ROLE` varchar(50) DEFAULT NULL,
-  `TENANT_METADATA` tinyint(1) DEFAULT 0,
-  `IDENTITY_SERVER_TYPE` varchar(50) DEFAULT NULL,
-  `IDENTITY_AUTHENTICATION_TYPE` varchar(50) DEFAULT NULL,
+  `REGION_ID` varchar(11) DEFAULT NULL,
+  `IDENTITY_SERVICE_ID` varchar(50) DEFAULT NULL,
+  `CLOUD_VERSION` varchar(20) DEFAULT NULL,
+  `CLLI` varchar(11) DEFAULT NULL,
+  `CLOUDIFY_ID` varchar(50) DEFAULT NULL,
+  `PLATFORM` varchar(50) DEFAULT NULL,
+  `ORCHESTRATOR` varchar(50) DEFAULT NULL,
   `LAST_UPDATED_BY` varchar(120) DEFAULT NULL,
-  `CREATION_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`ID`)
-) ;
+  `CREATION_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  KEY `FK_cloud_sites_identity_services` (`IDENTITY_SERVICE_ID`),
+  CONSTRAINT `FK_cloud_sites_identity_services` FOREIGN KEY (`IDENTITY_SERVICE_ID`) REFERENCES `identity_services` (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE IF NOT EXISTS `cloudify_managers` (
+--
+-- Table structure for table `cloudify_managers`
+--
+
+DROP TABLE IF EXISTS `cloudify_managers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cloudify_managers` (
   `ID` varchar(50) NOT NULL,
   `CLOUDIFY_URL` varchar(200) DEFAULT NULL,
   `USERNAME` varchar(255) DEFAULT NULL,
   `PASSWORD` varchar(255) DEFAULT NULL,
   `VERSION` varchar(20) DEFAULT NULL,
   `LAST_UPDATED_BY` varchar(120) DEFAULT NULL,
-  `CREATION_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
+  `CREATION_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`ID`)
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE IF NOT EXISTS `cloud_sites` (
-  `ID` varchar(50) NOT NULL,
-  `REGION_ID` varchar(11)  DEFAULT NULL,
-  `IDENTITY_SERVICE_ID` varchar(50)  DEFAULT NULL,
-  `CLOUD_VERSION` varchar(20)  DEFAULT NULL,
-  `CLLI` varchar(11)  DEFAULT NULL,
-  `CLOUDIFY_ID` varchar(50)  DEFAULT NULL,
-  `PLATFORM` varchar(50)  DEFAULT NULL,
-  `ORCHESTRATOR` varchar(50)  DEFAULT NULL,
-  `LAST_UPDATED_BY` varchar(120) DEFAULT NULL,
-  `CREATION_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
+--
+-- Table structure for table `collection_network_resource_customization`
+--
+
+DROP TABLE IF EXISTS `collection_network_resource_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `collection_network_resource_customization` (
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `NETWORK_TECHNOLOGY` varchar(45) DEFAULT NULL,
+  `NETWORK_TYPE` varchar(45) DEFAULT NULL,
+  `NETWORK_ROLE` varchar(200) DEFAULT NULL,
+  `NETWORK_SCOPE` varchar(45) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `NETWORK_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
+  `INSTANCE_GROUP_MODEL_UUID` varchar(200) DEFAULT NULL,
+  `CRC_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`,`CRC_MODEL_CUSTOMIZATION_UUID`),
+  KEY `fk_collection_net_resource_customization__network_resource1_idx` (`NETWORK_RESOURCE_MODEL_UUID`),
+  KEY `fk_collection_net_resource_customization__instance_group1_idx` (`INSTANCE_GROUP_MODEL_UUID`),
+  KEY `fk_col_net_res_customization__collection_res_customization_idx` (`CRC_MODEL_CUSTOMIZATION_UUID`),
+  CONSTRAINT `fk_collection_net_resource_customization__instance_group10` FOREIGN KEY (`INSTANCE_GROUP_MODEL_UUID`) REFERENCES `instance_group` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_collection_net_resource_customization__network_resource10` FOREIGN KEY (`NETWORK_RESOURCE_MODEL_UUID`) REFERENCES `network_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_collection_network_resource_customization__collection_reso1` FOREIGN KEY (`CRC_MODEL_CUSTOMIZATION_UUID`) REFERENCES `collection_resource_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `collection_resource`
+--
+
+DROP TABLE IF EXISTS `collection_resource`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `collection_resource` (
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) NOT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`MODEL_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `collection_resource_customization`
+--
+
+DROP TABLE IF EXISTS `collection_resource_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `collection_resource_customization` (
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `role` varchar(200) DEFAULT NULL,
+  `object_type` varchar(200) NOT NULL,
+  `function` varchar(200) DEFAULT NULL,
+  `collection_resource_type` varchar(200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `CR_MODEL_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
+  KEY `CR_MODEL_UUID` (`CR_MODEL_UUID`),
+  CONSTRAINT `collection_resource_customization_ibfk_1` FOREIGN KEY (`CR_MODEL_UUID`) REFERENCES `collection_resource` (`MODEL_UUID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `collection_resource_customization_to_service`
+--
+
+DROP TABLE IF EXISTS `collection_resource_customization_to_service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `collection_resource_customization_to_service` (
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`),
+  KEY `RESOURCE_MODEL_CUSTOMIZATION_UUID` (`RESOURCE_MODEL_CUSTOMIZATION_UUID`),
+  CONSTRAINT `collection_resource_customization_to_service_ibfk_1` FOREIGN KEY (`SERVICE_MODEL_UUID`) REFERENCES `service` (`MODEL_UUID`) ON DELETE CASCADE,
+  CONSTRAINT `collection_resource_customization_to_service_ibfk_2` FOREIGN KEY (`RESOURCE_MODEL_CUSTOMIZATION_UUID`) REFERENCES `collection_resource_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `collection_resource_instance_group_customization`
+--
+
+DROP TABLE IF EXISTS `collection_resource_instance_group_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `collection_resource_instance_group_customization` (
+  `COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID` varchar(200) NOT NULL,
+  `INSTANCE_GROUP_MODEL_UUID` varchar(200) NOT NULL,
+  `FUNCTION` varchar(200) DEFAULT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `SUBINTERFACE_NETWORK_QUANTITY` int(11) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID`,`INSTANCE_GROUP_MODEL_UUID`),
+  KEY `fk_collection_resource_instance_group_customization__instan_idx` (`INSTANCE_GROUP_MODEL_UUID`),
+  CONSTRAINT `fk_collection_resource_instance_group_customization__collecti1` FOREIGN KEY (`COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID`) REFERENCES `collection_resource_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_collection_resource_instance_group_customization__instance1` FOREIGN KEY (`INSTANCE_GROUP_MODEL_UUID`) REFERENCES `instance_group` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `configuration`
+--
+
+DROP TABLE IF EXISTS `configuration`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `configuration` (
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) NOT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`MODEL_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `configuration_customization`
+--
+
+DROP TABLE IF EXISTS `configuration_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `configuration_customization` (
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `CONFIGURATION_TYPE` varchar(200) DEFAULT NULL,
+  `CONFIGURATION_ROLE` varchar(200) DEFAULT NULL,
+  `CONFIGURATION_FUNCTION` varchar(200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `CONFIGURATION_MODEL_UUID` varchar(200) NOT NULL,
+  `SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID` varchar(200) DEFAULT NULL,
+  `CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
+  KEY `fk_configuration_customization__configuration_idx` (`CONFIGURATION_MODEL_UUID`),
+  KEY `fk_configuration_customization__service_proxy_customization_idx` (`SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID`),
+  KEY `fk_configuration_customization__configuration_customization_idx` (`CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID`),
+  CONSTRAINT `fk_configuration_customization__configuration_customization1` FOREIGN KEY (`CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID`) REFERENCES `configuration_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_configuration_resource_customization__configuration_resour1` FOREIGN KEY (`CONFIGURATION_MODEL_UUID`) REFERENCES `configuration` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `configuration_customization_to_service`
+--
+
+DROP TABLE IF EXISTS `configuration_customization_to_service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `configuration_customization_to_service` (
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `controller_selection_reference`
+--
+
+DROP TABLE IF EXISTS `controller_selection_reference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `controller_selection_reference` (
+  `VNF_TYPE` varchar(50) NOT NULL,
+  `CONTROLLER_NAME` varchar(100) NOT NULL,
+  `ACTION_CATEGORY` varchar(15) NOT NULL,
+  PRIMARY KEY (`VNF_TYPE`,`CONTROLLER_NAME`,`ACTION_CATEGORY`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `cvnfc_configuration_customization`
+--
+
+DROP TABLE IF EXISTS `cvnfc_configuration_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cvnfc_configuration_customization` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `CONFIGURATION_TYPE` varchar(200) DEFAULT NULL,
+  `CONFIGURATION_ROLE` varchar(200) DEFAULT NULL,
+  `CONFIGURATION_FUNCTION` varchar(200) DEFAULT NULL,
+  `POLICY_NAME` varchar(200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `CONFIGURATION_MODEL_UUID` varchar(200) NOT NULL,
+  `CVNFC_CUSTOMIZATION_ID` int(11) DEFAULT NULL,
   PRIMARY KEY (`ID`),
-  KEY `FK_cloud_sites_identity_services` (`IDENTITY_SERVICE_ID`),
-  CONSTRAINT `FK_cloud_sites_identity_services` FOREIGN KEY (`IDENTITY_SERVICE_ID`) REFERENCES `identity_services` (`ID`)
-) ;
+  KEY `fk_vnf_vfmodule_cvnfc_config_cust__configuration_idx` (`CONFIGURATION_MODEL_UUID`),
+  CONSTRAINT `fk_vnf_vfmod_cvnfc_config_cust__configuration_resource` FOREIGN KEY (`CONFIGURATION_MODEL_UUID`) REFERENCES `configuration` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=20655 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE IF NOT EXISTS vnfc_customization (
-`MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL,
-`MODEL_INSTANCE_NAME` VARCHAR(200) NOT NULL,
-`MODEL_UUID` VARCHAR(200) NOT NULL,
-`MODEL_INVARIANT_UUID` VARCHAR(200) NOT NULL,
-`MODEL_VERSION` VARCHAR(20) NOT NULL,
-`MODEL_NAME` VARCHAR(200) NOT NULL,
-`TOSCA_NODE_TYPE` VARCHAR(200) NOT NULL,
-`DESCRIPTION` VARCHAR(1200) NULL DEFAULT NULL,
-`CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`))
-ENGINE = InnoDB
-AUTO_INCREMENT = 20654
-DEFAULT CHARACTER SET = latin1;
+--
+-- Table structure for table `cvnfc_customization`
+--
 
-CREATE TABLE IF NOT EXISTS cvnfc_customization (
-  `ID` INT(11) NOT NULL AUTO_INCREMENT, 
-  `MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL, 
-  `MODEL_INSTANCE_NAME` VARCHAR(200) NOT NULL, 
-  `MODEL_UUID` VARCHAR(200) NOT NULL, 
-  `MODEL_INVARIANT_UUID` VARCHAR(200) NOT NULL, 
-  `MODEL_VERSION` VARCHAR(20) NOT NULL, 
-  `MODEL_NAME` VARCHAR(200) NOT NULL, 
-  `TOSCA_NODE_TYPE` VARCHAR(200) NOT NULL, 
-  `DESCRIPTION` VARCHAR(1200) NULL DEFAULT NULL, 
-  `NFC_FUNCTION` VARCHAR(200) NULL, 
-  `NFC_NAMING_CODE` VARCHAR(200) NULL, 
-  `CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-  `VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL, 
-  `VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL, 
-  `VNFC_CUST_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL, 
-  PRIMARY KEY (`ID`), 
-  INDEX `fk_cvnfc_customization__vf_module_customization1_idx` (
-    `VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID` ASC
-  ), 
-  INDEX `fk_cvnfc_customization__vnfc_customization1_idx` (
-    `VNFC_CUST_MODEL_CUSTOMIZATION_UUID` ASC
-  ), 
-  INDEX `fk_cvnfc_customization__vnf_resource_customization1_idx` (
-    `VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID` ASC
-  ), 
-  UNIQUE INDEX `UK_cvnfc_customization` (
-    `VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID` ASC, 
-    `VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID` ASC, 
-    `MODEL_CUSTOMIZATION_UUID` ASC
-  ), 
-  INDEX `fk_cvnfc_customization__vnf_vfmod_cvnfc_config_cust1_idx` (`MODEL_CUSTOMIZATION_UUID` ASC), 
-  CONSTRAINT `fk_cvnfc_customization__vf_module_customization1` FOREIGN KEY (
-    `VF_MODULE_CUST_MODEL_CUSTOMIZATION_UUID`
-  ) REFERENCES `vf_module_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE ON UPDATE CASCADE, 
-    CONSTRAINT `fk_cvnfc_customization__vnfc_customization1` FOREIGN KEY (
-      `VNFC_CUST_MODEL_CUSTOMIZATION_UUID`
-    ) REFERENCES `vnfc_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE ON UPDATE CASCADE, 
-    CONSTRAINT `fk_cvnfc_customization__vnf_resource_customization1` FOREIGN KEY (
-      `VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID`
-    ) REFERENCES `vnf_resource_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = InnoDB AUTO_INCREMENT = 20654 DEFAULT CHARACTER SET = latin1;
+DROP TABLE IF EXISTS `cvnfc_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `cvnfc_customization` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) NOT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `NFC_FUNCTION` varchar(200) DEFAULT NULL,
+  `NFC_NAMING_CODE` varchar(200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `VNFC_CUST_MODEL_CUSTOMIZATION_UUID` varchar(200) DEFAULT NULL,
+  `VF_MODULE_CUSTOMIZATION_ID` int(13) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `fk_cvnfc_customization__vnfc_customization1_idx` (`VNFC_CUST_MODEL_CUSTOMIZATION_UUID`),
+  KEY `fk_cvnfc_customization__vnf_vfmod_cvnfc_config_cust1_idx` (`MODEL_CUSTOMIZATION_UUID`),
+  KEY `fk_cvnfc_customization_to_vf_module_resource_customization` (`VF_MODULE_CUSTOMIZATION_ID`),
+  CONSTRAINT `fk_cvnfc_customization__vnfc_customization1` FOREIGN KEY (`VNFC_CUST_MODEL_CUSTOMIZATION_UUID`) REFERENCES `vnfc_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_cvnfc_customization_to_vf_module_resource_customization` FOREIGN KEY (`VF_MODULE_CUSTOMIZATION_ID`) REFERENCES `vf_module_customization` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=20655 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE IF NOT EXISTS vnf_vfmodule_cvnfc_configuration_customization (
-  `ID` INT(11) NOT NULL AUTO_INCREMENT, 
-  `MODEL_CUSTOMIZATION_UUID` VARCHAR(200) NOT NULL, 
-  `MODEL_INSTANCE_NAME` VARCHAR(200) NOT NULL, 
-  `CONFIGURATION_TYPE` VARCHAR(200) NULL, 
-  `CONFIGURATION_ROLE` VARCHAR(200) NULL, 
-  `CONFIGURATION_FUNCTION` VARCHAR(200) NULL, 
-  `POLICY_NAME` VARCHAR(200) NULL, 
-  `CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, 
-  `CONFIGURATION_MODEL_UUID` VARCHAR(200) NOT NULL,
-  `VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) DEFAULT NULL,
-  `VF_MODULE_MODEL_CUSTOMIZATION_UUID` VARCHAR(200) DEFAULT NULL, 
-  `CVNFC_CUSTOMIZATION_ID` INT(11) DEFAULT NULL,
-  PRIMARY KEY (`ID`), 
-  INDEX `fk_vnf_vfmodule_cvnfc_config_cust__configuration_idx` (`CONFIGURATION_MODEL_UUID` ASC), 
- 
-  CONSTRAINT `fk_vnf_vfmod_cvnfc_config_cust__configuration_resource` FOREIGN KEY (`CONFIGURATION_MODEL_UUID`) 
-  REFERENCES `configuration` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE = INNODB AUTO_INCREMENT = 20654 DEFAULT CHARACTER SET = LATIN1;
+--
+-- Table structure for table `external_service_to_internal_model_mapping`
+--
+
+DROP TABLE IF EXISTS `external_service_to_internal_model_mapping`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `external_service_to_internal_model_mapping` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `SERVICE_NAME` varchar(200) NOT NULL,
+  `PRODUCT_FLAVOR` varchar(200) DEFAULT NULL,
+  `SUBSCRIPTION_SERVICE_TYPE` varchar(200) NOT NULL,
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_external_service_to_internal_model_mapping` (`SERVICE_NAME`,`PRODUCT_FLAVOR`,`SERVICE_MODEL_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `flyway_schema_history`
+--
+
+DROP TABLE IF EXISTS `flyway_schema_history`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `flyway_schema_history` (
+  `installed_rank` int(11) NOT NULL,
+  `version` varchar(50) DEFAULT NULL,
+  `description` varchar(200) NOT NULL,
+  `type` varchar(20) NOT NULL,
+  `script` varchar(1000) NOT NULL,
+  `checksum` int(11) DEFAULT NULL,
+  `installed_by` varchar(100) NOT NULL,
+  `installed_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `execution_time` int(11) NOT NULL,
+  `success` tinyint(1) NOT NULL,
+  PRIMARY KEY (`installed_rank`),
+  KEY `flyway_schema_history_s_idx` (`success`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `heat_environment`
+--
+
+DROP TABLE IF EXISTS `heat_environment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `heat_environment` (
+  `ARTIFACT_UUID` varchar(200) NOT NULL,
+  `NAME` varchar(100) NOT NULL,
+  `VERSION` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `BODY` longtext NOT NULL,
+  `ARTIFACT_CHECKSUM` varchar(200) NOT NULL DEFAULT 'MANUAL RECORD',
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ARTIFACT_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `heat_files`
+--
+
+DROP TABLE IF EXISTS `heat_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `heat_files` (
+  `ARTIFACT_UUID` varchar(200) NOT NULL,
+  `NAME` varchar(200) NOT NULL,
+  `VERSION` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `BODY` longtext NOT NULL,
+  `ARTIFACT_CHECKSUM` varchar(200) NOT NULL DEFAULT 'MANUAL RECORD',
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ARTIFACT_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `heat_nested_template`
+--
+
+DROP TABLE IF EXISTS `heat_nested_template`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `heat_nested_template` (
+  `PARENT_HEAT_TEMPLATE_UUID` varchar(200) NOT NULL,
+  `CHILD_HEAT_TEMPLATE_UUID` varchar(200) NOT NULL,
+  `PROVIDER_RESOURCE_FILE` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`PARENT_HEAT_TEMPLATE_UUID`,`CHILD_HEAT_TEMPLATE_UUID`),
+  KEY `fk_heat_nested_template__heat_template2_idx` (`CHILD_HEAT_TEMPLATE_UUID`),
+  CONSTRAINT `fk_heat_nested_template__child_heat_temp_uuid__heat_template1` FOREIGN KEY (`CHILD_HEAT_TEMPLATE_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_heat_nested_template__parent_heat_temp_uuid__heat_template1` FOREIGN KEY (`PARENT_HEAT_TEMPLATE_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `heat_template`
+--
+
+DROP TABLE IF EXISTS `heat_template`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `heat_template` (
+  `ARTIFACT_UUID` varchar(200) NOT NULL,
+  `NAME` varchar(200) NOT NULL,
+  `VERSION` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `BODY` longtext NOT NULL,
+  `TIMEOUT_MINUTES` int(11) DEFAULT NULL,
+  `ARTIFACT_CHECKSUM` varchar(200) NOT NULL DEFAULT 'MANUAL RECORD',
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ARTIFACT_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `heat_template_params`
+--
+
+DROP TABLE IF EXISTS `heat_template_params`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `heat_template_params` (
+  `HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) NOT NULL,
+  `PARAM_NAME` varchar(100) NOT NULL,
+  `IS_REQUIRED` bit(1) NOT NULL,
+  `PARAM_TYPE` varchar(20) DEFAULT NULL,
+  `PARAM_ALIAS` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`HEAT_TEMPLATE_ARTIFACT_UUID`,`PARAM_NAME`),
+  CONSTRAINT `fk_heat_template_params__heat_template1` FOREIGN KEY (`HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `identity_services`
+--
+
+DROP TABLE IF EXISTS `identity_services`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `identity_services` (
+  `ID` varchar(50) NOT NULL,
+  `IDENTITY_URL` varchar(200) DEFAULT NULL,
+  `MSO_ID` varchar(255) DEFAULT NULL,
+  `MSO_PASS` varchar(255) DEFAULT NULL,
+  `ADMIN_TENANT` varchar(50) DEFAULT NULL,
+  `MEMBER_ROLE` varchar(50) DEFAULT NULL,
+  `TENANT_METADATA` tinyint(1) DEFAULT '0',
+  `IDENTITY_SERVER_TYPE` varchar(50) DEFAULT NULL,
+  `IDENTITY_AUTHENTICATION_TYPE` varchar(50) DEFAULT NULL,
+  `LAST_UPDATED_BY` varchar(120) DEFAULT NULL,
+  `CREATION_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `PROJECT_DOMAIN_NAME` varchar(255) DEFAULT NULL,
+  `USER_DOMAIN_NAME` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `instance_group`
+--
+
+DROP TABLE IF EXISTS `instance_group`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `instance_group` (
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) NOT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) DEFAULT NULL,
+  `ROLE` varchar(200) NOT NULL,
+  `OBJECT_TYPE` varchar(200) NOT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `CR_MODEL_UUID` varchar(200) DEFAULT NULL,
+  `INSTANCE_GROUP_TYPE` varchar(200) NOT NULL,
+  PRIMARY KEY (`MODEL_UUID`),
+  KEY `CR_MODEL_UUID` (`CR_MODEL_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model`
+--
+
+DROP TABLE IF EXISTS `model`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `MODEL_CUSTOMIZATION_ID` varchar(40) DEFAULT NULL,
+  `MODEL_CUSTOMIZATION_NAME` varchar(40) DEFAULT NULL,
+  `MODEL_INVARIANT_ID` varchar(40) DEFAULT NULL,
+  `MODEL_NAME` varchar(40) DEFAULT NULL,
+  `MODEL_TYPE` varchar(20) DEFAULT NULL,
+  `MODEL_VERSION` varchar(20) DEFAULT NULL,
+  `MODEL_VERSION_ID` varchar(40) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `RECIPE` int(11) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `uk1_model` (`MODEL_TYPE`,`MODEL_VERSION_ID`),
+  KEY `RECIPE` (`RECIPE`),
+  CONSTRAINT `model_ibfk_1` FOREIGN KEY (`RECIPE`) REFERENCES `model_recipe` (`MODEL_ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `model_recipe`
+--
+
+DROP TABLE IF EXISTS `model_recipe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `model_recipe` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `MODEL_ID` int(11) DEFAULT NULL,
+  `ACTION` varchar(40) DEFAULT NULL,
+  `SCHEMA_VERSION` varchar(40) DEFAULT NULL,
+  `DESCRIPTION` varchar(40) DEFAULT NULL,
+  `ORCHESTRATION_URI` varchar(20) DEFAULT NULL,
+  `MODEL_PARAM_XSD` varchar(20) DEFAULT NULL,
+  `RECIPE_TIMEOUT` int(11) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `uk1_model_recipe` (`MODEL_ID`,`ACTION`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `network_recipe`
+--
+
+DROP TABLE IF EXISTS `network_recipe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `network_recipe` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `MODEL_NAME` varchar(20) NOT NULL,
+  `ACTION` varchar(50) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `ORCHESTRATION_URI` varchar(256) NOT NULL,
+  `NETWORK_PARAM_XSD` varchar(2048) DEFAULT NULL,
+  `RECIPE_TIMEOUT` int(11) DEFAULT NULL,
+  `SERVICE_TYPE` varchar(45) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `VERSION_STR` varchar(20) NOT NULL,
+  `RESOURCE_CATEGORY` varchar(200) DEFAULT NULL,
+  `RESOURCE_SUB_CATEGORY` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_rl4f296i0p8lyokxveaiwkayi` (`MODEL_NAME`,`ACTION`,`VERSION_STR`)
+) ENGINE=InnoDB AUTO_INCREMENT=181 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `network_resource`
+--
+
+DROP TABLE IF EXISTS `network_resource`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `network_resource` (
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) DEFAULT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) NULL,
+  `NEUTRON_NETWORK_TYPE` varchar(20) DEFAULT NULL,
+  `MODEL_VERSION` varchar(20) DEFAULT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) DEFAULT NULL,
+  `AIC_VERSION_MIN` varchar(20) NULL,
+  `AIC_VERSION_MAX` varchar(20) DEFAULT NULL,
+  `ORCHESTRATION_MODE` varchar(20) DEFAULT 'HEAT',
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `RESOURCE_CATEGORY` varchar(200) DEFAULT NULL,
+  `RESOURCE_SUB_CATEGORY` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`MODEL_UUID`),
+  KEY `fk_network_resource__temp_network_heat_template_lookup1_idx` (`MODEL_NAME`),
+  KEY `fk_network_resource__heat_template1_idx` (`HEAT_TEMPLATE_ARTIFACT_UUID`),
+  CONSTRAINT `fk_network_resource__heat_template1` FOREIGN KEY (`HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  CONSTRAINT `fk_network_resource__temp_network_heat_template_lookup__mod_nm1` FOREIGN KEY (`MODEL_NAME`) REFERENCES `temp_network_heat_template_lookup` (`NETWORK_RESOURCE_MODEL_NAME`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `network_resource_customization`
+--
+
+DROP TABLE IF EXISTS `network_resource_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `network_resource_customization` (
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `NETWORK_TECHNOLOGY` varchar(45) DEFAULT NULL,
+  `NETWORK_TYPE` varchar(45) DEFAULT NULL,
+  `NETWORK_ROLE` varchar(200) DEFAULT NULL,
+  `NETWORK_SCOPE` varchar(45) DEFAULT NULL,
+  `RESOURCE_INPUT` varchar(20000) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `NETWORK_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
+  KEY `fk_network_resource_customization__network_resource1_idx` (`NETWORK_RESOURCE_MODEL_UUID`),
+  CONSTRAINT `fk_network_resource_customization__network_resource1` FOREIGN KEY (`NETWORK_RESOURCE_MODEL_UUID`) REFERENCES `network_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `network_resource_customization_to_service`
+--
+
+DROP TABLE IF EXISTS `network_resource_customization_to_service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `network_resource_customization_to_service` (
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`),
+  KEY `RESOURCE_MODEL_CUSTOMIZATION_UUID` (`RESOURCE_MODEL_CUSTOMIZATION_UUID`),
+  CONSTRAINT `network_resource_customization_to_service_ibfk_1` FOREIGN KEY (`SERVICE_MODEL_UUID`) REFERENCES `service` (`MODEL_UUID`) ON DELETE CASCADE,
+  CONSTRAINT `network_resource_customization_to_service_ibfk_2` FOREIGN KEY (`RESOURCE_MODEL_CUSTOMIZATION_UUID`) REFERENCES `network_resource_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `northbound_request_ref_lookup`
+--
+
+DROP TABLE IF EXISTS `northbound_request_ref_lookup`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `northbound_request_ref_lookup` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `REQUEST_SCOPE` varchar(200) NOT NULL,
+  `MACRO_ACTION` varchar(200) NOT NULL,
+  `ACTION` varchar(200) NOT NULL,
+  `IS_ALACARTE` tinyint(1) NOT NULL DEFAULT '0',
+  `MIN_API_VERSION` double NOT NULL,
+  `MAX_API_VERSION` double DEFAULT NULL,
+  `IS_TOPLEVELFLOW` tinyint(1) DEFAULT NULL,
+  `CLOUD_OWNER` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_northbound_request_ref_lookup` (`MIN_API_VERSION`,`REQUEST_SCOPE`,`ACTION`,`IS_ALACARTE`,`MACRO_ACTION`,`CLOUD_OWNER`)
+) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `orchestration_flow_reference`
+--
+
+DROP TABLE IF EXISTS `orchestration_flow_reference`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `orchestration_flow_reference` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `COMPOSITE_ACTION` varchar(200) NOT NULL,
+  `SEQ_NO` int(11) NOT NULL,
+  `FLOW_NAME` varchar(200) NOT NULL,
+  `FLOW_VERSION` double NOT NULL,
+  `NB_REQ_REF_LOOKUP_ID` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_orchestration_flow_reference` (`COMPOSITE_ACTION`,`FLOW_NAME`,`SEQ_NO`,`NB_REQ_REF_LOOKUP_ID`),
+  KEY `fk_orchestration_flow_reference__northbound_req_ref_look_idx` (`NB_REQ_REF_LOOKUP_ID`),
+  KEY `fk_orchestration_flow_reference__building_block_detail` (`FLOW_NAME`),
+  CONSTRAINT `fk_orchestration_flow_reference__northbound_request_ref_look1` FOREIGN KEY (`NB_REQ_REF_LOOKUP_ID`) REFERENCES `northbound_request_ref_lookup` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=398 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `orchestration_status_state_transition_directive`
+--
+
+DROP TABLE IF EXISTS `orchestration_status_state_transition_directive`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `orchestration_status_state_transition_directive` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `RESOURCE_TYPE` varchar(25) NOT NULL,
+  `ORCHESTRATION_STATUS` varchar(25) NOT NULL,
+  `TARGET_ACTION` varchar(25) NOT NULL,
+  `FLOW_DIRECTIVE` varchar(25) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_orchestration_status_state_transition_directive` (`RESOURCE_TYPE`,`ORCHESTRATION_STATUS`,`TARGET_ACTION`)
+) ENGINE=InnoDB AUTO_INCREMENT=686 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `rainy_day_handler_macro`
+--
+
+DROP TABLE IF EXISTS `rainy_day_handler_macro`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `rainy_day_handler_macro` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `FLOW_NAME` varchar(200) NOT NULL,
+  `SERVICE_TYPE` varchar(200) NOT NULL,
+  `VNF_TYPE` varchar(200) NOT NULL,
+  `ERROR_CODE` varchar(200) NOT NULL,
+  `WORK_STEP` varchar(200) NOT NULL,
+  `POLICY` varchar(200) NOT NULL,
+  `SECONDARY_POLICY` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `service`
+--
+
+DROP TABLE IF EXISTS `service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `service` (
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) NOT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `TOSCA_CSAR_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
+  `SERVICE_TYPE` varchar(200) DEFAULT NULL,
+  `SERVICE_ROLE` varchar(200) DEFAULT NULL,
+  `ENVIRONMENT_CONTEXT` varchar(200) DEFAULT NULL,
+  `WORKLOAD_CONTEXT` varchar(200) DEFAULT NULL,
+  `SERVICE_CATEGORY` varchar(200) DEFAULT NULL,
+  `RESOURCE_ORDER` varchar(200) default NULL,
+  PRIMARY KEY (`MODEL_UUID`),
+  KEY `fk_service__tosca_csar1_idx` (`TOSCA_CSAR_ARTIFACT_UUID`),
+  CONSTRAINT `fk_service__tosca_csar1` FOREIGN KEY (`TOSCA_CSAR_ARTIFACT_UUID`) REFERENCES `tosca_csar` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `service_proxy_customization`
+--
+
+DROP TABLE IF EXISTS `service_proxy_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `service_proxy_customization` (
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) NOT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `SOURCE_SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
+  KEY `fk_service_proxy_customization__service1_idx` (`SOURCE_SERVICE_MODEL_UUID`),
+  CONSTRAINT `fk_service_proxy_resource_customization__service1` FOREIGN KEY (`SOURCE_SERVICE_MODEL_UUID`) REFERENCES `service` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `service_proxy_customization_to_service`
+--
+
+DROP TABLE IF EXISTS `service_proxy_customization_to_service`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `service_proxy_customization_to_service` (
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `service_recipe`
+--
+
+DROP TABLE IF EXISTS `service_recipe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `service_recipe` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ACTION` varchar(50) NOT NULL,
+  `VERSION_STR` varchar(20) DEFAULT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `ORCHESTRATION_URI` varchar(256) NOT NULL,
+  `SERVICE_PARAM_XSD` varchar(2048) DEFAULT NULL,
+  `RECIPE_TIMEOUT` int(11) DEFAULT NULL,
+  `SERVICE_TIMEOUT_INTERIM` int(11) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_7fav5dkux2v8g9d2i5ymudlgc` (`SERVICE_MODEL_UUID`,`ACTION`),
+  KEY `fk_service_recipe__service1_idx` (`SERVICE_MODEL_UUID`),
+  CONSTRAINT `fk_service_recipe__service1` FOREIGN KEY (`SERVICE_MODEL_UUID`) REFERENCES `service` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=93 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `temp_network_heat_template_lookup`
+--
+
+DROP TABLE IF EXISTS `temp_network_heat_template_lookup`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `temp_network_heat_template_lookup` (
+  `NETWORK_RESOURCE_MODEL_NAME` varchar(200) NOT NULL,
+  `HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) NULL,
+  `AIC_VERSION_MIN` varchar(20) NULL,
+  `AIC_VERSION_MAX` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`NETWORK_RESOURCE_MODEL_NAME`),
+  KEY `fk_temp_network_heat_template_lookup__heat_template1_idx` (`HEAT_TEMPLATE_ARTIFACT_UUID`),
+  CONSTRAINT `fk_temp_network_heat_template_lookup__heat_template1` FOREIGN KEY (`HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE NO ACTION ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tosca_csar`
+--
+
+DROP TABLE IF EXISTS `tosca_csar`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tosca_csar` (
+  `ARTIFACT_UUID` varchar(200) NOT NULL,
+  `NAME` varchar(200) NOT NULL,
+  `VERSION` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `ARTIFACT_CHECKSUM` varchar(200) NOT NULL,
+  `URL` varchar(200) NOT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ARTIFACT_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vf_module`
+--
+
+DROP TABLE IF EXISTS `vf_module`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vf_module` (
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) DEFAULT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `IS_BASE` tinyint(1) NOT NULL,
+  `HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
+  `VOL_HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `VNF_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`MODEL_UUID`,`VNF_RESOURCE_MODEL_UUID`),
+  KEY `fk_vf_module__vnf_resource1_idx` (`VNF_RESOURCE_MODEL_UUID`),
+  KEY `fk_vf_module__heat_template_art_uuid__heat_template1_idx` (`HEAT_TEMPLATE_ARTIFACT_UUID`),
+  KEY `fk_vf_module__vol_heat_template_art_uuid__heat_template2_idx` (`VOL_HEAT_TEMPLATE_ARTIFACT_UUID`),
+  CONSTRAINT `fk_vf_module__heat_template_art_uuid__heat_template1` FOREIGN KEY (`HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vf_module__vnf_resource1` FOREIGN KEY (`VNF_RESOURCE_MODEL_UUID`) REFERENCES `vnf_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vf_module__vol_heat_template_art_uuid__heat_template2` FOREIGN KEY (`VOL_HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vf_module_customization`
+--
+
+DROP TABLE IF EXISTS `vf_module_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vf_module_customization` (
+  `ID` int(13) NOT NULL AUTO_INCREMENT,
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `LABEL` varchar(200) DEFAULT NULL,
+  `INITIAL_COUNT` int(11) DEFAULT '0',
+  `MIN_INSTANCES` int(11) DEFAULT '0',
+  `MAX_INSTANCES` int(11) DEFAULT NULL,
+  `AVAILABILITY_ZONE_COUNT` int(11) DEFAULT NULL,
+  `HEAT_ENVIRONMENT_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
+  `VOL_ENVIRONMENT_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `VF_MODULE_MODEL_UUID` varchar(200) NOT NULL,
+  `VNF_RESOURCE_CUSTOMIZATION_ID` int(13) DEFAULT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `fk_vf_module_customization__vf_module1_idx` (`VF_MODULE_MODEL_UUID`),
+  KEY `fk_vf_module_customization__heat_env__heat_environment1_idx` (`HEAT_ENVIRONMENT_ARTIFACT_UUID`),
+  KEY `fk_vf_module_customization__vol_env__heat_environment2_idx` (`VOL_ENVIRONMENT_ARTIFACT_UUID`),
+  KEY `fk_vf_module_customization_to_vnf_resource_customization` (`VNF_RESOURCE_CUSTOMIZATION_ID`),
+  KEY `vf_module_customization_model_cust_uuid_idx` (`MODEL_CUSTOMIZATION_UUID`),
+  CONSTRAINT `fk_vf_module_customization__heat_env__heat_environment1` FOREIGN KEY (`HEAT_ENVIRONMENT_ARTIFACT_UUID`) REFERENCES `heat_environment` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vf_module_customization__vf_module1` FOREIGN KEY (`VF_MODULE_MODEL_UUID`) REFERENCES `vf_module` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vf_module_customization__vol_env__heat_environment2` FOREIGN KEY (`VOL_ENVIRONMENT_ARTIFACT_UUID`) REFERENCES `heat_environment` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vf_module_customization_to_vnf_resource_customization` FOREIGN KEY (`VNF_RESOURCE_CUSTOMIZATION_ID`) REFERENCES `vnf_resource_customization` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vf_module_to_heat_files`
+--
+
+DROP TABLE IF EXISTS `vf_module_to_heat_files`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vf_module_to_heat_files` (
+  `VF_MODULE_MODEL_UUID` varchar(200) NOT NULL,
+  `HEAT_FILES_ARTIFACT_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`VF_MODULE_MODEL_UUID`,`HEAT_FILES_ARTIFACT_UUID`),
+  KEY `fk_vf_module_to_heat_files__heat_files__artifact_uuid1_idx` (`HEAT_FILES_ARTIFACT_UUID`),
+  CONSTRAINT `fk_vf_module_to_heat_files__heat_files__artifact_uuid1` FOREIGN KEY (`HEAT_FILES_ARTIFACT_UUID`) REFERENCES `heat_files` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vf_module_to_heat_files__vf_module__model_uuid1` FOREIGN KEY (`VF_MODULE_MODEL_UUID`) REFERENCES `vf_module` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='il fait ce qu''il dit';
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vnf_components`
+--
+
+DROP TABLE IF EXISTS `vnf_components`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vnf_components` (
+  `VNF_ID` int(11) NOT NULL,
+  `COMPONENT_TYPE` varchar(20) NOT NULL,
+  `HEAT_TEMPLATE_ID` int(11) DEFAULT NULL,
+  `HEAT_ENVIRONMENT_ID` int(11) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`VNF_ID`,`COMPONENT_TYPE`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vnf_components_recipe`
+--
+
+DROP TABLE IF EXISTS `vnf_components_recipe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vnf_components_recipe` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `VNF_TYPE` varchar(200) DEFAULT NULL,
+  `VNF_COMPONENT_TYPE` varchar(45) NOT NULL,
+  `ACTION` varchar(50) NOT NULL,
+  `SERVICE_TYPE` varchar(45) DEFAULT NULL,
+  `VERSION` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `ORCHESTRATION_URI` varchar(256) NOT NULL,
+  `VNF_COMPONENT_PARAM_XSD` varchar(2048) DEFAULT NULL,
+  `RECIPE_TIMEOUT` int(11) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime DEFAULT CURRENT_TIMESTAMP,
+  `VF_MODULE_MODEL_UUID` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_4dpdwddaaclhc11wxsb7h59ma` (`VF_MODULE_MODEL_UUID`,`VNF_COMPONENT_TYPE`,`ACTION`,`VERSION`)
+) ENGINE=InnoDB AUTO_INCREMENT=38 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vnf_recipe`
+--
+
+DROP TABLE IF EXISTS `vnf_recipe`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vnf_recipe` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `NF_ROLE` varchar(200) DEFAULT NULL,
+  `ACTION` varchar(50) NOT NULL,
+  `SERVICE_TYPE` varchar(45) DEFAULT NULL,
+  `VERSION_STR` varchar(20) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `ORCHESTRATION_URI` varchar(256) NOT NULL,
+  `VNF_PARAM_XSD` varchar(2048) DEFAULT NULL,
+  `RECIPE_TIMEOUT` int(11) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime DEFAULT CURRENT_TIMESTAMP,
+  `VF_MODULE_ID` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK_f3tvqau498vrifq3cr8qnigkr` (`VF_MODULE_ID`,`ACTION`,`VERSION_STR`)
+) ENGINE=InnoDB AUTO_INCREMENT=10015 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vnf_resource`
+--
+
+DROP TABLE IF EXISTS `vnf_resource`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vnf_resource` (
+  `ORCHESTRATION_MODE` varchar(20) NOT NULL DEFAULT 'HEAT',
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `AIC_VERSION_MIN` varchar(20) DEFAULT NULL,
+  `AIC_VERSION_MAX` varchar(20) DEFAULT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) DEFAULT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `MODEL_NAME` varchar(200) DEFAULT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) DEFAULT NULL,
+  `HEAT_TEMPLATE_ARTIFACT_UUID` varchar(200) DEFAULT NULL,
+  `RESOURCE_CATEGORY` varchar(200) DEFAULT NULL,
+  `RESOURCE_SUB_CATEGORY` varchar(200) DEFAULT NULL,
+  PRIMARY KEY (`MODEL_UUID`),
+  KEY `fk_vnf_resource__heat_template1` (`HEAT_TEMPLATE_ARTIFACT_UUID`),
+  CONSTRAINT `fk_vnf_resource__heat_template1` FOREIGN KEY (`HEAT_TEMPLATE_ARTIFACT_UUID`) REFERENCES `heat_template` (`ARTIFACT_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vnf_resource_customization`
+--
+
+DROP TABLE IF EXISTS `vnf_resource_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vnf_resource_customization` (
+  `ID` int(13) NOT NULL AUTO_INCREMENT,
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `MIN_INSTANCES` int(11) DEFAULT NULL,
+  `MAX_INSTANCES` int(11) DEFAULT NULL,
+  `AVAILABILITY_ZONE_MAX_COUNT` int(11) DEFAULT NULL,
+  `NF_TYPE` varchar(200) DEFAULT NULL,
+  `NF_ROLE` varchar(200) DEFAULT NULL,
+  `NF_FUNCTION` varchar(200) DEFAULT NULL,
+  `NF_NAMING_CODE` varchar(200) DEFAULT NULL,
+  `MULTI_STAGE_DESIGN` varchar(20) DEFAULT NULL,
+  `RESOURCE_INPUT` varchar(20000) DEFAULT NULL,
+  `CDS_BLUEPRINT_NAME` varchar(200) default null,
+  `CDS_BLUEPRINT_VERSION` varchar(20) default null,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `VNF_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
+  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `UK_vnf_resource_customization` (`MODEL_CUSTOMIZATION_UUID`,`SERVICE_MODEL_UUID`),
+  KEY `fk_vnf_resource_customization__vnf_resource1_idx` (`VNF_RESOURCE_MODEL_UUID`),
+  KEY `fk_vnf_resource_customization_to_service` (`SERVICE_MODEL_UUID`),
+  KEY `vnf_resource_customization_mod_cust_uuid_idx` (`MODEL_CUSTOMIZATION_UUID`),
+  CONSTRAINT `fk_vnf_resource_customization__vnf_resource1` FOREIGN KEY (`VNF_RESOURCE_MODEL_UUID`) REFERENCES `vnf_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vnf_resource_customization_to_service` FOREIGN KEY (`SERVICE_MODEL_UUID`) REFERENCES `service` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vnfc_customization`
+--
+
+DROP TABLE IF EXISTS `vnfc_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vnfc_customization` (
+  `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
+  `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
+  `MODEL_UUID` varchar(200) NOT NULL,
+  `MODEL_INVARIANT_UUID` varchar(200) NOT NULL,
+  `MODEL_VERSION` varchar(20) NOT NULL,
+  `MODEL_NAME` varchar(200) NOT NULL,
+  `TOSCA_NODE_TYPE` varchar(200) NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `vnfc_instance_group_customization`
+--
+
+DROP TABLE IF EXISTS `vnfc_instance_group_customization`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `vnfc_instance_group_customization` (
+  `ID` int(13) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  `VNF_RESOURCE_CUSTOMIZATION_ID` int(13) NOT NULL,
+  `INSTANCE_GROUP_MODEL_UUID` varchar(200) NOT NULL,
+  `FUNCTION` varchar(200) DEFAULT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY `fk_vnfc_instance_group_customization__instance_group1_idx` (`INSTANCE_GROUP_MODEL_UUID`),
+  CONSTRAINT `fk_vnfc_instance_group_customization__instance_group1` FOREIGN KEY (`INSTANCE_GROUP_MODEL_UUID`) REFERENCES `instance_group` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vnfc_instance_group_customization_vnf_customization` FOREIGN KEY (`VNF_RESOURCE_CUSTOMIZATION_ID`) REFERENCES `vnf_resource_customization` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+set foreign_key_checks=1;
 
 CREATE TABLE IF NOT EXISTS `pnf_resource` (
   `ORCHESTRATION_MODE` varchar(20) DEFAULT NULL,

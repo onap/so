@@ -876,7 +876,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	logger.debug("version: {}", vfVersion);
             if (useMCUuid) {
         		// 1707 - db refactoring
-        		vfmc = vfModuleCustomRepo.findByModelCustomizationUUID(mcu);
+        		vfmc = vfModuleCustomRepo.findFirstByModelCustomizationUUIDOrderByCreatedDesc(mcu);
         		if(vfmc != null)
         			vf=vfmc.getVfModule();
         		else
@@ -1638,7 +1638,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         	VfModule vf = null;
         	VfModuleCustomization vfmc = null;
             if (useMCUuid){
-        		vfmc = vfModuleCustomRepo.findByModelCustomizationUUID(modelCustomizationUuid);
+        		vfmc = vfModuleCustomRepo.findFirstByModelCustomizationUUIDOrderByCreatedDesc(modelCustomizationUuid);
         		vf = vfmc != null ? vfmc.getVfModule() : null;
                 if (vf == null) {
                     logger.debug("Unable to find a vfModule matching modelCustomizationUuid={}", mcu);

@@ -2,6 +2,7 @@
   "_embedded": {
     "vfModuleCustomization": [
       {
+        "id" : "1",
         "modelCustomizationUUID": "b4ea86b4-253f-11e7-93ae-92361f002672",
         "label": "PCM",
         "minInstances": 0,
@@ -11,19 +12,19 @@
         "created": "2017-05-26 09:38:23.000",
         "_links": {
           "self": {
-            "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672"
+            "href": "http://localhost:8090/vfModuleCustomization/1"
           },
           "vfModuleCustomization": {
-            "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672"
+            "href": "http://localhost:8090/vfModuleCustomization/1"
           },
           "volumeHeatEnv": {
-            "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/volumeHeatEnv"
+            "href": "http://localhost:8090/vfModuleCustomization/1/volumeHeatEnv"
           },
           "heatEnvironment": {
-            "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/heatEnvironment"
+            "href": "http://localhost:8090/vfModuleCustomization/1/heatEnvironment"
           },
           "vfModule": {
-            "href": "http://localhost:8090/vfModuleCustomization/b4ea86b4-253f-11e7-93ae-92361f002672/vfModule"
+            "href": "http://localhost:8090/vfModuleCustomization/1/vfModule"
           }
         }
       }
@@ -31,7 +32,7 @@
   },
   "_links": {
     "self": {
-      "href": "http://localhost:8090/vnfResourceCustomization/68dc9a92-214c-11e7-93ae-92361f002673/vfModuleCustomizations"
+      "href": "http://localhost:8090/vnfResourceCustomization/1/vfModuleCustomizations"
     }
   }
 }

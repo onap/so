@@ -103,7 +103,7 @@ import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
-import org.onap.so.db.catalog.beans.VnfVfmoduleCvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
@@ -1284,7 +1284,7 @@ public class BBInputSetupTest {
 		Vnfc vnfc = new Vnfc();
 		vnfc.setVnfcName(vnfcName);
 		
-		VnfVfmoduleCvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new VnfVfmoduleCvnfcConfigurationCustomization();
+		CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new CvnfcConfigurationCustomization();
 		ConfigurationResource configurationResource = new ConfigurationResource();
 		configurationResource.setModelUUID("modelUUID");
 		configurationResource.setModelInvariantUUID("modelInvariantUUID");
@@ -1370,14 +1370,15 @@ public class BBInputSetupTest {
 		GenericVnf genericVnf = new GenericVnf();
 		ModelInfo modelInfo = Mockito.mock(ModelInfo.class);
 		Service service = Mockito.mock(Service.class);
+		org.onap.so.db.catalog.beans.InstanceGroup instanceGroup = new org.onap.so.db.catalog.beans.InstanceGroup();
+		instanceGroup.setModelUUID("modelUUID");
 		List<VnfcInstanceGroupCustomization> vnfcInstanceGroups = new ArrayList<>();
 		VnfcInstanceGroupCustomization vnfcInstanceGroupCust = new VnfcInstanceGroupCustomization();
-		vnfcInstanceGroupCust.setModelUUID("modelUUID");
+		vnfcInstanceGroupCust.setInstanceGroup(instanceGroup);
 		vnfcInstanceGroupCust.setFunction("function");
 		vnfcInstanceGroupCust.setDescription("description");
 		vnfcInstanceGroups.add(vnfcInstanceGroupCust);
-		org.onap.so.db.catalog.beans.InstanceGroup instanceGroup = new org.onap.so.db.catalog.beans.InstanceGroup();
-		instanceGroup.setModelUUID("modelUUID");
+	
 		ModelInfoInstanceGroup modelInfoInstanceGroup = new ModelInfoInstanceGroup();
 		modelInfoInstanceGroup.setModelUUID("modelUUID");
 		doReturn(vnfResourceCust).when(SPY_bbInputSetup).getVnfResourceCustomizationFromService(modelInfo, service);

@@ -48,17 +48,17 @@ import com.openpojo.business.annotation.BusinessKey;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
-@Table(name = "vnf_vfmodule_cvnfc_configuration_customization")
-public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable {
+@Table(name = "cvnfc_configuration_customization")
+public class CvnfcConfigurationCustomization implements Serializable {
 
 	private static final long serialVersionUID = -3153216266280581103L;
 
 	@Id
-	@Column(name = "ID")
+	@BusinessKey
+	@Column(name = "ID")	
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@BusinessKey
 	@Column(name = "MODEL_CUSTOMIZATION_UUID")
 	private String modelCustomizationUUID;
 	
@@ -76,7 +76,6 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 
 	@Column(name = "POLICY_NAME")
 	private String policyName;
-
 	
 	@Column(name = "CREATION_TIMESTAMP", updatable = false)
 	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
@@ -87,39 +86,25 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 	@JoinColumn(name = "CONFIGURATION_MODEL_UUID")
 	private ConfigurationResource configurationResource;
 	
-	@BusinessKey
 	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CVNFC_CUSTOMIZATION_ID")
 	private CvnfcCustomization cvnfcCustomization;
-	
-	@BusinessKey
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VF_MODULE_MODEL_CUSTOMIZATION_UUID")
-	private VfModuleCustomization vfModuleCustomization;
 
-	@BusinessKey
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VNF_RESOURCE_CUST_MODEL_CUSTOMIZATION_UUID")
-	private VnfResourceCustomization vnfResourceCustomization; 
 
 	@Override
 	public boolean equals(final Object other) {
-		if (!(other instanceof VnfVfmoduleCvnfcConfigurationCustomization)) {
+		if (!(other instanceof CvnfcConfigurationCustomization)) {
 			return false;
 		}
-		VnfVfmoduleCvnfcConfigurationCustomization castOther = (VnfVfmoduleCvnfcConfigurationCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID)
-				.append(cvnfcCustomization, castOther.cvnfcCustomization)
-				.append(vfModuleCustomization, castOther.vfModuleCustomization)
-				.append(vnfResourceCustomization, castOther.vnfResourceCustomization).isEquals();
+		CvnfcConfigurationCustomization castOther = (CvnfcConfigurationCustomization) other;
+		return new EqualsBuilder().append(id, castOther.id).isEquals();
 	}
 
 
 
 	@Override
 	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).append(cvnfcCustomization)
-				.append(vfModuleCustomization).append(vnfResourceCustomization).toHashCode();
+		return new HashCodeBuilder().append(id).toHashCode();
 	}
 
 
@@ -130,9 +115,7 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 				.append("modelInstanceName", modelInstanceName).append("configurationType", configurationType)
 				.append("configurationRole", configurationRole).append("configurationFunction", configurationFunction)
 				.append("policyName", policyName).append("created", created)
-				.append("configurationResource", configurationResource).append("cvnfcCustomization", cvnfcCustomization)
-				.append("vfModuleCustomization", vfModuleCustomization)
-				.append("vnfResourceCustomization", vnfResourceCustomization).toString();
+				.append("configurationResource", configurationResource).append("cvnfcCustomization", cvnfcCustomization).toString();
 	}
 
 
@@ -224,21 +207,4 @@ public class VnfVfmoduleCvnfcConfigurationCustomization implements Serializable 
 		this.cvnfcCustomization = cvnfcCustomization;
 	}
 
-	@LinkedResource
-	public VfModuleCustomization getVfModuleCustomization() {
-		return vfModuleCustomization;
-	}
-
-	public void setVfModuleCustomization(VfModuleCustomization vfModuleCustomization) {
-		this.vfModuleCustomization = vfModuleCustomization;
-	}
-
-	@LinkedResource
-	public VnfResourceCustomization getVnfResourceCustomization() {
-		return vnfResourceCustomization;
-	}
-
-	public void setVnfResourceCustomization(VnfResourceCustomization vnfResourceCustomization) {
-		this.vnfResourceCustomization = vnfResourceCustomization;
-	}
 }

@@ -43,9 +43,9 @@ public interface VFModuleRepository extends JpaRepository<VfModule, String> {
 	@Query(value = "SELECT * FROM vf_module WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
 	VfModule findFirstByModelNameOrderByModelVersionDesc(String modelName);
 
-	VfModule findByModelInvariantUUIDAndModelUUID(String modelCustomizationUUID, String modelUUID);
+	VfModule findFirstByModelInvariantUUIDAndModelUUID(String modelCustomizationUUID, String modelUUID);
 
-	VfModule findByModelInvariantUUID(String modelCustomizationUUID);
+	VfModule findFirstByModelInvariantUUID(String modelCustomizationUUID);
 
 	/** 
 	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting

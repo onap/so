@@ -1,4 +1,5 @@
 {
+  "id" : 2,
   "modelUUID": "066de97e-253e-11e7-93ae-92361f002672",
   "modelInvariantUUID": "64efd51a-2544-11e7-93ae-92361f002671",
   "modelName": "test::PCM::module-1",
@@ -9,22 +10,22 @@
   "heatFiles": [],
   "_links": {
     "self": {
-      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672"
+      "href": "http://localhost:8090/vfModule/2"
     },
     "vfModule": {
-      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672"
+      "href": "http://localhost:8090/vfModule/2"
     },
     "vfModuleCustomization": {
-      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672/vfModuleCustomization"
+      "href": "http://localhost:8090/vfModule/2/vfModuleCustomization"
     },
     "volumeHeatTemplate": {
-      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672/volumeHeatTemplate"
+      "href": "http://localhost:8090/vfModule/2/volumeHeatTemplate"
     },
     "vnfResources": {
-      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672/vnfResources"
+      "href": "http://localhost:8090/vfModule/2/vnfResources"
     },
     "moduleHeatTemplate": {
-      "href": "http://localhost:8090/vfModule/066de97e-253e-11e7-93ae-92361f002672/moduleHeatTemplate"
+      "href": "http://localhost:8090/vfModule/2/moduleHeatTemplate"
     }
   }
 }

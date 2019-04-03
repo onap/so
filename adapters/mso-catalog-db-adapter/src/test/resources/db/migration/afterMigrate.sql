@@ -1,55 +1,4 @@
 
-CREATE TABLE IF NOT EXISTS `identity_services` (
-  `ID` varchar(50) NOT NULL,
-  `IDENTITY_URL` varchar(200) DEFAULT NULL,
-  `MSO_ID` varchar(255) DEFAULT NULL,
-  `MSO_PASS` varchar(255) DEFAULT NULL,
-  `PROJECT_DOMAIN_NAME` varchar(255) DEFAULT NULL,
-  `USER_DOMAIN_NAME` varchar(255) DEFAULT NULL,
-  `ADMIN_TENANT` varchar(50) DEFAULT NULL,
-  `MEMBER_ROLE` varchar(50) DEFAULT NULL,
-  `TENANT_METADATA` tinyint(1) DEFAULT 0,
-  `IDENTITY_SERVER_TYPE` varchar(50) DEFAULT NULL,
-  `IDENTITY_AUTHENTICATION_TYPE` varchar(50) DEFAULT NULL,
-  `LAST_UPDATED_BY` varchar(120) DEFAULT NULL,
-  `CREATION_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`ID`)
-) ;
-
-
-
-CREATE TABLE IF NOT EXISTS `cloudify_managers` (
-  `ID` varchar(50) NOT NULL,
-  `CLOUDIFY_URL` varchar(200) DEFAULT NULL,
-  `USERNAME` varchar(255) DEFAULT NULL,
-  `PASSWORD` varchar(255) DEFAULT NULL,
-  `VERSION` varchar(20) DEFAULT NULL,
-  `LAST_UPDATED_BY` varchar(120) DEFAULT NULL,
-  `CREATION_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`ID`)
-) ;
-
-
-
-
-CREATE TABLE IF NOT EXISTS `cloud_sites` (
-  `ID` varchar(50) NOT NULL,
-  `REGION_ID` varchar(11)  DEFAULT NULL,
-  `IDENTITY_SERVICE_ID` varchar(50)  DEFAULT NULL,
-  `CLOUD_VERSION` varchar(20)  DEFAULT NULL,
-  `CLLI` varchar(11)  DEFAULT NULL,
-  `CLOUDIFY_ID` varchar(50)  DEFAULT NULL,
-  `PLATFORM` varchar(50)  DEFAULT NULL,
-  `ORCHESTRATOR` varchar(50)  DEFAULT NULL,
-  `LAST_UPDATED_BY` varchar(120) DEFAULT NULL,
-  `CREATION_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  `UPDATE_TIMESTAMP` timestamp NULL DEFAULT current_timestamp(),
-  PRIMARY KEY (`ID`),
-  KEY `FK_cloud_sites_identity_services` (`IDENTITY_SERVICE_ID`),
-  CONSTRAINT `FK_cloud_sites_identity_services` FOREIGN KEY (`IDENTITY_SERVICE_ID`) REFERENCES `identity_services` (`ID`)
-) ;
 
 CREATE TABLE IF NOT EXISTS `homing_instances` (
 `SERVICE_INSTANCE_ID` varchar(50) NOT NULL,
@@ -111,26 +60,29 @@ insert into heat_environment(artifact_uuid, name, version, description, body, ar
 ('fefb1751-4333-11e7-9252-005056850d2e', 'module_nso.env', '2', 'Auto-generated HEAT Environment deployment artifact', 'parameters:\n  availability_zone_0: \"alln-zone-1\"\n  nso_flavor_name: \"citeis.1vCPUx2GB\"\n  nso_image_name: \"RHEL-6.8-BASE-20160912\"\n  nso_name_0: \"zrdm3vamp01nso001\"\n  nso_oam_ip_0: \"172.18.25.175\"\n  nso_oam_net_gw: \"172.18.25.1\"\n  nso_oam_net_mask: \"255.255.255.0\"\n  nso_sec_grp_id: \"36f48d82-f099-4437-bfbc-70d9e5d420d1\"\n  nso_srv_grp_id: \"e431c477-5bd1-476a-bfa9-e4ce16b8356b\"\n  oam_net_id: \"nso_oam\"\n  vf_module_id: \"145cd730797234b4a40aa99335abc143\"\n  vnf_id: \"730797234b4a40aa99335157b02871cd\"\n  vnf_name: \"Mobisupport\"\n', 'MWI2ODY0Yjc1NDJjNWU1NjdkMTAyMjVkNzFmZDU0MzA=', '2017-11-27 08:42:58');
 
 insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
-('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002671', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '1.0', 'vSAMP10a', 'VF', 'ff874603-4222-11e7-9252-005056850d2e');
+('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002671', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '1.0', 'vSAMP10a', 'VF', 'ff874603-4222-11e7-9252-005056850d2e'),
+('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002672', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '2.0', 'vSAMP10a', 'VF', 'ff874603-4222-11e7-9252-005056850d2e');
 
-insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design, resource_input) values
-('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null, "{\\\"vf_module_id\\\":\\\"vFirewall\\\",\\\"vfw_private_ip_1\\\":\\\"192.168.20.100\\\",\\\"public_net_id\\\":\\\"PUBLIC NET ID\\\",\\\"vfw_private_ip_0\\\":\\\"192.168.10.100\\\",\\\"onap_private_subnet_id\\\":\\\"PRIVATE NETWORK\\\",\\\"sec_group\\\":\\\"SECURITY GROUP\\\",\\\"vfw_private_ip_2\\\":\\\"10.0.100.1\\\",\\\"vfw_name_0\\\":\\\"zdfw1fwl01fwl01\\\",\\\"nexus_artifact_repo\\\":\\\"https://nexus.onap.org\\\",\\\"onap_private_net_cidr\\\":\\\"10.0.0.0/16\\\",\\\"dcae_collector_ip\\\":\\\"10.0.4.1\\\",\\\"vnf_id\\\":\\\"vFirewall_demo_app\\\",\\\"dcae_collector_port\\\":\\\"8081\\\",\\\"vpg_name_0\\\":\\\"zdfw1fwl01pgn01\\\",\\\"vsn_private_ip_0\\\":\\\"192.168.20.250\\\",\\\"vpg_private_ip_1\\\":\\\"10.0.100.2\\\",\\\"vsn_private_ip_1\\\":\\\"10.0.100.3\\\",\\\"vpg_private_ip_0\\\":\\\"192.168.10.200\\\",\\\"protected_private_net_cidr\\\":\\\"192.168.20.0/24\\\",\\\"unprotected_private_net_cidr\\\":\\\"192.168.10.0/24\\\",\\\"nf_naming\\\":\\\"true\\\",\\\"vsn_name_0\\\":\\\"zdfw1fwl01snk01\\\",\\\"multi_stage_design\\\":\\\"false\\\",\\\"onap_private_net_id\\\":\\\"PRIVATE NETWORK\\\",\\\"unprotected_private_net_id\\\":\\\"zdfw1fwl01_unprotected\\\",\\\"availability_zone_max_count\\\":\\\"1\\\",\\\"vfw_flavor_name\\\":\\\"(m1.medium suggested)\\\",\\\"demo_artifacts_version\\\":\\\"1.3.0-SNAPSHOT\\\",\\\"pub_key\\\":\\\"ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQXYJYYi3/OUZXUiCYWdtc7K0m5C0dJKVxPG0eI8EWZrEHYdfYe6WoTSDJCww+1qlBSpA5ac/Ba4Wn9vh+lR1vtUKkyIC/nrYb90ReUd385Glkgzrfh5HdR5y5S2cL/Frh86lAn9r6b3iWTJD8wBwXFyoe1S2nMTOIuG4RPNvfmyCTYVh8XTCCE8HPvh3xv2r4egawG1P4Q4UDwk+hDBXThY2KS8M5/8EMyxHV0ImpLbpYCTBA6KYDIRtqmgS6iKyy8v2D1aSY5mc9J0T5t9S2Gv+VZQNWQDDKNFnxqYaAo1uEoq/i1q63XC5AD3ckXb2VT6dp23BQMdDfbHyUWfJN\\\",\\\"key_name\\\":\\\"vfw_key\\\",\\\"install_script_version\\\":\\\"1.3.0-SNAPSHOT\\\",\\\"vfw_image_name\\\":\\\"(UBUNTU 1404 required)\\\",\\\"protected_private_net_id\\\":\\\"zdfw1fwl01_protected\\\",\\\"cloud_env\\\":\\\"openstack\\\"}");
+
+insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design,service_model_uuid) values
+('68dc9a92-214c-11e7-93ae-92361f002671', 'vSAMP10a 1', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002671', null,'5df8b6de-2083-11e7-93ae-92361f002671'),
+('68dc9a92-214c-11e7-93ae-92361f002672', 'vSAMP10a 2', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002672', null,'5df8b6de-2083-11e7-93ae-92361f002672');
+
 
 
 insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
-
 ('20c4431c-246d-11e7-93ae-92361f002671', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
-('066de97e-253e-11e7-93ae-92361f002671', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
+('066de97e-253e-11e7-93ae-92361f002671', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
+('20c4431c-246d-11e7-93ae-92361f002672', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
+('066de97e-253e-11e7-93ae-92361f002672', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
 
 
-insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid) values
-('cb82ffd8-252a-11e7-93ae-92361f002671', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002671'),
-('b4ea86b4-253f-11e7-93ae-92361f002671', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002671');
+insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid,VNF_RESOURCE_CUSTOMIZATION_ID) values
+('cb82ffd8-252a-11e7-93ae-92361f002671', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002671',1),
+('b4ea86b4-253f-11e7-93ae-92361f002671', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002671',1),
+('cb82ffd8-252a-11e7-93ae-92361f002672', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002672',2),
+('b4ea86b4-253f-11e7-93ae-92361f002672', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002672',2);
 
-
-insert into vnf_res_custom_to_vf_module_custom(vnf_resource_cust_model_customization_uuid, vf_module_cust_model_customization_uuid, creation_timestamp) values
-('68dc9a92-214c-11e7-93ae-92361f002671', 'cb82ffd8-252a-11e7-93ae-92361f002671', '2017-05-26 15:08:24'),
-('68dc9a92-214c-11e7-93ae-92361f002671', 'b4ea86b4-253f-11e7-93ae-92361f002671', '2017-05-26 15:08:24');
 
 insert into allotted_resource(model_uuid, model_invariant_uuid, model_version, model_name, tosca_node_type, subcategory, description, creation_timestamp) values
 ('f6b7d4c6-e8a4-46e2-81bc-31cad5072842', 'b7a1b78e-6b6b-4b36-9698-8c9530da14af', '1.0', 'Tunnel_Xconn', '', '', '', '2017-05-26 15:08:24'); 
@@ -150,35 +102,7 @@ insert into network_resource_customization(model_customization_uuid, model_insta
 insert into collection_network_resource_customization(model_customization_uuid, model_instance_name, network_technology, network_type, network_role, network_scope, creation_timestamp, network_resource_model_uuid, instance_group_model_uuid, crc_model_customization_uuid) values
 ('1a61be4b-3378-4c9a-91c8-c919519b2d01', 'CONTRAIL30_GNDIRECT 9', '', '', '', '', '2017-04-19 14:28:32', '10b36f65-f4e6-4be6-ae49-9596dc1c47fc', '0c8692ef-b9c0-435d-a738-edf31e71f38b', 'a07a5826-3281-485c-8f40-6988011ef3f2');
 
-insert into vnf_resource(orchestration_mode, description, creation_timestamp, model_uuid, aic_version_min, aic_version_max, model_invariant_uuid, model_version, model_name, tosca_node_type, heat_template_artifact_uuid) values
-('HEAT', '1607 vSAMP10a - inherent network', '2017-04-14 21:46:28', 'ff2ae348-214a-11e7-93ae-92361f002672', '', '', '2fff5b20-214b-11e7-93ae-92361f002671', '2.0', 'vSAMP10a', 'VF', 'ff874603-4222-11e7-9252-005056850d2e');
 
-
-insert into vnf_resource_customization(model_customization_uuid, model_instance_name, min_instances, max_instances, availability_zone_max_count, nf_type, nf_role, nf_function, nf_naming_code, creation_timestamp, vnf_resource_model_uuid, multi_stage_design) values
-('68dc9a92-214c-11e7-93ae-92361f002672', 'vSAMP10a 2', '0', '0', '0', 'vSAMP', 'vSAMP', 'vSAMP', 'vSAMP', '2017-05-26 15:08:24', 'ff2ae348-214a-11e7-93ae-92361f002672', null);
-
-
-
-
-
-insert into vf_module(model_uuid, model_invariant_uuid, model_version, model_name, description, is_base, heat_template_artifact_uuid, vol_heat_template_artifact_uuid, creation_timestamp, vnf_resource_model_uuid) values
-
-('20c4431c-246d-11e7-93ae-92361f002672', '78ca26d0-246d-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::base::module-0', 'vSAMP10a DEV Base', '1', 'ff874603-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671'),
-('066de97e-253e-11e7-93ae-92361f002672', '64efd51a-2544-11e7-93ae-92361f002671', '2', 'vSAMP10aDEV::PCM::module-1', 'vSAMP10a DEV PCM', '0', 'ff87482f-4222-11e7-9252-005056850d2e', null, '2016-09-14 18:19:56', 'ff2ae348-214a-11e7-93ae-92361f002671');
-
-
-
-insert into vf_module_customization(model_customization_uuid, label, initial_count, min_instances, max_instances, availability_zone_count, heat_environment_artifact_uuid, vol_environment_artifact_uuid, creation_timestamp, vf_module_model_uuid) values
-('cb82ffd8-252a-11e7-93ae-92361f002672', 'base', '1', '0', '0', '0', 'fefb1601-4222-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '20c4431c-246d-11e7-93ae-92361f002672'),
-('b4ea86b4-253f-11e7-93ae-92361f002672', 'PCM', '0', '0', '0', '0', 'fefb1751-4333-11e7-9252-005056850d2e', null, '2017-05-26 15:08:23', '066de97e-253e-11e7-93ae-92361f002672');
-
-
-insert into vnf_res_custom_to_vf_module_custom(vnf_resource_cust_model_customization_uuid, vf_module_cust_model_customization_uuid, creation_timestamp) values
-('68dc9a92-214c-11e7-93ae-92361f002672', 'cb82ffd8-252a-11e7-93ae-92361f002672', '2017-05-26 15:08:24'),
-('68dc9a92-214c-11e7-93ae-92361f002672', 'b4ea86b4-253f-11e7-93ae-92361f002672', '2017-05-26 15:08:24');
-           
-
-              
 insert into vf_module_to_heat_files(vf_module_model_uuid, heat_files_artifact_uuid) values
 ('20c4431c-246d-11e7-93ae-92361f002671', '00535bdd-0878-4478-b95a-c575c742bfb0'),
 ('066de97e-253e-11e7-93ae-92361f002671', '00535bdd-0878-4478-b95a-c575c742bfb0');
@@ -189,9 +113,7 @@ insert into network_resource_customization_to_service(service_model_uuid, resour
 ('5df8b6de-2083-11e7-93ae-92361f002672', '3bdbb104-476c-483e-9f8b-c095b3d308ac');
 
 
-insert into vnf_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
-('5df8b6de-2083-11e7-93ae-92361f002671', '68dc9a92-214c-11e7-93ae-92361f002671'),
-('5df8b6de-2083-11e7-93ae-92361f002672', '68dc9a92-214c-11e7-93ae-92361f002672');
+
 
 insert into allotted_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
 ('5df8b6de-2083-11e7-93ae-92361f002671', '367a8ba9-057a-4506-b106-fbae818597c6' ),
@@ -275,9 +197,7 @@ INSERT INTO `cvnfc_customization`
              `nfc_function`,
              `nfc_naming_code`,
              `creation_timestamp`,
-             `vnf_resource_cust_model_customization_uuid`,
-             `vf_module_cust_model_customization_uuid`,
-             `vnfc_cust_model_customization_uuid`)
+             `vnfc_cust_model_customization_uuid`,VF_MODULE_CUSTOMIZATION_ID)
 VALUES      ( '1',
               'dadc2c8c-2bab-11e9-b210-d663bd873d93',
               'testModelInstanceName',
@@ -290,9 +210,7 @@ VALUES      ( '1',
               'testNfcFunction',
               'testNfcNamingCode',
               '2018-07-17 14:05:08',
-              '68dc9a92-214c-11e7-93ae-92361f002671',
-              'cb82ffd8-252a-11e7-93ae-92361f002671',
-              '9bcce658-9b37-11e8-98d0-529269fb1459');
+              '9bcce658-9b37-11e8-98d0-529269fb1459',1);
 
 insert into service(model_uuid, model_name, model_invariant_uuid, model_version, description, creation_timestamp, tosca_csar_artifact_uuid, service_type, service_role, environment_context, workload_context) values
 ('5df8b6de-2083-11e7-93ae-92361f002676', 'PNF_routing_service', '9647dfc4-2083-11e7-93ae-92361f002676', '1.0', 'PNF service', '2019-03-08 12:00:29', null, 'NA', 'NA', 'Luna', 'Oxygen');

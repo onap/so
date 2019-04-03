@@ -681,7 +681,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     	VfModuleCustomization vfModuleCust = null;
 
         try {
-            vfModuleCust = vfModuleCustomRepo.findByModelCustomizationUUID(modelCustomizationUuid);
+            vfModuleCust = vfModuleCustomRepo.findFirstByModelCustomizationUUIDOrderByCreatedDesc(modelCustomizationUuid);
 
             if (vfModuleCust == null) {
                 String error = "Create vfModule error: Unable to find vfModuleCust with modelCustomizationUuid="

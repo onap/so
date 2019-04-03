@@ -1,6 +1,5 @@
 {
-	"modelCustomizationUUID" : "modelCustomizationUUID",
-	"modelUUID" : "modelUUID",
+	"id":1,
 	"vnfResourceCust" : {},
 	"instanceGroup" : {},
 	"function" : "function",
