@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f55d78e5_ce9d8776",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-04-03T14:49:07Z",
+      "side": 1,
+      "message": "All integration tests should be included in a single test suite",
+      "revId": "228226c637dac33d4db2383482dc78d7a2416218",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "73fefd68_701e17d6",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/BaseBPMNTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-04-03T14:49:07Z",
+      "side": 1,
+      "message": "Autowire the wire mock server for use with tests",
+      "revId": "228226c637dac33d4db2383482dc78d7a2416218",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
