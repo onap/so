@@ -22,6 +22,30 @@
       "revId": "3682d1bf4fb84866608f1c335cd980dd28ea1a4c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5bb6ff2f_41ad6c78",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClientTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 124,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-03T13:07:13Z",
+      "side": 1,
+      "message": "Please take a look at PnfEventReadyDmaapClient class, I made one change in the unregister method. The reason I made that change is all the following activities are being inited and used twice due to more threads in my integration test. Please take a look at the CreateVcpeResCustServiceSimplifiedTest class, I have a logic to notify the WaitForDmaapPnfReadyNotification. without that signal, the test just hang. \n\nAs told you designed the PNF workflow, right? Do you mind take a look and let me know is it required to execute runnable.run() in the unregister? Should we remove the thread instead? \n\nI am not intended to beak the existing PNF workflow, that\u0027s why I add that change to commit.",
+      "parentUuid": "e73e72ae_b88fa262",
+      "range": {
+        "startLine": 124,
+        "startChar": 8,
+        "endLine": 124,
+        "endChar": 54
+      },
+      "revId": "3682d1bf4fb84866608f1c335cd980dd28ea1a4c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
