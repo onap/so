@@ -19,11 +19,11 @@
  */
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
-import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.CREATE_VNF_RESPONSE_PARAM_NAME;
+import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.DELETE_VNF_RESPONSE_PARAM_NAME;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.OPERATION_STATUS_PARAM_NAME;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.client.exception.ExceptionBuilder;
-import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
+import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
 import org.onap.vnfmadapter.v1.model.OperationStateEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,29 +33,30 @@ import com.google.common.base.Optional;
 
 
 /**
- * @author waqas.ikram@est.tech
+ * 
+ * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
  *
  */
 @Component
-public class MonitorVnfmCreateJobTask extends MonitorVnfmJobTask{
+public class MonitorVnfmDeleteJobTask extends MonitorVnfmJobTask {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MonitorVnfmCreateJobTask.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(MonitorVnfmDeleteJobTask.class);
 
   @Autowired
-  public MonitorVnfmCreateJobTask(final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
+  public MonitorVnfmDeleteJobTask(final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
       final ExceptionBuilder exceptionUtil) {
     super(vnfmAdapterServiceProvider, exceptionUtil);
   }
 
   /**
-   * Get the current operation status of instantiation job
+   * Get the current operation status of Delete job
    * 
    * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
    */
   public void getCurrentOperationStatus(final BuildingBlockExecution execution) {
     LOGGER.debug("Executing getCurrentOperationStatus  ...");
-    final CreateVnfResponse vnfInstantiateResponse = execution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME);
-    execution.setVariable(OPERATION_STATUS_PARAM_NAME, getOperationStatus(execution, vnfInstantiateResponse.getJobId()));
+    final DeleteVnfResponse deleteVnfResponse = execution.getVariable(Constants.DELETE_VNF_RESPONSE_PARAM_NAME);
+    execution.setVariable(OPERATION_STATUS_PARAM_NAME, getOperationStatus(execution, deleteVnfResponse.getJobId()));
     LOGGER.debug("Finished executing getCurrentOperationStatus ...");
   }
 
@@ -65,37 +66,36 @@ public class MonitorVnfmCreateJobTask extends MonitorVnfmJobTask{
    * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
    */
   public void timeOutLogFailue(final BuildingBlockExecution execution) {
-    final String message = "Instantiation operation time out";
+    final String message = "Delete operation time out";
     LOGGER.error(message);
-    exceptionUtil.buildAndThrowWorkflowException(execution, 1205, message);
+    exceptionUtil.buildAndThrowWorkflowException(execution, 1213, message);
   }
 
   /**
-   * Check the final status of instantiation throw exception if not completed successfully
+   * Check the final status of delete throw exception if not completed successfully
    * 
    * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
    */
   public void checkIfOperationWasSuccessful(final BuildingBlockExecution execution) {
     LOGGER.debug("Executing checkIfOperationWasSuccessful  ...");
     final Optional<OperationStateEnum> operationStatusOption = execution.getVariable(OPERATION_STATUS_PARAM_NAME);
-    final CreateVnfResponse vnfInstantiateResponse = execution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME);
+    final DeleteVnfResponse deleteVnfResponse = execution.getVariable(DELETE_VNF_RESPONSE_PARAM_NAME);
     if (operationStatusOption == null || !operationStatusOption.isPresent()) {
-      final String message = "Unable to instantiate jobId: "
-          + (vnfInstantiateResponse != null ? vnfInstantiateResponse.getJobId() : "null")
-          + "Unable to retrieve OperationStatus";
+      final String message = "Unable to delete jobId: "
+          + (deleteVnfResponse != null ? deleteVnfResponse.getJobId() : "null") + "Unable to retrieve OperationStatus";
       LOGGER.error(message);
-      exceptionUtil.buildAndThrowWorkflowException(execution, 1206, message);
+      exceptionUtil.buildAndThrowWorkflowException(execution, 1214, message);
     }
     if (operationStatusOption.isPresent()) {
       final OperationStateEnum operationStatus = operationStatusOption.get();
       if (operationStatus != OperationStateEnum.COMPLETED) {
-        final String message = "Unable to instantiate jobId: "
-            + (vnfInstantiateResponse != null ? vnfInstantiateResponse.getJobId() : "null") + " OperationStatus: "
-            + operationStatus;
+        final String message =
+            "Unable to Delete jobId: " + (deleteVnfResponse != null ? deleteVnfResponse.getJobId() : "null")
+                + " OperationStatus: " + operationStatus;
         LOGGER.error(message);
-        exceptionUtil.buildAndThrowWorkflowException(execution, 1207, message);
+        exceptionUtil.buildAndThrowWorkflowException(execution, 1215, message);
       }
-      LOGGER.debug("Successfully completed instatiation of job {}", vnfInstantiateResponse);
+      LOGGER.debug("Successfully completed Deletion of job {}", deleteVnfResponse);
     }
   }
 }
