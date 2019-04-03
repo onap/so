@@ -20,28 +20,36 @@
 
 package org.onap.so.client.cds;
 
-import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.client.cds.beans.AbstractCDSPropertiesBean;
+import org.onap.so.client.exception.ExceptionBuilder;
 
-@RunWith(JUnit4.class)
+@RunWith(MockitoJUnitRunner.class)
 public class AbstractCDSProcessingBBUtilsTest {
     @InjectMocks
     private AbstractCDSProcessingBBUtils abstractCDSProcessingBBUtils = new AbstractCDSProcessingBBUtils();
     @InjectMocks
     AbstractCDSPropertiesBean abstractCDSPropertiesBean = new AbstractCDSPropertiesBean();
+    @Mock
+    ExceptionBuilder exceptionUtil;
 
-    @Test
-    public void preProcessRequestTest() throws Exception {
+    @Before
+    public void init(){
         String requestObject = "{\"config-assign-request\":{\"resolution-key\":\"resolutionKey\", \"config-assign-properties\":{\"service-instance-id\":\"serviceInstanceId\", \"vnf-id\":\"vnfId\", \"vnf-name\":\"vnfName\", \"service-model-uuid\":\"serviceModelUuid\", \"vnf-customization-uuid\":\"vnfCustomizationUuid\",\"Instance1\":\"Instance1Value\",\"Instance2\":\"Instance2Value\",\"Param3\":\"Param3Value\"}}}";
         String blueprintName = "blueprintName";
         String blueprintVersion = "blueprintVersion";
@@ -59,12 +67,28 @@ public class AbstractCDSProcessingBBUtilsTest {
         abstractCDSPropertiesBean.setRequestId(requestId);
         abstractCDSPropertiesBean.setRequestObject(requestObject);
         abstractCDSPropertiesBean.setSubRequestId(subRequestId);
+    }
+
+    @Test
+    public void preProcessRequestTest() throws Exception {
 
         DelegateExecution execution = mock(DelegateExecution.class);
         when(execution.getVariable("executionObject")).thenReturn(abstractCDSPropertiesBean);
 
         abstractCDSProcessingBBUtils.constructExecutionServiceInputObject(execution);
-        assertTrue(true);
+        verify(exceptionUtil, times(0))
+            .buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(), any(Exception.class));
+    }
+
+    @Test
+    public void sendRequestToCDSClientTest() {
+
+        DelegateExecution execution = mock(DelegateExecution.class);
+        when(execution.getVariable("executionServiceInput")).thenReturn(abstractCDSPropertiesBean);
+        abstractCDSProcessingBBUtils.sendRequestToCDSClient(execution);
+        verify(exceptionUtil, times(1))
+            .buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(), any(Exception.class));
+
     }
 
 }
