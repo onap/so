@@ -27,6 +27,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import com.google.gson.Gson;
 import java.net.URI;
@@ -90,6 +91,9 @@ public class VnfmAdapterControllerTest {
             OffsetDateTime.of(LocalDateTime.of(2019, 1, 1, 12, 0), ZoneOffset.UTC);
     private static final OffsetDateTime JAN_1_2019_1_00 =
             OffsetDateTime.of(LocalDateTime.of(2019, 1, 1, 1, 0), ZoneOffset.UTC);
+    private static final String CLOUD_OWNER = "myTestCloudOwner";
+    private static final String REGION = "myTestRegion";
+    private static final String TENANT_ID = "myTestTenantId";
 
     @LocalServerPort
     private int port;
@@ -112,65 +116,28 @@ public class VnfmAdapterControllerTest {
 
     @Test
     public void createVnf_ValidRequest_Returns202AndJobId() throws Exception {
-        final Tenant tenant =
-                new Tenant().cloudOwner("myTestCloudOwner").regionName("myTestRegion").tenantId("myTestTenantId");
+        final Tenant tenant = new Tenant().cloudOwner(CLOUD_OWNER).regionName(REGION).tenantId(TENANT_ID);
         final CreateVnfRequest createVnfRequest = new CreateVnfRequest().name("myTestName").tenant(tenant);
 
-        final GenericVnf genericVnf = new GenericVnf();
-        genericVnf.setVnfId("myTestVnfId");
-        genericVnf.setNfType("vnfmType2");
+        setUpGenericVnfInMockAai("vnfmType2");
+        setUpVnfmsInMockAai();
+        setUpVimInMockAai();
 
-        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class), MockitoHamcrest
-                .argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId?depth=1")));
+        mockRestServer.expect(requestTo("http://dummy.value/until/create/implememted/vnfId"))
+                .andRespond(withStatus(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON)
+                        .location(new URI("http://vnfm2:8080/vnf_lcm_op_occs/123456")));
 
-        final EsrSystemInfo esrSystemInfo1 = new EsrSystemInfo();
-        esrSystemInfo1.setServiceUrl("http://vnfm1:8080");
-        esrSystemInfo1.setType("vnfmType1");
-        esrSystemInfo1.setSystemType("VNFM");
-        final EsrSystemInfoList esrSystemInfoList1 = new EsrSystemInfoList();
-        esrSystemInfoList1.getEsrSystemInfo().add(esrSystemInfo1);
-
-        final EsrVnfm esrVnfm1 = new EsrVnfm();
-        esrVnfm1.setVnfmId("vnfm1");
-        esrVnfm1.setEsrSystemInfoList(esrSystemInfoList1);
-        esrVnfm1.setResourceVersion("1234");
-
-        final EsrSystemInfo esrSystemInfo2 = new EsrSystemInfo();
-        esrSystemInfo2.setServiceUrl("http://vnfm2:8080");
-        esrSystemInfo2.setType("vnfmType2");
-        esrSystemInfo2.setSystemType("VNFM");
-        final EsrSystemInfoList esrSystemInfoList2 = new EsrSystemInfoList();
-        esrSystemInfoList2.getEsrSystemInfo().add(esrSystemInfo2);
-
-        final EsrVnfm esrVnfm2 = new EsrVnfm();
-        esrVnfm2.setVnfmId("vnfm2");
-        esrVnfm2.setEsrSystemInfoList(esrSystemInfoList2);
-        esrVnfm2.setResourceVersion("1234");
-
-        final EsrVnfmList esrVnfmList = new EsrVnfmList();
-        esrVnfmList.getEsrVnfm().add(esrVnfm1);
-        esrVnfmList.getEsrVnfm().add(esrVnfm2);
-
-        doReturn(Optional.of(esrVnfmList)).when(aaiResourcesClient).get(eq(EsrVnfmList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list")));
-
-        doReturn(Optional.of(esrSystemInfoList1)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
-                        "/external-system/esr-vnfm-list/esr-vnfm/vnfm1/esr-system-info-list")));
-        doReturn(Optional.of(esrSystemInfoList2)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
-                        "/external-system/esr-vnfm-list/esr-vnfm/vnfm2/esr-system-info-list")));
 
         final InlineResponse200 firstOperationQueryResponse = createOperationQueryResponse(
                 org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum.INSTANTIATE,
                 org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationStateEnum.PROCESSING);
-        mockRestServer.expect(requestTo(new StringStartsWith("http://vnfm2:8080/vnf_lcm_op_occs")))
+        mockRestServer.expect(requestTo("http://vnfm2:8080/vnf_lcm_op_occs/123456"))
                 .andRespond(withSuccess(gson.toJson(firstOperationQueryResponse), MediaType.APPLICATION_JSON));
 
         final InlineResponse200 secondOperationQueryReponse = createOperationQueryResponse(
                 org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum.INSTANTIATE,
                 org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationStateEnum.COMPLETED);
-        mockRestServer.expect(requestTo(new StringStartsWith("http://vnfm2:8080/vnf_lcm_op_occs")))
+        mockRestServer.expect(requestTo("http://vnfm2:8080/vnf_lcm_op_occs/123456"))
                 .andRespond(withSuccess(gson.toJson(secondOperationQueryReponse), MediaType.APPLICATION_JSON));
 
         // Invoke the create request
@@ -214,138 +181,47 @@ public class VnfmAdapterControllerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void createVnf_VnfAlreadyExistsOnVnfm_ThrowsIllegalArgumentException() throws Exception {
-        final Tenant tenant =
-                new Tenant().cloudOwner("myTestCloudOwner").regionName("myTestRegion").tenantId("myTestTenantId");
+        final Tenant tenant = new Tenant().cloudOwner(CLOUD_OWNER).regionName(REGION).tenantId(TENANT_ID);
         final CreateVnfRequest createVnfRequest = new CreateVnfRequest().name("myTestName").tenant(tenant);
 
         final GenericVnf genericVnf = new GenericVnf();
         genericVnf.setVnfId("myTestVnfId");
-        genericVnf.setNfType("vnfmType");
+        genericVnf.setNfType("vnfmType1");
         genericVnf.setSelflink("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm");
 
-        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class), MockitoHamcrest
-                .argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId?depth=1")));
-
-        final EsrSystemInfo esrSystemInfo = new EsrSystemInfo();
-        esrSystemInfo.setServiceUrl("http://vnfm:8080");
-        esrSystemInfo.setType("vnfmType");
-        esrSystemInfo.setSystemType("VNFM");
-        final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
-        esrSystemInfoList.getEsrSystemInfo().add(esrSystemInfo);
-
-        final EsrVnfm esrVnfm = new EsrVnfm();
-        esrVnfm.setVnfmId("vnfm");
-        esrVnfm.setEsrSystemInfoList(esrSystemInfoList);
-        esrVnfm.setResourceVersion("1234");
-
-        final EsrVnfmList esrVnfmList = new EsrVnfmList();
-        esrVnfmList.getEsrVnfm().add(esrVnfm);
+        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId")));
 
         final InlineResponse201 reponse = new InlineResponse201();
         mockRestServer.expect(requestTo(new URI("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm")))
                 .andRespond(withSuccess(gson.toJson(reponse), MediaType.APPLICATION_JSON));
-
-        doReturn(Optional.of(esrVnfmList)).when(aaiResourcesClient).get(eq(EsrVnfmList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list")));
 
         controller.vnfCreate("myTestVnfId", createVnfRequest, "asadas", "so", "1213");
     }
 
     @Test(expected = VnfmNotFoundException.class)
     public void createVnf_NoMatchingVnfmFound_ThrowsException() throws Exception {
-        final Tenant tenant =
-                new Tenant().cloudOwner("myTestCloudOwner").regionName("myTestRegion").tenantId("myTestTenantId");
+        final Tenant tenant = new Tenant().cloudOwner(CLOUD_OWNER).regionName(REGION).tenantId(TENANT_ID);
         final CreateVnfRequest createVnfRequest = new CreateVnfRequest().name("myTestName").tenant(tenant);
 
-        final GenericVnf genericVnf = new GenericVnf();
-        genericVnf.setVnfId("myTestVnfId");
-        genericVnf.setNfType("anotherType");
-
-        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class), MockitoHamcrest
-                .argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId?depth=1")));
-
-        final EsrSystemInfo esrSystemInfo1 = new EsrSystemInfo();
-        esrSystemInfo1.setServiceUrl("http://vnfm1:8080");
-        esrSystemInfo1.setType("vnfmType1");
-        esrSystemInfo1.setSystemType("VNFM");
-        final EsrSystemInfoList esrSystemInfoList1 = new EsrSystemInfoList();
-        esrSystemInfoList1.getEsrSystemInfo().add(esrSystemInfo1);
-
-        final EsrVnfm esrVnfm1 = new EsrVnfm();
-        esrVnfm1.setVnfmId("vnfm1");
-        esrVnfm1.setEsrSystemInfoList(esrSystemInfoList1);
-        esrVnfm1.setResourceVersion("1234");
-
-        final EsrSystemInfo esrSystemInfo2 = new EsrSystemInfo();
-        esrSystemInfo2.setServiceUrl("http://vnfm2:8080");
-        esrSystemInfo2.setType("vnfmType2");
-        esrSystemInfo2.setSystemType("VNFM");
-        final EsrSystemInfoList esrSystemInfoList2 = new EsrSystemInfoList();
-        esrSystemInfoList2.getEsrSystemInfo().add(esrSystemInfo2);
-
-        final EsrVnfm esrVnfm2 = new EsrVnfm();
-        esrVnfm2.setVnfmId("vnfm2");
-        esrVnfm2.setEsrSystemInfoList(esrSystemInfoList2);
-        esrVnfm2.setResourceVersion("1234");
-
-        final EsrVnfmList esrVnfmList = new EsrVnfmList();
-        esrVnfmList.getEsrVnfm().add(esrVnfm1);
-        esrVnfmList.getEsrVnfm().add(esrVnfm2);
-
-        doReturn(Optional.of(esrVnfmList)).when(aaiResourcesClient).get(eq(EsrVnfmList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list")));
-
-
-        doReturn(Optional.of(esrSystemInfoList1)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
-                        "/external-system/esr-vnfm-list/esr-vnfm/vnfm1/esr-system-info-list")));
-
-        doReturn(Optional.of(esrSystemInfoList2)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
-                        "/external-system/esr-vnfm-list/esr-vnfm/vnfm2/esr-system-info-list")));
+        setUpGenericVnfInMockAai("anotherType");
+        setUpVnfmsInMockAai();
 
         controller.vnfCreate("myTestVnfId", createVnfRequest, "asadas", "so", "1213");
     }
 
     @Test
     public void createVnf_VnfmAlreadyAssociatedWithVnf_Returns202AndJobId() throws Exception {
-        final Tenant tenant =
-                new Tenant().cloudOwner("myTestCloudOwner").regionName("myTestRegion").tenantId("myTestTenantId");
+        final Tenant tenant = new Tenant().cloudOwner(CLOUD_OWNER).regionName(REGION).tenantId(TENANT_ID);
         final CreateVnfRequest createVnfRequest = new CreateVnfRequest().name("myTestName").tenant(tenant);
 
-        final GenericVnf genericVnf = new GenericVnf();
-        genericVnf.setVnfId("myTestVnfId");
-        genericVnf.setNfType("vnfmType2");
+        setUpGenericVnfWithVnfmRelationshipInMockAai("vnfmType2", "vnfm1");
+        setUpVnfmsInMockAai();
+        setUpVimInMockAai();
 
-        final Relationship relationshipToVnfm = new Relationship();
-        relationshipToVnfm.setRelatedLink("/aai/v15/external-system/esr-vnfm-list/esr-vnfm/vnfm1");
-        relationshipToVnfm.setRelatedTo("esr-vnfm");
-        final RelationshipData relationshipData = new RelationshipData();
-        relationshipData.setRelationshipKey("esr-vnfm.vnfm-id");
-        relationshipData.setRelationshipValue("vnfm1");
-        relationshipToVnfm.getRelationshipData().add(relationshipData);
-
-        final RelationshipList relationshipList = new RelationshipList();
-        relationshipList.getRelationship().add(relationshipToVnfm);
-        genericVnf.setRelationshipList(relationshipList);
-
-        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class), MockitoHamcrest
-                .argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId?depth=1")));
-
-        final EsrSystemInfo esrSystemInfo1 = new EsrSystemInfo();
-        esrSystemInfo1.setServiceUrl("http://vnfm1:8080");
-        esrSystemInfo1.setType("vnfmType1");
-        esrSystemInfo1.setSystemType("VNFM");
-        final EsrSystemInfoList esrSystemInfoList1 = new EsrSystemInfoList();
-        esrSystemInfoList1.getEsrSystemInfo().add(esrSystemInfo1);
-
-        final EsrVnfm esrVnfm1 = new EsrVnfm();
-        esrVnfm1.setVnfmId("vnfm1");
-        esrVnfm1.setEsrSystemInfoList(esrSystemInfoList1);
-        esrVnfm1.setResourceVersion("1234");
-
-        doReturn(Optional.of(esrVnfm1)).when(aaiResourcesClient).get(eq(EsrVnfm.class),
-                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/vnfm1")));
+        mockRestServer.expect(requestTo("http://dummy.value/until/create/implememted/vnfId"))
+                .andRespond(withStatus(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON)
+                        .location(new URI("http://vnfm2:8080/vnf_lcm_op_occs/123456")));
 
         final ResponseEntity<CreateVnfResponse> response =
                 controller.vnfCreate("myTestVnfId", createVnfRequest, "asadas", "so", "1213");
@@ -356,8 +232,7 @@ public class VnfmAdapterControllerTest {
     @Test
     public void createVnf_UnauthorizedUser_Returns401() throws Exception {
         final TestRestTemplate restTemplateWrongPassword = new TestRestTemplate("test", "wrongPassword");
-        final Tenant tenant =
-                new Tenant().cloudOwner("myTestCloudOwner").regionName("myTestRegion").tenantId("myTestTenantId");
+        final Tenant tenant = new Tenant().cloudOwner(CLOUD_OWNER).regionName(REGION).tenantId(TENANT_ID);
         final CreateVnfRequest createVnfRequest = new CreateVnfRequest().name("myTestName").tenant(tenant);
 
         final RequestEntity<CreateVnfRequest> request =
@@ -433,6 +308,101 @@ public class VnfmAdapterControllerTest {
         response.setStateEnteredTime(JAN_1_2019_1_00);
         response.setVnfInstanceId("myVnfInstanceId");
         return response;
+    }
+
+    private GenericVnf createGenericVnf(final String type) {
+        final GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setVnfId("myTestVnfId");
+        genericVnf.setNfType(type);
+        return genericVnf;
+    }
+
+    private void setUpGenericVnfInMockAai(final String type) {
+        final GenericVnf genericVnf = createGenericVnf(type);
+
+        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId")));
+    }
+
+    private void setUpGenericVnfWithVnfmRelationshipInMockAai(final String type, final String vnfmId) {
+        final GenericVnf genericVnf = createGenericVnf(type);
+
+        final Relationship relationshipToVnfm = new Relationship();
+        relationshipToVnfm.setRelatedLink(
+                "/aai/v15/external-system/esr-vnfm-li//        final InlineResponse201 vnfInstance = new InlineResponse201();\n"
+                        + "//        vnfInstance.setInstantiationState(InstantiationStateEnum.NOT_INSTANTIATED);\n"
+                        + "//        mockRestServer.expect(requestTo(\"http://dummy.value/until/create/implememted/vnfId\"))\n"
+                        + "//                .andRespond(withSuccess(gson.toJson(vnfInstance), MediaType.APPLICATION_JSON));st/esr-vnfm/"
+                        + vnfmId);
+        relationshipToVnfm.setRelatedTo("esr-vnfm");
+        final RelationshipData relationshipData = new RelationshipData();
+        relationshipData.setRelationshipKey("esr-vnfm.vnfm-id");
+        relationshipData.setRelationshipValue(vnfmId);
+        relationshipToVnfm.getRelationshipData().add(relationshipData);
+
+        final RelationshipList relationshipList = new RelationshipList();
+        relationshipList.getRelationship().add(relationshipToVnfm);
+        genericVnf.setRelationshipList(relationshipList);
+
+        doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId")));
+    }
+
+    private void setUpVnfmsInMockAai() {
+        final EsrSystemInfo esrSystemInfo1 = new EsrSystemInfo();
+        esrSystemInfo1.setServiceUrl("http://vnfm1:8080");
+        esrSystemInfo1.setType("vnfmType1");
+        esrSystemInfo1.setSystemType("VNFM");
+        final EsrSystemInfoList esrSystemInfoList1 = new EsrSystemInfoList();
+        esrSystemInfoList1.getEsrSystemInfo().add(esrSystemInfo1);
+
+        final EsrVnfm esrVnfm1 = new EsrVnfm();
+        esrVnfm1.setVnfmId("vnfm1");
+        esrVnfm1.setEsrSystemInfoList(esrSystemInfoList1);
+        esrVnfm1.setResourceVersion("1234");
+
+        final EsrSystemInfo esrSystemInfo2 = new EsrSystemInfo();
+        esrSystemInfo2.setServiceUrl("http://vnfm2:8080");
+        esrSystemInfo2.setType("vnfmType2");
+        esrSystemInfo2.setSystemType("VNFM");
+        final EsrSystemInfoList esrSystemInfoList2 = new EsrSystemInfoList();
+        esrSystemInfoList2.getEsrSystemInfo().add(esrSystemInfo2);
+
+        final EsrVnfm esrVnfm2 = new EsrVnfm();
+        esrVnfm2.setVnfmId("vnfm2");
+        esrVnfm2.setEsrSystemInfoList(esrSystemInfoList2);
+        esrVnfm2.setResourceVersion("1234");
+
+        final EsrVnfmList esrVnfmList = new EsrVnfmList();
+        esrVnfmList.getEsrVnfm().add(esrVnfm1);
+        esrVnfmList.getEsrVnfm().add(esrVnfm2);
+
+        doReturn(Optional.of(esrVnfmList)).when(aaiResourcesClient).get(eq(EsrVnfmList.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list")));
+
+        doReturn(Optional.of(esrSystemInfoList1)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+                        "/external-system/esr-vnfm-list/esr-vnfm/vnfm1/esr-system-info-list")));
+        doReturn(Optional.of(esrSystemInfoList2)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+                        "/external-system/esr-vnfm-list/esr-vnfm/vnfm2/esr-system-info-list")));
+    }
+
+    private void setUpVimInMockAai() {
+        final EsrSystemInfo esrSystemInfo = new EsrSystemInfo();
+        esrSystemInfo.setServiceUrl("http://myVim:8080");
+        esrSystemInfo.setType("openstack");
+        esrSystemInfo.setSystemType("VIM");
+        esrSystemInfo.setCloudDomain("myDomain");
+        esrSystemInfo.setUserName("myUser");
+        esrSystemInfo.setPassword("myPassword");
+
+        final EsrSystemInfoList esrSystemInfoList = new EsrSystemInfoList();
+        esrSystemInfoList.getEsrSystemInfo().add(esrSystemInfo);
+
+        doReturn(Optional.of(esrSystemInfoList)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher("/cloud-infrastructure/cloud-regions/cloud-region/"
+                        + CLOUD_OWNER + "/" + REGION + "/esr-system-info-list")));
     }
 
     private class AaiResourceUriMatcher extends BaseMatcher<AAIResourceUri> {

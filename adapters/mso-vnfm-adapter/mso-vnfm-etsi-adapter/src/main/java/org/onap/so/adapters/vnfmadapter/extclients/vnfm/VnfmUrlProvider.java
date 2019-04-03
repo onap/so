@@ -46,10 +46,10 @@ public class VnfmUrlProvider {
     }
 
     /**
-     * Get the URL for a generic VNF in AAI.
+     * Get the URL for an operation on a VNFM.
      *
-     * @param vnfId The identifier of the VNF
-     * @return the URL of the VNF
+     * @param vnfmId The ID of the VNFM
+     * @return the URL of the operation
      */
     public String getOperationUrl(final String vnfmId, final String operationId) {
         final String url = UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("/vnf_lcm_op_occs/")

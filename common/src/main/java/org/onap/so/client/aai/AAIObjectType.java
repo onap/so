@@ -145,6 +145,7 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
     public static final AAIObjectType VNFM = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM + "/esr-vnfm-list/esr-vnfm/{vnfm-id}", EsrVnfm.class);
     public static final AAIObjectType VNFM_LIST = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM, "/esr-vnfm-list", "vnfm-list");
     public static final AAIObjectType VNFM_ESR_SYSTEM_INFO_LIST = new AAIObjectType(AAINamespaceConstants.EXTERNAL_SYSTEM + "/esr-vnfm-list", "/esr-vnfm/{vnfm-id}/esr-system-info-list", "vnfm-esr-system-info-list");
+    public static final AAIObjectType CLOUD_ESR_SYSTEM_INFO_LIST = new AAIObjectType(AAIObjectType.CLOUD_REGION.uriTemplate(), "/esr-system-info-list", "cloud-esr-system-info-list");
 
 
 	private final String uriTemplate;

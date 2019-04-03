@@ -24,6 +24,7 @@ import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Tenant;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.slf4j.Logger;
@@ -85,6 +86,28 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     public void invokePutGenericVnf(final GenericVnf vnf) {
         aaiClientProvider.getAaiClient()
                 .update(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId()), vnf);
+    }
+
+    @Override
+    public Tenant invokeGetTenant(final String cloudOwner, final String cloudRegion, final String tenantId) {
+        return aaiClientProvider.getAaiClient()
+                .get(Tenant.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudOwner, cloudRegion, tenantId))
+                .orElseGet(() -> {
+                    logger.debug("Tenant not found in AAI");
+                    return null;
+                });
+    }
+
+    @Override
+    public EsrSystemInfoList invokeGetCloudRegionEsrSystemInfoList(final String cloudOwner, final String cloudRegion) {
+        return aaiClientProvider
+                .getAaiClient().get(EsrSystemInfoList.class, AAIUriFactory
+                        .createResourceUri(AAIObjectType.CLOUD_ESR_SYSTEM_INFO_LIST, cloudOwner, cloudRegion))
+                .orElseGet(() -> {
+                    logger.debug("Cloud esr system info list not found in AAI");
+                    return null;
+                });
     }
 
 }

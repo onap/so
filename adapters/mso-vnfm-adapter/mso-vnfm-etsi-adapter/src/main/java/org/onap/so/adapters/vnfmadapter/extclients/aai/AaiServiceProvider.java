@@ -24,6 +24,7 @@ import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Tenant;
 
 /**
  * Provides methods for invoking REST calls to AAI.
@@ -52,7 +53,6 @@ public interface AaiServiceProvider {
      */
     EsrSystemInfoList invokeGetVnfmEsrSystemInfoList(final String vnfmId);
 
-
     /**
      * Invoke a GET request for the a VNFM.
      *
@@ -68,5 +68,24 @@ public interface AaiServiceProvider {
      * @return
      */
     void invokePutGenericVnf(GenericVnf vnf);
+
+    /**
+     * Invoke a GET request for the a tenant.
+     *
+     * @param cloudOwner the cloud owner
+     * @param cloudRegion the cloud region
+     * @param tenantId the ID of the tenant
+     * @return the tenant
+     */
+    Tenant invokeGetTenant(final String cloudOwner, final String cloudRegion, final String tenantId);
+
+    /**
+     * Invoke a GET request for the esr system info list for a cloud region.
+     *
+     * @param cloudOwner the cloud owner
+     * @param cloudRegion the cloud region
+     * @return the esr system info list for the VNFM
+     */
+    EsrSystemInfoList invokeGetCloudRegionEsrSystemInfoList(final String cloudOwner, final String cloudRegion);
 
 }

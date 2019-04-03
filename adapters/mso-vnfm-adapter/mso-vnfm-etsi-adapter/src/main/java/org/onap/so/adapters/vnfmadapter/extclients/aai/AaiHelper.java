@@ -29,6 +29,7 @@ import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
+import org.onap.aai.domain.yang.Tenant;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIVersion;
@@ -92,20 +93,42 @@ public class AaiHelper {
      * @return the VNFM to use, or <code>null</code> if no VNFM has been assigned yet
      */
     public EsrVnfm getAssignedVnfm(final GenericVnf vnf) {
+        final Relationship relationship = getRelationship(vnf, "esr-vnfm");
+        final String vnfmId = getRelationshipKey(relationship, "esr-vnfm.vnfm-id");
+        return vnfmId == null ? null : aaiServiceProvider.invokeGetVnfm(vnfmId);
+    }
+
+    /**
+     * Get the tenant assigned for use for the given generic VNF.
+     *
+     * @param vnf the generic VNF
+     * @return the tenant to use, or <code>null</code> if no tenant has been assigned yet
+     */
+    public Tenant getAssignedTenant(final GenericVnf vnf) {
+        final Relationship relationship = getRelationship(vnf, "tenant");
+        final String cloudOwner = getRelationshipKey(relationship, "cloud-region.cloud-owner");
+        final String cloudRegion = getRelationshipKey(relationship, "cloud-region.cloud-region-id");
+        final String tenantId = getRelationshipKey(relationship, "tenant.tenant-id");
+        return cloudOwner == null || cloudRegion == null || tenantId == null ? null
+                : aaiServiceProvider.invokeGetTenant(cloudOwner, cloudRegion, tenantId);
+    }
+
+    private Relationship getRelationship(final GenericVnf vnf, final String relationshipRelatedToValue) {
         for (final Relationship relationship : vnf.getRelationshipList() == null ? Collections.<Relationship>emptyList()
                 : vnf.getRelationshipList().getRelationship()) {
-            if ("esr-vnfm".equals(relationship.getRelatedTo())) {
-                return getRelatedVnfmId(relationship);
+            if (relationship.getRelatedTo().equals(relationshipRelatedToValue)) {
+                return relationship;
             }
         }
         return null;
     }
 
-    private EsrVnfm getRelatedVnfmId(final Relationship relationship) {
-        for (final RelationshipData relationshipData : relationship.getRelationshipData()) {
-            if ("esr-vnfm.vnfm-id".equals(relationshipData.getRelationshipKey())) {
-                logger.debug("VNFM URL from GenericVnf relataionship: " + relationshipData.getRelationshipValue());
-                return aaiServiceProvider.invokeGetVnfm(relationshipData.getRelationshipValue());
+    private String getRelationshipKey(final Relationship relationship, final String relationshipKey) {
+        if (relationship != null) {
+            for (final RelationshipData relationshipData : relationship.getRelationshipData()) {
+                if (relationshipData.getRelationshipKey().equals(relationshipKey)) {
+                    return relationshipData.getRelationshipValue();
+                }
             }
         }
         return null;

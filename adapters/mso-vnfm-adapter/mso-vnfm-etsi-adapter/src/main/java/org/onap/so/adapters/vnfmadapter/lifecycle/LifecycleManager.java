@@ -24,14 +24,13 @@ import com.google.common.base.Optional;
 import java.util.UUID;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiClientProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
-import org.onap.so.client.aai.AAIObjectType;
-import org.onap.so.client.aai.entities.uri.AAIUriFactory;
-import org.onap.so.client.graphinventory.entities.uri.Depth;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
@@ -46,17 +45,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class LifecycleManager {
     private static final Logger logger = LoggerFactory.getLogger(LifecycleManager.class);
-    private final AaiClientProvider aaiClientProvider;
+    private final AaiServiceProvider aaiServiceProvider;
     private final VnfmServiceProvider vnfmServiceProvider;
     private final AaiHelper aaiHelper;
+    private final VnfmHelper vnfmHelper;
     private final JobManager jobManager;
 
     @Autowired
-    LifecycleManager(final AaiClientProvider aaiClientProvider, final AaiHelper aaiHelper,
-            final VnfmServiceProvider vnfmServiceProvider, final JobManager jobManager) {
-        this.aaiClientProvider = aaiClientProvider;
+    LifecycleManager(final AaiServiceProvider aaiServiceProvider, final AaiHelper aaiHelper,
+            final VnfmHelper vnfmHelper, final VnfmServiceProvider vnfmServiceProvider, final JobManager jobManager) {
+        this.aaiServiceProvider = aaiServiceProvider;
         this.vnfmServiceProvider = vnfmServiceProvider;
         this.aaiHelper = aaiHelper;
+        this.vnfmHelper = vnfmHelper;
         this.jobManager = jobManager;
     }
 
@@ -77,22 +78,17 @@ public class LifecycleManager {
             aaiHelper.addRelationshipFromGenericVnfToVnfm(genericVnf, vnfm.getVnfmId());
         }
 
-        // operation ID set to random value for now, will be set correctly once we implement instantiate
-        // call towards the VNFM
-        final String jobId = jobManager.createJob(vnfm.getVnfmId(), UUID.randomUUID().toString(), false);
+        final String vnfIdInVnfm = sendCreateRequestToVnfm(genericVnf);
+        final String operationId = sendInstantiateRequestToVnfm(vnfm, genericVnf, request, vnfIdInAai, vnfIdInVnfm);
+
+        final String jobId = jobManager.createJob(vnfm.getVnfmId(), operationId, false);
         final CreateVnfResponse response = new CreateVnfResponse();
         response.setJobId(jobId);
         return response;
     }
 
     private GenericVnf getGenericVnfFromAai(final String vnfIdInAai) {
-        final GenericVnf genericVnf = aaiClientProvider.getAaiClient()
-                .get(GenericVnf.class,
-                        AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfIdInAai).depth(Depth.ONE))
-                .orElseGet(() -> {
-                    logger.debug("No Generic Vnf matched by id");
-                    return null;
-                });
+        final GenericVnf genericVnf = aaiServiceProvider.invokeGetGenericVnf(vnfIdInAai);
         logger.debug("Retrieved generic VNF from AAI: " + genericVnf);
         return genericVnf;
     }
@@ -110,6 +106,23 @@ public class LifecycleManager {
                         + " is already defined on the VNFM, self link: " + genericVnf.getSelflink());
             }
         }
+    }
+
+    private String sendCreateRequestToVnfm(final GenericVnf genericVnf) {
+        // TODO call create request
+        genericVnf.setSelflink("http://dummy.value/until/create/implememted/vnfId");
+        return "vnfId";
+    }
+
+    private String sendInstantiateRequestToVnfm(final EsrVnfm vnfm, final GenericVnf genericVnf,
+            final CreateVnfRequest createVnfRequest, final String vnfIdInAai, final String vnfIdInVnfm) {
+
+        final InstantiateVnfRequest instantiateVnfRequest =
+                vnfmHelper.createInstantiateRequest(createVnfRequest.getTenant(), createVnfRequest);
+        final String jobId = vnfmServiceProvider.instantiateVnf(genericVnf.getSelflink(), instantiateVnfRequest);
+
+        logger.info("Instantiate VNF request successfully sent to " + genericVnf.getSelflink());
+        return jobId;
     }
 
     /**

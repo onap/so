@@ -23,13 +23,20 @@ package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 import com.google.common.base.Optional;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmRequestFailureException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VnfmServiceProviderImpl implements VnfmServiceProvider {
+    private static final Logger logger = LoggerFactory.getLogger(VnfmServiceProviderImpl.class);
 
     private final HttpRestServiceProvider httpServiceProvider;
     private final VnfmUrlProvider urlProvider;
@@ -47,8 +54,21 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     }
 
     @Override
+    public String instantiateVnf(final String vnfSelfLink, final InstantiateVnfRequest instantiateVnfRequest) {
+        logger.debug("Sending instantiate request " + instantiateVnfRequest + " to : " + vnfSelfLink);
+        final ResponseEntity<Void> response = httpServiceProvider.getHttpResponse(vnfSelfLink, Void.class);
+        if (response.getStatusCode() != HttpStatus.ACCEPTED) {
+            throw new VnfmRequestFailureException("Instantiate request to " + vnfSelfLink + " return status code: "
+                    + response.getStatusCode() + ", request: " + instantiateVnfRequest);
+        }
+        final String locationHeader = response.getHeaders().get("Location").iterator().next();
+        return locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
+    }
+
+    @Override
     public Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId) {
         final String url = urlProvider.getOperationUrl(vnfmId, operationId);
         return httpServiceProvider.get(url, InlineResponse200.class);
     }
+
 }
