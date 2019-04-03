@@ -1,5 +1,6 @@
 <deleteVolumeGroupRequest>
     <cloudSiteId>null</cloudSiteId>
+    <cloudOwner>null</cloudOwner>
     <tenantId>12345</tenantId>
     <volumeGroupId>12345</volumeGroupId>
     <volumeGroupStackId>null</volumeGroupStackId>
