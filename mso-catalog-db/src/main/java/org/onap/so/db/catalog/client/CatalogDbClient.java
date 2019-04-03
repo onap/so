@@ -175,7 +175,7 @@ public class CatalogDbClient {
     private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
     private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
     private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
-
+    private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -287,6 +287,9 @@ public class CatalogDbClient {
         findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType;
         findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH + findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep;
         findByClliAndCloudVersion = endpoint + CLOUD_SITE + SEARCH + findByClliAndCloudVersion;
+
+        findPnfResourceCustomizationByModelUuid =
+            endpoint + PNF_RESOURCE_CUSTOMIZATION + SEARCH + findPnfResourceCustomizationByModelUuid;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
@@ -456,6 +459,12 @@ public class CatalogDbClient {
             pnfResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         }
         return pnfResourceCustomization;
+    }
+
+    public List<PnfResourceCustomization> getPnfResourceCustomizationByModelUuid(String modelUuid) {
+        return this.getMultipleResources(pnfResourceCustomizationClient, getUri(
+            UriBuilder.fromUri(findPnfResourceCustomizationByModelUuid).queryParam("SERVICE_MODEL_UUID", modelUuid)
+                .build().toString()));
     }
 
     public CollectionNetworkResourceCustomization getCollectionNetworkResourceCustomizationByID(String modelCustomizationUUID) {

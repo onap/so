@@ -1,44 +1,69 @@
 <configuration>
 
+  <property name="LOGS" value="target/logs" />
+
+  <!-- Add this appender to keep the log file for further troubleshooting-->
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] |%X{RequestId}| %-5level
+        %logger{1024} - %msg%n
+      </pattern>
+    </encoder>
+  </appender>
+
+  <appender name="File"
+    class="ch.qos.logback.core.FileAppender">
+    <file>${LOGS}/testing.log</file>
+    <encoder
+      class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] |%X{RequestId}| %-5level
+        %logger{1024} - %msg%n</Pattern>
+    </encoder>
+  </appender>
+
+  <logger name="com.att.ecomp.audit" level="info" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
+  <logger name="com.att.eelf.metrics" level="info" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
+  <logger name="com.att.eelf.error" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
+
+  <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
 
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] |%X{RequestId}| %-5level
-                %logger{1024} - %msg%n
-            </pattern>
-        </encoder>
-    </appender>
+  <logger name="ch.vorburger" level="WARN" additivity="false">
+    <appender-ref ref="STDOUT"/>
+  </logger>
 
+  <logger name="AUDIT" level="info" additivity="true">
+    <appender-ref ref="STDOUT"/>
+  </logger>
 
-    <logger name="com.att.ecomp.audit" level="info" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
+  <!-- suppress the amount of org.apache.tomcat.util.net.NioEndpoint log-->
+  <logger name="org.apache.tomcat" level="WARN" />
 
-    <logger name="com.att.eelf.metrics" level="info" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
+  <!-- suppress the amount of org.springframework.beans log-->
+  <logger name="org.springframework.beans" level="WARN"/>
 
-    <logger name="com.att.eelf.error" level="WARN" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
+  <!-- suppress the amount of org.springframework.context log-->
+  <logger name="org.springframework.context" level="WARN"/>
 
-    <logger name="org.onap" level="${so.log.level:-DEBUG}" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-    
+  <!-- suppress the amount of org.camunda.bpm.engine.impl.persistence-->
+  <logger name="org.camunda.bpm.engine.impl.persistence" level="WARN"/>
 
-    <logger name="ch.vorburger" level="WARN" additivity="false">
-        <appender-ref ref="STDOUT" />
-    </logger>
-    
-    <logger name="AUDIT" level="info" additivity="true">        
-        <appender-ref ref="STDOUT" />
-    </logger>
+  <!-- suppress the amount of org.camunda.bpm.engine.persistence-->
+  <logger name="org.camunda.bpm.engine.persistence" level="WARN"/>
 
-    <root level="WARN">
-        <appender-ref ref="STDOUT" />
-    </root>
-
+  <root level="WARN">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="File"/>
+  </root>
 
 </configuration>
