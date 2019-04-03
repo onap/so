@@ -272,6 +272,37 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
 	}
 	
 	@Test
+	public void rollbackExecutionRollbackToCreatedTest(){
+		execution.setVariable("isRollback", false);
+		execution.setVariable("handlingCode", "RollbackToCreated");
+		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
+		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
+		BuildingBlock bb1 = new BuildingBlock();
+		bb1.setBpmnFlowName("AssignVfModuleBB");
+		ebb1.setBuildingBlock(bb1);
+		flowsToExecute.add(ebb1);
+		ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
+		BuildingBlock bb2 = new BuildingBlock();
+		bb2.setBpmnFlowName("CreateVfModuleBB");
+		ebb2.setBuildingBlock(bb2);
+		flowsToExecute.add(ebb2);
+		ExecuteBuildingBlock ebb3 = new ExecuteBuildingBlock();
+		BuildingBlock bb3 = new BuildingBlock();
+		bb3.setBpmnFlowName("ActivateVfModuleBB");
+		ebb3.setBuildingBlock(bb3);
+		flowsToExecute.add(ebb3);
+		
+		execution.setVariable("flowsToExecute", flowsToExecute);
+		execution.setVariable("gCurrentSequence", 3);
+		
+		workflowActionBBTasks.rollbackExecutionPath(execution);
+		List<ExecuteBuildingBlock> ebbs = (List<ExecuteBuildingBlock>) execution.getVariable("flowsToExecute");
+		assertEquals("DeactivateVfModuleBB",ebbs.get(0).getBuildingBlock().getBpmnFlowName());
+		assertEquals(0,execution.getVariable("gCurrentSequence"));
+		assertEquals(1,ebbs.size());
+	}
+	
+	@Test
 	public void checkRetryStatusTest(){
 		String reqId = "reqId123";
 		execution.setVariable("mso-request-id", reqId);
