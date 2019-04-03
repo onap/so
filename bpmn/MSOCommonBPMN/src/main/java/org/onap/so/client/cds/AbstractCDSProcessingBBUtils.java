@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2019 TechMahindra
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -130,13 +132,16 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
 
             CDSProcessingListener cdsProcessingListener = new AbstractCDSProcessingBBUtils();
 
-            CDSProcessingClient cdsClient = new CDSProcessingClient(cdsProcessingListener);
-            CountDownLatch countDownLatch = cdsClient.sendRequest(executionServiceInput);
+            CDSProcessingClient cdsClient = null;
+            CountDownLatch countDownLatch;
 
             try {
+                cdsClient = new CDSProcessingClient(cdsProcessingListener);
+                countDownLatch = cdsClient.sendRequest(executionServiceInput);
                 countDownLatch.await(props.getTimeout(), TimeUnit.SECONDS);
             } catch (InterruptedException ex) {
                 logger.error("Caught exception in sendRequestToCDSClient in AbstractCDSProcessingBBUtils : ", ex);
+                Thread.currentThread().interrupt();
             } finally {
                 cdsClient.close();
             }
