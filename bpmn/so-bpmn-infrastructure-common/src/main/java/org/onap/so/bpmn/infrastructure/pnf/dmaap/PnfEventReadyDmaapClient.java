@@ -136,7 +136,8 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             Runnable runnable = unregister(pnfCorrelationId);
             if (runnable != null) {
                 logger.debug("dmaap listener gets pnf ready event for pnfCorrelationId: {}", pnfCorrelationId);
-                runnable.run();
+                //runnable.run();
+                runnable = null;
             }
         }
     }

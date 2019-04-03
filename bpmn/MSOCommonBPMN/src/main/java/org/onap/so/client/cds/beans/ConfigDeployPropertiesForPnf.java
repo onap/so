@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 "service-instance-id",
 "pnf-id",
 "pnf-name",
+"pnf-ipv4-address",
+"pnf-ipv6-address",
 "service-model-uuid",
 "pnf-customization-uuid"
 })
@@ -23,6 +25,15 @@ public class ConfigDeployPropertiesForPnf {
 
 	@JsonProperty("pnf-name")
 	private String pnfName;
+
+	/**
+	 * Config Deploy require IP address of PNF.
+	 */
+	@JsonProperty("pnf-ipv4-address")
+	private String pnfIpV4Address;
+
+	@JsonProperty("pnf-ipv6-address")
+	private String pnfIpV6Address;
 
 	@JsonProperty("service-model-uuid")
 	private String serviceModelUuid;
@@ -70,6 +81,23 @@ public class ConfigDeployPropertiesForPnf {
 		this.pnfCustomizationUuid = pnfCustomizationUuid;
 	}
 
+	public String getPnfIpV4Address() {
+		return pnfIpV4Address;
+	}
+
+	public void setPnfIpV4Address(String pnfIpV4Address) {
+		this.pnfIpV4Address = pnfIpV4Address;
+	}
+
+	public String getPnfIpV6Address() {
+		return pnfIpV6Address;
+	}
+
+	public void setPnfIpV6Address(String pnfIpV6Address) {
+		this.pnfIpV6Address = pnfIpV6Address;
+	}
+
+
 	@Override
 	public String toString() {
 
@@ -77,6 +105,8 @@ public class ConfigDeployPropertiesForPnf {
 		sb.append("\"service-instance-id\":").append("\"").append(serviceInstanceId).append("\"");
 		sb.append(", \"pnf-id\":").append("\"").append(pnfId).append("\"");
 		sb.append(", \"pnf-name\":").append("\"").append(pnfName).append("\"");
+		sb.append(", \"pnf-ipv4-address\":").append("\"").append(pnfIpV4Address).append("\"");
+		sb.append(", \"pnf-ipv6-address\":").append("\"").append(pnfIpV6Address).append("\"");
 		sb.append(", \"service-model-uuid\":").append("\"").append(serviceModelUuid).append("\"");
 		sb.append(", \"pnf-customization-uuid\":").append("\"").append(pnfCustomizationUuid).append("\"");
 

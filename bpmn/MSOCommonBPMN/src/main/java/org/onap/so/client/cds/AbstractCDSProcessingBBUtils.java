@@ -128,9 +128,9 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
             ExecutionServiceInput executionServiceInput = (ExecutionServiceInput) execution
                     .getVariable("executionServiceInput");
 
-            CDSProcessingListener cdsProcessingListener = new AbstractCDSProcessingBBUtils();
+            //CDSProcessingListener cdsProcessingListener = new AbstractCDSProcessingBBUtils();
 
-            CDSProcessingClient cdsClient = new CDSProcessingClient(cdsProcessingListener);
+            CDSProcessingClient cdsClient = new CDSProcessingClient(this);
             CountDownLatch countDownLatch = cdsClient.sendRequest(executionServiceInput);
 
             try {
