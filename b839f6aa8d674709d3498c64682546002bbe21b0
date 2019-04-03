@@ -331,6 +331,30 @@
     },
     {
       "key": {
+        "uuid": "37236ad2_aeb90b77",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-03T13:07:13Z",
+      "side": 1,
+      "message": "I agreed with you regarding throw unchecked exception, and I removed most of that. With \u0027throw exception\u0027 in method def, the comment auto-generate will contain the @throws Exception automatically, that\u0027s one of the benefit:)",
+      "parentUuid": "053139f4_42ad9c3c",
+      "range": {
+        "startLine": 50,
+        "startChar": 8,
+        "endLine": 50,
+        "endChar": 24
+      },
+      "revId": "b839f6aa8d674709d3498c64682546002bbe21b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b82b222c_2d13af0b",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigAssignDelegate.java",
         "patchSetId": 1
