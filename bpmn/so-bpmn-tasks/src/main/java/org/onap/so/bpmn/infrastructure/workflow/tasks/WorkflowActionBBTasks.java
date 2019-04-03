@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.aai.domain.yang.Vnfc;
 import org.onap.so.bpmn.common.workflow.context.WorkflowCallbackResponse;
@@ -296,14 +298,15 @@ public class WorkflowActionBBTasks {
 				}
 			}
 			
-			int flowSize = rollbackFlows.size();
 			String handlingCode = (String) execution.getVariable("handlingCode");
+			List<ExecuteBuildingBlock> rollbackFlowsFiltered = new ArrayList<>();
+			rollbackFlowsFiltered.addAll(rollbackFlows);
 			if(handlingCode.equals("RollbackToAssigned") || handlingCode.equals("RollbackToCreated")){
-				for(int i = 0; i<flowSize; i++){
+				for(int i = 0; i<rollbackFlows.size(); i++){
 					if(rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Unassign")){
-						rollbackFlows.remove(i);
+						rollbackFlowsFiltered.remove(rollbackFlows.get(i));
 					} else if(rollbackFlows.get(i).getBuildingBlock().getBpmnFlowName().contains("Delete") && handlingCode.equals("RollbackToCreated")) {
-						rollbackFlows.remove(i);
+						rollbackFlowsFiltered.remove(rollbackFlows.get(i));
 					}
 				}
 			}
@@ -314,7 +317,7 @@ public class WorkflowActionBBTasks {
 				execution.setVariable("isRollbackNeeded", false);
 			else
 				execution.setVariable("isRollbackNeeded", true);
-			execution.setVariable("flowsToExecute", rollbackFlows);
+			execution.setVariable("flowsToExecute", rollbackFlowsFiltered);
 			execution.setVariable("handlingCode", "PreformingRollback");
 			execution.setVariable("isRollback", true);
 			execution.setVariable("gCurrentSequence", 0);
@@ -396,6 +399,8 @@ public class WorkflowActionBBTasks {
 					logger.debug("No cvnfcCustomization found for customizationId: " + modelCustomizationId);
 				}
 			}
+		} catch (EntityNotFoundException e) {
+			logger.debug(e.getMessage() + " Will not be running Fabric Config Building Blocks");
 		} catch (Exception e) {
 			String errorMessage = "Error occurred in post processing of Vf Module create";
 			execution.setVariable("handlingCode", "RollbackToCreated");
