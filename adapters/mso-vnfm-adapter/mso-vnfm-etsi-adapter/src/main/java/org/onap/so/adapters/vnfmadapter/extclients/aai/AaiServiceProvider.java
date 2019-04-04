@@ -20,11 +20,13 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
+import java.util.List;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Tenant;
+import org.onap.aai.domain.yang.Vserver;
 
 /**
  * Provides methods for invoking REST calls to AAI.
@@ -38,6 +40,14 @@ public interface AaiServiceProvider {
      * @return the generic VNF
      */
     GenericVnf invokeGetGenericVnf(final String vnfId);
+
+    /**
+     * Invoke a query for a generic VNF with the given selfLink
+     *
+     * @param selfLink the selfLink
+     * @return the matching generic vnfs
+     */
+    List<GenericVnf> invokeQueryGenericVnf(final String selfLink);
 
     /**
      * Invoke a GET request for the VNFMs.
@@ -68,6 +78,18 @@ public interface AaiServiceProvider {
      * @return
      */
     void invokePutGenericVnf(GenericVnf vnf);
+
+    /**
+     * Invoke a PUT request for a vserver.
+     *
+     * @param cloudOwner the cloud owner
+     * @param cloudRegion the cloud region
+     * @param tenantId the ID of the tenant
+     * @param vserver the vserver
+     * @return
+     */
+    void invokePutVserver(final String cloudOwner, final String cloudRegion, final String tenantId,
+            final Vserver vserver);
 
     /**
      * Invoke a GET request for the a tenant.
