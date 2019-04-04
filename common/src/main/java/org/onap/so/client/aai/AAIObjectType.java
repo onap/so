@@ -95,6 +95,7 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
 	public static final AAIObjectType BULK_PROCESS = new AAIObjectType("/bulkprocess", "", "bulkprocess");
 	public static final AAIObjectType SINGLE_TRANSACTION = new AAIObjectType("/bulk/single-transaction", "", "single-transaction");
 	public static final AAIObjectType GENERIC_VNF = new AAIObjectType(AAINamespaceConstants.NETWORK, GenericVnf.class);
+	public static final AAIObjectType GENERIC_VNFS = new AAIObjectType(AAINamespaceConstants.NETWORK, "/generic-vnfs", "generic-vnfs");
 	public static final AAIObjectType VF_MODULE = new AAIObjectType(AAIObjectType.GENERIC_VNF.uriTemplate(), VfModule.class);
 	public static final AAIObjectType L3_NETWORK = new AAIObjectType(AAINamespaceConstants.NETWORK, L3Network.class);
 	public static final AAIObjectType NETWORK_POLICY = new AAIObjectType(AAINamespaceConstants.NETWORK, NetworkPolicy.class);
