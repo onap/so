@@ -25,6 +25,7 @@ import org.openstack4j.api.OSClient.OSClientV2;
 import org.openstack4j.api.OSClient.OSClientV3;
 import org.openstack4j.api.exceptions.AuthenticationException;
 import org.openstack4j.openstack.OSFactory;
+import org.openstack4j.model.common.Identifier;
 
 public class OpenstackClientFactoryImpl implements OpenstackClientFactory {
 
@@ -35,12 +36,14 @@ public class OpenstackClientFactoryImpl implements OpenstackClientFactory {
         Preconditions.checkNotNull(osAccess.getPassword(), "Keystone-v3 Auth: password not set.");
         Preconditions.checkNotNull(osAccess.getDomainNameIdentifier(), "Keystone-v3 Auth: domain not set.");
         Preconditions.checkNotNull(osAccess.getRegion(), "Keystone-v3 Auth: region not set.");
+        Preconditions.checkNotNull(osAccess.getTenantId(), "Keystone-v3 Auth: tenant-id not set.");
 
         OSClientV3 client;
         try {
             client = OSFactory.builderV3()
                 .endpoint(osAccess.getUrl())
                 .credentials(osAccess.getUser(), osAccess.getPassword(), osAccess.getDomainNameIdentifier())
+                .scopeToProject(Identifier.byId(osAccess.getTenantId()))
                 .authenticate()
                 .useRegion(osAccess.getRegion());
             return new OpenstackV3ClientImpl(client);
@@ -54,7 +57,7 @@ public class OpenstackClientFactoryImpl implements OpenstackClientFactory {
         Preconditions.checkNotNull(osAccess.getUrl(), "Keystone-v2 Auth: endpoint not set.");
         Preconditions.checkNotNull(osAccess.getUser(), "Keystone-v2 Auth: username not set.");
         Preconditions.checkNotNull(osAccess.getPassword(), "Keystone-v2 Auth: password not set.");
-        Preconditions.checkNotNull(osAccess.getTenantId(), "Keystone-v2 Auth: domain not set.");
+        Preconditions.checkNotNull(osAccess.getTenantId(), "Keystone-v2 Auth: tenant-id not set.");
         Preconditions.checkNotNull(osAccess.getRegion(), "Keystone-v2 Auth: region not set.");
 
         OSClientV2 client;
