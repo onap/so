@@ -28,9 +28,11 @@ import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.VnfRollback;
+import org.onap.so.openstack.mappers.MapAdapter;
 
 /**
  * This webservice defines the Asynchronous versions of VNF adapter calls.
@@ -54,7 +56,7 @@ public interface MsoVnfAdapterAsync
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
 							@WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
-							@WebParam(name="inputs") Map<String,Object> inputs,
+							@WebParam(name="inputs") @XmlJavaTypeAdapter(MapAdapter.class) Map<String,Object> inputs,
 							@WebParam(name="failIfExists") Boolean failIfExists,
 							@WebParam(name="backout") Boolean backout,
 							@WebParam(name="enableBridge") Boolean enableBridge,
@@ -72,7 +74,7 @@ public interface MsoVnfAdapterAsync
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
 							@WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
-							@WebParam(name="inputs") Map<String,Object> inputs,
+							@WebParam(name="inputs") @XmlJavaTypeAdapter(MapAdapter.class) Map<String,Object> inputs,
 							@WebParam(name="messageId") @XmlElement(required=true) String messageId,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="notificationUrl") @XmlElement(required=true) String notificationUrl );
