@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "88c6353e_dfe81fd5",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 97
+      },
+      "writtenOn": "2019-04-04T13:06:00Z",
+      "side": 1,
+      "message": "All suite tests must share the same spring context and therefore must extend the same \"suite parent class\". Usually this is \"BaseTest\" or something similar. By doing this the embedded db, wiremock, and spring boot server only start once for N tests.",
+      "parentUuid": "cd3902ea_82cb0789",
+      "revId": "228226c637dac33d4db2383482dc78d7a2416218",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "73fefd68_701e17d6",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/BaseBPMNTest.java",
         "patchSetId": 1
