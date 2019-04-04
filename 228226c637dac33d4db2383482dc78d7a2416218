@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "1ee2f09f_59bfd377",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/delegate/PrepareConfigDeployDelegateTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-04T15:07:57Z",
+      "side": 1,
+      "message": "Hi Max,\nThis class is junit test, it\u0027s not the full application context based integration test. In the contextConfiguration, only required classes are included. \n\nI understand for the integration test, it\u0027s better to extend the BaseTest to share the application context. And that\u0027s what I did in other integration test cases.",
+      "parentUuid": "88c6353e_dfe81fd5",
+      "revId": "228226c637dac33d4db2383482dc78d7a2416218",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "73fefd68_701e17d6",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/BaseBPMNTest.java",
         "patchSetId": 1
