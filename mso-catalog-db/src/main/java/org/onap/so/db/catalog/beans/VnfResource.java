@@ -100,6 +100,9 @@ public class VnfResource implements Serializable {
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResources")
 	private List<VnfResourceCustomization> vnfResourceCustomizations;
 
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResource")
+	private List<VnfResourceWorkflow> vnfResourceWorkflow;
+	
 	@PrePersist
 	protected void onCreate() {
 		this.created = new Date();
@@ -113,6 +116,7 @@ public class VnfResource implements Serializable {
 				.append("orchestrationMode", orchestrationMode).append("aicVersionMin", aicVersionMin)
 				.append("aicVersionMax", aicVersionMax).append("created", created)
 				.append("heatTemplates", heatTemplates).append("vnfResourceCustomizations", vnfResourceCustomizations)
+				.append("vnfResourceWorkflow",vnfResourceWorkflow)
 				.toString();
 	}
 
@@ -258,5 +262,17 @@ public class VnfResource implements Serializable {
 
 	public void setModelVersion(String modelVersion) {
 		this.modelVersion = modelVersion;
+	}
+	
+
+	@LinkedResource
+	public List<VnfResourceWorkflow> getVnfResourceWorkflow() {
+		if (vnfResourceWorkflow == null)
+			vnfResourceWorkflow = new ArrayList<>();
+		return vnfResourceWorkflow;
+	}
+
+	public void setVnfResourceWorkflow(List<VnfResourceWorkflow> vnfResourceWorkflow) {
+		this.vnfResourceWorkflow = vnfResourceWorkflow;
 	}
 }
