@@ -139,7 +139,6 @@ public class ResourceRequestBuilder {
             Map<String, Object> serviceInputs) {
         try {
             Map<String, Object> serviceInstnace = getServiceInstnace(serviceUuid);
-
             // find match of customization uuid in vnf
             Map<String, Map<String, Object>> serviceResources =
                     (Map<String, Map<String, Object>>) serviceInstnace.get("serviceResources");
@@ -200,7 +199,11 @@ public class ResourceRequestBuilder {
                 if (serviceInputs.containsKey(tmpKey)) {
                     value = (String) serviceInputs.get(tmpKey);
                 } else {
-                    value = split[1];
+                    if (split.length == 1) { // means value is empty e.g. "a":"key1|"
+                        value = "";
+                    } else {
+                        value = split[1];
+                    }
                 }
             }
             resourceInput.put(key, value);

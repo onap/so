@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,15 +19,17 @@
  */
 package org.onap.so.bpmn.common.resource;
 
+import org.junit.Test;
+import org.onap.so.BaseTest;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.ok;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.junit.Test;
-import org.onap.so.BaseTest;
 
 
 public class ResourceRequestBuilderTest extends BaseTest {
@@ -339,6 +341,61 @@ public class ResourceRequestBuilderTest extends BaseTest {
         Map<String, Object> stringObjectMap = ResourceRequestBuilder.buildResouceRequest(
                 "c3954379-4efe-431c-8258-f84905b158e5", "e776449e-2b10-45c5-9217-2775c88ca1a0", serviceInput);
         assertEquals(0, stringObjectMap.size());
+    }
+
+    @Test
+    public void testGetResourceInputEmptyValue() {
+        wireMockServer.stubFor(get(urlEqualTo("/ecomp/mso/catalog/v2/serviceResources?serviceModelUuid=c3954379-4efe-431c-8258-f84905b158e5"))
+                .willReturn(ok("{ \"serviceResources\"    : {\n" +
+                        "\t\"modelInfo\"       : {\n" +
+                        "\t\t\"modelName\"          : \"demoVFWCL\",\n" +
+                        "\t\t\"modelUuid\"          : \"c3954379-4efe-431c-8258-f84905b158e5\",\n" +
+                        "\t\t\"modelInvariantUuid\" : \"0cbff61e-3b0a-4eed-97ce-b1b4faa03493\",\n" +
+                        "\t\t\"modelVersion\"       : \"1.0\"\n" +
+                        "\t},\n" +
+                        "\t\"serviceType\"        : \"\",\n" +
+                        "\t\"serviceRole\"        : \"\",\n" +
+                        "\t\"environmentContext\" : null,\n" +
+                        "\t\"resourceOrder\"       : \"res1,res2\",\n" +
+                        "\t\"workloadContext\"    : \"Production\",\n" +
+                        "\t\"serviceVnfs\": [\n" +
+                        "\t\n" +
+                        "\t\t{ \"modelInfo\"                    : {\n" +
+                        "\t\t\t\"modelName\"              : \"15968a6e-2fe5-41bf-a481\",\n" +
+                        "\t\t\t\"modelUuid\"              : \"808abda3-2023-4105-92d2-e62644b61d53\",\n" +
+                        "\t\t\t\"modelInvariantUuid\"     : \"6e4ffc7c-497e-4a77-970d-af966e642d31\",\n" +
+                        "\t\t\t\"modelVersion\"           : \"1.0\",\n" +
+                        "\t\t\t\"modelCustomizationUuid\" : \"a00404d5-d7eb-4c46-b6b6-9cf2d087e545\",\n" +
+                        "\t\t\t\"modelInstanceName\"      : \"15968a6e-2fe5-41bf-a481 0\"\n" +
+                        "\t\t\t},\n" +
+                        "\t\t\"toscaNodeType\"            : \"org.openecomp.resource.vf.15968a6e2fe541bfA481\",\n" +
+                        "\t\t\"nfFunction\"           \t: null,\n" +
+                        "\"resourceInput\":\"{\\\"a\\\":\\\"key1|\\\"}\"," +
+                        "\t\t\"nfType\"              \t\t: null,\n" +
+                        "\t\t\"nfRole\"              \t\t: null,\n" +
+                        "\t\t\"nfNamingCode\"         \t: null,\n" +
+                        "\t\t\"multiStageDesign\"         : \"false\",\n" +
+                        "\t\t\t\"vfModules\": [\n" +
+                        "\t\t\t\t{\n" +
+                        "\t\t\t\t\t\"modelInfo\"               : { \n" +
+                        "\t\t\t\t\t\t\"modelName\"              : \"15968a6e2fe541bfA481..base_vfw..module-0\",\n" +
+                        "\t\t\t\t\t\t\"modelUuid\"              : \"ec7fadde-1e5a-42f7-8255-cb19e475ff45\",\n" +
+                        "\t\t\t\t\t\t\"modelInvariantUuid\"     : \"61ab8b64-a014-4cf3-8a5a-b5ef388f8819\",\n" +
+                        "\t\t\t\t\t\t\"modelVersion\"           : \"1\",\n" +
+                        "\t\t\t\t\t\t\"modelCustomizationUuid\" : \"123aff6b-854f-4026-ae1e-cc74a3924576\"\n" +
+                        "\t\t\t\t\t},\t\t\"isBase\"                 : true,\n" +
+                        "\t\t\t\t\t\"vfModuleLabel\"          : \"base_vfw\",\n" +
+                        "\t\t\t\t\t\"initialCount\"           : 1,\n" +
+                        "\t\t\t\t\t\"hasVolumeGroup\"           : true\n" +
+                        "\t\t\t\t}\n" +
+                        "\t\t\t]\n" +
+                        "\t\t}]}}")));
+
+        HashMap serviceInput = new HashMap();
+        serviceInput.put("key2", "value");
+        Map<String, Object> stringObjectMap = ResourceRequestBuilder.buildResouceRequest("c3954379-4efe-431c-8258-f84905b158e5",
+                "a00404d5-d7eb-4c46-b6b6-9cf2d087e545", serviceInput);
+        assertEquals(stringObjectMap.get("a"), "");
     }
 
 }
