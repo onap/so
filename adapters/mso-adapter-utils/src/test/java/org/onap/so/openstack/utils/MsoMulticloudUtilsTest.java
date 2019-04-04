@@ -23,6 +23,7 @@
 package org.onap.so.openstack.utils;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
@@ -35,7 +36,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Optional;
 
+import javax.ws.rs.core.MediaType;
+
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -65,20 +70,51 @@ public class MsoMulticloudUtilsTest extends BaseTest {
     @Mock
     private CloudConfig cloudConfigMock;
 
+    private int get_index = 0;
+
     private static final String CREATE_STACK_RESPONSE = "{\"template_type\": \"TEST-template\", \"workload_id\": "
         + "\"TEST-workload\", \"template_response\": {\"stack\": {\"id\": \"TEST-stack\", \"links\": []}}}";
+    private static final String UPDATE_STACK_RESPONSE = "{\"template_type\": \"TEST-template\", \"workload_id\": "
+            + "\"TEST-workload\"}";
+    private static final String GET_CREATE_STACK_RESPONSE = "{\"template_type\": \"TEST-template\", \"workload_id\": "
+            + "\"TEST-workload\", \"workload_status\": \"CREATE_COMPLETE\"}";
+    private static final String GET_UPDATE_STACK_RESPONSE = "{\"template_type\": \"TEST-template\", \"workload_id\": "
+            + "\"TEST-workload\", \"workload_status\": \"UPDATE_COMPLETE\"}";
 
-    private static final String MULTICLOUD_PATH = "/api/multicloud/v1/CloudOwner/MTN14/infra_workload";
+    private static final String MULTICLOUD_CREATE_PATH = "/api/multicloud/v1/CloudOwner/MTN14/infra_workload";
+    private static final String MULTICLOUD_UPDATE_PATH = "/api/multicloud/v1/CloudOwner/MTN14/infra_workload/TEST-workload";
+    private static final String MULTICLOUD_GET_PATH = "/api/multicloud/v1/CloudOwner/MTN14/infra_workload/TEST-workload";
+
+    @Before
+    public void before() {
+    }
 
     @Test
     public void createStackSuccess() throws MsoException, IOException {
-        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_PATH))
+        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH)).inScenario("CREATE")
             .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 .withBody(CREATE_STACK_RESPONSE)
-                .withStatus(HttpStatus.SC_CREATED)));
+                .withStatus(HttpStatus.SC_CREATED))
+            .willSetStateTo("CREATING"));
+        wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH))
+                .inScenario("CREATE").whenScenarioStateIs("CREATING")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                    .withBody(GET_CREATE_STACK_RESPONSE)
+                    .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_UPDATE_PATH)).inScenario("CREATE")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                    .withBody(UPDATE_STACK_RESPONSE)
+                    .withStatus(HttpStatus.SC_ACCEPTED))
+                .willSetStateTo("UPDATING"));
+        wireMockServer.stubFor(get(urlPathEqualTo(MULTICLOUD_GET_PATH))
+                .inScenario("CREATE").whenScenarioStateIs("UPDATING")
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                    .withBody(GET_UPDATE_STACK_RESPONSE)
+                    .withStatus(HttpStatus.SC_OK)));
         StackInfo result = multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
-            "TEST-heat", new HashMap<>(), false, 200, "TEST-env",
+            "TEST-heat", new HashMap<>(), true, 200, "TEST-env",
             new HashMap<>(), new HashMap<>(), false);
+        wireMockServer.resetScenarios();
         assertNotNull(result);
         assertEquals("TEST-stack", result.getName());
     }
@@ -131,7 +167,7 @@ public class MsoMulticloudUtilsTest extends BaseTest {
     @Test
     public void createStackBadRequest() {
         try {
-            wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_PATH))
+            wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
                     .withStatus(HttpStatus.SC_BAD_REQUEST)));
             multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
@@ -146,7 +182,7 @@ public class MsoMulticloudUtilsTest extends BaseTest {
 
     @Test
     public void createStackEmptyResponseEntity() throws MsoException {
-        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_PATH))
+        wireMockServer.stubFor(post(urlPathEqualTo(MULTICLOUD_CREATE_PATH))
             .willReturn(aResponse().withHeader("Content-Type", "application/json")
                 .withStatus(HttpStatus.SC_CREATED)));
         StackInfo result = multicloudUtils.createStack("MTN14", "CloudOwner", "TEST-tenant", "TEST-stack", new VduModelInfo(),
