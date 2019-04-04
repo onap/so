@@ -51,7 +51,6 @@ server:
     tomcat:
         max-threads: 50
 
-
 #Actuator
 management: 
   endpoints:

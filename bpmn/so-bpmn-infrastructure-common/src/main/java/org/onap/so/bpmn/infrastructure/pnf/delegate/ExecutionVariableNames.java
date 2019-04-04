@@ -34,4 +34,26 @@ public class ExecutionVariableNames {
     public final static String TIMEOUT_FOR_NOTIFICATION = "timeoutForPnfEntryNotification";
     public final static String PNF_UUID = "pnfUuid";
     public final static String SERVICE_INSTANCE_ID = "serviceInstanceId";
+    public final static String MSO_REQUEST_ID = "msoRequestId";
+    public final static String MODEL_UUID = "modelUuid";
+
+    public final static String SERVICE_MODEL_INFO = "serviceModelInfo";
+
+    /**
+     * Variable used to contain the {@link org.onap.so.client.cds.beans.AbstractCDSPropertiesBean} json value.
+     */
+    public static final String EXECUTION_OBJECT = "executionObject";
+
+    /**
+     * Variables used to contain the {@link org.onap.so.db.catalog.beans.PnfResourceCustomization} fields.
+     */
+    public static final String PRC_BLUEPRINT_NAME = "PRC_blueprintName";
+    public static final String PRC_BLUEPRINT_VERSION = "PRC_blueprintVersion";
+    public static final String PRC_CUSTOMIZATION_UUID = "PRC_customizationUuid";
+    public static final String PRC_INSTANCE_NAME = "PRC_instanceName";
+
+    /**
+     * Variable used to contain skipPostInstantiationConfiguration flag.
+     */
+    public static final String SKIP_POST_INSTANTIATION_CONFIGURATION = "SkipPostInstantiationConfiguration";
 }

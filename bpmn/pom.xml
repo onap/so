@@ -24,6 +24,7 @@
 		<xmlunit.version>2.4.0</xmlunit.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<sdnc.northbound.version>1.5.1-SNAPSHOT</sdnc.northbound.version>
 	</properties>
 
 	<modules>

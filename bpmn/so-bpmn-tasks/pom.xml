@@ -131,7 +131,7 @@
         <dependency>
             <groupId>org.onap.sdnc.northbound</groupId>
             <artifactId>generic-resource-api-client</artifactId>
-            <version>1.5.0-SNAPSHOT</version>
+            <version>${sdnc.northbound.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>javax.ws.rs</groupId>
