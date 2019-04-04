@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ae5e5619_4ffcd6fe",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/ActivitySpecActivitySpecCategories.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-04T17:23:44Z",
+      "side": 1,
+      "message": "Missing generated id annotation",
+      "revId": "cad0a8e70b23950e6ca466420f46e2968e213082",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a0a13ecf_8d3ec935",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/ActivitySpecActivitySpecCategories.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-04T17:23:44Z",
+      "side": 1,
+      "message": "You should not allow ID to be set, as it is should be auto generated",
+      "revId": "cad0a8e70b23950e6ca466420f46e2968e213082",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
