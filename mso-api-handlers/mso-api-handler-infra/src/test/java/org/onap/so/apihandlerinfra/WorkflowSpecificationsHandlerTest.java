@@ -71,7 +71,7 @@ public class WorkflowSpecificationsHandlerTest extends BaseTest{
 		
 		WorkflowSpecifications expectedResponse = mapper.readValue(new String(Files.readAllBytes(Paths.get("src/test/resources/__files/WorkflowSpecifications.json"))), WorkflowSpecifications.class);
 
-		assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());	
+		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());	
 		WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
 		assertThat(realResponse, sameBeanAs(expectedResponse));	
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
