@@ -22,6 +22,30 @@
       "revId": "f882bf368caacf0f7d6cf4bb2363330f75e4b050",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "30d83a2e_3740cc9b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/MonitorVnfmCreateJobTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 5094
+      },
+      "writtenOn": "2019-04-04T13:51:24Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6cf3e5a0_5a31346a",
+      "range": {
+        "startLine": 114,
+        "startChar": 4,
+        "endLine": 114,
+        "endChar": 75
+      },
+      "revId": "f882bf368caacf0f7d6cf4bb2363330f75e4b050",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
