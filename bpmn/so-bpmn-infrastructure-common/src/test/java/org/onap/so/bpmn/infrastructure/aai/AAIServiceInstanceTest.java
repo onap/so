@@ -26,88 +26,91 @@ import org.junit.Test;
 
 public class AAIServiceInstanceTest {
 
-    AAIServiceInstance test = new AAIServiceInstance("serviceInstanceName","serviceType","serviceRole","orchestrationStatus","modelInvariantUuid","modelVersionId","environmentContext","workloadContext");
+	AAIServiceInstance test = new AAIServiceInstance.AAIServiceInstanceBuilder()
+			.setServiceInstanceName("serviceInstanceName").setServiceType("serviceType").setServiceRole("serviceRole")
+			.setOrchestrationStatus("orchestrationStatus").setModelInvariantUuid("modelInvariantUuid")
+			.setModelVersionId("modelVersionId").setEnvironmentContext("environmentContext")
+			.setWorkloadContext("workloadContext").createAAIServiceInstance();
 
-    @Test
-    public void getServiceInstanceNameTest() throws Exception {
-        test.getServiceInstanceName();
-    }
+	@Test
+	public void getServiceInstanceNameTest() throws Exception {
+		test.getServiceInstanceName();
+	}
 
-    @Test
-    public void setServiceInstanceNameTest() throws Exception {
-        test.setServiceInstanceName("serviceInstanceName");
-    }
+	@Test
+	public void setServiceInstanceNameTest() throws Exception {
+		test.setServiceInstanceName("serviceInstanceName");
+	}
 
-    @Test
-    public void getServiceTypeTest() throws Exception {
-        test.getServiceType();
-    }
+	@Test
+	public void getServiceTypeTest() throws Exception {
+		test.getServiceType();
+	}
 
-    @Test
-    public void setServiceTypeTest() throws Exception {
-        test.setServiceType("serviceType");
-    }
+	@Test
+	public void setServiceTypeTest() throws Exception {
+		test.setServiceType("serviceType");
+	}
 
+	@Test
+	public void getServiceRoleTest() throws Exception {
+		test.getServiceRole();
+	}
 
-    @Test
-    public void getServiceRoleTest() throws Exception {
-        test.getServiceRole();
-    }
+	@Test
+	public void setServiceRoleTest() throws Exception {
+		test.setServiceRole("serviceRole");
+	}
 
-    @Test
-    public void setServiceRoleTest() throws Exception {
-        test.setServiceRole("serviceRole");
-    }
+	@Test
+	public void getOrchestrationStatusTest() throws Exception {
+		test.getOrchestrationStatus();
+	}
 
-    @Test
-    public void getOrchestrationStatusTest() throws Exception {
-        test.getOrchestrationStatus();
-    }
+	@Test
+	public void setOrchestrationStatusTest() throws Exception {
+		test.setOrchestrationStatus("status");
+	}
 
-    @Test
-    public void setOrchestrationStatusTest() throws Exception {
-        test.setOrchestrationStatus("status");
-    }
+	@Test
+	public void getModelInvariantUuidTest() throws Exception {
+		test.getModelInvariantUuid();
+	}
 
-    @Test
-    public void getModelInvariantUuidTest() throws Exception {
-        test.getModelInvariantUuid();
-    }
+	@Test
+	public void setModelInvariantUuidTest() throws Exception {
+		test.setModelInvariantUuid("uuid");
+	}
 
-    @Test
-    public void setModelInvariantUuidTest() throws Exception {
-        test.setModelInvariantUuid("uuid");
-    }
+	@Test
+	public void getModelVersionIdTest() throws Exception {
+		test.getModelVersionId();
+	}
 
-    @Test
-    public void getModelVersionIdTest() throws Exception {
-        test.getModelVersionId();
-    }
+	@Test
+	public void setModelVersionIdTest() throws Exception {
+		test.setModelVersionId("versionId");
+	}
 
-    @Test
-    public void setModelVersionIdTest() throws Exception {
-        test.setModelVersionId("versionId");
-    }
+	@Test
+	public void getEnvironmentContextTest() throws Exception {
+		test.getEnvironmentContext();
+	}
 
-    @Test
-    public void getEnvironmentContextTest() throws Exception {
-        test.getEnvironmentContext();
-    }
+	@Test
+	public void setEnvironmentContextTest() throws Exception {
+		test.setEnvironmentContext("context");
+	}
 
-    @Test
-    public void setEnvironmentContextTest() throws Exception {
-        test.setEnvironmentContext("context");
-    }
+	@Test
+	public void getWorkloadContextTest() throws Exception {
+		test.getWorkloadContext();
+	}
 
-    @Test
-    public void getWorkloadContextTest() throws Exception {
-        test.getWorkloadContext();
-    }
-
-    @Test
-    public void setWorkloadContextTest() throws Exception {
-        test.setWorkloadContext("context");
-    }
+	@Test
+	public void setWorkloadContextTest() throws Exception {
+		test.setWorkloadContext("context");
+	}
 
 }
 
