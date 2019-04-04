@@ -20,6 +20,7 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
 
@@ -43,6 +45,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -51,6 +54,7 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.LineOfBusiness;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.NetworkPolicy;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
@@ -61,6 +65,7 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoVfModule;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.Platform;
 
 public class AAICreateTasksTest extends BaseTaskTest{
 	
@@ -162,14 +167,41 @@ public class AAICreateTasksTest extends BaseTaskTest{
 	public void createPlatformTest() throws Exception {
 		doNothing().when(aaiVnfResources).createPlatformandConnectVnf(genericVnf.getPlatform(), genericVnf);
 		aaiCreateTasks.createPlatform(execution);
-		verify(aaiVnfResources, times(1)).createPlatformandConnectVnf(genericVnf.getPlatform(), genericVnf);
+		ArgumentCaptor<Platform> platformCaptor = ArgumentCaptor.forClass(Platform.class);
+		ArgumentCaptor<GenericVnf> genericVnf = ArgumentCaptor.forClass(GenericVnf.class);
+		Mockito.verify(aaiVnfResources,times(4)).createPlatformandConnectVnf(platformCaptor.capture(),genericVnf.capture());
+		
+		List<Platform> capturedPlatforms = platformCaptor.getAllValues();
+		assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName".equals(item.getPlatformName())));
+		assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName2".equals(item.getPlatformName())));
+		assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName3".equals(item.getPlatformName())));
+		assertTrue(capturedPlatforms.stream().anyMatch(item -> "testPlatformName4".equals(item.getPlatformName())));
 	}
 	
 	@Test
 	public void createLineOfBusinessTest() throws Exception {
 		doNothing().when(aaiVnfResources).createLineOfBusinessandConnectVnf(genericVnf.getLineOfBusiness(), genericVnf);
 		aaiCreateTasks.createLineOfBusiness(execution);
-		verify(aaiVnfResources, times(1)).createLineOfBusinessandConnectVnf(genericVnf.getLineOfBusiness(), genericVnf);
+		
+		ArgumentCaptor<LineOfBusiness> lobCaptor = ArgumentCaptor.forClass(LineOfBusiness.class);
+		ArgumentCaptor<GenericVnf> genericVnf = ArgumentCaptor.forClass(GenericVnf.class);
+		Mockito.verify(aaiVnfResources,times(4)).createLineOfBusinessandConnectVnf(lobCaptor.capture(),genericVnf.capture());
+		
+		List<LineOfBusiness> capturedLOB = lobCaptor.getAllValues();
+		assertTrue(capturedLOB.stream().anyMatch(item -> "testLineOfBusinessName".equals(item.getLineOfBusinessName())));
+		assertTrue(capturedLOB.stream().anyMatch(item -> "testLineOfBusinessName2".equals(item.getLineOfBusinessName())));
+		assertTrue(capturedLOB.stream().anyMatch(item -> "testLineOfBusinessName3".equals(item.getLineOfBusinessName())));
+		assertTrue(capturedLOB.stream().anyMatch(item -> "testLineOfBusinessName4".equals(item.getLineOfBusinessName())));
+	
+	}
+	
+	@Test
+	public void splitCDL_Test() throws Exception {
+		List<String> strings = aaiCreateTasks.splitCDL("Test");
+		assertEquals(strings.get(0),"Test");
+		
+		List<String> strings2 = aaiCreateTasks.splitCDL("");
+		assertEquals(strings2.get(0),"");
 	}
 	
 	@Test

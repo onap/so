@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -38,6 +39,14 @@ public class LineOfBusiness implements Serializable, ShallowCopy<LineOfBusiness>
 	@Id
 	@JsonProperty("line-of-business-name")
 	private String lineOfBusinessName;
+
+	public LineOfBusiness() {
+	}
+
+	
+	public LineOfBusiness(String lineOfBusinessName) {
+		this.lineOfBusinessName = lineOfBusinessName;
+	}
 
 	public String getLineOfBusinessName() {
 		return lineOfBusinessName;
