@@ -26,6 +26,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +49,7 @@ import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.onap.so.openstack.utils.MsoNeutronUtils;
 import org.skyscreamer.jsonassert.JSONAssert;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.woorea.openstack.heat.model.Resource;
@@ -74,9 +78,9 @@ public class HeatStackAuditTest extends HeatStackAudit {
 	
 	private Resources resources = new Resources();
 	
-	private ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	private ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).setSerializationInclusion(Include.NON_NULL);
 	
-	private ObjectMapper stackObjectMapper = new ObjectMapper().configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+	private ObjectMapper stackObjectMapper = new ObjectMapper().configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true).setSerializationInclusion(Include.NON_NULL);
 
 	private List<Optional<Port>> portList = new ArrayList<>();
 	
@@ -131,62 +135,7 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		
 		List<Resource> resourceGroups = resources.getList().stream()
 				.filter(p -> "OS::Heat::ResourceGroup".equals(p.getType())).collect(Collectors.toList());
-		
-		Set<Vserver> expectedVservers = new HashSet<>();
-		Vserver vServer1= new Vserver();
-		vServer1.setVserverId("92272b67-d23f-42ca-87fa-7b06a9ec81f3");
-		LInterfaces vServer1Linterfaces = new LInterfaces();
-		vServer1.setLInterfaces(vServer1Linterfaces);
-		
-		LInterface ssc_1_trusted_port_0 = new LInterface();
-		ssc_1_trusted_port_0.setInterfaceId("7ee06d9d-3d18-411c-9d3e-aec930f70413");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_trusted_port_0);
-		
 
-		
-		LInterface ssc_1_mgmt_port_1 = new LInterface();
-		ssc_1_mgmt_port_1.setInterfaceId("fdeedf37-c01e-4ab0-bdd6-8d5fc4913943");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_1);
-		
-		LInterface ssc_1_mgmt_port_0 = new LInterface();
-		ssc_1_mgmt_port_0.setInterfaceId("8d93f63e-e972-48c7-ad98-b2122da47315");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_0);
-		
-		LInterface ssc_1_service2_port_0 = new LInterface();
-		ssc_1_service2_port_0.setLInterfaces(new LInterfaces());
-		ssc_1_service2_port_0.setInterfaceId("0594a2f2-7ea4-42eb-abc2-48ea49677fca");	
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_service2_port_0);
-		
-		LInterface service2_sub_interface_1 = new LInterface();
-		service2_sub_interface_1.setInterfaceId("2bbfa345-33bb-495a-94b2-fb514ee1cffc");	
-		ssc_1_service2_port_0.getLInterfaces().getLInterface().add(service2_sub_interface_1);
-		
-		LInterface ssc_1_int_ha_port_0 = new LInterface();
-		ssc_1_int_ha_port_0.setInterfaceId("00bb8407-650e-48b5-b919-33b88d6f8fe3");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_int_ha_port_0);		
-		
-		
-		LInterface ssc_1_service1_port_0 = new LInterface();
-		ssc_1_service1_port_0.setInterfaceId("27391d94-33af-474a-927d-d409249e8fd3");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_service1_port_0);		
-		ssc_1_service1_port_0.setLInterfaces(new LInterfaces());		
-		
-		LInterface service1_sub_interface_0 = new LInterface();
-		service1_sub_interface_0.setInterfaceId("d54dfd09-75c6-4e04-b204-909455b8f933");
-		ssc_1_service1_port_0.getLInterfaces().getLInterface().add(service1_sub_interface_0);
-		
-		LInterface service1_sub_interface_1 = new LInterface();
-		service1_sub_interface_1.setInterfaceId("f7a998c0-8939-4b07-bf4a-0862e9c325e1");
-		ssc_1_service1_port_0.getLInterfaces().getLInterface().add(service1_sub_interface_1);
-		
-		LInterface service1_sub_interface_2 = new LInterface();
-		service1_sub_interface_2.setInterfaceId("621c1fea-60b8-44ee-aede-c01b8b1aaa70");
-		ssc_1_service1_port_0.getLInterfaces().getLInterface().add(service1_sub_interface_2);
-
-		
-		expectedVservers.add(vServer1);
-		
-		
 		Resources service1QueryResponse = objectMapper.readValue(new File("src/test/resources/Service1ResourceGroupResponse.json"), Resources.class);
 		doReturn(service1QueryResponse).when(msoHeatUtilsMock).executeHeatClientRequest("/stacks/tsbc0005vm002ssc001-ssc_1_subint_service1_port_0_subinterfaces-dtmxjmny7yjz/31d0647a-6043-49a4-81b6-ccab29380672/resources", cloudRegion,	tenantId, Resources.class);
 		
@@ -219,20 +168,18 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		Set<Vserver> vserversWithSubInterfaces = heatStackAudit.processSubInterfaces(cloudRegion,tenantId,resourceGroups, vServersToAudit);
 		
 		String actualValue = objectMapper.writeValueAsString(vserversWithSubInterfaces);
-		String expectedValue = objectMapper.writeValueAsString(expectedVservers);
-		
+		String expectedValue = getJson("ExpectedVserversToAudit.json");
+		System.out.println(actualValue);
 		JSONAssert.assertEquals(expectedValue, actualValue, false);
 	}
 	
 	@Test
 	public void auditHeatStackNoServers_Test() throws Exception{
-
-		
 		Resources getResource = objectMapper.readValue(new File("src/test/resources/Service1ResourceGroupResponse.json"), Resources.class);
 		doReturn(getResource).when(msoHeatUtilsMock).queryStackResources(cloudRegion,	tenantId, "heatStackName");
 		
-		boolean actual = heatStackAudit.auditHeatStackCreate(cloudRegion, "cloudOwner", tenantId, "heatStackName");
-		assertEquals(true, actual);
+		Optional<AAIObjectAuditList> actual = heatStackAudit.auditHeatStack(cloudRegion, "cloudOwner", tenantId, "heatStackName");
+		assertEquals(true, actual.get().getAuditList().isEmpty());
 	}
 	
 
@@ -248,26 +195,32 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		
 		LInterface ssc_1_trusted_port_0 = new LInterface();
 		ssc_1_trusted_port_0.setInterfaceId("7ee06d9d-3d18-411c-9d3e-aec930f70413");
+		ssc_1_trusted_port_0.setInterfaceName("ibcx0026v_ibcx0026vm003_untrusted_port");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_trusted_port_0);
 		
-		LInterface ssc_1_service1_port_0 = new LInterface();
-		ssc_1_service1_port_0.setInterfaceId("27391d94-33af-474a-927d-d409249e8fd3");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_service1_port_0);
+		LInterface ssc_1_svc2_port_0 = new LInterface();
+		ssc_1_svc2_port_0.setInterfaceId("27391d94-33af-474a-927d-d409249e8fd3");
+		ssc_1_svc2_port_0.setInterfaceName("ibcx0026v_ibcx0026vm003_untrusted_port");
+		vServer1.getLInterfaces().getLInterface().add(ssc_1_svc2_port_0);
 		
 		LInterface ssc_1_mgmt_port_1 = new LInterface();
 		ssc_1_mgmt_port_1.setInterfaceId("fdeedf37-c01e-4ab0-bdd6-8d5fc4913943");
+		ssc_1_mgmt_port_1.setInterfaceName("ibcx0026v_ibcx0026vm003_untrusted_port");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_1);
 		
 		LInterface ssc_1_mgmt_port_0 = new LInterface();
 		ssc_1_mgmt_port_0.setInterfaceId("8d93f63e-e972-48c7-ad98-b2122da47315");
+		ssc_1_mgmt_port_0.setInterfaceName("ibcx0026v_ibcx0026vm003_untrusted_port");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_mgmt_port_0);
 		
-		LInterface ssc_1_service2_port_0 = new LInterface();
-		ssc_1_service2_port_0.setInterfaceId("0594a2f2-7ea4-42eb-abc2-48ea49677fca");
-		vServer1.getLInterfaces().getLInterface().add(ssc_1_service2_port_0);
+		LInterface ssc_1_svc1_port_0 = new LInterface();
+		ssc_1_svc1_port_0.setInterfaceId("0594a2f2-7ea4-42eb-abc2-48ea49677fca");
+		ssc_1_svc1_port_0.setInterfaceName("ibcx0026v_ibcx0026vm003_untrusted_port");
+		vServer1.getLInterfaces().getLInterface().add(ssc_1_svc1_port_0);
 		
 		LInterface ssc_1_int_ha_port_0 = new LInterface();
 		ssc_1_int_ha_port_0.setInterfaceId("00bb8407-650e-48b5-b919-33b88d6f8fe3");
+		ssc_1_int_ha_port_0.setInterfaceName("ibcx0026v_ibcx0026vm003_untrusted_port");
 		vServer1.getLInterfaces().getLInterface().add(ssc_1_int_ha_port_0);		
 		
 		expectedVservers.add(vServer1);
@@ -277,5 +230,7 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		assertThat(actualVservers, sameBeanAs(expectedVservers));
 	}
 
-
+	private String getJson(String filename) throws IOException {
+		 return new String(Files.readAllBytes(Paths.get("src/test/resources/" + filename)));
+	}
 }

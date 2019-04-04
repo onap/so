@@ -16,6 +16,7 @@ mso:
   workflow:
     topics:
       retryMultiplier: 60000
+      retrySequence: 1, 1, 2, 3, 5, 8, 13, 20
 spring:
   datasource:
     url: jdbc:mariadb://${DB_HOST}:${DB_PORT}/catalogdb

@@ -219,6 +219,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
     public Optional<Port> getNeutronPort(String neutronPortId, String tenantId, String cloudSiteId)
 	{
 		try {
+			logger.debug("Finding Neutron port:" + neutronPortId);
 			  CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
 		                () -> new MsoCloudSiteNotFound(cloudSiteId));
 				Quantum neutronClient = getNeutronClient (cloudSite, tenantId);
@@ -525,6 +526,7 @@ public class MsoNeutronUtils extends MsoCommonUtils
 		}
 		catch (OpenStackResponseException e) {
 			if (e.getStatus() == 404) {
+				logger.warn("Neutron port not found: " + neutronPortId,"Neutron port not found: " + neutronPortId);
 				return null;
 			} else {
 				logger.error("{} {} Openstack Error, GET Neutron Port By ID ({}): ", MessageEnum.RA_CONNECTION_EXCEPTION,

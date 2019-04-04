@@ -77,6 +77,10 @@ mso:
     core-pool-size: 50
     max-pool-size: 50
     queue-capacity: 500
+    workflow:
+  topics:
+    retryMultiplier: 60000
+    retrySequence: 1, 1, 2, 3, 5, 8, 13, 20
 spring:
   datasource:
     url: jdbc:mariadb://localhost:3307/catalogdb
