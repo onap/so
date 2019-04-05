@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -75,10 +74,4 @@ public class SubscriberInfo implements Serializable {
     public void setSubscriberCommonSiteId(String subscriberCommonSiteId) {
         this.subscriberCommonSiteId = subscriberCommonSiteId;
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("globalSubscriberId", globalSubscriberId).append("subscriberName", subscriberName).append("subscriberCommonSiteId", subscriberCommonSiteId).toString();
-    }
-
 }

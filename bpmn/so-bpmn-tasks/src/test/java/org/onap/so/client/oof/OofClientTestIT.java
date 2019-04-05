@@ -23,14 +23,26 @@ package org.onap.so.client.oof;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.client.exception.BadResponseException;
+import org.onap.so.client.oof.beans.ModelInfo;
 import org.onap.so.client.oof.beans.OofRequest;
+import org.onap.so.client.oof.beans.OofRequestParameters;
+import org.onap.so.client.oof.beans.PlacementDemand;
+import org.onap.so.client.oof.beans.PlacementInfo;
+import org.onap.so.client.oof.beans.RequestInfo;
+import org.onap.so.client.oof.beans.ResourceModelInfo;
+import org.onap.so.client.oof.beans.ServiceInfo;
+import org.onap.so.client.oof.beans.SubscriberInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class OofClientTestIT extends BaseIntegrationTest {
@@ -38,20 +50,135 @@ public class OofClientTestIT extends BaseIntegrationTest {
     @Autowired
     private OofClient client;
 
-
-    @Test(expected = Test.None.class)
+    @Test
     public void testPostDemands_success() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"status\", \"requestStatus\": \"accepted\"}";
+
+        ModelInfo modelInfo = new ModelInfo();
+        modelInfo.setModelCustomizationName("modelCustomizationName-Service");
+        modelInfo.setModelInvariantId("modelInvariantId-Service");
+        modelInfo.setModelName("modelName-Service");
+        modelInfo.setModelType("modelType-Service");
+        modelInfo.setModelVersion("modelVersion-Service");
+        modelInfo.setModelVersionId("modelVersionId-Service");
+
+        ServiceInfo serviceInfo = new ServiceInfo();
+        serviceInfo.setModelInfo(modelInfo);
+        serviceInfo.setServiceInstanceId("serviceInstanceId");
+        serviceInfo.setServiceName("serviceName");
+
+        SubscriberInfo subscriberInfo = new SubscriberInfo();
+        subscriberInfo.setGlobalSubscriberId("globalSubscriberId");
+        subscriberInfo.setSubscriberCommonSiteId("subscriberCommonSiteId");
+        subscriberInfo.setSubscriberName("subscriberName");
+
+        ResourceModelInfo resourceModelInfo = new ResourceModelInfo();
+        resourceModelInfo.setModelType("modelType");
+        resourceModelInfo.setModelCustomizationName("modelCustomizationName");
+        resourceModelInfo.setModelInvariantId("invarianteId");
+        resourceModelInfo.setModelName("modelName");
+        resourceModelInfo.setModelVersion("version");
+        resourceModelInfo.setModelVersionId("versionId");
+
+        PlacementDemand placementDemand = new PlacementDemand();
+        placementDemand.setResourceModelInfo(resourceModelInfo);
+        placementDemand.setResourceModuleName("resourceModuleName");
+        placementDemand.setServiceResourceId("serviceResourceId");
+        placementDemand.setTenantId("tenantId");
+
+        OofRequestParameters oofRequestParameters = new OofRequestParameters();
+        oofRequestParameters.setCustomerLatitude("customerLatitude");
+        oofRequestParameters.setCustomerLongitude("customerLongitude");
+        oofRequestParameters.setCustomerName("customerName");
+
+        ArrayList<PlacementDemand> placementDemands = new ArrayList<>();
+        placementDemands.add(placementDemand);
+
+        PlacementInfo placementInfo = new PlacementInfo();
+        placementInfo.setPlacementDemands(placementDemands);
+        placementInfo.setRequestParameters(oofRequestParameters);
+        placementInfo.setSubscriberInfo(subscriberInfo);
+
+        RequestInfo requestInfo = new RequestInfo();
+        requestInfo.setTransactionId("transactionId");
+        List<String> optimizer = new ArrayList<>();
+        optimizer.add("optimizer1");
+        optimizer.add("optimizer2");
+        requestInfo.setOptimizers(optimizer);
+        requestInfo.setCallbackUrl("callBackUrl");
+        requestInfo.setNumSolutions(1);
+        requestInfo.setRequestId("requestId");
+        requestInfo.setSourceId("sourceId");
+        requestInfo.setTimeout(30L);
+        requestInfo.setRequestType("requestType");
+
+        OofRequest oofRequest = new OofRequest();
+        oofRequest.setRequestInformation(requestInfo);
+        oofRequest.setPlacementInformation(placementInfo);
+        oofRequest.setServiceInformation(serviceInfo);
+        oofRequest.setLicenseInformation("");
 
         wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
                 .willReturn(aResponse().withStatus(200)
                         .withHeader("Content-Type", "application/json")
                         .withBody(mockResponse)));
 
-        client.postDemands(new OofRequest());
+        client.postDemands(oofRequest);
+
+        String oofRequestOutput = oofRequest.toJsonString();
+        assertEquals("{\n" +
+                "  \"requestInfo\" : {\n" +
+                "    \"transactionId\" : \"transactionId\",\n" +
+                "    \"requestId\" : \"requestId\",\n" +
+                "    \"callbackUrl\" : \"callBackUrl\",\n" +
+                "    \"sourceId\" : \"sourceId\",\n" +
+                "    \"requestType\" : \"requestType\",\n" +
+                "    \"numSolutions\" : 1,\n" +
+                "    \"optimizers\" : [ \"optimizer1\", \"optimizer2\" ],\n" +
+                "    \"timeout\" : 30\n" +
+                "  },\n" +
+                "  \"serviceInfo\" : {\n" +
+                "    \"serviceInstanceId\" : \"serviceInstanceId\",\n" +
+                "    \"serviceName\" : \"serviceName\",\n" +
+                "    \"modelInfo\" : {\n" +
+                "      \"modelType\" : \"modelType-Service\",\n" +
+                "      \"modelInvariantId\" : \"modelInvariantId-Service\",\n" +
+                "      \"modelVersionId\" : \"modelVersionId-Service\",\n" +
+                "      \"modelName\" : \"modelName-Service\",\n" +
+                "      \"modelVersion\" : \"modelVersion-Service\",\n" +
+                "      \"modelCustomizationName\" : \"modelCustomizationName-Service\"\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"placementInfo\" : {\n" +
+                "    \"requestParameters\" : {\n" +
+                "      \"customerLatitude\" : \"customerLatitude\",\n" +
+                "      \"customerLongitude\" : \"customerLongitude\",\n" +
+                "      \"customerName\" : \"customerName\"\n" +
+                "    },\n" +
+                "    \"subscriberInfo\" : {\n" +
+                "      \"globalSubscriberId\" : \"globalSubscriberId\",\n" +
+                "      \"subscriberName\" : \"subscriberName\",\n" +
+                "      \"subscriberCommonSiteId\" : \"subscriberCommonSiteId\"\n" +
+                "    },\n" +
+                "    \"placementDemands\" : [ {\n" +
+                "      \"resourceModuleName\" : \"resourceModuleName\",\n" +
+                "      \"serviceResourceId\" : \"serviceResourceId\",\n" +
+                "      \"tenantId\" : \"tenantId\",\n" +
+                "      \"resourceModelInfo\" : {\n" +
+                "        \"modelType\" : \"modelType\",\n" +
+                "        \"modelInvariantId\" : \"invarianteId\",\n" +
+                "        \"modelVersionId\" : \"versionId\",\n" +
+                "        \"modelName\" : \"modelName\",\n" +
+                "        \"modelVersion\" : \"version\",\n" +
+                "        \"modelCustomizationName\" : \"modelCustomizationName\"\n" +
+                "      }\n" +
+                "    } ]\n" +
+                "  },\n" +
+                "  \"licenseInfo\" : \"\"\n" +
+                "}", oofRequestOutput);
     }
 
-    @Test(expected = Test.None.class)
+    @Test
     public void testAsyncResponse_success() throws BadResponseException, JsonProcessingException {
         String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"status\", \"requestStatus\": \"accepted\"}";
 

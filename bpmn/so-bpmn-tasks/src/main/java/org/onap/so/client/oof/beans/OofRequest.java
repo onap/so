@@ -23,7 +23,6 @@ package org.onap.so.client.oof.beans;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.slf4j.Logger;
@@ -37,16 +36,16 @@ public class OofRequest implements Serializable{
     private static final long serialVersionUID = -1541132882892163132L;
     private static final Logger logger = LoggerFactory.getLogger(OofRequest.class);
 
-    @JsonRawValue
+
     @JsonProperty("requestInfo")
     private RequestInfo requestInformation;
-    @JsonRawValue
+
     @JsonProperty("serviceInfo")
     private ServiceInfo serviceInformation;
-    @JsonRawValue
+
     @JsonProperty("placementInfo")
     private PlacementInfo placementInformation;
-    @JsonRawValue
+
     @JsonProperty("licenseInfo")
     private String licenseInformation;
 

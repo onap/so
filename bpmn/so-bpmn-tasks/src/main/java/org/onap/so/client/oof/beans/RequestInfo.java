@@ -26,7 +26,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -139,11 +138,6 @@ public class RequestInfo implements Serializable {
     @JsonProperty("timeout")
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("transactionId", transactionId).append("requestId", requestId).append("callbackUrl", callbackUrl).append("sourceId", sourceId).append("requestType", requestType).append("numSolutions", numSolutions).append("optimizers", optimizers).append("timeout", timeout).toString();
     }
 
 }
