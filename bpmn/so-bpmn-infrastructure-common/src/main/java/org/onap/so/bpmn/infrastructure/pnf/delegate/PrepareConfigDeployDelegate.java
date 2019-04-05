@@ -95,8 +95,13 @@ public class PrepareConfigDeployDelegate extends PrepareCdsCallDelegate {
             Optional<Pnf> pnfOptional = pnfManagement.getEntryFor(pnfName);
             if ( pnfOptional.isPresent()){
                 Pnf pnf = pnfOptional.get();
-                configDeployProperties.setPnfIpV4Address(pnf.getPnfIpv4Address());
-                configDeployProperties.setPnfIpV6Address(pnf.getPnfIpv6Address());
+
+                /**
+                 * PRH patches the AAI with oam address.
+                 * Use ipaddress-v4-oam and ipaddress-v6-oam for the config deploy request.
+                 */
+                configDeployProperties.setPnfIpV4Address(pnf.getIpaddressV4Oam());
+                configDeployProperties.setPnfIpV6Address(pnf.getIpaddressV6Oam());
             } else {
                 exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE, "AAI entry for PNF: " + pnfName + " does not exist");
             }
