@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -87,11 +86,6 @@ public class PlacementDemand implements Serializable {
     @JsonProperty("resourceModelInfo")
     public void setResourceModelInfo(ResourceModelInfo resourceModelInfo) {
         this.resourceModelInfo = resourceModelInfo;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("resourceModuleName", resourceModuleName).append("serviceResourceId", serviceResourceId).append("tenantId", tenantId).append("resourceModelInfo", resourceModelInfo).toString();
     }
 
 }

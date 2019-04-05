@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -74,11 +73,6 @@ public class ServiceInfo implements Serializable {
     @JsonProperty("modelInfo")
     public void setModelInfo(ModelInfo modelInfo) {
         this.modelInfo = modelInfo;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId).append("serviceName", serviceName).append("modelInfo", modelInfo).toString();
     }
 
 }
