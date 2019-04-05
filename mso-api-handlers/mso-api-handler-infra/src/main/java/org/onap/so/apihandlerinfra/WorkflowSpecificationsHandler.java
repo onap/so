@@ -85,6 +85,6 @@ public class WorkflowSpecificationsHandler {
 			throw validateException;
 		}
 		
-		return builder.buildResponse(HttpStatus.SC_ACCEPTED, "", jsonResponse, apiVersion);
+		return builder.buildResponse(HttpStatus.SC_OK, "", jsonResponse, apiVersion);
     }    
 }
