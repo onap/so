@@ -4,8 +4,6 @@
  * ================================================================================
  * Copyright (C) 2019 Samsung Intellectual Property. All rights reserved.
  * ================================================================================
- * Modifications Copyright (c) 2019 Samsung
- * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +29,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
+import static org.onap.so.openstack.utils.MsoMulticloudUtils.MULTICLOUD_QUERY_BODY_NULL;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -121,6 +120,18 @@ public class MsoMulticloudUtilsTest extends BaseTest {
     public void queryStack() throws MsoException {
         StackInfo result = multicloudUtils.queryStack("MTN13", "CloudOwner", "TEST-tenant", "instanceId");
         assertTrue(HeatStatus.NOTFOUND == result.getStatus());
+    }
+
+    @Test
+    public void queryStackWithNullMulticloudQueryBody() throws MsoException {
+        wireMockServer.stubFor(get(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/instanceId"))
+            .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                .withBody(CREATE_STACK_RESPONSE)
+                .withStatus(HttpStatus.SC_OK)));
+
+        StackInfo result = multicloudUtils.queryStack("MTN13", "CloudOwner", "TEST-tenant", "instanceId");
+        assertTrue(HeatStatus.FAILED == result.getStatus());
+        assertEquals(MULTICLOUD_QUERY_BODY_NULL, result.getStatusMessage());
     }
 
     @Test(expected = VduException.class)

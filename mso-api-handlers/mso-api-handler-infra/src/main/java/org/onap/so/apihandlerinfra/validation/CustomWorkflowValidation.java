@@ -4,6 +4,7 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
+ * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,44 +22,31 @@
 
 package org.onap.so.apihandlerinfra.validation;
 
-import java.util.List;
-import java.util.Map;
-
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 
 import com.google.common.base.Strings;
 
-public class CustomWorkflowValidation implements ValidationRule{
-    
+public class CustomWorkflowValidation implements ValidationRule {
+
 	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-    	RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
-    	CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails ().getCloudConfiguration();
-    	String workflowUuid = info.getInstanceIdMap().get("workflowUuid");
-    	
+	public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+		RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
+		CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails().getCloudConfiguration();
+
 		if (cloudConfiguration == null) {
-			throw new ValidationException ("cloudConfiguration");
-		}else if (Strings.isNullOrEmpty((cloudConfiguration.getCloudOwner ()))) {
-    		throw new ValidationException ("cloudOwner");			
-		}else if (Strings.isNullOrEmpty((cloudConfiguration.getLcpCloudRegionId ()))) {
-    		throw new ValidationException ("lcpCloudRegionId");
-    	}else if (Strings.isNullOrEmpty((cloudConfiguration.getTenantId ()))) {
-    		throw new ValidationException ("tenantId");
-    	}
-    	if(requestParameters == null){
-    		throw new ValidationException("requestParameters");
-    	}
-    	
-    	List<Map<String, Object>> userParams = requestParameters.getUserParams();
-    	if (!validateCustomUserParams(userParams, workflowUuid)) {
-    		throw new ValidationException("userParams");
-    	}
-        return info;
-	}
-	
-	private boolean validateCustomUserParams(List<Map<String, Object>> userParams, String workflowUuid) {
-		return true;
+			throw new ValidationException("cloudConfiguration");
+		} else if (Strings.isNullOrEmpty((cloudConfiguration.getCloudOwner()))) {
+			throw new ValidationException("cloudOwner");
+		} else if (Strings.isNullOrEmpty((cloudConfiguration.getLcpCloudRegionId()))) {
+			throw new ValidationException("lcpCloudRegionId");
+		} else if (Strings.isNullOrEmpty((cloudConfiguration.getTenantId()))) {
+			throw new ValidationException("tenantId");
+		}
+		if (requestParameters == null) {
+			throw new ValidationException("requestParameters");
+		}
+		return info;
 	}
 }

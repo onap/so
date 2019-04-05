@@ -71,6 +71,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     public static final String VNF_ID = "vnf_id";
     public static final String VF_MODULE_ID = "vf_module_id";
     public static final String TEMPLATE_TYPE = "template_type";
+    public static final String MULTICLOUD_QUERY_BODY_NULL = "multicloudQueryBody is null";
     public static final List<String> MULTICLOUD_INPUTS =
             Arrays.asList(OOF_DIRECTIVES, SDNC_DIRECTIVES, USER_DIRECTIVES, TEMPLATE_TYPE);
 
@@ -302,11 +303,16 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
                 returnInfo.setStatusMessage(response.getStatusInfo().getReasonPhrase());
             } else if (response.getStatus() == Response.Status.OK.getStatusCode() && response.hasEntity()) {
                 multicloudQueryBody = getQueryBody((java.io.InputStream)response.getEntity());
-                returnInfo.setCanonicalName(stackName + "/" + multicloudQueryBody.getWorkloadId());
-                returnInfo.setStatus(getHeatStatus(multicloudQueryBody.getWorkloadStatus()));
-                returnInfo.setStatusMessage(multicloudQueryBody.getWorkloadStatus());
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Multicloud Create Response Body: " + multicloudQueryBody.toString());
+                if (multicloudQueryBody != null) {
+                    returnInfo.setCanonicalName(stackName + "/" + multicloudQueryBody.getWorkloadId());
+                    returnInfo.setStatus(getHeatStatus(multicloudQueryBody.getWorkloadStatus()));
+                    returnInfo.setStatusMessage(multicloudQueryBody.getWorkloadStatus());
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Multicloud Create Response Body: " + multicloudQueryBody.toString());
+                    }
+                } else {
+                    returnInfo.setStatus(HeatStatus.FAILED);
+                    returnInfo.setStatusMessage(MULTICLOUD_QUERY_BODY_NULL);
                 }
             } else {
                 returnInfo.setStatus(HeatStatus.FAILED);
@@ -624,7 +630,9 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
     }
 
     private HeatStatus mapResponseToHeatStatus(Response response) {
-        if (response.getStatusInfo().getStatusCode() == Response.Status.OK.getStatusCode()) {
+        if (response == null) {
+            return HeatStatus.FAILED;
+        } else if (response.getStatusInfo().getStatusCode() == Response.Status.OK.getStatusCode()) {
             return HeatStatus.CREATED;
         } else if (response.getStatusInfo().getStatusCode() == Response.Status.CREATED.getStatusCode()) {
             return HeatStatus.CREATED;
