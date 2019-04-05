@@ -228,7 +228,13 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             if (logger.isDebugEnabled()) {
                 logger.debug("Multicloud Create Response Body: {}", multicloudResponseBody);
             }
-            return getStackStatus(cloudSiteId, cloudOwner, tenantId, canonicalName, pollForCompletion, timeoutMinutes, backout);
+            StackInfo stackStatus = getStackStatus(cloudSiteId, cloudOwner, tenantId, canonicalName, pollForCompletion, timeoutMinutes, backout);
+
+            if (HeatStatus.CREATED.equals(stackStatus.getStatus())) {
+                multicloudAaiUpdate(cloudSiteId, cloudOwner, tenantId, genericVnfId, vfModuleId, multicloudResponseBody.getWorkloadId(), pollForCompletion, timeoutMinutes);
+            }
+
+            return stackStatus;
         }
         StringBuilder stackErrorStatusReason = new StringBuilder(response.getStatusInfo().getReasonPhrase());
         if (null != multicloudResponseBody) {
@@ -287,7 +293,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         if (multicloudClient != null) {
             Response response = multicloudClient.get();
             if (logger.isDebugEnabled()) {
-                logger.debug (String.format("Mulicloud GET Response: %s", response.toString()));
+                logger.debug (String.format("Multicloud GET Response: %s", response.toString()));
             }
 
             MulticloudQueryResponse multicloudQueryBody = null;
@@ -369,6 +375,81 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         if ("UPDATE_FAILED".equals(workloadStatus)) return HeatStatus.FAILED;
         if ("UPDATE_COMPLETE".equals(workloadStatus)) return HeatStatus.UPDATED;
         return HeatStatus.UNKNOWN;
+    }
+
+    private void multicloudAaiUpdate(String cloudSiteId, String cloudOwner, String tenantId, String genericVnfId, String vfModuleId, String workloadId,
+            boolean pollForCompletion, int timeoutMinutes) {
+
+        MulticloudRequest multicloudRequest= new MulticloudRequest();
+
+        multicloudRequest.setGenericVnfId(genericVnfId);
+        multicloudRequest.setVfModuleId(vfModuleId);
+
+        String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, workloadId);
+        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
+
+        if (multicloudClient == null) {
+            if (logger.isDebugEnabled())
+                logger.debug("Multicloud client could not be initialized");
+        }
+
+        Response response = multicloudClient.post(multicloudRequest);
+        if (response.getStatus() != Response.Status.ACCEPTED.getStatusCode()) {
+            if (logger.isDebugEnabled())
+                logger.debug("Multicloud AAI update request failed: " + response.getStatus() + response.getStatusInfo());
+            return;
+        }
+
+        if (!pollForCompletion) {
+            return;
+        }
+
+        int updatePollInterval = Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
+        int pollTimeout = (timeoutMinutes * 60) + updatePollInterval;
+        boolean updateTimedOut = false;
+        logger.debug("updatePollInterval=" + updatePollInterval + ", pollTimeout=" + pollTimeout);
+
+        StackInfo stackInfo = null;
+        while (true) {
+            try {
+                stackInfo = queryStack(cloudSiteId, cloudOwner, tenantId, workloadId);
+                if (logger.isDebugEnabled())
+                    logger.debug (stackInfo.getStatus() + " (" + workloadId + ")");
+
+                if (HeatStatus.UPDATING.equals(stackInfo.getStatus())) {
+                    if (pollTimeout <= 0) {
+                        // Note that this should not occur, since there is a timeout specified
+                        // in the Openstack (multicloud?) call.
+                        if (logger.isDebugEnabled())
+                            logger.debug("Multicloud AAI update timeout failure: {} {} {} {}", cloudOwner, cloudSiteId, tenantId, workloadId);
+                        updateTimedOut = true;
+                        break;
+                    }
+
+                    sleep(updatePollInterval * 1000L);
+
+                    pollTimeout -= updatePollInterval;
+                    if (logger.isDebugEnabled())
+                        logger.debug("pollTimeout remaining: " + pollTimeout);
+                } else {
+                    break;
+                }
+            } catch (MsoException me) {
+                if (logger.isDebugEnabled())
+                    logger.debug("Multicloud AAI update exception: {} {} {} {}", cloudOwner, cloudSiteId, tenantId, workloadId, me);
+                return;
+            }
+        }
+        if (updateTimedOut) {
+            if (logger.isDebugEnabled())
+                logger.debug("Multicloud AAI update request failed: {} {}", response.getStatus(), response.getStatusInfo().toString());
+        } else if (!HeatStatus.UPDATED.equals(stackInfo.getStatus())) {
+            if (logger.isDebugEnabled())
+                logger.debug("Multicloud AAI update request failed: {} {}", response.getStatus(), response.getStatusInfo().toString());
+        } else {
+            if (logger.isDebugEnabled())
+                logger.debug("Multicloud AAI update successful: {} {}", response.getStatus(), response.getStatusInfo().toString());
+        }
     }
 
     private StackInfo getStackStatus(String cloudSiteId, String cloudOwner, String tenantId, String instanceId) throws MsoException {
@@ -596,7 +677,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         return null;
     }
 
-    private String getMulticloudEndpoint(String cloudSiteId, String cloudOwner, String workloadId) throws MsoCloudSiteNotFound {
+    private String getMulticloudEndpoint(String cloudSiteId, String cloudOwner, String workloadId) {
         String msbIp = System.getenv().get(ONAP_IP);
         if (null == msbIp || msbIp.isEmpty()) {
             msbIp = environment.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
