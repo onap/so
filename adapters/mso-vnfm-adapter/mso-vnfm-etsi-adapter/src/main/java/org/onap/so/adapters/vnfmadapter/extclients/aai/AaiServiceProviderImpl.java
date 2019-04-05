@@ -20,11 +20,13 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
+import java.util.List;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Tenant;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.slf4j.Logger;
@@ -49,6 +51,17 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
                 .get(GenericVnf.class, AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId))
                 .orElseGet(() -> {
                     logger.debug("No vnf found in AAI with ID: {}", vnfId);
+                    return null;
+                });
+    }
+
+    @Override
+    public List<GenericVnf> invokeQueryGenericVnf(final String selfLink) {
+        return aaiClientProvider.getAaiClient()
+                .get(List.class,
+                        AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNFS).queryParam("selflink", selfLink))
+                .orElseGet(() -> {
+                    logger.debug("No vnf found in AAI with selflink: {}", selfLink);
                     return null;
                 });
     }
@@ -86,6 +99,13 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     public void invokePutGenericVnf(final GenericVnf vnf) {
         aaiClientProvider.getAaiClient()
                 .update(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId()), vnf);
+    }
+
+    @Override
+    public void invokePutVserver(final String cloudOwner, final String cloudRegion, final String tenant,
+            final Vserver vserver) {
+        aaiClientProvider.getAaiClient().update(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
+                cloudRegion, tenant, vserver.getVserverId()), vserver);
     }
 
     @Override

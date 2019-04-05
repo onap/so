@@ -30,6 +30,8 @@ import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.aai.domain.yang.Tenant;
+import org.onap.aai.domain.yang.Vserver;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIVersion;
@@ -170,6 +172,45 @@ public class AaiHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Create a vserver.
+     *
+     * @param vnfc the VNFC to base the vserver on
+     * @return the vserver
+     */
+    public Vserver createVserver(final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc) {
+        final Vserver vserver = new Vserver();
+        vserver.setVserverId(vnfc.getComputeResource().getResourceId());
+        vserver.setVserverName(vnfc.getId());
+        vserver.setProvStatus("active");
+        vserver.setVserverSelflink("Not available");
+        return vserver;
+    }
+
+    /**
+     * Add a relationship to the given vserver to the given VNF.
+     *
+     * @param vnf the vserver
+     * @param vnfmId the ID of the VNF
+     */
+    public void addRelationshipFromVserverVnfToGenericVnf(final Vserver vserver, final String vnfId) {
+        if (vserver.getRelationshipList() == null) {
+            vserver.setRelationshipList(new RelationshipList());
+        }
+        final RelationshipList vserverRelationshiplist = vserver.getRelationshipList();
+        vserverRelationshiplist.getRelationship().add(createRelationshipToGenericVnf(vnfId));
+    }
+
+    private Relationship createRelationshipToGenericVnf(final String vnfId) {
+        final Relationship relationship = new Relationship();
+        relationship.setRelatedTo("generic-vnf");
+        relationship.setRelationshipLabel("tosca.relationships.HostedOn");
+        relationship.setRelatedLink("/aai/" + AAIVersion.LATEST
+                + AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).build().toString());
+        relationship.getRelationshipData().add(createRelationshipData("generic-vnf.vnf-id", vnfId));
+        return relationship;
     }
 
 }
