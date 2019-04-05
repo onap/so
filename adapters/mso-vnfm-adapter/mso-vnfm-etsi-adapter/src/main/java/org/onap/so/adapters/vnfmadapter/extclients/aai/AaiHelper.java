@@ -95,9 +95,19 @@ public class AaiHelper {
      * @return the VNFM to use, or <code>null</code> if no VNFM has been assigned yet
      */
     public EsrVnfm getAssignedVnfm(final GenericVnf vnf) {
-        final Relationship relationship = getRelationship(vnf, "esr-vnfm");
-        final String vnfmId = getRelationshipKey(relationship, "esr-vnfm.vnfm-id");
+        final String vnfmId = getIdOfAssignedVnfm(vnf);
         return vnfmId == null ? null : aaiServiceProvider.invokeGetVnfm(vnfmId);
+    }
+
+    /**
+     * Get the ID of the VNFM assigned for use for the given generic VNF.
+     *
+     * @param vnf the generic VNF
+     * @return the ID of the VNFM to use, or <code>null</code> if no VNFM has been assigned yet
+     */
+    public String getIdOfAssignedVnfm(final GenericVnf vnf) {
+        final Relationship relationship = getRelationship(vnf, "esr-vnfm");
+        return getRelationshipKey(relationship, "esr-vnfm.vnfm-id");
     }
 
     /**

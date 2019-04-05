@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.UUID;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.JobNotFoundException;
 import org.onap.vnfmadapter.v1.model.OperationEnum;
 import org.onap.vnfmadapter.v1.model.OperationStateEnum;
 import org.onap.vnfmadapter.v1.model.OperationStatusRetrievalStatusEnum;
@@ -82,7 +83,7 @@ public class JobManager {
         final QueryJobResponse response = new QueryJobResponse();
 
         if (vnfmOperation == null) {
-            return null;
+            throw new JobNotFoundException("No job found with ID: " + jobId);
         }
 
         final Optional<InlineResponse200> operationOptional =

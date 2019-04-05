@@ -21,7 +21,6 @@
 package org.onap.so.adapters.vnfmadapter.lifecycle;
 
 import com.google.common.base.Optional;
-import java.util.UUID;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
@@ -30,7 +29,11 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest.TerminationTypeEnum;
 import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfNotFoundException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
@@ -87,12 +90,6 @@ public class LifecycleManager {
         return response;
     }
 
-    private GenericVnf getGenericVnfFromAai(final String vnfIdInAai) {
-        final GenericVnf genericVnf = aaiServiceProvider.invokeGetGenericVnf(vnfIdInAai);
-        logger.debug("Retrieved generic VNF from AAI: " + genericVnf);
-        return genericVnf;
-    }
-
     private void checkIfVnfAlreadyExistsInVnfm(final GenericVnf genericVnf) {
         if (genericVnf.getSelflink() != null && !genericVnf.getSelflink().isEmpty()) {
             Optional<InlineResponse201> response = Optional.absent();
@@ -132,11 +129,35 @@ public class LifecycleManager {
      * @return the response to the request
      */
     public DeleteVnfResponse deleteVnf(final String vnfIdInAai) {
-        // vnfm ID and operation ID set to random value for now, will be set correctly once we implement
-        // terminate call towards the VNFM
-        final String jobId = jobManager.createJob(UUID.randomUUID().toString(), UUID.randomUUID().toString(), true);
-        final DeleteVnfResponse response = new DeleteVnfResponse();
-        response.setJobId(jobId);
-        return response;
+        final GenericVnf genericVnf = getGenericVnfFromAai(vnfIdInAai);
+        final String vnfmId = getIdOfAssignedVnfm(genericVnf);
+
+        final String operationId = sendTerminateRequestToVnfm(genericVnf);
+        final String jobId = jobManager.createJob(vnfmId, operationId, true);
+
+        return new DeleteVnfResponse().jobId(jobId);
+    }
+
+    private String sendTerminateRequestToVnfm(final GenericVnf genericVnf) {
+        final TerminateVnfRequest terminateVnfRequest = new TerminateVnfRequest();
+        terminateVnfRequest.setTerminationType(TerminationTypeEnum.FORCEFUL);
+        return vnfmServiceProvider.terminateVnf(genericVnf.getSelflink(), terminateVnfRequest);
+    }
+
+    private GenericVnf getGenericVnfFromAai(final String vnfIdInAai) {
+        final GenericVnf genericVnf = aaiServiceProvider.invokeGetGenericVnf(vnfIdInAai);
+        if (genericVnf == null) {
+            throw new VnfNotFoundException("VNF not found in AAI: " + vnfIdInAai);
+        }
+        logger.debug("Retrieved generic VNF from AAI: " + genericVnf);
+        return genericVnf;
+    }
+
+    private String getIdOfAssignedVnfm(final GenericVnf genericVnf) {
+        final String vnfmId = aaiHelper.getIdOfAssignedVnfm(genericVnf);
+        if (vnfmId == null) {
+            throw new VnfmNotFoundException("No VNFM found in AAI for VNF " + genericVnf.getVnfId());
+        }
+        return vnfmId;
     }
 }

@@ -87,9 +87,12 @@ public class VnfmAdapterController {
 
         logger.info("REST request vnfCreate with body: {}", createVnfRequest);
 
-        final CreateVnfResponse createVnfResponse = lifecycleManager.createVnf(vnfId, createVnfRequest);
-        clearLoggingMDCs();
-        return new ResponseEntity<>(createVnfResponse, HttpStatus.ACCEPTED);
+        try {
+            final CreateVnfResponse createVnfResponse = lifecycleManager.createVnf(vnfId, createVnfRequest);
+            return new ResponseEntity<>(createVnfResponse, HttpStatus.ACCEPTED);
+        } finally {
+            clearLoggingMDCs();
+        }
     }
 
     @DeleteMapping(value = "/vnfs/{vnfId}")
@@ -113,9 +116,12 @@ public class VnfmAdapterController {
 
         logger.info("REST request vnfDelete for VNF: {}", vnfId);
 
-        final DeleteVnfResponse response = lifecycleManager.deleteVnf(vnfId);
-        clearLoggingMDCs();
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        try {
+            final DeleteVnfResponse response = lifecycleManager.deleteVnf(vnfId);
+            return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        } finally {
+            clearLoggingMDCs();
+        }
     }
 
     @GetMapping(value = "/jobs/{jobId}")
@@ -136,12 +142,12 @@ public class VnfmAdapterController {
 
         setLoggingMDCs(requestId, partnerName, invocationId);
 
-        final QueryJobResponse response = jobManager.getVnfmOperation(jobId);
-        if (response == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        try {
+            final QueryJobResponse response = jobManager.getVnfmOperation(jobId);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } finally {
+            clearLoggingMDCs();
         }
-        return new ResponseEntity<>(response, HttpStatus.OK);
-
     }
 
 

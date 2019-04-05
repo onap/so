@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
 
 /**
  * Provides methods for invoking REST calls to a VNFM.
@@ -46,6 +47,15 @@ public interface VnfmServiceProvider {
      * @return the operation ID of the instantiation operation
      */
     String instantiateVnf(final String vnfSelfLink, final InstantiateVnfRequest instantiateVnfRequest);
+
+    /**
+     * Invoke a terminate request for a VNF.
+     *
+     * @param vnfSelfLink the link to he VNF on the VNFM
+     * @param terminateVnfRequest the terminate request
+     * @return the operation ID of the termination operation
+     */
+    String terminateVnf(final String vnfSelfLink, final TerminateVnfRequest terminateVnfRequest);
 
     /**
      * Invoke a get request for a VNFM operation.

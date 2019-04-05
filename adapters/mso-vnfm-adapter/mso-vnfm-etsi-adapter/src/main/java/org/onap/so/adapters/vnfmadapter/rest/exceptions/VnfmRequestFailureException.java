@@ -31,5 +31,9 @@ public class VnfmRequestFailureException extends RuntimeException {
         super(message);
     }
 
+    public VnfmRequestFailureException(final String message, final Throwable throwable) {
+        super(message, throwable);
+    }
+
 }
 

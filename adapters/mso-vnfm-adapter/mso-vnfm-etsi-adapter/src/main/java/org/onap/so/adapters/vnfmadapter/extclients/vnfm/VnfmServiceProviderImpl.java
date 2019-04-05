@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmRequestFailureException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
@@ -56,13 +57,50 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     @Override
     public String instantiateVnf(final String vnfSelfLink, final InstantiateVnfRequest instantiateVnfRequest) {
         logger.debug("Sending instantiate request " + instantiateVnfRequest + " to : " + vnfSelfLink);
-        final ResponseEntity<Void> response = httpServiceProvider.getHttpResponse(vnfSelfLink, Void.class);
+
+        ResponseEntity<Void> response = null;
+        try {
+            response = httpServiceProvider.postHttpRequest(instantiateVnfRequest, vnfSelfLink + "/instantiate",
+                    Void.class);
+        } catch (final Exception exception) {
+            final String errorMessage =
+                    "Instantiate request to " + vnfSelfLink + " resulted in exception" + instantiateVnfRequest;
+            logger.error(errorMessage, exception);
+            throw new VnfmRequestFailureException(errorMessage, exception);
+        }
         if (response.getStatusCode() != HttpStatus.ACCEPTED) {
-            throw new VnfmRequestFailureException("Instantiate request to " + vnfSelfLink + " return status code: "
-                    + response.getStatusCode() + ", request: " + instantiateVnfRequest);
+            final String errorMessage = "Instantiate request to " + vnfSelfLink + " returned status code: "
+                    + response.getStatusCode() + ", request: " + instantiateVnfRequest;
+            logger.error(errorMessage);
+            throw new VnfmRequestFailureException(errorMessage);
         }
         final String locationHeader = response.getHeaders().get("Location").iterator().next();
         return locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
+
+    }
+
+    @Override
+    public String terminateVnf(final String vnfSelfLink, final TerminateVnfRequest terminateVnfRequest) {
+        logger.debug("Sending terminate request " + terminateVnfRequest + " to : " + vnfSelfLink);
+
+        ResponseEntity<Void> response = null;
+        try {
+            response = httpServiceProvider.postHttpRequest(terminateVnfRequest, vnfSelfLink + "/terminate", Void.class);
+        } catch (final Exception exception) {
+            final String errorMessage =
+                    "Terminate request to " + vnfSelfLink + " resulted in exception" + terminateVnfRequest;
+            logger.error(errorMessage, exception);
+            throw new VnfmRequestFailureException(errorMessage, exception);
+        }
+        if (response.getStatusCode() != HttpStatus.ACCEPTED) {
+            final String errorMessage = "Terminate request to " + vnfSelfLink + " returned status code: "
+                    + response.getStatusCode() + ", request: " + terminateVnfRequest;
+            logger.error(errorMessage);
+            throw new VnfmRequestFailureException(errorMessage);
+        }
+        final String locationHeader = response.getHeaders().get("Location").iterator().next();
+        return locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
+
     }
 
     @Override

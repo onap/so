@@ -24,14 +24,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception for VNFM not found.
+ * Exception for VNF not found.
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class VnfmNotFoundException extends RuntimeException {
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class VnfNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 6398018034431666933L;
 
-    public VnfmNotFoundException(final String message) {
+    public VnfNotFoundException(final String message) {
         super(message);
     }
 
