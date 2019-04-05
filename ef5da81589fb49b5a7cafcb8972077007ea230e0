@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f3eec9bf_c59d517b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/adapter/vnfm/tasks/MonitorVnfmNodeTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2085
+      },
+      "writtenOn": "2019-04-05T13:01:19Z",
+      "side": 1,
+      "message": "Question: Does the orchestrationStatus which is assigned mean \u0027Delete\u0027?",
+      "range": {
+        "startLine": 68,
+        "startChar": 28,
+        "endLine": 68,
+        "endChar": 104
+      },
+      "revId": "ef5da81589fb49b5a7cafcb8972077007ea230e0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
