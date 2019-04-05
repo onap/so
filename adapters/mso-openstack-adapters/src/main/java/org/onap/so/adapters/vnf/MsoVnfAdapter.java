@@ -28,6 +28,7 @@ import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.ws.Holder;
 
 import org.onap.so.adapters.vnf.exceptions.VnfAlreadyExists;
@@ -35,6 +36,7 @@ import org.onap.so.adapters.vnf.exceptions.VnfException;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
+import org.onap.so.openstack.mappers.MapAdapter;
 
 @WebService (name="VnfAdapter", targetNamespace="http://org.onap.so/vnf")
 public interface MsoVnfAdapter
@@ -51,7 +53,7 @@ public interface MsoVnfAdapter
                             @WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
                             @WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
-							@WebParam(name="inputs") Map<String,Object> inputs,
+							@WebParam(name="inputs") @XmlJavaTypeAdapter(MapAdapter.class) Map<String,Object> inputs,
 							@WebParam(name="failIfExists") Boolean failIfExists,
 							@WebParam(name="backout") Boolean backout,
 							@WebParam(name="enableBridge") Boolean enableBridge,
@@ -70,7 +72,7 @@ public interface MsoVnfAdapter
 							@WebParam(name="vnfName") @XmlElement(required=true) String vnfName,
 							@WebParam(name="requestType") @XmlElement(required=false) String requestType,
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
-							@WebParam(name="inputs") Map<String,Object> inputs,
+							@WebParam(name="inputs") @XmlJavaTypeAdapter(MapAdapter.class) Map<String,Object> inputs,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="outputs", mode=Mode.OUT) Holder<Map<String,String>> outputs,
 							@WebParam(name="rollback", mode=Mode.OUT) Holder<VnfRollback> rollback )
@@ -114,7 +116,7 @@ public interface MsoVnfAdapter
 							@WebParam(name="volumeGroupHeatStackId") @XmlElement(required=false) String volumeGroupHeatStackId,
 							@WebParam(name="baseVfHeatStackId") @XmlElement(required=false) String baseVfHeatStackId,
 							@WebParam(name = "modelCustomizationUuid") @XmlElement(required = false) String modelCustomizationUuid,
-							@WebParam(name="inputs") Map<String,Object> inputs,
+							@WebParam(name="inputs") @XmlJavaTypeAdapter(MapAdapter.class) Map<String,Object> inputs,
 							@WebParam(name="failIfExists") Boolean failIfExists,
 							@WebParam(name="backout") Boolean backout,
 							@WebParam(name="enableBridge") Boolean enableBridge,
@@ -145,7 +147,7 @@ public interface MsoVnfAdapter
 							@WebParam(name="baseVfHeatStackId") @XmlElement(required=false) String baseVfHeatStackId,
 							@WebParam(name="vfModuleStackId") @XmlElement(required=false) String vfModuleStackId,
 							@WebParam(name = "modelCustomizationUuid") @XmlElement(required = false) String modelCustomizationUuid,
-							@WebParam(name="inputs") Map<String,Object> inputs,
+							@WebParam(name="inputs") @XmlJavaTypeAdapter(MapAdapter.class) Map<String,Object> inputs,
 							@WebParam(name="request") MsoRequest msoRequest,
 							@WebParam(name="outputs", mode=Mode.OUT) Holder<Map<String,String>> outputs,
 							@WebParam(name="rollback", mode=Mode.OUT) Holder<VnfRollback> rollback )
