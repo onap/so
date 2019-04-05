@@ -24,7 +24,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -113,11 +112,6 @@ public class ModelInfo implements Serializable {
     @JsonProperty("modelCustomizationName")
     public void setModelCustomizationName(String modelCustomizationName) {
         this.modelCustomizationName = modelCustomizationName;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("modelType", modelType).append("modelInvariantId", modelInvariantId).append("modelVersionId", modelVersionId).append("modelName", modelName).append("modelVersion", modelVersion).append("modelCustomizationName", modelCustomizationName).toString();
     }
 
 }
