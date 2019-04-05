@@ -552,6 +552,21 @@ public class StubResponseAAI {
 				  .withBodyFile(responseFile)));
 	}
 
+    public static void MockPostNetwork(WireMockServer wireMockServer, String networkId) {
+        wireMockServer.stubFor(post(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network/" + networkId))
+            .willReturn(aResponse()
+                .withStatus(201)
+                .withHeader("Content-Type", "text/xml")));
+    }
+
+    public static void MockPostNetworkSubnet(WireMockServer wireMockServer, String networkId, String subnetId) {
+        wireMockServer.stubFor(post(urlMatching(
+            "/aai/v[0-9]+/network/l3-networks/l3-network/" + networkId + "/subnets/subnet/" + subnetId))
+            .willReturn(aResponse()
+                .withStatus(201)
+                .withHeader("Content-Type", "text/xml")));
+    }
+
 	public static void MockGetNetworkName(WireMockServer wireMockServer, String networkPolicyName, String responseFile, int statusCode) {
 		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/l3-networks/l3-network[?]network-name=" + networkPolicyName))
 				  .willReturn(aResponse()
@@ -560,13 +575,19 @@ public class StubResponseAAI {
 				  .withBodyFile(responseFile)));
 	}
 
-	public static void MockGetNetworkVpnBinding(WireMockServer wireMockServer, String responseFile, String vpnBinding) {
-		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/vpn-bindings/vpn-binding/"+vpnBinding + "[?]depth=all"))
-				.willReturn(aResponse()
-						.withStatus(200)
-						.withHeader("Content-Type", "text/xml")
-						.withBodyFile(responseFile)));
-	}
+    public static void MockGetNetworkVpnBinding(WireMockServer wireMockServer, String responseFile, String vpnBinding) {
+        MockGetNetworkVpnBindingWithDepth(wireMockServer, responseFile, vpnBinding, "all");
+    }
+
+    public static void MockGetNetworkVpnBindingWithDepth(WireMockServer wireMockServer, String responseFile,
+        String vpnBinding, String depth) {
+        wireMockServer.stubFor(
+            get(urlMatching("/aai/v[0-9]+/network/vpn-bindings/vpn-binding/" + vpnBinding + "[?]depth=" + depth))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "text/xml")
+                    .withBodyFile(responseFile)));
+    }
 
 	public static void MockGetNetworkPolicy(WireMockServer wireMockServer, String responseFile, String policy) {
 		wireMockServer.stubFor(get(urlMatching("/aai/v[0-9]+/network/network-policies/network-policy/"+policy + "[?]depth=all"))
