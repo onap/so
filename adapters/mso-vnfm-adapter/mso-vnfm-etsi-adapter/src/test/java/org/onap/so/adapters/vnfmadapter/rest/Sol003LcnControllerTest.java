@@ -25,8 +25,10 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import com.google.gson.Gson;
 import java.net.URI;
@@ -125,8 +127,33 @@ public class Sol003LcnControllerTest {
     }
 
     @Test
+    public void lcnNotification_InstantiateStartingOrProcessing_NoAction()
+            throws URISyntaxException, InterruptedException {
+        final VnfLcmOperationOccurrenceNotification startingNotification = new VnfLcmOperationOccurrenceNotification();
+        startingNotification.setOperation(OperationEnum.INSTANTIATE);
+        startingNotification.setOperationState(OperationStateEnum.STARTING);
+
+        ResponseEntity<Void> response = controller.lcnVnfLcmOperationOccurrenceNotificationPost(startingNotification);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        verifyZeroInteractions(aaiResourcesClient);
+
+        final VnfLcmOperationOccurrenceNotification processingNotification =
+                new VnfLcmOperationOccurrenceNotification();
+        processingNotification.setOperation(OperationEnum.INSTANTIATE);
+        processingNotification.setOperationState(OperationStateEnum.STARTING);
+
+        response = controller.lcnVnfLcmOperationOccurrenceNotificationPost(processingNotification);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        verifyZeroInteractions(aaiResourcesClient);
+    }
+
+    @Test
     public void lcnNotification_InstantiateCompleted_AaiUpdated() throws URISyntaxException, InterruptedException {
-        final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification = createNotification();
+        final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification =
+                createNotification(OperationEnum.INSTANTIATE);
+        addVnfcsToNotification(vnfLcmOperationOccurrenceNotification, ChangeTypeEnum.ADDED);
         final InlineResponse201 vnfInstance = createVnfInstance();
 
         mockRestServer.expect(requestTo(new URI("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm")))
@@ -169,9 +196,51 @@ public class Sol003LcnControllerTest {
         assertEquals("myTestVnfId", relationship.getRelationshipData().get(0).getRelationshipValue());
     }
 
-    private VnfLcmOperationOccurrenceNotification createNotification() {
+    @Test
+    public void lcnNotification_TerminateCompleted_AaiUpdated() throws URISyntaxException, InterruptedException {
+        final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification =
+                createNotification(OperationEnum.TERMINATE);
+        addVnfcsToNotification(vnfLcmOperationOccurrenceNotification, ChangeTypeEnum.REMOVED);
+
+        final InlineResponse201 vnfInstance = createVnfInstance();
+
+        mockRestServer.expect(requestTo(new URI("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm")))
+                .andRespond(withSuccess(gson.toJson(vnfInstance), MediaType.APPLICATION_JSON));
+
+        mockRestServer.expect(requestTo(new URI("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm")))
+                .andRespond(withStatus(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON));
+
+        final GenericVnf genericVnf = createGenericVnf("vnfmType1");
+        genericVnf.setSelflink("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm");
+        final List<GenericVnf> genericVnfs = new ArrayList<>();
+        genericVnfs.add(genericVnf);
+        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(List.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+                        "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
+
+        final ResponseEntity<Void> response =
+                controller.lcnVnfLcmOperationOccurrenceNotificationPost(vnfLcmOperationOccurrenceNotification);
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+
+        final ArgumentCaptor<GenericVnf> genericVnfArgument = ArgumentCaptor.forClass(GenericVnf.class);
+        final ArgumentCaptor<AAIResourceUri> updateUriArgument = ArgumentCaptor.forClass(AAIResourceUri.class);
+        verify(aaiResourcesClient, timeout(10000000)).update(updateUriArgument.capture(), genericVnfArgument.capture());
+        assertEquals("/network/generic-vnfs/generic-vnf/myTestVnfId", updateUriArgument.getValue().build().toString());
+        assertEquals("Assigned", genericVnfArgument.getValue().getOrchestrationStatus());
+
+        final ArgumentCaptor<AAIResourceUri> deleteUriArgument = ArgumentCaptor.forClass(AAIResourceUri.class);
+
+        verify(aaiResourcesClient, timeout(10000000)).delete(deleteUriArgument.capture());
+
+        assertEquals(
+                "/cloud-infrastructure/cloud-regions/cloud-region/" + CLOUD_OWNER + "/" + REGION + "/tenants/tenant/"
+                        + TENANT_ID + "/vservers/vserver/myVnfc1",
+                deleteUriArgument.getAllValues().get(0).build().toString());
+    }
+
+    private VnfLcmOperationOccurrenceNotification createNotification(final OperationEnum operation) {
         final VnfLcmOperationOccurrenceNotification notification = new VnfLcmOperationOccurrenceNotification();
-        notification.setOperation(OperationEnum.INSTANTIATE);
+        notification.setOperation(operation);
         notification.setOperationState(OperationStateEnum.COMPLETED);
 
         final LcnVnfLcmOperationOccurrenceNotificationLinksVnfInstance linkToVnfInstance =
@@ -181,10 +250,15 @@ public class Sol003LcnControllerTest {
                 new LcnVnfLcmOperationOccurrenceNotificationLinks().vnfInstance(linkToVnfInstance);
         notification.setLinks(operationLinks);
 
+        return notification;
+    }
+
+    private void addVnfcsToNotification(final VnfLcmOperationOccurrenceNotification notification,
+            final ChangeTypeEnum changeType) {
         final List<LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs> affectedVnfcs = new ArrayList<>();;
         final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc =
                 new LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs();
-        vnfc.changeType(ChangeTypeEnum.ADDED);
+        vnfc.changeType(changeType);
         final LcnVnfLcmOperationOccurrenceNotificationComputeResource computeResource =
                 new LcnVnfLcmOperationOccurrenceNotificationComputeResource();
         computeResource.setResourceId("myVnfc1");
@@ -192,7 +266,6 @@ public class Sol003LcnControllerTest {
         vnfc.setComputeResource(computeResource);
         affectedVnfcs.add(vnfc);
         notification.setAffectedVnfcs(affectedVnfcs);
-        return notification;
     }
 
     private InlineResponse201 createVnfInstance() {

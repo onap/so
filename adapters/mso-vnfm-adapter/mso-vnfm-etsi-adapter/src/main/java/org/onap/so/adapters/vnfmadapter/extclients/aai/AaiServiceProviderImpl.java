@@ -109,6 +109,13 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     }
 
     @Override
+    public void invokeDeleteVserver(final String cloudOwner, final String cloudRegion, final String tenant,
+            final String vserverId) {
+        aaiClientProvider.getAaiClient().delete(
+                AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion, tenant, vserverId));
+    }
+
+    @Override
     public Tenant invokeGetTenant(final String cloudOwner, final String cloudRegion, final String tenantId) {
         return aaiClientProvider.getAaiClient()
                 .get(Tenant.class,

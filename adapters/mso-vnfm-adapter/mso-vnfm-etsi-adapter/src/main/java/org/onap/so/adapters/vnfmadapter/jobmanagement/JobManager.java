@@ -110,11 +110,27 @@ public class JobManager {
             final InlineResponse200 operationResponse) {
         final OperationStateEnum operationState =
                 OperationStateEnum.fromValue(operationResponse.getOperationState().getValue());
-        if (operationState == OperationStateEnum.COMPLETED && vnfmOperation.isWaitForNotificationForSuccess()
-                && !vnfmOperation.isNotificationProcessed()) {
-            return org.onap.vnfmadapter.v1.model.OperationStateEnum.PROCESSING;
+        switch (vnfmOperation.getNotificationStatus()) {
+            case NOTIFICATION_PROCESSING_NOT_REQUIRED:
+            default:
+                return operationState;
+            case NOTIFICATION_PROCESSING_PENDING:
+                return org.onap.vnfmadapter.v1.model.OperationStateEnum.PROCESSING;
+            case NOTIFICATION_PROCEESING_SUCCESSFUL:
+                return operationState;
+            case NOTIFICATION_PROCESSING_FAILED:
+                return org.onap.vnfmadapter.v1.model.OperationStateEnum.FAILED;
         }
-        return operationState;
+    }
+
+    public void notificationProcessedForOperation(final String operationId,
+            final boolean notificationProcessingWasSuccessful) {
+        final java.util.Optional<VnfmOperation> relatedOperation = mapOfJobIdToVnfmOperation.values().stream()
+                .filter(operation -> operation.getOperationId().equals(operationId)).findFirst();
+        if (relatedOperation.isPresent()) {
+            relatedOperation.get().setNotificationProcessed(notificationProcessingWasSuccessful);
+        }
+        logger.debug("No operation found for operation ID " + operationId);
     }
 
 }
