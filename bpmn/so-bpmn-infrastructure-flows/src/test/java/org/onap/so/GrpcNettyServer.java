@@ -53,9 +53,9 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
     @Rule
     public final GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
 
-    private final List<String> messagesDelivered = new ArrayList<>();
     private final CountDownLatch allRequestsDelivered = new CountDownLatch(1);
     private final AtomicReference<StreamObserver<ExecutionServiceOutput>> responseObserverRef = new AtomicReference<>();
+    private final List<ExecutionServiceInput> detailedMessages = new ArrayList<>();
 
     @PostConstruct
     public void start() throws IOException {
@@ -71,7 +71,7 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
                     StreamObserver<ExecutionServiceInput> requestObserver = new StreamObserver<ExecutionServiceInput>() {
                         @Override
                         public void onNext(ExecutionServiceInput message) {
-                            messagesDelivered.add(message.getActionIdentifiers().getActionName());
+                            detailedMessages.add(message);
                             logger.info("Message received: {}", message);
                             ExecutionServiceOutput executionServiceOutput = ExecutionServiceOutput.newBuilder()
                                 .setActionIdentifiers(message.getActionIdentifiers())
@@ -103,8 +103,8 @@ public class GrpcNettyServer extends BluePrintProcessingServiceImplBase {
 
     }
 
-    public List<String> getMessagesDelivered() {
-        return this.messagesDelivered;
+    public List<ExecutionServiceInput> getDetailedMessages(){
+        return this.detailedMessages;
     }
 
 }

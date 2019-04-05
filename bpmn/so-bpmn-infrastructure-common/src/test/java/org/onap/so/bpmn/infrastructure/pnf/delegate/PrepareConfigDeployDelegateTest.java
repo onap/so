@@ -99,8 +99,8 @@ public class PrepareConfigDeployDelegateTest {
 
     private void mockAai() throws IOException {
         Pnf pnf = new Pnf();
-        pnf.setPnfIpv4Address(TEST_IPV4_ADDRESS);
-        pnf.setPnfIpv6Address(TEST_IPV6_ADDRESS);
+        pnf.setIpaddressV4Oam(TEST_IPV4_ADDRESS);
+        pnf.setIpaddressV6Oam(TEST_IPV6_ADDRESS);
         when(pnfManagement.getEntryFor(TEST_PNF_CORRELATION_ID)).thenReturn(Optional.of(pnf));
     }
 
