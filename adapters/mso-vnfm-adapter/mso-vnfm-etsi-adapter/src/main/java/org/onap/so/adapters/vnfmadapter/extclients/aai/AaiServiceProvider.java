@@ -92,6 +92,18 @@ public interface AaiServiceProvider {
             final Vserver vserver);
 
     /**
+     * Invoke a DELETE request for a vserver.
+     *
+     * @param cloudOwner the cloud owner
+     * @param cloudRegion the cloud region
+     * @param tenantId the ID of the tenant
+     * @param vserver the ID of the vserver
+     * @return
+     */
+    void invokeDeleteVserver(final String cloudOwner, final String cloudRegion, final String tenantId,
+            final String vserverId);
+
+    /**
      * Invoke a GET request for the a tenant.
      *
      * @param cloudOwner the cloud owner

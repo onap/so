@@ -58,6 +58,14 @@ public interface VnfmServiceProvider {
     String terminateVnf(final String vnfSelfLink, final TerminateVnfRequest terminateVnfRequest);
 
     /**
+     * Invoke a delete request for a VNF.
+     *
+     * @param vnfSelfLink the link to he VNF on the VNFM
+     * @return the operation ID of the instantiation operation
+     */
+    void deleteVnf(final String vnfSelfLink);
+
+    /**
      * Invoke a get request for a VNFM operation.
      *
      * @param vnfmId the id of the VNFM in AAI

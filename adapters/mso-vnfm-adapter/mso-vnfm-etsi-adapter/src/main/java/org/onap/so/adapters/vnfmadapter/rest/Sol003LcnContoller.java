@@ -34,6 +34,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperatio
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification.OperationEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification.OperationStateEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
 import org.onap.so.adapters.vnfmadapter.notificationhandling.NotificationHandler;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,14 +57,16 @@ public class Sol003LcnContoller {
     private final AaiServiceProvider aaiServiceProvider;
     private final AaiHelper aaiHelper;
     private final VnfmServiceProvider vnfmServiceProvider;
+    private final JobManager jobManager;
     private final ExecutorService executor = Executors.newCachedThreadPool();
 
     @Autowired
     Sol003LcnContoller(final AaiServiceProvider aaiServiceProvider, final AaiHelper aaiHelper,
-            final VnfmServiceProvider vnfmServiceProvider) {
+            final VnfmServiceProvider vnfmServiceProvider, final JobManager jobManager) {
         this.aaiServiceProvider = aaiServiceProvider;
         this.aaiHelper = aaiHelper;
         this.vnfmServiceProvider = vnfmServiceProvider;
+        this.jobManager = jobManager;
     }
 
     @PostMapping(value = "/lcn/VnfIdentifierCreationNotification")
@@ -85,17 +88,31 @@ public class Sol003LcnContoller {
             @RequestBody final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification) {
         logger.info(LOG_LCN_RECEIVED + vnfLcmOperationOccurrenceNotification);
 
-        final OperationEnum operation = vnfLcmOperationOccurrenceNotification.getOperation();
-        if ((operation.equals(OperationEnum.INSTANTIATE))
-                && vnfLcmOperationOccurrenceNotification.getOperationState().equals(OperationStateEnum.COMPLETED)) {
+        if (isANotificationOfInterest(vnfLcmOperationOccurrenceNotification)) {
             final InlineResponse201 vnfInstance = getVnfInstance(vnfLcmOperationOccurrenceNotification);
             final NotificationHandler handler = new NotificationHandler(vnfLcmOperationOccurrenceNotification,
-                    aaiHelper, aaiServiceProvider, vnfInstance);
+                    aaiHelper, aaiServiceProvider, vnfmServiceProvider, jobManager, vnfInstance);
             executor.execute(handler);
         }
 
         logger.info("Sending notification response");
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    private boolean isANotificationOfInterest(final VnfLcmOperationOccurrenceNotification notification) {
+        return isInstanitiateCompleted(notification) || isTerminateTerminalState(notification);
+    }
+
+    private boolean isInstanitiateCompleted(final VnfLcmOperationOccurrenceNotification notification) {
+        return notification.getOperation().equals(OperationEnum.INSTANTIATE)
+                && notification.getOperationState().equals(OperationStateEnum.COMPLETED);
+    }
+
+    private boolean isTerminateTerminalState(final VnfLcmOperationOccurrenceNotification notification) {
+        return notification.getOperation().equals(OperationEnum.TERMINATE)
+                && (notification.getOperationState().equals(OperationStateEnum.COMPLETED)
+                        || notification.getOperationState().equals(OperationStateEnum.FAILED)
+                        || notification.getOperationState().equals(OperationStateEnum.ROLLED_BACK));
     }
 
     private InlineResponse201 getVnfInstance(

@@ -30,11 +30,13 @@ import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification.OperationStateEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201VimConnectionInfo;
+import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
 import org.slf4j.Logger;
 
 /**
@@ -46,16 +48,19 @@ public class NotificationHandler implements Runnable {
     private final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification;
     private final AaiHelper aaiHelper;
     private final AaiServiceProvider aaiServiceProvider;
-
-
+    private final VnfmServiceProvider vnfmServiceProvider;
+    private final JobManager jobManager;
     private final InlineResponse201 vnfInstance;
 
     public NotificationHandler(final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification,
             final AaiHelper aaiHelper, final AaiServiceProvider aaiServiceProvider,
+            final VnfmServiceProvider vnfmServiceProvider, final JobManager jobManager,
             final InlineResponse201 vnfInstance) {
         this.vnfLcmOperationOccurrenceNotification = vnfLcmOperationOccurrenceNotification;
         this.aaiHelper = aaiHelper;
         this.aaiServiceProvider = aaiServiceProvider;
+        this.vnfmServiceProvider = vnfmServiceProvider;
+        this.jobManager = jobManager;
         this.vnfInstance = vnfInstance;
     }
 
@@ -63,12 +68,12 @@ public class NotificationHandler implements Runnable {
     public void run() {
         try {
             if (vnfLcmOperationOccurrenceNotification.getOperationState().equals(OperationStateEnum.COMPLETED)) {
-                final GenericVnf genericVnf =
-                        aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).get(0);
-
                 switch (vnfLcmOperationOccurrenceNotification.getOperation()) {
                     case INSTANTIATE:
-                        handleVnfInstantiated(genericVnf);
+                        handleVnfInstantiate();
+                        break;
+                    case TERMINATE:
+                        handleVnfTerminate();
                         break;
                     default:
                 }
@@ -79,7 +84,15 @@ public class NotificationHandler implements Runnable {
         }
     }
 
-    private void handleVnfInstantiated(final GenericVnf genericVnf) {
+    private void handleVnfInstantiate() {
+        if (vnfLcmOperationOccurrenceNotification.getOperationState().equals(OperationStateEnum.COMPLETED)) {
+            handleVnfInstantiateCompleted();
+        }
+    }
+
+    private void handleVnfInstantiateCompleted() {
+        final GenericVnf genericVnf =
+                aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).get(0);
         final String ipAddress = getOamIpAddress(vnfInstance);
         logger.debug("Updating " + genericVnf.getVnfId() + " with VNF OAM IP ADDRESS: " + ipAddress);
         genericVnf.setIpv4OamAddress(ipAddress);
@@ -108,6 +121,45 @@ public class NotificationHandler implements Runnable {
         }
     }
 
+    private void handleVnfTerminate() {
+        switch (vnfLcmOperationOccurrenceNotification.getOperationState()) {
+            case COMPLETED:
+                handleVnfTerminateCompleted();
+                break;
+            case FAILED:
+            case ROLLING_BACK:
+                handleVnfTerminateFailed();
+                break;
+            default:
+        }
+    }
+
+    private void handleVnfTerminateFailed() {
+        final GenericVnf genericVnf =
+                aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).get(0);
+        updateVservers(vnfLcmOperationOccurrenceNotification, genericVnf.getVnfId(),
+                vnfInstance.getVimConnectionInfo());
+        jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getId(), false);
+    }
+
+    private void handleVnfTerminateCompleted() {
+        final GenericVnf genericVnf =
+                aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).get(0);
+        updateVservers(vnfLcmOperationOccurrenceNotification, genericVnf.getVnfId(),
+                vnfInstance.getVimConnectionInfo());
+
+        boolean deleteSuccessful = false;
+        try {
+            vnfmServiceProvider.deleteVnf(genericVnf.getSelflink());
+            deleteSuccessful = true;
+        } finally {
+            jobManager.notificationProcessedForOperation(vnfLcmOperationOccurrenceNotification.getId(),
+                    deleteSuccessful);
+            genericVnf.setOrchestrationStatus("Assigned");
+            aaiServiceProvider.invokePutGenericVnf(genericVnf);
+        }
+    }
+
     private void updateVservers(final VnfLcmOperationOccurrenceNotification notification, final String vnfId,
             final List<InlineResponse201VimConnectionInfo> vnfInstancesVimConnectionInfo) {
         final Map<String, InlineResponse201VimConnectionInfo> vimConnectionIdToVimConnectionInfo = new HashMap<>();
@@ -116,17 +168,21 @@ public class NotificationHandler implements Runnable {
         }
 
         for (final LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs vnfc : notification.getAffectedVnfcs()) {
-
+            final InlineResponse201VimConnectionInfo vimConnectionInfo =
+                    getVimConnectionInfo(vimConnectionIdToVimConnectionInfo, vnfc);
             switch (vnfc.getChangeType()) {
                 case ADDED:
                     final Vserver vserver = aaiHelper.createVserver(vnfc);
                     aaiHelper.addRelationshipFromVserverVnfToGenericVnf(vserver, vnfId);
-                    final InlineResponse201VimConnectionInfo vimConnectionInfo =
-                            getVimConnectionInfo(vimConnectionIdToVimConnectionInfo, vnfc);
+
                     aaiServiceProvider.invokePutVserver(getCloudOwner(vimConnectionInfo),
                             getCloudRegion(vimConnectionInfo), getTenant(vimConnectionInfo), vserver);
                     break;
                 case REMOVED:
+                    aaiServiceProvider.invokeDeleteVserver(getCloudOwner(vimConnectionInfo),
+                            getCloudRegion(vimConnectionInfo), getTenant(vimConnectionInfo),
+                            vnfc.getComputeResource().getResourceId());
+                    break;
                 case MODIFIED:
                 case TEMPORARY:
                 default:

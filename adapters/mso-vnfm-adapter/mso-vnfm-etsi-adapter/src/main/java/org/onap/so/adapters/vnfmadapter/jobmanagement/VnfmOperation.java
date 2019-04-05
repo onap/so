@@ -27,13 +27,13 @@ public class VnfmOperation {
 
     private final String vnfmId;
     private final String operationId;
-    private boolean waitForNotificationForSuccess = false;
-    private boolean isNotificationProcessed = false;
+    private NotificationStatus notificationStatus;
 
     public VnfmOperation(final String vnfmId, final String operationId, final boolean waitForNotificationForSuccess) {
         this.vnfmId = vnfmId;
         this.operationId = operationId;
-        this.waitForNotificationForSuccess = waitForNotificationForSuccess;
+        this.notificationStatus = waitForNotificationForSuccess ? NotificationStatus.NOTIFICATION_PROCESSING_PENDING
+                : NotificationStatus.NOTIFICATION_PROCESSING_NOT_REQUIRED;
     }
 
     /**
@@ -55,31 +55,43 @@ public class VnfmOperation {
     }
 
     /**
-     * Check if a notification should be processed before the operation is considered successfully
-     * completed.
-     *
-     * @return <code>true></code> if a notification must be processed before the operation is considered
-     *         successfully completed, <code>false</code> otherwise
-     */
-    public boolean isWaitForNotificationForSuccess() {
-        return waitForNotificationForSuccess;
-    }
-
-    /**
      * Set the required notification has been processed for the operation.
+     *
+     * @param notificationProcessingWasSuccessful <code>true</code> if the notification processing was
+     *        successful, <code>false<code> otherwise
      */
-    public void setNotificationProcessed() {
-        this.isNotificationProcessed = true;
+    public void setNotificationProcessed(final boolean notificationProcessingWasSuccessful) {
+        this.notificationStatus =
+                notificationProcessingWasSuccessful ? NotificationStatus.NOTIFICATION_PROCEESING_SUCCESSFUL
+                        : NotificationStatus.NOTIFICATION_PROCESSING_FAILED;
     }
 
     /**
-     * Check if the required notification has been processed.
+     * Get the notification status for the operation.
      *
-     * @return <code>true</code> of the required notification has been processed, <code>false</code>
-     *         otherwise
+     * @return the notification status
      */
-    public boolean isNotificationProcessed() {
-        return isNotificationProcessed;
+    public NotificationStatus getNotificationStatus() {
+        return notificationStatus;
+    }
+
+    public enum NotificationStatus {
+        /**
+         * No notification handling is required to determine the status of the operation
+         */
+        NOTIFICATION_PROCESSING_NOT_REQUIRED,
+        /**
+         * A notification must be processed before the notification can be considered to be completed
+         */
+        NOTIFICATION_PROCESSING_PENDING,
+        /**
+         * A notification has been successfully handled for the operation
+         */
+        NOTIFICATION_PROCEESING_SUCCESSFUL,
+        /**
+         * An error occurred processing a notification for the operation
+         */
+        NOTIFICATION_PROCESSING_FAILED;
     }
 
 }

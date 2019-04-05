@@ -104,6 +104,17 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     }
 
     @Override
+    public void deleteVnf(final String vnfSelfLink) {
+        logger.debug("Sending delete request to : " + vnfSelfLink);
+        final ResponseEntity<Void> response = httpServiceProvider.deleteHttpRequest(vnfSelfLink, Void.class);
+        if (response.getStatusCode() != HttpStatus.OK) {
+            throw new VnfmRequestFailureException(
+                    "Delete request to " + vnfSelfLink + " return status code: " + response.getStatusCode());
+        }
+    }
+
+
+    @Override
     public Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId) {
         final String url = urlProvider.getOperationUrl(vnfmId, operationId);
         return httpServiceProvider.get(url, InlineResponse200.class);
