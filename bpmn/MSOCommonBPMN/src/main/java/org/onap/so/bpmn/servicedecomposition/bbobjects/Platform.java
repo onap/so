@@ -38,6 +38,14 @@ public class Platform implements Serializable, ShallowCopy<Platform> {
 	@Id
 	@JsonProperty("platform-name")
 	private String platformName;
+	
+	public Platform() {
+	}
+
+
+	public Platform(String platformName) {
+		this.platformName = platformName;
+	}
 
 	public String getPlatformName() {
 		return platformName;

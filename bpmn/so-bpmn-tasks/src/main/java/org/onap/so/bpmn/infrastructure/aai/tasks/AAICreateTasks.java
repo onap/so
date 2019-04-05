@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -204,13 +205,21 @@ public class AAICreateTasks {
 				if (platform.getPlatformName() == null || "".equals(platform.getPlatformName())) {
 					logger.debug("PlatformName is null in input. Skipping create platform...");
 				} else {
-					aaiVnfResources.createPlatformandConnectVnf(platform,vnf);
+					 List<String> platforms = splitCDL(platform.getPlatformName());
+					 platforms.stream().forEach(platformName -> aaiVnfResources.createPlatformandConnectVnf(new Platform(platformName),vnf));
 				}
 			}
 		} catch (Exception ex) {
 			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
 		}
 
+	}
+	
+	public List<String> splitCDL(String str){
+	    return Stream.of(str.split(","))
+	      .map(String::trim)
+	      .map (elem -> new String(elem))
+	      .collect(Collectors.toList());
 	}
 	
 	public void createLineOfBusiness(BuildingBlockExecution execution) {
@@ -221,7 +230,8 @@ public class AAICreateTasks {
 				if (lineOfBusiness.getLineOfBusinessName() == null || "".equals(lineOfBusiness.getLineOfBusinessName())) {
 					logger.info("lineOfBusiness is null in input. Skipping create lineOfBusiness...");
 				} else {
-					aaiVnfResources.createLineOfBusinessandConnectVnf(lineOfBusiness,vnf);
+					List<String> lineOfBussinesses = splitCDL(lineOfBusiness.getLineOfBusinessName());
+					lineOfBussinesses.stream().forEach(lobName -> aaiVnfResources.createLineOfBusinessandConnectVnf(new LineOfBusiness(lobName),vnf));
 				}
 			}
 		} catch (Exception ex) {

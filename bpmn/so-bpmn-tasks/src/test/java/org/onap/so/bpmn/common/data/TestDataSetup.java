@@ -267,7 +267,7 @@ public class TestDataSetup{
 		projectCounter++;
 
 		Project project = new Project();
-		project.setProjectName("testProjectName" + projectCounter);
+		project.setProjectName("testProjectName1 , testProjectName2      , testProjectName3" + projectCounter);
 
 		return project;
 	}
@@ -485,11 +485,11 @@ public class TestDataSetup{
 		genericVnf.setIpv4OamAddress("10.222.22.2");
 
 		Platform platform = new Platform();
-		platform.setPlatformName("testPlatformName");
+		platform.setPlatformName(" testPlatformName, testPlatformName2   ,   testPlatformName3   , testPlatformName4");
 		genericVnf.setPlatform(platform);
 
 		LineOfBusiness lob = new LineOfBusiness();
-		lob.setLineOfBusinessName("testLineOfBusinessName");
+		lob.setLineOfBusinessName("  testLineOfBusinessName   , testLineOfBusinessName2,    testLineOfBusinessName3,   testLineOfBusinessName4");
 		genericVnf.setLineOfBusiness(lob);
 
 		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
