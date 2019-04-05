@@ -20,21 +20,17 @@
 
 package org.onap.so.adapters.audit;
 
-import static org.hamcrest.CoreMatchers.isA;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -42,17 +38,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.onap.aai.domain.yang.LInterface;
 import org.onap.so.audit.beans.AuditInventory;
 import org.springframework.core.env.Environment;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AuditStackServiceDataTest extends AuditStackServiceData {
+public class AuditStackServiceDataTest extends AuditCreateStackService {
 
 	@InjectMocks
-	private AuditStackServiceData auditStackService = new AuditStackServiceData();
+	private AuditCreateStackService auditStackService = new AuditCreateStackService();
 
 	@Mock
 	private HeatStackAudit heatStackAuditMock;
@@ -191,13 +187,13 @@ public class AuditStackServiceDataTest extends AuditStackServiceData {
 
 	@Test
 	public void determineAuditResult_Test() throws Exception{		
-		boolean actual = auditStackService.didAuditFail(auditListOptSuccess);
+		boolean actual = auditStackService.didCreateAuditFail(auditListOptSuccess);
 		assertEquals(false, actual);
 	}
 	
 	@Test
 	public void determineAuditResult_Failure_Test() throws Exception{
-		boolean actual = auditStackService.didAuditFail(auditListOptFailure);
+		boolean actual = auditStackService.didCreateAuditFail(auditListOptFailure);
 		assertEquals(true, actual);
 	}
 }
