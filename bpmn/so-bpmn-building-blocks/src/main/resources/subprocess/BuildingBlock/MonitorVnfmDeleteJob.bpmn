@@ -37,7 +37,7 @@
       </bpmn:serviceTask>
       <bpmn:sequenceFlow id="SequenceFlow_1vmxw9g" sourceRef="ExclusiveGateway_1hkl6yy" targetRef="IntermediateCatchEvent_1besn3n" />
       <bpmn:sequenceFlow id="SequenceFlow_0is7myf" sourceRef="ExclusiveGateway_1hkl6yy" targetRef="EndEvent_1ohsce9">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${MonitorVnfmCreateJobTask.hasOperationFinished(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))}</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${MonitorVnfmDeleteJobTask.hasOperationFinished(InjectExecution.execute(execution, execution.getVariable("gBuildingBlockExecution")))}</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="SequenceFlow_153a3kp" sourceRef="ServiceTask_17jlnng" targetRef="ExclusiveGateway_1hkl6yy" />
     </bpmn:subProcess>

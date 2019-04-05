@@ -34,6 +34,10 @@ public class Constants {
   public static final String CREATE_VNF_RESPONSE_PARAM_NAME = "createVnfResponse";
   public static final String INPUT_PARAMETER = "inputParameter";
   public static final String DELETE_VNF_RESPONSE_PARAM_NAME = "deleteVnfResponse";
+  public static final String DELETE_VNF_NODE_STATUS = "deleteVnfNodeStatus";
+  public static final String CREATE_VNF_NODE_STATUS = "createVnfNodeStatus";
+  public static final String VNF_ASSIGNED = "Assigned";
+  public static final String VNF_CREATED = "Created";
 
 
   public static final String DOT = ".";

@@ -9,21 +9,20 @@
       <bpmn:outgoing>SequenceFlow_1064iul</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="EndEvent_1khf4qw">
-      <bpmn:incoming>SequenceFlow_0qt5cvg</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_0503le2</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="SequenceFlow_1064iul" sourceRef="ServiceTask_1d5jbsb" targetRef="CallActivity_1f7uwws" />
     <bpmn:sequenceFlow id="SequenceFlow_01pwrcr" sourceRef="StartEvent_0i3wi1x" targetRef="ServiceTask_1d5jbsb" />
     <bpmn:callActivity id="CallActivity_1f7uwws" name="Monitor Delete Job" calledElement="MonitorVnfmDeleteJob">
-      <bpmn:extensionElements>
-        <camunda:in source="SDNCRequest" target="SDNCRequest" />
-        <camunda:out source="SDNCResponse" target="SDNCResponse" />
-        <camunda:out source="WorkflowException" target="WorkflowException" />
-        <camunda:in source="mso-request-id" target="mso-request-id" />
-      </bpmn:extensionElements>
       <bpmn:incoming>SequenceFlow_1064iul</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0qt5cvg</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:sequenceFlow id="SequenceFlow_0qt5cvg" sourceRef="CallActivity_1f7uwws" targetRef="EndEvent_1khf4qw" />
+    <bpmn:sequenceFlow id="SequenceFlow_0qt5cvg" sourceRef="CallActivity_1f7uwws" targetRef="CallActivity_0udkzom" />
+    <bpmn:callActivity id="CallActivity_0udkzom" name="Monitor Delete Node Status" calledElement="MonitorVnfmDeleteNodeStatus">
+      <bpmn:incoming>SequenceFlow_0qt5cvg</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0503le2</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="SequenceFlow_0503le2" sourceRef="CallActivity_0udkzom" targetRef="EndEvent_1khf4qw" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="EtsiVnfDeleteBB">
@@ -34,7 +33,7 @@
         <dc:Bounds x="503" y="161" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_1khf4qw_di" bpmnElement="EndEvent_1khf4qw">
-        <dc:Bounds x="820" y="183" width="36" height="36" />
+        <dc:Bounds x="1001" y="183" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1064iul_di" bpmnElement="SequenceFlow_1064iul">
         <di:waypoint x="603" y="201" />
@@ -49,7 +48,14 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0qt5cvg_di" bpmnElement="SequenceFlow_0qt5cvg">
         <di:waypoint x="759" y="201" />
-        <di:waypoint x="820" y="201" />
+        <di:waypoint x="812" y="201" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_0udkzom_di" bpmnElement="CallActivity_0udkzom">
+        <dc:Bounds x="812" y="161" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0503le2_di" bpmnElement="SequenceFlow_0503le2">
+        <di:waypoint x="912" y="201" />
+        <di:waypoint x="1001" y="201" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
