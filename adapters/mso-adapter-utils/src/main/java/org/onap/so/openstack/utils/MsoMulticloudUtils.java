@@ -45,6 +45,7 @@ import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduPlugin;
 import org.onap.so.adapters.vdu.VduStateType;
 import org.onap.so.adapters.vdu.VduStatus;
+import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
 import org.onap.so.client.RestClient;
 import org.onap.so.logger.ErrorCode;
@@ -207,7 +208,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         }
 
         String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, null);
-        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
+        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint, tenantId);
 
         if (multicloudClient == null) {
             MsoOpenstackException me = new MsoOpenstackException(0, "", "Multicloud client could not be initialized");
@@ -289,7 +290,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         returnInfo.setName(stackName);
 
         String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId);
-        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
+        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint, tenantId);
 
         if (multicloudClient != null) {
             Response response = multicloudClient.get();
@@ -343,7 +344,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         Response response = null;
 
         String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, stackId);
-        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
+        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint, tenantId);
 
         if (multicloudClient != null) {
             response = multicloudClient.delete();
@@ -392,7 +393,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         multicloudRequest.setVfModuleId(vfModuleId);
 
         String multicloudEndpoint = getMulticloudEndpoint(cloudSiteId, cloudOwner, workloadId);
-        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint);
+        RestClient multicloudClient = getMulticloudClient(multicloudEndpoint, tenantId);
 
         if (multicloudClient == null) {
             if (logger.isDebugEnabled())
@@ -708,12 +709,15 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         }
     }
 
-    private RestClient getMulticloudClient(String endpoint) {
-        RestClient client = null;
+    private RestClient getMulticloudClient(String endpoint, String tenantId) {
+        HttpClient client = null;
         try {
             client = httpClientFactory.newJsonClient(
                 new URL(endpoint),
                 TargetEntity.MULTICLOUD);
+            if (tenantId != null && !tenantId.isEmpty()) {
+                client.addAdditionalHeader("Project", tenantId);
+            }
         } catch (MalformedURLException e) {
             logger.debug(String.format("Encountered malformed URL error getting multicloud rest client %s", e.getMessage()));
         } catch (IllegalArgumentException e) {
