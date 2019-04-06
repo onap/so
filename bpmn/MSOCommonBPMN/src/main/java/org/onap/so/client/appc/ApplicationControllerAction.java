@@ -90,6 +90,8 @@ public class ApplicationControllerAction {
 					break;
 				case ConfigModify:
 				case ConfigScaleOut:
+				case DistributeTraffic:
+				case DistributeTrafficCheck:
 					appCStatus = payloadAction(action, msoRequestId, vnfId, payload, controllerType);
 					break;
 				case UpgradePreCheck:
@@ -135,7 +137,7 @@ public class ApplicationControllerAction {
 			throw new IllegalArgumentException("Payload is not present for " + action.toString());
 		}
 		return client.vnfCommand(action, msoRequestId, vnfId, Optional.empty(), payload, controllerType);
-	}
+	}	
 	
 	private Status quiesceTrafficAction(String msoRequestId, String vnfId, Optional<String> payload, String vnfName, String controllerType) throws JsonProcessingException, IllegalArgumentException,ApplicationControllerOrchestratorException{
 		if(!(payload.isPresent())){

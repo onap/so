@@ -311,7 +311,7 @@
 		<dependency>
 			<groupId>org.onap.appc.client</groupId>
 			<artifactId>client-lib</artifactId>
-			<version>1.4.4</version>
+			<version>1.5.0-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.mockito</groupId>
@@ -330,7 +330,7 @@
 		<dependency>
 			<groupId>org.onap.appc.client</groupId>
 			<artifactId>client-kit</artifactId>
-			<version>1.4.4</version>
+			<version>1.5.0-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.mockito</groupId>

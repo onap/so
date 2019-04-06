@@ -69,6 +69,8 @@ public class AppcRunTasks {
 		execution.setVariable("actionStop", Action.Stop);
 		execution.setVariable("actionStart", Action.Start);
 		execution.setVariable("actionHealthCheck", Action.HealthCheck);
+		execution.setVariable("actionDistributeTraffic", Action.DistributeTraffic);
+		execution.setVariable("actionDistributeTrafficCheck", Action.DistributeTrafficCheck);
 		execution.setVariable("rollbackVnfStop", false);
 		execution.setVariable("rollbackVnfLock", false);
 		execution.setVariable("rollbackQuiesceTraffic", false);
