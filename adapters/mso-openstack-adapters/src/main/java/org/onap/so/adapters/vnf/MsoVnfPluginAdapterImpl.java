@@ -705,18 +705,16 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         	throw new VnfException("Exception during create VF " + e.getMessage());
         }
 
-        //  Perform a version check against cloudSite
+        // Perform a version check against cloudSite
         // Obtain the cloud site information where we will create the VF Module
-        Boolean usingMulticloud = false;
         Optional<CloudSite> cloudSiteOp = cloudConfig.getCloudSite (cloudSiteId);
         if (!cloudSiteOp.isPresent()) {
             // If cloudSiteId is not present in the catalog DB, then default to multicloud
-            usingMulticloud = true;
+            logger.debug("{} is not present in cloud_site catalog DB, defaulting to Multicloud plugin adapter", cloudSiteId);
         } else {
             CloudSite cloudSite = cloudSiteOp.get();
     		MavenLikeVersioning aicV = new MavenLikeVersioning();
     		aicV.setVersion(cloudSite.getCloudVersion());
-    		usingMulticloud = getUsingMulticloud(cloudSite);
 
     		String vnfMin = vnfResource.getAicVersionMin();
     		String vnfMax = vnfResource.getAicVersionMax();
@@ -743,24 +741,20 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         // Use the VduPlugin.
         VduPlugin vduPlugin = getVduPlugin(cloudSiteId, cloudOwner);
 
-        // First, look up to see if the VF already exists, unless using multicloud adapter
-
         long subStartTime1 = System.currentTimeMillis ();
-        if (!usingMulticloud) {
-            try {
-                vduInstance = vduPlugin.queryVdu (cloudInfo, vfModuleName);
-            }
-            catch (VduException me) {
-                // Failed to query the VDU due to a plugin exception.
-                String error = "Create VF Module: Query " + vfModuleName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me ;
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName,
-                    cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(),
-                    "Exception - queryVdu", me);
-                logger.debug(error);
-                // Convert to a generic VnfException
-                me.addContext ("CreateVFModule");
-                throw new VnfException (me);
-            }
+        try {
+            vduInstance = vduPlugin.queryVdu (cloudInfo, vfModuleName);
+        }
+        catch (VduException me) {
+            // Failed to query the VDU due to a plugin exception.
+            String error = "Create VF Module: Query " + vfModuleName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me ;
+            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vfModuleName,
+                cloudOwner, cloudSiteId, tenantId, "VDU", "queryVdu", ErrorCode.DataError.getValue(),
+                "Exception - queryVdu", me);
+            logger.debug(error);
+            // Convert to a generic VnfException
+            me.addContext ("CreateVFModule");
+            throw new VnfException (me);
         }
 
         // More precise handling/messaging if the Module already exists
@@ -838,7 +832,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
         Map<String, Object> volumeGroupOutputs = null;
 
         // If a Volume Group was provided, query its outputs for inclusion in Module input parameters
-        if (!usingMulticloud && volumeGroupId != null) {
+        if (volumeGroupId != null) {
             long subStartTime2 = System.currentTimeMillis ();
             VduInstance volumeVdu = null;
             try {
@@ -887,8 +881,7 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
                 logger.debug("WARNING:  Add-on Module request - no Base Module ID provided");
             }
 
-            // Need to verify if multicloud needs to have the vaseVfModuleId passed to it.  Ignoring this for now.
-            if (!usingMulticloud && baseVfModuleId != null) {
+            if (baseVfModuleId != null) {
 	            long subStartTime2 = System.currentTimeMillis ();
 	            VduInstance baseVdu = null;
 	            try {
@@ -942,15 +935,15 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 		}
 
 		if (heatTemplate == null) {
-        String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType + ", reqType="
-            + requestType;
-        logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID", vfModuleType,
-            "VNF", ErrorCode.DataError.getValue(), error);
-        logger.debug(error);
-        throw new VnfException(error, MsoExceptionCategory.INTERNAL);
-    } else {
-        logger.debug("Got HEAT Template from DB: " + heatTemplate.getHeatTemplate());
-    }
+            String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType + ", reqType="
+                + requestType;
+            logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID", vfModuleType,
+                "VNF", ErrorCode.DataError.getValue(), error);
+            logger.debug(error);
+            throw new VnfException(error, MsoExceptionCategory.INTERNAL);
+        } else {
+            logger.debug("Got HEAT Template from DB: " + heatTemplate.getHeatTemplate());
+        }
 
         if (heatEnvironment == null) {
             String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
@@ -1011,12 +1004,10 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
 			if (!extraInputs.isEmpty()) {
 				// Add multicloud inputs
-			    boolean multicloudInputs = false;
 				for (String key : MsoMulticloudUtils.MULTICLOUD_INPUTS) {
 					if (extraInputs.contains(key)) {
 						goldenInputs.put(key, inputs.get(key));
 						extraInputs.remove(key);
-						multicloudInputs = true;
 						if (extraInputs.isEmpty()) {
 							break;
 						}
@@ -1274,13 +1265,5 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     	}
         // Default if no cloudSite record exists - return multicloud plugin
     	return multicloudUtils;
-    }
-
-    private Boolean getUsingMulticloud (CloudSite cloudSite) {
-        if (cloudSite.getOrchestrator().equalsIgnoreCase("MULTICLOUD")) {
-            return true;
-        } else {
-            return false;
-        }
     }
 }
