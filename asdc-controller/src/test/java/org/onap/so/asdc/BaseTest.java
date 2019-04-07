@@ -47,6 +47,7 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = SpringContextHelper.class, initializers = ConfigFileApplicationContextInitializer.class)
 @AutoConfigureWireMock(port = 0)
+
 public abstract class BaseTest {
 	@MockBean
 	protected VfResourceStructure vfResourceStructure;
@@ -66,5 +67,9 @@ public abstract class BaseTest {
 	public void after() {
 		reset(vfResourceStructure);
 		reset(toscaResourceStruct);
+	}
+	
+	protected String createURLWithPort(String uri) {
+		return "http://localhost:" + wireMockPort + uri;
 	}
 }
