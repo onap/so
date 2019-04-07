@@ -89,6 +89,8 @@ mso:
       messageBusAddress: localhost,localhost
   asdc:
     config:
+      activity:
+        endpoint: http://localhost:${wiremock.server.port}
       key: 566B754875657232314F5548556D3665
       components:
         count: 3,
