@@ -52,6 +52,7 @@ import org.onap.so.db.catalog.beans.VnfComponentsRecipe;
 import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -683,6 +684,20 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         List<PnfResourceCustomization> pnfResourceCustomizationList = client
             .getPnfResourceCustomizationByModelUuid(UUID.randomUUID().toString());
         assertEquals(0, pnfResourceCustomizationList.size());
+    }
+    
+    @Test
+    public void getWorkflowByArtifactUUID_validUuid_expectedOutput() {
+        Workflow workflow = client
+            .findWorkflowByArtifactUUID("5b0c4322-643d-4c9f-b184-4516049e99b1");
+        assertEquals("artifactName", "testingWorkflow", workflow.getArtifactName());
+    }
+
+    @Test
+    public void getWorkflowByArtifactUUID_invalidUuid_nullOutput() {
+        Workflow workflow = client
+            .findWorkflowByArtifactUUID(UUID.randomUUID().toString());
+        Assert.assertNull(workflow);
     }
 
 }
