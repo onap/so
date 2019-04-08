@@ -223,3 +223,6 @@ insert into pnf_resource_customization(model_customization_uuid, model_instance_
 
 insert into pnf_resource_customization_to_service(service_model_uuid, resource_model_customization_uuid) values
 ('5df8b6de-2083-11e7-93ae-92361f002676', '68dc9a92-214c-11e7-93ae-92361f002680');
+
+insert into workflow(artifact_uuid, artifact_name, name, operation_name, version, description, body, resource_target, source) values
+('5b0c4322-643d-4c9f-b184-4516049e99b1', 'testingWorkflow', 'testingWorkflow', 'create', 1, 'Test Workflow', null, 'vnf', 'sdc');

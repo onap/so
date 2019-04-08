@@ -50,7 +50,6 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.logger.HttpHeadersConstants;
 import org.onap.so.serviceinstancebeans.RequestReferences;
 import org.onap.so.serviceinstancebeans.ServiceInstancesResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -67,9 +66,6 @@ public class InstanceManagementTest extends BaseTest{
 	private final ObjectMapper mapper = new ObjectMapper();
 	private ObjectMapper errorMapper = new ObjectMapper();
 	
-    @Autowired
-    private InstanceManagement instanceManagement;
-    
     @Value("${wiremock.server.port}")
 	private String wiremockPort;
 
@@ -154,15 +150,14 @@ public class InstanceManagementTest extends BaseTest{
 
     @Test
     public void executeCustomWorkflow() throws IOException {
-    	wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/VnfInPlaceUpdate"))
+    	wireMockServer.stubFor(post(urlPathEqualTo("/mso/async/services/testingWorkflow"))
                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                         .withBodyFile("Camunda/TestResponse.json").withStatus(org.apache.http.HttpStatus.SC_OK)));
         
-    	wireMockServer.stubFor(get(urlMatching(".*/vnfRecipe/search/findFirstVnfRecipeByNfRoleAndAction[?]" +
-                "nfRole=GR-API-DEFAULT&action=inPlaceSoftwareUpdate"))
-                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                        .withBody(getWiremockResponseForCatalogdb("vnfRecipeInPlaceUpdate_Response.json"))
-                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+    	 wireMockServer.stubFor(get(urlMatching(".*/workflow/search/findByArtifactUUID[?]artifactUUID=71526781-e55c-4cb7-adb3-97e09d9c76be"))
+                 .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                         .withBody(getWiremockResponseForCatalogdb("workflow_Response.json"))
+                         .withStatus(org.apache.http.HttpStatus.SC_OK)));
 
         //expected response
         ServiceInstancesResponse expectedResponse = new ServiceInstancesResponse();
