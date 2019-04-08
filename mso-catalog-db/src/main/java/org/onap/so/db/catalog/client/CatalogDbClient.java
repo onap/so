@@ -59,6 +59,7 @@ import org.onap.so.db.catalog.beans.VnfRecipe;
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
+import org.onap.so.db.catalog.beans.Workflow;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.onap.so.db.catalog.beans.macro.RainyDayHandlerStatus;
@@ -110,6 +111,7 @@ public class CatalogDbClient {
     private static final String NETWORK_RECIPE = "/networkRecipe";
     private static final String PNF_RESOURCE = "/pnfResource";
     private static final String PNF_RESOURCE_CUSTOMIZATION = "/pnfResourceCustomization";
+    private static final String WORKFLOW = "/workflow";
 
 
     private static final String SEARCH = "/search";
@@ -143,6 +145,7 @@ public class CatalogDbClient {
     private static final String CLLI = "clli";
     private static final String CLOUD_VERSION = "cloudVersion";
     private static final String HOMING_INSTANCE = "/homingInstance";
+    private static final String ARTIFACT_UUID = "artifactUUID";
     
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
@@ -176,6 +179,7 @@ public class CatalogDbClient {
     private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
     private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
+    private String findWorkflowByArtifactUUID = "/findByArtifactUUID";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -192,6 +196,7 @@ public class CatalogDbClient {
     private String cvnfcResourceCustomizationURI;
     private String pnfResourceURI;
     private String pnfResourceCustomizationURI;
+    private String workflowURI;
 
     private final Client<Service> serviceClient;
 
@@ -248,6 +253,8 @@ public class CatalogDbClient {
     private final Client<PnfResource> pnfResourceClient;
 
     private final Client<PnfResourceCustomization> pnfResourceCustomizationClient;
+    
+    private final Client<Workflow> workflowClient;
 
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
     private String endpoint;
@@ -290,6 +297,8 @@ public class CatalogDbClient {
 
         findPnfResourceCustomizationByModelUuid =
             endpoint + PNF_RESOURCE_CUSTOMIZATION + SEARCH + findPnfResourceCustomizationByModelUuid;
+        
+        findWorkflowByArtifactUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByArtifactUUID;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
@@ -306,6 +315,7 @@ public class CatalogDbClient {
         homingInstanceURI = endpoint + HOMING_INSTANCE + URI_SEPARATOR;
         pnfResourceURI = endpoint + PNF_RESOURCE + URI_SEPARATOR;
         pnfResourceCustomizationURI = endpoint + PNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
+        workflowURI = endpoint + WORKFLOW + URI_SEPARATOR;
 
     }
 
@@ -352,6 +362,7 @@ public class CatalogDbClient {
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
+        workflowClient = clientFactory.create(Workflow.class);
     }
 
     public CatalogDbClient(String baseUri, String auth) {
@@ -397,6 +408,7 @@ public class CatalogDbClient {
         externalServiceToInternalServiceClient = clientFactory.create(ExternalServiceToInternalService.class);
         pnfResourceClient = clientFactory.create(PnfResource.class);
         pnfResourceCustomizationClient = clientFactory.create(PnfResourceCustomization.class);
+        workflowClient = clientFactory.create(Workflow.class);
     }
 
     public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(String modelCustomizationUUID) {
@@ -801,5 +813,10 @@ public class CatalogDbClient {
         }else
             throw new EntityNotFoundException("Unable to find CvnfcConfigurationCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
     }
-
+    
+    public Workflow findWorkflowByArtifactUUID (String artifactUUID) {
+    	return this.getSingleResource(workflowClient,getUri(UriBuilder
+                .fromUri(findWorkflowByArtifactUUID)
+                .queryParam(ARTIFACT_UUID, artifactUUID).build().toString()));                
+    }
 }

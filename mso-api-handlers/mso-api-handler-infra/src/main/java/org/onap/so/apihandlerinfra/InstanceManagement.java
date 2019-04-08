@@ -32,6 +32,8 @@ import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.onap.so.apihandlerinfra.exceptions.RequestDbFailureException;
 import org.onap.so.apihandlerinfra.exceptions.ValidateException;
 import org.onap.so.apihandlerinfra.logging.ErrorLoggerInfo;
+import org.onap.so.db.catalog.beans.Workflow;
+import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
@@ -70,6 +72,9 @@ public class InstanceManagement {
 
 	@Autowired
 	private RequestsDbClient infraActiveRequestsClient;
+	
+	@Autowired
+	private CatalogDbClient catalogDbClient;
 	
 	@Autowired
 	private MsoRequest msoRequest;
@@ -156,7 +161,17 @@ public class InstanceManagement {
 			workflowUuid = instanceIdMap.get("workflowUuid");
 		}
 
-        RecipeLookupResult recipeLookupResult = getCustomWorkflowUri(workflowUuid);
+        RecipeLookupResult recipeLookupResult = null;
+        
+        try {
+        	recipeLookupResult = getCustomWorkflowUri(workflowUuid);
+		} catch (IOException e) {
+			ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError).errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
+			ValidateException validateException = new ValidateException.Builder(e.getMessage(), HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
+                .errorInfo(errorLoggerInfo).build();
+			requestHandlerUtils.updateStatus(currentActiveReq, Status.FAILED, validateException.getMessage());
+			throw validateException;
+		}
         String serviceInstanceType = requestHandlerUtils.getServiceType(requestScope, sir, true);						
 	
 		serviceInstanceId = requestHandlerUtils.setServiceInstanceId(requestScope, sir);
@@ -198,9 +213,17 @@ public class InstanceManagement {
 		return requestHandlerUtils.postBPELRequest(currentActiveReq, requestClientParameter, recipeLookupResult.getOrchestrationURI(), requestScope);
 	}	
    
-    private RecipeLookupResult getCustomWorkflowUri(String workflowUuid) {
+    private RecipeLookupResult getCustomWorkflowUri(String workflowUuid) throws IOException {
     	
-		RecipeLookupResult recipeLookupResult = new RecipeLookupResult("/mso/async/services/VnfInPlaceUpdate", 180);
-		return recipeLookupResult;		
+		String recipeUri = null;
+		Workflow workflow = catalogDbClient.findWorkflowByArtifactUUID(workflowUuid);
+		if (workflow == null) {
+			return null;
+		}
+		else {
+			String workflowName = workflow.getArtifactName();
+			recipeUri = "/mso/async/services/" + workflowName;
+		}
+		return new RecipeLookupResult(recipeUri, 180);		
 	}	
 }
