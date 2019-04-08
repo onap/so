@@ -130,19 +130,12 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
             ExecutionServiceInput executionServiceInput = (ExecutionServiceInput) execution
                     .getVariable("executionServiceInput");
 
-            //CDSProcessingListener cdsProcessingListener = new AbstractCDSProcessingBBUtils();
-
-            CDSProcessingClient cdsClient = null;
-            CountDownLatch countDownLatch;
-            try {
-                cdsClient = new CDSProcessingClient(this);
-                countDownLatch = cdsClient.sendRequest(executionServiceInput);
+            try(CDSProcessingClient cdsClient = new CDSProcessingClient(this)) {
+                CountDownLatch countDownLatch = cdsClient.sendRequest(executionServiceInput);
                 countDownLatch.await(props.getTimeout(), TimeUnit.SECONDS);
-            } catch (InterruptedException ex) {
+            } catch (InterruptedException ex){
                 logger.error("Caught exception in sendRequestToCDSClient in AbstractCDSProcessingBBUtils : ", ex);
                 Thread.currentThread().interrupt();
-            } finally {
-                cdsClient.close();
             }
 
             if (cdsResponse != null) {

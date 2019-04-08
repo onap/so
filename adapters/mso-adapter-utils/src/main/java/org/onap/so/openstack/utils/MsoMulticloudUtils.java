@@ -233,7 +233,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
             StackInfo stackStatus = getStackStatus(cloudSiteId, cloudOwner, tenantId, canonicalName, pollForCompletion, timeoutMinutes, backout);
 
             if (HeatStatus.CREATED.equals(stackStatus.getStatus())) {
-                multicloudAaiUpdate(cloudSiteId, cloudOwner, tenantId, genericVnfId, vfModuleId, multicloudResponseBody.getWorkloadId(), pollForCompletion, timeoutMinutes);
+                String workloadId = multicloudResponseBody == null ? null : multicloudResponseBody.getWorkloadId();
+                multicloudAaiUpdate(cloudSiteId, cloudOwner, tenantId, genericVnfId, vfModuleId, workloadId, pollForCompletion, timeoutMinutes);
             }
 
             return stackStatus;
@@ -398,6 +399,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin{
         if (multicloudClient == null) {
             if (logger.isDebugEnabled())
                 logger.debug("Multicloud client could not be initialized");
+            return;
         }
 
         Response response = multicloudClient.post(multicloudRequest);

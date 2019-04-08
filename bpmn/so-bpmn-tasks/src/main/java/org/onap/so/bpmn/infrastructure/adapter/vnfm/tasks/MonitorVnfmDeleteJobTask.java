@@ -2,6 +2,8 @@
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Ericsson. All rights reserved.
  * ================================================================================
+ *  Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -85,8 +87,7 @@ public class MonitorVnfmDeleteJobTask extends MonitorVnfmJobTask {
           + (deleteVnfResponse != null ? deleteVnfResponse.getJobId() : "null") + "Unable to retrieve OperationStatus";
       LOGGER.error(message);
       exceptionUtil.buildAndThrowWorkflowException(execution, 1214, message);
-    }
-    if (operationStatusOption.isPresent()) {
+    } else if (operationStatusOption != null && operationStatusOption.isPresent()) {
       final OperationStateEnum operationStatus = operationStatusOption.get();
       if (operationStatus != OperationStateEnum.COMPLETED) {
         final String message =
