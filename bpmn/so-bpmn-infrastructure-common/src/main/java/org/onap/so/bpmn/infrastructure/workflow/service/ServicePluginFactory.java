@@ -22,15 +22,18 @@
 
 package org.onap.so.bpmn.infrastructure.workflow.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.ParseException;
@@ -68,17 +71,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriUtils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 public class ServicePluginFactory {
 
 	// SOTN calculate route
 	public static final String OOF_DEFAULT_ENDPOINT = "http://192.168.1.223:8443/oof/sotncalc";
 
 	public static final String THIRD_SP_DEFAULT_ENDPOINT = "http://192.168.1.223:8443/sp/resourcemgr/querytps";
-	
+
 	public static final String INVENTORY_OSS_DEFAULT_ENDPOINT = "http://192.168.1.199:8443/oss/inventory";
 
 	private static final int DEFAULT_TIME_OUT = 60000;
@@ -88,7 +87,7 @@ public class ServicePluginFactory {
 	private static Logger logger = LoggerFactory.getLogger(ServicePluginFactory.class);
 
 	private static ServicePluginFactory instance;
-	
+
 
 	public static synchronized ServicePluginFactory getInstance() {
 		if (null == instance) {
@@ -100,11 +99,11 @@ public class ServicePluginFactory {
 	private ServicePluginFactory() {
 
 	}
-	
+
 	private String getInventoryOSSEndPoint(){
 		return UrnPropertiesReader.getVariable("mso.service-plugin.inventory-oss-endpoint", INVENTORY_OSS_DEFAULT_ENDPOINT);
 	}
-	
+
 	private String getThirdSPEndPoint(){
 		return UrnPropertiesReader.getVariable("mso.service-plugin.third-sp-endpoint", THIRD_SP_DEFAULT_ENDPOINT);
 	}
@@ -118,18 +117,23 @@ public class ServicePluginFactory {
 		if(!isNeedProcessSite(uuiRequest)) {
 			return uuiRequest;
 		}
-	
-		Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
-		Map<String, Object> serviceObject = (Map<String, Object>) uuiObject.get("service");
-		Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject.get("parameters");
-		Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject.get("requestInputs");
-		List<Object> resources = (List<Object>) serviceParametersObject.get("resources");    	
 
-		if (isSiteLocationLocal(serviceRequestInputs, resources)) {
-			// resources changed : added TP info 
-			String newRequest = getJsonString(uuiObject);
-			return newRequest;
-		}
+      Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
+      if (uuiObject == null) {
+          return uuiRequest;
+      }
+      Map<String, Object> serviceObject = (Map<String, Object>) uuiObject
+          .getOrDefault("service", Collections.emptyMap());
+      Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject
+          .getOrDefault("parameters", Collections.emptyMap());
+      Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject
+          .getOrDefault("requestInputs", Collections.emptyMap());
+      List<Object> resources = (List<Object>) serviceParametersObject.getOrDefault("resources", Collections.emptyList());
+
+      if (isSiteLocationLocal(serviceRequestInputs, resources)) {
+          // resources changed : added TP info
+          return getJsonString(uuiObject);
+      }
 
 		List<Resource> addResourceList = new ArrayList<>();
 		addResourceList.addAll(serviceDecomposition.getServiceResources());
@@ -155,9 +159,9 @@ public class ServicePluginFactory {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean isSiteLocationLocal(Map<String, Object> serviceRequestInputs, List<Object> resources) {    	
-    	Map<String, Object> tpInfoMap = getTPforVPNAttachment(serviceRequestInputs);	
-			
+	private boolean isSiteLocationLocal(Map<String, Object> serviceRequestInputs, List<Object> resources) {
+      Map<String, Object> tpInfoMap = getTPforVPNAttachment(serviceRequestInputs);
+
 		if(tpInfoMap.isEmpty()) {
 			return true;
 		}
@@ -166,7 +170,7 @@ public class ServicePluginFactory {
 		if (!host.isEmpty()) {
 			return false;
 		}
-		
+
 		Map<String, Object> accessTPInfo = new HashMap<String, Object>();
 		accessTPInfo.put("access-provider-id", tpInfoMap.get("access-provider-id"));
 		accessTPInfo.put("access-client-id", tpInfoMap.get("access-client-id"));
@@ -180,7 +184,7 @@ public class ServicePluginFactory {
 			Map<String, Object> resource = (Map<String, Object>)curResource;
 			String curResourceName = (String) resource.get("resourceName");
 			curResourceName = curResourceName.replaceAll(" ", "");
-			if(resourceName.equalsIgnoreCase(curResourceName)) { 
+			if(resourceName.equalsIgnoreCase(curResourceName)) {
 				putResourceRequestInputs(resource, accessTPInfo);
 				break;
 			}
@@ -188,7 +192,7 @@ public class ServicePluginFactory {
 
 		return true;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private Map<String, Object> getTPforVPNAttachment(Map<String, Object> serviceRequestInputs) {
 		Object location = null;
@@ -199,24 +203,24 @@ public class ServicePluginFactory {
 		// logic for R2 uuiRequest params in service level
 		for (Entry<String, Object> entry : serviceRequestInputs.entrySet()) {
 			String key = entry.getKey();
-			if (key.toLowerCase().contains("site_address")) {				
+			if (key.toLowerCase().contains("site_address")) {
 				location = entry.getValue();
-			} 
-			if (key.toLowerCase().contains("sotncondition_clientsignal")) {				
+			}
+			if (key.toLowerCase().contains("sotncondition_clientsignal")) {
 				clientSignal = entry.getValue();
 				vpnAttachmentResourceName = key.substring(0, key.indexOf("_"));
 			}
 		}
 
 		Map<String, Object> tpInfoMap =  new HashMap<String, Object>();
-		
+
 		// Site resource has location param and SOTNAttachment resource has clientSignal param
 		if(location == null || clientSignal == null ) {
 			return tpInfoMap;
 		}
-		
-		// Query terminal points from InventoryOSS system by location.		
-		String locationAddress = (String) location;		
+
+		// Query terminal points from InventoryOSS system by location.
+		String locationAddress = (String) location;
 		List<Object> locationTPList = queryAccessTPbyLocationFromInventoryOSS(locationAddress);
 		if(locationTPList != null && !locationTPList.isEmpty()) {
 		    for(Object tp: locationTPList) {
@@ -232,10 +236,10 @@ public class ServicePluginFactory {
 			logger.debug("Get Terminal TP from InventoryOSS");
 			return tpInfoMap;
 		}
-		
+
 		return tpInfoMap;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private List<Object> queryAccessTPbyLocationFromInventoryOSS(String locationAddress) {
 		String url = getInventoryOSSEndPoint();
@@ -247,7 +251,7 @@ public class ServicePluginFactory {
 		}
 		return accessTPs;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void putResourceRequestInputs(Map<String, Object> resource, Map<String, Object> resourceInputs) {
 		Map<String, Object> resourceParametersObject = new HashMap<>();
@@ -260,7 +264,7 @@ public class ServicePluginFactory {
 			if(resParametersObject.containsKey("requestInputs")) {
 				Map<String, Object> resRequestInputs = (Map<String, Object>) resourceRequestInputs.get("requestInputs");
 				Map<String, Object> oldRequestInputs = (Map<String, Object>) resParametersObject.get("requestInputs");
-				if(oldRequestInputs != null) {					
+				if(oldRequestInputs != null) {
 					oldRequestInputs.putAll(resRequestInputs);
 				}
 				else {
@@ -268,7 +272,7 @@ public class ServicePluginFactory {
 				}
 			}
 			else {
-				resParametersObject.putAll(resourceRequestInputs);				
+				resParametersObject.putAll(resourceRequestInputs);
 			}
 		}
 		else {
@@ -277,24 +281,29 @@ public class ServicePluginFactory {
 
 		return;
 	}
-	
 
-	
+
+
 	@SuppressWarnings("unchecked")
-	public String doTPResourcesAllocation(DelegateExecution execution, String uuiRequest) {		
-		Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
-		Map<String, Object> serviceObject = (Map<String, Object>) uuiObject.get("service");
-		Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject.get("parameters");
-		Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject.get("requestInputs");
-		
-		if(!isNeedAllocateCrossTPResources(serviceRequestInputs)) {
-			return uuiRequest;
-		}
-		
-		allocateCrossTPResources(execution, serviceRequestInputs);
-		String newRequest = getJsonString(uuiObject);
-		return newRequest;
-	}
+	public String doTPResourcesAllocation(DelegateExecution execution, String uuiRequest) {
+      Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
+      if (uuiObject == null) {
+          return uuiRequest;
+      }
+      Map<String, Object> serviceObject = (Map<String, Object>) uuiObject
+          .getOrDefault("service", Collections.emptyMap());
+      Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject
+          .getOrDefault("parameters", Collections.emptyMap());
+      Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject
+          .getOrDefault("requestInputs", Collections.emptyMap());
+
+      if (!isNeedAllocateCrossTPResources(serviceRequestInputs)) {
+          return uuiRequest;
+      }
+
+      allocateCrossTPResources(execution, serviceRequestInputs);
+      return getJsonString(uuiObject);
+  }
 
 	@SuppressWarnings("unchecked")
 	private boolean isNeedAllocateCrossTPResources(Map<String, Object> serviceRequestInputs) {
@@ -303,7 +312,7 @@ public class ServicePluginFactory {
 			String callSource = (String) serviceRequestInputs.get("CallSource");
 			if("ExternalAPI".equalsIgnoreCase(callSource)) {
 				return false;
-			}							
+			}
 		}
 		for (String input : serviceRequestInputs.keySet())
 		{
@@ -313,12 +322,12 @@ public class ServicePluginFactory {
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void allocateCrossTPResources(DelegateExecution execution, Map<String, Object> serviceRequestInputs) {
 
 		Map<String, Object> crossTPs = this.getTPsfromAAI();
-		
+
 		if(crossTPs == null || crossTPs.isEmpty()) {
 			serviceRequestInputs.put("local-access-provider-id", "");
 			serviceRequestInputs.put("local-access-client-id", "");
@@ -329,7 +338,7 @@ public class ServicePluginFactory {
 			serviceRequestInputs.put("remote-access-client-id", "");
 			serviceRequestInputs.put("remote-access-topology-id", "");
 			serviceRequestInputs.put("remote-access-node-id", "");
-			serviceRequestInputs.put("remote-access-ltp-id", "");			
+			serviceRequestInputs.put("remote-access-ltp-id", "");
 		}
 		else {
 			serviceRequestInputs.put("local-access-provider-id", crossTPs.get("local-access-provider-id"));
@@ -343,24 +352,24 @@ public class ServicePluginFactory {
 			serviceRequestInputs.put("remote-access-node-id", crossTPs.get("remote-node-id"));
 			serviceRequestInputs.put("remote-access-ltp-id", crossTPs.get("remote-ltp-id"));
 		}
-		
+
 		return;
 	}
 
-	// This method returns Local and remote TPs information from AAI	
+	// This method returns Local and remote TPs information from AAI
 	public Map getTPsfromAAI() {
 		Map<String, Object> tpInfo = new HashMap<>();
-		
+
 		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.LOGICAL_LINK);
 		AAIResourcesClient client = new AAIResourcesClient();
 		Optional<LogicalLinks> result = client.get(LogicalLinks.class, uri);
-		
+
 		if (result.isPresent()) {
 			LogicalLinks links = result.get();
 			boolean isRemoteLink = false;
-			
+
 			links.getLogicalLink();
-			
+
 			for (LogicalLink link : links.getLogicalLink()) {
 				AAIResultWrapper wrapper = new AAIResultWrapper(link);
 				Optional<Relationships> optRelationships = wrapper.getRelationships();
@@ -372,7 +381,7 @@ public class ServicePluginFactory {
 					}
 					pInterfaces.addAll(relationships.getRelatedAAIUris(AAIObjectType.P_INTERFACE));
 				}
-				
+
 				if (isRemoteLink) {
 					// find remote p interface
 					AAIResourceUri localTP = null;
@@ -393,7 +402,7 @@ public class ServicePluginFactory {
 						String tpUrl = localTP.build().toString();
 						PInterface intfLocal = client.get(PInterface.class, localTP).get();
 						tpInfo.put("local-access-node-id", tpUrl.split("/")[6]);
-					
+
 						String[] networkRef = intfLocal.getNetworkRef().split("/");
 						if (networkRef.length == 6) {
 							tpInfo.put("local-access-provider-id", networkRef[1]);
@@ -404,7 +413,7 @@ public class ServicePluginFactory {
 						if (ltpIdStr.contains("-")) {
 							tpInfo.put("local-access-ltp-id", ltpIdStr.substring(ltpIdStr.lastIndexOf("-") + 1));
 						}
-						
+
 						// give remote tp
 						tpUrl = remoteTP.build().toString();
 						PInterface intfRemote = client.get(PInterface.class, remoteTP).get();
@@ -431,7 +440,7 @@ public class ServicePluginFactory {
 
 	// this method check if pInterface is remote
 	private boolean isRemotePInterface(AAIResourcesClient client, AAIResourceUri uri) {
-		
+
 		String uriString = uri.build().toString();
 
 		if (uriString != null) {
@@ -447,7 +456,7 @@ public class ServicePluginFactory {
 				return !relationships.getRelatedAAIUris(AAIObjectType.EXT_AAI_NETWORK).isEmpty();
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -475,12 +484,19 @@ public class ServicePluginFactory {
 		return uuiRequest.contains("clientSignal") && uuiRequest.contains("vpnType");
 	}
 
+	@SuppressWarnings("unchecked")
 	private String preProcessSOTNService(ServiceDecomposition serviceDecomposition, String uuiRequest) {
 		Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
-		Map<String, Object> serviceObject = (Map<String, Object>) uuiObject.get("service");
-		Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject.get("parameters");
-		Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject.get("requestInputs");
-		List<Object> resources = (List<Object>) serviceParametersObject.get("resources");
+      if (uuiObject == null) {
+          return uuiRequest;
+      }
+      Map<String, Object> serviceObject = (Map<String, Object>) uuiObject
+          .getOrDefault("service", Collections.emptyMap());
+      Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject
+          .getOrDefault("parameters", Collections.emptyMap());
+      Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject
+          .getOrDefault("requestInputs", Collections.emptyMap());
+      List<Object> resources = (List<Object>) serviceParametersObject.getOrDefault("resources", Collections.emptyList());
 		// This is a logic for demo , it could not be finalized to community.
 		String srcLocation = "";
 		String dstLocation = "";
@@ -534,7 +550,7 @@ public class ServicePluginFactory {
 			vpnRequestInputs.put("src-client-signal", srcClientSignal);
 			vpnRequestInputs.put("dst-client-signal", dstClientSignal);
 		}
-		
+
 
 		// Now we need to query terminal points from SP resourcemgr system.
 		List<Object> locationTerminalPointList = queryTerminalPointsFromServiceProviderSystem(srcLocation, dstLocation);
@@ -589,54 +605,61 @@ public class ServicePluginFactory {
 		}
 		return null;
 	}
-	
+
 	public static void main(String args[]){
 		String str = "restconf/config/GENERIC-RESOURCE-API:services/service/eca7e542-12ba-48de-8544-fac59303b14e/service-data/networks/network/aec07806-1671-4af2-b722-53c8e320a633/network-data/";
-		
+
 		int index1 = str.indexOf("/network/");
 		int index2 = str.indexOf("/network-data");
-		
+
 		String str1 = str.substring(index1 + "/network/".length(), index2);
 		System.out.println(str1);
-		
+
 	}
 
-	private String doSOTNServiceHoming(ServiceDecomposition serviceDecomposition, String uuiRequest) {
-		// query the route for the service.
-		Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
-		Map<String, Object> serviceObject = (Map<String, Object>) uuiObject.get("service");
-		Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject.get("parameters");
-		Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject.get("requestInputs");
-		Map<String, Object> oofQueryObject = new HashMap<>();
-		List<Object> resources = (List<Object>) serviceParametersObject.get("resources");
-		oofQueryObject.put("src-access-provider-id", serviceRequestInputs.get("inner-src-access-provider-id"));
-		oofQueryObject.put("src-access-client-id", serviceRequestInputs.get("inner-src-access-client-id"));
-		oofQueryObject.put("src-access-topology-id", serviceRequestInputs.get("inner-src-access-topology-id"));
-		oofQueryObject.put("src-access-node-id", serviceRequestInputs.get("inner-src-access-node-id"));
-		oofQueryObject.put("src-access-ltp-id", serviceRequestInputs.get("inner-src-access-ltp-id"));
-		oofQueryObject.put("dst-access-provider-id", serviceRequestInputs.get("inner-dst-access-provider-id"));
-		oofQueryObject.put("dst-access-client-id", serviceRequestInputs.get("inner-dst-access-client-id"));
-		oofQueryObject.put("dst-access-topology-id", serviceRequestInputs.get("inner-dst-access-topology-id"));
-		oofQueryObject.put("dst-access-node-id", serviceRequestInputs.get("inner-dst-access-node-id"));
-		oofQueryObject.put("dst-access-ltp-id", serviceRequestInputs.get("inner-dst-access-ltp-id"));
-		String oofRequestReq = getJsonString(oofQueryObject);
-		String url = getOOFCalcEndPoint();
-		String responseContent = sendRequest(url, "POST", oofRequestReq);
+    @SuppressWarnings("unchecked")
+    private String doSOTNServiceHoming(ServiceDecomposition serviceDecomposition, String uuiRequest) {
+        // query the route for the service.
+        Map<String, Object> uuiObject = getJsonObject(uuiRequest, Map.class);
+        if (uuiObject == null) {
+            return uuiRequest;
+        }
+        Map<String, Object> serviceObject = (Map<String, Object>) uuiObject
+            .getOrDefault("service", Collections.emptyMap());
+        Map<String, Object> serviceParametersObject = (Map<String, Object>) serviceObject
+            .getOrDefault("parameters", Collections.emptyMap());
+        Map<String, Object> serviceRequestInputs = (Map<String, Object>) serviceParametersObject
+            .getOrDefault("requestInputs", Collections.emptyMap());
+        Map<String, Object> oofQueryObject = new HashMap<>();
+        List<Object> resources = (List<Object>) serviceParametersObject
+            .getOrDefault("resources", Collections.emptyList());
+        oofQueryObject.put("src-access-provider-id", serviceRequestInputs.get("inner-src-access-provider-id"));
+        oofQueryObject.put("src-access-client-id", serviceRequestInputs.get("inner-src-access-client-id"));
+        oofQueryObject.put("src-access-topology-id", serviceRequestInputs.get("inner-src-access-topology-id"));
+        oofQueryObject.put("src-access-node-id", serviceRequestInputs.get("inner-src-access-node-id"));
+        oofQueryObject.put("src-access-ltp-id", serviceRequestInputs.get("inner-src-access-ltp-id"));
+        oofQueryObject.put("dst-access-provider-id", serviceRequestInputs.get("inner-dst-access-provider-id"));
+        oofQueryObject.put("dst-access-client-id", serviceRequestInputs.get("inner-dst-access-client-id"));
+        oofQueryObject.put("dst-access-topology-id", serviceRequestInputs.get("inner-dst-access-topology-id"));
+        oofQueryObject.put("dst-access-node-id", serviceRequestInputs.get("inner-dst-access-node-id"));
+        oofQueryObject.put("dst-access-ltp-id", serviceRequestInputs.get("inner-dst-access-ltp-id"));
+        String oofRequestReq = getJsonString(oofQueryObject);
+        String url = getOOFCalcEndPoint();
+        String responseContent = sendRequest(url, "POST", oofRequestReq);
 
-		List<Object> returnList = new ArrayList<>();
-		if (null != responseContent) {
-			returnList = getJsonObject(responseContent, List.class);
-		}
-		// in demo we have only one VPN. no cross VPNs, so get first item.
-		Map<String, Object> returnRoute = getReturnRoute(returnList);
-		Map<String, Object> vpnRequestInputs = getVPNResourceRequestInputs(resources);
-		if(null!=vpnRequestInputs) {
-			vpnRequestInputs.putAll(returnRoute);
-		}
-		String newRequest = getJsonString(uuiObject);
-		return newRequest;
-	}
-	
+        List<Object> returnList = new ArrayList<>();
+        if (null != responseContent) {
+            returnList = getJsonObject(responseContent, List.class);
+        }
+        // in demo we have only one VPN. no cross VPNs, so get first item.
+        Map<String, Object> returnRoute = getReturnRoute(returnList);
+        Map<String, Object> vpnRequestInputs = getVPNResourceRequestInputs(resources);
+        if (null != vpnRequestInputs) {
+            vpnRequestInputs.putAll(returnRoute);
+        }
+        return getJsonString(uuiObject);
+    }
+
 	private Map<String, Object> getReturnRoute(List<Object> returnList){
 		Map<String, Object> returnRoute = new HashMap<>();
 		for(Object returnVpn :returnList){
@@ -681,7 +704,7 @@ public class ServicePluginFactory {
 		return resourceInputsFromUuiMap;
 	}
 
-	public static <T> T getJsonObject(String jsonstr, Class<T> type) {
+	private static <T> T getJsonObject(String jsonstr, Class<T> type) {
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 		try {
@@ -706,7 +729,7 @@ public class ServicePluginFactory {
 	}
 
 	private static String sendRequest(String url, String methodType, String content) {
-		
+
 		String msbUrl = url;
 		HttpRequestBase method = null;
 		HttpResponse httpResponse = null;
