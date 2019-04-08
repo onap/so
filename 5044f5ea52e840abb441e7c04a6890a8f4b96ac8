@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "b28e75be_fcaa8d1f",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/main/java/org/onap/so/apihandlerinfra/InstanceManagement.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-08T11:21:12Z",
+      "side": 1,
+      "message": "this should be its own method.",
+      "revId": "5044f5ea52e840abb441e7c04a6890a8f4b96ac8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9d664e30_27df8030",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/schema.sql",
+        "patchSetId": 3
+      },
+      "lineNbr": 1471,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-08T11:21:12Z",
+      "side": 1,
+      "message": "Do we have a migration that creates this table?",
+      "revId": "5044f5ea52e840abb441e7c04a6890a8f4b96ac8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
