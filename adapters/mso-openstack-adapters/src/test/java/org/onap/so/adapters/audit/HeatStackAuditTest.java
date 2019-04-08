@@ -169,17 +169,32 @@ public class HeatStackAuditTest extends HeatStackAudit {
 		
 		String actualValue = objectMapper.writeValueAsString(vserversWithSubInterfaces);
 		String expectedValue = getJson("ExpectedVserversToAudit.json");
-		System.out.println(actualValue);
 		JSONAssert.assertEquals(expectedValue, actualValue, false);
 	}
 	
 	@Test
 	public void auditHeatStackNoServers_Test() throws Exception{
 		Resources getResource = objectMapper.readValue(new File("src/test/resources/Service1ResourceGroupResponse.json"), Resources.class);
-		doReturn(getResource).when(msoHeatUtilsMock).queryStackResources(cloudRegion,	tenantId, "heatStackName");
+		doReturn(getResource).when(msoHeatUtilsMock).queryStackResources(cloudRegion,	tenantId, "heatStackName", 3);
 		
 		Optional<AAIObjectAuditList> actual = heatStackAudit.auditHeatStack(cloudRegion, "cloudOwner", tenantId, "heatStackName");
 		assertEquals(true, actual.get().getAuditList().isEmpty());
+	}
+	
+	@Test
+	public void auditHeatStackNestedServers_Test() throws Exception{
+		Resources getResource = objectMapper.readValue(new File("src/test/resources/GetNestedResources.json"), Resources.class);		
+		List<Resource> novaResources = getResource.getList().stream()
+				.filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());		
+		List<Resource> resourceGroups = getResource.getList().stream()
+				.filter(p -> "OS::Heat::ResourceGroup".equals(p.getType())).collect(Collectors.toList());
+		
+		doReturn(getResource).when(msoHeatUtilsMock).queryStackResources(cloudRegion,	tenantId, "heatStackName", 3);		
+		Set<Vserver> vServersToAudit = heatStackAudit.createVserverSet(resources, novaResources,portList);		
+		Set<Vserver> vserversWithSubInterfaces = heatStackAudit.processSubInterfaces(cloudRegion,tenantId,resourceGroups, vServersToAudit);
+		String actualValue = objectMapper.writeValueAsString(vserversWithSubInterfaces);
+		String expectedValue = getJson("NestedExpectedValue.json");
+		JSONAssert.assertEquals(expectedValue, actualValue, false);
 	}
 	
 

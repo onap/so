@@ -68,7 +68,7 @@ public class HeatStackAudit {
 	public Optional<AAIObjectAuditList> auditHeatStack(String cloudRegion, String cloudOwner, String tenantId, String heatStackName) {
 		try {
 			logger.debug("Fetching Top Level Stack Information");
-			Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName);
+			Resources resources = heat.queryStackResources(cloudRegion, tenantId, heatStackName, 3);
 			List<Resource> novaResources = resources.getList().stream()
 					.filter(p -> "OS::Nova::Server".equals(p.getType())).collect(Collectors.toList());
 			List<Resource> resourceGroups = resources.getList().stream()

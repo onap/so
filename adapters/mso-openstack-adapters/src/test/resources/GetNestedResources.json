@@ -1,0 +1,277 @@
+{
+    "resources": [
+        {
+            "resource_name": "rar_keypair",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module/9b93aecf-fe05-4047-ba36-d5eb7bc7354e/resources/rar_keypair",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module/9b93aecf-fe05-4047-ba36-d5eb7bc7354e",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_keypair",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:49Z",
+            "required_by": [
+                "rar_node_0"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "rdm6ararf8001v-key_pair",
+            "resource_type": "OS::Nova::KeyPair"
+        },
+        {
+            "resource_name": "rar_node_0",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module/9b93aecf-fe05-4047-ba36-d5eb7bc7354e/resources/rar_node_0",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module/9b93aecf-fe05-4047-ba36-d5eb7bc7354e",
+                    "rel": "stack"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "nested"
+                }
+            ],
+            "logical_resource_id": "rar_node_0",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:49Z",
+            "required_by": [],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "c4876377-22bb-45d2-9fc3-f36a32207fa5",
+            "resource_type": "nest_rareport_server.yaml"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_volumeattachment_0",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_volumeattachment_0",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_volumeattachment_0",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "a27b9151-f439-437e-b7b0-94068cc856fa",
+            "resource_type": "OS::Cinder::VolumeAttachment"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_volume_0",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_volume_0",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_volume_0",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [
+                "rar_volumeattachment_0"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "a27b9151-f439-437e-b7b0-94068cc856fa",
+            "resource_type": "OS::Cinder::Volume"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_RMM",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_RMM",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_RMM",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [
+                "rar_server_0"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "dd23e047-d169-4cc3-a90a-6bc81b1ea17a",
+            "resource_type": "OS::Heat::MultipartMime"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_server_0",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_server_0",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_server_0",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [
+                "rar_volumeattachment_0"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "03a31a65-91ed-4563-9d5d-4f7223df9767",
+            "resource_type": "OS::Nova::Server"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_RSC",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_RSC",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_RSC",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [
+                "rar_RMM"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "7cea5faf-f5a8-4182-a686-05964f51ad95",
+            "resource_type": "OS::Heat::SoftwareConfig"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_0_oam_port_0",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_0_oam_port_0",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_0_oam_port_0",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [
+                "rar_server_0"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "d2bc253c-96a5-47df-a00f-5b9f3eebe684",
+            "resource_type": "OS::Neutron::Port"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_RCC_2",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_RCC_2",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_RCC_2",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [
+                "rar_RMM"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "15d092ab-4702-4635-8da9-24fff85c175b",
+            "resource_type": "OS::Heat::CloudConfig"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_RCC_0",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_RCC_0",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_RCC_0",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [
+                "rar_RMM"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "9420ad4c-49da-4f23-89fc-109f9d5a4505",
+            "resource_type": "OS::Heat::CloudConfig"
+        },
+        {
+            "parent_resource": "rar_node_0",
+            "resource_name": "rar_RCC_1",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5/resources/rar_RCC_1",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module-rar_node_0-4pkqvamx52u6/c4876377-22bb-45d2-9fc3-f36a32207fa5",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_RCC_1",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:56Z",
+            "required_by": [
+                "rar_RMM"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "321b91fb-f265-4e56-8025-3c3e88da320a",
+            "resource_type": "OS::Heat::CloudConfig"
+        },
+        {
+            "resource_name": "rar_Sec_Grp",
+            "links": [
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module/9b93aecf-fe05-4047-ba36-d5eb7bc7354e/resources/rar_Sec_Grp",
+                    "rel": "self"
+                },
+                {
+                    "href": "https://test.com:8004/v1/326799122bd4451c801153f5db7f8509/stacks/rdm6ararf8001v_base_module/9b93aecf-fe05-4047-ba36-d5eb7bc7354e",
+                    "rel": "stack"
+                }
+            ],
+            "logical_resource_id": "rar_Sec_Grp",
+            "resource_status": "CREATE_COMPLETE",
+            "updated_time": "2019-04-02T20:13:49Z",
+            "required_by": [
+                "rar_node_0"
+            ],
+            "resource_status_reason": "state changed",
+            "physical_resource_id": "99fc77c6-019b-441c-ad99-b48dd1059f71",
+            "resource_type": "OS::Neutron::SecurityGroup"
+        }
+    ]
+}
