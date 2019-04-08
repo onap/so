@@ -33,6 +33,24 @@
       "revId": "5044f5ea52e840abb441e7c04a6890a8f4b96ac8",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "448a2800_d22dbc27",
+        "filename": "mso-api-handlers/mso-api-handler-infra/src/test/resources/schema.sql",
+        "patchSetId": 3
+      },
+      "lineNbr": 1471,
+      "author": {
+        "id": 1523
+      },
+      "writtenOn": "2019-04-08T13:40:30Z",
+      "side": 1,
+      "message": "Yes. V5.7_WorkFlowDesignerTables.sql",
+      "parentUuid": "9d664e30_27df8030",
+      "revId": "5044f5ea52e840abb441e7c04a6890a8f4b96ac8",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
