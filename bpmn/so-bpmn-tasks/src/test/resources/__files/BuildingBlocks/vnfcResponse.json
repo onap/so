@@ -1,0 +1,29 @@
+{
+  "vnfc-name": "vnfcName",
+  "nfc-naming-code": "oamfw",
+  "nfc-function": "FIREWALL",
+  "prov-status": "PREPROV",
+  "orchestration-status": "Active",
+  "in-maint": false,
+  "is-closed-loop-disabled": false,
+  "model-invariant-id": "9dae8bb5-0709-4c0e-8f5b-6448232510ea",
+  "model-version-id": "b4e05ccb-01d0-4176-90ae-380308a35e5f",
+  "model-customization-id": "abf73d38-9da2-47af-bd53-26954318449f",
+  "resource-version": "1552319567126",
+   "relationship-list": {
+      "relationship": [
+        {
+          "related-to": "generic-vnf",
+          "related-link": "/aai/v11/network/generic-vnfs/generic-vnf/testGenericVnfId",
+          "relationship-data": {
+            "relationship-key": "generic-vnf",
+            "relationship-value": "4a9184ac-5fad-44a1-b224-289bb490eaa9"
+          },
+          "related-to-property": {
+            "property-key": "generic-vnf.vnf-name",
+            "property-value": "USBBBBmtwnjVVHP047"
+          }
+        }
+      ]
+    }
+}

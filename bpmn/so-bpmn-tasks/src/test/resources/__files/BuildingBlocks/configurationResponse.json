@@ -1,0 +1,8 @@
+{
+	"configuration-id": "testConfigurationId",
+	"configuration-type": "...",
+	"orchestration-status": "...",
+	"tunnel-bandwidth": "100",
+	"vendor-allowed-max-bandwidth": "90",
+	"resource-version": "1234"
+}

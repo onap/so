@@ -787,7 +787,7 @@ public class CatalogDbClient {
             logger.debug("Found CvnfcCustomization: {}", filtered.get(0));
             return filtered.get(0);
         }else
-            throw new EntityNotFoundException("Unable to find VfModuleCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
+            throw new EntityNotFoundException("Unable to find CvnfcCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
     }
     
     public CvnfcConfigurationCustomization getCvnfcCustomization(String serviceModelUUID, String vnfCustomizationUuid,
