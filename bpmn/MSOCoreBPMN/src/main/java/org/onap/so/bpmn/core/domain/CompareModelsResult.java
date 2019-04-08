@@ -23,31 +23,35 @@ package org.onap.so.bpmn.core.domain;
 import java.io.Serializable;
 import java.util.List;
 
-public class CompareModelsResult  extends JsonWrapper implements Serializable 
-{
-	private static final long serialVersionUID = 1L;
-	
-	private List<ResourceModelInfo> addedResourceList;	
-	private List<ResourceModelInfo> deletedResourceList;
-	private List<String> requestInputs;
-	
-	public List<ResourceModelInfo> getAddedResourceList() {
-		return addedResourceList;
-	}
-	public void setAddedResourceList(List<ResourceModelInfo> addedResourceList) {
-		this.addedResourceList = addedResourceList;
-	}
-	public List<ResourceModelInfo> getDeletedResourceList() {
-		return deletedResourceList;
-	}
-	public void setDeletedResourceList(List<ResourceModelInfo> deletedResourceList) {
-		this.deletedResourceList = deletedResourceList;
-	}
-	public List<String> getRequestInputs() {
-		return requestInputs;
-	}
-	public void setRequestInputs(List<String> requestInputs) {
-		this.requestInputs = requestInputs;
-	}
+public class CompareModelsResult extends JsonWrapper implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    private List<ResourceModelInfo> addedResourceList;
+    private List<ResourceModelInfo> deletedResourceList;
+    private List<String> requestInputs;
+
+    public List<ResourceModelInfo> getAddedResourceList() {
+        return addedResourceList;
+    }
+
+    public void setAddedResourceList(List<ResourceModelInfo> addedResourceList) {
+        this.addedResourceList = addedResourceList;
+    }
+
+    public List<ResourceModelInfo> getDeletedResourceList() {
+        return deletedResourceList;
+    }
+
+    public void setDeletedResourceList(List<ResourceModelInfo> deletedResourceList) {
+        this.deletedResourceList = deletedResourceList;
+    }
+
+    public List<String> getRequestInputs() {
+        return requestInputs;
+    }
+
+    public void setRequestInputs(List<String> requestInputs) {
+        this.requestInputs = requestInputs;
+    }
 
 }

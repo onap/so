@@ -22,41 +22,43 @@ package org.onap.so.openstack.mappers;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.w3c.dom.Element;
 
 public class MapAdapter extends XmlAdapter<MapEntry, Map<String, Object>> {
 
-	@Override
-	public MapEntry marshal(Map<String, Object> v) throws Exception {
+    @Override
+    public MapEntry marshal(Map<String, Object> v) throws Exception {
 
-		if (v == null || v.isEmpty()) {return null;}
+        if (v == null || v.isEmpty()) {
+            return null;
+        }
 
-		MapEntry map = new MapEntry();
+        MapEntry map = new MapEntry();
 
-		for (String key : v.keySet()) {
-			map.addEntry(key, v.get(key));
-		}
+        for (String key : v.keySet()) {
+            map.addEntry(key, v.get(key));
+        }
 
-		return map;
-	}
+        return map;
+    }
 
-	@Override
-	public Map<String, Object> unmarshal(MapEntry v) throws Exception {
-		if (v == null) {return null;}
+    @Override
+    public Map<String, Object> unmarshal(MapEntry v) throws Exception {
+        if (v == null) {
+            return null;
+        }
 
-		Map<String, Object> map = new HashMap<>(v.entry.size());
+        Map<String, Object> map = new HashMap<>(v.entry.size());
 
-		for(MapElements entry: v.entry) {
-			if (entry.value instanceof Element) {
-				map.put(entry.key, ((Element)entry.value).getTextContent());
-			} else {
-				map.put(entry.key, entry.value);
-			}
-		}
+        for (MapElements entry : v.entry) {
+            if (entry.value instanceof Element) {
+                map.put(entry.key, ((Element) entry.value).getTextContent());
+            } else {
+                map.put(entry.key, entry.value);
+            }
+        }
 
-		return map;
-	}
+        return map;
+    }
 }

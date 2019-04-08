@@ -22,7 +22,6 @@ package org.onap.so.client.grm.beans;
 
 import java.io.Serializable;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,216 +31,216 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName(value = "serviceEndPoint")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({ "name", "version", "hostAddress", "listenPort", "latitude", "longitude", "registrationTime",
-		"expirationTime", "contextPath", "routeOffer", "statusInfo", "eventStatusInfo", "validatorStatusInfo",
-		"operationalInfo", "protocol", "properties", "disableType" })
+@JsonPropertyOrder({"name", "version", "hostAddress", "listenPort", "latitude", "longitude", "registrationTime",
+        "expirationTime", "contextPath", "routeOffer", "statusInfo", "eventStatusInfo", "validatorStatusInfo",
+        "operationalInfo", "protocol", "properties", "disableType"})
 public class ServiceEndPoint implements Serializable {
 
-	private static final long serialVersionUID = -1594441352549128491L;
-	
-	@JsonProperty("name")
-	private String name;
-	@JsonProperty("version")
-	private Version version;
-	@JsonProperty("hostAddress")
-	private String hostAddress;
-	@JsonProperty("listenPort")
-	private String listenPort;
-	@JsonProperty("latitude")
-	private String latitude;
-	@JsonProperty("longitude")
-	private String longitude;
-	@JsonProperty("registrationTime")
-	private String registrationTime;
-	@JsonProperty("expirationTime")
-	private String expirationTime;
-	@JsonProperty("contextPath")
-	private String contextPath;
-	@JsonProperty("routeOffer")
-	private String routeOffer;
-	@JsonProperty("statusInfo")
-	private Status statusInfo;
-	@JsonProperty("eventStatusInfo")
-	private Status eventStatusInfo;
-	@JsonProperty("validatorStatusInfo")
-	private Status validatorStatusInfo;
-	@JsonProperty("operationalInfo")
-	private OperationalInfo operationalInfo;
-	@JsonProperty("protocol")
-	private String protocol;
-	@JsonProperty("properties")
-	private List<Property> properties = null;
-	@JsonProperty("disableType")
-	private List<Object> disableType = null;
+    private static final long serialVersionUID = -1594441352549128491L;
 
-	@JsonProperty("name")
-	public String getName() {
-		return name;
-	}
+    @JsonProperty("name")
+    private String name;
+    @JsonProperty("version")
+    private Version version;
+    @JsonProperty("hostAddress")
+    private String hostAddress;
+    @JsonProperty("listenPort")
+    private String listenPort;
+    @JsonProperty("latitude")
+    private String latitude;
+    @JsonProperty("longitude")
+    private String longitude;
+    @JsonProperty("registrationTime")
+    private String registrationTime;
+    @JsonProperty("expirationTime")
+    private String expirationTime;
+    @JsonProperty("contextPath")
+    private String contextPath;
+    @JsonProperty("routeOffer")
+    private String routeOffer;
+    @JsonProperty("statusInfo")
+    private Status statusInfo;
+    @JsonProperty("eventStatusInfo")
+    private Status eventStatusInfo;
+    @JsonProperty("validatorStatusInfo")
+    private Status validatorStatusInfo;
+    @JsonProperty("operationalInfo")
+    private OperationalInfo operationalInfo;
+    @JsonProperty("protocol")
+    private String protocol;
+    @JsonProperty("properties")
+    private List<Property> properties = null;
+    @JsonProperty("disableType")
+    private List<Object> disableType = null;
 
-	@JsonProperty("name")
-	public void setName(String name) {
-		this.name = name;
-	}
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
 
-	@JsonProperty("version")
-	public Version getVersion() {
-		return version;
-	}
+    @JsonProperty("name")
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@JsonProperty("version")
-	public void setVersion(Version version) {
-		this.version = version;
-	}
+    @JsonProperty("version")
+    public Version getVersion() {
+        return version;
+    }
 
-	@JsonProperty("hostAddress")
-	public String getHostAddress() {
-		return hostAddress;
-	}
+    @JsonProperty("version")
+    public void setVersion(Version version) {
+        this.version = version;
+    }
 
-	@JsonProperty("hostAddress")
-	public void setHostAddress(String hostAddress) {
-		this.hostAddress = hostAddress;
-	}
+    @JsonProperty("hostAddress")
+    public String getHostAddress() {
+        return hostAddress;
+    }
 
-	@JsonProperty("listenPort")
-	public String getListenPort() {
-		return listenPort;
-	}
+    @JsonProperty("hostAddress")
+    public void setHostAddress(String hostAddress) {
+        this.hostAddress = hostAddress;
+    }
 
-	@JsonProperty("listenPort")
-	public void setListenPort(String listenPort) {
-		this.listenPort = listenPort;
-	}
+    @JsonProperty("listenPort")
+    public String getListenPort() {
+        return listenPort;
+    }
 
-	@JsonProperty("latitude")
-	public String getLatitude() {
-		return latitude;
-	}
+    @JsonProperty("listenPort")
+    public void setListenPort(String listenPort) {
+        this.listenPort = listenPort;
+    }
 
-	@JsonProperty("latitude")
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
+    @JsonProperty("latitude")
+    public String getLatitude() {
+        return latitude;
+    }
 
-	@JsonProperty("longitude")
-	public String getLongitude() {
-		return longitude;
-	}
+    @JsonProperty("latitude")
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
 
-	@JsonProperty("longitude")
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
+    @JsonProperty("longitude")
+    public String getLongitude() {
+        return longitude;
+    }
 
-	@JsonProperty("registrationTime")
-	public String getRegistrationTime() {
-		return registrationTime;
-	}
+    @JsonProperty("longitude")
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
 
-	@JsonProperty("registrationTime")
-	public void setRegistrationTime(String registrationTime) {
-		this.registrationTime = registrationTime;
-	}
+    @JsonProperty("registrationTime")
+    public String getRegistrationTime() {
+        return registrationTime;
+    }
 
-	@JsonProperty("expirationTime")
-	public String getExpirationTime() {
-		return expirationTime;
-	}
+    @JsonProperty("registrationTime")
+    public void setRegistrationTime(String registrationTime) {
+        this.registrationTime = registrationTime;
+    }
 
-	@JsonProperty("expirationTime")
-	public void setExpirationTime(String expirationTime) {
-		this.expirationTime = expirationTime;
-	}
+    @JsonProperty("expirationTime")
+    public String getExpirationTime() {
+        return expirationTime;
+    }
 
-	@JsonProperty("contextPath")
-	public String getContextPath() {
-		return contextPath;
-	}
+    @JsonProperty("expirationTime")
+    public void setExpirationTime(String expirationTime) {
+        this.expirationTime = expirationTime;
+    }
 
-	@JsonProperty("contextPath")
-	public void setContextPath(String contextPath) {
-		this.contextPath = contextPath;
-	}
+    @JsonProperty("contextPath")
+    public String getContextPath() {
+        return contextPath;
+    }
 
-	@JsonProperty("routeOffer")
-	public String getRouteOffer() {
-		return routeOffer;
-	}
+    @JsonProperty("contextPath")
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
 
-	@JsonProperty("routeOffer")
-	public void setRouteOffer(String routeOffer) {
-		this.routeOffer = routeOffer;
-	}
+    @JsonProperty("routeOffer")
+    public String getRouteOffer() {
+        return routeOffer;
+    }
 
-	@JsonProperty("statusInfo")
-	public Status getStatusInfo() {
-		return statusInfo;
-	}
+    @JsonProperty("routeOffer")
+    public void setRouteOffer(String routeOffer) {
+        this.routeOffer = routeOffer;
+    }
 
-	@JsonProperty("statusInfo")
-	public void setStatusInfo(Status statusInfo) {
-		this.statusInfo = statusInfo;
-	}
+    @JsonProperty("statusInfo")
+    public Status getStatusInfo() {
+        return statusInfo;
+    }
 
-	@JsonProperty("eventStatusInfo")
-	public Status getEventStatusInfo() {
-		return eventStatusInfo;
-	}
+    @JsonProperty("statusInfo")
+    public void setStatusInfo(Status statusInfo) {
+        this.statusInfo = statusInfo;
+    }
 
-	@JsonProperty("eventStatusInfo")
-	public void setEventStatusInfo(Status eventStatusInfo) {
-		this.eventStatusInfo = eventStatusInfo;
-	}
+    @JsonProperty("eventStatusInfo")
+    public Status getEventStatusInfo() {
+        return eventStatusInfo;
+    }
 
-	@JsonProperty("validatorStatusInfo")
-	public Status getValidatorStatusInfo() {
-		return validatorStatusInfo;
-	}
+    @JsonProperty("eventStatusInfo")
+    public void setEventStatusInfo(Status eventStatusInfo) {
+        this.eventStatusInfo = eventStatusInfo;
+    }
 
-	@JsonProperty("validatorStatusInfo")
-	public void setValidatorStatusInfo(Status validatorStatusInfo) {
-		this.validatorStatusInfo = validatorStatusInfo;
-	}
+    @JsonProperty("validatorStatusInfo")
+    public Status getValidatorStatusInfo() {
+        return validatorStatusInfo;
+    }
 
-	@JsonProperty("operationalInfo")
-	public OperationalInfo getOperationalInfo() {
-		return operationalInfo;
-	}
+    @JsonProperty("validatorStatusInfo")
+    public void setValidatorStatusInfo(Status validatorStatusInfo) {
+        this.validatorStatusInfo = validatorStatusInfo;
+    }
 
-	@JsonProperty("operationalInfo")
-	public void setOperationalInfo(OperationalInfo operationalInfo) {
-		this.operationalInfo = operationalInfo;
-	}
+    @JsonProperty("operationalInfo")
+    public OperationalInfo getOperationalInfo() {
+        return operationalInfo;
+    }
 
-	@JsonProperty("protocol")
-	public String getProtocol() {
-		return protocol;
-	}
+    @JsonProperty("operationalInfo")
+    public void setOperationalInfo(OperationalInfo operationalInfo) {
+        this.operationalInfo = operationalInfo;
+    }
 
-	@JsonProperty("protocol")
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
+    @JsonProperty("protocol")
+    public String getProtocol() {
+        return protocol;
+    }
 
-	@JsonProperty("properties")
-	public List<Property> getProperties() {
-		return properties;
-	}
+    @JsonProperty("protocol")
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
 
-	@JsonProperty("properties")
-	public void setProperties(List<Property> properties) {
-		this.properties = properties;
-	}
+    @JsonProperty("properties")
+    public List<Property> getProperties() {
+        return properties;
+    }
 
-	@JsonProperty("disableType")
-	public List<Object> getDisableType() {
-		return disableType;
-	}
+    @JsonProperty("properties")
+    public void setProperties(List<Property> properties) {
+        this.properties = properties;
+    }
 
-	@JsonProperty("disableType")
-	public void setDisableType(List<Object> disableType) {
-		this.disableType = disableType;
-	}
+    @JsonProperty("disableType")
+    public List<Object> getDisableType() {
+        return disableType;
+    }
+
+    @JsonProperty("disableType")
+    public void setDisableType(List<Object> disableType) {
+        this.disableType = disableType;
+    }
 
 }

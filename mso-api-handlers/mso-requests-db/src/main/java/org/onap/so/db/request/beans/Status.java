@@ -23,11 +23,11 @@ package org.onap.so.db.request.beans;
 
 /*
  * Enum for Status values returned by API Handler to Tail-F
-*/
+ */
 public enum Status {
-                    PENDING, INPROGRESS, COMPLETED, FAILED, TIMEOUT;
+    PENDING, INPROGRESS, COMPLETED, FAILED, TIMEOUT;
 
-    public boolean isFinished () {
+    public boolean isFinished() {
         switch (this) {
             case COMPLETED:
             case FAILED:

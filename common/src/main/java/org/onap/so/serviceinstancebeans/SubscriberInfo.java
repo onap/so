@@ -21,7 +21,6 @@
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,18 +30,16 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class SubscriberInfo implements Serializable {
 
-	private static final long serialVersionUID = -1750701712128104652L;
-	@JsonProperty("globalSubscriberId")
+    private static final long serialVersionUID = -1750701712128104652L;
+    @JsonProperty("globalSubscriberId")
     protected String globalSubscriberId;
-	@JsonProperty("subscriberName")
+    @JsonProperty("subscriberName")
     protected String subscriberName;
 
     /**
      * Gets the value of the globalSubscriberId property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getGlobalSubscriberId() {
@@ -52,9 +49,7 @@ public class SubscriberInfo implements Serializable {
     /**
      * Sets the value of the globalSubscriberId property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setGlobalSubscriberId(String value) {
@@ -64,9 +59,7 @@ public class SubscriberInfo implements Serializable {
     /**
      * Gets the value of the subscriberName property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getSubscriberName() {
@@ -76,19 +69,16 @@ public class SubscriberInfo implements Serializable {
     /**
      * Sets the value of the subscriberName property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setSubscriberName(String value) {
         this.subscriberName = value;
     }
 
-	@Override
-	public String toString() {
-		return "SubscriberInfo [globalSubscriberId=" + globalSubscriberId
-				+ ", subscriberName=" + subscriberName + "]";
-	}
+    @Override
+    public String toString() {
+        return "SubscriberInfo [globalSubscriberId=" + globalSubscriberId + ", subscriberName=" + subscriberName + "]";
+    }
 
 }

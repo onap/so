@@ -24,7 +24,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,39 +37,40 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 public class AssignNetworkTest extends BaseTaskTest {
-	
-	@InjectMocks
-	private AssignNetwork assignNetwork = new AssignNetwork();
-	
-	private L3Network network;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		network = setL3Network();
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));	
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
-	}
-	
-	@Test
-	public void networkNotFoundTest() throws Exception {
-		//network status to PRECREATED - when it was NOT found by name
-		try {
-			network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-		} catch(BBObjectNotFoundException e) {
-		}
-		
-		network.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
-		boolean networkFound = assignNetwork.networkFoundByName(execution);
-		assertEquals(false, networkFound);
-	}
 
-	@Test
-	public void networkFoundTest() throws Exception {
-		try {
-			network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-		} catch(BBObjectNotFoundException e) {
-		}
-		boolean networkFound = assignNetwork.networkFoundByName(execution);
-		assertEquals(true, networkFound);
-	}
+    @InjectMocks
+    private AssignNetwork assignNetwork = new AssignNetwork();
+
+    private L3Network network;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        network = setL3Network();
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
+    }
+
+    @Test
+    public void networkNotFoundTest() throws Exception {
+        // network status to PRECREATED - when it was NOT found by name
+        try {
+            network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+        } catch (BBObjectNotFoundException e) {
+        }
+
+        network.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
+        boolean networkFound = assignNetwork.networkFoundByName(execution);
+        assertEquals(false, networkFound);
+    }
+
+    @Test
+    public void networkFoundTest() throws Exception {
+        try {
+            network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+        } catch (BBObjectNotFoundException e) {
+        }
+        boolean networkFound = assignNetwork.networkFoundByName(execution);
+        assertEquals(true, networkFound);
+    }
 }

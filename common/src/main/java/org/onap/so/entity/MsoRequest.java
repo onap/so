@@ -24,41 +24,39 @@ package org.onap.so.entity;
 import java.io.Serializable;
 
 /**
- * This simple bean holds tracking information for MSO requests within
- * the adapters.  This tracking information should be added to logs,
- * metrics, alarms as appropriate.
+ * This simple bean holds tracking information for MSO requests within the adapters. This tracking information should be
+ * added to logs, metrics, alarms as appropriate.
  * 
  *
  */
-public class MsoRequest implements Serializable
-{
-	private static final long serialVersionUID = 1797142528913733469L;
-	private String requestId;
-	private String serviceInstanceId;
+public class MsoRequest implements Serializable {
+    private static final long serialVersionUID = 1797142528913733469L;
+    private String requestId;
+    private String serviceInstanceId;
 
-	public MsoRequest() {
-		this.requestId = null;
-		this.serviceInstanceId = null;
-	}
+    public MsoRequest() {
+        this.requestId = null;
+        this.serviceInstanceId = null;
+    }
 
-	public MsoRequest(String r, String s) {
-		this.requestId = r;
-		this.serviceInstanceId = s;
-	}
-	
-	public String getRequestId() {
-		return requestId;
-	}
+    public MsoRequest(String r, String s) {
+        this.requestId = r;
+        this.serviceInstanceId = s;
+    }
 
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
+    public String getRequestId() {
+        return requestId;
+    }
 
-	public String getServiceInstanceId() {
-		return serviceInstanceId;
-	}
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
-	public void setServiceInstanceId(String serviceInstanceId) {
-		this.serviceInstanceId = serviceInstanceId;
-	}
+    public String getServiceInstanceId() {
+        return serviceInstanceId;
+    }
+
+    public void setServiceInstanceId(String serviceInstanceId) {
+        this.serviceInstanceId = serviceInstanceId;
+    }
 }

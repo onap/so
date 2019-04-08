@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,174 +36,172 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "cvnfc_configuration_customization")
 public class CvnfcConfigurationCustomization implements Serializable {
 
-	private static final long serialVersionUID = -3153216266280581103L;
+    private static final long serialVersionUID = -3153216266280581103L;
 
-	@Id
-	@BusinessKey
-	@Column(name = "ID")	
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	
-	@Column(name = "MODEL_CUSTOMIZATION_UUID")
-	private String modelCustomizationUUID;
-	
-	@Column(name = "MODEL_INSTANCE_NAME")
-	private String modelInstanceName;	
-	
-	@Column(name = "CONFIGURATION_TYPE")
-	private String configurationType;	
-	
-	@Column(name = "CONFIGURATION_ROLE")
-	private String configurationRole;	
+    @Id
+    @BusinessKey
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@Column(name = "CONFIGURATION_FUNCTION")
-	private String configurationFunction;	
+    @Column(name = "MODEL_CUSTOMIZATION_UUID")
+    private String modelCustomizationUUID;
 
-	@Column(name = "POLICY_NAME")
-	private String policyName;
-	
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONFIGURATION_MODEL_UUID")
-	private ConfigurationResource configurationResource;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CVNFC_CUSTOMIZATION_ID")
-	private CvnfcCustomization cvnfcCustomization;
+    @Column(name = "MODEL_INSTANCE_NAME")
+    private String modelInstanceName;
 
+    @Column(name = "CONFIGURATION_TYPE")
+    private String configurationType;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof CvnfcConfigurationCustomization)) {
-			return false;
-		}
-		CvnfcConfigurationCustomization castOther = (CvnfcConfigurationCustomization) other;
-		return new EqualsBuilder().append(id, castOther.id).isEquals();
-	}
+    @Column(name = "CONFIGURATION_ROLE")
+    private String configurationRole;
+
+    @Column(name = "CONFIGURATION_FUNCTION")
+    private String configurationFunction;
+
+    @Column(name = "POLICY_NAME")
+    private String policyName;
+
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CONFIGURATION_MODEL_UUID")
+    private ConfigurationResource configurationResource;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CVNFC_CUSTOMIZATION_ID")
+    private CvnfcCustomization cvnfcCustomization;
 
 
-
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(id).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof CvnfcConfigurationCustomization)) {
+            return false;
+        }
+        CvnfcConfigurationCustomization castOther = (CvnfcConfigurationCustomization) other;
+        return new EqualsBuilder().append(id, castOther.id).isEquals();
+    }
 
 
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelInstanceName", modelInstanceName).append("configurationType", configurationType)
-				.append("configurationRole", configurationRole).append("configurationFunction", configurationFunction)
-				.append("policyName", policyName).append("created", created)
-				.append("configurationResource", configurationResource).append("cvnfcCustomization", cvnfcCustomization).toString();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
 
 
-	
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
-	
-	public Integer getId() {
-		return id;
-	}
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName).append("configurationType", configurationType)
+                .append("configurationRole", configurationRole).append("configurationFunction", configurationFunction)
+                .append("policyName", policyName).append("created", created)
+                .append("configurationResource", configurationResource).append("cvnfcCustomization", cvnfcCustomization)
+                .toString();
+    }
 
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
 
-	public String getModelInstanceName() {
-		return modelInstanceName;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setModelInstanceName(String modelInstanceName) {
-		this.modelInstanceName = modelInstanceName;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getConfigurationType() {
-		return configurationType;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setConfigurationType(String configurationType) {
-		this.configurationType = configurationType;
-	}
+    public String getModelCustomizationUUID() {
+        return modelCustomizationUUID;
+    }
 
-	public String getConfigurationRole() {
-		return configurationRole;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public void setConfigurationRole(String configurationRole) {
-		this.configurationRole = configurationRole;
-	}
+    public String getModelInstanceName() {
+        return modelInstanceName;
+    }
 
-	public String getConfigurationFunction() {
-		return configurationFunction;
-	}
+    public void setModelInstanceName(String modelInstanceName) {
+        this.modelInstanceName = modelInstanceName;
+    }
 
-	public void setConfigurationFunction(String configurationFunction) {
-		this.configurationFunction = configurationFunction;
-	}
+    public String getConfigurationType() {
+        return configurationType;
+    }
 
-	public String getPolicyName() {
-		return policyName;
-	}
+    public void setConfigurationType(String configurationType) {
+        this.configurationType = configurationType;
+    }
 
-	public void setPolicyName(String policyName) {
-		this.policyName = policyName;
-	}
+    public String getConfigurationRole() {
+        return configurationRole;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setConfigurationRole(String configurationRole) {
+        this.configurationRole = configurationRole;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public String getConfigurationFunction() {
+        return configurationFunction;
+    }
 
-	@LinkedResource
-	public ConfigurationResource getConfigurationResource() {
-		return configurationResource;
-	}
+    public void setConfigurationFunction(String configurationFunction) {
+        this.configurationFunction = configurationFunction;
+    }
 
-	public void setConfigurationResource(ConfigurationResource configurationResource) {
-		this.configurationResource = configurationResource;
-	}
+    public String getPolicyName() {
+        return policyName;
+    }
 
-	@LinkedResource
-	public CvnfcCustomization getCvnfcCustomization() {
-		return cvnfcCustomization;
-	}
+    public void setPolicyName(String policyName) {
+        this.policyName = policyName;
+    }
 
-	public void setCvnfcCustomization(CvnfcCustomization cvnfcCustomization) {
-		this.cvnfcCustomization = cvnfcCustomization;
-	}
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @LinkedResource
+    public ConfigurationResource getConfigurationResource() {
+        return configurationResource;
+    }
+
+    public void setConfigurationResource(ConfigurationResource configurationResource) {
+        this.configurationResource = configurationResource;
+    }
+
+    @LinkedResource
+    public CvnfcCustomization getCvnfcCustomization() {
+        return cvnfcCustomization;
+    }
+
+    public void setCvnfcCustomization(CvnfcCustomization cvnfcCustomization) {
+        this.cvnfcCustomization = cvnfcCustomization;
+    }
 
 }

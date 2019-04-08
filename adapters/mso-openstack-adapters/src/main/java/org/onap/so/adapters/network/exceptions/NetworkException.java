@@ -23,58 +23,58 @@ package org.onap.so.adapters.network.exceptions;
 
 
 import javax.xml.ws.WebFault;
-
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 /**
- * This class simply extends Exception (without addition additional functionality)
- * to provide an identifier for Network related exceptions on create, delete, query.
+ * This class simply extends Exception (without addition additional functionality) to provide an identifier for Network
+ * related exceptions on create, delete, query.
  * 
  *
  */
-@WebFault (name="NetworkException", faultBean="org.onap.so.adapters.network.exceptions.NetworkExceptionBean", targetNamespace="http://org.onap.so/network")
+@WebFault(name = "NetworkException", faultBean = "org.onap.so.adapters.network.exceptions.NetworkExceptionBean",
+        targetNamespace = "http://org.onap.so/network")
 public class NetworkException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private NetworkExceptionBean faultInfo;
-	
-	public NetworkException (String msg) {
-		super(msg);
-		faultInfo = new NetworkExceptionBean (msg);
-	}
-	
-	public NetworkException (Throwable e) {
-		super(e);
-		faultInfo = new NetworkExceptionBean (e.getMessage());
-	}
-	
-	public NetworkException (String msg, Throwable e) {
-		super (msg, e);
-		faultInfo = new NetworkExceptionBean (msg);
-	}
+    private NetworkExceptionBean faultInfo;
 
-	public NetworkException (String msg, MsoExceptionCategory category) {
-		super(msg);
-		faultInfo = new NetworkExceptionBean (msg, category);
-	}
-	
-	public NetworkException (String msg, MsoExceptionCategory category, Throwable e) {
-		super (msg, e);
-		faultInfo = new NetworkExceptionBean (msg, category);
-	}
-	
-	public NetworkException (MsoException e) {
-		super (e);
-		faultInfo = new NetworkExceptionBean (e.getContextMessage(), e.getCategory());
-	}
-	
-	public NetworkExceptionBean getFaultInfo() {
-		return faultInfo;
-	}
+    public NetworkException(String msg) {
+        super(msg);
+        faultInfo = new NetworkExceptionBean(msg);
+    }
 
-	public void setFaultInfo(NetworkExceptionBean faultInfo) {
-		this.faultInfo = faultInfo;
-	}
+    public NetworkException(Throwable e) {
+        super(e);
+        faultInfo = new NetworkExceptionBean(e.getMessage());
+    }
+
+    public NetworkException(String msg, Throwable e) {
+        super(msg, e);
+        faultInfo = new NetworkExceptionBean(msg);
+    }
+
+    public NetworkException(String msg, MsoExceptionCategory category) {
+        super(msg);
+        faultInfo = new NetworkExceptionBean(msg, category);
+    }
+
+    public NetworkException(String msg, MsoExceptionCategory category, Throwable e) {
+        super(msg, e);
+        faultInfo = new NetworkExceptionBean(msg, category);
+    }
+
+    public NetworkException(MsoException e) {
+        super(e);
+        faultInfo = new NetworkExceptionBean(e.getContextMessage(), e.getCategory());
+    }
+
+    public NetworkExceptionBean getFaultInfo() {
+        return faultInfo;
+    }
+
+    public void setFaultInfo(NetworkExceptionBean faultInfo) {
+        this.faultInfo = faultInfo;
+    }
 }

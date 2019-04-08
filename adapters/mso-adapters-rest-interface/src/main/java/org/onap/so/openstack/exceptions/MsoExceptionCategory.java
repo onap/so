@@ -23,5 +23,5 @@ package org.onap.so.openstack.exceptions;
 
 
 public enum MsoExceptionCategory {
-	OPENSTACK, IO, INTERNAL, USERDATA
+    OPENSTACK, IO, INTERNAL, USERDATA
 }

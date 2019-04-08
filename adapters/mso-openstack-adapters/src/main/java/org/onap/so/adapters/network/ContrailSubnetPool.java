@@ -23,46 +23,45 @@ package org.onap.so.adapters.network;
 
 import org.onap.so.openstack.beans.Pool;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ContrailSubnetPool {
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_start")
-	private String start;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_end")
-	private String end;
 
-	public ContrailSubnetPool() {
-		/* Empty constructor */
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_start")
+    private String start;
 
-	public String getStart() {
-		return start;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_end")
+    private String end;
 
-	public void setStart(String start) {
-		this.start = start;
-	}
+    public ContrailSubnetPool() {
+        /* Empty constructor */
+    }
 
-	public String getEnd() {
-		return end;
-	}
+    public String getStart() {
+        return start;
+    }
 
-	public void setEnd(String end) {
-		this.end = end;
-	}
-	
-	public void populateWith(Pool pool)
-	{
-		if (pool != null)
-		{
-			start = pool.getStart();
-			end = pool.getEnd();
-		}
-	}
+    public void setStart(String start) {
+        this.start = start;
+    }
 
-	@Override
-	public String toString() {
-		return "ContrailSubnetPool [start=" + start + ", end=" + end + "]";
-	}
-	
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    public void populateWith(Pool pool) {
+        if (pool != null) {
+            start = pool.getStart();
+            end = pool.getEnd();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ContrailSubnetPool [start=" + start + ", end=" + end + "]";
+    }
+
 }

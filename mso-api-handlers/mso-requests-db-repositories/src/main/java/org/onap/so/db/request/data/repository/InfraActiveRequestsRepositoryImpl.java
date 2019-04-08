@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
@@ -44,7 +43,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,9 +128,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#getRequestFromInfraActive(java.
-     * lang.String)
+     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#getRequestFromInfraActive(java. lang.String)
      */
     @Override
     public InfraActiveRequests getRequestFromInfraActive(final String requestId) {
@@ -141,7 +137,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
 
         InfraActiveRequests ar = null;
         final Query query = entityManager
-            .createQuery("from InfraActiveRequests where requestId = :requestId OR clientRequestId = :requestId");
+                .createQuery("from InfraActiveRequests where requestId = :requestId OR clientRequestId = :requestId");
         query.setParameter(REQUEST_ID, requestId);
         ar = this.getSingleResult(query);
         return ar;
@@ -150,9 +146,8 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkInstanceNameDuplicate(java.
-     * util.HashMap, java.lang.String, java.lang.String)
+     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkInstanceNameDuplicate(java. util.HashMap,
+     * java.lang.String, java.lang.String)
      */
     @Override
     public InfraActiveRequests checkInstanceNameDuplicate(final HashMap<String, String> instanceIdMap,
@@ -383,9 +378,8 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#getRequestListFromInfraActive(java
-     * .lang.String, java.lang.String, java.lang.String)
+     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#getRequestListFromInfraActive(java .lang.String,
+     * java.lang.String, java.lang.String)
      */
     @Override
     public List<InfraActiveRequests> getRequestListFromInfraActive(final String queryAttributeName,
@@ -419,9 +413,8 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#getRequestFromInfraActive(java.
-     * lang.String, java.lang.String)
+     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#getRequestFromInfraActive(java. lang.String,
+     * java.lang.String)
      */
     @Override
     public InfraActiveRequests getRequestFromInfraActive(final String requestId, final String requestType) {
@@ -431,7 +424,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
         InfraActiveRequests ar = null;
 
         final Query query = entityManager.createQuery(
-            "from InfraActiveRequests where (requestId = :requestId OR clientRequestId = :requestId) and requestType = :requestType");
+                "from InfraActiveRequests where (requestId = :requestId OR clientRequestId = :requestId) and requestType = :requestType");
         query.setParameter(REQUEST_ID, requestId);
         query.setParameter(REQUEST_TYPE, requestType);
         ar = this.getSingleResult(query);
@@ -442,9 +435,8 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkDuplicateByVnfName(java.lang.
-     * String, java.lang.String, java.lang.String)
+     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkDuplicateByVnfName(java.lang. String,
+     * java.lang.String, java.lang.String)
      */
     @Override
     public InfraActiveRequests checkDuplicateByVnfName(final String vnfName, final String action,
@@ -452,16 +444,17 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
 
         final long startTime = System.currentTimeMillis();
         logger.debug("Get infra request from DB for VNF {} and action {} and requestType {}", vnfName, action,
-            requestType);
+                requestType);
 
         InfraActiveRequests ar = null;
 
         final Query query = entityManager.createQuery(
-            "from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
+                "from InfraActiveRequests where vnfName = :vnfName and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
         query.setParameter("vnfName", vnfName);
         query.setParameter("action", action);
         query.setParameter(REQUEST_TYPE, requestType);
-        @SuppressWarnings("unchecked") final List<InfraActiveRequests> results = query.getResultList();
+        @SuppressWarnings("unchecked")
+        final List<InfraActiveRequests> results = query.getResultList();
         if (!results.isEmpty()) {
             ar = results.get(0);
         }
@@ -472,9 +465,8 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkDuplicateByVnfId(java.lang.
-     * String, java.lang.String, java.lang.String)
+     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkDuplicateByVnfId(java.lang. String,
+     * java.lang.String, java.lang.String)
      */
     @Override
     public InfraActiveRequests checkDuplicateByVnfId(final String vnfId, final String action,
@@ -486,11 +478,12 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
         InfraActiveRequests ar = null;
 
         final Query query = entityManager.createQuery(
-            "from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
+                "from InfraActiveRequests where vnfId = :vnfId and action = :action and (requestStatus = 'PENDING' or requestStatus = 'IN_PROGRESS' or requestStatus = 'TIMEOUT' or requestStatus = 'PENDING_MANUAL_TASK') and requestType = :requestType ORDER BY startTime DESC");
         query.setParameter("vnfId", vnfId);
         query.setParameter("action", action);
         query.setParameter(REQUEST_TYPE, requestType);
-        @SuppressWarnings("unchecked") final List<InfraActiveRequests> results = query.getResultList();
+        @SuppressWarnings("unchecked")
+        final List<InfraActiveRequests> results = query.getResultList();
         if (!results.isEmpty()) {
             ar = results.get(0);
         }
@@ -501,8 +494,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkVnfIdStatus(java.lang.String)
+     * @see org.onap.so.requestsdb.InfraActiveRequestsRepositoryCustom#checkVnfIdStatus(java.lang.String)
      */
     @Override
     public InfraActiveRequests checkVnfIdStatus(final String operationalEnvironmentId) {
@@ -560,9 +552,10 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
             final Timestamp minTime = new Timestamp(startTime);
             final Timestamp maxTime = new Timestamp(endTime);
             final Predicate basePredicate = criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()]));
-            final Predicate additionalPredicate = criteriaBuilder.and(
-            		criteriaBuilder.greaterThanOrEqualTo(tableRoot.get(START_TIME), minTime),
-                    criteriaBuilder.or(tableRoot.get(END_TIME).isNull(), criteriaBuilder.lessThanOrEqualTo(tableRoot.get(END_TIME), maxTime)));
+            final Predicate additionalPredicate =
+                    criteriaBuilder.and(criteriaBuilder.greaterThanOrEqualTo(tableRoot.get(START_TIME), minTime),
+                            criteriaBuilder.or(tableRoot.get(END_TIME).isNull(),
+                                    criteriaBuilder.lessThanOrEqualTo(tableRoot.get(END_TIME), maxTime)));
 
             criteriaQuery.where(criteriaBuilder.and(basePredicate, additionalPredicate));
             if (maxResult != null) {

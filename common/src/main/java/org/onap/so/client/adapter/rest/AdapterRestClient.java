@@ -24,7 +24,6 @@ import java.net.URI;
 import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.Optional;
-
 import org.apache.commons.codec.binary.Base64;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.policy.CommonObjectMapperProvider;
@@ -34,46 +33,47 @@ import org.onap.so.utils.TargetEntity;
 
 public class AdapterRestClient extends RestClient {
 
-	private final AdapterRestProperties adapterRestProperties;
-	public AdapterRestClient(AdapterRestProperties props, URI uri) {
-		super(props, Optional.of(uri));
-		this.adapterRestProperties = props;
-	}
+    private final AdapterRestProperties adapterRestProperties;
 
-	public AdapterRestClient(AdapterRestProperties props, URI uri, String accept, String contentType) {
-		super(props, Optional.of(uri), accept, contentType);
-		this.adapterRestProperties = props;
-	}
+    public AdapterRestClient(AdapterRestProperties props, URI uri) {
+        super(props, Optional.of(uri));
+        this.adapterRestProperties = props;
+    }
+
+    public AdapterRestClient(AdapterRestProperties props, URI uri, String accept, String contentType) {
+        super(props, Optional.of(uri), accept, contentType);
+        this.adapterRestProperties = props;
+    }
 
     @Override
-    public TargetEntity getTargetEntity(){
+    public TargetEntity getTargetEntity() {
         return TargetEntity.OPENSTACK_ADAPTER;
     }
 
-	@Override
-	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("Authorization",
-				this.getBasicAuth(adapterRestProperties.getAuth(), adapterRestProperties.getKey()));
-	}
+    @Override
+    protected void initializeHeaderMap(Map<String, String> headerMap) {
+        headerMap.put("Authorization",
+                this.getBasicAuth(adapterRestProperties.getAuth(), adapterRestProperties.getKey()));
+    }
 
-	@Override
-	protected CommonObjectMapperProvider getCommonObjectMapperProvider() {
-		return new JettisonStyleMapperProvider();
-	}
-	
-	private String getBasicAuth(String encryptedAuth, String msoKey) {
-		if ((encryptedAuth == null || encryptedAuth.isEmpty()) || (msoKey == null || msoKey.isEmpty())) {
-			return null;
-		}
-		try {
-			String auth = CryptoUtils.decrypt(encryptedAuth, msoKey);
-			byte[] encoded = Base64.encodeBase64(auth.getBytes());
-			String encodedString = new String(encoded);
-			encodedString = "Basic " + encodedString;
-			return encodedString;
-		} catch (GeneralSecurityException e) {
-			logger.error(e.getMessage(),e);
-			return null;
-		}
-	}
+    @Override
+    protected CommonObjectMapperProvider getCommonObjectMapperProvider() {
+        return new JettisonStyleMapperProvider();
+    }
+
+    private String getBasicAuth(String encryptedAuth, String msoKey) {
+        if ((encryptedAuth == null || encryptedAuth.isEmpty()) || (msoKey == null || msoKey.isEmpty())) {
+            return null;
+        }
+        try {
+            String auth = CryptoUtils.decrypt(encryptedAuth, msoKey);
+            byte[] encoded = Base64.encodeBase64(auth.getBytes());
+            String encodedString = new String(encoded);
+            encodedString = "Basic " + encodedString;
+            return encodedString;
+        } catch (GeneralSecurityException e) {
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+    }
 }

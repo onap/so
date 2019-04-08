@@ -23,7 +23,6 @@
 package org.onap.so.client.sniro.beans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -33,60 +32,67 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class SniroManagerRequest implements Serializable{
+public class SniroManagerRequest implements Serializable {
 
-	private static final long serialVersionUID = -1541132882892163132L;
-	private static final Logger logger = LoggerFactory.getLogger(SniroManagerRequest.class);
+    private static final long serialVersionUID = -1541132882892163132L;
+    private static final Logger logger = LoggerFactory.getLogger(SniroManagerRequest.class);
 
-	@JsonProperty("requestInfo")
-	private RequestInfo requestInformation;
-	@JsonProperty("serviceInfo")
-	private ServiceInfo serviceInformation;
-	@JsonProperty("placementInfo")
-	private PlacementInfo placementInformation;
-	@JsonProperty("licenseInfo")
-	private LicenseInfo licenseInformation;
-
-
-	public RequestInfo getRequestInformation() {
-		return requestInformation;
-	}
-	public void setRequestInformation(RequestInfo requestInformation) {
-		this.requestInformation = requestInformation;
-	}
-	public ServiceInfo getServiceInformation() {
-		return serviceInformation;
-	}
-	public void setServiceInformation(ServiceInfo serviceInformation) {
-		this.serviceInformation = serviceInformation;
-	}
-	public PlacementInfo getPlacementInformation() {
-		return placementInformation;
-	}
-	public void setPlacementInformation(PlacementInfo placementInformation) {
-		this.placementInformation = placementInformation;
-	}
-	public LicenseInfo getLicenseInformation() {
-		return licenseInformation;
-	}
-	public void setLicenseInformation(LicenseInfo licenseInformation) {
-		this.licenseInformation = licenseInformation;
-	}
+    @JsonProperty("requestInfo")
+    private RequestInfo requestInformation;
+    @JsonProperty("serviceInfo")
+    private ServiceInfo serviceInformation;
+    @JsonProperty("placementInfo")
+    private PlacementInfo placementInformation;
+    @JsonProperty("licenseInfo")
+    private LicenseInfo licenseInformation;
 
 
-	@JsonInclude(Include.NON_NULL)
-	public String toJsonString(){
-		String json = "";
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-		try{
-			json = ow.writeValueAsString(this);
-		}catch (Exception e){
-			logger.error("Unable to convert SniroManagerRequest to string", e);
-		}
-		return json.replaceAll("\\\\", "");
-	}
+    public RequestInfo getRequestInformation() {
+        return requestInformation;
+    }
+
+    public void setRequestInformation(RequestInfo requestInformation) {
+        this.requestInformation = requestInformation;
+    }
+
+    public ServiceInfo getServiceInformation() {
+        return serviceInformation;
+    }
+
+    public void setServiceInformation(ServiceInfo serviceInformation) {
+        this.serviceInformation = serviceInformation;
+    }
+
+    public PlacementInfo getPlacementInformation() {
+        return placementInformation;
+    }
+
+    public void setPlacementInformation(PlacementInfo placementInformation) {
+        this.placementInformation = placementInformation;
+    }
+
+    public LicenseInfo getLicenseInformation() {
+        return licenseInformation;
+    }
+
+    public void setLicenseInformation(LicenseInfo licenseInformation) {
+        this.licenseInformation = licenseInformation;
+    }
+
+
+    @JsonInclude(Include.NON_NULL)
+    public String toJsonString() {
+        String json = "";
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        try {
+            json = ow.writeValueAsString(this);
+        } catch (Exception e) {
+            logger.error("Unable to convert SniroManagerRequest to string", e);
+        }
+        return json.replaceAll("\\\\", "");
+    }
 
 
 }

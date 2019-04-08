@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder;
 
 import java.util.List;
 import java.util.Map;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.NetworkInformationEntity;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.NetworkInputParametersEntity;
@@ -35,44 +34,53 @@ import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcNet
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.SdncRequestHeaderEntity;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.ServiceInformationEntity;
 
-public class NetworkRpcInputEntityBuilder extends AbstractBuilder<Map<String, String>, RpcNetworkTopologyOperationInputEntity> {
+public class NetworkRpcInputEntityBuilder
+        extends AbstractBuilder<Map<String, String>, RpcNetworkTopologyOperationInputEntity> {
 
     @Override
     public RpcNetworkTopologyOperationInputEntity build(DelegateExecution execution, Map<String, String> inputs) {
-        RpcNetworkTopologyOperationInputEntity rpcNetworkTopologyOperationInputEntity = new RpcNetworkTopologyOperationInputEntity();
-        NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity = getNetworkTopologyOperationInputEntity(execution, inputs);
+        RpcNetworkTopologyOperationInputEntity rpcNetworkTopologyOperationInputEntity =
+                new RpcNetworkTopologyOperationInputEntity();
+        NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity =
+                getNetworkTopologyOperationInputEntity(execution, inputs);
         rpcNetworkTopologyOperationInputEntity.setInput(networkTopologyOperationInputEntity);
         return rpcNetworkTopologyOperationInputEntity;
     }
 
-    private void loadNetwrokRequestInputEntity(Map<String, String> inputs, NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity) {
+    private void loadNetwrokRequestInputEntity(Map<String, String> inputs,
+            NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity) {
         NetworkRequestInputEntity networkRequestInputEntity = new NetworkRequestInputEntity();
-	    NetworkInputParametersEntity networkInputParametersEntity = new NetworkInputParametersEntity();
+        NetworkInputParametersEntity networkInputParametersEntity = new NetworkInputParametersEntity();
         List<ParamEntity> paramEntityList = getParamEntities(inputs);
         networkInputParametersEntity.setParamList(paramEntityList);
-	    networkRequestInputEntity.setNetworkInputPaarameters(networkInputParametersEntity);
+        networkRequestInputEntity.setNetworkInputPaarameters(networkInputParametersEntity);
         networkTopologyOperationInputEntity.setNetworkRequestInput(networkRequestInputEntity);
     }
 
-    private void loadRequestInformationEntity(NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity, DelegateExecution execution) {
+    private void loadRequestInformationEntity(NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity,
+            DelegateExecution execution) {
         RequestInformationEntity requestInformationEntity = getRequestInformationEntity(execution);
         networkTopologyOperationInputEntity.setRequestInformation(requestInformationEntity);
     }
 
-    private void loadSdncRequestHeaderEntity(NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity, DelegateExecution execution) {
+    private void loadSdncRequestHeaderEntity(NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity,
+            DelegateExecution execution) {
         SdncRequestHeaderEntity sdncRequestHeaderEntity = new SdncRequestHeaderEntity();
         sdncRequestHeaderEntity.setSvcRequestId(getRequestId(execution));
         sdncRequestHeaderEntity.setSvcAction(getSvcAction(execution));
         networkTopologyOperationInputEntity.setSdncRequestHeader(sdncRequestHeaderEntity);
     }
 
-    private void loadServiceInformation(NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity, DelegateExecution execution) {
+    private void loadServiceInformation(NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity,
+            DelegateExecution execution) {
         ServiceInformationEntity serviceInformationEntity = getServiceInformationEntity(execution);
         networkTopologyOperationInputEntity.setServiceInformation(serviceInformationEntity);
     }
 
-    private NetworkTopologyOperationInputEntity getNetworkTopologyOperationInputEntity(DelegateExecution execution, Map<String, String> inputs) {
-        NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity = new NetworkTopologyOperationInputEntity();
+    private NetworkTopologyOperationInputEntity getNetworkTopologyOperationInputEntity(DelegateExecution execution,
+            Map<String, String> inputs) {
+        NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity =
+                new NetworkTopologyOperationInputEntity();
         loadSdncRequestHeaderEntity(networkTopologyOperationInputEntity, execution);
         loadRequestInformationEntity(networkTopologyOperationInputEntity, execution);
         loadServiceInformation(networkTopologyOperationInputEntity, execution);
@@ -81,7 +89,8 @@ public class NetworkRpcInputEntityBuilder extends AbstractBuilder<Map<String, St
         return networkTopologyOperationInputEntity;
     }
 
-    private void loadNetworkInformationEntity(DelegateExecution execution, NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity) {
+    private void loadNetworkInformationEntity(DelegateExecution execution,
+            NetworkTopologyOperationInputEntity networkTopologyOperationInputEntity) {
         NetworkInformationEntity networkInformationEntity = new NetworkInformationEntity();
         OnapModelInformationEntity onapModelInformationEntity = getOnapNetworkModelInformationEntity(execution);
         networkInformationEntity.setOnapModelInformation(onapModelInformationEntity);

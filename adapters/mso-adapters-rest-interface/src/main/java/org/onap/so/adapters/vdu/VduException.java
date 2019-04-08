@@ -26,35 +26,36 @@ import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 /**
  * OpenStack exception.
  */
-public class VduException extends MsoException
-{
-	
-	/**
+public class VduException extends MsoException {
+
+    /**
      * Serialization id.
      */
     private static final long serialVersionUID = 3313636124141766495L;
-    
-	/**
-	 * Constructor to create a new VduException instance
-	 * @param detail error details
-	 */
-	public VduException (String detail) {
-		// Set the detailed error as the Exception 'message'
-		super(detail);
-		// TODO:  Need a more generic category than OPENSTACK
-		super.category = MsoExceptionCategory.OPENSTACK;
-	}
-	
-	/**
-	 * Constructor to create a new VduException instance
-	 * @param detail error details
-	 * @param e the cause
-	 */
-	public VduException (String detail, Exception e) {
-		// Set the detailed error as the Exception 'message'
-		super(detail, e);
-		// TODO:  Need a more generic category than OPENSTACK
-		super.category = MsoExceptionCategory.OPENSTACK;
-	}
+
+    /**
+     * Constructor to create a new VduException instance
+     * 
+     * @param detail error details
+     */
+    public VduException(String detail) {
+        // Set the detailed error as the Exception 'message'
+        super(detail);
+        // TODO: Need a more generic category than OPENSTACK
+        super.category = MsoExceptionCategory.OPENSTACK;
+    }
+
+    /**
+     * Constructor to create a new VduException instance
+     * 
+     * @param detail error details
+     * @param e the cause
+     */
+    public VduException(String detail, Exception e) {
+        // Set the detailed error as the Exception 'message'
+        super(detail, e);
+        // TODO: Need a more generic category than OPENSTACK
+        super.category = MsoExceptionCategory.OPENSTACK;
+    }
 
 }

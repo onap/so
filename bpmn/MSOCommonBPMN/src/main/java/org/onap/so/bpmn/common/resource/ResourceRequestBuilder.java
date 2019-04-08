@@ -29,17 +29,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-
 import org.camunda.bpm.engine.runtime.Execution;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.bpmn.core.json.JsonUtils;
 import org.onap.so.client.HttpClient;
 import org.onap.so.client.HttpClientFactory;
 import org.onap.so.utils.TargetEntity;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -58,7 +55,7 @@ public class ResourceRequestBuilder {
 
     static JsonUtils jsonUtil = new JsonUtils();
 
-	public static List<String> getResourceSequence(String serviceUuid) {
+    public static List<String> getResourceSequence(String serviceUuid) {
 
         List<String> resourceSequence = new ArrayList();
         try {
@@ -69,7 +66,7 @@ public class ResourceRequestBuilder {
 
                 if (serviceResources.containsKey("resourceOrder")) {
                     String resourceOrder = (String) serviceResources.get("resourceOrder");
-                    if (resourceOrder!= null) {
+                    if (resourceOrder != null) {
                         resourceSequence.addAll(Arrays.asList(resourceOrder.split(",")));
                     }
                 }
@@ -78,32 +75,35 @@ public class ResourceRequestBuilder {
             logger.error("not able to retrieve service order.");
         }
         return resourceSequence;
-	}
+    }
 
-     /* build the resource Parameters detail.
-     * It's a json string for resource instantiant
-     * {
-     *     "locationConstraints":[...]
-     *     "requestInputs":{K,V}
-     * }
-     * <br>
+    /*
+     * build the resource Parameters detail. It's a json string for resource instantiant { "locationConstraints":[...]
+     * "requestInputs":{K,V} } <br>
      *
      * @param execution Execution context
+     * 
      * @param serviceUuid The service template uuid
+     * 
      * @param resourceCustomizationUuid The resource customization uuid
+     * 
      * @param serviceParameters the service parameters passed from the API
+     * 
      * @return the resource instantiate parameters
+     * 
      * @since ONAP Beijing Release
      */
     @SuppressWarnings("unchecked")
-    public static String buildResourceRequestParameters(Execution execution, String serviceUuid, String resourceCustomizationUuid, String serviceParameters) {
-        List<String> resourceList = jsonUtil.StringArrayToList(execution, (String)JsonUtils.getJsonValue(serviceParameters, "resources"));
-        //Get the right location str for resource. default is an empty array.
-        String locationConstraints ="[]";
+    public static String buildResourceRequestParameters(Execution execution, String serviceUuid,
+            String resourceCustomizationUuid, String serviceParameters) {
+        List<String> resourceList =
+                jsonUtil.StringArrayToList(execution, (String) JsonUtils.getJsonValue(serviceParameters, "resources"));
+        // Get the right location str for resource. default is an empty array.
+        String locationConstraints = "[]";
         String resourceInputsFromUui = "";
-        for(String resource: resourceList){
-            String resCusUuid = (String)JsonUtils.getJsonValue(resource, "resourceCustomizationUuid");
-            if(resourceCustomizationUuid.equals(resCusUuid)){
+        for (String resource : resourceList) {
+            String resCusUuid = (String) JsonUtils.getJsonValue(resource, "resourceCustomizationUuid");
+            if (resourceCustomizationUuid.equals(resCusUuid)) {
                 String resourceParameters = JsonUtils.getJsonValue(resource, "parameters");
                 locationConstraints = JsonUtils.getJsonValue(resourceParameters, "locationConstraints");
                 resourceInputsFromUui = JsonUtils.getJsonValue(resourceParameters, "requestInputs");
@@ -111,7 +111,8 @@ public class ResourceRequestBuilder {
         }
         Map<String, Object> serviceInput = null;
         if (JsonUtils.getJsonValue(serviceParameters, "requestInputs") != null) {
-            serviceInput = getJsonObject((String)JsonUtils.getJsonValue(serviceParameters, "requestInputs"), Map.class);
+            serviceInput =
+                    getJsonObject((String) JsonUtils.getJsonValue(serviceParameters, "requestInputs"), Map.class);
         }
 
         Map<String, Object> resourceInputsFromUuiMap = getJsonObject(resourceInputsFromUui, Map.class);
@@ -124,42 +125,45 @@ public class ResourceRequestBuilder {
             resourceInputsFromUuiMap = new HashMap();
         }
 
-        Map<String, Object> resourceInputsFromServiceDeclaredLevel = buildResouceRequest(serviceUuid, resourceCustomizationUuid, serviceInput);
+        Map<String, Object> resourceInputsFromServiceDeclaredLevel =
+                buildResouceRequest(serviceUuid, resourceCustomizationUuid, serviceInput);
         resourceInputsFromUuiMap.putAll(resourceInputsFromServiceDeclaredLevel);
         String resourceInputsStr = getJsonString(resourceInputsFromUuiMap);
-        String result = "{\n"
-                + "\"locationConstraints\":" + locationConstraints +",\n"
-                + "\"requestInputs\":" + resourceInputsStr +"\n"
-                +"}";
+        String result = "{\n" + "\"locationConstraints\":" + locationConstraints + ",\n" + "\"requestInputs\":"
+                + resourceInputsStr + "\n" + "}";
         return result;
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> buildResouceRequest(String serviceUuid, String resourceCustomizationUuid, Map<String, Object> serviceInputs) {
+    public static Map<String, Object> buildResouceRequest(String serviceUuid, String resourceCustomizationUuid,
+            Map<String, Object> serviceInputs) {
         try {
             Map<String, Object> serviceInstnace = getServiceInstnace(serviceUuid);
 
             // find match of customization uuid in vnf
-            Map<String, Map<String, Object>> serviceResources = (Map<String, Map<String, Object>>) serviceInstnace.get("serviceResources");
+            Map<String, Map<String, Object>> serviceResources =
+                    (Map<String, Map<String, Object>>) serviceInstnace.get("serviceResources");
 
             List<Map<String, Object>> serviceVnfCust = (List<Map<String, Object>>) serviceResources.get("serviceVnfs");
             String resourceInputStr = getResourceInputStr(serviceVnfCust, resourceCustomizationUuid);
 
             // find match in network resource
             if (resourceInputStr == null) {
-                List<Map<String, Object>> serviceNetworkCust = (List<Map<String, Object>>) serviceResources.get("serviceNetworks");
+                List<Map<String, Object>> serviceNetworkCust =
+                        (List<Map<String, Object>>) serviceResources.get("serviceNetworks");
                 resourceInputStr = getResourceInputStr(serviceNetworkCust, resourceCustomizationUuid);
 
                 // find match in AR resource
                 if (resourceInputStr == null) {
-                    List<Map<String, Object>> serviceArCust = (List<Map<String, Object>>) serviceResources.get("serviceAllottedResources");
+                    List<Map<String, Object>> serviceArCust =
+                            (List<Map<String, Object>>) serviceResources.get("serviceAllottedResources");
                     resourceInputStr = getResourceInputStr(serviceArCust, resourceCustomizationUuid);
                 }
             }
 
-           if (resourceInputStr != null && !resourceInputStr.isEmpty()) {
+            if (resourceInputStr != null && !resourceInputStr.isEmpty()) {
                 return getResourceInput(resourceInputStr, serviceInputs);
-           }
+            }
 
         } catch (Exception e) {
             logger.error("not able to retrieve service instance");
@@ -182,11 +186,11 @@ public class ResourceRequestBuilder {
     // this method combines resource input with service input
     private static Map<String, Object> getResourceInput(String resourceInputStr, Map<String, Object> serviceInputs) {
         Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, String>>(){}.getType();
+        Type type = new TypeToken<Map<String, String>>() {}.getType();
         Map<String, Object> resourceInput = gson.fromJson(resourceInputStr, type);
 
         // replace value if key is available in service input
-        for (String key: resourceInput.keySet()) {
+        for (String key : resourceInput.keySet()) {
             String value = (String) resourceInput.get(key);
 
             if (value.contains("|")) {
@@ -199,7 +203,7 @@ public class ResourceRequestBuilder {
                     value = split[1];
                 }
             }
-            resourceInput.put(key,value);
+            resourceInput.put(key, value);
         }
         return resourceInput;
     }
@@ -207,8 +211,8 @@ public class ResourceRequestBuilder {
     public static Map<String, Object> getServiceInstnace(String uuid) throws Exception {
         String catalogEndPoint = UrnPropertiesReader.getVariable("mso.catalog.db.endpoint");
 
-        HttpClient client = new HttpClientFactory().newJsonClient(
-        	    UriBuilder.fromUri(catalogEndPoint).path(SERVICE_URL_SERVICE_INSTANCE).queryParam("serviceModelUuid", uuid).build().toURL(),
+        HttpClient client = new HttpClientFactory().newJsonClient(UriBuilder.fromUri(catalogEndPoint)
+                .path(SERVICE_URL_SERVICE_INSTANCE).queryParam("serviceModelUuid", uuid).build().toURL(),
                 TargetEntity.CATALOG_DB);
 
         client.addAdditionalHeader("Accept", "application/json");
@@ -234,7 +238,7 @@ public class ResourceRequestBuilder {
         return null;
     }
 
-    public static String getJsonString(Object srcObj)  {
+    public static String getJsonString(Object srcObj) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         String jsonStr = null;

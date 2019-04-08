@@ -29,9 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType>
@@ -51,16 +53,9 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
-//BPEL to SDNCAdapter request header
+// BPEL to SDNCAdapter request header
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "requestId",
-    "svcInstanceId",
-    "svcAction",
-    "svcOperation",
-    "callbackUrl",
-    "msoAction"
-})
+@XmlType(name = "", propOrder = {"requestId", "svcInstanceId", "svcAction", "svcOperation", "callbackUrl", "msoAction"})
 @XmlRootElement(name = "RequestHeader")
 public class RequestHeader {
 
@@ -80,9 +75,7 @@ public class RequestHeader {
     /**
      * Gets the value of the requestId property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getRequestId() {
@@ -92,9 +85,7 @@ public class RequestHeader {
     /**
      * Sets the value of the requestId property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setRequestId(String value) {
@@ -102,19 +93,17 @@ public class RequestHeader {
     }
 
     public String getSvcInstanceId() {
-		return svcInstanceId;
-	}
+        return svcInstanceId;
+    }
 
-	public void setSvcInstanceId(String svcInstanceId) {
-		this.svcInstanceId = svcInstanceId;
-	}
+    public void setSvcInstanceId(String svcInstanceId) {
+        this.svcInstanceId = svcInstanceId;
+    }
 
-	/**
+    /**
      * Gets the value of the svcAction property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getSvcAction() {
@@ -124,9 +113,7 @@ public class RequestHeader {
     /**
      * Sets the value of the svcAction property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setSvcAction(String value) {
@@ -136,9 +123,7 @@ public class RequestHeader {
     /**
      * Gets the value of the svcOperation property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getSvcOperation() {
@@ -148,9 +133,7 @@ public class RequestHeader {
     /**
      * Sets the value of the svcOperation property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setSvcOperation(String value) {
@@ -160,9 +143,7 @@ public class RequestHeader {
     /**
      * Gets the value of the callbackUrl property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getCallbackUrl() {
@@ -172,9 +153,7 @@ public class RequestHeader {
     /**
      * Sets the value of the callbackUrl property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setCallbackUrl(String value) {
@@ -184,9 +163,7 @@ public class RequestHeader {
     /**
      * Gets the value of the callbackUrl property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getMsoAction() {
@@ -196,9 +173,7 @@ public class RequestHeader {
     /**
      * Sets the value of the callbackUrl property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setMsoAction(String value) {
@@ -206,14 +181,10 @@ public class RequestHeader {
     }
 
 
-	@Override
-	public String toString() {
-		return "RequestHeader [requestId=" + requestId +
-				", svcInstanceId=" + svcInstanceId +
-				", svcAction=" + svcAction +
-				", svcOperation=" + svcOperation +
-				", callbackUrl=" + callbackUrl +
-				", msoAction=" + msoAction + "]";
-	}
+    @Override
+    public String toString() {
+        return "RequestHeader [requestId=" + requestId + ", svcInstanceId=" + svcInstanceId + ", svcAction=" + svcAction
+                + ", svcOperation=" + svcOperation + ", callbackUrl=" + callbackUrl + ", msoAction=" + msoAction + "]";
+    }
 
 }

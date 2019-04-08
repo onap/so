@@ -22,9 +22,7 @@ package org.onap.so.openpojo.rules;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.anything;
-
 import org.hamcrest.Matcher;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.validation.affirm.Affirm;
 import com.openpojo.validation.test.Tester;
@@ -32,24 +30,26 @@ import com.openpojo.validation.utils.ValidationHelper;
 
 public class ToStringTester implements Tester {
 
-	private final Matcher m;
-	public ToStringTester() {
-		m = anything();
-	}
-	
-	public ToStringTester(Matcher m) {
-		this.m = m;
-	}
-	
-	@Override
-	public void run(PojoClass pojoClass) {
-		Class<?> clazz = pojoClass.getClazz();
-		if (anyOf(m).matches(clazz)) {
-			final Object classInstance = ValidationHelper.getBasicInstance(pojoClass);
-			
-			Affirm.affirmFalse("Found default toString output", classInstance.toString().matches(Object.class.getName() + "@" + "\\w+"));
-		}
-		
-	}
+    private final Matcher m;
+
+    public ToStringTester() {
+        m = anything();
+    }
+
+    public ToStringTester(Matcher m) {
+        this.m = m;
+    }
+
+    @Override
+    public void run(PojoClass pojoClass) {
+        Class<?> clazz = pojoClass.getClazz();
+        if (anyOf(m).matches(clazz)) {
+            final Object classInstance = ValidationHelper.getBasicInstance(pojoClass);
+
+            Affirm.affirmFalse("Found default toString output",
+                    classInstance.toString().matches(Object.class.getName() + "@" + "\\w+"));
+        }
+
+    }
 
 }

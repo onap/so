@@ -23,9 +23,7 @@ package org.onap.so.bpmn.servicedecomposition.bbobjects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Id;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -35,65 +33,77 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 @JsonRootName("customer")
 public class Customer implements Serializable, ShallowCopy<Customer> {
 
-	private static final long serialVersionUID = 2006599484099139618L;
+    private static final long serialVersionUID = 2006599484099139618L;
 
-	@Id
-	@JsonProperty("global-customer-id")
-	private String globalCustomerId;
-	@JsonProperty("subscriber-name")
-	private String subscriberName;
-	@JsonProperty("subscriber-type")
-	private String subscriberType;
-	@JsonProperty("subscriber-common-site-id")
-	private String subscriberCommonSiteId;
-	@JsonProperty("service-subscription")
+    @Id
+    @JsonProperty("global-customer-id")
+    private String globalCustomerId;
+    @JsonProperty("subscriber-name")
+    private String subscriberName;
+    @JsonProperty("subscriber-type")
+    private String subscriberType;
+    @JsonProperty("subscriber-common-site-id")
+    private String subscriberCommonSiteId;
+    @JsonProperty("service-subscription")
     private ServiceSubscription serviceSubscription;
     @JsonProperty("vpn-bindings")
-	private List<VpnBinding> vpnBindings = new ArrayList<>();
+    private List<VpnBinding> vpnBindings = new ArrayList<>();
 
-	public String getGlobalCustomerId() {
-		return globalCustomerId;
-	}
-	public void setGlobalCustomerId(String globalCustomerId) {
-		this.globalCustomerId = globalCustomerId;
-	}
-	public String getSubscriberName() {
-		return subscriberName;
-	}
-	public void setSubscriberName(String subscriberName) {
-		this.subscriberName = subscriberName;
-	}
-	public String getSubscriberType() {
-		return subscriberType;
-	}
-	public void setSubscriberType(String subscriberType) {
-		this.subscriberType = subscriberType;
-	}
-	public String getSubscriberCommonSiteId() {
-		return subscriberCommonSiteId;
-	}
-	public void setSubscriberCommonSiteId(String subscriberCommonSiteId) {
-		this.subscriberCommonSiteId = subscriberCommonSiteId;
-	}
-	public ServiceSubscription getServiceSubscription() {
-		return serviceSubscription;
-	}
-	public void setServiceSubscription(ServiceSubscription serviceSubscription) {
-		this.serviceSubscription = serviceSubscription;
-	}
-	public List<VpnBinding> getVpnBindings() {
-		return vpnBindings;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof Customer)) {
-			return false;
-		}
-		Customer castOther = (Customer) other;
-		return new EqualsBuilder().append(globalCustomerId, castOther.globalCustomerId).isEquals();
-	}
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(globalCustomerId).toHashCode();
-	}
+    public String getGlobalCustomerId() {
+        return globalCustomerId;
+    }
+
+    public void setGlobalCustomerId(String globalCustomerId) {
+        this.globalCustomerId = globalCustomerId;
+    }
+
+    public String getSubscriberName() {
+        return subscriberName;
+    }
+
+    public void setSubscriberName(String subscriberName) {
+        this.subscriberName = subscriberName;
+    }
+
+    public String getSubscriberType() {
+        return subscriberType;
+    }
+
+    public void setSubscriberType(String subscriberType) {
+        this.subscriberType = subscriberType;
+    }
+
+    public String getSubscriberCommonSiteId() {
+        return subscriberCommonSiteId;
+    }
+
+    public void setSubscriberCommonSiteId(String subscriberCommonSiteId) {
+        this.subscriberCommonSiteId = subscriberCommonSiteId;
+    }
+
+    public ServiceSubscription getServiceSubscription() {
+        return serviceSubscription;
+    }
+
+    public void setServiceSubscription(ServiceSubscription serviceSubscription) {
+        this.serviceSubscription = serviceSubscription;
+    }
+
+    public List<VpnBinding> getVpnBindings() {
+        return vpnBindings;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof Customer)) {
+            return false;
+        }
+        Customer castOther = (Customer) other;
+        return new EqualsBuilder().append(globalCustomerId, castOther.globalCustomerId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(globalCustomerId).toHashCode();
+    }
 }

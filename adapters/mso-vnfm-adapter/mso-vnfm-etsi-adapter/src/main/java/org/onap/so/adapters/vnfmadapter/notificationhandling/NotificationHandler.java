@@ -40,8 +40,8 @@ import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
 import org.slf4j.Logger;
 
 /**
- * Performs updates to AAI based on a received notification. The updates are executed in a separate
- * thread so as the notification response to the VNFM is not delayed.
+ * Performs updates to AAI based on a received notification. The updates are executed in a separate thread so as the
+ * notification response to the VNFM is not delayed.
  */
 public class NotificationHandler implements Runnable {
     private static Logger logger = getLogger(NotificationHandler.class);

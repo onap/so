@@ -19,10 +19,10 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Ignore;
@@ -30,49 +30,48 @@ import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
-public class UnassignVnfBBTest extends BaseBPMNTest{
-	@Test
-	public void sunnyDayUnassignVnf_Test() throws InterruptedException {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("UnassignVnfBB_Start", 
-				"UnassignVnf",
-				"CallActivity_sdncHandlerCall",
-				"DeleteVnfInstanceGroups",
-				"DeleteVnf",				
-				"UnassignVnfBB_End");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test
-	@Ignore
-	public void rainyDayUnassignVnfInstanceGroupsDeleteFailed_Test() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(unassignVnf).deleteInstanceGroups(any(BuildingBlockExecution.class));  //.deleteVnf(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
-		assertThat(pi).isNotNull().isStarted()
-				.hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf", "DeleteVnfInstanceGroups")
-				.hasNotPassed("DeleteVnf","UnassignVnfBB_End");
-		
-	}
-	
-	@Test
-	public void rainyDayUnassignVnfAAIDeleteFailed_Test() throws Exception {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiDeleteTasks).deleteVnf(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf", "DeleteVnfInstanceGroups","DeleteVnf")
-		.hasNotPassed("UnassignVnfBB_End");
-	}
-	
-	@Test
-	public void rainyDayUnassignVnfSDNCUnassignFailed_Test() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncUnassignTasks).unassignVnf(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf")
-				.hasNotPassed("DeleteVnfInstanceGroups","DeleteVnf", "UnassignVnfBB_End");
-		assertThat(pi).isEnded();
-	}
+public class UnassignVnfBBTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayUnassignVnf_Test() throws InterruptedException {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf",
+                "CallActivity_sdncHandlerCall", "DeleteVnfInstanceGroups", "DeleteVnf", "UnassignVnfBB_End");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    @Ignore
+    public void rainyDayUnassignVnfInstanceGroupsDeleteFailed_Test() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(unassignVnf)
+                .deleteInstanceGroups(any(BuildingBlockExecution.class)); // .deleteVnf(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
+        assertThat(pi).isNotNull().isStarted()
+                .hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf", "DeleteVnfInstanceGroups")
+                .hasNotPassed("DeleteVnf", "UnassignVnfBB_End");
+
+    }
+
+    @Test
+    public void rainyDayUnassignVnfAAIDeleteFailed_Test() throws Exception {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiDeleteTasks)
+                .deleteVnf(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
+        assertThat(pi).isNotNull().isStarted()
+                .hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf", "DeleteVnfInstanceGroups", "DeleteVnf")
+                .hasNotPassed("UnassignVnfBB_End");
+    }
+
+    @Test
+    public void rainyDayUnassignVnfSDNCUnassignFailed_Test() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncUnassignTasks)
+                .unassignVnf(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVnfBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("UnassignVnfBB_Start", "UnassignVnf")
+                .hasNotPassed("DeleteVnfInstanceGroups", "DeleteVnf", "UnassignVnfBB_End");
+        assertThat(pi).isEnded();
+    }
 }

@@ -32,7 +32,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -77,27 +76,26 @@ public class BpmnInstallerTest {
     public static void cleanup() {
         System.clearProperty("mso.config.path");
     }
-    
+
     @Test
     public void buildMimeMultiPart_Test() throws Exception {
-    	Path tempFilePath = Paths.get(tempDirectoryPath.toAbsolutePath().toString(), "TestBB.bpmn");
-    	Files.createFile(tempFilePath);
-    	HttpEntity entity = bpmnInstaller.buildMimeMultipart("TestBB.bpmn");    	
-    	String mimeMultipartBodyFilePath = "src/test/resources" + "/mime-multipart-body.txt";
-    	
-    	File mimeMultipartBody = new File(mimeMultipartBodyFilePath);
-    	InputStream expectedContent = new FileInputStream(mimeMultipartBody);
-    	
-    	assertThat(IOUtils.contentEquals(expectedContent, entity.getContent()));
-    	
-    	IOUtils.closeQuietly(expectedContent);
+        Path tempFilePath = Paths.get(tempDirectoryPath.toAbsolutePath().toString(), "TestBB.bpmn");
+        Files.createFile(tempFilePath);
+        HttpEntity entity = bpmnInstaller.buildMimeMultipart("TestBB.bpmn");
+        String mimeMultipartBodyFilePath = "src/test/resources" + "/mime-multipart-body.txt";
+
+        File mimeMultipartBody = new File(mimeMultipartBodyFilePath);
+        InputStream expectedContent = new FileInputStream(mimeMultipartBody);
+
+        assertThat(IOUtils.contentEquals(expectedContent, entity.getContent()));
+
+        IOUtils.closeQuietly(expectedContent);
     }
 
     @Test
     public void installBpmn_Test() throws Exception {
         BpmnInstaller bpmnInstallerSpy = spy(bpmnInstaller);
-        HttpResponse response = new BasicHttpResponse(
-            new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, ""));
+        HttpResponse response = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, ""));
         HttpClient httpClient = mock(HttpClient.class);
         doReturn(response).when(httpClient).execute(any(HttpPost.class));
         bpmnInstallerSpy.installBpmn(TEST_CSAR);

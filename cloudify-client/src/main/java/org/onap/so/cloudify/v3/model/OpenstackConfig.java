@@ -21,69 +21,68 @@
 package org.onap.so.cloudify.v3.model;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class OpenstackConfig implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	@JsonProperty("username")
-	String username;
+    private static final long serialVersionUID = 1L;
 
-	@JsonProperty("password")
-	String password;
+    @JsonProperty("username")
+    String username;
 
-	@JsonProperty("tenant_name")
-	String tenantName;
+    @JsonProperty("password")
+    String password;
 
-	@JsonProperty("auth_url")
-	String authUrl;
+    @JsonProperty("tenant_name")
+    String tenantName;
 
-	@JsonProperty("region")
-	String region;
+    @JsonProperty("auth_url")
+    String authUrl;
 
-	// NOTE:  Not supporting "custom_configuration"
+    @JsonProperty("region")
+    String region;
 
-	public String getUsername() {
-		return username;
-	}
+    // NOTE: Not supporting "custom_configuration"
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public String getTenantName() {
-		return tenantName;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setTenantName(String tenantName) {
-		this.tenantName = tenantName;
-	}
+    public String getTenantName() {
+        return tenantName;
+    }
 
-	public String getAuthUrl() {
-		return authUrl;
-	}
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
+    }
 
-	public void setAuthUrl(String authUrl) {
-		this.authUrl = authUrl;
-	}
+    public String getAuthUrl() {
+        return authUrl;
+    }
 
-	public String getRegion() {
-		return region;
-	}
+    public void setAuthUrl(String authUrl) {
+        this.authUrl = authUrl;
+    }
 
-	public void setRegion(String region) {
-		this.region = region;
-	}
+    public String getRegion() {
+        return region;
+    }
 
-	
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+
 }

@@ -28,9 +28,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.List;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,94 +46,103 @@ import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
 public class AssignVnfTest extends BaseTaskTest {
-	@InjectMocks
-	private AssignVnf assignVnf = new AssignVnf();
-	
-	@Mock
-	private AAIObjectInstanceNameGenerator aaiObjectInstanceNameGenerator = new AAIObjectInstanceNameGenerator();
-	
-	private InstanceGroup instanceGroup1;
-	private InstanceGroup instanceGroup2;
-	private InstanceGroup instanceGroup3;
-	private InstanceGroup instanceGroup4;
-	private GenericVnf genericVnf;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		ModelInfoInstanceGroup modelVnfc = new ModelInfoInstanceGroup();
-		modelVnfc.setType("VNFC");
-		modelVnfc.setFunction("function");
-		
-		ModelInfoInstanceGroup modelNetworkInstanceGroup = new ModelInfoInstanceGroup();
-		modelNetworkInstanceGroup.setType("L3-NETWORK");
-		modelNetworkInstanceGroup.setFunction("function");
-		
-		instanceGroup1 = new InstanceGroup();
-		instanceGroup1.setId("test-001");
-		instanceGroup1.setModelInfoInstanceGroup(modelVnfc);
-		
-		instanceGroup2 = new InstanceGroup();
-		instanceGroup2.setId("test-002");
-		instanceGroup2.setModelInfoInstanceGroup(modelVnfc);
-		
-		instanceGroup3 = new InstanceGroup();
-		instanceGroup3.setId("test-003");
-		instanceGroup3.setModelInfoInstanceGroup(modelNetworkInstanceGroup);
-		
-		instanceGroup4 = new InstanceGroup();
-		instanceGroup4.setId("test-004");
-		instanceGroup4.setModelInfoInstanceGroup(modelNetworkInstanceGroup);
-		
-		genericVnf = setGenericVnf();
-		genericVnf.setVnfName("vnfName");
+    @InjectMocks
+    private AssignVnf assignVnf = new AssignVnf();
 
-		
-		doNothing().when(aaiInstanceGroupResources).createInstanceGroup(isA(InstanceGroup.class));
-		doNothing().when(aaiInstanceGroupResources).connectInstanceGroupToVnf(isA(InstanceGroup.class), isA(GenericVnf.class));
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-	}
+    @Mock
+    private AAIObjectInstanceNameGenerator aaiObjectInstanceNameGenerator = new AAIObjectInstanceNameGenerator();
 
-	@Test
-	public void createInstanceGroupsSunnyDayTest() throws Exception {
-		
-		List<InstanceGroup> instanceGroupList = genericVnf.getInstanceGroups();
-		instanceGroupList.add(instanceGroup1);
-		instanceGroupList.add(instanceGroup2);
-		instanceGroupList.add(instanceGroup3);
-		instanceGroupList.add(instanceGroup4);
-	
-	
-		assignVnf.createInstanceGroups(execution);
-		verify(aaiInstanceGroupResources, times(1)).createInstanceGroup(instanceGroup1);
-		verify(aaiInstanceGroupResources, times(1)).createInstanceGroup(instanceGroup2);
-		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup1, genericVnf, AAIEdgeLabel.BELONGS_TO);
-		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup2, genericVnf, AAIEdgeLabel.BELONGS_TO);
-		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup3, genericVnf, AAIEdgeLabel.USES);
-		verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup4, genericVnf, AAIEdgeLabel.USES);
-	}
-	
-	@Test
-	public void createVnfcInstanceGroupNoneTest() throws Exception {
-		assignVnf.createInstanceGroups(execution);
-		
-		
-		verify(aaiInstanceGroupResources, times(0)).createInstanceGroup(any(InstanceGroup.class));
-		verify(aaiInstanceGroupResources, times(0)).connectInstanceGroupToVnf(any(InstanceGroup.class), any(GenericVnf.class));
-	}
+    private InstanceGroup instanceGroup1;
+    private InstanceGroup instanceGroup2;
+    private InstanceGroup instanceGroup3;
+    private InstanceGroup instanceGroup4;
+    private GenericVnf genericVnf;
 
-	@Test
-	public void createVnfcInstanceGroupExceptionTest() throws Exception {
-		List<InstanceGroup> instanceGroupList = genericVnf.getInstanceGroups();
-		instanceGroupList.add(instanceGroup1);
-		instanceGroupList.add(instanceGroup2);
-		instanceGroupList.add(instanceGroup3);
-		instanceGroupList.add(instanceGroup4);
-		doThrow(RuntimeException.class).when(aaiInstanceGroupResources).createInstanceGroup(isA(InstanceGroup.class));
-		expectedException.expect(BpmnError.class);
-		
-		genericVnf.setVnfId("test-999");
-		assignVnf.createInstanceGroups(execution);
-	}
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        ModelInfoInstanceGroup modelVnfc = new ModelInfoInstanceGroup();
+        modelVnfc.setType("VNFC");
+        modelVnfc.setFunction("function");
+
+        ModelInfoInstanceGroup modelNetworkInstanceGroup = new ModelInfoInstanceGroup();
+        modelNetworkInstanceGroup.setType("L3-NETWORK");
+        modelNetworkInstanceGroup.setFunction("function");
+
+        instanceGroup1 = new InstanceGroup();
+        instanceGroup1.setId("test-001");
+        instanceGroup1.setModelInfoInstanceGroup(modelVnfc);
+
+        instanceGroup2 = new InstanceGroup();
+        instanceGroup2.setId("test-002");
+        instanceGroup2.setModelInfoInstanceGroup(modelVnfc);
+
+        instanceGroup3 = new InstanceGroup();
+        instanceGroup3.setId("test-003");
+        instanceGroup3.setModelInfoInstanceGroup(modelNetworkInstanceGroup);
+
+        instanceGroup4 = new InstanceGroup();
+        instanceGroup4.setId("test-004");
+        instanceGroup4.setModelInfoInstanceGroup(modelNetworkInstanceGroup);
+
+        genericVnf = setGenericVnf();
+        genericVnf.setVnfName("vnfName");
+
+
+        doNothing().when(aaiInstanceGroupResources).createInstanceGroup(isA(InstanceGroup.class));
+        doNothing().when(aaiInstanceGroupResources).connectInstanceGroupToVnf(isA(InstanceGroup.class),
+                isA(GenericVnf.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+    }
+
+    @Test
+    public void createInstanceGroupsSunnyDayTest() throws Exception {
+
+        List<InstanceGroup> instanceGroupList = genericVnf.getInstanceGroups();
+        instanceGroupList.add(instanceGroup1);
+        instanceGroupList.add(instanceGroup2);
+        instanceGroupList.add(instanceGroup3);
+        instanceGroupList.add(instanceGroup4);
+
+
+        assignVnf.createInstanceGroups(execution);
+        verify(aaiInstanceGroupResources, times(1)).createInstanceGroup(instanceGroup1);
+        verify(aaiInstanceGroupResources, times(1)).createInstanceGroup(instanceGroup2);
+        verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup1, genericVnf,
+                AAIEdgeLabel.BELONGS_TO);
+        verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup2, genericVnf,
+                AAIEdgeLabel.BELONGS_TO);
+        verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup3, genericVnf,
+                AAIEdgeLabel.USES);
+        verify(aaiInstanceGroupResources, times(1)).connectInstanceGroupToVnf(instanceGroup4, genericVnf,
+                AAIEdgeLabel.USES);
+    }
+
+    @Test
+    public void createVnfcInstanceGroupNoneTest() throws Exception {
+        assignVnf.createInstanceGroups(execution);
+
+
+        verify(aaiInstanceGroupResources, times(0)).createInstanceGroup(any(InstanceGroup.class));
+        verify(aaiInstanceGroupResources, times(0)).connectInstanceGroupToVnf(any(InstanceGroup.class),
+                any(GenericVnf.class));
+    }
+
+    @Test
+    public void createVnfcInstanceGroupExceptionTest() throws Exception {
+        List<InstanceGroup> instanceGroupList = genericVnf.getInstanceGroups();
+        instanceGroupList.add(instanceGroup1);
+        instanceGroupList.add(instanceGroup2);
+        instanceGroupList.add(instanceGroup3);
+        instanceGroupList.add(instanceGroup4);
+        doThrow(RuntimeException.class).when(aaiInstanceGroupResources).createInstanceGroup(isA(InstanceGroup.class));
+        expectedException.expect(BpmnError.class);
+
+        genericVnf.setVnfId("test-999");
+        assignVnf.createInstanceGroups(execution);
+    }
 }

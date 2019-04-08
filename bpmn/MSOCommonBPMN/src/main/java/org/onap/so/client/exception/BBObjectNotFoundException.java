@@ -22,24 +22,23 @@ package org.onap.so.client.exception;
 
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 
-public class BBObjectNotFoundException extends Exception{
-	private ResourceKey resourceKey;
-	private String resourceValue;
-	
+public class BBObjectNotFoundException extends Exception {
+    private ResourceKey resourceKey;
+    private String resourceValue;
+
     public BBObjectNotFoundException() {}
 
-    public BBObjectNotFoundException(ResourceKey resourceKey, String resourceValue)
-    {
-    	super("BBObject" + resourceKey + " was not found in gBBInput using reference value: " + resourceValue);
-    	this.resourceKey = resourceKey;
-    	this.resourceValue = resourceValue;
+    public BBObjectNotFoundException(ResourceKey resourceKey, String resourceValue) {
+        super("BBObject" + resourceKey + " was not found in gBBInput using reference value: " + resourceValue);
+        this.resourceKey = resourceKey;
+        this.resourceValue = resourceValue;
     }
 
     public ResourceKey getResourceKey() {
-    	return resourceKey;
+        return resourceKey;
     }
-    
+
     public String getResourceValue() {
-    	return resourceValue;
+        return resourceValue;
     }
 }

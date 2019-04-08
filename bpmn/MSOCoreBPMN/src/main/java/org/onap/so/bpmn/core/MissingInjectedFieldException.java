@@ -25,15 +25,15 @@ package org.onap.so.bpmn.core;
  */
 public class MissingInjectedFieldException extends BadInjectedFieldException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param fieldName the field name
-	 * @param taskName the task name
-	 */
-	public MissingInjectedFieldException(String fieldName, String taskName) {
-			super(fieldName, taskName, "missing required field");
-	}
+    /**
+     * Constructor.
+     *
+     * @param fieldName the field name
+     * @param taskName the task name
+     */
+    public MissingInjectedFieldException(String fieldName, String taskName) {
+        super(fieldName, taskName, "missing required field");
+    }
 }

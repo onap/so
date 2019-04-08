@@ -30,94 +30,89 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ActivateVnfDBHelper {
-	
-	private static Logger logger = LoggerFactory.getLogger(ActivateVnfDBHelper.class);
-	
-	/**
-	 * Insert record to OperationalEnvServiceModelStatus table  
-	 * @param requestId - String
-	 * @param operationalEnvironmentId - String
-	 * @param serviceModelVersionId - String
-	 * @param status - String
-	 * @param recoveryAction - String
-	 * @param retryCount - int
-	 * @param workloadContext - String
-	 * @return serviceModelStatus - OperationalEnvServiceModelStatus object
-	 */
-	public OperationalEnvServiceModelStatus insertRecordToOperationalEnvServiceModelStatus( String requestId,
-																						 	String operationalEnvironmentId,
-																						 	String serviceModelVersionId,
-																						 	String status,
-																						 	String recoveryAction, 
-																						 	int retryCount,
-																						 	String workloadContext,
-																						 	String vnfOperationalEnvironmentId) { 
-		OperationalEnvServiceModelStatus serviceModelStatus = new OperationalEnvServiceModelStatus();
-		serviceModelStatus.setRequestId(requestId);
-		serviceModelStatus.setOperationalEnvId(operationalEnvironmentId);
-		serviceModelStatus.setServiceModelVersionId(serviceModelVersionId);
-		serviceModelStatus.setServiceModelVersionDistrStatus(status);		
-		serviceModelStatus.setRecoveryAction(recoveryAction);
-		serviceModelStatus.setRetryCount(new Integer(retryCount));
-		serviceModelStatus.setWorkloadContext(workloadContext);
-		serviceModelStatus.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
-		return serviceModelStatus;
-	}
 
-	/**
-	 * Update RetryCount & Status in OperationalEnvServiceModelStatus table 
-	 * @param serviceModelStatusResponse - OperationalEnvServiceModelStatus object
-	 * @param status - String
-	 * @param retryCount - int
-	 * @return serviceModelStatusResponse - OperationalEnvServiceModelStatus object
-	 */	
-	public OperationalEnvServiceModelStatus updateRetryCountAndStatusInOperationalEnvServiceModelStatus(OperationalEnvServiceModelStatus serviceModelStatusResponse, 
-																										String status,
-																										int retryCount) {
-		serviceModelStatusResponse.setServiceModelVersionDistrStatus(status);
-		serviceModelStatusResponse.setRetryCount(new Integer(retryCount));	
-	    return serviceModelStatusResponse;
-	}
-	
-	/**
-	 * Insert record to OperationalEnvDistributionStatus table  
-	 * @param distributionId - String
-	 * @param operationalEnvironmentId - String
-	 * @param serviceModelVersionId - String
-	 * @param requestId - String
-	 * @param status - String
-	 * @param distributionIdErrorReason - String
-	 * @return distStatus - OperationalEnvDistributionStatus object
-	 */
-	public OperationalEnvDistributionStatus insertRecordToOperationalEnvDistributionStatus( String distributionId,
-																							String operationalEnvironmentId,
-																							String serviceModelVersionId,																							
-																							String requestId,
- 																							String status,
- 																							String distributionIdErrorReason) {
-		OperationalEnvDistributionStatus distStatus = new OperationalEnvDistributionStatus();
-		distStatus.setDistributionId(distributionId);
-		distStatus.setOperationalEnvId(operationalEnvironmentId);
-		distStatus.setServiceModelVersionId(serviceModelVersionId);
-		distStatus.setRequestId(requestId);		
-		distStatus.setDistributionIdStatus(status);
-		distStatus.setDistributionIdErrorReason(distributionIdErrorReason);
-		return distStatus;
-	}
-	
-	/**
-	 * Update Status in OperationalEnvDistributionStatus table
-	 * @param distributionStatusResponse -  OperationalEnvDistributionStatus object
-	 * @param status - String
-	 * @param distributionIdErrorReason - String
-	 * @return distributionStatusResponse - OperationalEnvDistributionStatus object
-	 */
-	public OperationalEnvDistributionStatus updateStatusInOperationalEnvDistributionStatus(OperationalEnvDistributionStatus distributionStatusResponse, 
-																						   String status,
-																						   String distributionIdErrorReason) {
-		distributionStatusResponse.setDistributionIdStatus(status);
-		distributionStatusResponse.setDistributionIdErrorReason(distributionIdErrorReason);
-		return distributionStatusResponse;
-	}
-	
+    private static Logger logger = LoggerFactory.getLogger(ActivateVnfDBHelper.class);
+
+    /**
+     * Insert record to OperationalEnvServiceModelStatus table
+     * 
+     * @param requestId - String
+     * @param operationalEnvironmentId - String
+     * @param serviceModelVersionId - String
+     * @param status - String
+     * @param recoveryAction - String
+     * @param retryCount - int
+     * @param workloadContext - String
+     * @return serviceModelStatus - OperationalEnvServiceModelStatus object
+     */
+    public OperationalEnvServiceModelStatus insertRecordToOperationalEnvServiceModelStatus(String requestId,
+            String operationalEnvironmentId, String serviceModelVersionId, String status, String recoveryAction,
+            int retryCount, String workloadContext, String vnfOperationalEnvironmentId) {
+        OperationalEnvServiceModelStatus serviceModelStatus = new OperationalEnvServiceModelStatus();
+        serviceModelStatus.setRequestId(requestId);
+        serviceModelStatus.setOperationalEnvId(operationalEnvironmentId);
+        serviceModelStatus.setServiceModelVersionId(serviceModelVersionId);
+        serviceModelStatus.setServiceModelVersionDistrStatus(status);
+        serviceModelStatus.setRecoveryAction(recoveryAction);
+        serviceModelStatus.setRetryCount(new Integer(retryCount));
+        serviceModelStatus.setWorkloadContext(workloadContext);
+        serviceModelStatus.setVnfOperationalEnvId(vnfOperationalEnvironmentId);
+        return serviceModelStatus;
+    }
+
+    /**
+     * Update RetryCount & Status in OperationalEnvServiceModelStatus table
+     * 
+     * @param serviceModelStatusResponse - OperationalEnvServiceModelStatus object
+     * @param status - String
+     * @param retryCount - int
+     * @return serviceModelStatusResponse - OperationalEnvServiceModelStatus object
+     */
+    public OperationalEnvServiceModelStatus updateRetryCountAndStatusInOperationalEnvServiceModelStatus(
+            OperationalEnvServiceModelStatus serviceModelStatusResponse, String status, int retryCount) {
+        serviceModelStatusResponse.setServiceModelVersionDistrStatus(status);
+        serviceModelStatusResponse.setRetryCount(new Integer(retryCount));
+        return serviceModelStatusResponse;
+    }
+
+    /**
+     * Insert record to OperationalEnvDistributionStatus table
+     * 
+     * @param distributionId - String
+     * @param operationalEnvironmentId - String
+     * @param serviceModelVersionId - String
+     * @param requestId - String
+     * @param status - String
+     * @param distributionIdErrorReason - String
+     * @return distStatus - OperationalEnvDistributionStatus object
+     */
+    public OperationalEnvDistributionStatus insertRecordToOperationalEnvDistributionStatus(String distributionId,
+            String operationalEnvironmentId, String serviceModelVersionId, String requestId, String status,
+            String distributionIdErrorReason) {
+        OperationalEnvDistributionStatus distStatus = new OperationalEnvDistributionStatus();
+        distStatus.setDistributionId(distributionId);
+        distStatus.setOperationalEnvId(operationalEnvironmentId);
+        distStatus.setServiceModelVersionId(serviceModelVersionId);
+        distStatus.setRequestId(requestId);
+        distStatus.setDistributionIdStatus(status);
+        distStatus.setDistributionIdErrorReason(distributionIdErrorReason);
+        return distStatus;
+    }
+
+    /**
+     * Update Status in OperationalEnvDistributionStatus table
+     * 
+     * @param distributionStatusResponse - OperationalEnvDistributionStatus object
+     * @param status - String
+     * @param distributionIdErrorReason - String
+     * @return distributionStatusResponse - OperationalEnvDistributionStatus object
+     */
+    public OperationalEnvDistributionStatus updateStatusInOperationalEnvDistributionStatus(
+            OperationalEnvDistributionStatus distributionStatusResponse, String status,
+            String distributionIdErrorReason) {
+        distributionStatusResponse.setDistributionIdStatus(status);
+        distributionStatusResponse.setDistributionIdErrorReason(distributionIdErrorReason);
+        return distributionStatusResponse;
+    }
+
 }

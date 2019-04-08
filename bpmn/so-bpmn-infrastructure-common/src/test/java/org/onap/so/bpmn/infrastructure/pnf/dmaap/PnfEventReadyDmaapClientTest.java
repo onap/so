@@ -30,14 +30,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
@@ -53,6 +51,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient.DmaapTopicListenerThread;
 import org.springframework.core.env.Environment;
+
 @RunWith(MockitoJUnitRunner.class)
 public class PnfEventReadyDmaapClientTest {
 
@@ -83,8 +82,8 @@ public class PnfEventReadyDmaapClientTest {
 
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException {
-    	when(env.getProperty(eq("pnf.dmaap.port"), eq(Integer.class))).thenReturn(PORT);
-    	when(env.getProperty(eq("pnf.dmaap.host"))).thenReturn(HOST);
+        when(env.getProperty(eq("pnf.dmaap.port"), eq(Integer.class))).thenReturn(PORT);
+        when(env.getProperty(eq("pnf.dmaap.host"))).thenReturn(HOST);
         when(env.getProperty(eq("pnf.dmaap.protocol"))).thenReturn(PROTOCOL);
         when(env.getProperty(eq("pnf.dmaap.uriPathPrefix"))).thenReturn(URI_PATH_PREFIX);
         when(env.getProperty(eq("pnf.dmaap.topicName"))).thenReturn(EVENT_TOPIC_TEST);
@@ -102,56 +101,60 @@ public class PnfEventReadyDmaapClientTest {
 
     /**
      * Test run method, where the are following conditions:
-     * <p> - DmaapThreadListener is running, flag is set to true
-     * <p> - map is filled with one entry with the key that we get from response
-     * <p> run method should invoke thread from map to notify camunda process, remove element from the map (map is
-     * empty) and shutdown the executor because of empty map
+     * <p>
+     * - DmaapThreadListener is running, flag is set to true
+     * <p>
+     * - map is filled with one entry with the key that we get from response
+     * <p>
+     * run method should invoke thread from map to notify camunda process, remove element from the map (map is empty)
+     * and shutdown the executor because of empty map
      */
     @Test
-    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfReady()
-            throws IOException {
-        when(httpClientMock.execute(any(HttpGet.class))).
-                thenReturn(createResponse(String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID, PNF_CORRELATION_ID)));
+    public void pnfCorrelationIdIsFoundInHttpResponse_notifyAboutPnfReady() throws IOException {
+        when(httpClientMock.execute(any(HttpGet.class)))
+                .thenReturn(createResponse(String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID, PNF_CORRELATION_ID)));
         testedObjectInnerClassThread.run();
         ArgumentCaptor<HttpGet> captor1 = ArgumentCaptor.forClass(HttpGet.class);
-        verify(httpClientMock).execute(captor1.capture());      
-        
-        assertEquals(captor1.getValue().getURI().getHost(),HOST);
-        assertEquals(captor1.getValue().getURI().getPort(),PORT);
-        assertEquals(captor1.getValue().getURI().getScheme(),PROTOCOL);
-        assertEquals(captor1.getValue().getURI().getPath(),"/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
-  
-        //verify(threadMockToNotifyCamundaFlow).run();
+        verify(httpClientMock).execute(captor1.capture());
+
+        assertEquals(captor1.getValue().getURI().getHost(), HOST);
+        assertEquals(captor1.getValue().getURI().getPort(), PORT);
+        assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
+        assertEquals(captor1.getValue().getURI().getPath(),
+                "/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+
+        // verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
     }
 
     /**
      * Test run method, where the are following conditions:
-     * <p> - DmaapThreadListener is running, flag is set to true
-     * <p> - map is filled with one entry with the pnfCorrelationId that does not match to pnfCorrelationId
-     * taken from http response. run method should not do anything with the map not run any thread to notify camunda
-     * process
+     * <p>
+     * - DmaapThreadListener is running, flag is set to true
+     * <p>
+     * - map is filled with one entry with the pnfCorrelationId that does not match to pnfCorrelationId taken from http
+     * response. run method should not do anything with the map not run any thread to notify camunda process
      */
     @Test
-    public void pnfCorrelationIdIsFoundInHttpResponse_NotFoundInMap()
-            throws IOException {
-        when(httpClientMock.execute(any(HttpGet.class))).
-                thenReturn(createResponse(
-                        String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID, PNF_CORRELATION_ID_NOT_FOUND_IN_MAP)));
+    public void pnfCorrelationIdIsFoundInHttpResponse_NotFoundInMap() throws IOException {
+        when(httpClientMock.execute(any(HttpGet.class))).thenReturn(createResponse(
+                String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID, PNF_CORRELATION_ID_NOT_FOUND_IN_MAP)));
         testedObjectInnerClassThread.run();
         verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
 
     /**
      * Test run method, where the are following conditions:
-     * <p> - DmaapThreadListener is running, flag is set to true
-     * <p> - map is filled with one entry with the pnfCorrelationId but no correlation id is taken from HttpResponse
-     * run method should not do anything with the map and not run any thread to notify camunda process
+     * <p>
+     * - DmaapThreadListener is running, flag is set to true
+     * <p>
+     * - map is filled with one entry with the pnfCorrelationId but no correlation id is taken from HttpResponse run
+     * method should not do anything with the map and not run any thread to notify camunda process
      */
     @Test
     public void pnfCorrelationIdIsNotFoundInHttpResponse() throws IOException {
-        when(httpClientMock.execute(any(HttpGet.class))).
-                thenReturn(createResponse(JSON_EXAMPLE_WITH_NO_PNF_CORRELATION_ID));
+        when(httpClientMock.execute(any(HttpGet.class)))
+                .thenReturn(createResponse(JSON_EXAMPLE_WITH_NO_PNF_CORRELATION_ID));
         testedObjectInnerClassThread.run();
         verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
@@ -167,8 +170,7 @@ public class PnfEventReadyDmaapClientTest {
         executorField.set(testedObject, executorMock);
         executorField.setAccessible(false);
 
-        Field pnfCorrelationToThreadMapField = testedObject.getClass()
-                .getDeclaredField("pnfCorrelationIdToThreadMap");
+        Field pnfCorrelationToThreadMapField = testedObject.getClass().getDeclaredField("pnfCorrelationIdToThreadMap");
         pnfCorrelationToThreadMapField.setAccessible(true);
         Map<String, Runnable> pnfCorrelationToThreadMap = new ConcurrentHashMap<>();
         pnfCorrelationToThreadMap.put(PNF_CORRELATION_ID, threadMockToNotifyCamundaFlow);

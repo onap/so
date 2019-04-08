@@ -22,67 +22,82 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 public class Resource {
 
-	private String resourceId;
-	private WorkflowType resourceType;
-	private boolean generated;
-	private boolean baseVfModule;
-	private String virtualLinkKey;
-	private String vnfCustomizationId;
-	private String vfModuleCustomizationId;
-	private String cvnfModuleCustomizationId;
-	
-	public Resource(WorkflowType resourceType, String resourceId, boolean generated){
-		this.resourceId = resourceId;
-		this.resourceType = resourceType;
-		this.generated = generated;
-	}
-	
-	public String getResourceId() {
-		return resourceId;
-	}
-	public void setResourceId(String resourceId) {
-		this.resourceId = resourceId;
-	}
-	public WorkflowType getResourceType() {
-		return resourceType;
-	}
-	public void setResourceType(WorkflowType resourceType) {
-		this.resourceType = resourceType;
-	}
-	public boolean isGenerated() {
-		return generated;
-	}
-	public void setGenerated(boolean generated) {
-		this.generated = generated;
-	}
-	public boolean isBaseVfModule() {
-		return baseVfModule;
-	}
-	public void setBaseVfModule(boolean baseVfModule) {
-		this.baseVfModule = baseVfModule;
-	}
-	public String getVirtualLinkKey() {
-		return virtualLinkKey;
-	}
-	public void setVirtualLinkKey(String virtualLinkKey) {
-		this.virtualLinkKey = virtualLinkKey;
-	}
-	public String getVnfCustomizationId() {
-		return vnfCustomizationId;
-	}
-	public void setVnfCustomizationId(String vnfCustomizationId) {
-		this.vnfCustomizationId = vnfCustomizationId;
-	}
-	public String getVfModuleCustomizationId() {
-		return vfModuleCustomizationId;
-	}
-	public void setVfModuleCustomizationId(String vfModuleCustomizationId) {
-		this.vfModuleCustomizationId = vfModuleCustomizationId;
-	}
-	public String getCvnfModuleCustomizationId() {
-		return cvnfModuleCustomizationId;
-	}
-	public void setCvnfModuleCustomizationId(String cvnfModuleCustomizationId) {
-		this.cvnfModuleCustomizationId = cvnfModuleCustomizationId;
-	}
+    private String resourceId;
+    private WorkflowType resourceType;
+    private boolean generated;
+    private boolean baseVfModule;
+    private String virtualLinkKey;
+    private String vnfCustomizationId;
+    private String vfModuleCustomizationId;
+    private String cvnfModuleCustomizationId;
+
+    public Resource(WorkflowType resourceType, String resourceId, boolean generated) {
+        this.resourceId = resourceId;
+        this.resourceType = resourceType;
+        this.generated = generated;
+    }
+
+    public String getResourceId() {
+        return resourceId;
+    }
+
+    public void setResourceId(String resourceId) {
+        this.resourceId = resourceId;
+    }
+
+    public WorkflowType getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(WorkflowType resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    public boolean isGenerated() {
+        return generated;
+    }
+
+    public void setGenerated(boolean generated) {
+        this.generated = generated;
+    }
+
+    public boolean isBaseVfModule() {
+        return baseVfModule;
+    }
+
+    public void setBaseVfModule(boolean baseVfModule) {
+        this.baseVfModule = baseVfModule;
+    }
+
+    public String getVirtualLinkKey() {
+        return virtualLinkKey;
+    }
+
+    public void setVirtualLinkKey(String virtualLinkKey) {
+        this.virtualLinkKey = virtualLinkKey;
+    }
+
+    public String getVnfCustomizationId() {
+        return vnfCustomizationId;
+    }
+
+    public void setVnfCustomizationId(String vnfCustomizationId) {
+        this.vnfCustomizationId = vnfCustomizationId;
+    }
+
+    public String getVfModuleCustomizationId() {
+        return vfModuleCustomizationId;
+    }
+
+    public void setVfModuleCustomizationId(String vfModuleCustomizationId) {
+        this.vfModuleCustomizationId = vfModuleCustomizationId;
+    }
+
+    public String getCvnfModuleCustomizationId() {
+        return cvnfModuleCustomizationId;
+    }
+
+    public void setCvnfModuleCustomizationId(String cvnfModuleCustomizationId) {
+        this.cvnfModuleCustomizationId = cvnfModuleCustomizationId;
+    }
 }

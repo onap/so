@@ -22,7 +22,6 @@ package org.onap.so.adapters.inventory.create;
 
 import java.util.Optional;
 import java.util.stream.Stream;
-
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.so.adapters.audit.AAIObjectAudit;
 import org.onap.so.adapters.audit.AAIObjectAuditList;
@@ -32,37 +31,44 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CreateAAIInventory{
-	
-	private AAIResourcesClient aaiClient;
+public class CreateAAIInventory {
 
-	public void createInventory(AAIObjectAuditList auditList) throws InventoryException {	
-		if(didAuditFailVserverLInterfaces(auditList)){
-			throw new InventoryException("Audit failed for VServer or LInterface cannot write Sub-Interfaces");
-		}
-		auditList.getAuditList().parallelStream().filter(auditObject -> !auditObject.isDoesObjectExist() && AAIObjectType.SUB_L_INTERFACE.typeName().equals(auditObject.getAaiObjectType())).
-		forEach(auditObject -> getAaiClient().createIfNotExists(AAIUriFactory.createResourceFromExistingURI(AAIObjectType.fromTypeName(auditObject.getAaiObjectType()), auditObject.getResourceURI()), Optional.of(auditObject.getAaiObject())));
-	}
-	
-	
-	/**
-	 * @param auditHeatStackFailed
-	 * @param auditList
-	 * @return
-	 */
-	protected boolean didAuditFailVserverLInterfaces(AAIObjectAuditList auditList) {
-		Stream<AAIObjectAudit> issue = auditList.getAuditList().stream().filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName()) || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
-		
-		return issue.filter(auditObject -> !auditObject.isDoesObjectExist()).findFirst().map(v -> true).orElse(false);
-	}
+    private AAIResourcesClient aaiClient;
 
-	protected AAIResourcesClient getAaiClient(){
-		if(aaiClient == null)
-			return new AAIResourcesClient();
-		else
-			return aaiClient;
-	}	
-	protected void setAaiClient(AAIResourcesClient aaiResource){
-		aaiClient = aaiResource;
-	}
+    public void createInventory(AAIObjectAuditList auditList) throws InventoryException {
+        if (didAuditFailVserverLInterfaces(auditList)) {
+            throw new InventoryException("Audit failed for VServer or LInterface cannot write Sub-Interfaces");
+        }
+        auditList.getAuditList().parallelStream()
+                .filter(auditObject -> !auditObject.isDoesObjectExist()
+                        && AAIObjectType.SUB_L_INTERFACE.typeName().equals(auditObject.getAaiObjectType()))
+                .forEach(auditObject -> getAaiClient().createIfNotExists(AAIUriFactory.createResourceFromExistingURI(
+                        AAIObjectType.fromTypeName(auditObject.getAaiObjectType()), auditObject.getResourceURI()),
+                        Optional.of(auditObject.getAaiObject())));
+    }
+
+
+    /**
+     * @param auditHeatStackFailed
+     * @param auditList
+     * @return
+     */
+    protected boolean didAuditFailVserverLInterfaces(AAIObjectAuditList auditList) {
+        Stream<AAIObjectAudit> issue = auditList.getAuditList().stream()
+                .filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName())
+                        || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
+
+        return issue.filter(auditObject -> !auditObject.isDoesObjectExist()).findFirst().map(v -> true).orElse(false);
+    }
+
+    protected AAIResourcesClient getAaiClient() {
+        if (aaiClient == null)
+            return new AAIResourcesClient();
+        else
+            return aaiClient;
+    }
+
+    protected void setAaiClient(AAIResourcesClient aaiResource) {
+        aaiClient = aaiResource;
+    }
 }

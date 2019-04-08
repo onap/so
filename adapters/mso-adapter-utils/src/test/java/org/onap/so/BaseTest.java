@@ -26,13 +26,10 @@ package org.onap.so;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
 import javax.ws.rs.core.MediaType;
-
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.junit.After;
@@ -48,7 +45,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 
@@ -58,77 +54,74 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseTest extends TestDataSetup {
 
-	@Value("${wiremock.server.port}")
-	protected int wireMockPort;
-	@Autowired
-	protected WireMockServer wireMockServer;
-	
-	@After
-	public void after() {
-		wireMockServer.resetAll();
-	}
+    @Value("${wiremock.server.port}")
+    protected int wireMockPort;
+    @Autowired
+    protected WireMockServer wireMockServer;
 
-	protected static String getBody(String body, int port, String urlPath) throws IOException {
-		return body.replaceAll("port", "http://localhost:" + port + urlPath);
-	}
+    @After
+    public void after() {
+        wireMockServer.resetAll();
+    }
 
-	@Before
-	public void init() throws IOException {
-		CloudIdentity identity = getCloudIdentity();
-		CloudSite cloudSite = getCloudSite(identity);
-		mockCloud(identity, cloudSite);
-	}
+    protected static String getBody(String body, int port, String urlPath) throws IOException {
+        return body.replaceAll("port", "http://localhost:" + port + urlPath);
+    }
 
-	private void mockCloud(CloudIdentity identity, CloudSite cloudSite) throws IOException {
-		wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
-				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
-				.withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-				.withStatus(HttpStatus.SC_OK)));
-		wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
-				.withBody(getBody(mapper.writeValueAsString(cloudSite),wireMockPort, ""))
-				.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
-				.withStatus(HttpStatus.SC_OK)));
-		wireMockServer.stubFor(get(urlPathEqualTo("/cloudIdentity/mtn13")).willReturn(aResponse()
-				.withBody(getBody(mapper.writeValueAsString(identity),wireMockPort, ""))
-				.withHeader(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON)
-				.withStatus(HttpStatus.SC_OK)));
-	}
+    @Before
+    public void init() throws IOException {
+        CloudIdentity identity = getCloudIdentity();
+        CloudSite cloudSite = getCloudSite(identity);
+        mockCloud(identity, cloudSite);
+    }
 
-	protected CloudIdentity getCloudIdentity() {
-		CloudIdentity identity = new CloudIdentity();
-		identity.setId("mtn13");
-		identity.setMsoId("m93945");
-		identity.setMsoPass("93937EA01B94A10A49279D4572B48369");
-		identity.setAdminTenant("admin");
-		identity.setMemberRole("admin");
-		identity.setTenantMetadata(false);
-		identity.setIdentityUrl("http://localhost:"+wireMockPort+"/v2.0");
-		identity.setIdentityAuthenticationType(AuthenticationType.USERNAME_PASSWORD);
-		identity.setIdentityServerType(ServerType.KEYSTONE);
-		return identity;
-	}
+    private void mockCloud(CloudIdentity identity, CloudSite cloudSite) throws IOException {
+        wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/MTN13")).willReturn(aResponse()
+                .withBody(getBody(mapper.writeValueAsString(cloudSite), wireMockPort, ""))
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlPathEqualTo("/cloudSite/DEFAULT")).willReturn(aResponse()
+                .withBody(getBody(mapper.writeValueAsString(cloudSite), wireMockPort, ""))
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlPathEqualTo("/cloudIdentity/mtn13")).willReturn(aResponse()
+                .withBody(getBody(mapper.writeValueAsString(identity), wireMockPort, ""))
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+    }
 
-	protected CloudSite getCloudSite(CloudIdentity identity) {
-		CloudSite cloudSite = new CloudSite();
-		cloudSite.setId("MTN13");
-		cloudSite.setCloudVersion("3.0");
-		cloudSite.setClli("MDT13");
-		cloudSite.setRegionId("mtn13");
-		cloudSite.setIdentityService(identity);
-		return cloudSite;
-	}
+    protected CloudIdentity getCloudIdentity() {
+        CloudIdentity identity = new CloudIdentity();
+        identity.setId("mtn13");
+        identity.setMsoId("m93945");
+        identity.setMsoPass("93937EA01B94A10A49279D4572B48369");
+        identity.setAdminTenant("admin");
+        identity.setMemberRole("admin");
+        identity.setTenantMetadata(false);
+        identity.setIdentityUrl("http://localhost:" + wireMockPort + "/v2.0");
+        identity.setIdentityAuthenticationType(AuthenticationType.USERNAME_PASSWORD);
+        identity.setIdentityServerType(ServerType.KEYSTONE);
+        return identity;
+    }
 
-	private static String readFile(String fileName) throws IOException {
-		try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-			StringBuilder sb = new StringBuilder();
-			String line = br.readLine();
+    protected CloudSite getCloudSite(CloudIdentity identity) {
+        CloudSite cloudSite = new CloudSite();
+        cloudSite.setId("MTN13");
+        cloudSite.setCloudVersion("3.0");
+        cloudSite.setClli("MDT13");
+        cloudSite.setRegionId("mtn13");
+        cloudSite.setIdentityService(identity);
+        return cloudSite;
+    }
 
-			while (line != null) {
-				sb.append(line);
-				sb.append("\n");
-				line = br.readLine();
-			}
-			return sb.toString();
-		}
-	}
+    private static String readFile(String fileName) throws IOException {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append("\n");
+                line = br.readLine();
+            }
+            return sb.toString();
+        }
+    }
 }

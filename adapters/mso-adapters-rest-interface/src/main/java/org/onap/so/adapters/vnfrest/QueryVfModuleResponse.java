@@ -23,7 +23,6 @@
 package org.onap.so.adapters.vnfrest;
 
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
 import org.onap.so.openstack.beans.VnfStatus;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -32,66 +31,66 @@ import org.slf4j.LoggerFactory;
 
 @JsonRootName("queryVfModuleResponse")
 @XmlRootElement(name = "queryVfModuleResponse")
-public class QueryVfModuleResponse extends VfResponseCommon{
-	private static final Logger logger = LoggerFactory.getLogger(QueryVfModuleResponse.class);
-	private String vnfId;
-	private String vfModuleId;
-	private String vfModuleStackId;
-	private VnfStatus vnfStatus;
-	private Map<String, String> vfModuleOutputs;
+public class QueryVfModuleResponse extends VfResponseCommon {
+    private static final Logger logger = LoggerFactory.getLogger(QueryVfModuleResponse.class);
+    private String vnfId;
+    private String vfModuleId;
+    private String vfModuleStackId;
+    private VnfStatus vnfStatus;
+    private Map<String, String> vfModuleOutputs;
 
-	public QueryVfModuleResponse() {
-		super();
-	}
+    public QueryVfModuleResponse() {
+        super();
+    }
 
-	public QueryVfModuleResponse(String vnfId, String vfModuleId, String vfModuleStackId, VnfStatus vnfStatus,
-			Map<String, String> vfModuleOutputs) {
-		super();
-		this.vnfId = vnfId;
-		this.vfModuleId = vfModuleId;
-		this.vfModuleStackId = vfModuleStackId;
-		this.vnfStatus = vnfStatus;
-		this.vfModuleOutputs = vfModuleOutputs;
-	}
+    public QueryVfModuleResponse(String vnfId, String vfModuleId, String vfModuleStackId, VnfStatus vnfStatus,
+            Map<String, String> vfModuleOutputs) {
+        super();
+        this.vnfId = vnfId;
+        this.vfModuleId = vfModuleId;
+        this.vfModuleStackId = vfModuleStackId;
+        this.vnfStatus = vnfStatus;
+        this.vfModuleOutputs = vfModuleOutputs;
+    }
 
-	public String getVnfId() {
-		return vnfId;
-	}
+    public String getVnfId() {
+        return vnfId;
+    }
 
-	public void setVnfId(String vnfId) {
-		this.vnfId = vnfId;
-	}
+    public void setVnfId(String vnfId) {
+        this.vnfId = vnfId;
+    }
 
-	public String getVfModuleId() {
-		return vfModuleId;
-	}
+    public String getVfModuleId() {
+        return vfModuleId;
+    }
 
-	public void setVfModuleId(String vfModuleId) {
-		this.vfModuleId = vfModuleId;
-	}
+    public void setVfModuleId(String vfModuleId) {
+        this.vfModuleId = vfModuleId;
+    }
 
-	public String getVfModuleStackId() {
-		return vfModuleStackId;
-	}
+    public String getVfModuleStackId() {
+        return vfModuleStackId;
+    }
 
-	public void setVfModuleStackId(String vfModuleStackId) {
-		this.vfModuleStackId = vfModuleStackId;
-	}
+    public void setVfModuleStackId(String vfModuleStackId) {
+        this.vfModuleStackId = vfModuleStackId;
+    }
 
-	public VnfStatus getVnfStatus() {
-		return vnfStatus;
-	}
+    public VnfStatus getVnfStatus() {
+        return vnfStatus;
+    }
 
-	public void setVnfStatus(VnfStatus vnfStatus) {
-		this.vnfStatus = vnfStatus;
-	}
+    public void setVnfStatus(VnfStatus vnfStatus) {
+        this.vnfStatus = vnfStatus;
+    }
 
-	public Map<String, String> getVfModuleOutputs() {
-		return vfModuleOutputs;
-	}
+    public Map<String, String> getVfModuleOutputs() {
+        return vfModuleOutputs;
+    }
 
-	public void setVfModuleOutputs(Map<String, String> vfModuleOutputs) {
-		this.vfModuleOutputs = vfModuleOutputs;
-	}
-	
+    public void setVfModuleOutputs(Map<String, String> vfModuleOutputs) {
+        this.vfModuleOutputs = vfModuleOutputs;
+    }
+
 }

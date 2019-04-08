@@ -24,12 +24,10 @@
 package org.onap.so.adapters.vfc.util;
 
 import java.io.IOException;
-
 import org.onap.so.adapters.vfc.constant.HttpCode;
 import org.onap.so.adapters.vfc.exceptions.ApplicationException;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -47,93 +45,92 @@ import org.slf4j.LoggerFactory;
  */
 public class JsonUtil {
 
-  /**
-   * Log service
-   */
-  private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
+    /**
+     * Log service
+     */
+    private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
-  /**
-   * Mapper.
-   */
-  private static final ObjectMapper MAPPER = new ObjectMapper();
-  private static final String UNMARSHAL_FAIL_MSG="fail to unMarshal json";
-  static {
-    MAPPER.setConfig(MAPPER.getDeserializationConfig().without(
-        DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
-    MAPPER.setSerializationInclusion(Include.NON_NULL);
-  }
-
-  /**
-   * Constructor<br/>
-   * <p>
-   * </p>
-   * 
-   * @since ONAP Amsterdam Release 2017-9-6
-   */
-  private JsonUtil() {
-
-  }
-
-  /**
-   * Parse the string in form of json.<br/>
-   * 
-   * @param jsonstr json string.
-   * @param type that convert json string to
-   * @return model object
-   * @since ONAP Amsterdam Release 2017-9-6
-   */
-  public static <T> T unMarshal(String jsonstr, Class<T> type) throws ApplicationException {
-    try {
-      return MAPPER.readValue(jsonstr, type);
-    } catch (IOException e) {
-      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
-          UNMARSHAL_FAIL_MSG, e);
-      throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
+    /**
+     * Mapper.
+     */
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final String UNMARSHAL_FAIL_MSG = "fail to unMarshal json";
+    static {
+        MAPPER.setConfig(MAPPER.getDeserializationConfig().without(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES));
+        MAPPER.setSerializationInclusion(Include.NON_NULL);
     }
-  }
 
-  /**
-   * Parse the string in form of json.<br/>
-   * 
-   * @param jsonstr json string.
-   * @param type that convert json string to
-   * @return model object
-   * @since ONAP Amsterdam Release 2017-9-6
-   */
-  public static <T> T unMarshal(String jsonstr, TypeReference<T> type) throws ApplicationException {
-    try {
-      return MAPPER.readValue(jsonstr, type);
-    } catch (IOException e) {
-      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
-          UNMARSHAL_FAIL_MSG, e);
-      throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
+    /**
+     * Constructor<br/>
+     * <p>
+     * </p>
+     * 
+     * @since ONAP Amsterdam Release 2017-9-6
+     */
+    private JsonUtil() {
+
     }
-  }
 
-  /**
-   * Convert object to json string.<br/>
-   * 
-   * @param srcObj data object
-   * @return json string
-   * @since ONAP Amsterdam Release 2017-9-6
-   */
-  public static String marshal(Object srcObj) throws ApplicationException {
-    try {
-      return MAPPER.writeValueAsString(srcObj);
-    } catch (IOException e) {
-      logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
-          "fail to marshal json", e);
-      throw new ApplicationException(HttpCode.BAD_REQUEST, "srcObj marshal failed!");
+    /**
+     * Parse the string in form of json.<br/>
+     * 
+     * @param jsonstr json string.
+     * @param type that convert json string to
+     * @return model object
+     * @since ONAP Amsterdam Release 2017-9-6
+     */
+    public static <T> T unMarshal(String jsonstr, Class<T> type) throws ApplicationException {
+        try {
+            return MAPPER.readValue(jsonstr, type);
+        } catch (IOException e) {
+            logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
+                    UNMARSHAL_FAIL_MSG, e);
+            throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
+        }
     }
-  }
 
-  /**
-   * Get mapper.<br/>
-   * 
-   * @return mapper
-   * @since ONAP Amsterdam Release 2017-9-6
-   */
-  public static ObjectMapper getMapper() {
-    return MAPPER;
-  }
+    /**
+     * Parse the string in form of json.<br/>
+     * 
+     * @param jsonstr json string.
+     * @param type that convert json string to
+     * @return model object
+     * @since ONAP Amsterdam Release 2017-9-6
+     */
+    public static <T> T unMarshal(String jsonstr, TypeReference<T> type) throws ApplicationException {
+        try {
+            return MAPPER.readValue(jsonstr, type);
+        } catch (IOException e) {
+            logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
+                    UNMARSHAL_FAIL_MSG, e);
+            throw new ApplicationException(HttpCode.BAD_REQUEST, UNMARSHAL_FAIL_MSG);
+        }
+    }
+
+    /**
+     * Convert object to json string.<br/>
+     * 
+     * @param srcObj data object
+     * @return json string
+     * @since ONAP Amsterdam Release 2017-9-6
+     */
+    public static String marshal(Object srcObj) throws ApplicationException {
+        try {
+            return MAPPER.writeValueAsString(srcObj);
+        } catch (IOException e) {
+            logger.error("{} {} {}", MessageEnum.RA_NS_EXC.toString(), ErrorCode.BusinessProcesssError.getValue(),
+                    "fail to marshal json", e);
+            throw new ApplicationException(HttpCode.BAD_REQUEST, "srcObj marshal failed!");
+        }
+    }
+
+    /**
+     * Get mapper.<br/>
+     * 
+     * @return mapper
+     * @since ONAP Amsterdam Release 2017-9-6
+     */
+    public static ObjectMapper getMapper() {
+        return MAPPER;
+    }
 }

@@ -31,7 +31,6 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,10 +39,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.http.HttpStatus;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -63,7 +60,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -73,8 +69,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class OrchestrationRequestsTest extends BaseTest {
     @Autowired
     private RequestsDbClient requestsDbClient;
-    
-    @Autowired 
+
+    @Autowired
     private OrchestrationRequests orchReq;
 
     private static final GetOrchestrationListResponse ORCHESTRATION_LIST = generateOrchestrationList();
@@ -113,13 +109,12 @@ public class OrchestrationRequestsTest extends BaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
 
-        ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
-                entity, GetOrchestrationResponse.class);
+        ResponseEntity<GetOrchestrationResponse> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(response.getBody(),
-            sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.finishTime")
-                .ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
+                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -127,7 +122,7 @@ public class OrchestrationRequestsTest extends BaseTest {
         assertEquals("00032ab7-na18-42e5-965d-8ea592502018", response.getHeaders().get("X-TransactionID").get(0));
         assertNotNull(response.getBody().getRequest().getFinishTime());
     }
-    
+
     @Test
     public void testGetOrchestrationRequestInstanceGroup() throws Exception {
         setupTestGetOrchestrationRequestInstanceGroup();
@@ -145,19 +140,18 @@ public class OrchestrationRequestsTest extends BaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
 
-        ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
-                entity, GetOrchestrationResponse.class);
+        ResponseEntity<GetOrchestrationResponse> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(response.getBody(),
-            sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.finishTime")
-                .ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
+                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
     }
 
     @Test
     public void testGetOrchestrationRequestRequestDetails() throws Exception {
         setupTestGetOrchestrationRequestRequestDetails("00032ab7-3fb3-42e5-965d-8ea592502017", "COMPLETED");
-        //Test request with modelInfo request body
+        // Test request with modelInfo request body
         GetOrchestrationResponse testResponse = new GetOrchestrationResponse();
 
         Request request = ORCHESTRATION_LIST.getRequestList().get(0).getRequest();
@@ -172,13 +166,12 @@ public class OrchestrationRequestsTest extends BaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + testRequestId));
 
-        ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
-                entity, GetOrchestrationResponse.class);
+        ResponseEntity<GetOrchestrationResponse> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        assertThat(response.getBody(),
-            sameBeanAs(testResponse).ignoring("request.startTime").ignoring("request.finishTime")
-                .ignoring("request.requestStatus.timeStamp"));
+        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("request.startTime")
+                .ignoring("request.finishTime").ignoring("request.requestStatus.timeStamp"));
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
@@ -188,12 +181,12 @@ public class OrchestrationRequestsTest extends BaseTest {
 
     @Test
     public void testGetOrchestrationRequestNoRequestID() {
-    	HttpHeaders headers = new HttpHeaders();
-    	headers.set("Accept", "application/json; charset=UTF-8");
-        headers.set("Content-Type", "application/json; charset=UTF-8"); 
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", "application/json; charset=UTF-8");
+        headers.set("Content-Type", "application/json; charset=UTF-8");
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v6/"));
+        UriComponentsBuilder builder =
+                UriComponentsBuilder.fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v6/"));
 
         ResponseEntity<GetOrchestrationListResponse> response = restTemplate.exchange(builder.toUriString(),
                 HttpMethod.GET, entity, GetOrchestrationListResponse.class);
@@ -206,10 +199,11 @@ public class OrchestrationRequestsTest extends BaseTest {
         List<String> values = new ArrayList<>();
         values.add("EQUALS");
         values.add("vfModule");
-        
+
         ObjectMapper mapper = new ObjectMapper();
-        GetOrchestrationListResponse testResponse = mapper.readValue(new File("src/test/resources/OrchestrationRequest/OrchestrationFilterResponse.json"),
-                GetOrchestrationListResponse.class);
+        GetOrchestrationListResponse testResponse =
+                mapper.readValue(new File("src/test/resources/OrchestrationRequest/OrchestrationFilterResponse.json"),
+                        GetOrchestrationListResponse.class);
 
         Map<String, List<String>> orchestrationMap = new HashMap<>();
         orchestrationMap.put("modelType", values);
@@ -219,18 +213,17 @@ public class OrchestrationRequestsTest extends BaseTest {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         HttpEntity<Request> entity = new HttpEntity<Request>(null, headers);
-        
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v6?filter=modelType:EQUALS:vfModule"));
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                createURLWithPort("/onap/so/infra/orchestrationRequests/v6?filter=modelType:EQUALS:vfModule"));
 
         ResponseEntity<GetOrchestrationListResponse> response = restTemplate.exchange(builder.toUriString(),
                 HttpMethod.GET, entity, GetOrchestrationListResponse.class);
-        assertThat(response.getBody(),
-            sameBeanAs(testResponse).ignoring("requestList.request.startTime").ignoring("requestList.request.finishTime")
-                .ignoring("requestList.request.requestStatus.timeStamp"));
+        assertThat(response.getBody(), sameBeanAs(testResponse).ignoring("requestList.request.startTime")
+                .ignoring("requestList.request.finishTime").ignoring("requestList.request.requestStatus.timeStamp"));
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertEquals(requests.size(), response.getBody().getRequestList().size());
-        
+
     }
 
     @Test
@@ -238,7 +231,8 @@ public class OrchestrationRequestsTest extends BaseTest {
         setupTestUnlockOrchestrationRequest("0017f68c-eb2d-45bb-b7c7-ec31b37dc349", "UNLOCKED");
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-        String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
+        String requestJSON =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -254,11 +248,12 @@ public class OrchestrationRequestsTest extends BaseTest {
         expectedRequestError = new RequestError();
         se = new ServiceException();
         se.setMessageId(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR);
-        se.setText("Orchestration RequestId 0017f68c-eb2d-45bb-b7c7-ec31b37dc349 has a status of UNLOCKED and can not be unlocked");
+        se.setText(
+                "Orchestration RequestId 0017f68c-eb2d-45bb-b7c7-ec31b37dc349 has a status of UNLOCKED and can not be unlocked");
         expectedRequestError.setServiceException(se);
 
-        builder = UriComponentsBuilder.fromHttpUrl(
-                createURLWithPort("/onap/so/infra/orchestrationRequests/v6/0017f68c-eb2d-45bb-b7c7-ec31b37dc349/unlock"));
+        builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(
+                "/onap/so/infra/orchestrationRequests/v6/0017f68c-eb2d-45bb-b7c7-ec31b37dc349/unlock"));
 
         response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
         actualRequestError = mapper.readValue(response.getBody(), RequestError.class);
@@ -272,7 +267,8 @@ public class OrchestrationRequestsTest extends BaseTest {
         setupTestUnlockOrchestrationRequest_invalid_Json();
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-        String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
+        String requestJSON =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -306,7 +302,8 @@ public class OrchestrationRequestsTest extends BaseTest {
             throws JsonParseException, JsonMappingException, IOException, ValidationException {
         setupTestUnlockOrchestrationRequest_Valid_Status("5ffbabd6-b793-4377-a1ab-082670fbc7ac", "PENDING");
         ObjectMapper mapper = new ObjectMapper();
-        String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
+        String requestJSON =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/Request.json")));
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -318,14 +315,15 @@ public class OrchestrationRequestsTest extends BaseTest {
 
         // Test valid status
         request = ORCHESTRATION_LIST.getRequestList().get(1).getRequest();
-        builder = UriComponentsBuilder.fromHttpUrl(
-                createURLWithPort("/onap/so/infra/orchestrationRequests/v7/" + "5ffbabd6-b793-4377-a1ab-082670fbc7ac" + "/unlock"));
+        builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(
+                "/onap/so/infra/orchestrationRequests/v7/" + "5ffbabd6-b793-4377-a1ab-082670fbc7ac" + "/unlock"));
 
         response = restTemplate.exchange(builder.toUriString(), HttpMethod.POST, entity, String.class);
-        //Cannot assert anything further here, already have a wiremock in place which ensures that the post was properly called to update.
+        // Cannot assert anything further here, already have a wiremock in place which ensures that the post was
+        // properly called to update.
     }
 
-    @Ignore //What is this testing?
+    @Ignore // What is this testing?
     @Test
     public void testGetOrchestrationRequestRequestDetailsWhiteSpace() throws Exception {
         InfraActiveRequests requests = new InfraActiveRequests();
@@ -346,8 +344,8 @@ public class OrchestrationRequestsTest extends BaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/requestId"));
 
-        ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
-                entity, GetOrchestrationResponse.class);
+        ResponseEntity<GetOrchestrationResponse> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
@@ -357,19 +355,20 @@ public class OrchestrationRequestsTest extends BaseTest {
         assertEquals("requestId", response.getHeaders().get("X-TransactionID").get(0));
     }
 
-    @Ignore //What is this testing?
+    @Ignore // What is this testing?
     @Test
     public void testGetOrchestrationRequestRequestDetailsAlaCarte() throws IOException {
         InfraActiveRequests requests = new InfraActiveRequests();
 
-        String requestJSON = new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/AlaCarteRequest.json")));
+        String requestJSON = new String(
+                Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/AlaCarteRequest.json")));
 
         requests.setAction("create");
         requests.setRequestBody(requestJSON);
         requests.setRequestId("requestId");
         requests.setRequestScope("service");
         requests.setRequestType("createInstance");
-//        iar.save(requests);
+        // iar.save(requests);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
@@ -378,8 +377,8 @@ public class OrchestrationRequestsTest extends BaseTest {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(createURLWithPort("/onap/so/infra/orchestrationRequests/v7/requestId"));
 
-        ResponseEntity<GetOrchestrationResponse> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET,
-                entity, GetOrchestrationResponse.class);
+        ResponseEntity<GetOrchestrationResponse> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, GetOrchestrationResponse.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
@@ -388,96 +387,112 @@ public class OrchestrationRequestsTest extends BaseTest {
         assertEquals("7.0.0", response.getHeaders().get("X-LatestVersion").get(0));
         assertEquals("requestId", response.getHeaders().get("X-TransactionID").get(0));
     }
+
     @Test
-    public void mapRequestProcessingDataTest() throws JsonParseException, JsonMappingException, IOException{
-    	RequestProcessingData entry = new RequestProcessingData();
-    	RequestProcessingData secondEntry = new RequestProcessingData();
-    	List<HashMap<String, String>> expectedList = new ArrayList<>();
-    	HashMap<String, String> expectedMap = new HashMap<>();
-    	List<HashMap<String, String>> secondExpectedList = new ArrayList<>();
-    	HashMap<String, String> secondExpectedMap = new HashMap<>();
-    	List<RequestProcessingData> expectedDataList = new ArrayList<>();
-    	entry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca714");
-    	entry.setTag("pincFabricConfigRequest");
-    	expectedMap.put("requestAction", "assign");
-    	expectedMap.put("pincFabricId", "testId");
-    	expectedList.add(expectedMap);
-    	entry.setDataPairs(expectedList);
-    	secondEntry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca715");
-    	secondEntry.setTag("pincFabricConfig");
-    	secondExpectedMap.put("requestAction", "unassign");
-    	secondExpectedList.add(secondExpectedMap);
-    	secondEntry.setDataPairs(secondExpectedList);
-    	expectedDataList.add(entry);
-    	expectedDataList.add(secondEntry);
-    	
-    	List<org.onap.so.db.request.beans.RequestProcessingData> processingData = new ArrayList<>(); 
-    	List<RequestProcessingData> actualProcessingData = new ArrayList<>();
-    	ObjectMapper mapper = new ObjectMapper();
-        processingData = mapper.readValue(new File("src/test/resources/OrchestrationRequest/RequestProcessingData.json"),
-        		new TypeReference<List<org.onap.so.db.request.beans.RequestProcessingData>>(){});
+    public void mapRequestProcessingDataTest() throws JsonParseException, JsonMappingException, IOException {
+        RequestProcessingData entry = new RequestProcessingData();
+        RequestProcessingData secondEntry = new RequestProcessingData();
+        List<HashMap<String, String>> expectedList = new ArrayList<>();
+        HashMap<String, String> expectedMap = new HashMap<>();
+        List<HashMap<String, String>> secondExpectedList = new ArrayList<>();
+        HashMap<String, String> secondExpectedMap = new HashMap<>();
+        List<RequestProcessingData> expectedDataList = new ArrayList<>();
+        entry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca714");
+        entry.setTag("pincFabricConfigRequest");
+        expectedMap.put("requestAction", "assign");
+        expectedMap.put("pincFabricId", "testId");
+        expectedList.add(expectedMap);
+        entry.setDataPairs(expectedList);
+        secondEntry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca715");
+        secondEntry.setTag("pincFabricConfig");
+        secondExpectedMap.put("requestAction", "unassign");
+        secondExpectedList.add(secondExpectedMap);
+        secondEntry.setDataPairs(secondExpectedList);
+        expectedDataList.add(entry);
+        expectedDataList.add(secondEntry);
+
+        List<org.onap.so.db.request.beans.RequestProcessingData> processingData = new ArrayList<>();
+        List<RequestProcessingData> actualProcessingData = new ArrayList<>();
+        ObjectMapper mapper = new ObjectMapper();
+        processingData =
+                mapper.readValue(new File("src/test/resources/OrchestrationRequest/RequestProcessingData.json"),
+                        new TypeReference<List<org.onap.so.db.request.beans.RequestProcessingData>>() {});
         actualProcessingData = orchReq.mapRequestProcessingData(processingData);
-    	assertThat(actualProcessingData,sameBeanAs(expectedDataList));
+        assertThat(actualProcessingData, sameBeanAs(expectedDataList));
     }
 
-    public void setupTestGetOrchestrationRequest() throws Exception{
-        //For testGetOrchestrationRequest
-        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequest.json"))))
-                .withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
-        		.withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-na18-42e5-965d-8ea592502018"))
-        		.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))
-                .withStatus(HttpStatus.SC_OK)));
-    }
-    public void setupTestGetOrchestrationRequestInstanceGroup() throws Exception{
-        //For testGetOrchestrationRequest
-        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequestInstanceGroup.json"))))
-                .withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
-        		.withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-na18-42e5-965d-8ea592502018"))
-        		.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))
-                .withStatus(HttpStatus.SC_OK)));
+    public void setupTestGetOrchestrationRequest() throws Exception {
+        // For testGetOrchestrationRequest
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(new String(Files.readAllBytes(
+                                Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequest.json"))))
+                        .withStatus(HttpStatus.SC_OK)));
+        wireMockServer
+                .stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
+                        .withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-na18-42e5-965d-8ea592502018"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(new String(Files.readAllBytes(Paths
+                                        .get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))
+                                .withStatus(HttpStatus.SC_OK)));
     }
 
-    private void setupTestGetOrchestrationRequestRequestDetails(String requestId, String status) throws Exception{
-        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequestDetails.json"))))
+    public void setupTestGetOrchestrationRequestInstanceGroup() throws Exception {
+        // For testGetOrchestrationRequest
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/00032ab7-na18-42e5-965d-8ea592502018"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(new String(Files.readAllBytes(Paths.get(
+                                "src/test/resources/OrchestrationRequest/getOrchestrationRequestInstanceGroup.json"))))
+                        .withStatus(HttpStatus.SC_OK)));
+        wireMockServer
+                .stubFor(get(urlPathEqualTo("/requestProcessingData/search/findBySoRequestIdOrderByGroupingIdDesc/"))
+                        .withQueryParam("SO_REQUEST_ID", equalTo("00032ab7-na18-42e5-965d-8ea592502018"))
+                        .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                                .withBody(new String(Files.readAllBytes(Paths
+                                        .get("src/test/resources/OrchestrationRequest/getRequestProcessingData.json"))))
+                                .withStatus(HttpStatus.SC_OK)));
+    }
+
+    private void setupTestGetOrchestrationRequestRequestDetails(String requestId, String status) throws Exception {
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                .withBody(new String(Files.readAllBytes(
+                        Paths.get("src/test/resources/OrchestrationRequest/getOrchestrationRequestDetails.json"))))
                 .withStatus(HttpStatus.SC_OK)));
     }
 
     private void setupTestUnlockOrchestrationRequest(String requestId, String status) {
-        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(String.format(getResponseTemplate, requestId, status))
-                .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestId)))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(String.format(getResponseTemplate, requestId, status)).withStatus(HttpStatus.SC_OK)));
 
     }
 
 
 
     private void setupTestUnlockOrchestrationRequest_invalid_Json() {
-        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(INVALID_REQUEST_ID))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withStatus(HttpStatus.SC_NOT_FOUND)));
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(INVALID_REQUEST_ID))).willReturn(aResponse()
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_NOT_FOUND)));
 
     }
 
     private void setupTestUnlockOrchestrationRequest_Valid_Status(String requestID, String status) {
-        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestID))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(String.format(getResponseTemplate, requestID, status))
-                .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(get(urlPathEqualTo(getTestUrl(requestID)))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(String.format(getResponseTemplate, requestID, status)).withStatus(HttpStatus.SC_OK)));
 
-        wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl(""))).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(String.format(infraActivePost, requestID))
-                .withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo(getTestUrl("")))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(String.format(infraActivePost, requestID)).withStatus(HttpStatus.SC_OK)));
     }
 
-    private void setupTestGetOrchestrationRequestFilter() throws Exception{
-        //for testGetOrchestrationRequestFilter();
-        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/getOrchestrationFiltersFromInfraActive/")).withRequestBody(equalToJson("{\"modelType\":[\"EQUALS\",\"vfModule\"]}")).willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-                .withBody(new String(Files.readAllBytes(Paths.get("src/test/resources/OrchestrationRequest/getRequestDetailsFilter.json"))))
-                .withStatus(HttpStatus.SC_OK)));
+    private void setupTestGetOrchestrationRequestFilter() throws Exception {
+        // for testGetOrchestrationRequestFilter();
+        wireMockServer.stubFor(any(urlPathEqualTo("/infraActiveRequests/getOrchestrationFiltersFromInfraActive/"))
+                .withRequestBody(equalToJson("{\"modelType\":[\"EQUALS\",\"vfModule\"]}"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(new String(Files.readAllBytes(
+                                Paths.get("src/test/resources/OrchestrationRequest/getRequestDetailsFilter.json"))))
+                        .withStatus(HttpStatus.SC_OK)));
     }
 }

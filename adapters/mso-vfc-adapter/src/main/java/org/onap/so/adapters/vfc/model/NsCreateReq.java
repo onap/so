@@ -31,14 +31,14 @@ package org.onap.so.adapters.vfc.model;
 public class NsCreateReq {
 
     CustomerModel context;
-    
+
     String csarId;
 
     String nsName;
 
     String description;
-    
-    
+
+
     /**
      * @return Returns the context.
      */
@@ -47,7 +47,7 @@ public class NsCreateReq {
     }
 
 
-    
+
     /**
      * @param context The context to set.
      */
@@ -63,7 +63,7 @@ public class NsCreateReq {
         return csarId;
     }
 
-    
+
     /**
      * @param csarId The csarId to set.
      */

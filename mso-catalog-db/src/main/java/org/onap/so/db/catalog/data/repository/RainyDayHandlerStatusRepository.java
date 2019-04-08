@@ -26,6 +26,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "rainy_day_handler_macro", path = "rainy_day_handler_macro")
 public interface RainyDayHandlerStatusRepository extends JpaRepository<RainyDayHandlerStatus, Integer> {
-	RainyDayHandlerStatus findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(
-			String flowName, String serviceType, String vnfType, String errorCode, String workStep);
+    RainyDayHandlerStatus findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(String flowName,
+            String serviceType, String vnfType, String errorCode, String workStep);
 }

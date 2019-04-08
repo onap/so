@@ -23,41 +23,40 @@ package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@JsonIgnoreProperties({ "additionalProperties" })
+@JsonIgnoreProperties({"additionalProperties"})
 public class E2EParameters {
 
-	@JsonProperty("locationConstraints")
-	List<LocationConstraint> locationConstraints;
+    @JsonProperty("locationConstraints")
+    List<LocationConstraint> locationConstraints;
 
-	@JsonProperty("resources")
-	private List<ResourceRequest> resources;
+    @JsonProperty("resources")
+    private List<ResourceRequest> resources;
 
-	@JsonProperty("requestInputs")
-	private HashMap<String, ?> requestInputs;
+    @JsonProperty("requestInputs")
+    private HashMap<String, ?> requestInputs;
 
-	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<>();
+    @JsonIgnore
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
-	public Map<String, Object> getAdditionalProperties() {
-		return additionalProperties;
-	}
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
 
-	public void setAdditionalProperties(Map<String, Object> additionalProperties) {
-		this.additionalProperties = additionalProperties;
-	}
-    
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
     /**
      * @return Returns the resources.
      */
     public List<ResourceRequest> getResources() {
         return resources;
     }
-    
+
     /**
      * @param resources The resources to set.
      */
@@ -73,11 +72,11 @@ public class E2EParameters {
         this.locationConstraints = locationConstraints;
     }
 
-	public HashMap<String, ?> getRequestInputs() {
-		return requestInputs;
-	}
+    public HashMap<String, ?> getRequestInputs() {
+        return requestInputs;
+    }
 
-	public void setRequestInputs(HashMap<String, ?> requestInputs) {
-		this.requestInputs = requestInputs;
-	}
+    public void setRequestInputs(HashMap<String, ?> requestInputs) {
+        this.requestInputs = requestInputs;
+    }
 }

@@ -36,55 +36,53 @@ import org.springframework.stereotype.Component;
 
 public class BeansTest {
 
-	private final PojoClassFilter filterTestClasses = new FilterTestClasses();
-	
-	private final PojoClassFilter  enumFilter = new FilterEnum();
-	
-	private final PojoClassFilter noNestedClasses = new FilterTestNestedClasses();
-			
-	
+    private final PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void pojoStructure() {	
-		test("org.onap.so.adapters.network.async.client");
-		test("org.onap.so.adapters.vnf.async.client");
-		test("org.onap.so.adapters.network");
-		test("org.onap.so.adapters.vnf");
-		test("org.onap.so.adapters.valet");
-		test("org.onap.so.adapters.valet.beans");
-		test("org.onap.so.vdu.utils");
-	}
+    private final PojoClassFilter enumFilter = new FilterEnum();
 
-	private void test(String pojoPackage) {
-		Validator validator = ValidatorBuilder.create()
-				 .with(new NoStaticExceptFinalRule())
-                .with(new SerializableMustHaveSerialVersionUIDRule())
-				.with(new NoPublicFieldsExceptStaticFinalRule())			 
-				.with(new SetterTester())
-				.with(new GetterTester())
-				.with(new ToStringTester())
-				
-				.build();
-		
-	
-		validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses,enumFilter,new FilterNonConcrete(), noNestedClasses, new FilterBeans());
-	}
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
+    private final PojoClassFilter noNestedClasses = new FilterTestNestedClasses();
 
-	private static class FilterTestNestedClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.isNestedClass();
-		}
-	}
 
-	private static class FilterBeans implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return pojoClass.getAnnotations().stream().filter(o -> o instanceof Component).count() <= 0;
-		}
-	}
+
+    @Test
+    public void pojoStructure() {
+        test("org.onap.so.adapters.network.async.client");
+        test("org.onap.so.adapters.vnf.async.client");
+        test("org.onap.so.adapters.network");
+        test("org.onap.so.adapters.vnf");
+        test("org.onap.so.adapters.valet");
+        test("org.onap.so.adapters.valet.beans");
+        test("org.onap.so.vdu.utils");
+    }
+
+    private void test(String pojoPackage) {
+        Validator validator = ValidatorBuilder.create().with(new NoStaticExceptFinalRule())
+                .with(new SerializableMustHaveSerialVersionUIDRule()).with(new NoPublicFieldsExceptStaticFinalRule())
+                .with(new SetterTester()).with(new GetterTester()).with(new ToStringTester())
+
+                .build();
+
+
+        validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, enumFilter, new FilterNonConcrete(),
+                noNestedClasses, new FilterBeans());
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
+
+    private static class FilterTestNestedClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.isNestedClass();
+        }
+    }
+
+    private static class FilterBeans implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return pojoClass.getAnnotations().stream().filter(o -> o instanceof Component).count() <= 0;
+        }
+    }
 
 }

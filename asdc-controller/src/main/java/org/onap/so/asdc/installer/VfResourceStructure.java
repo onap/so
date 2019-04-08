@@ -83,13 +83,13 @@ public class VfResourceStructure extends ResourceStructure {
     }
 
     public void addArtifactToStructure(IDistributionClient distributionClient, IArtifactInfo artifactinfo,
-        IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
+            IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
         this.addArtifactToStructure(distributionClient, artifactinfo, clientResult, null);
     }
 
     public void addArtifactToStructure(IDistributionClient distributionClient, IArtifactInfo artifactinfo,
-        IDistributionClientDownloadResult clientResult, String modifiedHeatTemplate)
-        throws UnsupportedEncodingException {
+            IDistributionClientDownloadResult clientResult, String modifiedHeatTemplate)
+            throws UnsupportedEncodingException {
         VfModuleArtifact vfModuleArtifact = new VfModuleArtifact(artifactinfo, clientResult, modifiedHeatTemplate);
         addArtifactByType(artifactinfo, clientResult, vfModuleArtifact);
         if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifactinfo.getArtifactType())) {
@@ -99,13 +99,13 @@ public class VfResourceStructure extends ResourceStructure {
     }
 
     protected void addArtifactByType(IArtifactInfo artifactinfo, IDistributionClientDownloadResult clientResult,
-        VfModuleArtifact vfModuleArtifact) throws UnsupportedEncodingException {
+            VfModuleArtifact vfModuleArtifact) throws UnsupportedEncodingException {
 
         switch (artifactinfo.getArtifactType()) {
             case ASDCConfiguration.HEAT:
             case ASDCConfiguration.HEAT_ENV:
             case ASDCConfiguration.HEAT_VOL:
-            case ASDCConfiguration.HEAT_NESTED:    // For 1607 only 1 level tree is supported
+            case ASDCConfiguration.HEAT_NESTED: // For 1607 only 1 level tree is supported
             case ASDCConfiguration.HEAT_ARTIFACT:
             case ASDCConfiguration.HEAT_NET:
             case ASDCConfiguration.OTHER:
@@ -119,17 +119,16 @@ public class VfResourceStructure extends ResourceStructure {
         }
     }
 
-    public void prepareInstall() throws ArtifactInstallerException{
+    public void prepareInstall() throws ArtifactInstallerException {
         createVfModuleStructures();
     }
 
     public void createVfModuleStructures() throws ArtifactInstallerException {
 
-        //for vender tosca VNF there is no VFModule in VF
+        // for vender tosca VNF there is no VFModule in VF
         if (vfModulesMetadataList == null) {
             logger.info("{} {} {} {}", MessageEnum.ASDC_GENERAL_INFO.toString(), "There is no VF mudules in the VF.",
-                "ASDC",
-                "createVfModuleStructures");
+                    "ASDC", "createVfModuleStructures");
             return;
         }
         for (IVfModuleData vfModuleMeta : vfModulesMetadataList) {
@@ -165,7 +164,7 @@ public class VfResourceStructure extends ResourceStructure {
 
     // Network Only
     public void setCatalogNetworkResourceCustomization(
-        NetworkResourceCustomization catalogNetworkResourceCustomization) {
+            NetworkResourceCustomization catalogNetworkResourceCustomization) {
         this.catalogNetworkResourceCustomization = catalogNetworkResourceCustomization;
     }
 
@@ -173,8 +172,7 @@ public class VfResourceStructure extends ResourceStructure {
         return catalogResourceCustomization;
     }
 
-    public void setCatalogResourceCustomization(
-        AllottedResourceCustomization catalogResourceCustomization) {
+    public void setCatalogResourceCustomization(AllottedResourceCustomization catalogResourceCustomization) {
         this.catalogResourceCustomization = catalogResourceCustomization;
     }
 
@@ -188,9 +186,8 @@ public class VfResourceStructure extends ResourceStructure {
 
     public List<IVfModuleData> decodeVfModuleArtifact(byte[] arg0) {
         try {
-            List<IVfModuleData> listVFModuleMetaData = new ObjectMapper()
-                .readValue(arg0, new TypeReference<List<VfModuleMetaData>>() {
-                });
+            List<IVfModuleData> listVFModuleMetaData =
+                    new ObjectMapper().readValue(arg0, new TypeReference<List<VfModuleMetaData>>() {});
             return listVFModuleMetaData;
 
         } catch (JsonParseException e) {

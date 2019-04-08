@@ -22,7 +22,6 @@ package org.onap.so.adapters.requestsdb;
 
 import java.util.List;
 import java.util.Map;
-
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.controller.InstanceNameDuplicateCheckRequest;
 import org.onap.so.db.request.data.repository.InfraActiveRequestsRepository;
@@ -40,26 +39,35 @@ public class InfraActiveRequestsRepositoryCustomController {
     @Autowired
     InfraActiveRequestsRepository infraActiveRequestsRepository;
 
-    @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/getCloudOrchestrationFiltersFromInfraActive")
-    public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(@RequestBody Map<String, String> orchestrationMap) {
+    @RequestMapping(method = RequestMethod.POST,
+            value = "/infraActiveRequests/getCloudOrchestrationFiltersFromInfraActive")
+    public List<InfraActiveRequests> getCloudOrchestrationFiltersFromInfraActive(
+            @RequestBody Map<String, String> orchestrationMap) {
         return infraActiveRequestsRepository.getCloudOrchestrationFiltersFromInfraActive(orchestrationMap);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/getOrchestrationFiltersFromInfraActive")
-    public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(@RequestBody Map<String, List<String>> orchestrationMap) {
+    public List<InfraActiveRequests> getOrchestrationFiltersFromInfraActive(
+            @RequestBody Map<String, List<String>> orchestrationMap) {
         return infraActiveRequestsRepository.getOrchestrationFiltersFromInfraActive(orchestrationMap);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/infraActiveRequests/checkVnfIdStatus/{operationalEnvironmentId}")
-    public InfraActiveRequests checkVnfIdStatus(@PathVariable("operationalEnvironmentId") String operationalEnvironmentId) {
+    @RequestMapping(method = RequestMethod.GET,
+            value = "/infraActiveRequests/checkVnfIdStatus/{operationalEnvironmentId}")
+    public InfraActiveRequests checkVnfIdStatus(
+            @PathVariable("operationalEnvironmentId") String operationalEnvironmentId) {
         return infraActiveRequestsRepository.checkVnfIdStatus(operationalEnvironmentId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/checkInstanceNameDuplicate")
-    public InfraActiveRequests checkInstanceNameDuplicate(@RequestBody InstanceNameDuplicateCheckRequest instanceNameDuplicateCheckRequest) {
-        return infraActiveRequestsRepository.checkInstanceNameDuplicate(instanceNameDuplicateCheckRequest.getInstanceIdMap(), instanceNameDuplicateCheckRequest.getInstanceName(), instanceNameDuplicateCheckRequest.getRequestScope());
+    public InfraActiveRequests checkInstanceNameDuplicate(
+            @RequestBody InstanceNameDuplicateCheckRequest instanceNameDuplicateCheckRequest) {
+        return infraActiveRequestsRepository.checkInstanceNameDuplicate(
+                instanceNameDuplicateCheckRequest.getInstanceIdMap(),
+                instanceNameDuplicateCheckRequest.getInstanceName(),
+                instanceNameDuplicateCheckRequest.getRequestScope());
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/infraActiveRequests/v1/getInfraActiveRequests")
     public List<InfraActiveRequests> getInfraActiveRequests(@RequestBody Map<String, String[]> filters,
             @RequestParam("from") long startTime, @RequestParam("to") long endTime,

@@ -27,11 +27,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,71 +45,77 @@ import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class UnassignNetworkBBTest extends BaseTaskTest {
-	
-	@Mock
-	private NetworkBBUtils networkBBUtils;
 
-	@InjectMocks
-	private UnassignNetworkBB unassignNetworkBB = new UnassignNetworkBB();
-	
-	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/Network/";	
-	private L3Network network;
-	
-	@Before
-	public void setup(){
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-	}
-	
-	@Test
-	public void checkRelationshipRelatedToTrueTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		network = setL3Network();
-		network.setNetworkId("testNetworkId1");
-		final String aaiResponse = new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "unassignNetworkBB_queryAAIResponse_.json")));
-		AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(aaiResponse); 
-		Optional<org.onap.aai.domain.yang.L3Network> l3network = aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
-		
-		doReturn(network).when(extractPojosForBB).extractByKey(execution, ResourceKey.NETWORK_ID);
-		doReturn(aaiResultWrapper).when(aaiNetworkResources).queryNetworkWrapperById(network);
-		
-		doReturn(true).when(networkBBUtils).isRelationshipRelatedToExists(any(Optional.class), eq("vf-module"));
-		
-		unassignNetworkBB.checkRelationshipRelatedTo(execution, "vf-module");
-		assertThat(execution.getVariable("ErrorUnassignNetworkBB"), notNullValue());
-	}	
-	
-	@Test
-	public void getCloudSdncRegion25Test() throws Exception {
-		CloudRegion cloudRegion = setCloudRegion();
-		cloudRegion.setCloudRegionVersion("2.5");
-		doReturn("AAIAIC25").when(networkBBUtils).getCloudRegion(execution, SourceSystem.SDNC);
-		unassignNetworkBB.getCloudSdncRegion(execution);
-		assertEquals("AAIAIC25", execution.getVariable("cloudRegionSdnc"));
-	}	
-	
-	@Test
-	public void getCloudSdncRegion30Test() throws Exception {
-		CloudRegion cloudRegion = setCloudRegion();
-		cloudRegion.setCloudRegionVersion("3.0");
-		gBBInput.setCloudRegion(cloudRegion);
-		doReturn(cloudRegion.getLcpCloudRegionId()).when(networkBBUtils).getCloudRegion(execution, SourceSystem.SDNC);
-		unassignNetworkBB.getCloudSdncRegion(execution);
-		assertEquals(cloudRegion.getLcpCloudRegionId(), execution.getVariable("cloudRegionSdnc"));
-	}	
-	
-	@Test
-	public void errorEncounteredTest_rollback() throws Exception {
-		expectedException.expect(BpmnError.class);
-		execution.setVariable("ErrorUnassignNetworkBB", "Relationship's RelatedTo still exists in AAI, remove the relationship vf-module first.");
-		execution.setVariable("isRollbackNeeded", true);
-		unassignNetworkBB.errorEncountered(execution);
-	}
-	
-	@Test
-	public void errorEncounteredTest_noRollback() throws Exception {
-		expectedException.expect(BpmnError.class);
-		execution.setVariable("ErrorUnassignNetworkBB", "Relationship's RelatedTo still exists in AAI, remove the relationship vf-module first.");
-		unassignNetworkBB.errorEncountered(execution);
-	}	
+    @Mock
+    private NetworkBBUtils networkBBUtils;
+
+    @InjectMocks
+    private UnassignNetworkBB unassignNetworkBB = new UnassignNetworkBB();
+
+    private final static String JSON_FILE_LOCATION = "src/test/resources/__files/BuildingBlocks/Network/";
+    private L3Network network;
+
+    @Before
+    public void setup() {
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+    }
+
+    @Test
+    public void checkRelationshipRelatedToTrueTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        network = setL3Network();
+        network.setNetworkId("testNetworkId1");
+        final String aaiResponse = new String(
+                Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + "unassignNetworkBB_queryAAIResponse_.json")));
+        AAIResultWrapper aaiResultWrapper = new AAIResultWrapper(aaiResponse);
+        Optional<org.onap.aai.domain.yang.L3Network> l3network =
+                aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
+
+        doReturn(network).when(extractPojosForBB).extractByKey(execution, ResourceKey.NETWORK_ID);
+        doReturn(aaiResultWrapper).when(aaiNetworkResources).queryNetworkWrapperById(network);
+
+        doReturn(true).when(networkBBUtils).isRelationshipRelatedToExists(any(Optional.class), eq("vf-module"));
+
+        unassignNetworkBB.checkRelationshipRelatedTo(execution, "vf-module");
+        assertThat(execution.getVariable("ErrorUnassignNetworkBB"), notNullValue());
+    }
+
+    @Test
+    public void getCloudSdncRegion25Test() throws Exception {
+        CloudRegion cloudRegion = setCloudRegion();
+        cloudRegion.setCloudRegionVersion("2.5");
+        doReturn("AAIAIC25").when(networkBBUtils).getCloudRegion(execution, SourceSystem.SDNC);
+        unassignNetworkBB.getCloudSdncRegion(execution);
+        assertEquals("AAIAIC25", execution.getVariable("cloudRegionSdnc"));
+    }
+
+    @Test
+    public void getCloudSdncRegion30Test() throws Exception {
+        CloudRegion cloudRegion = setCloudRegion();
+        cloudRegion.setCloudRegionVersion("3.0");
+        gBBInput.setCloudRegion(cloudRegion);
+        doReturn(cloudRegion.getLcpCloudRegionId()).when(networkBBUtils).getCloudRegion(execution, SourceSystem.SDNC);
+        unassignNetworkBB.getCloudSdncRegion(execution);
+        assertEquals(cloudRegion.getLcpCloudRegionId(), execution.getVariable("cloudRegionSdnc"));
+    }
+
+    @Test
+    public void errorEncounteredTest_rollback() throws Exception {
+        expectedException.expect(BpmnError.class);
+        execution.setVariable("ErrorUnassignNetworkBB",
+                "Relationship's RelatedTo still exists in AAI, remove the relationship vf-module first.");
+        execution.setVariable("isRollbackNeeded", true);
+        unassignNetworkBB.errorEncountered(execution);
+    }
+
+    @Test
+    public void errorEncounteredTest_noRollback() throws Exception {
+        expectedException.expect(BpmnError.class);
+        execution.setVariable("ErrorUnassignNetworkBB",
+                "Relationship's RelatedTo still exists in AAI, remove the relationship vf-module first.");
+        unassignNetworkBB.errorEncountered(execution);
+    }
 }

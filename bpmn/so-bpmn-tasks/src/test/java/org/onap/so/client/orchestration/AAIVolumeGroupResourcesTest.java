@@ -27,7 +27,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,101 +45,105 @@ import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class AAIVolumeGroupResourcesTest extends TestDataSetup{
-	@InjectMocks
-	private AAIVolumeGroupResources aaiVolumeGroupResources = new AAIVolumeGroupResources();
+public class AAIVolumeGroupResourcesTest extends TestDataSetup {
+    @InjectMocks
+    private AAIVolumeGroupResources aaiVolumeGroupResources = new AAIVolumeGroupResources();
 
-	private CloudRegion cloudRegion;
-	private VolumeGroup volumeGroup;
+    private CloudRegion cloudRegion;
+    private VolumeGroup volumeGroup;
 
-	@Mock
-	protected AAIResourcesClient MOCK_aaiResourcesClient;
+    @Mock
+    protected AAIResourcesClient MOCK_aaiResourcesClient;
 
-	@Mock
-	protected AAIObjectMapper MOCK_aaiObjectMapper;
+    @Mock
+    protected AAIObjectMapper MOCK_aaiObjectMapper;
 
-	@Mock
-	protected InjectionHelper MOCK_injectionHelper;
+    @Mock
+    protected InjectionHelper MOCK_injectionHelper;
 
-	@Before
-	public void before() {
-		cloudRegion = buildCloudRegion();
-		volumeGroup = buildVolumeGroup();
-		doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-	}
+    @Before
+    public void before() {
+        cloudRegion = buildCloudRegion();
+        volumeGroup = buildVolumeGroup();
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
+    }
 
 
 
-	@Test
-	public void updateOrchestrationStatusVolumeGroupTest() throws Exception {	
-		volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+    @Test
+    public void updateOrchestrationStatusVolumeGroupTest() throws Exception {
+        volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
-		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VolumeGroup.class));
+        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VolumeGroup.class));
 
-		aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
+        aaiVolumeGroupResources.updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
+                OrchestrationStatus.ACTIVE);
 
-		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
+        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
 
-		assertEquals(OrchestrationStatus.ACTIVE, volumeGroup.getOrchestrationStatus());
-	}
+        assertEquals(OrchestrationStatus.ACTIVE, volumeGroup.getOrchestrationStatus());
+    }
 
-	@Test
-	public void createVolumeGroupTest() throws Exception {
-		volumeGroup.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
+    @Test
+    public void createVolumeGroupTest() throws Exception {
+        volumeGroup.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
-		doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VolumeGroup.class));
+        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VolumeGroup.class));
 
-		aaiVolumeGroupResources.createVolumeGroup(volumeGroup, cloudRegion);
+        aaiVolumeGroupResources.createVolumeGroup(volumeGroup, cloudRegion);
 
-		verify(MOCK_aaiResourcesClient, times(1)).create(any(AAIResourceUri.class), ArgumentMatchers.isNull());
+        verify(MOCK_aaiResourcesClient, times(1)).create(any(AAIResourceUri.class), ArgumentMatchers.isNull());
 
-		assertEquals(OrchestrationStatus.ASSIGNED, volumeGroup.getOrchestrationStatus());
-	}
+        assertEquals(OrchestrationStatus.ASSIGNED, volumeGroup.getOrchestrationStatus());
+    }
 
-	@Test
-	public void connectVolumeGroupToVnfTest() throws Exception {
-		
-		volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
-		
-		doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
+    @Test
+    public void connectVolumeGroupToVnfTest() throws Exception {
 
-		aaiVolumeGroupResources.connectVolumeGroupToTenant(volumeGroup, cloudRegion);
+        volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
-		verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
-	}
-	
-	@Test
-	public void connectVolumeGroupToTenantTest() throws Exception {
-		GenericVnf genericVnf = buildGenericVnf();
+        doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
 
-		volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+        aaiVolumeGroupResources.connectVolumeGroupToTenant(volumeGroup, cloudRegion);
 
-		doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
+        verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
 
-		aaiVolumeGroupResources.connectVolumeGroupToVnf(genericVnf, volumeGroup, cloudRegion);
+    @Test
+    public void connectVolumeGroupToTenantTest() throws Exception {
+        GenericVnf genericVnf = buildGenericVnf();
 
-		verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
-	}
+        volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
-	@Test
-	public void deleteVolumeGroupTest() {
-		doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
+        doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
 
-		aaiVolumeGroupResources.deleteVolumeGroup(volumeGroup, cloudRegion);
+        aaiVolumeGroupResources.connectVolumeGroupToVnf(genericVnf, volumeGroup, cloudRegion);
 
-		verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
-	}
-	
-	@Test
-	public void updateHeatStackIdVolumeGroupTest() throws Exception {	
-		volumeGroup.setHeatStackId("testVolumeHeatStackId");
-		
-		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VolumeGroup.class));
-		
-		aaiVolumeGroupResources.updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+        verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
 
-		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
-		
-		assertEquals("testVolumeHeatStackId", volumeGroup.getHeatStackId());
-	}
+    @Test
+    public void deleteVolumeGroupTest() {
+        doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
+
+        aaiVolumeGroupResources.deleteVolumeGroup(volumeGroup, cloudRegion);
+
+        verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
+    }
+
+    @Test
+    public void updateHeatStackIdVolumeGroupTest() throws Exception {
+        volumeGroup.setHeatStackId("testVolumeHeatStackId");
+
+        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VolumeGroup.class));
+
+        aaiVolumeGroupResources.updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+
+        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
+
+        assertEquals("testVolumeHeatStackId", volumeGroup.getHeatStackId());
+    }
 }

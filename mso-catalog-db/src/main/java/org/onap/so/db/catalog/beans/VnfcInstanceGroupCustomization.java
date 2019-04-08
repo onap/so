@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,13 +36,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -51,108 +47,107 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 @Table(name = "vnfc_instance_group_customization")
 public class VnfcInstanceGroupCustomization implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8288218040186901676L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8288218040186901676L;
 
-	@Id
-	@BusinessKey
-	@Column(name = "ID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VNF_RESOURCE_CUSTOMIZATION_ID")
-	private VnfResourceCustomization vnfResourceCust;
+    @Id
+    @BusinessKey
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "INSTANCE_GROUP_MODEL_UUID")
-	private InstanceGroup instanceGroup;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "VNF_RESOURCE_CUSTOMIZATION_ID")
+    private VnfResourceCustomization vnfResourceCust;
 
-	@Column(name = "FUNCTION")
-	private String function;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "INSTANCE_GROUP_MODEL_UUID")
+    private InstanceGroup instanceGroup;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "FUNCTION")
+    private String function;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VnfcInstanceGroupCustomization)) {
-			return false;
-		}
-		VnfcInstanceGroupCustomization castOther = (VnfcInstanceGroupCustomization) other;
-		return new EqualsBuilder().append(id, castOther.id).isEquals();
-	}
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(id).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VnfcInstanceGroupCustomization)) {
+            return false;
+        }
+        VnfcInstanceGroupCustomization castOther = (VnfcInstanceGroupCustomization) other;
+        return new EqualsBuilder().append(id, castOther.id).isEquals();
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append("function", function).append("description", description)
-				.append("created", created).toString();
-	}
-	
-	public Integer getId() {
-		return id;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("function", function).append("description", description)
+                .append("created", created).toString();
+    }
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
-	
-	public Date getCreated(){
-		return created;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getFunction() {
-		return function;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setFunction(String function) {
-		this.function = function;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getFunction() {
+        return function;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public void setFunction(String function) {
+        this.function = function;
+    }
 
-	@LinkedResource
-	public VnfResourceCustomization getVnfResourceCust() {
-		return vnfResourceCust;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setVnfResourceCust(VnfResourceCustomization vnfResourceCust) {
-		this.vnfResourceCust = vnfResourceCust;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@LinkedResource
-	public InstanceGroup getInstanceGroup() {
-		return instanceGroup;
-	}
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 
-	public void setInstanceGroup(InstanceGroup instanceGroup) {
-		this.instanceGroup = instanceGroup;
-	}
+    @LinkedResource
+    public VnfResourceCustomization getVnfResourceCust() {
+        return vnfResourceCust;
+    }
+
+    public void setVnfResourceCust(VnfResourceCustomization vnfResourceCust) {
+        this.vnfResourceCust = vnfResourceCust;
+    }
+
+    @LinkedResource
+    public InstanceGroup getInstanceGroup() {
+        return instanceGroup;
+    }
+
+    public void setInstanceGroup(InstanceGroup instanceGroup) {
+        this.instanceGroup = instanceGroup;
+    }
 }

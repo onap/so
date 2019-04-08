@@ -21,23 +21,22 @@
 package org.onap.so.cloudify.base.client;
 
 /**
- * A common abstract parent of all Openstack Exception types, allowing
- * calling classes the choice to catch all error exceptions together.
+ * A common abstract parent of all Openstack Exception types, allowing calling classes the choice to catch all error
+ * exceptions together.
  */
-public abstract class CloudifyBaseException extends RuntimeException
-{
-	private static final long serialVersionUID = 1L;
+public abstract class CloudifyBaseException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-	/*
-	 * Implement only the basic constructors
-	 */
-	public CloudifyBaseException () {}
-	
-	public CloudifyBaseException(String message) {
-		super(message);
-	}
+    /*
+     * Implement only the basic constructors
+     */
+    public CloudifyBaseException() {}
 
-	public CloudifyBaseException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public CloudifyBaseException(String message) {
+        super(message);
+    }
+
+    public CloudifyBaseException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

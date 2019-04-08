@@ -25,40 +25,42 @@ import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 /**
- * MSO Exception when a Cloudify workflow execution times out waiting for completion.
- * Exception includes the last known state of the workflow execution.
+ * MSO Exception when a Cloudify workflow execution times out waiting for completion. Exception includes the last known
+ * state of the workflow execution.
  */
-public class MsoCloudifyTimeout extends MsoException
-{
-	
-	/**
+public class MsoCloudifyTimeout extends MsoException {
+
+    /**
      * Serialization id.
      */
     private static final long serialVersionUID = 3313636124141766495L;
-    
-	private Execution execution;
 
-	/**
-	 * Constructor to create a new MsoOpenstackException instance
-	 * @param code the error code
-	 * @param message the error message
-	 * @param detail error details
-	 */
-	public MsoCloudifyTimeout (Execution execution) {
-		// Set the detailed error as the Exception 'message'
-		super("Cloudify Workflow Timeout for workflow " + execution.getWorkflowId() + " on deployment " + execution.getDeploymentId());
-		super.category = MsoExceptionCategory.OPENSTACK;
-		
-		this.execution = execution;
-	}
-		
-	public Execution getExecution() {
-		return this.execution;
-	}
-	
-	@Override
-	public String toString () {
-		String error = "Workflow timeout: workflow=" + execution.getWorkflowId() + ",deployment=" + execution.getDeploymentId();
-		return error;
-	}
+    private Execution execution;
+
+    /**
+     * Constructor to create a new MsoOpenstackException instance
+     * 
+     * @param code the error code
+     * @param message the error message
+     * @param detail error details
+     */
+    public MsoCloudifyTimeout(Execution execution) {
+        // Set the detailed error as the Exception 'message'
+        super("Cloudify Workflow Timeout for workflow " + execution.getWorkflowId() + " on deployment "
+                + execution.getDeploymentId());
+        super.category = MsoExceptionCategory.OPENSTACK;
+
+        this.execution = execution;
+    }
+
+    public Execution getExecution() {
+        return this.execution;
+    }
+
+    @Override
+    public String toString() {
+        String error = "Workflow timeout: workflow=" + execution.getWorkflowId() + ",deployment="
+                + execution.getDeploymentId();
+        return error;
+    }
 }

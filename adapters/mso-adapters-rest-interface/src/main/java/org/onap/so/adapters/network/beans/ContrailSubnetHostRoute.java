@@ -22,33 +22,34 @@ package org.onap.so.adapters.network.beans;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ContrailSubnetHostRoute {
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route_prefix")
-	private String prefix;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route_next_hop")
-	private String nextHop;
 
-	public String getPrefix() {
-		return prefix;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route_prefix")
+    private String prefix;
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route_next_hop")
+    private String nextHop;
 
-	public String getNextHop() {
-		return nextHop;
-	}
+    public String getPrefix() {
+        return prefix;
+    }
 
-	public void setNextHop(String nextHop) {
-		this.nextHop = nextHop;
-	}
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
 
-	@Override
-	public String toString() {
-		return "ContrailSubnetHostRoute [prefix=" + prefix + ", nextHop=" + nextHop + "]";
-	}
-	
+    public String getNextHop() {
+        return nextHop;
+    }
+
+    public void setNextHop(String nextHop) {
+        this.nextHop = nextHop;
+    }
+
+    @Override
+    public String toString() {
+        return "ContrailSubnetHostRoute [prefix=" + prefix + ", nextHop=" + nextHop + "]";
+    }
+
 }

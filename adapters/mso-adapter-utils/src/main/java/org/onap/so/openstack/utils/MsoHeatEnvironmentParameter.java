@@ -24,54 +24,59 @@ import java.util.Objects;
 
 public class MsoHeatEnvironmentParameter {
 
-	private String name;
-	private String value;
-	
-	public MsoHeatEnvironmentParameter(String name, String value) {
-		super();
-		this.name = name;
-		this.value = value;
-	}
-	public MsoHeatEnvironmentParameter(String name) {
-		// Allow to initialize with a null value
-		this(name, null);
-	}
-	public MsoHeatEnvironmentParameter() {
-		this(null, null);
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getValue() {
-		return this.value;
-	}
-	public void setValue(String value) {
-		this.value = value;
-	}
-	public String toString() {
-		return this.name + ": " + this.value;
-	}
-	
-	public boolean equals(Object o) {	
-		if (!(o instanceof MsoHeatEnvironmentParameter)) {
-			return false;
-		}
-		if (this == o) {
-			return true;
-		}
-		MsoHeatEnvironmentParameter hep = (MsoHeatEnvironmentParameter) o;	
-		// If the name of the parameter is the same, then they're equal
+    private String name;
+    private String value;
+
+    public MsoHeatEnvironmentParameter(String name, String value) {
+        super();
+        this.name = name;
+        this.value = value;
+    }
+
+    public MsoHeatEnvironmentParameter(String name) {
+        // Allow to initialize with a null value
+        this(name, null);
+    }
+
+    public MsoHeatEnvironmentParameter() {
+        this(null, null);
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String toString() {
+        return this.name + ": " + this.value;
+    }
+
+    public boolean equals(Object o) {
+        if (!(o instanceof MsoHeatEnvironmentParameter)) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        MsoHeatEnvironmentParameter hep = (MsoHeatEnvironmentParameter) o;
+        // If the name of the parameter is the same, then they're equal
         return hep.getName().equals(this.getName());
-	}
-	
-	public int hashCode() {
+    }
+
+    public int hashCode() {
         return Objects.hashCode(this.name);
-	}
+    }
 
 
 }

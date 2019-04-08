@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNFM_ADAPTER_DEFAULT_AUTH;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.VNFM_ADAPTER_DEFAULT_URL;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 

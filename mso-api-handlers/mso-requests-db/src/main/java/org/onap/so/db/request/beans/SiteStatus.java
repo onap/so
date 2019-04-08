@@ -23,7 +23,6 @@ package org.onap.so.db.request.beans;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -31,31 +30,29 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import java.util.Objects;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "site_status")
 public class SiteStatus {
-    
-	@Column(name = "STATUS")
+
+    @Column(name = "STATUS")
     private boolean status;
-	@Id
-	@Column(name = "SITE_NAME")
+    @Id
+    @Column(name = "SITE_NAME")
     private String siteName;
-	@Column(name = "CREATION_TIMESTAMP", insertable = false, updatable = false)
+    @Column(name = "CREATION_TIMESTAMP", insertable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
-    public SiteStatus() {
-    }
+    public SiteStatus() {}
 
     public SiteStatus(String siteName) {
-		this.siteName = siteName;
-	}
+        this.siteName = siteName;
+    }
 
-	public Date getCreated() {
+    public Date getCreated() {
         return created;
     }
 
@@ -77,28 +74,29 @@ public class SiteStatus {
 
     @PrePersist
     protected void createdAt() {
-    	this.created = new Date();
+        this.created = new Date();
     }
+
     @Override
-	public boolean equals(final Object other) {
-		if (this == other) {
-			return true;
-		}
-		if (!(other instanceof SiteStatus)) {
-			return false;
-		}
-		SiteStatus castOther = (SiteStatus) other;
-		return Objects.equals(getSiteName(), castOther.getSiteName());
-	}
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof SiteStatus)) {
+            return false;
+        }
+        SiteStatus castOther = (SiteStatus) other;
+        return Objects.equals(getSiteName(), castOther.getSiteName());
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(getSiteName());
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(getSiteName());
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("status", getStatus()).append("siteName", getSiteName())
-				.append("created", getCreated()).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("status", getStatus()).append("siteName", getSiteName())
+                .append("created", getCreated()).toString();
+    }
 }

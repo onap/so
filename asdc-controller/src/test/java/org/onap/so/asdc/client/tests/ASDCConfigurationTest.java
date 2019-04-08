@@ -24,12 +24,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.transaction.Transactional;
-
 import org.junit.Test;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.asdc.client.ASDCConfiguration;
@@ -42,111 +39,111 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Transactional
 public class ASDCConfigurationTest extends BaseTest {
-	
+
     @Autowired
     private ASDCConfiguration config;
-    
+
     private List<String> msgBusAddressList = new ArrayList<String>();
-    
+
     private static final String MSO_PRE_IST = "msopreist";
     private static final String MSO_ASDC_ID_LOCAL = "msoasdc-id-local";
     private static final String PRE_IST = "Pre-IST";
     private static final String ASDC_ADDRESS = "localhost:8443";
-    
+
     @Test
     public void isUseHttpsWithDmaapTest() {
-    	assertTrue(config.isUseHttpsWithDmaap());
+        assertTrue(config.isUseHttpsWithDmaap());
     }
-    
+
     @Test
     public void isConsumeProduceStatusTopicTest() {
-    	assertTrue(config.isConsumeProduceStatusTopic());
+        assertTrue(config.isConsumeProduceStatusTopic());
     }
-    
+
     @Test
     public void getUserTest() {
-    	assertTrue(MSO_PRE_IST.equals(config.getUser()));
+        assertTrue(MSO_PRE_IST.equals(config.getUser()));
     }
-    
+
     @Test
     public void getConsumerGroupTest() {
-    	assertTrue(MSO_ASDC_ID_LOCAL.equals(config.getConsumerGroup()));
+        assertTrue(MSO_ASDC_ID_LOCAL.equals(config.getConsumerGroup()));
     }
-    
+
     @Test
     public void getConsumerIDTest() {
-    	assertTrue(MSO_ASDC_ID_LOCAL.equals(config.getConsumerID()));
+        assertTrue(MSO_ASDC_ID_LOCAL.equals(config.getConsumerID()));
     }
-    
+
     @Test
     public void getEnvironmentNameTest() {
-    	assertTrue(PRE_IST.equals(config.getEnvironmentName()));
+        assertTrue(PRE_IST.equals(config.getEnvironmentName()));
     }
-    
+
     @Test
     public void getAsdcAddress() {
-    	assertTrue(ASDC_ADDRESS.equals(config.getAsdcAddress()));
+        assertTrue(ASDC_ADDRESS.equals(config.getAsdcAddress()));
     }
-    
+
     @Test
     public void getPasswordTest() {
-    	assertTrue(MSO_PRE_IST.equals(config.getPassword()));
+        assertTrue(MSO_PRE_IST.equals(config.getPassword()));
     }
-    
+
     @Test
     public void getPollingIntervalTest() {
-    	assertTrue(config.getPollingInterval() == 30);
+        assertTrue(config.getPollingInterval() == 30);
     }
-    
+
     @Test
     public void getPollingTimeoutTest() {
-    	assertTrue(config.getPollingTimeout() == 30);
+        assertTrue(config.getPollingTimeout() == 30);
     }
-    
+
     @Test
     public void getRelevantArtifactTypesTest() {
-    	assertTrue(config.getRelevantArtifactTypes().size() == ASDCConfiguration.SUPPORTED_ARTIFACT_TYPES_LIST.size());
+        assertTrue(config.getRelevantArtifactTypes().size() == ASDCConfiguration.SUPPORTED_ARTIFACT_TYPES_LIST.size());
     }
-    
+
     @Test
     public void getWatchDogTimeoutTest() {
-    	assertTrue(config.getWatchDogTimeout() == 1);
+        assertTrue(config.getWatchDogTimeout() == 1);
     }
-    
+
     @Test
     public void activateServerTLSAuthTest() {
-    	assertFalse(config.activateServerTLSAuth());
+        assertFalse(config.activateServerTLSAuth());
     }
-    
+
     @Test
     public void getKeyStorePasswordTest() {
-    	assertNull(config.getKeyStorePassword());
+        assertNull(config.getKeyStorePassword());
     }
-    
+
     @Test
     public void getKeyStorePathTest() {
-    	assertNull(config.getKeyStorePath());
+        assertNull(config.getKeyStorePath());
     }
-    
+
     @Test
     public void isFilterInEmptyResourcesTest() {
-    	assertTrue(config.isFilterInEmptyResources());
+        assertTrue(config.isFilterInEmptyResources());
     }
-    
+
     @Test
     public void setGetAsdcControllerNameTest() {
-    	String asdcControllerName = "testAsdcControllerName";
-    	config.setAsdcControllerName(asdcControllerName);
-    	String actualAsdcControllerName = config.getAsdcControllerName();
-    	assertEquals(asdcControllerName, actualAsdcControllerName);
+        String asdcControllerName = "testAsdcControllerName";
+        config.setAsdcControllerName(asdcControllerName);
+        String actualAsdcControllerName = config.getAsdcControllerName();
+        assertEquals(asdcControllerName, actualAsdcControllerName);
     }
-    
+
     @Test
     public void getMsgBusAddressTest() {
-    	msgBusAddressList.add("localhost");
-    	msgBusAddressList.add("localhost");
-    	
-    	List<String> actualMsgBusAddress = config.getMsgBusAddress();
-    	assertEquals(msgBusAddressList, actualMsgBusAddress);
+        msgBusAddressList.add("localhost");
+        msgBusAddressList.add("localhost");
+
+        List<String> actualMsgBusAddress = config.getMsgBusAddress();
+        assertEquals(msgBusAddressList, actualMsgBusAddress);
     }
 }

@@ -34,23 +34,24 @@ public class MsoCloudIdentityNotFound extends MsoException {
     /**
      * Default constructor (needed for BPEL/JAXB)
      */
-    public MsoCloudIdentityNotFound () {
+    public MsoCloudIdentityNotFound() {
         super("Cloud Identity not found");
-        super.category=MsoExceptionCategory.USERDATA;
+        super.category = MsoExceptionCategory.USERDATA;
     }
 
     /**
      * Constructor to create a new MsoOpenstackException instance
+     * 
      * @param cloudSite the cloud site
      */
-    public MsoCloudIdentityNotFound (String cloudIdentity) {
+    public MsoCloudIdentityNotFound(String cloudIdentity) {
         // Set the detailed error as the Exception 'message'
         super("Cloud Identity [" + cloudIdentity + "] not found");
-        super.category=MsoExceptionCategory.USERDATA;
+        super.category = MsoExceptionCategory.USERDATA;
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return getMessage();
     }
 }

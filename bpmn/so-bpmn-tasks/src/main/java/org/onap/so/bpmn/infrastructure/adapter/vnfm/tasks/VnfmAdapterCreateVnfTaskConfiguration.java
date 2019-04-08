@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
-
 import org.onap.so.configuration.rest.BasicHttpHeadersProvider;
 import org.onap.so.configuration.rest.HttpHeadersProvider;
 import org.onap.so.rest.service.HttpRestServiceProvider;

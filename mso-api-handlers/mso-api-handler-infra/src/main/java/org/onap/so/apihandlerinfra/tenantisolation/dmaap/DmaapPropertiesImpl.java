@@ -22,34 +22,30 @@ package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.onap.so.client.dmaap.DmaapProperties;
 import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 
 public class DmaapPropertiesImpl implements DmaapProperties {
 
-	private final Map<String, String> props  = new HashMap<>();
-	private static final String[] propertyNames = {
-			"mso.so.operational-environment.dmaap.auth",
-			"mso.msoKey",
-			"mso.so.operational-environment.publisher.topic",
-			"mso.so.operational-environment.dmaap.host"
-	};
-	public DmaapPropertiesImpl () {
-		ApplicationContext context = SpringContextHelper.getAppContext();
-		
-		for (String name : propertyNames) {
-			this.props.put(name, context.getEnvironment().getProperty(name));
+    private final Map<String, String> props = new HashMap<>();
+    private static final String[] propertyNames = {"mso.so.operational-environment.dmaap.auth", "mso.msoKey",
+            "mso.so.operational-environment.publisher.topic", "mso.so.operational-environment.dmaap.host"};
 
-		}
+    public DmaapPropertiesImpl() {
+        ApplicationContext context = SpringContextHelper.getAppContext();
 
-	}
-	
-	@Override
-	public Map<String, String> getProperties() {
-		
-		return this.props;
-	}
+        for (String name : propertyNames) {
+            this.props.put(name, context.getEnvironment().getProperty(name));
+
+        }
+
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+
+        return this.props;
+    }
 
 }

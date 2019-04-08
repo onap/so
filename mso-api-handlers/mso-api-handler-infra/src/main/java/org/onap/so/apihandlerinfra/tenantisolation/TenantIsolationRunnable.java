@@ -48,57 +48,63 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class TenantIsolationRunnable {
 
-	private static final Logger logger = LoggerFactory.getLogger(TenantIsolationRunnable.class);
-	
-	@Autowired 
-	private RequestsDBHelper requestDb; 
-	@Autowired 
-	private CreateEcompOperationalEnvironment createEcompOpEnv;
-	@Autowired 
-	private CreateVnfOperationalEnvironment createVnfOpEnv;
-	@Autowired 
-	private ActivateVnfOperationalEnvironment activateVnfOpEnv;
-	@Autowired 
-	private DeactivateVnfOperationalEnvironment deactivateVnfOpEnv;
-	@Autowired 
-	private ActivateVnfStatusOperationalEnvironment activateVnfStatusOpEnv;
-	
-	@Async
-	public void run(Action action, String operationalEnvType, CloudOrchestrationRequest cor, String requestId) throws ApiException {
+    private static final Logger logger = LoggerFactory.getLogger(TenantIsolationRunnable.class);
 
-		logger.debug("Starting threadExecution in TenantIsolationRunnable for Action {} and OperationalEnvType: {}",
-			action.name(), operationalEnvType);
-		try {
-			
-			if(Action.create.equals(action)) {
-				if(OperationalEnvironment.ECOMP.name().equalsIgnoreCase(operationalEnvType)) {
-					createEcompOpEnv.execute(requestId, cor);
-				} else if(OperationalEnvironment.VNF.name().equalsIgnoreCase(operationalEnvType)) {
-					createVnfOpEnv.execute(requestId, cor);
-				} else {
-                    ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
-                    ValidateException validateException = new ValidateException.Builder("Invalid OperationalEnvironment Type specified for Create Action",
+    @Autowired
+    private RequestsDBHelper requestDb;
+    @Autowired
+    private CreateEcompOperationalEnvironment createEcompOpEnv;
+    @Autowired
+    private CreateVnfOperationalEnvironment createVnfOpEnv;
+    @Autowired
+    private ActivateVnfOperationalEnvironment activateVnfOpEnv;
+    @Autowired
+    private DeactivateVnfOperationalEnvironment deactivateVnfOpEnv;
+    @Autowired
+    private ActivateVnfStatusOperationalEnvironment activateVnfStatusOpEnv;
+
+    @Async
+    public void run(Action action, String operationalEnvType, CloudOrchestrationRequest cor, String requestId)
+            throws ApiException {
+
+        logger.debug("Starting threadExecution in TenantIsolationRunnable for Action {} and OperationalEnvType: {}",
+                action.name(), operationalEnvType);
+        try {
+
+            if (Action.create.equals(action)) {
+                if (OperationalEnvironment.ECOMP.name().equalsIgnoreCase(operationalEnvType)) {
+                    createEcompOpEnv.execute(requestId, cor);
+                } else if (OperationalEnvironment.VNF.name().equalsIgnoreCase(operationalEnvType)) {
+                    createVnfOpEnv.execute(requestId, cor);
+                } else {
+                    ErrorLoggerInfo errorLoggerInfo =
+                            new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError)
+                                    .build();
+                    ValidateException validateException = new ValidateException.Builder(
+                            "Invalid OperationalEnvironment Type specified for Create Action",
                             HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo)
-											.build();
+                                    .build();
 
                     throw validateException;
-				}
-			} else if(Action.activate.equals(action)) {
-				activateVnfOpEnv.execute(requestId, cor);
-			} else if(Action.deactivate.equals(action)) {
-				deactivateVnfOpEnv.execute(requestId, cor);
-			} else if(Action.distributionStatus.equals(action)) {
-				activateVnfStatusOpEnv.execute(requestId, cor);
-			} else {
-                ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
-                ValidateException validateException = new ValidateException.Builder("Invalid Action specified: " + action,
-                        HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+                }
+            } else if (Action.activate.equals(action)) {
+                activateVnfOpEnv.execute(requestId, cor);
+            } else if (Action.deactivate.equals(action)) {
+                deactivateVnfOpEnv.execute(requestId, cor);
+            } else if (Action.distributionStatus.equals(action)) {
+                activateVnfStatusOpEnv.execute(requestId, cor);
+            } else {
+                ErrorLoggerInfo errorLoggerInfo =
+                        new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
+                ValidateException validateException =
+                        new ValidateException.Builder("Invalid Action specified: " + action, HttpStatus.SC_BAD_REQUEST,
+                                ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
                 throw validateException;
-			}
-		}catch(ApiException e) {
+            }
+        } catch (ApiException e) {
             requestDb.updateInfraFailureCompletion(e.getMessage(), requestId, cor.getOperationalEnvironmentId());
             throw e;
         }
-	}
+    }
 }
 

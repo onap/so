@@ -22,11 +22,9 @@ package org.onap.so.db.request;
 
 
 import java.util.TimeZone;
-
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -42,45 +40,35 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-		entityManagerFactoryRef = "requestEntityManagerFactory",transactionManagerRef = "requestTransactionManager",
-		basePackages = { "org.onap.so.db.request.data.repository" }
-		)
+@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory",
+        transactionManagerRef = "requestTransactionManager", basePackages = {"org.onap.so.db.request.data.repository"})
 public class RequestDBConfig {
 
-	@Primary
-	@Bean(name = "requestDataSource")
-	@ConfigurationProperties(prefix = "spring.datasource")
-	public DataSource dataSource() {
-		return DataSourceBuilder.create().build();
-	}
+    @Primary
+    @Bean(name = "requestDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource dataSource() {
+        return DataSourceBuilder.create().build();
+    }
 
-	@Primary
-	@Bean(name = "requestEntityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean 
-	entityManagerFactory(
-			EntityManagerFactoryBuilder builder,
-			@Qualifier("requestDataSource") DataSource dataSource
-			) {
-		return builder
-				.dataSource(dataSource)
-				.packages("org.onap.so.db.request.beans")
-				.persistenceUnit("requestDB")
-				.build();
-	}
+    @Primary
+    @Bean(name = "requestEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+            @Qualifier("requestDataSource") DataSource dataSource) {
+        return builder.dataSource(dataSource).packages("org.onap.so.db.request.beans").persistenceUnit("requestDB")
+                .build();
+    }
 
-	@Primary
-	@Bean(name = "requestTransactionManager")
-	public PlatformTransactionManager transactionManager(
-			@Qualifier("requestEntityManagerFactory") EntityManagerFactory 
-			entityManagerFactory
-			) {
-		return new JpaTransactionManager(entityManagerFactory);
-	}
-	
-	@PostConstruct
-	public void started() {
-	    TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	}
+    @Primary
+    @Bean(name = "requestTransactionManager")
+    public PlatformTransactionManager transactionManager(
+            @Qualifier("requestEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
+
+    @PostConstruct
+    public void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+    }
 
 }

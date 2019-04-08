@@ -21,21 +21,23 @@
 package org.onap.so.client.aai.entities.uri;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.onap.so.client.aai.AAIObjectType;
 
 public class AAISimpleUriFromParentUriTest {
 
-	
-	@Test
-	public void appendChildren() {
-		
-		AAIResourceUri parentUri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "key1", "key2", "key3");
-		
-		AAIUri uri = new AAISimpleUri(parentUri, AAIObjectType.ALLOTTED_RESOURCE, "key4");
-		
-		assertEquals("path appended", "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4", uri.build().toString());
-		
-	}
+
+    @Test
+    public void appendChildren() {
+
+        AAIResourceUri parentUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, "key1", "key2", "key3");
+
+        AAIUri uri = new AAISimpleUri(parentUri, AAIObjectType.ALLOTTED_RESOURCE, "key4");
+
+        assertEquals("path appended",
+                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4",
+                uri.build().toString());
+
+    }
 }

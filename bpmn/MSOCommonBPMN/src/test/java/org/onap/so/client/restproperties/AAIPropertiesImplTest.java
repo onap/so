@@ -21,30 +21,28 @@
 package org.onap.so.client.restproperties;
 
 import static org.junit.Assert.assertEquals;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.junit.Test;
 import org.onap.so.client.aai.AAIVersion;
 
-public class AAIPropertiesImplTest{
+public class AAIPropertiesImplTest {
 
-	private AAIPropertiesImpl aaiPropertiesImpl = new AAIPropertiesImpl();
-	
-	@Test
-	public void getEndpointTest() throws MalformedURLException {
-		assertEquals("aai.endpoint", AAIPropertiesImpl.AAI_ENDPOINT);
-	}
-	
-	@Test
-	public void getAuthTest() {
-		String expectedAuth = "aai.auth";
-		assertEquals(expectedAuth, AAIPropertiesImpl.AAI_AUTH);
-	}
-	
-	@Test
-	public void getKeyTest() {
-		assertEquals("mso.msoKey", AAIPropertiesImpl.MSO_MSO_KEY);
-	}
+    private AAIPropertiesImpl aaiPropertiesImpl = new AAIPropertiesImpl();
+
+    @Test
+    public void getEndpointTest() throws MalformedURLException {
+        assertEquals("aai.endpoint", AAIPropertiesImpl.AAI_ENDPOINT);
+    }
+
+    @Test
+    public void getAuthTest() {
+        String expectedAuth = "aai.auth";
+        assertEquals(expectedAuth, AAIPropertiesImpl.AAI_AUTH);
+    }
+
+    @Test
+    public void getKeyTest() {
+        assertEquals("mso.msoKey", AAIPropertiesImpl.MSO_MSO_KEY);
+    }
 }

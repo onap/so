@@ -28,14 +28,14 @@ public class MsoAdapterExceptionTest {
     @Test
     public void testConstructor() {
         MsoAdapterException msoAdapterException = new MsoAdapterException("test");
-        Assert.assertEquals("test",msoAdapterException.getMessage());
+        Assert.assertEquals("test", msoAdapterException.getMessage());
         Assert.assertEquals(MsoExceptionCategory.INTERNAL, msoAdapterException.category);
     }
 
     @Test
     public void testOverloadedConstructor() {
-        MsoAdapterException msoAdapterException = new MsoAdapterException("test" , new Throwable());
-        Assert.assertEquals("test",msoAdapterException.getMessage());
+        MsoAdapterException msoAdapterException = new MsoAdapterException("test", new Throwable());
+        Assert.assertEquals("test", msoAdapterException.getMessage());
         Assert.assertEquals(MsoExceptionCategory.INTERNAL, msoAdapterException.category);
         Assert.assertNotNull(msoAdapterException.getCause());
     }

@@ -22,5 +22,5 @@ package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 public enum ResourceType {
 
-	operationalEnvironment
+    operationalEnvironment
 }

@@ -23,32 +23,30 @@ package org.onap.so.client.policy;
 
 import java.util.Map;
 import java.util.Optional;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.client.RestClient;
 import org.onap.so.client.policy.entities.PolicyServiceType;
 import org.onap.so.utils.TargetEntity;
 
 public class PolicyRestClient extends RestClient {
 
-	private final PolicyRestProperties properties;
+    private final PolicyRestProperties properties;
 
-	public PolicyRestClient(PolicyRestProperties props, PolicyServiceType serviceType) {
-		super(props, Optional.of(UriBuilder.fromPath(serviceType.toString()).build()));
-		this.properties = props;
-	}
+    public PolicyRestClient(PolicyRestProperties props, PolicyServiceType serviceType) {
+        super(props, Optional.of(UriBuilder.fromPath(serviceType.toString()).build()));
+        this.properties = props;
+    }
 
     @Override
-    public TargetEntity getTargetEntity(){
+    public TargetEntity getTargetEntity() {
         return TargetEntity.POLICY;
     }
 
-	@Override
-	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("ClientAuth", properties.getClientAuth());
-		headerMap.put("Authorization", properties.getAuth());
-		headerMap.put("Environment", properties.getEnvironment());
-	}
+    @Override
+    protected void initializeHeaderMap(Map<String, String> headerMap) {
+        headerMap.put("ClientAuth", properties.getClientAuth());
+        headerMap.put("Authorization", properties.getAuth());
+        headerMap.put("Environment", properties.getEnvironment());
+    }
 
 }

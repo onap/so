@@ -24,72 +24,89 @@ import org.onap.so.db.catalog.beans.Service;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
 import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "service", path = "service")
 public interface ServiceRepository extends JpaRepository<Service, String> {
-	List<Service> findByModelName(String modelName);
+    List<Service> findByModelName(String modelName);
 
-	Service findOneByModelName(String modelName);
+    Service findOneByModelName(String modelName);
 
-	/**
-	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelName
-	 * @return
-	 */
-	@Query(value = "SELECT * FROM service WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
-	Service findFirstByModelNameOrderByModelVersionDesc(String modelName);
+    /**
+     * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the
+     * sorting
+     * 
+     * @param modelName
+     * @return
+     */
+    @Query(value = "SELECT * FROM service WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;",
+            nativeQuery = true)
+    Service findFirstByModelNameOrderByModelVersionDesc(String modelName);
 
-	/**
-	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelName
-	 * @return
-	 */
-	@Query(value = "SELECT * FROM service WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
-	Service findByModelNameOrderByModelVersionDesc(String modelName);
+    /**
+     * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the
+     * sorting
+     * 
+     * @param modelName
+     * @return
+     */
+    @Query(value = "SELECT * FROM service WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;",
+            nativeQuery = true)
+    Service findByModelNameOrderByModelVersionDesc(String modelName);
 
-	Service findOneByModelNameAndModelVersion(String modelName, String modelVersion);
+    Service findOneByModelNameAndModelVersion(String modelName, String modelVersion);
 
-	Service findByModelNameAndModelVersion(String modelName, String modelVersion);
+    Service findByModelNameAndModelVersion(String modelName, String modelVersion);
 
-	Service findByServiceType(String serviceType);
+    Service findByServiceType(String serviceType);
 
-	/**
-	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelUUID
-	 * @return
-	 */
-	@Query(value = "SELECT * FROM service WHERE MODEL_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
-	Service findFirstOneByModelUUIDOrderByModelVersionDesc(String modelUUID);
+    /**
+     * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the
+     * sorting
+     * 
+     * @param modelUUID
+     * @return
+     */
+    @Query(value = "SELECT * FROM service WHERE MODEL_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;",
+            nativeQuery = true)
+    Service findFirstOneByModelUUIDOrderByModelVersionDesc(String modelUUID);
 
-	/**
-	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelUUID
-	 * @return
-	 */
-	@Query(value = "SELECT * FROM service WHERE MODEL_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
-	Service findOneByModelUUIDOrderByModelVersionDesc(String modelUUID);
+    /**
+     * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the
+     * sorting
+     * 
+     * @param modelUUID
+     * @return
+     */
+    @Query(value = "SELECT * FROM service WHERE MODEL_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;",
+            nativeQuery = true)
+    Service findOneByModelUUIDOrderByModelVersionDesc(String modelUUID);
 
-	Service findFirstByModelVersionAndModelInvariantUUID(String modelVersion, String modelInvariantUUID);
+    Service findFirstByModelVersionAndModelInvariantUUID(String modelVersion, String modelInvariantUUID);
 
-	/**
-	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelInvariantUUID
-	 * @return
-	 */
-	@Query(value = "SELECT * FROM service WHERE MODEL_INVARIANT_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
-	Service findFirstByModelInvariantUUIDOrderByModelVersionDesc(String modelInvariantUUID);
+    /**
+     * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the
+     * sorting
+     * 
+     * @param modelInvariantUUID
+     * @return
+     */
+    @Query(value = "SELECT * FROM service WHERE MODEL_INVARIANT_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;",
+            nativeQuery = true)
+    Service findFirstByModelInvariantUUIDOrderByModelVersionDesc(String modelInvariantUUID);
 
-	List<Service> findByModelUUID(String modelUUID);
+    List<Service> findByModelUUID(String modelUUID);
 
-	Service findOneByModelUUID(String modelUUID);
+    Service findOneByModelUUID(String modelUUID);
 
-	/**
-	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelInvariantUUID
-	 * @return
-	 */
-	@Query(value = "SELECT * FROM service WHERE MODEL_INVARIANT_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC;", nativeQuery = true)
-	List<Service> findByModelInvariantUUIDOrderByModelVersionDesc(String modelInvariantUUID);
+    /**
+     * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the
+     * sorting
+     * 
+     * @param modelInvariantUUID
+     * @return
+     */
+    @Query(value = "SELECT * FROM service WHERE MODEL_INVARIANT_UUID = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC;",
+            nativeQuery = true)
+    List<Service> findByModelInvariantUUIDOrderByModelVersionDesc(String modelInvariantUUID);
 }

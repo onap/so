@@ -26,5 +26,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "workflow", path = "workflow")
 public interface WorkflowRepository extends JpaRepository<Workflow, String> {
-	Workflow findByArtifactUUID(String artifactUUID);
+    Workflow findByArtifactUUID(String artifactUUID);
 }

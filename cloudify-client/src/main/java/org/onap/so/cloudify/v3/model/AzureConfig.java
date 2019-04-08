@@ -21,55 +21,54 @@
 package org.onap.so.cloudify.v3.model;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class AzureConfig implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	@JsonProperty("subscription_id")
-	String subscriptionId;
+    private static final long serialVersionUID = 1L;
 
-	@JsonProperty("tenant_id")
-	String tenantId;
+    @JsonProperty("subscription_id")
+    String subscriptionId;
 
-	@JsonProperty("client_id")
-	String clientId;
+    @JsonProperty("tenant_id")
+    String tenantId;
 
-	@JsonProperty("client_secret")
-	String clientSecret;
+    @JsonProperty("client_id")
+    String clientId;
 
-	public String getSubscriptionId() {
-		return subscriptionId;
-	}
+    @JsonProperty("client_secret")
+    String clientSecret;
 
-	public void setSubscriptionId(String subscriptionId) {
-		this.subscriptionId = subscriptionId;
-	}
+    public String getSubscriptionId() {
+        return subscriptionId;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public void setSubscriptionId(String subscriptionId) {
+        this.subscriptionId = subscriptionId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public String getClientId() {
-		return clientId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public void setClientId(String clientId) {
-		this.clientId = clientId;
-	}
+    public String getClientId() {
+        return clientId;
+    }
 
-	public String getClientSecret() {
-		return clientSecret;
-	}
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
 
-	public void setClientSecret(String clientSecret) {
-		this.clientSecret = clientSecret;
-	}
-	
+    public String getClientSecret() {
+        return clientSecret;
+    }
+
+    public void setClientSecret(String clientSecret) {
+        this.clientSecret = clientSecret;
+    }
+
 }

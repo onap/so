@@ -21,36 +21,29 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.onap.so.db.catalog.beans.ToscaCsar;
 
 /**
- * serivce csar query support 
- * <br>
+ * serivce csar query support <br>
  * <p>
  * </p>
  * 
  * @author
- * @version     ONAP Beijing Release  2018-02-28
+ * @version ONAP Beijing Release 2018-02-28
  */
-public class QueryServiceCsar extends CatalogQuery{
-    
-    private static final String TEMPLATE =
-            "\t{\n"+
-            "\t\t\"artifactUUID\"         : <ARTIFACT_UUID>,\n"+
-            "\t\t\"name\"                 : <NAME>,\n"+
-            "\t\t\"version\"              : <VERSION>,\n"+
-            "\t\t\"artifactChecksum\"     : <ARTIFACT_CHECK_SUM>,\n"+
-            "\t\t\"url\"                  : <URL>,\n"+
-            "\t\t\"description\"          : <DESCRIPTION>\n"+
-            "\t}";
-    
+public class QueryServiceCsar extends CatalogQuery {
+
+    private static final String TEMPLATE = "\t{\n" + "\t\t\"artifactUUID\"         : <ARTIFACT_UUID>,\n"
+            + "\t\t\"name\"                 : <NAME>,\n" + "\t\t\"version\"              : <VERSION>,\n"
+            + "\t\t\"artifactChecksum\"     : <ARTIFACT_CHECK_SUM>,\n" + "\t\t\"url\"                  : <URL>,\n"
+            + "\t\t\"description\"          : <DESCRIPTION>\n" + "\t}";
+
     private ToscaCsar toscaCsar;
-    
-    public QueryServiceCsar(ToscaCsar toscaCsar){
+
+    public QueryServiceCsar(ToscaCsar toscaCsar) {
         this.toscaCsar = toscaCsar;
     }
-    
+
     @Override
     public String toString() {
         return toscaCsar.toString();

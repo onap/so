@@ -24,7 +24,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.security.GeneralSecurityException;
@@ -80,8 +79,8 @@ public class AdapterRestClientTest {
         String encyptedMessage = CryptoUtils.encrypt("testAdapter", CRYPTO_KEY);
         when(adapterRestPropertiesMock.getAuth()).thenReturn(encyptedMessage);
         when(adapterRestPropertiesMock.getKey()).thenReturn(INVALID_CRYPTO_KEY);
-        AdapterRestClient testedObject = new AdapterRestClient(adapterRestPropertiesMock, new URI(""),
-                "accept", "contentType");
+        AdapterRestClient testedObject =
+                new AdapterRestClient(adapterRestPropertiesMock, new URI(""), "accept", "contentType");
         // when
         testedObject.initializeHeaderMap(headerMap);
         // then

@@ -22,92 +22,91 @@
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import java.sql.Timestamp;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class E2ERequest {
 
-	protected String operationId;
-	protected String operation;
-	protected String result;
-	protected String reason;
-	protected String userId;
-	protected String operationContent;
-	protected long progress;
-	protected String operateAt;
-	protected String finishedAt;
+    protected String operationId;
+    protected String operation;
+    protected String result;
+    protected String reason;
+    protected String userId;
+    protected String operationContent;
+    protected long progress;
+    protected String operateAt;
+    protected String finishedAt;
 
-	public String getOperationId() {
-		return operationId;
-	}
+    public String getOperationId() {
+        return operationId;
+    }
 
-	public void setOperationId(String operationId) {
-		this.operationId = operationId;
-	}
+    public void setOperationId(String operationId) {
+        this.operationId = operationId;
+    }
 
-	public String getOperation() {
-		return operation;
-	}
+    public String getOperation() {
+        return operation;
+    }
 
-	public void setOperation(String operation) {
-		this.operation = operation;
-	}
+    public void setOperation(String operation) {
+        this.operation = operation;
+    }
 
-	public String getResult() {
-		return result;
-	}
+    public String getResult() {
+        return result;
+    }
 
-	public void setResult(String result) {
-		this.result = result;
-	}
+    public void setResult(String result) {
+        this.result = result;
+    }
 
-	public String getReason() {
-		return reason;
-	}
+    public String getReason() {
+        return reason;
+    }
 
-	public void setReason(String reason) {
-		this.reason = reason;
-	}
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
 
-	public String getUserId() {
-		return userId;
-	}
+    public String getUserId() {
+        return userId;
+    }
 
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
-	public String getOperationContent() {
-		return operationContent;
-	}
+    public String getOperationContent() {
+        return operationContent;
+    }
 
-	public void setOperationContent(String operationContent) {
-		this.operationContent = operationContent;
-	}
+    public void setOperationContent(String operationContent) {
+        this.operationContent = operationContent;
+    }
 
-	public long getProgress() {
-		return progress;
-	}
+    public long getProgress() {
+        return progress;
+    }
 
-	public void setProgress(long progress) {
-		this.progress = progress;
-	}
+    public void setProgress(long progress) {
+        this.progress = progress;
+    }
 
-	public String getOperateAt() {
-		return operateAt;
-	}
+    public String getOperateAt() {
+        return operateAt;
+    }
 
-	public void setOperateAt(String operateAt) {
-		this.operateAt = operateAt;
-	}
+    public void setOperateAt(String operateAt) {
+        this.operateAt = operateAt;
+    }
 
-	public String getFinishedAt() {
-		return finishedAt;
-	}
+    public String getFinishedAt() {
+        return finishedAt;
+    }
 
-	public void setFinishedAt(String finishedAt) {
-		this.finishedAt = finishedAt;
-	}
+    public void setFinishedAt(String finishedAt) {
+        this.finishedAt = finishedAt;
+    }
 
 }

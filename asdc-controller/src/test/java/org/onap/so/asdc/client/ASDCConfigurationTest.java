@@ -23,9 +23,7 @@ package org.onap.so.asdc.client;
 
 
 import static org.junit.Assert.assertTrue;
-
 import javax.transaction.Transactional;
-
 import org.junit.Test;
 import org.onap.so.asdc.BaseTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,24 +34,24 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  */
 public class ASDCConfigurationTest extends BaseTest {
-	
+
     @Autowired
     private ASDCConfiguration config;
-    
+
     @Test
-	@Transactional
-	public void testInitASDCConfiguration() throws Exception {    	
-		assertTrue("msopreist".equals(config.getUser()));
-		assertTrue("msoasdc-id-local".equals(config.getConsumerGroup()));
-		assertTrue("msoasdc-id-local".equals(config.getConsumerID()));
-		assertTrue("Pre-IST".equals(config.getEnvironmentName()));
-		assertTrue("localhost:8443".equals(config.getAsdcAddress()));
-		assertTrue("msopreist".equals(config.getPassword()));
-		assertTrue(config.getPollingInterval() == 30);
-		assertTrue(config.getPollingTimeout() == 30);
-		assertTrue(config.getRelevantArtifactTypes().size() == config.SUPPORTED_ARTIFACT_TYPES_LIST.size());
-		assertTrue(config.getWatchDogTimeout() == 1); 
-		assertTrue(config.isUseHttpsWithDmaap() == true);   
+    @Transactional
+    public void testInitASDCConfiguration() throws Exception {
+        assertTrue("msopreist".equals(config.getUser()));
+        assertTrue("msoasdc-id-local".equals(config.getConsumerGroup()));
+        assertTrue("msoasdc-id-local".equals(config.getConsumerID()));
+        assertTrue("Pre-IST".equals(config.getEnvironmentName()));
+        assertTrue("localhost:8443".equals(config.getAsdcAddress()));
+        assertTrue("msopreist".equals(config.getPassword()));
+        assertTrue(config.getPollingInterval() == 30);
+        assertTrue(config.getPollingTimeout() == 30);
+        assertTrue(config.getRelevantArtifactTypes().size() == config.SUPPORTED_ARTIFACT_TYPES_LIST.size());
+        assertTrue(config.getWatchDogTimeout() == 1);
+        assertTrue(config.isUseHttpsWithDmaap() == true);
     }
-    
+
 }

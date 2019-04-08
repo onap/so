@@ -22,45 +22,47 @@ package org.onap.so.adapters.valet.beans;
 
 import java.io.Serializable;
 import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*
  * This class represents the body of a Delete response on a Valet Placement API call
  */
 public class ValetDeleteResponse implements Serializable {
-	private static final long serialVersionUID = 768026109321305392L;
-	@JsonProperty("status")
-	private ValetStatus status;
-	
-	public ValetDeleteResponse() {
-		super();
-	}
-	public ValetDeleteResponse(ValetStatus status) {
-		super();
-		this.status = status;
-	}
-	
-	public ValetStatus getStatus() {
-		return this.status;
-	}
-	public void setStatus(ValetStatus status) {
-		this.status = status;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(status);
-	}
-	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		if (!(o instanceof ValetDeleteResponse)) {
-			return false;
-		}
-		ValetDeleteResponse vdr = (ValetDeleteResponse) o;
-		return Objects.equals(status, vdr.status); 
-	}
+    private static final long serialVersionUID = 768026109321305392L;
+    @JsonProperty("status")
+    private ValetStatus status;
+
+    public ValetDeleteResponse() {
+        super();
+    }
+
+    public ValetDeleteResponse(ValetStatus status) {
+        super();
+        this.status = status;
+    }
+
+    public ValetStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(ValetStatus status) {
+        this.status = status;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof ValetDeleteResponse)) {
+            return false;
+        }
+        ValetDeleteResponse vdr = (ValetDeleteResponse) o;
+        return Objects.equals(status, vdr.status);
+    }
 
 }

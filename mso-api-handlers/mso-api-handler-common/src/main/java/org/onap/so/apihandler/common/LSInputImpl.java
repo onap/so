@@ -23,7 +23,6 @@ package org.onap.so.apihandler.common;
 
 import java.io.InputStream;
 import java.io.Reader;
-
 import org.w3c.dom.ls.LSInput;
 
 public class LSInputImpl implements LSInput {
@@ -38,82 +37,82 @@ public class LSInputImpl implements LSInput {
     protected boolean fCertifiedText;
 
     @Override
-    public InputStream getByteStream () {
+    public InputStream getByteStream() {
         return fByteStream;
     }
 
     @Override
-    public void setByteStream (InputStream byteStream) {
+    public void setByteStream(InputStream byteStream) {
         fByteStream = byteStream;
     }
 
     @Override
-    public Reader getCharacterStream () {
+    public Reader getCharacterStream() {
         return fCharStream;
     }
 
     @Override
-    public void setCharacterStream (Reader characterStream) {
+    public void setCharacterStream(Reader characterStream) {
         fCharStream = characterStream;
     }
 
     @Override
-    public String getStringData () {
+    public String getStringData() {
         return fData;
     }
 
     @Override
-    public void setStringData (String stringData) {
+    public void setStringData(String stringData) {
         fData = stringData;
     }
 
     @Override
-    public String getEncoding () {
+    public String getEncoding() {
         return fEncoding;
     }
 
     @Override
-    public void setEncoding (String encoding) {
+    public void setEncoding(String encoding) {
         fEncoding = encoding;
     }
 
     @Override
-    public String getPublicId () {
+    public String getPublicId() {
         return fPublicId;
     }
 
     @Override
-    public void setPublicId (String publicId) {
+    public void setPublicId(String publicId) {
         fPublicId = publicId;
     }
 
     @Override
-    public String getSystemId () {
+    public String getSystemId() {
         return fSystemId;
     }
 
     @Override
-    public void setSystemId (String systemId) {
+    public void setSystemId(String systemId) {
         fSystemId = systemId;
     }
 
     @Override
-    public String getBaseURI () {
+    public String getBaseURI() {
         return fBaseSystemId;
     }
 
     @Override
-    public void setBaseURI (String baseURI) {
+    public void setBaseURI(String baseURI) {
         fBaseSystemId = baseURI;
     }
 
     @Override
-    public boolean getCertifiedText () {
+    public boolean getCertifiedText() {
         return fCertifiedText;
     }
 
     @Override
-    public void setCertifiedText (boolean certifiedText) {
+    public void setCertifiedText(boolean certifiedText) {
         fCertifiedText = certifiedText;
     }
 }

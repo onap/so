@@ -24,10 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "name",
-    "description"
-})
+@JsonPropertyOrder({"name", "description"})
 public class ActivitySequence {
 
     @JsonProperty("name")
@@ -39,8 +36,7 @@ public class ActivitySequence {
      * No args constructor for use in serialization
      * 
      */
-    public ActivitySequence() {
-    }
+    public ActivitySequence() {}
 
     /**
      * 

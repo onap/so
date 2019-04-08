@@ -26,5 +26,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "heatTemplate", path = "heatTemplate")
 public interface HeatTemplateRepository extends JpaRepository<HeatTemplate, String> {
-	HeatTemplate findByArtifactUuid(String artifactUUID);
+    HeatTemplate findByArtifactUuid(String artifactUUID);
 }

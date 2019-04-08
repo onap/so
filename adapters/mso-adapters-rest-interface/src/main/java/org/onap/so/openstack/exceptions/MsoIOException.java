@@ -24,30 +24,31 @@ package org.onap.so.openstack.exceptions;
 /**
  * I/O exception
  */
-public class MsoIOException extends MsoException
-{
+public class MsoIOException extends MsoException {
 
-	/**
+    /**
      * Serialization id.
      */
     private static final long serialVersionUID = 6752445132721635760L;
 
     /**
      * Basic constructor with message
+     * 
      * @param message the error message
      */
-	public MsoIOException (String message) {
-		super(message);
-		super.category = MsoExceptionCategory.IO;
-	}
-	
-	/**
-	 * Constructor to wrap a nested exception
-	 * @param message the error message
-	 * @param t the cause
-	 */
-	public MsoIOException (String message, Throwable t) {
-		super (message, t);
-		super.category = MsoExceptionCategory.IO;
-	}
+    public MsoIOException(String message) {
+        super(message);
+        super.category = MsoExceptionCategory.IO;
+    }
+
+    /**
+     * Constructor to wrap a nested exception
+     * 
+     * @param message the error message
+     * @param t the cause
+     */
+    public MsoIOException(String message, Throwable t) {
+        super(message, t);
+        super.category = MsoExceptionCategory.IO;
+    }
 }

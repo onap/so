@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,14 +40,11 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -98,36 +94,45 @@ public class Service implements Serializable {
     private String resourceOrder;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "network_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    @JoinTable(name = "network_resource_customization_to_service",
+            joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"),
+            inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<NetworkResourceCustomization> networkCustomizations;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     private List<VnfResourceCustomization> vnfCustomizations;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "allotted_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    @JoinTable(name = "allotted_resource_customization_to_service",
+            joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"),
+            inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<AllottedResourceCustomization> allottedCustomizations;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "collection_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    @JoinTable(name = "collection_resource_customization_to_service",
+            joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"),
+            inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<CollectionResourceCustomization> collectionResourceCustomizations;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "service_proxy_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    @JoinTable(name = "service_proxy_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"),
+            inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<ServiceProxyResourceCustomization> serviceProxyCustomizations;
-    
+
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "configuration_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    @JoinTable(name = "configuration_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"),
+            inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<ConfigurationResourceCustomization> configurationCustomizations;
-    
+
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "pnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"), inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    @JoinTable(name = "pnf_resource_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"),
+            inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<PnfResourceCustomization> pnfCustomizations;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     @MapKey(name = "action")
     private Map<String, ServiceRecipe> recipes;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "TOSCA_CSAR_ARTIFACT_UUID")
     private ToscaCsar csar;
@@ -143,10 +148,9 @@ public class Service implements Serializable {
                 .append("allottedCustomizations", allottedCustomizations)
                 .append("collectionResourceCustomizations", collectionResourceCustomizations)
                 .append("serviceProxyCustomizations", serviceProxyCustomizations)
-            .append("configurationCustomizations", configurationCustomizations)
-            .append("pnfCustomizations", pnfCustomizations)
-            .append("recipes", recipes)
-                .append("csar", csar).toString();
+                .append("configurationCustomizations", configurationCustomizations)
+                .append("pnfCustomizations", pnfCustomizations).append("recipes", recipes).append("csar", csar)
+                .toString();
     }
 
     @PrePersist

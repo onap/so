@@ -21,7 +21,6 @@
 package org.onap.so.adapters.vdu.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import com.google.common.collect.Lists;
 import java.util.List;
 import org.junit.Test;
@@ -55,14 +54,13 @@ public class VfModuleCustomizationToVduMapperTest {
         VfModuleCustomization vfModuleCustomization = createVfModuleCustomization();
         vfModuleCustomization.setHeatEnvironment(createHeatEnvironment(HEAT_ENV_NAME, HEAT_ENV_CONTENT));
         VfModule vfModule = createVfModule();
-        vfModule.setModuleHeatTemplate(createHeatTemplate(
-            MODULE_HEAT_TEMPLATE_NAME, MODULE_HEAT_TEMPLATE_BODY,
-            NESTED_TEMPLATE_NAME, NESTED_TEMPLATE_BODY));
+        vfModule.setModuleHeatTemplate(createHeatTemplate(MODULE_HEAT_TEMPLATE_NAME, MODULE_HEAT_TEMPLATE_BODY,
+                NESTED_TEMPLATE_NAME, NESTED_TEMPLATE_BODY));
         vfModuleCustomization.setVfModule(vfModule);
 
         // WHEN
-        VduModelInfo vduModelInfo = new VfModuleCustomizationToVduMapper()
-            .mapVfModuleCustomizationToVdu(vfModuleCustomization);
+        VduModelInfo vduModelInfo =
+                new VfModuleCustomizationToVduMapper().mapVfModuleCustomizationToVdu(vfModuleCustomization);
 
         // THEN
         assertThat(vduModelInfo.getModelCustomizationUUID()).isEqualTo(MODEL_CUSTOMIZATION_UUID);
@@ -76,14 +74,13 @@ public class VfModuleCustomizationToVduMapperTest {
         VfModuleCustomization vfModuleCustomization = createVfModuleCustomization();
         vfModuleCustomization.setVolumeHeatEnv(createHeatEnvironment(HEAT_ENV_NAME, HEAT_ENV_CONTENT));
         VfModule vfModule = createVfModule();
-        vfModule.setVolumeHeatTemplate(createHeatTemplate(
-            MODULE_HEAT_TEMPLATE_NAME, MODULE_HEAT_TEMPLATE_BODY,
-            NESTED_TEMPLATE_NAME, NESTED_TEMPLATE_BODY));
+        vfModule.setVolumeHeatTemplate(createHeatTemplate(MODULE_HEAT_TEMPLATE_NAME, MODULE_HEAT_TEMPLATE_BODY,
+                NESTED_TEMPLATE_NAME, NESTED_TEMPLATE_BODY));
         vfModuleCustomization.setVfModule(vfModule);
 
         // WHEN
-        VduModelInfo vduModelInfo = new VfModuleCustomizationToVduMapper()
-            .mapVfModuleCustVolumeToVdu(vfModuleCustomization);
+        VduModelInfo vduModelInfo =
+                new VfModuleCustomizationToVduMapper().mapVfModuleCustVolumeToVdu(vfModuleCustomization);
 
         // THEN
         assertThat(vduModelInfo.getModelCustomizationUUID()).isEqualTo(MODEL_CUSTOMIZATION_UUID);
@@ -119,7 +116,7 @@ public class VfModuleCustomizationToVduMapperTest {
     }
 
     private HeatTemplate createHeatTemplate(String moduleHeatTemplateName, String moduleHeatTemplateBody,
-        String childTemplateName, String childTemplateBody) {
+            String childTemplateName, String childTemplateBody) {
         HeatTemplate heatTemplate = new HeatTemplate();
         heatTemplate.setTemplateName(moduleHeatTemplateName);
         heatTemplate.setTemplateBody(moduleHeatTemplateBody);
@@ -137,10 +134,10 @@ public class VfModuleCustomizationToVduMapperTest {
 
     private List<VduArtifact> createExpectedVduArtifacts() {
         return Lists.newArrayList(
-            new VduArtifact(MODULE_HEAT_TEMPLATE_NAME, MODULE_HEAT_TEMPLATE_BODY.getBytes(),
-                ArtifactType.MAIN_TEMPLATE),
-            new VduArtifact(NESTED_TEMPLATE_NAME, NESTED_TEMPLATE_BODY.getBytes(), ArtifactType.NESTED_TEMPLATE),
-            new VduArtifact(CLOUD_FILE_NAME, CLOUD_FILE_BODY.getBytes(), ArtifactType.TEXT_FILE),
-            new VduArtifact(HEAT_ENV_NAME, HEAT_ENV_CONTENT.getBytes(), ArtifactType.ENVIRONMENT));
+                new VduArtifact(MODULE_HEAT_TEMPLATE_NAME, MODULE_HEAT_TEMPLATE_BODY.getBytes(),
+                        ArtifactType.MAIN_TEMPLATE),
+                new VduArtifact(NESTED_TEMPLATE_NAME, NESTED_TEMPLATE_BODY.getBytes(), ArtifactType.NESTED_TEMPLATE),
+                new VduArtifact(CLOUD_FILE_NAME, CLOUD_FILE_BODY.getBytes(), ArtifactType.TEXT_FILE),
+                new VduArtifact(HEAT_ENV_NAME, HEAT_ENV_CONTENT.getBytes(), ArtifactType.ENVIRONMENT));
     }
 }

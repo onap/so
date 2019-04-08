@@ -21,7 +21,6 @@
 package org.onap.so.client.orchestration;
 
 import java.util.Optional;
-
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
@@ -36,45 +35,53 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIInstanceGroupResources {
-	@Autowired
-	private InjectionHelper injectionHelper;
-	
-	@Autowired
-	private AAIObjectMapper aaiObjectMapper;
+    @Autowired
+    private InjectionHelper injectionHelper;
 
-	public void createInstanceGroup(InstanceGroup instanceGroup) {
-		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
-		org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup = aaiObjectMapper.mapInstanceGroup(instanceGroup);
-		injectionHelper.getAaiClient().createIfNotExists(instanceGroupUri, Optional.of(aaiInstanceGroup));
-	}
-	
-	public void deleteInstanceGroup(InstanceGroup instanceGroup) {
-		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
-		injectionHelper.getAaiClient().delete(instanceGroupUri);
-	}
+    @Autowired
+    private AAIObjectMapper aaiObjectMapper;
 
-	public void connectInstanceGroupToVnf(InstanceGroup instanceGroup, GenericVnf vnf) {
-		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
-		AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
-		injectionHelper.getAaiClient().connect(instanceGroupUri, vnfURI);
-	}
-	
-	public void connectInstanceGroupToVnf(InstanceGroup instanceGroup, GenericVnf vnf, AAIEdgeLabel aaiLabel) {
-		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
-		AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
-		injectionHelper.getAaiClient().connect(instanceGroupUri, vnfURI, aaiLabel);
-	}
-	
-	public boolean exists(InstanceGroup instanceGroup) {
-		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
-		return injectionHelper.getAaiClient().exists(instanceGroupUri);
-	}
-	
-	public void createInstanceGroupandConnectServiceInstance(InstanceGroup instanceGroup, ServiceInstance serviceInstance) {
-		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
-		org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup = aaiObjectMapper.mapInstanceGroup(instanceGroup);
-		AAIResourceUri serviceInstanceURI = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE,
-				serviceInstance.getServiceInstanceId());
-		injectionHelper.getAaiClient().createIfNotExists(instanceGroupUri, Optional.of(aaiInstanceGroup)).connect(instanceGroupUri, serviceInstanceURI);		
-	}
+    public void createInstanceGroup(InstanceGroup instanceGroup) {
+        AAIResourceUri instanceGroupUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+        org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup = aaiObjectMapper.mapInstanceGroup(instanceGroup);
+        injectionHelper.getAaiClient().createIfNotExists(instanceGroupUri, Optional.of(aaiInstanceGroup));
+    }
+
+    public void deleteInstanceGroup(InstanceGroup instanceGroup) {
+        AAIResourceUri instanceGroupUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+        injectionHelper.getAaiClient().delete(instanceGroupUri);
+    }
+
+    public void connectInstanceGroupToVnf(InstanceGroup instanceGroup, GenericVnf vnf) {
+        AAIResourceUri instanceGroupUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+        AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
+        injectionHelper.getAaiClient().connect(instanceGroupUri, vnfURI);
+    }
+
+    public void connectInstanceGroupToVnf(InstanceGroup instanceGroup, GenericVnf vnf, AAIEdgeLabel aaiLabel) {
+        AAIResourceUri instanceGroupUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+        AAIResourceUri vnfURI = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId());
+        injectionHelper.getAaiClient().connect(instanceGroupUri, vnfURI, aaiLabel);
+    }
+
+    public boolean exists(InstanceGroup instanceGroup) {
+        AAIResourceUri instanceGroupUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+        return injectionHelper.getAaiClient().exists(instanceGroupUri);
+    }
+
+    public void createInstanceGroupandConnectServiceInstance(InstanceGroup instanceGroup,
+            ServiceInstance serviceInstance) {
+        AAIResourceUri instanceGroupUri =
+                AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId());
+        org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup = aaiObjectMapper.mapInstanceGroup(instanceGroup);
+        AAIResourceUri serviceInstanceURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
+        injectionHelper.getAaiClient().createIfNotExists(instanceGroupUri, Optional.of(aaiInstanceGroup))
+                .connect(instanceGroupUri, serviceInstanceURI);
+    }
 }

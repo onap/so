@@ -23,29 +23,34 @@ package org.onap.so.cloudify.v3.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Pagination {
-	@JsonProperty("total")
-	private int total;
-	@JsonProperty("offset")
-	private int offset;
-	@JsonProperty("size")
-	private int size;
-	
-	public int getTotal() {
-		return total;
-	}
-	public void setTotal(int total) {
-		this.total = total;
-	}
-	public int getOffset() {
-		return offset;
-	}
-	public void setOffset(int offset) {
-		this.offset = offset;
-	}
-	public int getSize() {
-		return size;
-	}
-	public void setSize(int size) {
-		this.size = size;
-	}
+    @JsonProperty("total")
+    private int total;
+    @JsonProperty("offset")
+    private int offset;
+    @JsonProperty("size")
+    private int size;
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
+    }
 }

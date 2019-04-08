@@ -21,41 +21,37 @@
 package org.onap.so.db.catalog.beans;
 
 public enum OrchestrationStatus {
-	ACTIVE("Active", "active"),
-	ASSIGNED("Assigned", "assigned"),
-	CREATED("Created", "created"),
-	INVENTORIED("Inventoried", "inventoried"),
-	PENDING("Pending", "pending"),
-	PENDING_ACTIVATION("PendingActivation", "pending.?activation"),
-	PENDING_CREATE("PendingCreate", "pending.?create"),
-	PENDING_DELETE("PendingDelete", "pending.?delete"),
-	PRECREATED("PreCreated", "pre.?created"),
-	CONFIGASSIGNED("ConfigAssigned", "config.?assigned"),
-	CONFIGURE("Configure" , "configure"),
-	CONFIGURED("Configured" , "configured");
+    ACTIVE("Active", "active"), ASSIGNED("Assigned", "assigned"), CREATED("Created", "created"), INVENTORIED(
+            "Inventoried", "inventoried"), PENDING("Pending", "pending"), PENDING_ACTIVATION("PendingActivation",
+                    "pending.?activation"), PENDING_CREATE("PendingCreate", "pending.?create"), PENDING_DELETE(
+                            "PendingDelete", "pending.?delete"), PRECREATED("PreCreated",
+                                    "pre.?created"), CONFIGASSIGNED("ConfigAssigned", "config.?assigned"), CONFIGURE(
+                                            "Configure", "configure"), CONFIGURED("Configured", "configured");
 
-	private final String name;
-	private final String fuzzyMatcher;
-	private OrchestrationStatus(String name, String fuzzyMatcher) {
-		this.name = name;
-		this.fuzzyMatcher = fuzzyMatcher;
-	}
+    private final String name;
+    private final String fuzzyMatcher;
 
-	@Override
-	public String toString() {
-		return name;
-	}
-	/**
-	 * case insensitive regular expression match to enum value
-	 * 
-	 * @param status
-	 * @return
-	 */
-	public boolean fuzzyMap(String status) {
-		if (status != null) {
-			return status.matches("(?i)" + this.fuzzyMatcher);
-		} else {
-			return false;
-		}
-	}
+    private OrchestrationStatus(String name, String fuzzyMatcher) {
+        this.name = name;
+        this.fuzzyMatcher = fuzzyMatcher;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    /**
+     * case insensitive regular expression match to enum value
+     * 
+     * @param status
+     * @return
+     */
+    public boolean fuzzyMap(String status) {
+        if (status != null) {
+            return status.matches("(?i)" + this.fuzzyMatcher);
+        } else {
+            return false;
+        }
+    }
 }

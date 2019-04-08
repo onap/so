@@ -23,24 +23,24 @@ package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 public class E2EServiceInstanceDeleteRequest {
 
-	private String globalSubscriberId;
-	
-	private String serviceType;
+    private String globalSubscriberId;
 
-	public String getGlobalSubscriberId() {
-		return globalSubscriberId;
-	}
+    private String serviceType;
 
-	public void setGlobalSubscriberId(String globalSubscriberId) {
-		this.globalSubscriberId = globalSubscriberId;
-	}
+    public String getGlobalSubscriberId() {
+        return globalSubscriberId;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public void setGlobalSubscriberId(String globalSubscriberId) {
+        this.globalSubscriberId = globalSubscriberId;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
-	
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
 }

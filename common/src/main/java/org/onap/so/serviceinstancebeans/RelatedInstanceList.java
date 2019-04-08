@@ -21,7 +21,6 @@
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,22 +30,22 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class RelatedInstanceList implements Serializable {
 
-	private static final long serialVersionUID = 6333898302094446243L;
-	@JsonProperty("relatedInstance")
-	protected RelatedInstance relatedInstance;
+    private static final long serialVersionUID = 6333898302094446243L;
+    @JsonProperty("relatedInstance")
+    protected RelatedInstance relatedInstance;
 
-	public RelatedInstance getRelatedInstance() {
-		return relatedInstance;
-	}
+    public RelatedInstance getRelatedInstance() {
+        return relatedInstance;
+    }
 
-	public void setRelatedInstance(RelatedInstance relatedInstance) {
-		this.relatedInstance = relatedInstance;
-	}
+    public void setRelatedInstance(RelatedInstance relatedInstance) {
+        this.relatedInstance = relatedInstance;
+    }
 
-	@Override
-	public String toString() {
-		return "RelatedInstanceList [relatedInstance=" + relatedInstance + "]";
-	}
+    @Override
+    public String toString() {
+        return "RelatedInstanceList [relatedInstance=" + relatedInstance + "]";
+    }
 
 
 

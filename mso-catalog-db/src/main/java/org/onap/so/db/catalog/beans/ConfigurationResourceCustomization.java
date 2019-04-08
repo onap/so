@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,153 +37,150 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "configuration_customization")
 public class ConfigurationResourceCustomization implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1230671937560638856L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1230671937560638856L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_CUSTOMIZATION_UUID")
-	private String modelCustomizationUUID;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_CUSTOMIZATION_UUID")
+    private String modelCustomizationUUID;
 
-	@Column(name = "MODEL_INSTANCE_NAME")
-	private String modelInstanceName;
+    @Column(name = "MODEL_INSTANCE_NAME")
+    private String modelInstanceName;
 
-	@Column(name = "CONFIGURATION_FUNCTION")
-	private String nfFunction;
+    @Column(name = "CONFIGURATION_FUNCTION")
+    private String nfFunction;
 
-	@Column(name = "CONFIGURATION_TYPE")
-	private String nfType;
+    @Column(name = "CONFIGURATION_TYPE")
+    private String nfType;
 
-	@Column(name = "CONFIGURATION_ROLE")
-	private String nfRole;
+    @Column(name = "CONFIGURATION_ROLE")
+    private String nfRole;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@Column(name = "SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
-	private String serviceProxyResourceCustomizationUUID;
-		
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
-	private ConfigurationResourceCustomization configResourceCustomization;
+    @Column(name = "SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
+    private String serviceProxyResourceCustomizationUUID;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CONFIGURATION_MODEL_UUID")
-	private ConfigurationResource configurationResource;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
+    private ConfigurationResourceCustomization configResourceCustomization;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CONFIGURATION_MODEL_UUID")
+    private ConfigurationResource configurationResource;
 
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    public String getModelCustomizationUUID() {
+        return modelCustomizationUUID;
+    }
 
-	public String getModelInstanceName() {
-		return modelInstanceName;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public void setModelInstanceName(String modelInstanceName) {
-		this.modelInstanceName = modelInstanceName;
-	}
+    public String getModelInstanceName() {
+        return modelInstanceName;
+    }
 
-	public String getNfFunction() {
-		return nfFunction;
-	}
+    public void setModelInstanceName(String modelInstanceName) {
+        this.modelInstanceName = modelInstanceName;
+    }
 
-	public void setNfFunction(String nfFunction) {
-		this.nfFunction = nfFunction;
-	}
+    public String getNfFunction() {
+        return nfFunction;
+    }
 
-	public String getNfType() {
-		return nfType;
-	}
+    public void setNfFunction(String nfFunction) {
+        this.nfFunction = nfFunction;
+    }
 
-	public void setNfType(String nfType) {
-		this.nfType = nfType;
-	}
+    public String getNfType() {
+        return nfType;
+    }
 
-	public String getNfRole() {
-		return nfRole;
-	}
+    public void setNfType(String nfType) {
+        this.nfType = nfType;
+    }
 
-	public void setNfRole(String nfRole) {
-		this.nfRole = nfRole;
-	}
+    public String getNfRole() {
+        return nfRole;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
-		
-	public String getServiceProxyResourceCustomizationUUID() {
-		return serviceProxyResourceCustomizationUUID;
-	}
+    public void setNfRole(String nfRole) {
+        this.nfRole = nfRole;
+    }
 
-	public void setServiceProxyResourceCustomizationUUID(String serviceProxyResourceCustomizationUUID) {
-		this.serviceProxyResourceCustomizationUUID = serviceProxyResourceCustomizationUUID;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	@LinkedResource
-	public ConfigurationResourceCustomization getConfigResourceCustomization() {
-		return configResourceCustomization;
-	}
-	
-	public void setConfigResourceCustomization(ConfigurationResourceCustomization configResourceCustomization) {
-		this.configResourceCustomization = configResourceCustomization;
-	}
+    public String getServiceProxyResourceCustomizationUUID() {
+        return serviceProxyResourceCustomizationUUID;
+    }
 
-	@LinkedResource
-	public ConfigurationResource getConfigurationResource() {
-		return configurationResource;
-	}
+    public void setServiceProxyResourceCustomizationUUID(String serviceProxyResourceCustomizationUUID) {
+        this.serviceProxyResourceCustomizationUUID = serviceProxyResourceCustomizationUUID;
+    }
 
-	public void setConfigurationResource(ConfigurationResource configurationResource) {
-		this.configurationResource = configurationResource;
-	}
+    @LinkedResource
+    public ConfigurationResourceCustomization getConfigResourceCustomization() {
+        return configResourceCustomization;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelInstanceName", modelInstanceName).append("nfFunction", nfFunction)
-				.append("nfType", nfType).append("nfRole", nfRole).append("created", created)
-				//.append("serviceProxyResourceCustomization", serviceProxyResourceCustomization)
-				.append("configResourceCustomization", configResourceCustomization)
-				.append("configurationResource", configurationResource).toString();
-	}
+    public void setConfigResourceCustomization(ConfigurationResourceCustomization configResourceCustomization) {
+        this.configResourceCustomization = configResourceCustomization;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ConfigurationResourceCustomization)) {
-			return false;
-		}
-		ConfigurationResourceCustomization castOther = (ConfigurationResourceCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
-	}
+    @LinkedResource
+    public ConfigurationResource getConfigurationResource() {
+        return configurationResource;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
-	}
+    public void setConfigurationResource(ConfigurationResource configurationResource) {
+        this.configurationResource = configurationResource;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName).append("nfFunction", nfFunction)
+                .append("nfType", nfType).append("nfRole", nfRole).append("created", created)
+                // .append("serviceProxyResourceCustomization", serviceProxyResourceCustomization)
+                .append("configResourceCustomization", configResourceCustomization)
+                .append("configurationResource", configurationResource).toString();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ConfigurationResourceCustomization)) {
+            return false;
+        }
+        ConfigurationResourceCustomization castOther = (ConfigurationResourceCustomization) other;
+        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+    }
 
 }

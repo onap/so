@@ -22,15 +22,15 @@ package org.onap.so.apihandlerinfra.tenantisolation.exceptions;
 
 public class SDCClientCallFailed extends Exception {
 
-	private static final long serialVersionUID = 3066575499816576134L;
+    private static final long serialVersionUID = 3066575499816576134L;
 
-	public SDCClientCallFailed(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public SDCClientCallFailed(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public SDCClientCallFailed(String message) {
-		super(message);
-	}
-	
-	
+    public SDCClientCallFailed(String message) {
+        super(message);
+    }
+
+
 }

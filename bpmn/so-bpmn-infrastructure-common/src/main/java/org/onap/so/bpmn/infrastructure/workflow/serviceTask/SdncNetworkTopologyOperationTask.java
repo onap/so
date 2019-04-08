@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask;
 
 import java.util.Map;
-
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -49,29 +48,30 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
     private static final String URL = "/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation";
 
     @Override
-    public void sendRestrequestAndHandleResponse(DelegateExecution execution,
-                                                 Map<String, String> inputs,
-                                                 GenericResourceApi genericResourceApiClient) throws Exception {
+    public void sendRestrequestAndHandleResponse(DelegateExecution execution, Map<String, String> inputs,
+            GenericResourceApi genericResourceApiClient) throws Exception {
         logger.info("SdncNetworkTopologyOperationTask.sendRestrequestAndHandleResponse begin!");
-        updateProgress(execution, RequestsDbConstant.Status.PROCESSING, null, "40", "sendRestrequestAndHandleResponse begin!");
+        updateProgress(execution, RequestsDbConstant.Status.PROCESSING, null, "40",
+                "sendRestrequestAndHandleResponse begin!");
         NetworkRpcInputEntityBuilder builder = new NetworkRpcInputEntityBuilder();
         RpcNetworkTopologyOperationInputEntity inputEntity = builder.build(execution, inputs);
         updateProgress(execution, RequestsDbConstant.Status.PROCESSING, null, "50", "RequestBody build finished!");
         RpcNetworkTopologyOperationOutputEntity outputEntity;
         if (!isSend2SdncDirectly()) {
-            outputEntity = genericResourceApiClient.postNetworkTopologyOperation
-                    (HeaderUtil.DefaulAuth, inputEntity).execute().body();
-        updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
-        saveOutput(execution, outputEntity);
+            outputEntity = genericResourceApiClient.postNetworkTopologyOperation(HeaderUtil.DefaulAuth, inputEntity)
+                    .execute().body();
+            updateProgress(execution, null, null, "90", "sendRestrequestAndHandleResponse finished!");
+            saveOutput(execution, outputEntity);
         } else {
             send2SdncDirectly(HeaderUtil.DefaulAuth, inputEntity);
         }
-        updateProgress(execution, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED, "execute finished!");
+        updateProgress(execution, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED,
+                "execute finished!");
         logger.info("SdncNetworkTopologyOperationTask.sendRestrequestAndHandleResponse end!");
     }
 
-    private void send2SdncDirectly(String defaulAuth,
-                                   RpcNetworkTopologyOperationInputEntity inputEntity) throws RouteException {
+    private void send2SdncDirectly(String defaulAuth, RpcNetworkTopologyOperationInputEntity inputEntity)
+            throws RouteException {
         logger.info("SdncNetworkTopologyOperationTask.send2SdncDirectly begin!");
         String url = "http://" + getSdncIp() + ":" + getSdncPort() + URL;
         HttpPost httpPost = new HttpPost(url);
@@ -84,7 +84,8 @@ public class SdncNetworkTopologyOperationTask extends AbstractSdncOperationTask 
         logger.info("SdncNetworkTopologyOperationTask.send2SdncDirectly end!");
     }
 
-    private void saveOutput(DelegateExecution execution, RpcNetworkTopologyOperationOutputEntity output) throws RouteException {
+    private void saveOutput(DelegateExecution execution, RpcNetworkTopologyOperationOutputEntity output)
+            throws RouteException {
         logger.info("SdncNetworkTopologyOperationTask.saveOutput begin!");
         String responseCode = output.getOutput().getResponseCode();
         if (!"200".equals(responseCode)) {

@@ -26,25 +26,37 @@ import org.onap.so.client.graphinventory.GraphInventoryObjectPlurals;
 import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 
 public interface GraphInventoryResourceUri extends GraphInventoryUri {
-	public GraphInventoryResourceUri relationshipAPI();
-	public GraphInventoryResourceUri relatedTo(GraphInventoryObjectPlurals plural);
-	public GraphInventoryResourceUri relatedTo(GraphInventoryObjectType type, String... values);
-	public GraphInventoryResourceUri resourceVersion(String version);
-	public GraphInventoryResourceUri format(Format format);
-	@Override
-	public GraphInventoryResourceUri depth(Depth depth);
-	@Override
-	public GraphInventoryResourceUri nodesOnly(boolean nodesOnly);
-	@Override	
-	public GraphInventoryResourceUri queryParam(String name, String... values);
-	@Override
-	public GraphInventoryResourceUri replaceQueryParam(String name, String... values);
-	@Override
-	public GraphInventoryResourceUri resultIndex(int index);
-	@Override
-	public GraphInventoryResourceUri resultSize(int size);
-	@Override
-	public GraphInventoryResourceUri limit(int size);
-	@Override
-	public GraphInventoryResourceUri clone();
+    public GraphInventoryResourceUri relationshipAPI();
+
+    public GraphInventoryResourceUri relatedTo(GraphInventoryObjectPlurals plural);
+
+    public GraphInventoryResourceUri relatedTo(GraphInventoryObjectType type, String... values);
+
+    public GraphInventoryResourceUri resourceVersion(String version);
+
+    public GraphInventoryResourceUri format(Format format);
+
+    @Override
+    public GraphInventoryResourceUri depth(Depth depth);
+
+    @Override
+    public GraphInventoryResourceUri nodesOnly(boolean nodesOnly);
+
+    @Override
+    public GraphInventoryResourceUri queryParam(String name, String... values);
+
+    @Override
+    public GraphInventoryResourceUri replaceQueryParam(String name, String... values);
+
+    @Override
+    public GraphInventoryResourceUri resultIndex(int index);
+
+    @Override
+    public GraphInventoryResourceUri resultSize(int size);
+
+    @Override
+    public GraphInventoryResourceUri limit(int size);
+
+    @Override
+    public GraphInventoryResourceUri clone();
 }

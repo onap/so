@@ -27,7 +27,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -38,44 +37,50 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
 public class NamingServiceCreateTasksTest extends BaseTaskTest {
-	@InjectMocks
-	private NamingServiceCreateTasks namingServiceCreateTasks = new NamingServiceCreateTasks();	
-	
-	private InstanceGroup instanceGroup;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		instanceGroup = setInstanceGroup();				
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID))).thenReturn(instanceGroup);		
-	}
-	
-	@Test
-	public void createInstanceGroupTest() throws Exception {
-		String policyInstanceName = "policyInstanceName";
-		String nfNamingCode = "nfNamingCode";
-		String generatedName = "generatedInstanceGroupName";
-		execution.setVariable(policyInstanceName, policyInstanceName);
-		execution.setVariable(nfNamingCode, nfNamingCode);
-		doReturn(generatedName).when(namingServiceResources).generateInstanceGroupName(instanceGroup, policyInstanceName, nfNamingCode);
-		
-		namingServiceCreateTasks.createInstanceGroupName(execution);
-		verify(namingServiceResources, times(1)).generateInstanceGroupName(instanceGroup, policyInstanceName, nfNamingCode);
-		assertEquals(instanceGroup.getInstanceGroupName(), generatedName);
-	}
-	
-	@Test
-	public void createInstanceGroupExceptionTest() throws Exception {
-		expectedException.expect(BBObjectNotFoundException.class);		
-		lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, "notfound");
-		doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));	
-		String policyInstanceName = "policyInstanceName";
-		String nfNamingCode = "nfNamingCode";
-		execution.setVariable(policyInstanceName, policyInstanceName);
-		execution.setVariable(nfNamingCode, nfNamingCode);
-		doReturn("").when(namingServiceResources).generateInstanceGroupName(instanceGroup, policyInstanceName, nfNamingCode);		
-		namingServiceCreateTasks.createInstanceGroupName(execution);
-		verify(namingServiceResources, times(1)).generateInstanceGroupName(instanceGroup, policyInstanceName, nfNamingCode);
-		
-	}
-	
+    @InjectMocks
+    private NamingServiceCreateTasks namingServiceCreateTasks = new NamingServiceCreateTasks();
+
+    private InstanceGroup instanceGroup;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        instanceGroup = setInstanceGroup();
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID)))
+                .thenReturn(instanceGroup);
+    }
+
+    @Test
+    public void createInstanceGroupTest() throws Exception {
+        String policyInstanceName = "policyInstanceName";
+        String nfNamingCode = "nfNamingCode";
+        String generatedName = "generatedInstanceGroupName";
+        execution.setVariable(policyInstanceName, policyInstanceName);
+        execution.setVariable(nfNamingCode, nfNamingCode);
+        doReturn(generatedName).when(namingServiceResources).generateInstanceGroupName(instanceGroup,
+                policyInstanceName, nfNamingCode);
+
+        namingServiceCreateTasks.createInstanceGroupName(execution);
+        verify(namingServiceResources, times(1)).generateInstanceGroupName(instanceGroup, policyInstanceName,
+                nfNamingCode);
+        assertEquals(instanceGroup.getInstanceGroupName(), generatedName);
+    }
+
+    @Test
+    public void createInstanceGroupExceptionTest() throws Exception {
+        expectedException.expect(BBObjectNotFoundException.class);
+        lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, "notfound");
+        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),
+                ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));
+        String policyInstanceName = "policyInstanceName";
+        String nfNamingCode = "nfNamingCode";
+        execution.setVariable(policyInstanceName, policyInstanceName);
+        execution.setVariable(nfNamingCode, nfNamingCode);
+        doReturn("").when(namingServiceResources).generateInstanceGroupName(instanceGroup, policyInstanceName,
+                nfNamingCode);
+        namingServiceCreateTasks.createInstanceGroupName(execution);
+        verify(namingServiceResources, times(1)).generateInstanceGroupName(instanceGroup, policyInstanceName,
+                nfNamingCode);
+
+    }
+
 }

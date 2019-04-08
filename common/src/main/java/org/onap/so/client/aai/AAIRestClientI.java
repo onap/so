@@ -29,13 +29,13 @@ import org.onap.aai.domain.yang.Pserver;
 
 public interface AAIRestClientI {
 
-	List<Pserver> getPhysicalServerByVnfId(String vnfId) throws IOException;
-	
-	void updateMaintenceFlagVnfId(String vnfId, boolean inMaint);
-	
-	GenericVnf getVnfByName(String vnfId);
+    List<Pserver> getPhysicalServerByVnfId(String vnfId) throws IOException;
 
-	Optional<Pnf> getPnfByName(String pnfId);
+    void updateMaintenceFlagVnfId(String vnfId, boolean inMaint);
 
-	void createPnf(String pnfId, Pnf pnf);
+    GenericVnf getVnfByName(String vnfId);
+
+    Optional<Pnf> getPnfByName(String pnfId);
+
+    void createPnf(String pnfId, Pnf pnf);
 }

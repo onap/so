@@ -21,9 +21,7 @@
 package org.onap.so.adapters.msoopenstackadapters;
 
 import static org.junit.Assert.assertEquals;
-
 import javax.ws.rs.core.Response;
-
 import org.json.JSONException;
 import org.junit.Test;
 import org.onap.so.adapters.vnf.BaseRestTestUtils;
@@ -33,15 +31,15 @@ import org.springframework.http.ResponseEntity;
 
 public class HealthCheckHandlerTest extends BaseRestTestUtils {
 
-	@Test
-	public void testHealthcheckVnf() throws JSONException {
+    @Test
+    public void testHealthcheckVnf() throws JSONException {
 
-		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
-		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/manage/health"),
-				HttpMethod.GET, entity, String.class);
+        ResponseEntity<String> response =
+                restTemplate.exchange(createURLWithPort("/manage/health"), HttpMethod.GET, entity, String.class);
 
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
-	
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
+
 }

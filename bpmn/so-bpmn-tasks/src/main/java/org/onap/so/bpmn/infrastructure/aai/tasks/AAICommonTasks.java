@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import java.util.Optional;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
@@ -33,24 +32,25 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAICommonTasks {
-	
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	
-	public Optional<String> getServiceType(BuildingBlockExecution execution) {
-		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID); 
 
-			ModelInfoServiceInstance model = serviceInstance.getModelInfoServiceInstance();
-			if (model != null) {
-				return Optional.of(model.getServiceType());
-			}
-		} catch(Exception e) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e);
-		}
-		return Optional.empty();
-	}
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+
+    public Optional<String> getServiceType(BuildingBlockExecution execution) {
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+
+            ModelInfoServiceInstance model = serviceInstance.getModelInfoServiceInstance();
+            if (model != null) {
+                return Optional.of(model.getServiceType());
+            }
+        } catch (Exception e) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e);
+        }
+        return Optional.empty();
+    }
 
 }

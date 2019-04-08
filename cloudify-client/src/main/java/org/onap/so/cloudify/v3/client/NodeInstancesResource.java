@@ -50,7 +50,7 @@ public class NodeInstancesResource {
 
 
     public class GetNodeInstance extends CloudifyRequest<NodeInstance> {
-        public GetNodeInstance (String id) {
+        public GetNodeInstance(String id) {
             super(client, HttpMethod.GET, "/api/v3/node-instances/" + id, null, NodeInstance.class);
         }
     }
@@ -58,12 +58,13 @@ public class NodeInstancesResource {
     public class ListNodeInstances extends CloudifyRequest<NodeInstances> {
         public ListNodeInstances() {
             super(client, HttpMethod.GET, "/api/v3/node-instances", null, NodeInstances.class);
-       }
+        }
     }
 
     public class UpdateNodeInstance extends CloudifyRequest<NodeInstance> {
         public UpdateNodeInstance(String nodeInstanceId, UpdateNodeInstanceParams body) {
-            super(client, HttpMethod.PATCH, "/api/v3/node-instances/" + nodeInstanceId, Entity.json(body), NodeInstance.class);
+            super(client, HttpMethod.PATCH, "/api/v3/node-instances/" + nodeInstanceId, Entity.json(body),
+                    NodeInstance.class);
         }
     }
 

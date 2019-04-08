@@ -22,7 +22,6 @@ package org.onap.so.client.sdno;
 
 import static org.junit.Assert.assertEquals;
 import java.util.UUID;
-
 import org.junit.Test;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.client.sdno.beans.RequestHealthDiagnostic;
@@ -30,28 +29,28 @@ import org.onap.so.client.sdno.beans.SDNO;
 
 public class SDNOValidatorImplTest {
 
-	@Test
-	public void buildRequestDiagnosticTest() throws Exception {
-		SDNOValidatorImpl validator = new SDNOValidatorImpl();
-		UUID uuid = UUID.randomUUID();
-		GenericVnf vnf = new GenericVnf();
-		vnf.setVnfName("VNFNAME");
-		vnf.setVnfId("test");
-		vnf.setIpv4OamAddress("1.2.3.4");
-		vnf.setNfRole("VPE");
-		SDNO request = validator.buildRequestDiagnostic(vnf, uuid, "mechid");
-		assertEquals(request.getNodeType(), "VPE");
-		assertEquals(request.getOperation(), "health-diagnostic");
-		
-		RequestHealthDiagnostic innerRequest = request.getBody().getInput().getRequestHealthDiagnostic();
-		assertEquals(innerRequest.getRequestClientName(), "MSO");
-		assertEquals(innerRequest.getRequestNodeName(), "VNFNAME");
-		assertEquals(innerRequest.getRequestNodeUuid(), "test");
-		assertEquals(innerRequest.getRequestNodeType(), "VPE");
-		assertEquals(innerRequest.getRequestNodeIp(), "1.2.3.4");
-		assertEquals(innerRequest.getRequestUserId(), "mechid");
-		assertEquals(innerRequest.getRequestId(), uuid.toString());
-		assertEquals(innerRequest.getHealthDiagnosticCode(), "default");	
+    @Test
+    public void buildRequestDiagnosticTest() throws Exception {
+        SDNOValidatorImpl validator = new SDNOValidatorImpl();
+        UUID uuid = UUID.randomUUID();
+        GenericVnf vnf = new GenericVnf();
+        vnf.setVnfName("VNFNAME");
+        vnf.setVnfId("test");
+        vnf.setIpv4OamAddress("1.2.3.4");
+        vnf.setNfRole("VPE");
+        SDNO request = validator.buildRequestDiagnostic(vnf, uuid, "mechid");
+        assertEquals(request.getNodeType(), "VPE");
+        assertEquals(request.getOperation(), "health-diagnostic");
 
-	}	
+        RequestHealthDiagnostic innerRequest = request.getBody().getInput().getRequestHealthDiagnostic();
+        assertEquals(innerRequest.getRequestClientName(), "MSO");
+        assertEquals(innerRequest.getRequestNodeName(), "VNFNAME");
+        assertEquals(innerRequest.getRequestNodeUuid(), "test");
+        assertEquals(innerRequest.getRequestNodeType(), "VPE");
+        assertEquals(innerRequest.getRequestNodeIp(), "1.2.3.4");
+        assertEquals(innerRequest.getRequestUserId(), "mechid");
+        assertEquals(innerRequest.getRequestId(), uuid.toString());
+        assertEquals(innerRequest.getHealthDiagnosticCode(), "default");
+
+    }
 }

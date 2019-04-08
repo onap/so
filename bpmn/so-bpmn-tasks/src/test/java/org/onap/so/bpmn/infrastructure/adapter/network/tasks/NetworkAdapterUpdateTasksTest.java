@@ -30,11 +30,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,45 +54,49 @@ import org.onap.so.client.adapter.network.NetworkAdapterClientException;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class NetworkAdapterUpdateTasksTest extends BaseTaskTest{
-	@InjectMocks
-	private NetworkAdapterUpdateTasks networkAdapterUpdateTasks = new NetworkAdapterUpdateTasks();
-	
-	private ServiceInstance serviceInstance;
-	private L3Network network;
-	private RequestContext requestContext;
-	private CloudRegion cloudRegion;
-	private OrchestrationContext orchestrationContext;
-	private Map<String, String> userInput;
-	private Customer customer;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		customer = setCustomer();
-		serviceInstance = setServiceInstance();
-		network = setL3Network();
-		requestContext = setRequestContext();
-		cloudRegion = setCloudRegion();
-		orchestrationContext = setOrchestrationContext();
-		userInput = setUserInput();
-		userInput.put("userInputKey1", "userInputValue1");
-		
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-		
-	}
-	
-	@Test
-	public void updateNetworkTest() throws Exception {
-		String cloudRegionPo = "cloudRegionPo";
-		UpdateNetworkRequest updateNetworkRequest = new UpdateNetworkRequest();
-		execution.setVariable("cloudRegionPo", cloudRegionPo);
+public class NetworkAdapterUpdateTasksTest extends BaseTaskTest {
+    @InjectMocks
+    private NetworkAdapterUpdateTasks networkAdapterUpdateTasks = new NetworkAdapterUpdateTasks();
 
-		doReturn(updateNetworkRequest).when(networkAdapterObjectMapper).createNetworkUpdateRequestMapper(isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class), isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(Customer.class));
-		networkAdapterUpdateTasks.updateNetwork(execution);
-		verify(networkAdapterObjectMapper, times(1)).createNetworkUpdateRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, network, userInput, customer);
-		assertEquals(updateNetworkRequest, execution.getVariable("networkAdapterRequest"));	
-	}
-	
+    private ServiceInstance serviceInstance;
+    private L3Network network;
+    private RequestContext requestContext;
+    private CloudRegion cloudRegion;
+    private OrchestrationContext orchestrationContext;
+    private Map<String, String> userInput;
+    private Customer customer;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        customer = setCustomer();
+        serviceInstance = setServiceInstance();
+        network = setL3Network();
+        requestContext = setRequestContext();
+        cloudRegion = setCloudRegion();
+        orchestrationContext = setOrchestrationContext();
+        userInput = setUserInput();
+        userInput.put("userInputKey1", "userInputValue1");
+
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+
+    }
+
+    @Test
+    public void updateNetworkTest() throws Exception {
+        String cloudRegionPo = "cloudRegionPo";
+        UpdateNetworkRequest updateNetworkRequest = new UpdateNetworkRequest();
+        execution.setVariable("cloudRegionPo", cloudRegionPo);
+
+        doReturn(updateNetworkRequest).when(networkAdapterObjectMapper).createNetworkUpdateRequestMapper(
+                isA(RequestContext.class), isA(CloudRegion.class), isA(OrchestrationContext.class),
+                isA(ServiceInstance.class), isA(L3Network.class), isA(Map.class), isA(Customer.class));
+        networkAdapterUpdateTasks.updateNetwork(execution);
+        verify(networkAdapterObjectMapper, times(1)).createNetworkUpdateRequestMapper(requestContext, cloudRegion,
+                orchestrationContext, serviceInstance, network, userInput, customer);
+        assertEquals(updateNetworkRequest, execution.getVariable("networkAdapterRequest"));
+    }
+
 
 }

@@ -25,21 +25,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-	" AICIdentity "
-})
+@JsonPropertyOrder({" AICIdentity "})
 public class StartStopAction {
 
-	@JsonProperty(" AICIdentity ")
-	private String aicIdentity;
+    @JsonProperty(" AICIdentity ")
+    private String aicIdentity;
 
-	@JsonProperty(" AICIdentity ")
-	public String getAicIdentity() {
-		return aicIdentity;
-	}
+    @JsonProperty(" AICIdentity ")
+    public String getAicIdentity() {
+        return aicIdentity;
+    }
 
-	@JsonProperty(" AICIdentity ")
-	public void setAicIdentity(String aicIdentity) {
-		this.aicIdentity = aicIdentity;
-	}
+    @JsonProperty(" AICIdentity ")
+    public void setAicIdentity(String aicIdentity) {
+        this.aicIdentity = aicIdentity;
+    }
 }

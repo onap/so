@@ -23,10 +23,11 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "collectionNetworkResourceCustomization", path = "collectionNetworkResourceCustomization")
+@RepositoryRestResource(collectionResourceRel = "collectionNetworkResourceCustomization",
+        path = "collectionNetworkResourceCustomization")
 public interface CollectionNetworkResourceCustomizationRepository
-		extends JpaRepository<CollectionNetworkResourceCustomization, String> {
-	
-	CollectionNetworkResourceCustomization findOneByModelCustomizationUUID(String modelCustomizationUUID);
+        extends JpaRepository<CollectionNetworkResourceCustomization, String> {
+
+    CollectionNetworkResourceCustomization findOneByModelCustomizationUUID(String modelCustomizationUUID);
 
 }

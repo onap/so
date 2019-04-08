@@ -25,34 +25,32 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-"vnf-name"
-})
+@JsonPropertyOrder({"vnf-name"})
 public class RequestParametersHealthCheck {
 
-@JsonProperty("vnf-name")
-private String vnfName;
-@JsonProperty("host-ip-address")
-private String hostIpAddress;
+    @JsonProperty("vnf-name")
+    private String vnfName;
+    @JsonProperty("host-ip-address")
+    private String hostIpAddress;
 
-@JsonProperty("vnf-name")
-public String getVnfName() {
-	return vnfName;
-}
+    @JsonProperty("vnf-name")
+    public String getVnfName() {
+        return vnfName;
+    }
 
-@JsonProperty("vnf-name")
-public void setVnfName(String vnfName) {
-	this.vnfName = vnfName;
-}
+    @JsonProperty("vnf-name")
+    public void setVnfName(String vnfName) {
+        this.vnfName = vnfName;
+    }
 
-@JsonProperty("host-ip-address")
-public void setHostIpAddress(String hostIpAddress) {
-	this.hostIpAddress = hostIpAddress;
-}
+    @JsonProperty("host-ip-address")
+    public void setHostIpAddress(String hostIpAddress) {
+        this.hostIpAddress = hostIpAddress;
+    }
 
-@JsonProperty("host-ip-address")
-public String getHostIpAddress() {
-	return hostIpAddress;
-}
+    @JsonProperty("host-ip-address")
+    public String getHostIpAddress() {
+        return hostIpAddress;
+    }
 
 }

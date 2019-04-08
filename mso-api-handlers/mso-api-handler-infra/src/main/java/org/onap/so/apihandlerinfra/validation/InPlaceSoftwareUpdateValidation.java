@@ -26,33 +26,34 @@ import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 
-public class InPlaceSoftwareUpdateValidation implements ValidationRule{
+public class InPlaceSoftwareUpdateValidation implements ValidationRule {
     private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-    	RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
-    	CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails ().getCloudConfiguration();
-    	RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
 
-		if (cloudConfiguration == null) {
-			throw new ValidationException ("cloudConfiguration");
-		}else if (empty (cloudConfiguration.getLcpCloudRegionId ())) {
-    		throw new ValidationException ("lcpCloudRegionId");
-    	}else if (empty (cloudConfiguration.getTenantId ())) {
-    		throw new ValidationException ("tenantId");
-    	}
-    	if(requestInfo == null){
-    		throw new ValidationException("requestInfo");
-    	}else if(empty(requestInfo.getRequestorId())) {
-        	throw new ValidationException ("requestorId");
-        }else if (empty (requestInfo.getSource ())) {
-        	throw new ValidationException ("source");
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
+        CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails().getCloudConfiguration();
+        RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
+
+        if (cloudConfiguration == null) {
+            throw new ValidationException("cloudConfiguration");
+        } else if (empty(cloudConfiguration.getLcpCloudRegionId())) {
+            throw new ValidationException("lcpCloudRegionId");
+        } else if (empty(cloudConfiguration.getTenantId())) {
+            throw new ValidationException("tenantId");
         }
-    	if(requestParameters == null){
-    		throw new ValidationException("requestParameters");
-    	}
+        if (requestInfo == null) {
+            throw new ValidationException("requestInfo");
+        } else if (empty(requestInfo.getRequestorId())) {
+            throw new ValidationException("requestorId");
+        } else if (empty(requestInfo.getSource())) {
+            throw new ValidationException("source");
+        }
+        if (requestParameters == null) {
+            throw new ValidationException("requestParameters");
+        }
         return info;
-	}
+    }
 }

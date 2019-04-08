@@ -23,72 +23,76 @@ package org.onap.so.client.sdnc.beans;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.UUID;
-
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-public class SDNCRequest implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4679678988657593282L;
-	private String timeOut = "PT1H";
-	private SDNCTopology topology;
-	private String CorrelationValue = UUID.randomUUID().toString();
-	private String CorrelationName = "SDNCCallback";
-	private Object SDNCPayload;
-	
+public class SDNCRequest implements Serializable {
 
-	public String getTimeOut() {
-		return timeOut;
-	}
-	
-	public void setTimeOut(String timeOut) {
-		this.timeOut = timeOut;
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4679678988657593282L;
+    private String timeOut = "PT1H";
+    private SDNCTopology topology;
+    private String CorrelationValue = UUID.randomUUID().toString();
+    private String CorrelationName = "SDNCCallback";
+    private Object SDNCPayload;
 
-	public SDNCTopology getTopology() {
-		return topology;
-	}
 
-	public void setTopology(SDNCTopology topology) {
-		this.topology = topology;
-	}
+    public String getTimeOut() {
+        return timeOut;
+    }
 
-	public String getCorrelationValue() {
-		return CorrelationValue;
-	}
-	public void setCorrelationValue(String correlationValue) {
-		CorrelationValue = correlationValue;
-	}
-	public String getCorrelationName() {
-		return CorrelationName;
-	}
-	public void setCorrelationName(String correlationName) {
-		CorrelationName = correlationName;
-	}
-	public Object getSDNCPayload() {
-		return SDNCPayload;
-	}
-	public void setSDNCPayload(Object sDNCPayload) {
-		SDNCPayload = sDNCPayload;
-	}
-	
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof SDNCRequest)) {
-			return false;
-		}
-		SDNCRequest castOther = (SDNCRequest) other;
-		return new EqualsBuilder().append(CorrelationValue, castOther.CorrelationValue)
-				.append(CorrelationName, castOther.CorrelationName).isEquals();
-	}
+    public void setTimeOut(String timeOut) {
+        this.timeOut = timeOut;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(CorrelationValue).append(CorrelationName).toHashCode();
-	}
+    public SDNCTopology getTopology() {
+        return topology;
+    }
+
+    public void setTopology(SDNCTopology topology) {
+        this.topology = topology;
+    }
+
+    public String getCorrelationValue() {
+        return CorrelationValue;
+    }
+
+    public void setCorrelationValue(String correlationValue) {
+        CorrelationValue = correlationValue;
+    }
+
+    public String getCorrelationName() {
+        return CorrelationName;
+    }
+
+    public void setCorrelationName(String correlationName) {
+        CorrelationName = correlationName;
+    }
+
+    public Object getSDNCPayload() {
+        return SDNCPayload;
+    }
+
+    public void setSDNCPayload(Object sDNCPayload) {
+        SDNCPayload = sDNCPayload;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof SDNCRequest)) {
+            return false;
+        }
+        SDNCRequest castOther = (SDNCRequest) other;
+        return new EqualsBuilder().append(CorrelationValue, castOther.CorrelationValue)
+                .append(CorrelationName, castOther.CorrelationName).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(CorrelationValue).append(CorrelationName).toHashCode();
+    }
 
 }

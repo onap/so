@@ -25,16 +25,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AVPNDmaapBean {
-	
-	@JsonProperty("asyncRequestStatus")
-	private AsyncRequestStatus asyncRequestStatus;
 
-	public AsyncRequestStatus getAsyncRequestStatus() {
-		return asyncRequestStatus;
-	}
+    @JsonProperty("asyncRequestStatus")
+    private AsyncRequestStatus asyncRequestStatus;
 
-	public void setAsyncRequestStatus(AsyncRequestStatus asyncRequestStatus) {
-		this.asyncRequestStatus = asyncRequestStatus;
-	}
+    public AsyncRequestStatus getAsyncRequestStatus() {
+        return asyncRequestStatus;
+    }
+
+    public void setAsyncRequestStatus(AsyncRequestStatus asyncRequestStatus) {
+        this.asyncRequestStatus = asyncRequestStatus;
+    }
 
 }

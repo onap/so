@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.Optional;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
@@ -39,80 +38,83 @@ import org.springframework.stereotype.Component;
 @Component
 public class UnassignNetworkBB {
 
-	private static final Logger logger = LoggerFactory.getLogger(UnassignNetworkBB.class);
-	
-	private static String MESSAGE_CANNOT_PERFORM_UNASSIGN = "Cannot perform Unassign Network. Network is still related to ";	
-	private static String MESSAGE_ERROR_ROLLBACK = " Rollback is not possible. Please restore data manually.";	
-	
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
+    private static final Logger logger = LoggerFactory.getLogger(UnassignNetworkBB.class);
 
-	@Autowired
-	private NetworkBBUtils networkBBUtils;
-	
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	
-	@Autowired
-	private AAINetworkResources aaiNetworkResources;
+    private static String MESSAGE_CANNOT_PERFORM_UNASSIGN =
+            "Cannot perform Unassign Network. Network is still related to ";
+    private static String MESSAGE_ERROR_ROLLBACK = " Rollback is not possible. Please restore data manually.";
 
-	/**
-	 * BPMN access method to prepare overall error messages.
-	 * 
-	 * @param execution - BuildingBlockExecution
-	 * @param relatedToValue - String, ex: vf-module
-	 * @return void - nothing
-	 * @throws Exception
-	 */
-	
-	public void checkRelationshipRelatedTo(BuildingBlockExecution execution, String relatedToValue) throws Exception {
-		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-			AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
-			Optional<org.onap.aai.domain.yang.L3Network> network = aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
-			if (networkBBUtils.isRelationshipRelatedToExists(network, relatedToValue)) {
-				String msg = MESSAGE_CANNOT_PERFORM_UNASSIGN + relatedToValue;
-				execution.setVariable("ErrorUnassignNetworkBB", msg);
-				exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
-			}
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}	
-	
-	/**
-	 * BPMN access method to getCloudRegionId
-	 * 
-	 * @param execution - BuildingBlockExecution
-	 * @return void - nothing
-	 * @throws Exception
-	 */
-	
-	public void getCloudSdncRegion(BuildingBlockExecution execution) throws Exception {
-		try {
-			String cloudRegionSdnc = networkBBUtils.getCloudRegion(execution, SourceSystem.SDNC);
-			execution.setVariable("cloudRegionSdnc", cloudRegionSdnc);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}		
-	
-	/**
-	 * BPMN access method to prepare overall error messages.
-	 * 
-	 * @param execution - BuildingBlockExecution
-	 * @return void - nothing
-	 */
-	public void errorEncountered(BuildingBlockExecution execution) {
-		String msg;
-		boolean isRollbackNeeded = execution.getVariable("isRollbackNeeded") != null ? execution.getVariable("isRollbackNeeded") : false;
-		if (isRollbackNeeded == true) {
-			msg = execution.getVariable("ErrorUnassignNetworkBB") + MESSAGE_ERROR_ROLLBACK;
-		} else {
-			msg = execution.getVariable("ErrorUnassignNetworkBB");
-		}
-		exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
-	}	
-	
-	
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+
+    @Autowired
+    private NetworkBBUtils networkBBUtils;
+
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+
+    @Autowired
+    private AAINetworkResources aaiNetworkResources;
+
+    /**
+     * BPMN access method to prepare overall error messages.
+     * 
+     * @param execution - BuildingBlockExecution
+     * @param relatedToValue - String, ex: vf-module
+     * @return void - nothing
+     * @throws Exception
+     */
+
+    public void checkRelationshipRelatedTo(BuildingBlockExecution execution, String relatedToValue) throws Exception {
+        try {
+            L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+            AAIResultWrapper aaiResultWrapper = aaiNetworkResources.queryNetworkWrapperById(l3network);
+            Optional<org.onap.aai.domain.yang.L3Network> network =
+                    aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
+            if (networkBBUtils.isRelationshipRelatedToExists(network, relatedToValue)) {
+                String msg = MESSAGE_CANNOT_PERFORM_UNASSIGN + relatedToValue;
+                execution.setVariable("ErrorUnassignNetworkBB", msg);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    /**
+     * BPMN access method to getCloudRegionId
+     * 
+     * @param execution - BuildingBlockExecution
+     * @return void - nothing
+     * @throws Exception
+     */
+
+    public void getCloudSdncRegion(BuildingBlockExecution execution) throws Exception {
+        try {
+            String cloudRegionSdnc = networkBBUtils.getCloudRegion(execution, SourceSystem.SDNC);
+            execution.setVariable("cloudRegionSdnc", cloudRegionSdnc);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    /**
+     * BPMN access method to prepare overall error messages.
+     * 
+     * @param execution - BuildingBlockExecution
+     * @return void - nothing
+     */
+    public void errorEncountered(BuildingBlockExecution execution) {
+        String msg;
+        boolean isRollbackNeeded =
+                execution.getVariable("isRollbackNeeded") != null ? execution.getVariable("isRollbackNeeded") : false;
+        if (isRollbackNeeded == true) {
+            msg = execution.getVariable("ErrorUnassignNetworkBB") + MESSAGE_ERROR_ROLLBACK;
+        } else {
+            msg = execution.getVariable("ErrorUnassignNetworkBB");
+        }
+        exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
+    }
+
+
 }

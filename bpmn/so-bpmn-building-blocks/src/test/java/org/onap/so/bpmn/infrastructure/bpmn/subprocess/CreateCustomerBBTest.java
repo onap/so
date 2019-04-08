@@ -19,34 +19,35 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
-public class CreateCustomerBBTest extends BaseBPMNTest{
-	@Test
-	public void createCustomerBBTest() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateCustomerBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI", "CreateCustomerBB_End");
-		assertThat(pi).isEnded();
-	}
+public class CreateCustomerBBTest extends BaseBPMNTest {
+    @Test
+    public void createCustomerBBTest() throws InterruptedException {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateCustomerBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI",
+                "CreateCustomerBB_End");
+        assertThat(pi).isEnded();
+    }
 
-	@Test
-	public void createCustomerBBExceptionTest() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiCreateTasks).createCustomer(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateCustomerBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI")
-				.hasNotPassed("CreateCustomer_End");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void createCustomerBBExceptionTest() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiCreateTasks)
+                .createCustomer(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateCustomerBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("CreateCustomerBB_Start", "CreateCustomerAAI")
+                .hasNotPassed("CreateCustomer_End");
+        assertThat(pi).isEnded();
+    }
 }
 

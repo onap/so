@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 public interface UriParser {
-  public Set<String> getVariables();
-  public Map<String, String> parse(final String uri);
+    public Set<String> getVariables();
+
+    public Map<String, String> parse(final String uri);
 }

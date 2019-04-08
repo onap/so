@@ -32,24 +32,24 @@ import org.springframework.stereotype.Component;
 public class ActivateVfModule {
 
     private static final Logger logger = LoggerFactory.getLogger(ActivateVfModule.class);
-	
-	protected static final String VF_MODULE_TIMER_DURATION_PATH = "mso.workflow.vfModuleActivate.timer.duration";
-	protected static final String DEFAULT_TIMER_DURATION = "PT180S";
-	
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	
-	@Autowired
+
+    protected static final String VF_MODULE_TIMER_DURATION_PATH = "mso.workflow.vfModuleActivate.timer.duration";
+    protected static final String DEFAULT_TIMER_DURATION = "PT180S";
+
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+
+    @Autowired
     private Environment environment;
 
 
-	public void setTimerDuration(BuildingBlockExecution execution) {
-		try {
-			String waitDuration = this.environment.getProperty(VF_MODULE_TIMER_DURATION_PATH, DEFAULT_TIMER_DURATION);
-			logger.debug("Sleeping before proceeding with SDNC activate. Timer duration: {}", waitDuration);
-			execution.setVariable("vfModuleActivateTimerDuration", waitDuration);
-		} catch (Exception e) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e);
-		}
-	}
+    public void setTimerDuration(BuildingBlockExecution execution) {
+        try {
+            String waitDuration = this.environment.getProperty(VF_MODULE_TIMER_DURATION_PATH, DEFAULT_TIMER_DURATION);
+            logger.debug("Sleeping before proceeding with SDNC activate. Timer duration: {}", waitDuration);
+            execution.setVariable("vfModuleActivateTimerDuration", waitDuration);
+        } catch (Exception e) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, e);
+        }
+    }
 }

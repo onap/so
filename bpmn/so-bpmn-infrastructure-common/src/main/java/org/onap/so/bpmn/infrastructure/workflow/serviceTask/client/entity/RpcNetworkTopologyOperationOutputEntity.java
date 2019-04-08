@@ -23,9 +23,9 @@ package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RpcNetworkTopologyOperationOutputEntity {
-	@JsonProperty("GENERIC-RESOURCE-API:output")
+    @JsonProperty("GENERIC-RESOURCE-API:output")
     private NetworkTopologyOperationOutputEntity output;
-	
+
     public NetworkTopologyOperationOutputEntity getOutput() {
         return output;
     }

@@ -27,9 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.ws.rs.core.MultivaluedMap;
-
 import org.apache.commons.lang3.StringUtils;
 import org.onap.so.apihandlerinfra.Constants;
 import org.onap.so.apihandlerinfra.Status;
@@ -49,14 +47,12 @@ import org.onap.so.db.request.client.RequestsDbClient;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-
 import org.onap.so.utils.UUIDChecker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -75,316 +71,323 @@ public class TenantIsolationRequest {
     private long progress = Constants.PROGRESS_REQUEST_RECEIVED;
     private String requestScope;
     private CloudOrchestrationRequest cor;
-    
+
     @Autowired
-	private RequestsDbClient requestsDbClient;
-    
+    private RequestsDbClient requestsDbClient;
+
     private static Logger logger = LoggerFactory.getLogger(TenantIsolationRequest.class);
 
 
-	TenantIsolationRequest (String requestId) {
+    TenantIsolationRequest(String requestId) {
         this.requestId = requestId;
     }
 
-	TenantIsolationRequest () {
+    TenantIsolationRequest() {}
+
+    void parse(CloudOrchestrationRequest request, HashMap<String, String> instanceIdMap, Action action)
+            throws ValidationException {
+        this.cor = request;
+        this.requestInfo = request.getRequestDetails().getRequestInfo();
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            requestJSON = mapper.writeValueAsString(request.getRequestDetails());
+
+        } catch (JsonProcessingException e) {
+            throw new ValidationException("Parse ServiceInstanceRequest to JSON string", true);
+        }
+
+        String envId = null;
+        if (instanceIdMap != null) {
+            envId = instanceIdMap.get("operationalEnvironmentId");
+            if (envId != null && !UUIDChecker.isValidUUID(envId)) {
+                throw new ValidationException("operationalEnvironmentId", true);
+            }
+            cor.setOperationalEnvironmentId(envId);
+        }
+
+        this.operationalEnvironmentId = envId;
+
+        RequestDetails requestDetails = request.getRequestDetails();
+        RequestParameters requestParameters = requestDetails.getRequestParameters();
+
+        requestInfoValidation(action, requestInfo);
+
+        requestParamsValidation(action, requestParameters);
+
+        relatedInstanceValidation(action, requestDetails, requestParameters);
+
     }
-    
-	void parse(CloudOrchestrationRequest request, HashMap<String,String> instanceIdMap, Action action) throws ValidationException {
-		this.cor = request;
-		this.requestInfo = request.getRequestDetails().getRequestInfo();
-		
-		try{
-			ObjectMapper mapper = new ObjectMapper();
-        	requestJSON = mapper.writeValueAsString(request.getRequestDetails());
 
-        } catch(JsonProcessingException e){
-        	throw new ValidationException ("Parse ServiceInstanceRequest to JSON string", true);
+    private void relatedInstanceValidation(Action action, RequestDetails requestDetails,
+            RequestParameters requestParameters) throws ValidationException {
+        RelatedInstanceList[] instanceList = requestDetails.getRelatedInstanceList();
+
+        if (requestParameters == null) {
+            throw new ValidationException("requestParameters", true);
         }
-		
-		String envId = null;
-		if(instanceIdMap != null) {
-			envId = instanceIdMap.get("operationalEnvironmentId");
-			if(envId != null && !UUIDChecker.isValidUUID (envId)){
-				throw new ValidationException ("operationalEnvironmentId", true);
-			}
-			cor.setOperationalEnvironmentId(envId);
-		}
-		
-		this.operationalEnvironmentId = envId;
-		 
-		RequestDetails requestDetails = request.getRequestDetails();
-		RequestParameters requestParameters = requestDetails.getRequestParameters();
-		
-		requestInfoValidation(action, requestInfo);
-		
-		requestParamsValidation(action, requestParameters);
-		
-		relatedInstanceValidation(action, requestDetails, requestParameters);
-		
-	}
-
-	private void relatedInstanceValidation(Action action, RequestDetails requestDetails, RequestParameters requestParameters) throws ValidationException {
-		RelatedInstanceList[] instanceList = requestDetails.getRelatedInstanceList();
-		
-		if (requestParameters == null) {
-			throw new ValidationException("requestParameters", true);
-		}
-		if((Action.activate.equals(action) || Action.deactivate.equals(action)) && OperationalEnvironment.ECOMP.equals(requestParameters.getOperationalEnvironmentType())) {
-			throw new ValidationException("operationalEnvironmentType in requestParameters", true);
-		}
-		
-		if(!Action.deactivate.equals(action) && OperationalEnvironment.VNF.equals(requestParameters.getOperationalEnvironmentType())) {
-			if(instanceList != null && instanceList.length > 0) {
-			 	for(RelatedInstanceList relatedInstanceList : instanceList){
-			 		RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-			 		
-			 		if(relatedInstance.getResourceType() == null) {
-			 			throw new ValidationException("ResourceType in relatedInstance", true);
-			 		}
-			 		
-			 		if(!empty(relatedInstance.getInstanceName()) && !relatedInstance.getInstanceName().matches(Constants.VALID_INSTANCE_NAME_FORMAT)) {
-						throw new ValidationException ("instanceName format", true);
-					} 
-			 		
-			 		if (empty (relatedInstance.getInstanceId ())) {
-			 			throw new ValidationException ("instanceId in relatedInstance", true);
-			 		}
-			 		
-			 		if (!UUIDChecker.isValidUUID (relatedInstance.getInstanceId ())) {
-			 			throw new ValidationException ("instanceId format in relatedInstance", true);
-			 		}
-			 	}
-			} else {
-				throw new ValidationException ("relatedInstanceList", true);
-			}
-		}
-	}
-
-	private void requestParamsValidation(Action action, RequestParameters requestParameters) throws ValidationException {
-		
-		if(requestParameters != null) {
-			if(!Action.deactivate.equals(action) && requestParameters.getOperationalEnvironmentType() == null) {
-				throw new ValidationException ("OperationalEnvironmentType", true);
-			}
-			
-			if (Action.create.equals(action) && empty(requestParameters.getTenantContext())) {
-				throw new ValidationException ("Tenant Context", true);
-			}
-			if (!Action.deactivate.equals(action) && empty(requestParameters.getWorkloadContext())) {
-				throw new ValidationException ("Workload Context", true);
-			}
-			
-			Manifest manifest = requestParameters.getManifest();
-			
-			if(Action.activate.equals(action)) {
-				if(manifest == null) {
-					throw new ValidationException ("Manifest on Activate", true);
-				} else {
-					List<ServiceModelList> serviceModelList = manifest.getServiceModelList();
-					
-					if(serviceModelList.isEmpty()) {
-						throw new ValidationException (" empty ServiceModelList", true);
-					}
-					
-					for(ServiceModelList list : serviceModelList) {
-						if(empty(list.getServiceModelVersionId())) {
-							throw new ValidationException ("ServiceModelVersionId", true);
-						}
-						
-						if (!UUIDChecker.isValidUUID (list.getServiceModelVersionId())) {
-				 			throw new ValidationException ("ServiceModelVersionId format", true);
-				 		}
-						
-						if(list.getRecoveryAction() == null) {
-							throw new ValidationException ("RecoveryAction", true);
-						}
-					}
-				}
-			}
-		} else if(!Action.deactivate.equals(action)) {
-			throw new ValidationException("request Parameters", true);
-		}
-	}
-
-	private void requestInfoValidation(Action action, RequestInfo requestInfo) throws ValidationException {
-		 
-		if(Action.create.equals(action) && empty(requestInfo.getInstanceName())) {
-			throw new ValidationException ("instanceName", true);
-		} 
-		
-		if(!empty(requestInfo.getInstanceName()) && !requestInfo.getInstanceName().matches(Constants.VALID_INSTANCE_NAME_FORMAT)) {
-			throw new ValidationException ("instanceName format", true);
-		} 
-		
-		if (empty(requestInfo.getSource())) {
-        	throw new ValidationException ("source", true);
+        if ((Action.activate.equals(action) || Action.deactivate.equals(action))
+                && OperationalEnvironment.ECOMP.equals(requestParameters.getOperationalEnvironmentType())) {
+            throw new ValidationException("operationalEnvironmentType in requestParameters", true);
         }
-		
-		if(empty(requestInfo.getRequestorId())) {
-        	throw new ValidationException ("requestorId", true);
+
+        if (!Action.deactivate.equals(action)
+                && OperationalEnvironment.VNF.equals(requestParameters.getOperationalEnvironmentType())) {
+            if (instanceList != null && instanceList.length > 0) {
+                for (RelatedInstanceList relatedInstanceList : instanceList) {
+                    RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+
+                    if (relatedInstance.getResourceType() == null) {
+                        throw new ValidationException("ResourceType in relatedInstance", true);
+                    }
+
+                    if (!empty(relatedInstance.getInstanceName())
+                            && !relatedInstance.getInstanceName().matches(Constants.VALID_INSTANCE_NAME_FORMAT)) {
+                        throw new ValidationException("instanceName format", true);
+                    }
+
+                    if (empty(relatedInstance.getInstanceId())) {
+                        throw new ValidationException("instanceId in relatedInstance", true);
+                    }
+
+                    if (!UUIDChecker.isValidUUID(relatedInstance.getInstanceId())) {
+                        throw new ValidationException("instanceId format in relatedInstance", true);
+                    }
+                }
+            } else {
+                throw new ValidationException("relatedInstanceList", true);
+            }
         }
-		
-		ResourceType resourceType = requestInfo.getResourceType();
-		if(resourceType == null) {
-			throw new ValidationException ("resourceType", true);
-		}
-		
-		this.requestScope = resourceType.name();
-	}
-	
-	void parseOrchestration (CloudOrchestrationRequest cor) throws ValidationException {
+    }
+
+    private void requestParamsValidation(Action action, RequestParameters requestParameters)
+            throws ValidationException {
+
+        if (requestParameters != null) {
+            if (!Action.deactivate.equals(action) && requestParameters.getOperationalEnvironmentType() == null) {
+                throw new ValidationException("OperationalEnvironmentType", true);
+            }
+
+            if (Action.create.equals(action) && empty(requestParameters.getTenantContext())) {
+                throw new ValidationException("Tenant Context", true);
+            }
+            if (!Action.deactivate.equals(action) && empty(requestParameters.getWorkloadContext())) {
+                throw new ValidationException("Workload Context", true);
+            }
+
+            Manifest manifest = requestParameters.getManifest();
+
+            if (Action.activate.equals(action)) {
+                if (manifest == null) {
+                    throw new ValidationException("Manifest on Activate", true);
+                } else {
+                    List<ServiceModelList> serviceModelList = manifest.getServiceModelList();
+
+                    if (serviceModelList.isEmpty()) {
+                        throw new ValidationException(" empty ServiceModelList", true);
+                    }
+
+                    for (ServiceModelList list : serviceModelList) {
+                        if (empty(list.getServiceModelVersionId())) {
+                            throw new ValidationException("ServiceModelVersionId", true);
+                        }
+
+                        if (!UUIDChecker.isValidUUID(list.getServiceModelVersionId())) {
+                            throw new ValidationException("ServiceModelVersionId format", true);
+                        }
+
+                        if (list.getRecoveryAction() == null) {
+                            throw new ValidationException("RecoveryAction", true);
+                        }
+                    }
+                }
+            }
+        } else if (!Action.deactivate.equals(action)) {
+            throw new ValidationException("request Parameters", true);
+        }
+    }
+
+    private void requestInfoValidation(Action action, RequestInfo requestInfo) throws ValidationException {
+
+        if (Action.create.equals(action) && empty(requestInfo.getInstanceName())) {
+            throw new ValidationException("instanceName", true);
+        }
+
+        if (!empty(requestInfo.getInstanceName())
+                && !requestInfo.getInstanceName().matches(Constants.VALID_INSTANCE_NAME_FORMAT)) {
+            throw new ValidationException("instanceName format", true);
+        }
+
+        if (empty(requestInfo.getSource())) {
+            throw new ValidationException("source", true);
+        }
+
+        if (empty(requestInfo.getRequestorId())) {
+            throw new ValidationException("requestorId", true);
+        }
+
+        ResourceType resourceType = requestInfo.getResourceType();
+        if (resourceType == null) {
+            throw new ValidationException("resourceType", true);
+        }
+
+        this.requestScope = resourceType.name();
+    }
+
+    void parseOrchestration(CloudOrchestrationRequest cor) throws ValidationException {
 
         this.cor = cor;
 
-        try{
-        	ObjectMapper mapper = new ObjectMapper();
-        	requestJSON = mapper.writeValueAsString(cor.getRequestDetails());
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            requestJSON = mapper.writeValueAsString(cor.getRequestDetails());
 
-        } catch(JsonProcessingException e){
-        	throw new ValidationException ("Parse CloudOrchestrationRequest to JSON string", e);
+        } catch (JsonProcessingException e) {
+            throw new ValidationException("Parse CloudOrchestrationRequest to JSON string", e);
         }
 
-        if(cor.getRequestDetails() == null){
+        if (cor.getRequestDetails() == null) {
             throw new ValidationException("requestDetails", true);
         }
         this.requestInfo = cor.getRequestDetails().getRequestInfo();
 
         if (this.requestInfo == null) {
-            throw new ValidationException ("requestInfo", true);
+            throw new ValidationException("requestInfo", true);
         }
 
-        if (empty (requestInfo.getSource ())) {
-        	throw new ValidationException ("source", true);
+        if (empty(requestInfo.getSource())) {
+            throw new ValidationException("source", true);
         }
-        if (empty (requestInfo.getRequestorId ())) {
-        	throw new ValidationException ("requestorId", true);
+        if (empty(requestInfo.getRequestorId())) {
+            throw new ValidationException("requestorId", true);
         }
     }
-	
-    public void createRequestRecord (Status status, Action action){
 
-		InfraActiveRequests aq = new InfraActiveRequests ();
-		aq.setRequestId (requestId);
+    public void createRequestRecord(Status status, Action action) {
 
-		aq.setRequestAction(action.name());
-		aq.setAction(action.name());
+        InfraActiveRequests aq = new InfraActiveRequests();
+        aq.setRequestId(requestId);
 
-		Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
+        aq.setRequestAction(action.name());
+        aq.setAction(action.name());
 
-		aq.setStartTime (startTimeStamp);
+        Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
 
-		if (requestInfo != null) {
+        aq.setStartTime(startTimeStamp);
 
-			if(requestInfo.getSource() != null){
-				aq.setSource(requestInfo.getSource());
-			}
-			if(requestInfo.getRequestorId() != null) {
-				aq.setRequestorId(requestInfo.getRequestorId());
-			}
-			if(requestInfo.getResourceType() != null) {
-				aq.setRequestScope(requestInfo.getResourceType().name());
-			}
-		}
-             
-		if(ResourceType.operationalEnvironment.name().equalsIgnoreCase(requestScope) && requestInfo != null) {
-			aq.setOperationalEnvId(operationalEnvironmentId);
-			aq.setOperationalEnvName(requestInfo.getInstanceName());
-		}
+        if (requestInfo != null) {
 
-		aq.setRequestBody (this.requestJSON);
+            if (requestInfo.getSource() != null) {
+                aq.setSource(requestInfo.getSource());
+            }
+            if (requestInfo.getRequestorId() != null) {
+                aq.setRequestorId(requestInfo.getRequestorId());
+            }
+            if (requestInfo.getResourceType() != null) {
+                aq.setRequestScope(requestInfo.getResourceType().name());
+            }
+        }
 
-		aq.setRequestStatus (status.toString ());
-		aq.setLastModifiedBy (Constants.MODIFIED_BY_APIHANDLER);
+        if (ResourceType.operationalEnvironment.name().equalsIgnoreCase(requestScope) && requestInfo != null) {
+            aq.setOperationalEnvId(operationalEnvironmentId);
+            aq.setOperationalEnvName(requestInfo.getInstanceName());
+        }
 
-		if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
-			aq.setStatusMessage (this.errorMessage);
-			aq.setResponseBody (this.responseBody);
-			aq.setProgress(Long.valueOf(100));
+        aq.setRequestBody(this.requestJSON);
 
-			Timestamp endTimeStamp = new Timestamp (System.currentTimeMillis());
-			aq.setEndTime (endTimeStamp);
-		} else if(status == Status.IN_PROGRESS) {
-			aq.setProgress(Constants.PROGRESS_REQUEST_IN_PROGRESS);
-		}
-		requestsDbClient.save(aq);
+        aq.setRequestStatus(status.toString());
+        aq.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+
+        if ((status == Status.FAILED) || (status == Status.COMPLETE)) {
+            aq.setStatusMessage(this.errorMessage);
+            aq.setResponseBody(this.responseBody);
+            aq.setProgress(Long.valueOf(100));
+
+            Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
+            aq.setEndTime(endTimeStamp);
+        } else if (status == Status.IN_PROGRESS) {
+            aq.setProgress(Constants.PROGRESS_REQUEST_IN_PROGRESS);
+        }
+        requestsDbClient.save(aq);
     }
-	
-    
-    public Map<String, String> getOrchestrationFilters (MultivaluedMap<String, String> queryParams) throws ValidationException {
+
+
+    public Map<String, String> getOrchestrationFilters(MultivaluedMap<String, String> queryParams)
+            throws ValidationException {
         String queryParam = null;
         Map<String, String> orchestrationFilterParams = new HashMap<>();
 
-        for (Entry<String,List<String>> entry : queryParams.entrySet()) {
+        for (Entry<String, List<String>> entry : queryParams.entrySet()) {
             queryParam = entry.getKey();
-            try{
-          		  for(String value : entry.getValue()) {
-          			  if(StringUtils.isBlank(value)) {
-          				  throw (new Exception(queryParam + " value"));
-          			  }
-          			  orchestrationFilterParams.put(queryParam, value);
-          		  }
-            }catch(Exception e){
-                throw new ValidationException (e.getMessage(), true);
-        	}
+            try {
+                for (String value : entry.getValue()) {
+                    if (StringUtils.isBlank(value)) {
+                        throw (new Exception(queryParam + " value"));
+                    }
+                    orchestrationFilterParams.put(queryParam, value);
+                }
+            } catch (Exception e) {
+                throw new ValidationException(e.getMessage(), true);
+            }
         }
 
         return orchestrationFilterParams;
-  }
+    }
 
-	private static boolean empty(String s) {
-		return (s == null || s.trim().isEmpty());
-	}
-	
-    public String getRequestId () {
+    private static boolean empty(String s) {
+        return (s == null || s.trim().isEmpty());
+    }
+
+    public String getRequestId() {
         return requestId;
     }
-    
+
     public void setRequestId(String requestId) {
-    	this.requestId = requestId;
+        this.requestId = requestId;
     }
 
-	public void updateFinalStatus() {
-		try {
-			InfraActiveRequests request = new InfraActiveRequests(requestId);
-			request.setRequestStatus(status.toString());
-			request.setStatusMessage(this.errorMessage);
-			request.setProgress(this.progress);
-			request.setResponseBody(this.responseBody);
-			request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
-			requestsDbClient.save(request);
-		} catch (Exception e) {
-			logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
-				ErrorCode.DataError.getValue(), "Exception when updating record in DB");
-			logger.debug("Exception: ", e);
-		}
-	}
-	
-	public void setStatus (RequestStatusType status) {
-        this.status = status;
-        switch (status) {
-        case FAILED:
-        case COMPLETE:
-        	this.progress = Constants.PROGRESS_REQUEST_COMPLETED;
-        	break;
-        case IN_PROGRESS:
-        	this.progress = Constants.PROGRESS_REQUEST_IN_PROGRESS;
-        	break;
-		case PENDING:
-			break;
-		case TIMEOUT:
-			break;
-		case UNLOCKED:
-			break;
-		default:
-			break;
+    public void updateFinalStatus() {
+        try {
+            InfraActiveRequests request = new InfraActiveRequests(requestId);
+            request.setRequestStatus(status.toString());
+            request.setStatusMessage(this.errorMessage);
+            request.setProgress(this.progress);
+            request.setResponseBody(this.responseBody);
+            request.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+            requestsDbClient.save(request);
+        } catch (Exception e) {
+            logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
+                    ErrorCode.DataError.getValue(), "Exception when updating record in DB");
+            logger.debug("Exception: ", e);
         }
     }
 
-	public String getOperationalEnvironmentId() {
-		return operationalEnvironmentId;
-	}
+    public void setStatus(RequestStatusType status) {
+        this.status = status;
+        switch (status) {
+            case FAILED:
+            case COMPLETE:
+                this.progress = Constants.PROGRESS_REQUEST_COMPLETED;
+                break;
+            case IN_PROGRESS:
+                this.progress = Constants.PROGRESS_REQUEST_IN_PROGRESS;
+                break;
+            case PENDING:
+                break;
+            case TIMEOUT:
+                break;
+            case UNLOCKED:
+                break;
+            default:
+                break;
+        }
+    }
 
-	public void setOperationalEnvironmentId(String operationalEnvironmentId) {
-		this.operationalEnvironmentId = operationalEnvironmentId;
-	}
+    public String getOperationalEnvironmentId() {
+        return operationalEnvironmentId;
+    }
+
+    public void setOperationalEnvironmentId(String operationalEnvironmentId) {
+        this.operationalEnvironmentId = operationalEnvironmentId;
+    }
 }

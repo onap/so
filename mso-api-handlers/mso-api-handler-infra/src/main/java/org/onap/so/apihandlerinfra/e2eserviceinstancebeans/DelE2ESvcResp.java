@@ -25,13 +25,13 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class DelE2ESvcResp {
 
-	private String operationId;
+    private String operationId;
 
-	public String getOperationId() {
-		return operationId;
-	}
+    public String getOperationId() {
+        return operationId;
+    }
 
-	public void setOperationId(String operationId) {
-		this.operationId = operationId;
-	}
+    public void setOperationId(String operationId) {
+        this.operationId = operationId;
+    }
 }

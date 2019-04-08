@@ -51,16 +51,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Priority(1)
 @Provider
 @Component
-public class JaxRsFilterLogging implements ContainerRequestFilter,ContainerResponseFilter {
-    
+public class JaxRsFilterLogging implements ContainerRequestFilter, ContainerResponseFilter {
+
     protected static Logger logger = LoggerFactory.getLogger(JaxRsFilterLogging.class);
 
     @Context
     private HttpServletRequest httpServletRequest;
 
-    @Context 
+    @Context
     private Providers providers;
-    
+
     @Autowired
     private MDCSetup mdcSetup;
 
@@ -78,7 +78,7 @@ public class JaxRsFilterLogging implements ContainerRequestFilter,ContainerRespo
             mdcSetup.setInstanceUUID();
             mdcSetup.setEntryTimeStamp();
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
-            MDC.put(LogConstants.URI_BASE, containerRequest.getUriInfo().getBaseUri().toString());            
+            MDC.put(LogConstants.URI_BASE, containerRequest.getUriInfo().getBaseUri().toString());
             logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
         } catch (Exception e) {
             logger.warn("Error in incoming JAX-RS Inteceptor", e);
@@ -90,78 +90,71 @@ public class JaxRsFilterLogging implements ContainerRequestFilter,ContainerRespo
             throws IOException {
         try {
             setResponseStatusCode(responseContext);
-            MDC.put(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION,payloadMessage(responseContext));      
-            MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE,String.valueOf(responseContext.getStatus()));
+            MDC.put(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION, payloadMessage(responseContext));
+            MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(responseContext.getStatus()));
             logger.info(ONAPLogConstants.Markers.EXIT, "Exiting.");
             MDC.clear();
-        } catch ( Exception e) {
+        } catch (Exception e) {
             MDC.clear();
             logger.warn("Error in outgoing JAX-RS Inteceptor", e);
-        } 
+        }
     }
 
     private void setResponseStatusCode(ContainerResponseContext responseContext) {
         String statusCode;
-        if(Response.Status.Family.familyOf(responseContext.getStatus()).equals(Response.Status.Family.SUCCESSFUL)){		
-            statusCode=ONAPLogConstants.ResponseStatus.COMPLETED.toString();
-        }else{							
-            statusCode= ONAPLogConstants.ResponseStatus.ERROR.toString();				
-        }			
+        if (Response.Status.Family.familyOf(responseContext.getStatus()).equals(Response.Status.Family.SUCCESSFUL)) {
+            statusCode = ONAPLogConstants.ResponseStatus.COMPLETED.toString();
+        } else {
+            statusCode = ONAPLogConstants.ResponseStatus.ERROR.toString();
+        }
         MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, statusCode);
-    } 
+    }
 
     private String payloadMessage(ContainerResponseContext responseContext) throws IOException {
         String message = "";
         if (responseContext.hasEntity()) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();           
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
             Class<?> entityClass = responseContext.getEntityClass();
             Type entityType = responseContext.getEntityType();
             Annotation[] entityAnnotations = responseContext.getEntityAnnotations();
             MediaType mediaType = responseContext.getMediaType();
             @SuppressWarnings("unchecked")
-            MessageBodyWriter<Object> bodyWriter = (MessageBodyWriter<Object>) providers.getMessageBodyWriter(entityClass, 
-                    entityType, 
-                    entityAnnotations, 
-                    mediaType);
-            bodyWriter.writeTo(responseContext.getEntity(), 
-                    entityClass, 
-                    entityType, 
-                    entityAnnotations, 
-                    mediaType, 
-                    responseContext.getHeaders(), 
-                    baos); 
+            MessageBodyWriter<Object> bodyWriter = (MessageBodyWriter<Object>) providers
+                    .getMessageBodyWriter(entityClass, entityType, entityAnnotations, mediaType);
+            bodyWriter.writeTo(responseContext.getEntity(), entityClass, entityType, entityAnnotations, mediaType,
+                    responseContext.getHeaders(), baos);
             message = message.concat(new String(baos.toByteArray()));
         }
         return message;
     }
 
 
-    private void setRequestId(MultivaluedMap<String, String> headers){
-        String requestId=headers.getFirst(ONAPLogConstants.Headers.REQUEST_ID);
-        if(requestId == null || requestId.isEmpty())
+    private void setRequestId(MultivaluedMap<String, String> headers) {
+        String requestId = headers.getFirst(ONAPLogConstants.Headers.REQUEST_ID);
+        if (requestId == null || requestId.isEmpty())
             requestId = UUID.randomUUID().toString();
-        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID,requestId);
+        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, requestId);
     }
 
-    private void setInvocationId(MultivaluedMap<String, String> headers){
+    private void setInvocationId(MultivaluedMap<String, String> headers) {
         MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, findInvocationId(headers));
     }
 
-    private void setMDCPartnerName(MultivaluedMap<String, String> headers){
-        String partnerName=headers.getFirst(ONAPLogConstants.Headers.PARTNER_NAME);
-        if(partnerName == null || partnerName.isEmpty())
+    private void setMDCPartnerName(MultivaluedMap<String, String> headers) {
+        String partnerName = headers.getFirst(ONAPLogConstants.Headers.PARTNER_NAME);
+        if (partnerName == null || partnerName.isEmpty())
             partnerName = "";
-        MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME,partnerName);
+        MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME, partnerName);
     }
-    
+
     private String findInvocationId(MultivaluedMap<String, String> headers) {
         String invocationId = headers.getFirst(ONAPLogConstants.Headers.INVOCATION_ID);
-        if(invocationId == null || invocationId.isEmpty())
-            invocationId =UUID.randomUUID().toString();
+        if (invocationId == null || invocationId.isEmpty())
+            invocationId = UUID.randomUUID().toString();
         return invocationId;
     }
 
-    private void setServiceName(ContainerRequestContext containerRequest){
+    private void setServiceName(ContainerRequestContext containerRequest) {
         MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, containerRequest.getUriInfo().getPath());
     }
 

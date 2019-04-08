@@ -22,32 +22,33 @@ package org.onap.so.client.aai.entities.uri;
 
 import java.net.URI;
 import java.util.Optional;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 
 public class ServiceInstanceUri extends HttpLookupUri {
 
-	private static final long serialVersionUID = 2248914170527514548L;
-	protected ServiceInstanceUri(Object... values) {
-		super(AAIObjectType.SERVICE_INSTANCE, values);
-	}
-	protected ServiceInstanceUri(UriBuilder builder, Optional<String> cachedValue, Object... values) {
-		super(AAIObjectType.SERVICE_INSTANCE, builder, cachedValue, values);
-	}
-	
-	@Override
-	public ServiceInstanceUri clone() {
-		return new ServiceInstanceUri(this.internalURI.clone(), this.getCachedValue(), values);
-	}
-	
-	public AAIResourcesClient getResourcesClient() {
-		return new AAIResourcesClient();
-	}
-	@Override
-	public URI buildNoNetwork() {
-		return super.build(new String[]{"NONE", "NONE", (String)this.values[0]});
-	}
+    private static final long serialVersionUID = 2248914170527514548L;
+
+    protected ServiceInstanceUri(Object... values) {
+        super(AAIObjectType.SERVICE_INSTANCE, values);
+    }
+
+    protected ServiceInstanceUri(UriBuilder builder, Optional<String> cachedValue, Object... values) {
+        super(AAIObjectType.SERVICE_INSTANCE, builder, cachedValue, values);
+    }
+
+    @Override
+    public ServiceInstanceUri clone() {
+        return new ServiceInstanceUri(this.internalURI.clone(), this.getCachedValue(), values);
+    }
+
+    public AAIResourcesClient getResourcesClient() {
+        return new AAIResourcesClient();
+    }
+
+    @Override
+    public URI buildNoNetwork() {
+        return super.build(new String[] {"NONE", "NONE", (String) this.values[0]});
+    }
 }

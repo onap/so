@@ -21,7 +21,6 @@
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,19 +30,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @JsonInclude(Include.NON_DEFAULT)
 @JsonRootName(value = "platform")
 public class Platform implements Serializable {
-	
-	private static final long serialVersionUID = -7334479240678605536L;
-	@JsonProperty("platformName")
-	private String platformName;
-	
-	public String getPlatformName(){
-		return platformName;
-	}
-	public void setPlatformName(String value){
-		this.platformName = value;
-	}
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("platformName", platformName).toString();
-	}
+
+    private static final long serialVersionUID = -7334479240678605536L;
+    @JsonProperty("platformName")
+    private String platformName;
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String value) {
+        this.platformName = value;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("platformName", platformName).toString();
+    }
 }

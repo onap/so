@@ -54,7 +54,7 @@ public class HomingV2 {
     // Default solution is SNIRO. OOF gets called only if specified.
     private boolean isOof(BuildingBlockExecution execution) {
         for (Map<String, Object> params : execution.getGeneralBuildingBlock().getRequestContext().getRequestParameters()
-            .getUserParams()) {
+                .getUserParams()) {
             if (params.containsKey(HOMINGSOLUTION) && params.get(HOMINGSOLUTION).equals("oof")) {
                 return true;
             }

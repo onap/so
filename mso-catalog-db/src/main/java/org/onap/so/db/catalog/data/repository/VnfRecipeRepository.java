@@ -26,9 +26,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "vnfRecipe", path = "vnfRecipe")
 public interface VnfRecipeRepository extends JpaRepository<VnfRecipe, String> {
-	VnfRecipe findVnfRecipeByServiceTypeAndAction(String serviceType, String action);
-	
-	VnfRecipe findFirstVnfRecipeByNfRoleAndAction(String nfRole, String action);
+    VnfRecipe findVnfRecipeByServiceTypeAndAction(String serviceType, String action);
 
-	VnfRecipe findFirstVnfRecipeByNfRoleAndActionAndVersionStr(String nfRole, String action, String versionStr);
+    VnfRecipe findFirstVnfRecipeByNfRoleAndAction(String nfRole, String action);
+
+    VnfRecipe findFirstVnfRecipeByNfRoleAndActionAndVersionStr(String nfRole, String action, String versionStr);
 }

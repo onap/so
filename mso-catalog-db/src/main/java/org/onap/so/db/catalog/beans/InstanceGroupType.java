@@ -21,5 +21,5 @@
 package org.onap.so.db.catalog.beans;
 
 public enum InstanceGroupType {
-	L3_NETWORK, VNFC;
+    L3_NETWORK, VNFC;
 }

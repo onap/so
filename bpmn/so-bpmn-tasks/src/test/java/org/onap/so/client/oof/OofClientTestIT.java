@@ -24,7 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.client.exception.BadResponseException;
@@ -38,9 +37,7 @@ import org.onap.so.client.oof.beans.ResourceModelInfo;
 import org.onap.so.client.oof.beans.ServiceInfo;
 import org.onap.so.client.oof.beans.SubscriberInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +49,8 @@ public class OofClientTestIT extends BaseIntegrationTest {
 
     @Test
     public void testPostDemands_success() throws BadResponseException, JsonProcessingException {
-        String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"status\", \"requestStatus\": \"accepted\"}";
+        String mockResponse =
+                "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"status\", \"requestStatus\": \"accepted\"}";
 
         ModelInfo modelInfo = new ModelInfo();
         modelInfo.setModelCustomizationName("modelCustomizationName-Service");
@@ -118,102 +116,73 @@ public class OofClientTestIT extends BaseIntegrationTest {
         oofRequest.setServiceInformation(serviceInfo);
         oofRequest.setLicenseInformation("");
 
-        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
-                .willReturn(aResponse().withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(mockResponse)));
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement")).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
 
         client.postDemands(oofRequest);
 
         String oofRequestOutput = oofRequest.toJsonString();
-        assertEquals("{\n" +
-                "  \"requestInfo\" : {\n" +
-                "    \"transactionId\" : \"transactionId\",\n" +
-                "    \"requestId\" : \"requestId\",\n" +
-                "    \"callbackUrl\" : \"callBackUrl\",\n" +
-                "    \"sourceId\" : \"sourceId\",\n" +
-                "    \"requestType\" : \"requestType\",\n" +
-                "    \"numSolutions\" : 1,\n" +
-                "    \"optimizers\" : [ \"optimizer1\", \"optimizer2\" ],\n" +
-                "    \"timeout\" : 30\n" +
-                "  },\n" +
-                "  \"serviceInfo\" : {\n" +
-                "    \"serviceInstanceId\" : \"serviceInstanceId\",\n" +
-                "    \"serviceName\" : \"serviceName\",\n" +
-                "    \"modelInfo\" : {\n" +
-                "      \"modelType\" : \"modelType-Service\",\n" +
-                "      \"modelInvariantId\" : \"modelInvariantId-Service\",\n" +
-                "      \"modelVersionId\" : \"modelVersionId-Service\",\n" +
-                "      \"modelName\" : \"modelName-Service\",\n" +
-                "      \"modelVersion\" : \"modelVersion-Service\",\n" +
-                "      \"modelCustomizationName\" : \"modelCustomizationName-Service\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  \"placementInfo\" : {\n" +
-                "    \"requestParameters\" : {\n" +
-                "      \"customerLatitude\" : \"customerLatitude\",\n" +
-                "      \"customerLongitude\" : \"customerLongitude\",\n" +
-                "      \"customerName\" : \"customerName\"\n" +
-                "    },\n" +
-                "    \"subscriberInfo\" : {\n" +
-                "      \"globalSubscriberId\" : \"globalSubscriberId\",\n" +
-                "      \"subscriberName\" : \"subscriberName\",\n" +
-                "      \"subscriberCommonSiteId\" : \"subscriberCommonSiteId\"\n" +
-                "    },\n" +
-                "    \"placementDemands\" : [ {\n" +
-                "      \"resourceModuleName\" : \"resourceModuleName\",\n" +
-                "      \"serviceResourceId\" : \"serviceResourceId\",\n" +
-                "      \"tenantId\" : \"tenantId\",\n" +
-                "      \"resourceModelInfo\" : {\n" +
-                "        \"modelType\" : \"modelType\",\n" +
-                "        \"modelInvariantId\" : \"invarianteId\",\n" +
-                "        \"modelVersionId\" : \"versionId\",\n" +
-                "        \"modelName\" : \"modelName\",\n" +
-                "        \"modelVersion\" : \"version\",\n" +
-                "        \"modelCustomizationName\" : \"modelCustomizationName\"\n" +
-                "      }\n" +
-                "    } ]\n" +
-                "  },\n" +
-                "  \"licenseInfo\" : \"\"\n" +
-                "}", oofRequestOutput);
+        assertEquals("{\n" + "  \"requestInfo\" : {\n" + "    \"transactionId\" : \"transactionId\",\n"
+                + "    \"requestId\" : \"requestId\",\n" + "    \"callbackUrl\" : \"callBackUrl\",\n"
+                + "    \"sourceId\" : \"sourceId\",\n" + "    \"requestType\" : \"requestType\",\n"
+                + "    \"numSolutions\" : 1,\n" + "    \"optimizers\" : [ \"optimizer1\", \"optimizer2\" ],\n"
+                + "    \"timeout\" : 30\n" + "  },\n" + "  \"serviceInfo\" : {\n"
+                + "    \"serviceInstanceId\" : \"serviceInstanceId\",\n" + "    \"serviceName\" : \"serviceName\",\n"
+                + "    \"modelInfo\" : {\n" + "      \"modelType\" : \"modelType-Service\",\n"
+                + "      \"modelInvariantId\" : \"modelInvariantId-Service\",\n"
+                + "      \"modelVersionId\" : \"modelVersionId-Service\",\n"
+                + "      \"modelName\" : \"modelName-Service\",\n"
+                + "      \"modelVersion\" : \"modelVersion-Service\",\n"
+                + "      \"modelCustomizationName\" : \"modelCustomizationName-Service\"\n" + "    }\n" + "  },\n"
+                + "  \"placementInfo\" : {\n" + "    \"requestParameters\" : {\n"
+                + "      \"customerLatitude\" : \"customerLatitude\",\n"
+                + "      \"customerLongitude\" : \"customerLongitude\",\n"
+                + "      \"customerName\" : \"customerName\"\n" + "    },\n" + "    \"subscriberInfo\" : {\n"
+                + "      \"globalSubscriberId\" : \"globalSubscriberId\",\n"
+                + "      \"subscriberName\" : \"subscriberName\",\n"
+                + "      \"subscriberCommonSiteId\" : \"subscriberCommonSiteId\"\n" + "    },\n"
+                + "    \"placementDemands\" : [ {\n" + "      \"resourceModuleName\" : \"resourceModuleName\",\n"
+                + "      \"serviceResourceId\" : \"serviceResourceId\",\n" + "      \"tenantId\" : \"tenantId\",\n"
+                + "      \"resourceModelInfo\" : {\n" + "        \"modelType\" : \"modelType\",\n"
+                + "        \"modelInvariantId\" : \"invarianteId\",\n" + "        \"modelVersionId\" : \"versionId\",\n"
+                + "        \"modelName\" : \"modelName\",\n" + "        \"modelVersion\" : \"version\",\n"
+                + "        \"modelCustomizationName\" : \"modelCustomizationName\"\n" + "      }\n" + "    } ]\n"
+                + "  },\n" + "  \"licenseInfo\" : \"\"\n" + "}", oofRequestOutput);
     }
 
     @Test
     public void testAsyncResponse_success() throws BadResponseException, JsonProcessingException {
-        String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"status\", \"requestStatus\": \"accepted\"}";
+        String mockResponse =
+                "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"status\", \"requestStatus\": \"accepted\"}";
 
-        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
-                .willReturn(aResponse().withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(mockResponse)));
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement")).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
 
         client.postDemands(new OofRequest());
     }
 
     @Test(expected = BadResponseException.class)
     public void testPostDemands_error_failed() throws JsonProcessingException, BadResponseException {
-        String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": \"failed\"}";
+        String mockResponse =
+                "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": \"failed\"}";
 
-        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
-                .willReturn(aResponse().withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(mockResponse)));
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement")).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
 
 
         client.postDemands(new OofRequest());
 
-        //TODO	assertEquals("missing data", );
+        // TODO assertEquals("missing data", );
 
     }
 
     @Test(expected = BadResponseException.class)
     public void testPostDemands_error_noMessage() throws JsonProcessingException, BadResponseException {
-        String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"\", \"requestStatus\": \"failed\"}";
+        String mockResponse =
+                "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"\", \"requestStatus\": \"failed\"}";
 
-        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
-                .willReturn(aResponse().withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(mockResponse)));
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement")).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
 
 
         client.postDemands(new OofRequest());
@@ -222,12 +191,11 @@ public class OofClientTestIT extends BaseIntegrationTest {
 
     @Test(expected = BadResponseException.class)
     public void testPostDemands_error_noStatus() throws JsonProcessingException, BadResponseException {
-        String mockResponse = "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": null}";
+        String mockResponse =
+                "{\"transactionId\": \"123456789\", \"requestId\": \"1234\", \"statusMessage\": \"missing data\", \"requestStatus\": null}";
 
-        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
-                .willReturn(aResponse().withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(mockResponse)));
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement")).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
 
 
         client.postDemands(new OofRequest());
@@ -238,10 +206,8 @@ public class OofClientTestIT extends BaseIntegrationTest {
     public void testPostDemands_error_empty() throws JsonProcessingException, BadResponseException {
         String mockResponse = "{ }";
 
-        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement"))
-                .willReturn(aResponse().withStatus(200)
-                        .withHeader("Content-Type", "application/json")
-                        .withBody(mockResponse)));
+        wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement")).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
 
 
         client.postDemands(new OofRequest());

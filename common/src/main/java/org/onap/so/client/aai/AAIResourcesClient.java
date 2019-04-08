@@ -21,7 +21,6 @@
 package org.onap.so.client.aai;
 
 import java.util.Optional;
-
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
@@ -30,48 +29,49 @@ import org.onap.so.client.graphinventory.GraphInventoryResourcesClient;
 import org.onap.so.client.graphinventory.entities.GraphInventoryEdgeLabel;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
 
-public class AAIResourcesClient extends GraphInventoryResourcesClient<AAIResourcesClient, AAIResourceUri, AAIEdgeLabel, AAIResultWrapper, AAITransactionalClient, AAISingleTransactionClient> {
-	
-	private AAIClient aaiClient;
-	
-	public AAIResourcesClient() {
-		super(new AAIClient());
-		aaiClient = (AAIClient) super.client;
-	}
-	
-	public AAIResourcesClient(AAIVersion version) {
-		super(new AAIClient(version));
-		aaiClient = (AAIClient) super.client;
-	}
+public class AAIResourcesClient extends
+        GraphInventoryResourcesClient<AAIResourcesClient, AAIResourceUri, AAIEdgeLabel, AAIResultWrapper, AAITransactionalClient, AAISingleTransactionClient> {
 
-	@Override
-	public AAIResultWrapper createWrapper(String json) {
-		return new AAIResultWrapper(json);
-	}
+    private AAIClient aaiClient;
 
-	@Override
-	public AAITransactionalClient beginTransaction() {
-		return new AAITransactionalClient(this, aaiClient);
-	}
+    public AAIResourcesClient() {
+        super(new AAIClient());
+        aaiClient = (AAIClient) super.client;
+    }
 
-	@Override
-	public AAISingleTransactionClient beginSingleTransaction() {
-		return new AAISingleTransactionClient(this, aaiClient);
-	}
-	
-	@Override
-	protected Relationship buildRelationship(GraphInventoryResourceUri uri) {
-		return super.buildRelationship(uri, Optional.empty());
-	}
-	
-	@Override
-	protected Relationship buildRelationship(GraphInventoryResourceUri uri, GraphInventoryEdgeLabel label) {
-		return super.buildRelationship(uri, Optional.of(label));
-	}
-	
-	@Override
-	protected Relationship buildRelationship(GraphInventoryResourceUri uri, Optional<GraphInventoryEdgeLabel> label) {
-		return super.buildRelationship(uri, label);
-	}
-	
+    public AAIResourcesClient(AAIVersion version) {
+        super(new AAIClient(version));
+        aaiClient = (AAIClient) super.client;
+    }
+
+    @Override
+    public AAIResultWrapper createWrapper(String json) {
+        return new AAIResultWrapper(json);
+    }
+
+    @Override
+    public AAITransactionalClient beginTransaction() {
+        return new AAITransactionalClient(this, aaiClient);
+    }
+
+    @Override
+    public AAISingleTransactionClient beginSingleTransaction() {
+        return new AAISingleTransactionClient(this, aaiClient);
+    }
+
+    @Override
+    protected Relationship buildRelationship(GraphInventoryResourceUri uri) {
+        return super.buildRelationship(uri, Optional.empty());
+    }
+
+    @Override
+    protected Relationship buildRelationship(GraphInventoryResourceUri uri, GraphInventoryEdgeLabel label) {
+        return super.buildRelationship(uri, Optional.of(label));
+    }
+
+    @Override
+    protected Relationship buildRelationship(GraphInventoryResourceUri uri, Optional<GraphInventoryEdgeLabel> label) {
+        return super.buildRelationship(uri, label);
+    }
+
 }

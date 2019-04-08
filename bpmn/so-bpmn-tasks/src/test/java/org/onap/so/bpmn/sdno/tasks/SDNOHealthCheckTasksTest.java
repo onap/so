@@ -27,7 +27,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,62 +46,66 @@ import org.onap.so.client.orchestration.SDNOHealthCheckResources;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class SDNOHealthCheckTasksTest extends TestDataSetup {
-	
-	@InjectMocks
-	protected SDNOHealthCheckTasks sdnoHealthCheckTasks = new SDNOHealthCheckTasks();
-	
-	@Mock
-	SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
-	
-	
-	@Mock
-	private ExceptionBuilder exceptionUtil;
-	
-	@Mock
-	private ExtractPojosForBB extractPojosForBB;
-	
-	
-	private RequestContext requestContext;
-	private GenericVnf genericVnf;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		genericVnf = setGenericVnf();
-		requestContext = setRequestContext();
-		when(extractPojosForBB.extractByKey(any(),any())).thenReturn(genericVnf);
-		
-	}
 
-	@Test
-	public void sdnoHealthCheckTest() throws Exception {
-		doReturn(true).when(MOCK_sdnoHealthCheckResources).healthCheck(genericVnf,  requestContext);
-		sdnoHealthCheckTasks.sdnoHealthCheck(execution);
-		verify(MOCK_sdnoHealthCheckResources, times(1)).healthCheck(genericVnf, requestContext);
-	}
-	
-	@Test
-	public void sdnoHealthCheckNoResponseTest() throws Exception {
-	
-		doReturn(false).when(MOCK_sdnoHealthCheckResources).healthCheck(genericVnf, requestContext);
-		try {
-			sdnoHealthCheckTasks.sdnoHealthCheck(execution);
-		} catch (Exception e) {
-			verify(MOCK_sdnoHealthCheckResources, times(1)).healthCheck(genericVnf, requestContext);
-			verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-		}
-		
-	}
-	
-	@Test
-	public void sdnoHealthCheckExceptionTest() throws Exception {
-		doThrow(new Exception("Unknown Error")).when(MOCK_sdnoHealthCheckResources).healthCheck(genericVnf, requestContext);
-		doThrow(new BpmnError("Unknown Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-		try {
-			sdnoHealthCheckTasks.sdnoHealthCheck(execution);
-		} catch (Exception e) {
-			verify(MOCK_sdnoHealthCheckResources, times(1)).healthCheck(genericVnf, requestContext);
-			verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-		}
+    @InjectMocks
+    protected SDNOHealthCheckTasks sdnoHealthCheckTasks = new SDNOHealthCheckTasks();
 
-	}
+    @Mock
+    SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
+
+
+    @Mock
+    private ExceptionBuilder exceptionUtil;
+
+    @Mock
+    private ExtractPojosForBB extractPojosForBB;
+
+
+    private RequestContext requestContext;
+    private GenericVnf genericVnf;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        genericVnf = setGenericVnf();
+        requestContext = setRequestContext();
+        when(extractPojosForBB.extractByKey(any(), any())).thenReturn(genericVnf);
+
+    }
+
+    @Test
+    public void sdnoHealthCheckTest() throws Exception {
+        doReturn(true).when(MOCK_sdnoHealthCheckResources).healthCheck(genericVnf, requestContext);
+        sdnoHealthCheckTasks.sdnoHealthCheck(execution);
+        verify(MOCK_sdnoHealthCheckResources, times(1)).healthCheck(genericVnf, requestContext);
+    }
+
+    @Test
+    public void sdnoHealthCheckNoResponseTest() throws Exception {
+
+        doReturn(false).when(MOCK_sdnoHealthCheckResources).healthCheck(genericVnf, requestContext);
+        try {
+            sdnoHealthCheckTasks.sdnoHealthCheck(execution);
+        } catch (Exception e) {
+            verify(MOCK_sdnoHealthCheckResources, times(1)).healthCheck(genericVnf, requestContext);
+            verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000),
+                    any(String.class));
+        }
+
+    }
+
+    @Test
+    public void sdnoHealthCheckExceptionTest() throws Exception {
+        doThrow(new Exception("Unknown Error")).when(MOCK_sdnoHealthCheckResources).healthCheck(genericVnf,
+                requestContext);
+        doThrow(new BpmnError("Unknown Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+        try {
+            sdnoHealthCheckTasks.sdnoHealthCheck(execution);
+        } catch (Exception e) {
+            verify(MOCK_sdnoHealthCheckResources, times(1)).healthCheck(genericVnf, requestContext);
+            verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000),
+                    any(String.class));
+        }
+
+    }
 }

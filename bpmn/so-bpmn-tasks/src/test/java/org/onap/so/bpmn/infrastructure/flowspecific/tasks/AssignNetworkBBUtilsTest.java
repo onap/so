@@ -20,7 +20,6 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -28,34 +27,34 @@ import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 
 public class AssignNetworkBBUtilsTest extends BaseTaskTest {
-	
-	@InjectMocks
-	private AssignNetworkBBUtils nonMockAssignNetworkBBUtils = new AssignNetworkBBUtils();
-	
-	private CloudRegion cloudRegion;
-	
-	@Before
-	public void before() {
-		cloudRegion = setCloudRegion();
-	}
-	
-	@Test
-	public void getCloudRegionTest25() throws Exception {
-		cloudRegion.setCloudRegionVersion("2.5");
-		
-		nonMockAssignNetworkBBUtils.getCloudRegion(execution);
 
-		assertEquals(cloudRegion.getLcpCloudRegionId(), execution.getVariable("cloudRegionPo"));
-		assertEquals("AAIAIC25", execution.getVariable("cloudRegionSdnc"));
-	}
-	
-	@Test
-	public void getCloudRegionTest30() throws Exception {
-		cloudRegion.setCloudRegionVersion("3.0");
-		
-		nonMockAssignNetworkBBUtils.getCloudRegion(execution);
+    @InjectMocks
+    private AssignNetworkBBUtils nonMockAssignNetworkBBUtils = new AssignNetworkBBUtils();
 
-		assertEquals(cloudRegion.getLcpCloudRegionId(), execution.getVariable("cloudRegionPo"));
-		assertEquals(cloudRegion.getLcpCloudRegionId(), execution.getVariable("cloudRegionSdnc"));
-	}
+    private CloudRegion cloudRegion;
+
+    @Before
+    public void before() {
+        cloudRegion = setCloudRegion();
+    }
+
+    @Test
+    public void getCloudRegionTest25() throws Exception {
+        cloudRegion.setCloudRegionVersion("2.5");
+
+        nonMockAssignNetworkBBUtils.getCloudRegion(execution);
+
+        assertEquals(cloudRegion.getLcpCloudRegionId(), execution.getVariable("cloudRegionPo"));
+        assertEquals("AAIAIC25", execution.getVariable("cloudRegionSdnc"));
+    }
+
+    @Test
+    public void getCloudRegionTest30() throws Exception {
+        cloudRegion.setCloudRegionVersion("3.0");
+
+        nonMockAssignNetworkBBUtils.getCloudRegion(execution);
+
+        assertEquals(cloudRegion.getLcpCloudRegionId(), execution.getVariable("cloudRegionPo"));
+        assertEquals(cloudRegion.getLcpCloudRegionId(), execution.getVariable("cloudRegionSdnc"));
+    }
 }

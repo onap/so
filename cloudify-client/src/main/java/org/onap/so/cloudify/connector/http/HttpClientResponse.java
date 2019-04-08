@@ -25,11 +25,9 @@ package org.onap.so.cloudify.connector.http;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.onap.so.cloudify.base.client.CloudifyResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,44 +38,43 @@ import java.util.Map;
 public class HttpClientResponse implements CloudifyResponse {
 
     private static Logger logger = LoggerFactory.getLogger(HttpClientResponse.class);
-	
+
     private HttpResponse response = null;
     private String entityBody = null;
 
-    public HttpClientResponse(HttpResponse response)
-    {
+    public HttpClientResponse(HttpResponse response) {
         this.response = response;
-        
+
         // Read the body so InputStream can be closed
         if (response.getEntity() == null) {
             // No body
             logger.debug("No Response Body");
             return;
         }
-        
-		ByteArrayOutputStream responseBody = new ByteArrayOutputStream();
-		try {
-			response.getEntity().writeTo(responseBody);
-		} catch (IOException e) {
-			throw new HttpClientException ("Error Reading Response Body", e);
-		}
-		entityBody = responseBody.toString();
+
+        ByteArrayOutputStream responseBody = new ByteArrayOutputStream();
+        try {
+            response.getEntity().writeTo(responseBody);
+        } catch (IOException e) {
+            throw new HttpClientException("Error Reading Response Body", e);
+        }
+        entityBody = responseBody.toString();
         logger.debug(entityBody);
     }
 
-    
-    @Override
-	public <T> T getEntity (Class<T> returnType) {
-    	// Get appropriate mapper, based on existence of a root element
-		ObjectMapper mapper = HttpClientConnector.getObjectMapper (returnType);
 
-		T resp = null;
-		try {
-			resp = mapper.readValue(entityBody, returnType);
-		} catch (Exception e) {
-			throw new HttpClientException ("Caught exception in getEntity", e);
-		}
-		return resp;
+    @Override
+    public <T> T getEntity(Class<T> returnType) {
+        // Get appropriate mapper, based on existence of a root element
+        ObjectMapper mapper = HttpClientConnector.getObjectMapper(returnType);
+
+        T resp = null;
+        try {
+            resp = mapper.readValue(entityBody, returnType);
+        } catch (Exception e) {
+            throw new HttpClientException("Caught exception in getEntity", e);
+        }
+        return resp;
     }
 
     @Override
@@ -87,7 +84,7 @@ public class HttpClientResponse implements CloudifyResponse {
 
     @Override
     public InputStream getInputStream() {
-   		return new ByteArrayInputStream (entityBody.getBytes());
+        return new ByteArrayInputStream(entityBody.getBytes());
     }
 
     @Override

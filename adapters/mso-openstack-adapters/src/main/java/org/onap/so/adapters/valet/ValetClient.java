@@ -58,278 +58,292 @@ public class ValetClient {
 
     private static Logger logger = LoggerFactory.getLogger(ValetClient.class);
 
-	@Autowired
-	private Environment environment;
+    @Autowired
+    private Environment environment;
 
-	private static final String VALET_BASE_URL = "org.onap.so.adapters.valet.base_url";
-	private static final String VALET_BASE_PATH = "org.onap.so.adapters.valet.base_path";
-	private static final String VALET_AUTH = "org.onap.so.adapters.valet.basic_auth";
-	private static final String REQ_ID_HEADER_NAME = "X-RequestID";
-	protected static final String NO_STATUS_RETURNED = "no status returned from Valet";
+    private static final String VALET_BASE_URL = "org.onap.so.adapters.valet.base_url";
+    private static final String VALET_BASE_PATH = "org.onap.so.adapters.valet.base_path";
+    private static final String VALET_AUTH = "org.onap.so.adapters.valet.basic_auth";
+    private static final String REQ_ID_HEADER_NAME = "X-RequestID";
+    protected static final String NO_STATUS_RETURNED = "no status returned from Valet";
 
-	private static final String DEFAULT_BASE_URL = "http://localhost:8080/";
-	private static final String DEFAULT_BASE_PATH = "api/valet/placement/v1";
-	private static final String DEFAULT_AUTH_STRING = "";
-	private static final String REQUEST_ID="requestId";
-	private static final String HEADERS=", headers=";
-	private static final String BODY=", body=";
-	@Autowired
-	private ObjectMapper mapper;
+    private static final String DEFAULT_BASE_URL = "http://localhost:8080/";
+    private static final String DEFAULT_BASE_PATH = "api/valet/placement/v1";
+    private static final String DEFAULT_AUTH_STRING = "";
+    private static final String REQUEST_ID = "requestId";
+    private static final String HEADERS = ", headers=";
+    private static final String BODY = ", body=";
+    @Autowired
+    private ObjectMapper mapper;
 
-	protected String baseUrl;
-	protected String basePath;
-	protected String authString;
+    protected String baseUrl;
+    protected String basePath;
+    protected String authString;
 
-	/*
-	 * Setup the properties needed from properties file. Each will fall to a default
-	 */
-	@PostConstruct
-	private void setupParams() {
-		try {
+    /*
+     * Setup the properties needed from properties file. Each will fall to a default
+     */
+    @PostConstruct
+    private void setupParams() {
+        try {
             this.baseUrl = this.environment.getProperty(ValetClient.VALET_BASE_URL, ValetClient.DEFAULT_BASE_URL);
             this.basePath = this.environment.getProperty(ValetClient.VALET_BASE_PATH, ValetClient.DEFAULT_BASE_PATH);
-			this.authString = this.environment.getProperty(ValetClient.VALET_AUTH, ValetClient.DEFAULT_AUTH_STRING);
-		} catch (Exception e) {
-        logger.debug("Error retrieving valet properties. {}", e.getMessage());
+            this.authString = this.environment.getProperty(ValetClient.VALET_AUTH, ValetClient.DEFAULT_AUTH_STRING);
+        } catch (Exception e) {
+            logger.debug("Error retrieving valet properties. {}", e.getMessage());
+        }
     }
-	}
 
-	/*
-	 * This method will be invoked to send a Create request to Valet.
-	 */
-	public GenericValetResponse<ValetCreateResponse> callValetCreateRequest(String requestId, String regionId, String ownerId, String tenantId, String serviceInstanceId,
-			String vnfId, String vnfName, String vfModuleId, String vfModuleName, String keystoneUrl, HeatRequest heatRequest) throws Exception {
-		ResponseEntity<ValetCreateResponse> response = null;
-		GenericValetResponse<ValetCreateResponse> gvr = null;
+    /*
+     * This method will be invoked to send a Create request to Valet.
+     */
+    public GenericValetResponse<ValetCreateResponse> callValetCreateRequest(String requestId, String regionId,
+            String ownerId, String tenantId, String serviceInstanceId, String vnfId, String vnfName, String vfModuleId,
+            String vfModuleName, String keystoneUrl, HeatRequest heatRequest) throws Exception {
+        ResponseEntity<ValetCreateResponse> response = null;
+        GenericValetResponse<ValetCreateResponse> gvr = null;
 
-		try {
-			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
-			URI uri = builder.build();
+        try {
+            UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
+            URI uri = builder.build();
 
-			ValetCreateRequest vcr = this.createValetCreateRequest(regionId, ownerId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
-			String body = mapper.writeValueAsString(vcr);
-			HttpHeaders headers = generateHeaders(requestId);
-			HttpEntity<String> entity = new HttpEntity<>(body, headers);
+            ValetCreateRequest vcr = this.createValetCreateRequest(regionId, ownerId, tenantId, serviceInstanceId,
+                    vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
+            String body = mapper.writeValueAsString(vcr);
+            HttpHeaders headers = generateHeaders(requestId);
+            HttpEntity<String> entity = new HttpEntity<>(body, headers);
 
-			response = getRestTemplate().exchange(uri, HttpMethod.POST, entity, ValetCreateResponse.class);
-			gvr = this.getGVRFromResponse(response);
-		} catch (Exception e) {
-        logger.error("An exception occurred in callValetCreateRequest", e);
-        throw e;
-		}
-		return gvr;
-	}
+            response = getRestTemplate().exchange(uri, HttpMethod.POST, entity, ValetCreateResponse.class);
+            gvr = this.getGVRFromResponse(response);
+        } catch (Exception e) {
+            logger.error("An exception occurred in callValetCreateRequest", e);
+            throw e;
+        }
+        return gvr;
+    }
 
-	private RestTemplate getRestTemplate(){
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-		return restTemplate;
-	}
+    private RestTemplate getRestTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate
+                .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
+        return restTemplate;
+    }
 
-	/*
-	 * This method will be invoked to send an Update request to Valet.
-	 */
-	public GenericValetResponse<ValetUpdateResponse> callValetUpdateRequest(String requestId, String regionId, String ownerId, String tenantId, String serviceInstanceId,
-			String vnfId, String vnfName, String vfModuleId, String vfModuleName, String keystoneUrl, HeatRequest heatRequest) throws Exception {
-		ResponseEntity<ValetUpdateResponse> response = null;
-		GenericValetResponse<ValetUpdateResponse> gvr = null;
+    /*
+     * This method will be invoked to send an Update request to Valet.
+     */
+    public GenericValetResponse<ValetUpdateResponse> callValetUpdateRequest(String requestId, String regionId,
+            String ownerId, String tenantId, String serviceInstanceId, String vnfId, String vnfName, String vfModuleId,
+            String vfModuleName, String keystoneUrl, HeatRequest heatRequest) throws Exception {
+        ResponseEntity<ValetUpdateResponse> response = null;
+        GenericValetResponse<ValetUpdateResponse> gvr = null;
 
-		try {
-			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
-			URI uri = builder.build();
+        try {
+            UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
+            URI uri = builder.build();
 
-			ValetUpdateRequest vur = this.createValetUpdateRequest(regionId, ownerId, tenantId, serviceInstanceId, vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
-			String body = mapper.writeValueAsString(vur);
-			HttpHeaders headers = generateHeaders(requestId);
-			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-
-
-			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetUpdateResponse.class);
-			gvr = this.getGVRFromResponse(response);
-		} catch (Exception e) {
-        logger.error("An exception occurred in callValetUpdateRequest", e);
-        throw e;
-		}
-		return gvr;
-	}
-
-	/*
-	 * This method will be invoked to send a Delete request to Valet.
-	 */
-	public GenericValetResponse<ValetDeleteResponse> callValetDeleteRequest(String requestId, String regionId, String ownerId, String tenantId, String vfModuleId, String vfModuleName) throws Exception {
-		ResponseEntity<ValetDeleteResponse> response = null;
-		GenericValetResponse<ValetDeleteResponse> gvr = null;
-
-		try {
-			UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
-			URI uri = builder.build();
-
-			ValetDeleteRequest vdr = this.createValetDeleteRequest(regionId, ownerId, tenantId, vfModuleId, vfModuleName);
-
-			String body = mapper.writeValueAsString(vdr);
-			HttpHeaders headers = generateHeaders(requestId);
-			HttpEntity<String> entity = new HttpEntity<>(body, headers);
+            ValetUpdateRequest vur = this.createValetUpdateRequest(regionId, ownerId, tenantId, serviceInstanceId,
+                    vnfId, vnfName, vfModuleId, vfModuleName, keystoneUrl, heatRequest);
+            String body = mapper.writeValueAsString(vur);
+            HttpHeaders headers = generateHeaders(requestId);
+            HttpEntity<String> entity = new HttpEntity<>(body, headers);
 
 
-			response = getRestTemplate().exchange(uri, HttpMethod.DELETE, entity, ValetDeleteResponse.class);
-			gvr = this.getGVRFromResponse(response);
-		} catch (Exception e) {
-        logger.error("An exception occurred in callValetDeleteRequest", e);
-        throw e;
-		}
-		return gvr;
-	}
+            response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetUpdateResponse.class);
+            gvr = this.getGVRFromResponse(response);
+        } catch (Exception e) {
+            logger.error("An exception occurred in callValetUpdateRequest", e);
+            throw e;
+        }
+        return gvr;
+    }
 
-	/*
-	 * This method is called to invoke a Confirm request to Valet.
-	 */
-	public GenericValetResponse<ValetConfirmResponse> callValetConfirmRequest(String requestId, String stackId) throws Exception {
-		ResponseEntity<ValetConfirmResponse> response = null;
-		GenericValetResponse<ValetConfirmResponse> gvr = null;
+    /*
+     * This method will be invoked to send a Delete request to Valet.
+     */
+    public GenericValetResponse<ValetDeleteResponse> callValetDeleteRequest(String requestId, String regionId,
+            String ownerId, String tenantId, String vfModuleId, String vfModuleName) throws Exception {
+        ResponseEntity<ValetDeleteResponse> response = null;
+        GenericValetResponse<ValetDeleteResponse> gvr = null;
 
-		try {
-			UriBuilder builder = UriBuilder.fromPath(this.baseUrl).path(this.basePath).path("{requestId}/confirm/");
-			URI uri = builder.build(requestId);
+        try {
+            UriBuilder builder = UriBuilder.fromPath(baseUrl).path(basePath).queryParam(REQUEST_ID, requestId);
+            URI uri = builder.build();
 
-			ValetConfirmRequest vcr = this.createValetConfirmRequest(stackId);
+            ValetDeleteRequest vdr =
+                    this.createValetDeleteRequest(regionId, ownerId, tenantId, vfModuleId, vfModuleName);
 
-			String body = mapper.writeValueAsString(vcr);
-			HttpHeaders headers = generateHeaders(requestId);
-			HttpEntity<String> entity = new HttpEntity<>(body, headers);
-        logger.debug("valet confirm req: {} {} {} {} {}", uri, HEADERS, headers, BODY, body);
-
-			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetConfirmResponse.class);
-			gvr = this.getGVRFromResponse(response);
-		} catch (Exception e) {
-        logger.error("An exception occurred in callValetConfirmRequest", e);
-			throw e;
-		}
-		return gvr;
-	}
-
-	/*
-	 * This method is called to invoke a Rollback request to Valet.
-	 */
-	public GenericValetResponse<ValetRollbackResponse> callValetRollbackRequest(String requestId, String stackId, Boolean suppressRollback, String errorMessage) throws Exception {
-		ResponseEntity<ValetRollbackResponse> response = null;
-		GenericValetResponse<ValetRollbackResponse> gvr = null;
-
-		try {
-			UriBuilder builder = UriBuilder.fromPath(this.baseUrl).path(this.basePath).path("{requestId}/rollback/");
-			URI uri = builder.build(requestId);
-
-			ValetRollbackRequest vrr = this.createValetRollbackRequest(stackId, suppressRollback, errorMessage);
-
-			String body = mapper.writeValueAsString(vrr);
-			HttpHeaders headers = generateHeaders(requestId);
-			HttpEntity<String> entity = new HttpEntity<>(body, headers);
+            String body = mapper.writeValueAsString(vdr);
+            HttpHeaders headers = generateHeaders(requestId);
+            HttpEntity<String> entity = new HttpEntity<>(body, headers);
 
 
-			response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetRollbackResponse.class);
-			gvr = this.getGVRFromResponse(response);
-		} catch (Exception e) {
-        logger.error("An exception occurred in callValetRollbackRequest", e);
-			throw e;
-		}
-		return gvr;
-	}
+            response = getRestTemplate().exchange(uri, HttpMethod.DELETE, entity, ValetDeleteResponse.class);
+            gvr = this.getGVRFromResponse(response);
+        } catch (Exception e) {
+            logger.error("An exception occurred in callValetDeleteRequest", e);
+            throw e;
+        }
+        return gvr;
+    }
 
-	/*
-	 * This method is to construct the ValetCreateRequest pojo
-	 */
-	private ValetCreateRequest createValetCreateRequest(String regionId, String ownerId, String tenantId, String serviceInstanceId,
-			String vnfId, String vnfName, String vfModuleId, String vfModuleName, String keystoneUrl, HeatRequest heatRequest) {
-		ValetCreateRequest vcr = new ValetCreateRequest();
-		vcr.setHeatRequest(heatRequest);
-		vcr.setKeystoneUrl(keystoneUrl);
-		vcr.setRegionId(regionId);
-		vcr.setOwnerId(ownerId);
-		vcr.setServiceInstanceId(serviceInstanceId);
-		vcr.setTenantId(tenantId);
-		vcr.setVfModuleId(vfModuleId);
-		vcr.setVfModuleName(vfModuleName);
-		vcr.setVnfId(vnfId);
-		vcr.setVnfName(vnfName);
+    /*
+     * This method is called to invoke a Confirm request to Valet.
+     */
+    public GenericValetResponse<ValetConfirmResponse> callValetConfirmRequest(String requestId, String stackId)
+            throws Exception {
+        ResponseEntity<ValetConfirmResponse> response = null;
+        GenericValetResponse<ValetConfirmResponse> gvr = null;
 
-		return vcr;
-	}
+        try {
+            UriBuilder builder = UriBuilder.fromPath(this.baseUrl).path(this.basePath).path("{requestId}/confirm/");
+            URI uri = builder.build(requestId);
 
-	/*
-	 * This method is to construct the ValetUpdateRequest pojo
-	 */
-	private ValetUpdateRequest createValetUpdateRequest(String regionId, String ownerId, String tenantId, String serviceInstanceId,
-			String vnfId, String vnfName, String vfModuleId, String vfModuleName, String keystoneUrl, HeatRequest heatRequest) {
-		ValetUpdateRequest vur = new ValetUpdateRequest();
-		vur.setHeatRequest(heatRequest);
-		vur.setKeystoneUrl(keystoneUrl);
-		vur.setRegionId(regionId == null ? "" : regionId);
-		vur.setOwnerId(ownerId == null ? "" : ownerId);
-		vur.setServiceInstanceId(serviceInstanceId == null ? "" : serviceInstanceId);
-		vur.setTenantId(tenantId == null ? "" : tenantId);
-		vur.setVfModuleId(vfModuleId == null ? "" : vfModuleId);
-		vur.setVfModuleName(vfModuleName == null ? "" : vfModuleName);
-		vur.setVnfId(vnfId == null ? "" : vnfId);
-		vur.setVnfName(vnfName == null ? "" : vnfName);
+            ValetConfirmRequest vcr = this.createValetConfirmRequest(stackId);
 
-		return vur;
-	}
+            String body = mapper.writeValueAsString(vcr);
+            HttpHeaders headers = generateHeaders(requestId);
+            HttpEntity<String> entity = new HttpEntity<>(body, headers);
+            logger.debug("valet confirm req: {} {} {} {} {}", uri, HEADERS, headers, BODY, body);
 
-	/*
-	 * This method is to construct the ValetDeleteRequest pojo
-	 */
-	private ValetDeleteRequest createValetDeleteRequest(String regionId, String ownerId, String tenantId, String vfModuleId, String vfModuleName) {
-		ValetDeleteRequest vdr = new ValetDeleteRequest();
-		vdr.setRegionId(regionId == null ? "" : regionId);
-		vdr.setOwnerId(ownerId == null ? "" : ownerId);
-		vdr.setTenantId(tenantId == null ? "" : tenantId);
-		vdr.setVfModuleId(vfModuleId == null ? "" : vfModuleId);
-		vdr.setVfModuleName(vfModuleName == null ? "" : vfModuleName);
+            response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetConfirmResponse.class);
+            gvr = this.getGVRFromResponse(response);
+        } catch (Exception e) {
+            logger.error("An exception occurred in callValetConfirmRequest", e);
+            throw e;
+        }
+        return gvr;
+    }
 
-		return vdr;
-	}
+    /*
+     * This method is called to invoke a Rollback request to Valet.
+     */
+    public GenericValetResponse<ValetRollbackResponse> callValetRollbackRequest(String requestId, String stackId,
+            Boolean suppressRollback, String errorMessage) throws Exception {
+        ResponseEntity<ValetRollbackResponse> response = null;
+        GenericValetResponse<ValetRollbackResponse> gvr = null;
 
-	/*
-	 * This method is to construct the ValetDeleteRequest pojo
-	 */
-	private ValetConfirmRequest createValetConfirmRequest(String stackId) {
-		ValetConfirmRequest vcr = new ValetConfirmRequest();
-		vcr.setStackId(stackId);
+        try {
+            UriBuilder builder = UriBuilder.fromPath(this.baseUrl).path(this.basePath).path("{requestId}/rollback/");
+            URI uri = builder.build(requestId);
 
-		return vcr;
-	}
+            ValetRollbackRequest vrr = this.createValetRollbackRequest(stackId, suppressRollback, errorMessage);
 
-	/*
-	 * This method is to construct the ValetRollbackRequest pojo
-	 */
-	private ValetRollbackRequest createValetRollbackRequest(String stackId, Boolean suppressRollback, String errorMessage) {
-		ValetRollbackRequest vrr = new ValetRollbackRequest();
-		vrr.setStackId(stackId);
-		vrr.setSuppressRollback(suppressRollback);
-		vrr.setErrorMessage(errorMessage);
+            String body = mapper.writeValueAsString(vrr);
+            HttpHeaders headers = generateHeaders(requestId);
+            HttpEntity<String> entity = new HttpEntity<>(body, headers);
 
-		return vrr;
-	}
 
-	private HttpHeaders generateHeaders(String requestId) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-		if (!(this.authString == null || this.authString.isEmpty())) {
-			headers.add("Authorization",  "Basic " + this.authString);
-		}
-		headers.add(ValetClient.REQ_ID_HEADER_NAME, requestId);
+            response = getRestTemplate().exchange(uri, HttpMethod.PUT, entity, ValetRollbackResponse.class);
+            gvr = this.getGVRFromResponse(response);
+        } catch (Exception e) {
+            logger.error("An exception occurred in callValetRollbackRequest", e);
+            throw e;
+        }
+        return gvr;
+    }
 
-		return headers;
-	}
+    /*
+     * This method is to construct the ValetCreateRequest pojo
+     */
+    private ValetCreateRequest createValetCreateRequest(String regionId, String ownerId, String tenantId,
+            String serviceInstanceId, String vnfId, String vnfName, String vfModuleId, String vfModuleName,
+            String keystoneUrl, HeatRequest heatRequest) {
+        ValetCreateRequest vcr = new ValetCreateRequest();
+        vcr.setHeatRequest(heatRequest);
+        vcr.setKeystoneUrl(keystoneUrl);
+        vcr.setRegionId(regionId);
+        vcr.setOwnerId(ownerId);
+        vcr.setServiceInstanceId(serviceInstanceId);
+        vcr.setTenantId(tenantId);
+        vcr.setVfModuleId(vfModuleId);
+        vcr.setVfModuleName(vfModuleName);
+        vcr.setVnfId(vnfId);
+        vcr.setVnfName(vnfName);
 
-	private <T> GenericValetResponse<T> getGVRFromResponse(ResponseEntity<T> response) {
-		GenericValetResponse<T> gvr = null;
-		if (response != null) {
-			T responseObj = response.getBody();
-			gvr = new GenericValetResponse<>(response.getStatusCodeValue(), ValetClient.NO_STATUS_RETURNED, responseObj);
+        return vcr;
+    }
 
-		} else {
-			gvr = new GenericValetResponse<>(-1, ValetClient.NO_STATUS_RETURNED, null);
-		}
-		return gvr;
-	}
+    /*
+     * This method is to construct the ValetUpdateRequest pojo
+     */
+    private ValetUpdateRequest createValetUpdateRequest(String regionId, String ownerId, String tenantId,
+            String serviceInstanceId, String vnfId, String vnfName, String vfModuleId, String vfModuleName,
+            String keystoneUrl, HeatRequest heatRequest) {
+        ValetUpdateRequest vur = new ValetUpdateRequest();
+        vur.setHeatRequest(heatRequest);
+        vur.setKeystoneUrl(keystoneUrl);
+        vur.setRegionId(regionId == null ? "" : regionId);
+        vur.setOwnerId(ownerId == null ? "" : ownerId);
+        vur.setServiceInstanceId(serviceInstanceId == null ? "" : serviceInstanceId);
+        vur.setTenantId(tenantId == null ? "" : tenantId);
+        vur.setVfModuleId(vfModuleId == null ? "" : vfModuleId);
+        vur.setVfModuleName(vfModuleName == null ? "" : vfModuleName);
+        vur.setVnfId(vnfId == null ? "" : vnfId);
+        vur.setVnfName(vnfName == null ? "" : vnfName);
+
+        return vur;
+    }
+
+    /*
+     * This method is to construct the ValetDeleteRequest pojo
+     */
+    private ValetDeleteRequest createValetDeleteRequest(String regionId, String ownerId, String tenantId,
+            String vfModuleId, String vfModuleName) {
+        ValetDeleteRequest vdr = new ValetDeleteRequest();
+        vdr.setRegionId(regionId == null ? "" : regionId);
+        vdr.setOwnerId(ownerId == null ? "" : ownerId);
+        vdr.setTenantId(tenantId == null ? "" : tenantId);
+        vdr.setVfModuleId(vfModuleId == null ? "" : vfModuleId);
+        vdr.setVfModuleName(vfModuleName == null ? "" : vfModuleName);
+
+        return vdr;
+    }
+
+    /*
+     * This method is to construct the ValetDeleteRequest pojo
+     */
+    private ValetConfirmRequest createValetConfirmRequest(String stackId) {
+        ValetConfirmRequest vcr = new ValetConfirmRequest();
+        vcr.setStackId(stackId);
+
+        return vcr;
+    }
+
+    /*
+     * This method is to construct the ValetRollbackRequest pojo
+     */
+    private ValetRollbackRequest createValetRollbackRequest(String stackId, Boolean suppressRollback,
+            String errorMessage) {
+        ValetRollbackRequest vrr = new ValetRollbackRequest();
+        vrr.setStackId(stackId);
+        vrr.setSuppressRollback(suppressRollback);
+        vrr.setErrorMessage(errorMessage);
+
+        return vrr;
+    }
+
+    private HttpHeaders generateHeaders(String requestId) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        if (!(this.authString == null || this.authString.isEmpty())) {
+            headers.add("Authorization", "Basic " + this.authString);
+        }
+        headers.add(ValetClient.REQ_ID_HEADER_NAME, requestId);
+
+        return headers;
+    }
+
+    private <T> GenericValetResponse<T> getGVRFromResponse(ResponseEntity<T> response) {
+        GenericValetResponse<T> gvr = null;
+        if (response != null) {
+            T responseObj = response.getBody();
+            gvr = new GenericValetResponse<>(response.getStatusCodeValue(), ValetClient.NO_STATUS_RETURNED,
+                    responseObj);
+
+        } else {
+            gvr = new GenericValetResponse<>(-1, ValetClient.NO_STATUS_RETURNED, null);
+        }
+        return gvr;
+    }
 }

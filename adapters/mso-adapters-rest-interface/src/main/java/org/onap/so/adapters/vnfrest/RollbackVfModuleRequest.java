@@ -22,24 +22,23 @@ package org.onap.so.adapters.vnfrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
 @JsonRootName("rollbackVfModuleRequest")
 @XmlRootElement(name = "rollbackVfModuleRequest")
 public class RollbackVfModuleRequest extends VfRequestCommon {
-	private VfModuleRollback vfModuleRollback;
+    private VfModuleRollback vfModuleRollback;
 
-	public RollbackVfModuleRequest() {
-		super();
-	}
+    public RollbackVfModuleRequest() {
+        super();
+    }
 
-	public VfModuleRollback getVfModuleRollback() {
-		return vfModuleRollback;
-	}
+    public VfModuleRollback getVfModuleRollback() {
+        return vfModuleRollback;
+    }
 
-	public void setVfModuleRollback(VfModuleRollback vfModuleRollback) {
-		this.vfModuleRollback = vfModuleRollback;
-	}
+    public void setVfModuleRollback(VfModuleRollback vfModuleRollback) {
+        this.vfModuleRollback = vfModuleRollback;
+    }
 }

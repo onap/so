@@ -24,10 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "maxLength",
-    "allowableChars"
-})
+@JsonPropertyOrder({"maxLength", "allowableChars"})
 public class Validation {
 
     @JsonProperty("maxLength")
@@ -39,8 +36,7 @@ public class Validation {
      * No args constructor for use in serialization
      * 
      */
-    public Validation() {
-    }
+    public Validation() {}
 
     /**
      * 

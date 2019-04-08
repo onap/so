@@ -22,44 +22,42 @@ package org.onap.so.client.restproperties;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.policy.PolicyRestProperties;
 
 public class PolicyRestPropertiesImpl implements PolicyRestProperties {
 
-	public static final String POLICY_ENDPOINT = "policy.endpoint";
-	public static final String POLICY_ENVIRONMENT = "policy.environment";
-	public static final String POLICY_AUTH = "policy.auth";
-	public static final String POLICY_CLIENT_AUTH = "policy.client.auth";
+    public static final String POLICY_ENDPOINT = "policy.endpoint";
+    public static final String POLICY_ENVIRONMENT = "policy.environment";
+    public static final String POLICY_AUTH = "policy.auth";
+    public static final String POLICY_CLIENT_AUTH = "policy.client.auth";
 
-	public PolicyRestPropertiesImpl() {
-	}
-	
-	@Override
-	public URL getEndpoint() {
-		try {
-			return new URL(UrnPropertiesReader.getVariable(POLICY_ENDPOINT));
-		} catch (MalformedURLException e) {
-			return null;
-		}
-	}
+    public PolicyRestPropertiesImpl() {}
 
-	@Override
-	public String getSystemName() {
-		return "MSO";
-	}
-	
-	public String getClientAuth() {
-		return UrnPropertiesReader.getVariable(POLICY_CLIENT_AUTH);
-	}
-	
-	public String getAuth() {
-		return UrnPropertiesReader.getVariable(POLICY_AUTH);
-	}
-	
-	public String getEnvironment() {
-		return UrnPropertiesReader.getVariable(POLICY_ENVIRONMENT);
-	}
+    @Override
+    public URL getEndpoint() {
+        try {
+            return new URL(UrnPropertiesReader.getVariable(POLICY_ENDPOINT));
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String getSystemName() {
+        return "MSO";
+    }
+
+    public String getClientAuth() {
+        return UrnPropertiesReader.getVariable(POLICY_CLIENT_AUTH);
+    }
+
+    public String getAuth() {
+        return UrnPropertiesReader.getVariable(POLICY_AUTH);
+    }
+
+    public String getEnvironment() {
+        return UrnPropertiesReader.getVariable(POLICY_ENVIRONMENT);
+    }
 
 }

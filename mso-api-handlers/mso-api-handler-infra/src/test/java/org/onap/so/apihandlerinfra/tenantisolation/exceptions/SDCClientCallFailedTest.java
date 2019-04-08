@@ -21,25 +21,24 @@
 package org.onap.so.apihandlerinfra.tenantisolation.exceptions;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
 
-public class SDCClientCallFailedTest extends BaseTest{
-	
-	@Test
-	public void testAsdcException() {
-		SDCClientCallFailed asdc = new SDCClientCallFailed("failed");
-		
-		assertEquals("failed", asdc.getMessage());
-	}
-	
-	@Test
-	public void testAsdcExceptionWithCause() {
-		SDCClientCallFailed asdc = new SDCClientCallFailed("failed", new Throwable("throwable"));
-		
-		assertEquals("failed", asdc.getMessage());
-		assertEquals("throwable", asdc.getCause().getMessage());
-	}
+public class SDCClientCallFailedTest extends BaseTest {
+
+    @Test
+    public void testAsdcException() {
+        SDCClientCallFailed asdc = new SDCClientCallFailed("failed");
+
+        assertEquals("failed", asdc.getMessage());
+    }
+
+    @Test
+    public void testAsdcExceptionWithCause() {
+        SDCClientCallFailed asdc = new SDCClientCallFailed("failed", new Throwable("throwable"));
+
+        assertEquals("failed", asdc.getMessage());
+        assertEquals("throwable", asdc.getCause().getMessage());
+    }
 
 }

@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,149 +33,146 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "network_resource_customization")
 public class NetworkResourceCustomization implements Serializable {
-	public static final long serialVersionUID = -1322322139926390329L;
+    public static final long serialVersionUID = -1322322139926390329L;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelInstanceName", modelInstanceName).append("created", created)
-				.append("networkTechnology", networkTechnology).append("networkType", networkType)
-				.append("networkScope", networkScope).append("networkRole", networkRole)
-				.append("networkResource", networkResource).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName).append("created", created)
+                .append("networkTechnology", networkTechnology).append("networkType", networkType)
+                .append("networkScope", networkScope).append("networkRole", networkRole)
+                .append("networkResource", networkResource).toString();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof NetworkResourceCustomization)) {
-			return false;
-		}
-		NetworkResourceCustomization castOther = (NetworkResourceCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof NetworkResourceCustomization)) {
+            return false;
+        }
+        NetworkResourceCustomization castOther = (NetworkResourceCustomization) other;
+        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+    }
 
-	public NetworkResourceCustomization() {
-		super();
-	}
+    public NetworkResourceCustomization() {
+        super();
+    }
 
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_CUSTOMIZATION_UUID")
-	private String modelCustomizationUUID = null;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_CUSTOMIZATION_UUID")
+    private String modelCustomizationUUID = null;
 
-	@Column(name = "MODEL_INSTANCE_NAME")
-	private String modelInstanceName;
+    @Column(name = "MODEL_INSTANCE_NAME")
+    private String modelInstanceName;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@Column(name = "NETWORK_TECHNOLOGY")
-	private String networkTechnology;
+    @Column(name = "NETWORK_TECHNOLOGY")
+    private String networkTechnology;
 
-	@Column(name = "NETWORK_TYPE")
-	private String networkType = null;
+    @Column(name = "NETWORK_TYPE")
+    private String networkType = null;
 
-	@Column(name = "NETWORK_SCOPE")
-	private String networkScope;
+    @Column(name = "NETWORK_SCOPE")
+    private String networkScope;
 
-	@Column(name = "NETWORK_ROLE")
-	private String networkRole;
+    @Column(name = "NETWORK_ROLE")
+    private String networkRole;
 
-	@Column(name = "RESOURCE_INPUT")
-	private String resourceInput;
+    @Column(name = "RESOURCE_INPUT")
+    private String resourceInput;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "NETWORK_RESOURCE_MODEL_UUID")
-	private NetworkResource networkResource = null;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "NETWORK_RESOURCE_MODEL_UUID")
+    private NetworkResource networkResource = null;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public String getModelCustomizationUUID() {
-		return this.modelCustomizationUUID;
-	}
+    public String getModelCustomizationUUID() {
+        return this.modelCustomizationUUID;
+    }
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public String getModelInstanceName() {
-		return this.modelInstanceName;
-	}
+    public String getModelInstanceName() {
+        return this.modelInstanceName;
+    }
 
-	public void setModelInstanceName(String modelInstanceName) {
-		this.modelInstanceName = modelInstanceName;
-	}
+    public void setModelInstanceName(String modelInstanceName) {
+        this.modelInstanceName = modelInstanceName;
+    }
 
-	@LinkedResource
-	public NetworkResource getNetworkResource() {
-		return this.networkResource;
-	}
+    @LinkedResource
+    public NetworkResource getNetworkResource() {
+        return this.networkResource;
+    }
 
-	public void setNetworkResource(NetworkResource networkResource) {
-		this.networkResource = networkResource;
-	}
+    public void setNetworkResource(NetworkResource networkResource) {
+        this.networkResource = networkResource;
+    }
 
-	public String getNetworkType() {
-		return this.networkType;
-	}
+    public String getNetworkType() {
+        return this.networkType;
+    }
 
-	public void setNetworkType(String networkType) {
-		this.networkType = networkType;
-	}
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
+    }
 
-	public Date getCreated() {
-		return this.created;
-	}
+    public Date getCreated() {
+        return this.created;
+    }
 
-	public String getNetworkTechnology() {
-		return this.networkTechnology;
-	}
+    public String getNetworkTechnology() {
+        return this.networkTechnology;
+    }
 
-	public void setNetworkTechnology(String networkTechnology) {
-		this.networkTechnology = networkTechnology;
-	}
+    public void setNetworkTechnology(String networkTechnology) {
+        this.networkTechnology = networkTechnology;
+    }
 
-	public String getNetworkScope() {
-		return this.networkScope;
-	}
+    public String getNetworkScope() {
+        return this.networkScope;
+    }
 
-	public void setNetworkScope(String networkScope) {
-		this.networkScope = networkScope;
-	}
+    public void setNetworkScope(String networkScope) {
+        this.networkScope = networkScope;
+    }
 
-	public void setNetworkRole(String networkRole) {
-		this.networkRole = networkRole;
-	}
+    public void setNetworkRole(String networkRole) {
+        this.networkRole = networkRole;
+    }
 
-	public String getNetworkRole() {
-		return this.networkRole;
-	}
+    public String getNetworkRole() {
+        return this.networkRole;
+    }
 
-	public String getResourceInput() {
-		return resourceInput;
-	}
+    public String getResourceInput() {
+        return resourceInput;
+    }
 
-	public void setResourceInput(String resourceInput) {
-		this.resourceInput = resourceInput;
-	}
+    public void setResourceInput(String resourceInput) {
+        this.resourceInput = resourceInput;
+    }
 }

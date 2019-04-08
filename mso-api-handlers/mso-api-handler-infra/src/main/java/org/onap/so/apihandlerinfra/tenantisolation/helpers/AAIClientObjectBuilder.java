@@ -26,17 +26,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIClientObjectBuilder {
-	
-	public OperationalEnvironment buildAAIOperationalEnvironment(String status, CloudOrchestrationRequest cloudOrchestrationRequest) {
-		OperationalEnvironment env = new OperationalEnvironment();
-		env.setOperationalEnvironmentId(cloudOrchestrationRequest.getOperationalEnvironmentId());
-		env.setOperationalEnvironmentName(cloudOrchestrationRequest.getRequestDetails().getRequestInfo().getInstanceName());
-		env.setOperationalEnvironmentType(cloudOrchestrationRequest.getRequestDetails().getRequestParameters().getOperationalEnvironmentType().toString());
-		env.setOperationalEnvironmentStatus(status);
-		env.setTenantContext(cloudOrchestrationRequest.getRequestDetails().getRequestParameters().getTenantContext());
-		env.setWorkloadContext(cloudOrchestrationRequest.getRequestDetails().getRequestParameters().getWorkloadContext());
-		return env;	
-	}
+
+    public OperationalEnvironment buildAAIOperationalEnvironment(String status,
+            CloudOrchestrationRequest cloudOrchestrationRequest) {
+        OperationalEnvironment env = new OperationalEnvironment();
+        env.setOperationalEnvironmentId(cloudOrchestrationRequest.getOperationalEnvironmentId());
+        env.setOperationalEnvironmentName(
+                cloudOrchestrationRequest.getRequestDetails().getRequestInfo().getInstanceName());
+        env.setOperationalEnvironmentType(cloudOrchestrationRequest.getRequestDetails().getRequestParameters()
+                .getOperationalEnvironmentType().toString());
+        env.setOperationalEnvironmentStatus(status);
+        env.setTenantContext(cloudOrchestrationRequest.getRequestDetails().getRequestParameters().getTenantContext());
+        env.setWorkloadContext(
+                cloudOrchestrationRequest.getRequestDetails().getRequestParameters().getWorkloadContext());
+        return env;
+    }
 
 
 }

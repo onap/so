@@ -23,17 +23,17 @@ package org.onap.so.client.exceptions;
 
 public class SDNOException extends Exception {
 
-	private static final long serialVersionUID = 6189163383568887383L;
+    private static final long serialVersionUID = 6189163383568887383L;
 
-	public SDNOException() {
-		super();
-	}
-	
-	public SDNOException(String string) {
-		super("SDN-O exception: " + string);
-	}
+    public SDNOException() {
+        super();
+    }
 
-	public SDNOException(Exception e) {
-		super(e);
-	}
+    public SDNOException(String string) {
+        super("SDN-O exception: " + string);
+    }
+
+    public SDNOException(Exception e) {
+        super(e);
+    }
 }

@@ -28,9 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -49,28 +51,24 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "requestId",
-    "responseCode",
-    "responseMessage"
-}, namespace="http://org.onap/workflow/sdnc/adapter/schema/v1")
+@XmlType(name = "", propOrder = {"requestId", "responseCode", "responseMessage"},
+        namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1")
 @XmlRootElement(name = "CallbackHeader")
 public class CallbackHeader {
 
-    @XmlElement(name = "RequestId", required = true, namespace="http://org.onap/workflow/sdnc/adapter/schema/v1")
+    @XmlElement(name = "RequestId", required = true, namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1")
     protected String requestId;
-    @XmlElement(name = "ResponseCode", required = true,namespace="http://org.onap/workflow/sdnc/adapter/schema/v1")
+    @XmlElement(name = "ResponseCode", required = true, namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1")
     protected String responseCode;
-    @XmlElement(name = "ResponseMessage", required = true,namespace="http://org.onap/workflow/sdnc/adapter/schema/v1")
+    @XmlElement(name = "ResponseMessage", required = true,
+            namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1")
     protected String responseMessage;
 
     /**
      * Gets the value of the requestId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getRequestId() {
         return requestId;
@@ -79,10 +77,8 @@ public class CallbackHeader {
     /**
      * Sets the value of the requestId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setRequestId(String value) {
         this.requestId = value;
@@ -91,10 +87,8 @@ public class CallbackHeader {
     /**
      * Gets the value of the responseCode property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getResponseCode() {
         return responseCode;
@@ -103,10 +97,8 @@ public class CallbackHeader {
     /**
      * Sets the value of the responseCode property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setResponseCode(String value) {
         this.responseCode = value;
@@ -115,10 +107,8 @@ public class CallbackHeader {
     /**
      * Gets the value of the responseMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getResponseMessage() {
         return responseMessage;
@@ -127,10 +117,8 @@ public class CallbackHeader {
     /**
      * Sets the value of the responseMessage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setResponseMessage(String value) {
         this.responseMessage = value;

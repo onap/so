@@ -22,7 +22,6 @@ package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.HashMap;
 import java.util.Map;
 

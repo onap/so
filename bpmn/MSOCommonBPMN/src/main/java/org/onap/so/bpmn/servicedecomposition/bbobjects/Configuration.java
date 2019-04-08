@@ -27,7 +27,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.Metadata;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoConfiguration;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -36,205 +35,205 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 
 @JsonRootName("configuration")
 public class Configuration implements Serializable, ShallowCopy<Configuration> {
-	private static final long serialVersionUID = 4525487672816730299L;
+    private static final long serialVersionUID = 4525487672816730299L;
 
-	@Id
-	@JsonProperty("configuration-id")
-	private String configurationId;
-	@JsonProperty("orchestration-status")
-	private OrchestrationStatus orchestrationStatus;
-	@JsonProperty("tunnel-bandwidth")
-	private String tunnelBandwidth;
-	@JsonProperty("vendor-allowed-max-bandwidth")
-	private String vendorAllowedMaxBandwidth;
-	@JsonProperty("management-option")
-	private String managementOption;
-	@JsonProperty("configuration-name")
-	private String configurationName;
-	@JsonProperty("configuration-type")
-	private String configurationType;
-	@JsonProperty("configuration-sub-type")
-	private String configurationSubType;
-	@JsonProperty("operational-status")
-	private String operationalStatus;
-	@JsonProperty("configuration-selflink")
-	private String configurationSelflink;
-	@JsonProperty("metadata")
-	private Metadata metadata;
-	@JsonProperty("forwarder-evcs")
-	private List<ForwarderEvc> forwarderEvcs = new ArrayList<>();
-	@JsonProperty("evcs")
-	private List<Evc> evcs = new ArrayList<>();
-	@JsonProperty("vnfc")
-	private Vnfc vnfc = new Vnfc();
-	@JsonProperty("model-info-configuration")
-	private ModelInfoConfiguration modelInfoConfiguration;
-	
-	@JsonProperty("related-configuration")
-	private Configuration relatedConfiguration;
-	
-	@JsonProperty("l3-network")
-	private L3Network network;
-	
-	@JsonProperty("l-interface")
-	private LInterface lInterface;
+    @Id
+    @JsonProperty("configuration-id")
+    private String configurationId;
+    @JsonProperty("orchestration-status")
+    private OrchestrationStatus orchestrationStatus;
+    @JsonProperty("tunnel-bandwidth")
+    private String tunnelBandwidth;
+    @JsonProperty("vendor-allowed-max-bandwidth")
+    private String vendorAllowedMaxBandwidth;
+    @JsonProperty("management-option")
+    private String managementOption;
+    @JsonProperty("configuration-name")
+    private String configurationName;
+    @JsonProperty("configuration-type")
+    private String configurationType;
+    @JsonProperty("configuration-sub-type")
+    private String configurationSubType;
+    @JsonProperty("operational-status")
+    private String operationalStatus;
+    @JsonProperty("configuration-selflink")
+    private String configurationSelflink;
+    @JsonProperty("metadata")
+    private Metadata metadata;
+    @JsonProperty("forwarder-evcs")
+    private List<ForwarderEvc> forwarderEvcs = new ArrayList<>();
+    @JsonProperty("evcs")
+    private List<Evc> evcs = new ArrayList<>();
+    @JsonProperty("vnfc")
+    private Vnfc vnfc = new Vnfc();
+    @JsonProperty("model-info-configuration")
+    private ModelInfoConfiguration modelInfoConfiguration;
 
-	public ModelInfoConfiguration getModelInfoConfiguration() {
-		return modelInfoConfiguration;
-	}
+    @JsonProperty("related-configuration")
+    private Configuration relatedConfiguration;
 
-	public void setModelInfoConfiguration(ModelInfoConfiguration modelInfoConfiguration) {
-		this.modelInfoConfiguration = modelInfoConfiguration;
-	}
+    @JsonProperty("l3-network")
+    private L3Network network;
 
-	public List<ForwarderEvc> getForwarderEvcs() {
-		return forwarderEvcs;
-	}
-	
-	public Vnfc getVnfc() {
-		return vnfc;
-	}
+    @JsonProperty("l-interface")
+    private LInterface lInterface;
 
-	public void setVnfc(Vnfc vnfc) {
-		this.vnfc = vnfc;
-	}
+    public ModelInfoConfiguration getModelInfoConfiguration() {
+        return modelInfoConfiguration;
+    }
 
-	public List<Evc> getEvcs() {
-		return evcs;
-	}
+    public void setModelInfoConfiguration(ModelInfoConfiguration modelInfoConfiguration) {
+        this.modelInfoConfiguration = modelInfoConfiguration;
+    }
 
-	public String getConfigurationId() {
-		return configurationId;
-	}
+    public List<ForwarderEvc> getForwarderEvcs() {
+        return forwarderEvcs;
+    }
 
-	public void setConfigurationId(String configurationId) {
-		this.configurationId = configurationId;
-	}
+    public Vnfc getVnfc() {
+        return vnfc;
+    }
 
-	public String getManagementOption() {
-		return managementOption;
-	}
+    public void setVnfc(Vnfc vnfc) {
+        this.vnfc = vnfc;
+    }
 
-	public void setManagementOption(String managementOption) {
-		this.managementOption = managementOption;
-	}
+    public List<Evc> getEvcs() {
+        return evcs;
+    }
 
-	public String getConfigurationName() {
-		return configurationName;
-	}
+    public String getConfigurationId() {
+        return configurationId;
+    }
 
-	public void setConfigurationName(String configurationName) {
-		this.configurationName = configurationName;
-	}
+    public void setConfigurationId(String configurationId) {
+        this.configurationId = configurationId;
+    }
 
-	public String getConfigurationType() {
-		return configurationType;
-	}
+    public String getManagementOption() {
+        return managementOption;
+    }
 
-	public void setConfigurationType(String configurationType) {
-		this.configurationType = configurationType;
-	}
+    public void setManagementOption(String managementOption) {
+        this.managementOption = managementOption;
+    }
 
-	public String getConfigurationSubType() {
-		return configurationSubType;
-	}
+    public String getConfigurationName() {
+        return configurationName;
+    }
 
-	public void setConfigurationSubType(String configurationSubType) {
-		this.configurationSubType = configurationSubType;
-	}
+    public void setConfigurationName(String configurationName) {
+        this.configurationName = configurationName;
+    }
 
-	public String getOperationalStatus() {
-		return operationalStatus;
-	}
+    public String getConfigurationType() {
+        return configurationType;
+    }
 
-	public void setOperationalStatus(String operationalStatus) {
-		this.operationalStatus = operationalStatus;
-	}
+    public void setConfigurationType(String configurationType) {
+        this.configurationType = configurationType;
+    }
 
-	public String getConfigurationSelflink() {
-		return configurationSelflink;
-	}
+    public String getConfigurationSubType() {
+        return configurationSubType;
+    }
 
-	public void setConfigurationSelflink(String configurationSelflink) {
-		this.configurationSelflink = configurationSelflink;
-	}
+    public void setConfigurationSubType(String configurationSubType) {
+        this.configurationSubType = configurationSubType;
+    }
 
-	public OrchestrationStatus getOrchestrationStatus() {
-		return orchestrationStatus;
-	}
-	
-	public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
-		this.orchestrationStatus = orchestrationStatus;
-	}
+    public String getOperationalStatus() {
+        return operationalStatus;
+    }
 
-	public String getTunnelBandwidth() {
-		return tunnelBandwidth;
-	}
+    public void setOperationalStatus(String operationalStatus) {
+        this.operationalStatus = operationalStatus;
+    }
 
-	public void setTunnelBandwidth(String tunnelBandwidth) {
-		this.tunnelBandwidth = tunnelBandwidth;
-	}
+    public String getConfigurationSelflink() {
+        return configurationSelflink;
+    }
 
-	public String getVendorAllowedMaxBandwidth() {
-		return vendorAllowedMaxBandwidth;
-	}
+    public void setConfigurationSelflink(String configurationSelflink) {
+        this.configurationSelflink = configurationSelflink;
+    }
 
-	public void setVendorAllowedMaxBandwidth(String vendorAllowedMaxBandwidth) {
-		this.vendorAllowedMaxBandwidth = vendorAllowedMaxBandwidth;
-	}
+    public OrchestrationStatus getOrchestrationStatus() {
+        return orchestrationStatus;
+    }
 
-	public Metadata getMetadata() {
-		return metadata;
-	}
+    public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
+        this.orchestrationStatus = orchestrationStatus;
+    }
 
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
+    public String getTunnelBandwidth() {
+        return tunnelBandwidth;
+    }
 
-	public Configuration getRelatedConfiguration() {
-		return relatedConfiguration;
-	}
+    public void setTunnelBandwidth(String tunnelBandwidth) {
+        this.tunnelBandwidth = tunnelBandwidth;
+    }
 
-	public void setRelatedConfiguration(Configuration relatedConfiguration) {
-		this.relatedConfiguration = relatedConfiguration;
-	}
+    public String getVendorAllowedMaxBandwidth() {
+        return vendorAllowedMaxBandwidth;
+    }
 
-	public void setForwarderEvcs(List<ForwarderEvc> forwarderEvcs) {
-		this.forwarderEvcs = forwarderEvcs;
-	}
+    public void setVendorAllowedMaxBandwidth(String vendorAllowedMaxBandwidth) {
+        this.vendorAllowedMaxBandwidth = vendorAllowedMaxBandwidth;
+    }
 
-	public void setEvcs(List<Evc> evcs) {
-		this.evcs = evcs;
-	}
+    public Metadata getMetadata() {
+        return metadata;
+    }
 
-	public L3Network getNetwork() {
-		return network;
-	}
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
 
-	public void setNetwork(L3Network network) {
-		this.network = network;
-	}
+    public Configuration getRelatedConfiguration() {
+        return relatedConfiguration;
+    }
 
-	public LInterface getlInterface() {
-		return lInterface;
-	}
+    public void setRelatedConfiguration(Configuration relatedConfiguration) {
+        this.relatedConfiguration = relatedConfiguration;
+    }
 
-	public void setlInterface(LInterface lInterface) {
-		this.lInterface = lInterface;
-	}
+    public void setForwarderEvcs(List<ForwarderEvc> forwarderEvcs) {
+        this.forwarderEvcs = forwarderEvcs;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof Configuration)) {
-			return false;
-		}
-		Configuration castOther = (Configuration) other;
-		return new EqualsBuilder().append(configurationId, castOther.configurationId).isEquals();
-	}
+    public void setEvcs(List<Evc> evcs) {
+        this.evcs = evcs;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(configurationId).toHashCode();
-	}
-	
+    public L3Network getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(L3Network network) {
+        this.network = network;
+    }
+
+    public LInterface getlInterface() {
+        return lInterface;
+    }
+
+    public void setlInterface(LInterface lInterface) {
+        this.lInterface = lInterface;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof Configuration)) {
+            return false;
+        }
+        Configuration castOther = (Configuration) other;
+        return new EqualsBuilder().append(configurationId, castOther.configurationId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(configurationId).toHashCode();
+    }
+
 }

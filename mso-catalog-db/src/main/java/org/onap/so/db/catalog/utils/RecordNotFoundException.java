@@ -21,30 +21,30 @@
 package org.onap.so.db.catalog.utils;
 
 /*
-* Exception of the ASDC controller.
-*/
+ * Exception of the ASDC controller.
+ */
 public class RecordNotFoundException extends Exception {
 
-	/**
-    * serialization id.
-	 */
-	private static final long serialVersionUID = 8425657297510362736L;
+    /**
+     * serialization id.
+     */
+    private static final long serialVersionUID = 8425657297510362736L;
 
-   /**
-    * @param message The message to dump
-    * @param cause The Throwable cause object
-    */
-   public RecordNotFoundException(final String message) {
-       super (message);
+    /**
+     * @param message The message to dump
+     * @param cause The Throwable cause object
+     */
+    public RecordNotFoundException(final String message) {
+        super(message);
 
-   }
+    }
 
-   /**
-    * @param message The message to dump
-    * @param cause The Throwable cause object
-    */
-   public RecordNotFoundException(final String message, final Throwable cause) {
-       super (message, cause);
+    /**
+     * @param message The message to dump
+     * @param cause The Throwable cause object
+     */
+    public RecordNotFoundException(final String message, final Throwable cause) {
+        super(message, cause);
 
-   }
+    }
 }

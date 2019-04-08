@@ -17,18 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client.dmaap.exceptions;
 
 public class DMaaPConsumerFailure extends Exception {
 
-	private static final long serialVersionUID = 2499229901897110362L;
+    private static final long serialVersionUID = 2499229901897110362L;
 
-	public DMaaPConsumerFailure() {
-		super();
-	}
-	
-	public DMaaPConsumerFailure(String message) {
-		super(message);
-	}
+    public DMaaPConsumerFailure() {
+        super();
+    }
+
+    public DMaaPConsumerFailure(String message) {
+        super(message);
+    }
 }

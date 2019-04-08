@@ -39,45 +39,46 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuditTasks {
 
-	private static final Logger logger = LoggerFactory.getLogger(AuditTasks.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuditTasks.class);
 
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
 
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
 
-	@Autowired
-	private Environment env;
+    @Autowired
+    private Environment env;
 
-	public void isAuditNeeded(BuildingBlockExecution execution) {
-		try {
-			logger.debug("auditInventoryNeeded Value: {}", env.getProperty("mso.infra.auditInventory"));
-			execution.setVariable("auditInventoryNeeded", Boolean.parseBoolean(env.getProperty("mso.infra.auditInventory")));
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+    public void isAuditNeeded(BuildingBlockExecution execution) {
+        try {
+            logger.debug("auditInventoryNeeded Value: {}", env.getProperty("mso.infra.auditInventory"));
+            execution.setVariable("auditInventoryNeeded",
+                    Boolean.parseBoolean(env.getProperty("mso.infra.auditInventory")));
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 
-	public void setupAuditVariable(BuildingBlockExecution execution) {
-		try {
-			execution.setVariable("auditInventory",createAuditInventory(execution));
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+    public void setupAuditVariable(BuildingBlockExecution execution) {
+        try {
+            execution.setVariable("auditInventory", createAuditInventory(execution));
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 
-	private AuditInventory createAuditInventory(BuildingBlockExecution execution) throws BBObjectNotFoundException {
-			AuditInventory auditInventory = new AuditInventory();
+    private AuditInventory createAuditInventory(BuildingBlockExecution execution) throws BBObjectNotFoundException {
+        AuditInventory auditInventory = new AuditInventory();
 
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-			CloudRegion cloudRegion = gBBInput.getCloudRegion();
+        GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+        VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+        CloudRegion cloudRegion = gBBInput.getCloudRegion();
 
-			auditInventory.setCloudOwner(cloudRegion.getCloudOwner());
-			auditInventory.setCloudRegion(cloudRegion.getLcpCloudRegionId());
-			auditInventory.setTenantId(cloudRegion.getTenantId());
-			auditInventory.setHeatStackName(vfModule.getVfModuleName());
-			return auditInventory;
-	}
+        auditInventory.setCloudOwner(cloudRegion.getCloudOwner());
+        auditInventory.setCloudRegion(cloudRegion.getLcpCloudRegionId());
+        auditInventory.setTenantId(cloudRegion.getTenantId());
+        auditInventory.setHeatStackName(vfModule.getVfModuleName());
+        return auditInventory;
+    }
 }

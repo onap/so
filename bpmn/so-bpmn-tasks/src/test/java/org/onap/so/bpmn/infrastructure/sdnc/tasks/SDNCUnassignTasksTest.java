@@ -30,7 +30,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,99 +53,111 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 
-public class SDNCUnassignTasksTest extends BaseTaskTest{
-	@InjectMocks
-	private SDNCUnassignTasks sdncUnassignTasks = new SDNCUnassignTasks();
-	
-	private ServiceInstance serviceInstance;
-	private RequestContext requestContext;
-	private GenericVnf genericVnf;
-	private VfModule vfModule;
-	private CloudRegion cloudRegion;
-	private L3Network network;
-	private Customer customer;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		customer = setCustomer();
-		serviceInstance = setServiceInstance();
-		requestContext = setRequestContext();
-		genericVnf = setGenericVnf();
-		vfModule = setVfModule();
-		cloudRegion = setCloudRegion();
-		network = setL3Network();
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-	}
-	
-	@Test
-	public void unassignServiceInstanceTest() throws Exception {
-		doReturn(new GenericResourceApiServiceOperationInformation()).when(sdncServiceInstanceResources).unassignServiceInstance(serviceInstance, customer, requestContext);
-		sdncUnassignTasks.unassignServiceInstance(execution);
-		verify(sdncServiceInstanceResources, times(1)).unassignServiceInstance(serviceInstance, customer, requestContext);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.SERVICE,sdncRequest.getTopology());
-	}
+public class SDNCUnassignTasksTest extends BaseTaskTest {
+    @InjectMocks
+    private SDNCUnassignTasks sdncUnassignTasks = new SDNCUnassignTasks();
+
+    private ServiceInstance serviceInstance;
+    private RequestContext requestContext;
+    private GenericVnf genericVnf;
+    private VfModule vfModule;
+    private CloudRegion cloudRegion;
+    private L3Network network;
+    private Customer customer;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        customer = setCustomer();
+        serviceInstance = setServiceInstance();
+        requestContext = setRequestContext();
+        genericVnf = setGenericVnf();
+        vfModule = setVfModule();
+        cloudRegion = setCloudRegion();
+        network = setL3Network();
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+    }
+
+    @Test
+    public void unassignServiceInstanceTest() throws Exception {
+        doReturn(new GenericResourceApiServiceOperationInformation()).when(sdncServiceInstanceResources)
+                .unassignServiceInstance(serviceInstance, customer, requestContext);
+        sdncUnassignTasks.unassignServiceInstance(execution);
+        verify(sdncServiceInstanceResources, times(1)).unassignServiceInstance(serviceInstance, customer,
+                requestContext);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.SERVICE, sdncRequest.getTopology());
+    }
 
 
 
-	@Test
-	public void unassignServiceInstanceExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(sdncServiceInstanceResources).unassignServiceInstance(serviceInstance, customer, requestContext);
-		sdncUnassignTasks.unassignServiceInstance(execution);
-	}	
-		
-	@Test
-	public void unassignVfModuleTest() throws Exception {
-		doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).unassignVfModule(vfModule, genericVnf, serviceInstance);
-		sdncUnassignTasks.unassignVfModule(execution);
-		verify(sdncVfModuleResources, times(1)).unassignVfModule(vfModule, genericVnf, serviceInstance);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.VFMODULE,sdncRequest.getTopology());
-	}
-	
+    @Test
+    public void unassignServiceInstanceExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(sdncServiceInstanceResources).unassignServiceInstance(serviceInstance,
+                customer, requestContext);
+        sdncUnassignTasks.unassignServiceInstance(execution);
+    }
 
-	
+    @Test
+    public void unassignVfModuleTest() throws Exception {
+        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources)
+                .unassignVfModule(vfModule, genericVnf, serviceInstance);
+        sdncUnassignTasks.unassignVfModule(execution);
+        verify(sdncVfModuleResources, times(1)).unassignVfModule(vfModule, genericVnf, serviceInstance);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.VFMODULE, sdncRequest.getTopology());
+    }
 
-	@Test
-	public void unassignVfModuleExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(sdncVfModuleResources).unassignVfModule(vfModule, genericVnf, serviceInstance);
-		sdncUnassignTasks.unassignVfModule(execution);
-	}
-	
-	@Test
-	public void unassignVnfTest() throws Exception {
-		doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).unassignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncUnassignTasks.unassignVnf(execution);
-		verify(sdncVnfResources, times(1)).unassignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.VNF,sdncRequest.getTopology());	
-	}
-	
-	
-	@Test
-	public void unassignVnfExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(sdncVnfResources).unassignVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncUnassignTasks.unassignVnf(execution);
-	}
 
-	@Test
-	public void unassignNetworkTest() throws Exception {
-		String cloudRegionSdnc = "AAIAIC25";
-		cloudRegion.setCloudRegionVersion("2.5");
-		execution.setVariable("cloudRegionSdnc", cloudRegionSdnc);
-		doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources).unassignNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
-		assertNotEquals(cloudRegionSdnc, cloudRegion.getLcpCloudRegionId());
-		sdncUnassignTasks.unassignNetwork(execution);
-		verify(sdncNetworkResources, times(1)).unassignNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
-		assertEquals(cloudRegionSdnc, cloudRegion.getLcpCloudRegionId());
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.NETWORK,sdncRequest.getTopology());	
-	}
+
+    @Test
+    public void unassignVfModuleExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(sdncVfModuleResources).unassignVfModule(vfModule, genericVnf,
+                serviceInstance);
+        sdncUnassignTasks.unassignVfModule(execution);
+    }
+
+    @Test
+    public void unassignVnfTest() throws Exception {
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).unassignVnf(genericVnf,
+                serviceInstance, customer, cloudRegion, requestContext);
+        sdncUnassignTasks.unassignVnf(execution);
+        verify(sdncVnfResources, times(1)).unassignVnf(genericVnf, serviceInstance, customer, cloudRegion,
+                requestContext);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.VNF, sdncRequest.getTopology());
+    }
+
+
+    @Test
+    public void unassignVnfExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(sdncVnfResources).unassignVnf(genericVnf, serviceInstance, customer,
+                cloudRegion, requestContext);
+        sdncUnassignTasks.unassignVnf(execution);
+    }
+
+    @Test
+    public void unassignNetworkTest() throws Exception {
+        String cloudRegionSdnc = "AAIAIC25";
+        cloudRegion.setCloudRegionVersion("2.5");
+        execution.setVariable("cloudRegionSdnc", cloudRegionSdnc);
+        doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources)
+                .unassignNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
+        assertNotEquals(cloudRegionSdnc, cloudRegion.getLcpCloudRegionId());
+        sdncUnassignTasks.unassignNetwork(execution);
+        verify(sdncNetworkResources, times(1)).unassignNetwork(network, serviceInstance, customer, requestContext,
+                cloudRegion);
+        assertEquals(cloudRegionSdnc, cloudRegion.getLcpCloudRegionId());
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.NETWORK, sdncRequest.getTopology());
+    }
 }

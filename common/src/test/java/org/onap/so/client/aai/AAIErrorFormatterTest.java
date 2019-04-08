@@ -22,11 +22,9 @@ package org.onap.so.client.aai;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -37,52 +35,54 @@ import org.onap.so.client.aai.entities.ServiceException;
 
 public class AAIErrorFormatterTest {
 
-	@Mock private AAIError errorObj;
-	
-	@Before
-	public void init() {
-		MockitoAnnotations.initMocks(this);
-	}
-	@Test
-	public void testFillInTemplateWithReplace() {
-		String error = "Error %1 on %2";
-		List<String> list = Arrays.asList("PUT", "hello %1");
-		AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
-		String result = formatter.fillInTemplate(error, list);
-		assertEquals("equal", "Error PUT on hello PUT", result);
-		
-	}
-	
-	@Test
-	public void testFillInTemplateWithoutReplace() {
-		String error = "Error";
-		List<String> list = new ArrayList<>();
-		AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
-		String result = formatter.fillInTemplate(error, list);
-		assertEquals("equal", "Error", result);
-	}
-	
-	@Test
-	public void testGetMessage() {
-		ServiceException svcException = new ServiceException();
-		svcException.setText("test %1 message - %2");
-		svcException.setVariables(Arrays.asList("error", "service exception %1 test"));
-		
-		RequestError requestError = new RequestError();
-		requestError.setServiceException(svcException);
-		
-		doReturn(requestError).when(errorObj).getRequestError();
-		
-		AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
-		String result = formatter.getMessage();
-		assertEquals("equal", "test error message - service exception error test", result);
-	}
-	
-	@Test
-	public void testGetMessageNoParsable() {
-		errorObj.setRequestError(null);
-		AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
-		String result = formatter.getMessage();
-		assertEquals("equal", "no parsable error message found", result);
-	}
+    @Mock
+    private AAIError errorObj;
+
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testFillInTemplateWithReplace() {
+        String error = "Error %1 on %2";
+        List<String> list = Arrays.asList("PUT", "hello %1");
+        AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
+        String result = formatter.fillInTemplate(error, list);
+        assertEquals("equal", "Error PUT on hello PUT", result);
+
+    }
+
+    @Test
+    public void testFillInTemplateWithoutReplace() {
+        String error = "Error";
+        List<String> list = new ArrayList<>();
+        AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
+        String result = formatter.fillInTemplate(error, list);
+        assertEquals("equal", "Error", result);
+    }
+
+    @Test
+    public void testGetMessage() {
+        ServiceException svcException = new ServiceException();
+        svcException.setText("test %1 message - %2");
+        svcException.setVariables(Arrays.asList("error", "service exception %1 test"));
+
+        RequestError requestError = new RequestError();
+        requestError.setServiceException(svcException);
+
+        doReturn(requestError).when(errorObj).getRequestError();
+
+        AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
+        String result = formatter.getMessage();
+        assertEquals("equal", "test error message - service exception error test", result);
+    }
+
+    @Test
+    public void testGetMessageNoParsable() {
+        errorObj.setRequestError(null);
+        AAIErrorFormatter formatter = new AAIErrorFormatter(errorObj);
+        String result = formatter.getMessage();
+        assertEquals("equal", "no parsable error message found", result);
+    }
 }

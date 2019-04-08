@@ -21,5 +21,5 @@
 package org.onap.so.bpmn.infrastructure;
 
 public interface FlakyTests {
-	 /* category marker */ 
+    /* category marker */
 }

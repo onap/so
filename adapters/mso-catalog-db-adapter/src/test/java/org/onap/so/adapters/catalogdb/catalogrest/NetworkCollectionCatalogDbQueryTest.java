@@ -26,11 +26,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import java.util.List;
-
 import javax.transaction.Transactional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,102 +50,103 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 public class NetworkCollectionCatalogDbQueryTest extends CatalogDbAdapterBaseTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(NetworkCollectionCatalogDbQueryTest.class);
-	private static final String NETWORKCOLLECTION = "NetworkCollection";
-	
-	private final String serviceUUID = "5df8b6de-2083-11e7-93ae-92361f002671";
+    private static final Logger logger = LoggerFactory.getLogger(NetworkCollectionCatalogDbQueryTest.class);
+    private static final String NETWORKCOLLECTION = "NetworkCollection";
 
-	@LocalServerPort
-	private int port;
-	boolean isInitialized;
+    private final String serviceUUID = "5df8b6de-2083-11e7-93ae-92361f002671";
 
-	@Autowired
-	CatalogDbClientPortChanger client;
+    @LocalServerPort
+    private int port;
+    boolean isInitialized;
 
-	@Before
-	public void initialize(){
-		client.wiremockPort= String.valueOf(port);
-	}
-	
-	@Test
-	@Transactional
-	public void networkCollectionTest() {
-		logger.debug("TEST IS STARTING UP...");
-		String modelUUID = "4694a55f-58b3-4f17-92a5-796d6f5ffd0d";
-		boolean found = false;
-		logger.debug(Integer.toString(port));
-		InstanceGroup instanceGroup = null;
-		List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupList = null;
-		org.onap.so.db.catalog.beans.Service service = client.getServiceByID(modelUUID);
-		if (service == null) {
-			logger.debug("null");
-		} else {
-			List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
-			if (customizations.isEmpty()) {
-				logger.debug("No Network Collection found. CollectionResourceCustomizations is empty");
-			}
-			for (CollectionResourceCustomization crc : customizations) {
-				if(client.getNetworkCollectionResourceCustomizationByID(crc.getModelCustomizationUUID()) 
-						instanceof NetworkCollectionResourceCustomization) {
-					if (crc.getCollectionResource() != null) {
-						if (crc.getCollectionResource()
-								.getToscaNodeType() != null) {
-							String toscaNodeType = crc.getCollectionResource()
-									.getToscaNodeType();
-							if (toscaNodeType.contains(NETWORKCOLLECTION)) {
-								logger.debug("Found a network collection");
-								instanceGroup = crc.getCollectionResource().getInstanceGroup();
-								collectionInstanceGroupList = 
-										instanceGroup.getCollectionInstanceGroupCustomizations();
-								CollectionNetworkResourceCustomization collectionNetworkCust = instanceGroup.getCollectionNetworkResourceCustomizations().get(0);
-								logger.debug("Found Collection Network Resource Customization: " + collectionNetworkCust.getModelCustomizationUUID());
-							} else {
-								logger.debug(
-										"No Network Collection found. toscaNodeType does not contain NetworkCollection");
-							}
-						} else {
-							logger.debug("No Network Collection found. toscaNodeType is null");
-						}
-					} else {
-						logger.debug("No Network Collection found. collectionResource is null");
-					}
-					found = true;
-				} else {
-					logger.debug("Not a Network Collection Resource Customization Instance");
-				}
-			}
-		}
-		assertEquals("Number of CollectionResourceInstanceGroupCustomization in list", 2, collectionInstanceGroupList.size());
-		assertNotNull(instanceGroup);
-		assertTrue(found);
-	}
-	
-	@Test
-	public void buildingBlockDetailTest() {
-		logger.debug("TEST IS STARTING UP...");
-		logger.debug(Integer.toString(port));
-		String buildingBlockFlowName = "CreateNetworkCollectionBB";
-		BuildingBlockDetail buildingBlockDetail = client.getBuildingBlockDetail(buildingBlockFlowName);
-		logger.debug("" + buildingBlockDetail.getResourceType());
-		assertNotNull(buildingBlockDetail);
-	} 
-	
-	@Test
-	public void fetchServiceTopology_Test() {		
-		org.onap.so.db.catalog.beans.Service service = client.getServiceByID(serviceUUID);
+    @Autowired
+    CatalogDbClientPortChanger client;
 
-		if (service == null) {
-			fail("Service is null");
-		} 		
-		assertEquals(serviceUUID, service.getModelUUID());
-		assertEquals("MSOTADevInfra_vSAMP10a_Service",service.getModelName());
-	}
-	
-	@Test
-	public void CollectionNetworkResourceCustomizationTest() {
-		String modelCustId = "1a61be4b-3378-4c9a-91c8-c919519b2d01";
-		CollectionNetworkResourceCustomization collectionNetworkCust = client.getCollectionNetworkResourceCustomizationByID(modelCustId);
-		assertNotNull(collectionNetworkCust);
-		logger.debug(collectionNetworkCust.getModelCustomizationUUID());
-	}
+    @Before
+    public void initialize() {
+        client.wiremockPort = String.valueOf(port);
+    }
+
+    @Test
+    @Transactional
+    public void networkCollectionTest() {
+        logger.debug("TEST IS STARTING UP...");
+        String modelUUID = "4694a55f-58b3-4f17-92a5-796d6f5ffd0d";
+        boolean found = false;
+        logger.debug(Integer.toString(port));
+        InstanceGroup instanceGroup = null;
+        List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupList = null;
+        org.onap.so.db.catalog.beans.Service service = client.getServiceByID(modelUUID);
+        if (service == null) {
+            logger.debug("null");
+        } else {
+            List<CollectionResourceCustomization> customizations = service.getCollectionResourceCustomizations();
+            if (customizations.isEmpty()) {
+                logger.debug("No Network Collection found. CollectionResourceCustomizations is empty");
+            }
+            for (CollectionResourceCustomization crc : customizations) {
+                if (client.getNetworkCollectionResourceCustomizationByID(
+                        crc.getModelCustomizationUUID()) instanceof NetworkCollectionResourceCustomization) {
+                    if (crc.getCollectionResource() != null) {
+                        if (crc.getCollectionResource().getToscaNodeType() != null) {
+                            String toscaNodeType = crc.getCollectionResource().getToscaNodeType();
+                            if (toscaNodeType.contains(NETWORKCOLLECTION)) {
+                                logger.debug("Found a network collection");
+                                instanceGroup = crc.getCollectionResource().getInstanceGroup();
+                                collectionInstanceGroupList = instanceGroup.getCollectionInstanceGroupCustomizations();
+                                CollectionNetworkResourceCustomization collectionNetworkCust =
+                                        instanceGroup.getCollectionNetworkResourceCustomizations().get(0);
+                                logger.debug("Found Collection Network Resource Customization: "
+                                        + collectionNetworkCust.getModelCustomizationUUID());
+                            } else {
+                                logger.debug(
+                                        "No Network Collection found. toscaNodeType does not contain NetworkCollection");
+                            }
+                        } else {
+                            logger.debug("No Network Collection found. toscaNodeType is null");
+                        }
+                    } else {
+                        logger.debug("No Network Collection found. collectionResource is null");
+                    }
+                    found = true;
+                } else {
+                    logger.debug("Not a Network Collection Resource Customization Instance");
+                }
+            }
+        }
+        assertEquals("Number of CollectionResourceInstanceGroupCustomization in list", 2,
+                collectionInstanceGroupList.size());
+        assertNotNull(instanceGroup);
+        assertTrue(found);
+    }
+
+    @Test
+    public void buildingBlockDetailTest() {
+        logger.debug("TEST IS STARTING UP...");
+        logger.debug(Integer.toString(port));
+        String buildingBlockFlowName = "CreateNetworkCollectionBB";
+        BuildingBlockDetail buildingBlockDetail = client.getBuildingBlockDetail(buildingBlockFlowName);
+        logger.debug("" + buildingBlockDetail.getResourceType());
+        assertNotNull(buildingBlockDetail);
+    }
+
+    @Test
+    public void fetchServiceTopology_Test() {
+        org.onap.so.db.catalog.beans.Service service = client.getServiceByID(serviceUUID);
+
+        if (service == null) {
+            fail("Service is null");
+        }
+        assertEquals(serviceUUID, service.getModelUUID());
+        assertEquals("MSOTADevInfra_vSAMP10a_Service", service.getModelName());
+    }
+
+    @Test
+    public void CollectionNetworkResourceCustomizationTest() {
+        String modelCustId = "1a61be4b-3378-4c9a-91c8-c919519b2d01";
+        CollectionNetworkResourceCustomization collectionNetworkCust =
+                client.getCollectionNetworkResourceCustomizationByID(modelCustId);
+        assertNotNull(collectionNetworkCust);
+        logger.debug(collectionNetworkCust.getModelCustomizationUUID());
+    }
 }

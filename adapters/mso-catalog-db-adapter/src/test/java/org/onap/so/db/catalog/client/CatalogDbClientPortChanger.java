@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog.client;
 
 import org.springframework.stereotype.Component;
-
 import java.net.URI;
 
 @Component()
@@ -29,7 +28,7 @@ public class CatalogDbClientPortChanger extends CatalogDbClient {
 
     public String wiremockPort;
 
-    CatalogDbClientPortChanger(){
+    CatalogDbClientPortChanger() {
 
     }
 
@@ -44,6 +43,6 @@ public class CatalogDbClientPortChanger extends CatalogDbClient {
         String prefix = "http://localhost:" + wiremockPort;
         String query = uri.getQuery();
 
-        return URI.create(prefix + path + (query == null || query.isEmpty()?"":"?"+query));
+        return URI.create(prefix + path + (query == null || query.isEmpty() ? "" : "?" + query));
     }
 }

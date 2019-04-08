@@ -21,34 +21,33 @@
 package org.onap.so.cloudify.v3.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 import java.util.List;
 
-public class NodeInstances implements Serializable{
+public class NodeInstances implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@JsonProperty("items")
-	private List<NodeInstance> items;
-	
-	@JsonProperty("metadata")
-	private Metadata metadata;
-	
-	public List<NodeInstance> getItems() {
-		return items;
-	}
+    @JsonProperty("items")
+    private List<NodeInstance> items;
 
-	public void setItems(List<NodeInstance> items) {
-		this.items = items;
-	}
+    @JsonProperty("metadata")
+    private Metadata metadata;
 
-	public Metadata getMetadata() {
-		return metadata;
-	}
+    public List<NodeInstance> getItems() {
+        return items;
+    }
 
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
+    public void setItems(List<NodeInstance> items) {
+        this.items = items;
+    }
+
+    public Metadata getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
 
 }

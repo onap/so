@@ -26,34 +26,35 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryQueryClient;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
-public class AAIQueryClient extends GraphInventoryQueryClient<AAIQueryClient, CustomQuery, AAIResultWrapper, AAIObjectType> {
+public class AAIQueryClient
+        extends GraphInventoryQueryClient<AAIQueryClient, CustomQuery, AAIResultWrapper, AAIObjectType> {
 
-	public AAIQueryClient() {
-		super(new AAIClient());
-	}
-	
-	public AAIQueryClient(AAIVersion version) {
-		super(new AAIClient(version));
-	}
+    public AAIQueryClient() {
+        super(new AAIClient());
+    }
 
-	@Override
-	protected GraphInventoryUri getQueryUri() {
-		return AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY);
-	}
-	
-	@Override
-	protected GraphInventoryUri setupQueryParams(GraphInventoryUri uri) {
-		return super.setupQueryParams(uri);
-	}
+    public AAIQueryClient(AAIVersion version) {
+        super(new AAIClient(version));
+    }
 
-	@Override
-	public AAIResultWrapper createWrapper(String json) {
-		return new AAIResultWrapper(json);
-	}
+    @Override
+    protected GraphInventoryUri getQueryUri() {
+        return AAIUriFactory.createResourceUri(AAIObjectType.CUSTOM_QUERY);
+    }
 
-	@Override
-	public AAIObjectType createType(String name) {
-		return AAIObjectType.fromTypeName(name);
-	}
-	
+    @Override
+    protected GraphInventoryUri setupQueryParams(GraphInventoryUri uri) {
+        return super.setupQueryParams(uri);
+    }
+
+    @Override
+    public AAIResultWrapper createWrapper(String json) {
+        return new AAIResultWrapper(json);
+    }
+
+    @Override
+    public AAIObjectType createType(String name) {
+        return AAIObjectType.fromTypeName(name);
+    }
+
 }

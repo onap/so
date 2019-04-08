@@ -26,7 +26,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -40,99 +39,101 @@ import org.slf4j.LoggerFactory;
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestParameters implements Serializable {
 
-	private static final Logger logger = LoggerFactory.getLogger(RequestParameters.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestParameters.class);
 
-	private static final long serialVersionUID = -5979049912538894930L;
-	@JsonProperty("subscriptionServiceType")
-	private String subscriptionServiceType;
-	@JsonProperty("userParams")
-	private List<Map<String, Object>> userParams = new ArrayList<>();
-	@JsonProperty("aLaCarte")
-	private Boolean aLaCarte;
-	@JsonProperty("payload")
-	private String payload;
-	@JsonProperty("usePreload")
-	private Boolean usePreload;
+    private static final long serialVersionUID = -5979049912538894930L;
+    @JsonProperty("subscriptionServiceType")
+    private String subscriptionServiceType;
+    @JsonProperty("userParams")
+    private List<Map<String, Object>> userParams = new ArrayList<>();
+    @JsonProperty("aLaCarte")
+    private Boolean aLaCarte;
+    @JsonProperty("payload")
+    private String payload;
+    @JsonProperty("usePreload")
+    private Boolean usePreload;
 
-	public String getSubscriptionServiceType() {
-		return subscriptionServiceType;
-	}
+    public String getSubscriptionServiceType() {
+        return subscriptionServiceType;
+    }
 
-	public void setSubscriptionServiceType(String subscriptionServiceType) {
-		this.subscriptionServiceType = subscriptionServiceType;
-	}
-	@JsonProperty("aLaCarte")
-	public Boolean getALaCarte() {
-		return aLaCarte;
-	}
-	@JsonProperty("aLaCarte")
-	public void setaLaCarte(Boolean aLaCarte) {
-		this.aLaCarte = aLaCarte;
-	}
+    public void setSubscriptionServiceType(String subscriptionServiceType) {
+        this.subscriptionServiceType = subscriptionServiceType;
+    }
 
-	public Boolean isaLaCarte() {
-		return aLaCarte;
-	}
-	
-	public String getPayload(){
-		return payload;
-	}
-	public void setPayload(String value){
-		this.payload = value;
-	}
+    @JsonProperty("aLaCarte")
+    public Boolean getALaCarte() {
+        return aLaCarte;
+    }
 
-	public List<Map<String, Object>> getUserParams() {
-		return userParams;
-	}
+    @JsonProperty("aLaCarte")
+    public void setaLaCarte(Boolean aLaCarte) {
+        this.aLaCarte = aLaCarte;
+    }
 
-	public void setUserParams(List<Map<String, Object>> userParams) {
-		this.userParams = userParams;
-	}
+    public Boolean isaLaCarte() {
+        return aLaCarte;
+    }
 
-	public Object getUserParamValue(String name) {
-		if (userParams != null) {
-			for (Map<String, Object> param : userParams) {
-				if (param.get(name) != null) {
-					return param.get(name);
-				}
-			}
-		}
-		return null;
-	}
-	
-	public Boolean isUsePreload() {
-		return usePreload;
-	}
-	
-	@JsonProperty("usePreload")
-	public Boolean getUsePreload() {
-		return usePreload;
-	}
-	
-	@JsonProperty("usePreload")
-	public void setUsePreload(Boolean usePreload) {
-		this.usePreload = usePreload;
-	}
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(String value) {
+        this.payload = value;
+    }
+
+    public List<Map<String, Object>> getUserParams() {
+        return userParams;
+    }
+
+    public void setUserParams(List<Map<String, Object>> userParams) {
+        this.userParams = userParams;
+    }
+
+    public Object getUserParamValue(String name) {
+        if (userParams != null) {
+            for (Map<String, Object> param : userParams) {
+                if (param.get(name) != null) {
+                    return param.get(name);
+                }
+            }
+        }
+        return null;
+    }
+
+    public Boolean isUsePreload() {
+        return usePreload;
+    }
+
+    @JsonProperty("usePreload")
+    public Boolean getUsePreload() {
+        return usePreload;
+    }
+
+    @JsonProperty("usePreload")
+    public void setUsePreload(Boolean usePreload) {
+        this.usePreload = usePreload;
+    }
 
 
-	@JsonInclude(Include.NON_NULL)
-	public String toJsonString(){
-		String json = "";
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		ObjectWriter ow = mapper.writer();
-		try{
-			json = ow.writeValueAsString(this);
-		}catch (Exception e){
-			logger.error("Unable to convert Sniro Manager Request to string", e);
-		}
-		return json;
-	}
+    @JsonInclude(Include.NON_NULL)
+    public String toJsonString() {
+        String json = "";
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        ObjectWriter ow = mapper.writer();
+        try {
+            json = ow.writeValueAsString(this);
+        } catch (Exception e) {
+            logger.error("Unable to convert Sniro Manager Request to string", e);
+        }
+        return json;
+    }
 
-	@Override
-	public String toString() {
-		return "RequestParameters [subscriptionServiceType="
-				+ subscriptionServiceType + ", userParams=" + userParams
-				+ ", aLaCarte=" + aLaCarte + "]";
-	}
+    @Override
+    public String toString() {
+        return "RequestParameters [subscriptionServiceType=" + subscriptionServiceType + ", userParams=" + userParams
+                + ", aLaCarte=" + aLaCarte + "]";
+    }
 }

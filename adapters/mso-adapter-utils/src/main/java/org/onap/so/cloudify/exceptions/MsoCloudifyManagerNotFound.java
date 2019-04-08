@@ -22,12 +22,12 @@ package org.onap.so.cloudify.exceptions;
 
 public class MsoCloudifyManagerNotFound extends MsoCloudifyException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Constructor to create a new MsoCloudifyException instance
-	public MsoCloudifyManagerNotFound (String cloudSiteId) {
-		// Set the detailed error as the Exception 'message'
-		super(0, "Cloudify Manager Not Found", "No Cloudify Manager configured for cloud site " + cloudSiteId);
-	}
-		
+    // Constructor to create a new MsoCloudifyException instance
+    public MsoCloudifyManagerNotFound(String cloudSiteId) {
+        // Set the detailed error as the Exception 'message'
+        super(0, "Cloudify Manager Not Found", "No Cloudify Manager configured for cloud site " + cloudSiteId);
+    }
+
 }

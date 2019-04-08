@@ -20,22 +20,18 @@
 package org.onap.so.monitoring.configuration;
 
 import static org.junit.Assert.assertFalse;
-
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import org.junit.Test;
 import org.onap.so.openpojo.rules.ToStringTester;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.RegexPatternTypeFilter;
-
 import com.openpojo.reflection.filters.FilterPackageInfo;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
-
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 

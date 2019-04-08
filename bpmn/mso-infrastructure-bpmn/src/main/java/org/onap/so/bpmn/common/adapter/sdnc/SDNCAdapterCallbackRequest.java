@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.common.adapter.sdnc;
 
 import java.io.StringWriter;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -33,9 +32,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -53,25 +54,21 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", namespace="http://org.onap/workflow/sdnc/adapter/schema/v1", propOrder = {
-    "callbackHeader",
-    "requestData"
-})
-@XmlRootElement(name = "SDNCAdapterCallbackRequest", namespace="http://org.onap/workflow/sdnc/adapter/schema/v1")
+@XmlType(name = "", namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1",
+        propOrder = {"callbackHeader", "requestData"})
+@XmlRootElement(name = "SDNCAdapterCallbackRequest", namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1")
 public class SDNCAdapterCallbackRequest {
 
-    @XmlElement(name = "CallbackHeader", required = true, namespace="http://org.onap/workflow/sdnc/adapter/schema/v1")
+    @XmlElement(name = "CallbackHeader", required = true, namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1")
     protected CallbackHeader callbackHeader;
-    @XmlElement(name = "RequestData", required=false, namespace="http://org.onap/workflow/sdnc/adapter/schema/v1")
+    @XmlElement(name = "RequestData", required = false, namespace = "http://org.onap/workflow/sdnc/adapter/schema/v1")
     protected Object requestData;
 
     /**
      * Gets the value of the callbackHeader property.
      * 
-     * @return
-     *     possible object is
-     *     {@link CallbackHeader }
-     *     
+     * @return possible object is {@link CallbackHeader }
+     * 
      */
     public CallbackHeader getCallbackHeader() {
         return callbackHeader;
@@ -80,10 +77,8 @@ public class SDNCAdapterCallbackRequest {
     /**
      * Sets the value of the callbackHeader property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link CallbackHeader }
-     *     
+     * @param value allowed object is {@link CallbackHeader }
+     * 
      */
     public void setCallbackHeader(CallbackHeader value) {
         this.callbackHeader = value;
@@ -92,10 +87,8 @@ public class SDNCAdapterCallbackRequest {
     /**
      * Gets the value of the requestData property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
+     * @return possible object is {@link Object }
+     * 
      */
     public Object getRequestData() {
         return requestData;
@@ -104,27 +97,24 @@ public class SDNCAdapterCallbackRequest {
     /**
      * Sets the value of the requestData property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
+     * @param value allowed object is {@link Object }
+     * 
      */
     public void setRequestData(Object value) {
         this.requestData = value;
     }
 
     @Override
-	public String toString() {
-		StringWriter writer = new StringWriter();
-		try {
-			JAXBContext context = JAXBContext
-					.newInstance(SDNCAdapterCallbackRequest.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(this, writer);
-			return writer.getBuffer().toString();
-		} catch (JAXBException e) {
-			return "";
-		}
-	}
+    public String toString() {
+        StringWriter writer = new StringWriter();
+        try {
+            JAXBContext context = JAXBContext.newInstance(SDNCAdapterCallbackRequest.class);
+            Marshaller m = context.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            m.marshal(this, writer);
+            return writer.getBuffer().toString();
+        } catch (JAXBException e) {
+            return "";
+        }
+    }
 }

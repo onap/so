@@ -28,15 +28,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.transaction.annotation.Transactional;
 
-@RepositoryRestResource(collectionResourceRel = "operationalEnvDistributionStatus", path = "operationalEnvDistributionStatus")
-public interface OperationalEnvDistributionStatusRepository extends JpaRepository<OperationalEnvDistributionStatus, String> {
+@RepositoryRestResource(collectionResourceRel = "operationalEnvDistributionStatus",
+        path = "operationalEnvDistributionStatus")
+public interface OperationalEnvDistributionStatusRepository
+        extends JpaRepository<OperationalEnvDistributionStatus, String> {
 
-	@Modifying
-	@Transactional
-	@Query("update OperationalEnvDistributionStatus set distributionIdStatus = :distributionIdStatus where "
-					+ "distributionId = :distributionId and operationalEnvId = :operationalEnvId and serviceModelVersionId = :serviceModelVersionId")
-	public int setDistributionIdStatus(@Param("distributionIdStatus") String distributionIdStatus,
-										@Param("distributionId") String distributionId,
-										@Param("operationalEnvId") String operationalEnvId,
-										@Param("serviceModelVersionId") String serviceModelVersionId);
+    @Modifying
+    @Transactional
+    @Query("update OperationalEnvDistributionStatus set distributionIdStatus = :distributionIdStatus where "
+            + "distributionId = :distributionId and operationalEnvId = :operationalEnvId and serviceModelVersionId = :serviceModelVersionId")
+    public int setDistributionIdStatus(@Param("distributionIdStatus") String distributionIdStatus,
+            @Param("distributionId") String distributionId, @Param("operationalEnvId") String operationalEnvId,
+            @Param("serviceModelVersionId") String serviceModelVersionId);
 }

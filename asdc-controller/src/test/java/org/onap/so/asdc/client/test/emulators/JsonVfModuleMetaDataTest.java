@@ -21,32 +21,30 @@
 package org.onap.so.asdc.client.test.emulators;
 
 import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
-
 import org.junit.Test;
 
 public class JsonVfModuleMetaDataTest {
-	
-	@Test
-	public void attributesMapTest() {
-		JsonVfModuleMetaData vfModuleMetadata = new JsonVfModuleMetaData();
-		vfModuleMetadata.setAttribute("vfModuleModelDescription", "vfModuleModelDescription");
-		vfModuleMetadata.setAttribute("vfModuleModelInvariantUUID", "vfModuleModelInvariantUUID");
-		vfModuleMetadata.setAttribute("vfModuleModelCustomizationUUID", "vfModuleModelCustomizationUUID");
-		vfModuleMetadata.setAttribute("vfModuleModelName", "vfModuleModelName");
-		vfModuleMetadata.setAttribute("vfModuleModelUUID", "vfModuleModelUUID");
-		vfModuleMetadata.setAttribute("vfModuleModelVersion", "vfModuleModelVersion");
-		vfModuleMetadata.setAttribute("isBase", true);
-		
-		assertEquals("vfModuleModelDescription", vfModuleMetadata.getVfModuleModelDescription());
-		assertEquals("vfModuleModelInvariantUUID", vfModuleMetadata.getVfModuleModelInvariantUUID());
-		assertEquals("vfModuleModelCustomizationUUID", vfModuleMetadata.getVfModuleModelCustomizationUUID());
-		assertEquals("vfModuleModelName", vfModuleMetadata.getVfModuleModelName());
-		assertEquals("vfModuleModelUUID", vfModuleMetadata.getVfModuleModelUUID());
-		assertEquals("vfModuleModelVersion", vfModuleMetadata.getVfModuleModelVersion());
-		assertEquals(true, vfModuleMetadata.isBase());
-		assertEquals(null, vfModuleMetadata.getArtifacts());
-		assertEquals(new HashMap<String, String>(), vfModuleMetadata.getProperties());
-	}
+
+    @Test
+    public void attributesMapTest() {
+        JsonVfModuleMetaData vfModuleMetadata = new JsonVfModuleMetaData();
+        vfModuleMetadata.setAttribute("vfModuleModelDescription", "vfModuleModelDescription");
+        vfModuleMetadata.setAttribute("vfModuleModelInvariantUUID", "vfModuleModelInvariantUUID");
+        vfModuleMetadata.setAttribute("vfModuleModelCustomizationUUID", "vfModuleModelCustomizationUUID");
+        vfModuleMetadata.setAttribute("vfModuleModelName", "vfModuleModelName");
+        vfModuleMetadata.setAttribute("vfModuleModelUUID", "vfModuleModelUUID");
+        vfModuleMetadata.setAttribute("vfModuleModelVersion", "vfModuleModelVersion");
+        vfModuleMetadata.setAttribute("isBase", true);
+
+        assertEquals("vfModuleModelDescription", vfModuleMetadata.getVfModuleModelDescription());
+        assertEquals("vfModuleModelInvariantUUID", vfModuleMetadata.getVfModuleModelInvariantUUID());
+        assertEquals("vfModuleModelCustomizationUUID", vfModuleMetadata.getVfModuleModelCustomizationUUID());
+        assertEquals("vfModuleModelName", vfModuleMetadata.getVfModuleModelName());
+        assertEquals("vfModuleModelUUID", vfModuleMetadata.getVfModuleModelUUID());
+        assertEquals("vfModuleModelVersion", vfModuleMetadata.getVfModuleModelVersion());
+        assertEquals(true, vfModuleMetadata.isBase());
+        assertEquals(null, vfModuleMetadata.getArtifacts());
+        assertEquals(new HashMap<String, String>(), vfModuleMetadata.getProperties());
+    }
 }

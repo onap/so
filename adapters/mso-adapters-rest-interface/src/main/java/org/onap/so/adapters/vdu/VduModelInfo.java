@@ -24,41 +24,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VduModelInfo {
-	private String modelCustomizationUUID;
-	private String modelUUID;
-	private String modelInvariantUUID;
-	private int timeoutMinutes;
-	private List<VduArtifact> artifacts = new ArrayList<>();
+    private String modelCustomizationUUID;
+    private String modelUUID;
+    private String modelInvariantUUID;
+    private int timeoutMinutes;
+    private List<VduArtifact> artifacts = new ArrayList<>();
 
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    public String getModelCustomizationUUID() {
+        return modelCustomizationUUID;
+    }
+
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
+
     public String getModelUUID() {
         return modelUUID;
     }
+
     public void setModelUUID(String modelUUID) {
         this.modelUUID = modelUUID;
     }
+
     public String getModelInvariantUUID() {
         return modelInvariantUUID;
     }
+
     public void setModelInvariantUUID(String modelInvariantUUID) {
         this.modelInvariantUUID = modelInvariantUUID;
     }
-	public int getTimeoutMinutes() {
-		return timeoutMinutes;
-	}
-	public void setTimeoutMinutes(int timeoutMinutes) {
-		this.timeoutMinutes = timeoutMinutes;
-	}
-	public List<VduArtifact> getArtifacts() {
-		return artifacts;
-	}
-	public void setArtifacts(List<VduArtifact> artifacts) {
-		this.artifacts = artifacts;
-	}
+
+    public int getTimeoutMinutes() {
+        return timeoutMinutes;
+    }
+
+    public void setTimeoutMinutes(int timeoutMinutes) {
+        this.timeoutMinutes = timeoutMinutes;
+    }
+
+    public List<VduArtifact> getArtifacts() {
+        return artifacts;
+    }
+
+    public void setArtifacts(List<VduArtifact> artifacts) {
+        this.artifacts = artifacts;
+    }
 
 }

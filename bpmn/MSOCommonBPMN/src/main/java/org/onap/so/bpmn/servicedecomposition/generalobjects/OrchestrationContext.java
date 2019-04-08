@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.servicedecomposition.generalobjects;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
@@ -29,16 +28,16 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 @JsonRootName("orchestration-context")
 public class OrchestrationContext implements Serializable {
 
-	private static final long serialVersionUID = 6843015923244810369L;
-	
-	@JsonProperty("is-rollback-enabled")
-	private Boolean isRollbackEnabled;
+    private static final long serialVersionUID = 6843015923244810369L;
 
-	public Boolean getIsRollbackEnabled() {
-		return this.isRollbackEnabled;
-	}
+    @JsonProperty("is-rollback-enabled")
+    private Boolean isRollbackEnabled;
 
-	public void setIsRollbackEnabled(Boolean isRollbackEnabled) {
-		this.isRollbackEnabled = isRollbackEnabled;
-	}
+    public Boolean getIsRollbackEnabled() {
+        return this.isRollbackEnabled;
+    }
+
+    public void setIsRollbackEnabled(Boolean isRollbackEnabled) {
+        this.isRollbackEnabled = isRollbackEnabled;
+    }
 }

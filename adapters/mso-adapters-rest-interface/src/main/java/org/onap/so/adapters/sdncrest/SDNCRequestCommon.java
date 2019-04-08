@@ -24,15 +24,12 @@ package org.onap.so.adapters.sdncrest;
 
 import java.io.IOException;
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlElement;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,79 +37,76 @@ import org.slf4j.LoggerFactory;
  * Base class for all SDNC adapter requests.
  */
 public abstract class SDNCRequestCommon implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	private static final Logger logger = LoggerFactory.getLogger(SDNCRequestCommon.class);
+    private static final long serialVersionUID = 1L;
 
-	// Endpoint on which BPMN can receive notifications from the SDNC adapter.
-	private String bpNotificationUrl;
+    private static final Logger logger = LoggerFactory.getLogger(SDNCRequestCommon.class);
 
-	// BPMN flow timeout value in ISO 8601 format, e.g. PT5M.
-	// Not currently used by the SDNC adapter.
-	private String bpTimeout;
+    // Endpoint on which BPMN can receive notifications from the SDNC adapter.
+    private String bpNotificationUrl;
 
-	// Identifies the MSO transaction with SDNC.
-	// Maps to sdnc-request-header/requestId in the SDNC request.
-	private String sdncRequestId;
+    // BPMN flow timeout value in ISO 8601 format, e.g. PT5M.
+    // Not currently used by the SDNC adapter.
+    private String bpTimeout;
 
-	public SDNCRequestCommon(String sdncRequestId, String bpNotificationUrl,
-			String bpTimeout) {
-		this.sdncRequestId = sdncRequestId;
-		this.bpNotificationUrl = bpNotificationUrl;
-		this.bpTimeout = bpTimeout;
-	}
+    // Identifies the MSO transaction with SDNC.
+    // Maps to sdnc-request-header/requestId in the SDNC request.
+    private String sdncRequestId;
 
-	public SDNCRequestCommon() {
-	}
+    public SDNCRequestCommon(String sdncRequestId, String bpNotificationUrl, String bpTimeout) {
+        this.sdncRequestId = sdncRequestId;
+        this.bpNotificationUrl = bpNotificationUrl;
+        this.bpTimeout = bpTimeout;
+    }
 
-	@JsonProperty("bpNotificationUrl")
-	@XmlElement(name = "bpNotificationUrl")
-	public String getBPNotificationUrl() {
-		return bpNotificationUrl;
-	}
+    public SDNCRequestCommon() {}
 
-	@JsonProperty("bpNotificationUrl")
-	public void setBPNotificationUrl(String bpNotificationUrl) {
-		this.bpNotificationUrl = bpNotificationUrl;
-	}
+    @JsonProperty("bpNotificationUrl")
+    @XmlElement(name = "bpNotificationUrl")
+    public String getBPNotificationUrl() {
+        return bpNotificationUrl;
+    }
 
-	@JsonProperty("bpTimeout")
-	@XmlElement(name = "bpTimeout")
-	public String getBPTimeout() {
-		return bpTimeout;
-	}
+    @JsonProperty("bpNotificationUrl")
+    public void setBPNotificationUrl(String bpNotificationUrl) {
+        this.bpNotificationUrl = bpNotificationUrl;
+    }
 
-	@JsonProperty("bpTimeout")
-	public void setBPTimeout(String bpTimeout) {
-		this.bpTimeout = bpTimeout;
-	}
+    @JsonProperty("bpTimeout")
+    @XmlElement(name = "bpTimeout")
+    public String getBPTimeout() {
+        return bpTimeout;
+    }
 
-	@JsonProperty("sdncRequestId")
-	@XmlElement(name = "sdncRequestId")
-	public String getSdncRequestId() {
-		return sdncRequestId;
-	}
+    @JsonProperty("bpTimeout")
+    public void setBPTimeout(String bpTimeout) {
+        this.bpTimeout = bpTimeout;
+    }
 
-	@JsonProperty("sdncRequestId")
-	public void setSdncRequestId(String sdncRequestId) {
-		this.sdncRequestId = sdncRequestId;
-	}
+    @JsonProperty("sdncRequestId")
+    @XmlElement(name = "sdncRequestId")
+    public String getSdncRequestId() {
+        return sdncRequestId;
+    }
 
-	@JsonIgnore
-	public boolean isSynchronous() {
-		return bpNotificationUrl == null || bpNotificationUrl.isEmpty();
-	}
+    @JsonProperty("sdncRequestId")
+    public void setSdncRequestId(String sdncRequestId) {
+        this.sdncRequestId = sdncRequestId;
+    }
 
-	public String toJson() {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-			mapper.setSerializationInclusion(Include.NON_NULL);
-			return mapper.writeValueAsString(this);
-		} catch (IOException e) {
-			logger.debug("Exception:", e);
-			throw new UnsupportedOperationException("Cannot convert "
-				+ getClass().getSimpleName() + " to JSON", e);
-		}
-	}
+    @JsonIgnore
+    public boolean isSynchronous() {
+        return bpNotificationUrl == null || bpNotificationUrl.isEmpty();
+    }
+
+    public String toJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+            mapper.setSerializationInclusion(Include.NON_NULL);
+            return mapper.writeValueAsString(this);
+        } catch (IOException e) {
+            logger.debug("Exception:", e);
+            throw new UnsupportedOperationException("Cannot convert " + getClass().getSimpleName() + " to JSON", e);
+        }
+    }
 }

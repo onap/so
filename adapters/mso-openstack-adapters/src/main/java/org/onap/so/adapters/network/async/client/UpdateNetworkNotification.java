@@ -24,7 +24,6 @@ package org.onap.so.adapters.network.async.client;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,9 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for updateNetworkNotification complex type.
+ * <p>
+ * Java class for updateNetworkNotification complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="updateNetworkNotification">
@@ -77,14 +78,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "updateNetworkNotification", propOrder = {
-    "messageId",
-    "completed",
-    "exception",
-    "errorMessage",
-    "subnetIdMap",
-    "rollback"
-})
+@XmlType(name = "updateNetworkNotification",
+        propOrder = {"messageId", "completed", "exception", "errorMessage", "subnetIdMap", "rollback"})
 public class UpdateNetworkNotification {
 
     @XmlElement(required = true)
@@ -98,10 +93,8 @@ public class UpdateNetworkNotification {
     /**
      * Gets the value of the messageId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getMessageId() {
         return messageId;
@@ -110,10 +103,8 @@ public class UpdateNetworkNotification {
     /**
      * Sets the value of the messageId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setMessageId(String value) {
         this.messageId = value;
@@ -138,10 +129,8 @@ public class UpdateNetworkNotification {
     /**
      * Gets the value of the exception property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @return possible object is {@link MsoExceptionCategory }
+     * 
      */
     public MsoExceptionCategory getException() {
         return exception;
@@ -150,10 +139,8 @@ public class UpdateNetworkNotification {
     /**
      * Sets the value of the exception property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @param value allowed object is {@link MsoExceptionCategory }
+     * 
      */
     public void setException(MsoExceptionCategory value) {
         this.exception = value;
@@ -162,10 +149,8 @@ public class UpdateNetworkNotification {
     /**
      * Gets the value of the errorMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getErrorMessage() {
         return errorMessage;
@@ -174,10 +159,8 @@ public class UpdateNetworkNotification {
     /**
      * Sets the value of the errorMessage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setErrorMessage(String value) {
         this.errorMessage = value;
@@ -186,10 +169,8 @@ public class UpdateNetworkNotification {
     /**
      * Gets the value of the subnetIdMap property.
      * 
-     * @return
-     *     possible object is
-     *     {@link UpdateNetworkNotification.SubnetIdMap }
-     *     
+     * @return possible object is {@link UpdateNetworkNotification.SubnetIdMap }
+     * 
      */
     public UpdateNetworkNotification.SubnetIdMap getSubnetIdMap() {
         return subnetIdMap;
@@ -198,10 +179,8 @@ public class UpdateNetworkNotification {
     /**
      * Sets the value of the subnetIdMap property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link UpdateNetworkNotification.SubnetIdMap }
-     *     
+     * @param value allowed object is {@link UpdateNetworkNotification.SubnetIdMap }
+     * 
      */
     public void setSubnetIdMap(UpdateNetworkNotification.SubnetIdMap value) {
         this.subnetIdMap = value;
@@ -210,10 +189,8 @@ public class UpdateNetworkNotification {
     /**
      * Gets the value of the rollback property.
      * 
-     * @return
-     *     possible object is
-     *     {@link NetworkRollback }
-     *     
+     * @return possible object is {@link NetworkRollback }
+     * 
      */
     public NetworkRollback getRollback() {
         return rollback;
@@ -222,10 +199,8 @@ public class UpdateNetworkNotification {
     /**
      * Sets the value of the rollback property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link NetworkRollback }
-     *     
+     * @param value allowed object is {@link NetworkRollback }
+     * 
      */
     public void setRollback(NetworkRollback value) {
         this.rollback = value;
@@ -233,9 +208,11 @@ public class UpdateNetworkNotification {
 
 
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType>
@@ -263,9 +240,7 @@ public class UpdateNetworkNotification {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "entry"
-    })
+    @XmlType(name = "", propOrder = {"entry"})
     public static class SubnetIdMap {
 
         protected List<UpdateNetworkNotification.SubnetIdMap.Entry> entry;
@@ -274,21 +249,20 @@ public class UpdateNetworkNotification {
          * Gets the value of the entry property.
          * 
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the entry property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the entry property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getEntry().add(newItem);
+         * getEntry().add(newItem);
          * </pre>
          * 
          * 
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link UpdateNetworkNotification.SubnetIdMap.Entry }
+         * Objects of the following type(s) are allowed in the list {@link UpdateNetworkNotification.SubnetIdMap.Entry }
          * 
          * 
          */
@@ -301,9 +275,11 @@ public class UpdateNetworkNotification {
 
 
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -321,10 +297,7 @@ public class UpdateNetworkNotification {
          * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "key",
-            "value"
-        })
+        @XmlType(name = "", propOrder = {"key", "value"})
         public static class Entry {
 
             protected String key;
@@ -333,10 +306,8 @@ public class UpdateNetworkNotification {
             /**
              * Gets the value of the key property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getKey() {
                 return key;
@@ -345,10 +316,8 @@ public class UpdateNetworkNotification {
             /**
              * Sets the value of the key property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setKey(String value) {
                 this.key = value;
@@ -357,10 +326,8 @@ public class UpdateNetworkNotification {
             /**
              * Gets the value of the value property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getValue() {
                 return value;
@@ -369,10 +336,8 @@ public class UpdateNetworkNotification {
             /**
              * Sets the value of the value property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setValue(String value) {
                 this.value = value;

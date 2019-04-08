@@ -26,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.junit.Before;
@@ -51,7 +50,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
@@ -63,88 +61,86 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @AutoConfigureWireMock(port = 0)
 @Category(SpringAware.class)
 public abstract class BaseTest extends BuildingBlockTestDataSetup {
-	
 
-	protected Map<String, Object> variables = new HashMap<>();
 
-	protected TestRestTemplate restTemplate = new TestRestTemplate();
+    protected Map<String, Object> variables = new HashMap<>();
 
-	protected HttpHeaders headers = new HttpHeaders();
+    protected TestRestTemplate restTemplate = new TestRestTemplate();
 
-	
-	@Autowired
-	protected RuntimeService runtimeService;
+    protected HttpHeaders headers = new HttpHeaders();
 
-	@Autowired
-	private RepositoryService repositoryService;
-	
-	@Autowired
-	protected WireMockServer wireMockServer;
-	/*
-	 * Mocked for injection via autowiring
-	 */
-	
-	@Value("${mso.catalog.db.spring.endpoint}")
-	protected String endpoint;
-	
-	@Value("${wiremock.server.port}")
-	protected String wireMockPort;
-	
-	@MockBean
-	protected CatalogDbClient MOCK_catalogDbClient;
-	
-	@SpyBean
-	protected InjectionHelper MOCK_injectionHelper;
-	
-	@SpyBean
-	protected ExceptionBuilder exceptionUtil;
-	
-	/*
-	 *  Classes that cannot be simply mocked because they are both
-	 *  needed for testing another class, and must be autowired when
-	 *  being tested themselves....or classes with private methods that
-	 *  must be stubbed during testing
-	 */
-	
-	@SpyBean
-	protected BBInputSetupMapperLayer SPY_bbInputSetupMapperLayer;
-	@SpyBean
-	protected BBInputSetupUtils SPY_bbInputSetupUtils;
-	@SpyBean
-	protected BBInputSetup SPY_bbInputSetup;
-	
-	/*
-	 *  Mocked for injection via the IntectionHelper
-	 */
-	
 
-	
-	@Before
-	public void baseTestBefore() {
-		wireMockServer.resetAll();
-		variables.put("gBuildingBlockExecution", execution);
-	}
+    @Autowired
+    protected RuntimeService runtimeService;
 
-	@LocalServerPort
-	private int port;
-	
-	protected String readFile(String path) throws IOException {
-		return readFile(path, Charset.defaultCharset());
-	}
-	
-	protected String readFile(String path, Charset encoding) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, encoding);
-	}
-	
-	protected String readJsonFileAsString(String fileLocation) throws IOException{
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode jsonNode = mapper.readTree(new File(fileLocation));
-		return jsonNode.asText();
-	}
+    @Autowired
+    private RepositoryService repositoryService;
 
-	protected String createURLWithPort(String uri) {
-		return "http://localhost:" + port + uri;
-	}
-	
+    @Autowired
+    protected WireMockServer wireMockServer;
+    /*
+     * Mocked for injection via autowiring
+     */
+
+    @Value("${mso.catalog.db.spring.endpoint}")
+    protected String endpoint;
+
+    @Value("${wiremock.server.port}")
+    protected String wireMockPort;
+
+    @MockBean
+    protected CatalogDbClient MOCK_catalogDbClient;
+
+    @SpyBean
+    protected InjectionHelper MOCK_injectionHelper;
+
+    @SpyBean
+    protected ExceptionBuilder exceptionUtil;
+
+    /*
+     * Classes that cannot be simply mocked because they are both needed for testing another class, and must be
+     * autowired when being tested themselves....or classes with private methods that must be stubbed during testing
+     */
+
+    @SpyBean
+    protected BBInputSetupMapperLayer SPY_bbInputSetupMapperLayer;
+    @SpyBean
+    protected BBInputSetupUtils SPY_bbInputSetupUtils;
+    @SpyBean
+    protected BBInputSetup SPY_bbInputSetup;
+
+    /*
+     * Mocked for injection via the IntectionHelper
+     */
+
+
+
+    @Before
+    public void baseTestBefore() {
+        wireMockServer.resetAll();
+        variables.put("gBuildingBlockExecution", execution);
+    }
+
+    @LocalServerPort
+    private int port;
+
+    protected String readFile(String path) throws IOException {
+        return readFile(path, Charset.defaultCharset());
+    }
+
+    protected String readFile(String path, Charset encoding) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+    }
+
+    protected String readJsonFileAsString(String fileLocation) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(new File(fileLocation));
+        return jsonNode.asText();
+    }
+
+    protected String createURLWithPort(String uri) {
+        return "http://localhost:" + port + uri;
+    }
+
 }

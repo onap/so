@@ -21,88 +21,101 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-
 import javax.persistence.Id;
 
 @JsonRootName("l3-interface-ipv4-address-list")
-public class L3InterfaceIpv4AddressList implements Serializable, ShallowCopy<L3InterfaceIpv4AddressList>{
+public class L3InterfaceIpv4AddressList implements Serializable, ShallowCopy<L3InterfaceIpv4AddressList> {
 
-	private static final long serialVersionUID = -1566884527411610879L;
+    private static final long serialVersionUID = -1566884527411610879L;
 
-	@Id
-	@JsonProperty("l3-interface-ipv4-address")
+    @Id
+    @JsonProperty("l3-interface-ipv4-address")
     private String l3InterfaceIpv4Address;
-	@JsonProperty("l3-interface-ipv4-prefix-length")
+    @JsonProperty("l3-interface-ipv4-prefix-length")
     private Long l3InterfaceIpv4PrefixLength;
-	@JsonProperty("vlan-id-inner")
+    @JsonProperty("vlan-id-inner")
     private Long vlanIdInner;
-	@JsonProperty("vlan-id-outer")
+    @JsonProperty("vlan-id-outer")
     private Long vlanIdOuter;
-	@JsonProperty("is-floating")
+    @JsonProperty("is-floating")
     private Boolean isFloating;
-	@JsonProperty("neutron-network-id")
+    @JsonProperty("neutron-network-id")
     private String neutronNetworkId;
-	@JsonProperty("neutron-subnet-id")
+    @JsonProperty("neutron-subnet-id")
     private String neutronSubnetId;
 
-	public String getL3InterfaceIpv4Address() {
-		return l3InterfaceIpv4Address;
-	}
-	public void setL3InterfaceIpv4Address(String l3InterfaceIpv4Address) {
-		this.l3InterfaceIpv4Address = l3InterfaceIpv4Address;
-	}
-	public Long getL3InterfaceIpv4PrefixLength() {
-		return l3InterfaceIpv4PrefixLength;
-	}
-	public void setL3InterfaceIpv4PrefixLength(Long l3InterfaceIpv4PrefixLength) {
-		this.l3InterfaceIpv4PrefixLength = l3InterfaceIpv4PrefixLength;
-	}
-	public Long getVlanIdInner() {
-		return vlanIdInner;
-	}
-	public void setVlanIdInner(Long vlanIdInner) {
-		this.vlanIdInner = vlanIdInner;
-	}
-	public Long getVlanIdOuter() {
-		return vlanIdOuter;
-	}
-	public void setVlanIdOuter(Long vlanIdOuter) {
-		this.vlanIdOuter = vlanIdOuter;
-	}
-	public Boolean getIsFloating() {
-		return isFloating;
-	}
-	public void setIsFloating(Boolean isFloating) {
-		this.isFloating = isFloating;
-	}
-	public String getNeutronNetworkId() {
-		return neutronNetworkId;
-	}
-	public void setNeutronNetworkId(String neutronNetworkId) {
-		this.neutronNetworkId = neutronNetworkId;
-	}
-	public String getNeutronSubnetId() {
-		return neutronSubnetId;
-	}
-	public void setNeutronSubnetId(String neutronSubnetId) {
-		this.neutronSubnetId = neutronSubnetId;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof L3InterfaceIpv4AddressList)) {
-			return false;
-		}
-		L3InterfaceIpv4AddressList castOther = (L3InterfaceIpv4AddressList) other;
-		return new EqualsBuilder().append(l3InterfaceIpv4Address, castOther.l3InterfaceIpv4Address).isEquals();
-	}
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(l3InterfaceIpv4Address).toHashCode();
-	}
+    public String getL3InterfaceIpv4Address() {
+        return l3InterfaceIpv4Address;
+    }
+
+    public void setL3InterfaceIpv4Address(String l3InterfaceIpv4Address) {
+        this.l3InterfaceIpv4Address = l3InterfaceIpv4Address;
+    }
+
+    public Long getL3InterfaceIpv4PrefixLength() {
+        return l3InterfaceIpv4PrefixLength;
+    }
+
+    public void setL3InterfaceIpv4PrefixLength(Long l3InterfaceIpv4PrefixLength) {
+        this.l3InterfaceIpv4PrefixLength = l3InterfaceIpv4PrefixLength;
+    }
+
+    public Long getVlanIdInner() {
+        return vlanIdInner;
+    }
+
+    public void setVlanIdInner(Long vlanIdInner) {
+        this.vlanIdInner = vlanIdInner;
+    }
+
+    public Long getVlanIdOuter() {
+        return vlanIdOuter;
+    }
+
+    public void setVlanIdOuter(Long vlanIdOuter) {
+        this.vlanIdOuter = vlanIdOuter;
+    }
+
+    public Boolean getIsFloating() {
+        return isFloating;
+    }
+
+    public void setIsFloating(Boolean isFloating) {
+        this.isFloating = isFloating;
+    }
+
+    public String getNeutronNetworkId() {
+        return neutronNetworkId;
+    }
+
+    public void setNeutronNetworkId(String neutronNetworkId) {
+        this.neutronNetworkId = neutronNetworkId;
+    }
+
+    public String getNeutronSubnetId() {
+        return neutronSubnetId;
+    }
+
+    public void setNeutronSubnetId(String neutronSubnetId) {
+        this.neutronSubnetId = neutronSubnetId;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof L3InterfaceIpv4AddressList)) {
+            return false;
+        }
+        L3InterfaceIpv4AddressList castOther = (L3InterfaceIpv4AddressList) other;
+        return new EqualsBuilder().append(l3InterfaceIpv4Address, castOther.l3InterfaceIpv4Address).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(l3InterfaceIpv4Address).toHashCode();
+    }
 }

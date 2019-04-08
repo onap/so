@@ -22,33 +22,33 @@ package org.onap.so.cloudify.exceptions;
 
 /**
  * Reports an error with a Cloudify Workflow execution.
+ * 
  * @author JC1348
  *
  */
 public class MsoCloudifyWorkflowException extends MsoCloudifyException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String workflowStatus;
-	private boolean workflowStillRunning = false;
-	
-	// Constructor to create a new MsoCloudifyException instance
-	public MsoCloudifyWorkflowException (String message, String deploymentId, String workflowId, String workflowStatus)
-	{
-		super(0, "Workflow Exception", "Workflow " + workflowId + " failed on deployment " + deploymentId + ": " + message);
-		this.workflowStatus = workflowStatus;
-		if (workflowStatus.equals("pending") || workflowStatus.equals("started") ||
-			workflowStatus.equals("cancelling") || workflowStatus.equals("force_cancelling"))
-		{
-			workflowStillRunning = true;
-		}
-	}
-		
-	public String getWorkflowStatus() {
-		return workflowStatus;
-	}
-	
-	public boolean isWorkflowStillRunning () {
-		return workflowStillRunning;
-	}
+    private String workflowStatus;
+    private boolean workflowStillRunning = false;
+
+    // Constructor to create a new MsoCloudifyException instance
+    public MsoCloudifyWorkflowException(String message, String deploymentId, String workflowId, String workflowStatus) {
+        super(0, "Workflow Exception",
+                "Workflow " + workflowId + " failed on deployment " + deploymentId + ": " + message);
+        this.workflowStatus = workflowStatus;
+        if (workflowStatus.equals("pending") || workflowStatus.equals("started") || workflowStatus.equals("cancelling")
+                || workflowStatus.equals("force_cancelling")) {
+            workflowStillRunning = true;
+        }
+    }
+
+    public String getWorkflowStatus() {
+        return workflowStatus;
+    }
+
+    public boolean isWorkflowStillRunning() {
+        return workflowStillRunning;
+    }
 }

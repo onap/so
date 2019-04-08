@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import javax.ws.rs.core.GenericType;
-
 import org.onap.so.client.RestClient;
 import org.onap.so.client.aai.entities.AAIEdgeLabel;
 import org.onap.so.client.aai.entities.AAIError;
@@ -39,109 +37,116 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.so.client.graphinventory.GraphInventoryTransactionClient;
 import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 
-public class AAISingleTransactionClient extends GraphInventoryTransactionClient<AAISingleTransactionClient, AAIResourceUri, AAIEdgeLabel> {
+public class AAISingleTransactionClient
+        extends GraphInventoryTransactionClient<AAISingleTransactionClient, AAIResourceUri, AAIEdgeLabel> {
 
-	private final SingleTransactionRequest request;
-	private AAIResourcesClient resourcesClient;
-	private AAIClient aaiClient;
-	protected AAISingleTransactionClient(AAIResourcesClient resourcesClient, AAIClient aaiClient) {
-		super();
-		this.resourcesClient = resourcesClient;
-		this.aaiClient = aaiClient;
-		this.request = new SingleTransactionRequest();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.onap.so.client.aai.GraphInventoryTransactionClient#execute()
-	 */
-	@Override
-	public void execute() throws BulkProcessFailed {
-		try {
-			if (!this.request.getOperations().isEmpty()) {
-				RestClient client = aaiClient.createClient(AAIUriFactory.createResourceUri(AAIObjectType.SINGLE_TRANSACTION));
-				SingleTransactionResponse response = client.post(this.request, SingleTransactionResponse.class);
-				if (response != null) {
-					final Optional<String> errorMessage = this.locateErrorMessages(response);
-					if (errorMessage.isPresent()) {
-						throw new BulkProcessFailed("One or more transactions failed in A&AI. Check logs for payloads.\nMessages:\n" + errorMessage.get());
-					}
-				} else {
-					throw new BulkProcessFailed("Transactions acccepted by A&AI, but there was no response. Unsure of result.");
-				}
-			}
-		} finally {
-			this.request.getOperations().clear();
-			this.actionCount = 0;
-		}
-	}
+    private final SingleTransactionRequest request;
+    private AAIResourcesClient resourcesClient;
+    private AAIClient aaiClient;
 
-	protected Optional<String> locateErrorMessages(SingleTransactionResponse response) {
-		final List<String> errorMessages = new ArrayList<>();
-		final ObjectMapper mapper = new ObjectMapper();
-		
-		for (OperationBodyResponse body : response.getOperationResponses()) {
-			if (Optional.ofNullable(body.getResponseStatusCode()).orElse(400) > 300) {
-				AAIError error;
-				try {
-					error = mapper.readValue(mapper.writeValueAsString(body.getResponseBody()), AAIError.class);
-				} catch (IOException e) {
-					logger.error("could not parse error object from A&AI", e);
-					error = new AAIError();
-				}
-				AAIErrorFormatter formatter = new AAIErrorFormatter(error);
-				String outputMessage = formatter.getMessage();
-				errorMessages.add(outputMessage);
-			}
-		}
-		
-		if (!errorMessages.isEmpty()) {
-			return Optional.of(Joiner.on("\n").join(errorMessages));
-		} else {
-			return Optional.empty();
-		}
-	}
+    protected AAISingleTransactionClient(AAIResourcesClient resourcesClient, AAIClient aaiClient) {
+        super();
+        this.resourcesClient = resourcesClient;
+        this.aaiClient = aaiClient;
+        this.request = new SingleTransactionRequest();
+    }
 
-	
-	protected SingleTransactionRequest getRequest() {
-		return this.request;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.onap.so.client.aai.GraphInventoryTransactionClient#execute()
+     */
+    @Override
+    public void execute() throws BulkProcessFailed {
+        try {
+            if (!this.request.getOperations().isEmpty()) {
+                RestClient client =
+                        aaiClient.createClient(AAIUriFactory.createResourceUri(AAIObjectType.SINGLE_TRANSACTION));
+                SingleTransactionResponse response = client.post(this.request, SingleTransactionResponse.class);
+                if (response != null) {
+                    final Optional<String> errorMessage = this.locateErrorMessages(response);
+                    if (errorMessage.isPresent()) {
+                        throw new BulkProcessFailed(
+                                "One or more transactions failed in A&AI. Check logs for payloads.\nMessages:\n"
+                                        + errorMessage.get());
+                    }
+                } else {
+                    throw new BulkProcessFailed(
+                            "Transactions acccepted by A&AI, but there was no response. Unsure of result.");
+                }
+            }
+        } finally {
+            this.request.getOperations().clear();
+            this.actionCount = 0;
+        }
+    }
 
-	@Override
-	public void put(String uri, Object body) {
-		request.getOperations().add(new OperationBodyRequest().withAction("put").withUri(uri).withBody(body));
-	}
+    protected Optional<String> locateErrorMessages(SingleTransactionResponse response) {
+        final List<String> errorMessages = new ArrayList<>();
+        final ObjectMapper mapper = new ObjectMapper();
 
-	@Override
-	public void delete(String uri, Object body) {
-		request.getOperations().add(new OperationBodyRequest().withAction("delete").withUri(uri).withBody(body));
-	}
+        for (OperationBodyResponse body : response.getOperationResponses()) {
+            if (Optional.ofNullable(body.getResponseStatusCode()).orElse(400) > 300) {
+                AAIError error;
+                try {
+                    error = mapper.readValue(mapper.writeValueAsString(body.getResponseBody()), AAIError.class);
+                } catch (IOException e) {
+                    logger.error("could not parse error object from A&AI", e);
+                    error = new AAIError();
+                }
+                AAIErrorFormatter formatter = new AAIErrorFormatter(error);
+                String outputMessage = formatter.getMessage();
+                errorMessages.add(outputMessage);
+            }
+        }
 
-	@Override
-	public void patch(String uri, Object body) {
-		request.getOperations().add(new OperationBodyRequest().withAction("patch").withUri(uri).withBody(body));
-	}
+        if (!errorMessages.isEmpty()) {
+            return Optional.of(Joiner.on("\n").join(errorMessages));
+        } else {
+            return Optional.empty();
+        }
+    }
 
-	@Override
-	protected <T> Optional<T> get(GenericType<T> genericType, AAIResourceUri clone) {
-		return resourcesClient.get(genericType, clone);
-	}
-	
-	@Override
-	protected boolean exists(AAIResourceUri uri) {
-		return resourcesClient.exists(uri);
-	}
-	
-	@Override
-	protected String getGraphDBName() {
-		return aaiClient.getGraphDBName();
-	}
-	
-	@Override
-	protected GraphInventoryPatchConverter getPatchConverter() {
-		return this.patchConverter;
-	}
+
+    protected SingleTransactionRequest getRequest() {
+        return this.request;
+    }
+
+    @Override
+    public void put(String uri, Object body) {
+        request.getOperations().add(new OperationBodyRequest().withAction("put").withUri(uri).withBody(body));
+    }
+
+    @Override
+    public void delete(String uri, Object body) {
+        request.getOperations().add(new OperationBodyRequest().withAction("delete").withUri(uri).withBody(body));
+    }
+
+    @Override
+    public void patch(String uri, Object body) {
+        request.getOperations().add(new OperationBodyRequest().withAction("patch").withUri(uri).withBody(body));
+    }
+
+    @Override
+    protected <T> Optional<T> get(GenericType<T> genericType, AAIResourceUri clone) {
+        return resourcesClient.get(genericType, clone);
+    }
+
+    @Override
+    protected boolean exists(AAIResourceUri uri) {
+        return resourcesClient.exists(uri);
+    }
+
+    @Override
+    protected String getGraphDBName() {
+        return aaiClient.getGraphDBName();
+    }
+
+    @Override
+    protected GraphInventoryPatchConverter getPatchConverter() {
+        return this.patchConverter;
+    }
 }

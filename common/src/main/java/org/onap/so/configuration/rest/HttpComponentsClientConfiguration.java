@@ -21,7 +21,6 @@
 package org.onap.so.configuration.rest;
 
 import java.util.concurrent.TimeUnit;
-
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;

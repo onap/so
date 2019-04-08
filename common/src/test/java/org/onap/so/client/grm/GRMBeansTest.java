@@ -21,9 +21,7 @@
 package org.onap.so.client.grm;
 
 import java.util.List;
-
 import org.junit.Test;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -38,25 +36,21 @@ import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 
 public class GRMBeansTest {
-	private static final String POJO_PACKAGE = "org.onap.so.client.grm.beans";
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
+    private static final String POJO_PACKAGE = "org.onap.so.client.grm.beans";
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void testPojoStructureAndBehavior() {
-		Validator validator = ValidatorBuilder.create()
-								.with(new GetterMustExistRule())
-								.with(new SetterMustExistRule())
-								.with(new SetterTester())
-								.with(new GetterTester())
-								.build();
+    @Test
+    public void testPojoStructureAndBehavior() {
+        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
+                .with(new SetterTester()).with(new GetterTester()).build();
 
-		validator.validate(POJO_PACKAGE, new FilterPackageInfo(), new FilterEnum(), filterTestClasses);
-	}
-	
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
-	
+        validator.validate(POJO_PACKAGE, new FilterPackageInfo(), new FilterEnum(), filterTestClasses);
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
+
 }

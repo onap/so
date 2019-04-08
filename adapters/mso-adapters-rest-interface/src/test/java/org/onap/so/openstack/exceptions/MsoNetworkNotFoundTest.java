@@ -27,9 +27,10 @@ public class MsoNetworkNotFoundTest {
 
     @Test
     public void testConstructor() {
-        MsoNetworkNotFound msoNetworkNotFound =new MsoNetworkNotFound("test","test","test");
-        Assert.assertEquals("Network test does not exist in Cloud/Tenant test/test",msoNetworkNotFound.getMessage());
-        Assert.assertEquals("404 Not Found: Network test does not exist in Cloud/Tenant test/test",msoNetworkNotFound.toString());
+        MsoNetworkNotFound msoNetworkNotFound = new MsoNetworkNotFound("test", "test", "test");
+        Assert.assertEquals("Network test does not exist in Cloud/Tenant test/test", msoNetworkNotFound.getMessage());
+        Assert.assertEquals("404 Not Found: Network test does not exist in Cloud/Tenant test/test",
+                msoNetworkNotFound.toString());
     }
 
 }

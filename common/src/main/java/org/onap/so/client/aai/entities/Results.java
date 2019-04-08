@@ -22,7 +22,6 @@ package org.onap.so.client.aai.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -30,22 +29,21 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-"results"
-})
+@JsonPropertyOrder({"results"})
 public class Results<T> {
-	@JsonProperty("results")
-	protected List<T> results;
-	
-	@JsonProperty("results")
+    @JsonProperty("results")
+    protected List<T> results;
+
+    @JsonProperty("results")
     public List<T> getResult() {
         if (results == null) {
-        	results = new ArrayList<>();
+            results = new ArrayList<>();
         }
         return this.results;
     }
-	@JsonProperty("results")
-    public void setResult(List<T> results) {        
-        this.results=results;
-    }	
+
+    @JsonProperty("results")
+    public void setResult(List<T> results) {
+        this.results = results;
+    }
 }

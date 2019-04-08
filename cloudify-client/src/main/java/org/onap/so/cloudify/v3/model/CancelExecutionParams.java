@@ -21,33 +21,30 @@
 package org.onap.so.cloudify.v3.model;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CancelExecutionParams implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     @JsonProperty("action")
     private String action;
-    
+
     public final static String CANCEL_ACTION = "cancel";
     public final static String FORCE_CANCEL_ACTION = "force-cancel";
-    
+
     public String getAction() {
-		return action;
-	}
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
 
-	@Override
+    @Override
     public String toString() {
-        return "CancelExecutionParams{" +
-                "action='" + action + '\'' +
-                '}';
+        return "CancelExecutionParams{" + "action='" + action + '\'' + '}';
     }
 
 }

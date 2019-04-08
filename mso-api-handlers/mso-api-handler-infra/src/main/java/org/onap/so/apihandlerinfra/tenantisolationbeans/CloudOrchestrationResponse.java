@@ -25,14 +25,14 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class CloudOrchestrationResponse {
-	
-	protected Request request;
-	
-	public Request getRequest() {
-		return request;
-	}
 
-	public void setRequest(Request request) {
-		this.request = request;
-	}
+    protected Request request;
+
+    public Request getRequest() {
+        return request;
+    }
+
+    public void setRequest(Request request) {
+        this.request = request;
+    }
 }

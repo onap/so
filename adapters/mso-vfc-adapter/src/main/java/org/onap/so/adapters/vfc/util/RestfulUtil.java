@@ -26,9 +26,7 @@ package org.onap.so.adapters.vfc.util;
 
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -71,29 +69,29 @@ public class RestfulUtil {
     private static final int DEFAULT_TIME_OUT = 60000;
 
     private static final String ONAP_IP = "ONAP_IP";
-    
+
     private static final String DEFAULT_MSB_IP = "127.0.0.1";
 
     private static final Integer DEFAULT_MSB_PORT = 80;
-    
-    private static final String VFC_ADAPTER="VFC Adapter";
 
-   @Autowired
-   private Environment env;
+    private static final String VFC_ADAPTER = "VFC Adapter";
+
+    @Autowired
+    private Environment env;
 
     public String getMsbHost() {
-		// MSB_IP will be set as ONAP_IP environment parameter in install flow.
-		String msbIp = System.getenv().get(ONAP_IP);
-		// if ONAP IP is not set. get it from config file.
-		if (null == msbIp || msbIp.isEmpty()) {
-			msbIp = env.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
-		}
-    	Integer msbPort = env.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
-    	
-    	String msbEndpoint = UriBuilder.fromPath("").host(msbIp).port(msbPort).scheme("http").build().toString();
-    	logger.debug("msbEndpoint in vfc adapter: {}", msbEndpoint);
-    	
-    	return msbEndpoint;
+        // MSB_IP will be set as ONAP_IP environment parameter in install flow.
+        String msbIp = System.getenv().get(ONAP_IP);
+        // if ONAP IP is not set. get it from config file.
+        if (null == msbIp || msbIp.isEmpty()) {
+            msbIp = env.getProperty("mso.msb-ip", DEFAULT_MSB_IP);
+        }
+        Integer msbPort = env.getProperty("mso.msb-port", Integer.class, DEFAULT_MSB_PORT);
+
+        String msbEndpoint = UriBuilder.fromPath("").host(msbIp).port(msbPort).scheme("http").build().toString();
+        logger.debug("msbEndpoint in vfc adapter: {}", msbEndpoint);
+
+        return msbEndpoint;
     }
 
     private RestfulUtil() {
@@ -115,21 +113,21 @@ public class RestfulUtil {
 
             HttpClient client = HttpClientBuilder.create().build();
 
-            if("POST".equalsIgnoreCase(methodType)) {
+            if ("POST".equalsIgnoreCase(methodType)) {
                 HttpPost httpPost = new HttpPost(msbUrl);
                 httpPost.setConfig(requestConfig);
                 httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
                 method = httpPost;
-            } else if("PUT".equalsIgnoreCase(methodType)) {
+            } else if ("PUT".equalsIgnoreCase(methodType)) {
                 HttpPut httpPut = new HttpPut(msbUrl);
                 httpPut.setConfig(requestConfig);
                 httpPut.setEntity(new StringEntity(content, ContentType.APPLICATION_JSON));
                 method = httpPut;
-            } else if("GET".equalsIgnoreCase(methodType)) {
+            } else if ("GET".equalsIgnoreCase(methodType)) {
                 HttpGet httpGet = new HttpGet(msbUrl);
                 httpGet.setConfig(requestConfig);
                 method = httpGet;
-            } else if("DELETE".equalsIgnoreCase(methodType)) {
+            } else if ("DELETE".equalsIgnoreCase(methodType)) {
                 HttpDelete httpDelete = new HttpDelete(msbUrl);
                 httpDelete.setConfig(requestConfig);
                 method = httpDelete;
@@ -138,17 +136,17 @@ public class RestfulUtil {
             httpResponse = client.execute(method);
 
             String responseContent = null;
-            if(httpResponse.getEntity() != null) {
+            if (httpResponse.getEntity() != null) {
                 responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
             }
 
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
 
-            logger.debug("VFC Response: {} {}", statusCode, statusMessage
-                    + (responseContent == null ? "" : System.lineSeparator() + responseContent));
+            logger.debug("VFC Response: {} {}", statusCode,
+                    statusMessage + (responseContent == null ? "" : System.lineSeparator() + responseContent));
 
-            if(httpResponse.getStatusLine().getStatusCode() >= 300) {
+            if (httpResponse.getStatusLine().getStatusCode() >= 300) {
                 String errMsg = "VFC returned " + statusCode + " " + statusMessage;
                 logError(errMsg);
                 return createResponse(statusCode, errMsg);
@@ -156,7 +154,7 @@ public class RestfulUtil {
 
             httpResponse = null;
 
-            if(null != method) {
+            if (null != method) {
                 method.reset();
             } else {
                 logger.debug("method is NULL:");
@@ -165,29 +163,29 @@ public class RestfulUtil {
             method = null;
             return createResponse(statusCode, responseContent);
 
-        } catch(SocketTimeoutException | ConnectTimeoutException e) {
+        } catch (SocketTimeoutException | ConnectTimeoutException e) {
             String errMsg = "Request to VFC timed out";
             logError(errMsg, e);
             return createResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg);
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             String errMsg = "Error processing request to VFC";
             logError(errMsg, e);
             return createResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg);
 
         } finally {
-            if(httpResponse != null) {
+            if (httpResponse != null) {
                 try {
                     EntityUtils.consume(httpResponse.getEntity());
-                } catch(Exception e) {
+                } catch (Exception e) {
                     logger.debug("Exception :", e);
                 }
             }
 
-            if(method != null) {
+            if (method != null) {
                 try {
                     method.reset();
-                } catch(Exception e) {
+                } catch (Exception e) {
                     logger.debug("Exception :", e);
                 }
             }
@@ -196,12 +194,12 @@ public class RestfulUtil {
 
     private static void logError(String errMsg, Throwable t) {
         logger.error("{} {} {} {}", MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
-            ErrorCode.AvailabilityError.getValue(), errMsg, t);
+                ErrorCode.AvailabilityError.getValue(), errMsg, t);
     }
 
     private static void logError(String errMsg) {
         logger.error("{} {} {} {}", MessageEnum.RA_NS_EXC.toString(), VFC_ADAPTER,
-            ErrorCode.AvailabilityError.toString(), errMsg);
+                ErrorCode.AvailabilityError.toString(), errMsg);
     }
 
     private static RestfulResponse createResponse(int statusCode, String content) {

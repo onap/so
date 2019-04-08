@@ -23,13 +23,10 @@ package org.onap.so.db.catalog.beans;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.util.Date;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -41,9 +38,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 /**
- * EntityBean class for a CloudIdentity. This bean represents a cloud identity
- * service instance (i.e. a DCP node) in the NVP/AIC cloud. It will be loaded via
- * CloudConfig object, of which it is a component.
+ * EntityBean class for a CloudIdentity. This bean represents a cloud identity service instance (i.e. a DCP node) in the
+ * NVP/AIC cloud. It will be loaded via CloudConfig object, of which it is a component.
  *
  */
 @Entity
@@ -55,53 +51,53 @@ public class CloudIdentity {
     @Id
     @Column(name = "ID")
     private String id;
-    
+
     @JsonProperty("identity_url")
     @BusinessKey
     @Column(name = "IDENTITY_URL")
     private String identityUrl;
-    
+
     @JsonProperty("mso_id")
     @BusinessKey
     @Column(name = "MSO_ID")
     private String msoId;
-    
+
     @JsonProperty("mso_pass")
     @BusinessKey
     @Column(name = "MSO_PASS")
     private String msoPass;
-    
+
     @JsonProperty("project_domain_name")
     @BusinessKey
     @Column(name = "PROJECT_DOMAIN_NAME")
     private String projectDomainName;
-    
+
     @JsonProperty("user_domain_name")
     @BusinessKey
     @Column(name = "USER_DOMAIN_NAME")
     private String userDomainName;
-    
+
     @JsonProperty("admin_tenant")
     @BusinessKey
     @Column(name = "ADMIN_TENANT")
     private String adminTenant;
-    
+
     @JsonProperty("member_role")
     @BusinessKey
     @Column(name = "MEMBER_ROLE")
     private String memberRole;
-    
+
     @JsonProperty("tenant_metadata")
     @BusinessKey
     @Column(name = "TENANT_METADATA")
     private Boolean tenantMetadata;
-    
+
     @JsonProperty("identity_server_type")
     @BusinessKey
     @Enumerated(EnumType.STRING)
     @Column(name = "IDENTITY_SERVER_TYPE")
     private ServerType identityServerType;
-    
+
     @JsonProperty("identity_authentication_type")
     @BusinessKey
     @Enumerated(EnumType.STRING)
@@ -111,7 +107,7 @@ public class CloudIdentity {
     @JsonProperty("last_updated_by")
     @BusinessKey
     @Column(name = "LAST_UPDATED_BY")
-    private String lastUpdatedBy ;
+    private String lastUpdatedBy;
 
     @JsonProperty("creation_timestamp")
     @BusinessKey
@@ -124,7 +120,7 @@ public class CloudIdentity {
     @Column(name = "UPDATE_TIMESTAMP")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updated;
-    
+
     public CloudIdentity() {}
 
     @PrePersist
@@ -133,38 +129,39 @@ public class CloudIdentity {
         this.updated = new Date();
     }
 
-    public String getId () {
+    public String getId() {
         return id;
     }
 
-    public void setId (String id) {
+    public void setId(String id) {
         this.id = id;
     }
 
     public String getIdentityUrl() {
-    	return this.identityUrl;
-    }
-    public void setIdentityUrl(String url) {
-    	this.identityUrl = url;
+        return this.identityUrl;
     }
 
-    public String getMsoId () {
+    public void setIdentityUrl(String url) {
+        this.identityUrl = url;
+    }
+
+    public String getMsoId() {
         return msoId;
     }
 
-    public void setMsoId (String id) {
+    public void setMsoId(String id) {
         this.msoId = id;
     }
 
-    public String getMsoPass () {
+    public String getMsoPass() {
         return msoPass;
     }
 
-    public void setMsoPass (String pwd) {
+    public void setMsoPass(String pwd) {
         this.msoPass = pwd;
     }
 
-    public String getAdminTenant () {
+    public String getAdminTenant() {
         return adminTenant;
     }
 
@@ -192,15 +189,15 @@ public class CloudIdentity {
         this.updated = updated;
     }
 
-    public void setAdminTenant (String tenant) {
+    public void setAdminTenant(String tenant) {
         this.adminTenant = tenant;
     }
 
-    public String getMemberRole () {
+    public String getMemberRole() {
         return memberRole;
     }
 
-    public void setMemberRole (String role) {
+    public void setMemberRole(String role) {
         this.memberRole = role;
     }
 
@@ -208,100 +205,106 @@ public class CloudIdentity {
         return tenantMetadata;
     }
 
-    public void setTenantMetadata (Boolean meta) {
+    public void setTenantMetadata(Boolean meta) {
         this.tenantMetadata = meta;
     }
-    
+
     public ServerType getIdentityServerType() {
-    	return this.identityServerType;
+        return this.identityServerType;
     }
+
     public void setIdentityServerType(ServerType ist) {
-    	this.identityServerType = ist;
+        this.identityServerType = ist;
     }
+
     public String getIdentityServerTypeAsString() {
-    	return this.identityServerType.toString();
+        return this.identityServerType.toString();
     }
+
     /**
-	 * @return the identityAuthenticationType
-	 */
-	public AuthenticationType getIdentityAuthenticationType() {
-		return identityAuthenticationType;
-	}
+     * @return the identityAuthenticationType
+     */
+    public AuthenticationType getIdentityAuthenticationType() {
+        return identityAuthenticationType;
+    }
 
-	/**
-	 * @param identityAuthenticationType the identityAuthenticationType to set
-	 */
-	public void setIdentityAuthenticationType(AuthenticationType identityAuthenticationType) {
-		this.identityAuthenticationType = identityAuthenticationType;
-	}
+    /**
+     * @param identityAuthenticationType the identityAuthenticationType to set
+     */
+    public void setIdentityAuthenticationType(AuthenticationType identityAuthenticationType) {
+        this.identityAuthenticationType = identityAuthenticationType;
+    }
 
-	public String getProjectDomainName() {
-		return projectDomainName;
-	}
-	
-	public void setProjectDomainName(String projectDomainName) {
-		this.projectDomainName = projectDomainName;
-	}
-	
-	public String getUserDomainName() {
-		return userDomainName;
-	}
-	
-	public void setUserDomainName(String userDomainName) {
-		this.userDomainName = userDomainName;
-	}
-	@Override
-	public CloudIdentity clone() {
-		CloudIdentity cloudIdentityCopy = new CloudIdentity();
+    public String getProjectDomainName() {
+        return projectDomainName;
+    }
 
-		cloudIdentityCopy.id = this.id;
-		cloudIdentityCopy.identityUrl = this.identityUrl;
-		cloudIdentityCopy.msoId = this.msoId;
-		cloudIdentityCopy.msoPass = this.msoPass;
-		cloudIdentityCopy.adminTenant = this.adminTenant;
-		cloudIdentityCopy.memberRole = this.memberRole;
-		cloudIdentityCopy.tenantMetadata = this.tenantMetadata;
-		cloudIdentityCopy.identityServerType = this.identityServerType;
-		cloudIdentityCopy.identityAuthenticationType = this.identityAuthenticationType;
-		cloudIdentityCopy.projectDomainName = this.projectDomainName;
-		cloudIdentityCopy.userDomainName = this.userDomainName;
+    public void setProjectDomainName(String projectDomainName) {
+        this.projectDomainName = projectDomainName;
+    }
 
-		return cloudIdentityCopy;
-	}
+    public String getUserDomainName() {
+        return userDomainName;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
-				.append("identityUrl", getIdentityUrl()).append("msoId", getMsoId())
-				.append("projectDomain", getProjectDomainName()).append("userDomain", getUserDomainName())
-				.append("adminTenant", getAdminTenant()).append("memberRole", getMemberRole())
-				.append("tenantMetadata", getTenantMetadata()).append("identityServerType", getIdentityServerType())
-				.append("identityAuthenticationType", getIdentityAuthenticationType()).toString();
-	}
+    public void setUserDomainName(String userDomainName) {
+        this.userDomainName = userDomainName;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (other == null) {
-			return false;
-		}
-		if (!getClass().equals(other.getClass())) {
-			return false;
-		}
-		CloudIdentity castOther = (CloudIdentity) other;
-		return new EqualsBuilder().append(getId(), castOther.getId())
-				.append(getIdentityUrl(), castOther.getIdentityUrl()).append(getMsoId(), castOther.getMsoId())
-				.append(getMsoPass(), castOther.getMsoPass()).append(getAdminTenant(), castOther.getAdminTenant())
-				.append(getProjectDomainName(), castOther.getProjectDomainName()).append(getUserDomainName(), castOther.getUserDomainName())
-				.append(getMemberRole(), castOther.getMemberRole())
-				.append(getTenantMetadata(), castOther.getTenantMetadata())
-				.append(getIdentityServerType(), castOther.getIdentityServerType())
-				.append(getIdentityAuthenticationType(), castOther.getIdentityAuthenticationType()).isEquals();
-	}
+    @Override
+    public CloudIdentity clone() {
+        CloudIdentity cloudIdentityCopy = new CloudIdentity();
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(1, 31).append(getId()).append(getIdentityUrl()).append(getMsoId())
-				.append(getMsoPass()).append(getProjectDomainName()).append(getUserDomainName()).append(getAdminTenant()).append(getMemberRole()).append(getTenantMetadata())
-				.append(getIdentityServerType()).append(getIdentityAuthenticationType()).toHashCode();
-	}
+        cloudIdentityCopy.id = this.id;
+        cloudIdentityCopy.identityUrl = this.identityUrl;
+        cloudIdentityCopy.msoId = this.msoId;
+        cloudIdentityCopy.msoPass = this.msoPass;
+        cloudIdentityCopy.adminTenant = this.adminTenant;
+        cloudIdentityCopy.memberRole = this.memberRole;
+        cloudIdentityCopy.tenantMetadata = this.tenantMetadata;
+        cloudIdentityCopy.identityServerType = this.identityServerType;
+        cloudIdentityCopy.identityAuthenticationType = this.identityAuthenticationType;
+        cloudIdentityCopy.projectDomainName = this.projectDomainName;
+        cloudIdentityCopy.userDomainName = this.userDomainName;
+
+        return cloudIdentityCopy;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("id", getId())
+                .append("identityUrl", getIdentityUrl()).append("msoId", getMsoId())
+                .append("projectDomain", getProjectDomainName()).append("userDomain", getUserDomainName())
+                .append("adminTenant", getAdminTenant()).append("memberRole", getMemberRole())
+                .append("tenantMetadata", getTenantMetadata()).append("identityServerType", getIdentityServerType())
+                .append("identityAuthenticationType", getIdentityAuthenticationType()).toString();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (other == null) {
+            return false;
+        }
+        if (!getClass().equals(other.getClass())) {
+            return false;
+        }
+        CloudIdentity castOther = (CloudIdentity) other;
+        return new EqualsBuilder().append(getId(), castOther.getId())
+                .append(getIdentityUrl(), castOther.getIdentityUrl()).append(getMsoId(), castOther.getMsoId())
+                .append(getMsoPass(), castOther.getMsoPass()).append(getAdminTenant(), castOther.getAdminTenant())
+                .append(getProjectDomainName(), castOther.getProjectDomainName())
+                .append(getUserDomainName(), castOther.getUserDomainName())
+                .append(getMemberRole(), castOther.getMemberRole())
+                .append(getTenantMetadata(), castOther.getTenantMetadata())
+                .append(getIdentityServerType(), castOther.getIdentityServerType())
+                .append(getIdentityAuthenticationType(), castOther.getIdentityAuthenticationType()).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(1, 31).append(getId()).append(getIdentityUrl()).append(getMsoId())
+                .append(getMsoPass()).append(getProjectDomainName()).append(getUserDomainName())
+                .append(getAdminTenant()).append(getMemberRole()).append(getTenantMetadata())
+                .append(getIdentityServerType()).append(getIdentityAuthenticationType()).toHashCode();
+    }
 }

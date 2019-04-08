@@ -21,60 +21,70 @@
 package org.onap.so.bpmn.servicedecomposition.modelinfo;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ModelInfoConfiguration implements Serializable{
+public class ModelInfoConfiguration implements Serializable {
 
-	private static final long serialVersionUID = -387242776138157250L;
-	
-	@JsonProperty("model-invariant-id")
-	private String modelInvariantId;
-	@JsonProperty("model-version-id")
-	private String modelVersionId;
-	@JsonProperty("model-customization-id")
-	private String modelCustomizationId;
-	@JsonProperty("configuration-type")
-	private String configurationType;
-	@JsonProperty("configuration-role")
-	private String configurationRole;
-	@JsonProperty("policy-name")
-	private String policyName;
-	
-	public String getConfigurationRole() {
-		return configurationRole;
-	}
-	public void setConfigurationRole(String configurationRole) {
-		this.configurationRole = configurationRole;
-	}
-	public String getConfigurationType() {
-		return configurationType;
-	}
-	public void setConfigurationType(String configurationType) {
-		this.configurationType = configurationType;
-	}
-	public String getModelInvariantId() {
-		return modelInvariantId;
-	}
-	public void setModelInvariantId(String modelInvariantId) {
-		this.modelInvariantId = modelInvariantId;
-	}
-	public String getModelVersionId() {
-		return modelVersionId;
-	}
-	public void setModelVersionId(String modelVersionId) {
-		this.modelVersionId = modelVersionId;
-	}
-	public String getModelCustomizationId() {
-		return modelCustomizationId;
-	}
-	public void setModelCustomizationId(String modelCustomizationId) {
-		this.modelCustomizationId = modelCustomizationId;
-	}
-	public String getPolicyName() {
-		return policyName;
-	}
-	public void setPolicyName(String policyName) {
-		this.policyName = policyName;
-	}
+    private static final long serialVersionUID = -387242776138157250L;
+
+    @JsonProperty("model-invariant-id")
+    private String modelInvariantId;
+    @JsonProperty("model-version-id")
+    private String modelVersionId;
+    @JsonProperty("model-customization-id")
+    private String modelCustomizationId;
+    @JsonProperty("configuration-type")
+    private String configurationType;
+    @JsonProperty("configuration-role")
+    private String configurationRole;
+    @JsonProperty("policy-name")
+    private String policyName;
+
+    public String getConfigurationRole() {
+        return configurationRole;
+    }
+
+    public void setConfigurationRole(String configurationRole) {
+        this.configurationRole = configurationRole;
+    }
+
+    public String getConfigurationType() {
+        return configurationType;
+    }
+
+    public void setConfigurationType(String configurationType) {
+        this.configurationType = configurationType;
+    }
+
+    public String getModelInvariantId() {
+        return modelInvariantId;
+    }
+
+    public void setModelInvariantId(String modelInvariantId) {
+        this.modelInvariantId = modelInvariantId;
+    }
+
+    public String getModelVersionId() {
+        return modelVersionId;
+    }
+
+    public void setModelVersionId(String modelVersionId) {
+        this.modelVersionId = modelVersionId;
+    }
+
+    public String getModelCustomizationId() {
+        return modelCustomizationId;
+    }
+
+    public void setModelCustomizationId(String modelCustomizationId) {
+        this.modelCustomizationId = modelCustomizationId;
+    }
+
+    public String getPolicyName() {
+        return policyName;
+    }
+
+    public void setPolicyName(String policyName) {
+        this.policyName = policyName;
+    }
 }

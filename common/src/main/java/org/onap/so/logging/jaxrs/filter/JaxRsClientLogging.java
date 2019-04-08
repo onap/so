@@ -54,22 +54,22 @@ import java.util.UUID;
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Component
 @Priority(0)
-public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFilter {
-    
-    @Context 
+public class JaxRsClientLogging implements ClientRequestFilter, ClientResponseFilter {
+
+    @Context
     private Providers providers;
 
     private static final String TRACE = "trace-#";
     private static final String SO = "SO";
     private static Logger logger = LoggerFactory.getLogger(JaxRsClientLogging.class);
 
-    public void setTargetService(TargetEntity targetEntity){
+    public void setTargetService(TargetEntity targetEntity) {
         MDC.put(ONAPLogConstants.MDCs.TARGET_ENTITY, targetEntity.toString());
     }
 
     @Override
     public void filter(ClientRequestContext clientRequest) {
-        try{
+        try {
             setupMDC(clientRequest);
             setupHeaders(clientRequest);
             logger.info(ONAPLogConstants.Markers.INVOKE, "Invoke");
@@ -86,26 +86,27 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
     }
 
     private void setupMDC(ClientRequestContext clientRequest) {
-        MDC.put(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP, ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
+        MDC.put(ONAPLogConstants.MDCs.INVOKE_TIMESTAMP,
+                ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
         MDC.put(ONAPLogConstants.MDCs.TARGET_SERVICE_NAME, clientRequest.getUri().toString());
         MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
         setInvocationId();
-        MDC.put(ONAPLogConstants.MDCs.TARGET_ENTITY,MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
+        MDC.put(ONAPLogConstants.MDCs.TARGET_ENTITY, MDC.get(ONAPLogConstants.MDCs.TARGET_ENTITY));
     }
 
     private String extractRequestID(ClientRequestContext clientRequest) {
         String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
-        if(requestId == null || requestId.isEmpty() || requestId.equals(TRACE)){
+        if (requestId == null || requestId.isEmpty() || requestId.equals(TRACE)) {
             requestId = UUID.randomUUID().toString();
-            logger.warn("Could not Find Request ID Generating New One: {}",clientRequest.getUri().getPath());
+            logger.warn("Could not Find Request ID Generating New One: {}", clientRequest.getUri().getPath());
         }
         return requestId;
-    }	
+    }
 
     private void setInvocationId() {
         String invocationId = MDC.get(ONAPLogConstants.MDCs.INVOCATION_ID);
-        if(invocationId == null || invocationId.isEmpty())
-            invocationId =UUID.randomUUID().toString();
+        if (invocationId == null || invocationId.isEmpty())
+            invocationId = UUID.randomUUID().toString();
         MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, invocationId);
     }
 
@@ -115,16 +116,17 @@ public class JaxRsClientLogging implements ClientRequestFilter,ClientResponseFil
 
         try {
             String statusCode;
-            if(Response.Status.Family.familyOf(responseContext.getStatus()).equals(Response.Status.Family.SUCCESSFUL)){		
-                statusCode=ONAPLogConstants.ResponseStatus.COMPLETED.toString();
-            }else{							
-                statusCode=ONAPLogConstants.ResponseStatus.ERROR.toString();				
+            if (Response.Status.Family.familyOf(responseContext.getStatus())
+                    .equals(Response.Status.Family.SUCCESSFUL)) {
+                statusCode = ONAPLogConstants.ResponseStatus.COMPLETED.toString();
+            } else {
+                statusCode = ONAPLogConstants.ResponseStatus.ERROR.toString();
             }
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(responseContext.getStatus()));
             MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, statusCode);
             logger.info(ONAPLogConstants.Markers.INVOKE_RETURN, "InvokeReturn");
             clearClientMDCs();
-        } catch ( Exception e) {
+        } catch (Exception e) {
             logger.warn("Error in outgoing JAX-RS Inteceptor", e);
         }
     }

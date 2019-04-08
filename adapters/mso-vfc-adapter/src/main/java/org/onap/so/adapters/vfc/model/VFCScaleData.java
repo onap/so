@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Object totally matches required VFC input json format
- * JsonUtil.marshal will convert this Object to string
+ * Object totally matches required VFC input json format JsonUtil.marshal will convert this Object to string
  *
- * added on 2018/01/30 by Qihui Zhao from CMCC*/
+ * added on 2018/01/30 by Qihui Zhao from CMCC
+ */
 
 public class VFCScaleData {
 
@@ -66,14 +66,16 @@ public class VFCScaleData {
     }
 
     /**
-     *@return Returns the scaleNsDate.
+     * @return Returns the scaleNsDate.
      */
-    public List<ScaleNsData> getScaleNsData(){return scaleNsData;}
+    public List<ScaleNsData> getScaleNsData() {
+        return scaleNsData;
+    }
 
     /**
      * The scaleNsData to set.
      */
-    public void setScaleNsData(List<ScaleNsByStepsData> scaleNsByStepsData){
+    public void setScaleNsData(List<ScaleNsByStepsData> scaleNsByStepsData) {
         ScaleNsData scaleNsDataObj = new ScaleNsData();
         scaleNsDataObj.setScaleNsByStepsData(scaleNsByStepsData);
 

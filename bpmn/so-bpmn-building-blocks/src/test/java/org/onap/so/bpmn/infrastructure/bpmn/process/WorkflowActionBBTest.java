@@ -23,11 +23,9 @@ package org.onap.so.bpmn.infrastructure.bpmn.process;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
@@ -37,99 +35,117 @@ import org.onap.so.bpmn.BaseBPMNTest;
 
 @Ignore
 public class WorkflowActionBBTest extends BaseBPMNTest {
-	
-	@Test
-	public void sunnyDaySuccessIsTopLevelFlow() throws InterruptedException, IOException {
-		variables.put("isTopLevelFlow", true);
-		variables.put("completed", true);
-		
-		Map<String, String> map = new HashMap<>();
-		map.put("handlingCode", "Success");
-		mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
-		
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync",
-				"Task_SelectBB", "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted", "Task_UpdateRequestComplete",
-				"End_WorkflowActionBB");
-	
-	}
 
-	@Test
-	public void sunnyDaySuccessNotTopLevelFlow() throws InterruptedException, IOException {
-		variables.put("isTopLevelFlow", false);
-		variables.put("completed", true);
+    @Test
+    public void sunnyDaySuccessIsTopLevelFlow() throws InterruptedException, IOException {
+        variables.put("isTopLevelFlow", true);
+        variables.put("completed", true);
 
-		Map<String, String> map = new HashMap<>();
-		map.put("handlingCode", "Success");
-		mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
-		
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow",
-				"Task_SelectBB", "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted", "End_WorkflowActionBB");
-	}
-	
-	@Test
-	public void sunnyDayRollback() throws InterruptedException, IOException {
-		variables.put("isTopLevelFlow", false);
-		variables.put("isRollbackNeeded", false);
+        Map<String, String> map = new HashMap<>();
+        map.put("handlingCode", "Success");
+        mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
 
-		Map<String, String> map = new HashMap<>();
-		map.put("handlingCode", "Rollback");
-		mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
-		
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow",
-				"Task_SelectBB", "Call_ExecuteBB", "ExclusiveGateway_Finished", "Task_RollbackExecutionPath", "Task_UpdateRequestToFailed", "End_RollbackFailed");
-		
-	}
-	
-	@Test
-	public void rainyDayAbort() throws Exception {
-		variables.put("isTopLevelFlow", true);
-		variables.put("completed", false);
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
+        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
+                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB",
+                "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted",
+                "Task_UpdateRequestComplete", "End_WorkflowActionBB");
 
-		Map<String, String> map = new HashMap<>();
-		map.put("handlingCode", "Abort");
-		
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowActionBBFailure).abortCallErrorHandling(any(DelegateExecution.class));
-		mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
-		
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync",
-				"Task_SelectBB", "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowAbort", "Task_AbortAndCallErrorHandling", "ErrorStart",
-				"Task_UpdateDb", "ErrorEnd");
+    }
 
-	}
-	
-	@Test
-	public void retrieveBBExecutionListerrorHandling() throws Exception {
-		variables.put("isTopLevelFlow", true);
-		variables.put("sentSyncResponse", false);
-		doThrow(new IllegalStateException("TESTING ERRORS")).when(workflowAction).selectExecutionList(any(DelegateExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "StartEvent_runtimeError", "ServiceTask_HandleRuntimeError", "EndEvent__runtimeError", "SubProcess_0rze15o");
+    @Test
+    public void sunnyDaySuccessNotTopLevelFlow() throws InterruptedException, IOException {
+        variables.put("isTopLevelFlow", false);
+        variables.put("completed", true);
 
-	}
-	
-	@Test
-	public void errorCatchSubprocessHandlingTest() throws Exception {
-		variables.put("isTopLevelFlow", true);
-		variables.put("sentSyncResponse", false);
-		doThrow(new IllegalStateException("TESTING ERRORS")).when(workflowAction).selectExecutionList(any(DelegateExecution.class));
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowAction).handleRuntimeException(any(DelegateExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList", "StartEvent_runtimeError", "ServiceTask_HandleRuntimeError", "SubProcess_0fuugr9", "ErrorStart", "ExclusiveGateway_10q79b6", "Task_SendSyncAckError", "Task_UpdateDb", "ErrorEnd", "SubProcess_18226x4");
+        Map<String, String> map = new HashMap<>();
+        map.put("handlingCode", "Success");
+        mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
 
-	}
-	
-	@Test
-	public void errorCatchBpmnSubprocessHandlingTest() throws Exception {
-		variables.put("isTopLevelFlow", true);
-		variables.put("sentSyncResponse", false);
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowActionBBTasks).selectBB(any(DelegateExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList","ExclusiveGateway_isTopLevelFlow","Task_SendSync","Task_SelectBB", "ErrorStart", "ExclusiveGateway_10q79b6", "Task_SendSyncAckError", "Task_UpdateDb", "ErrorEnd", "SubProcess_18226x4");
-		
-	}
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
+        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
+                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SelectBB", "Call_ExecuteBB",
+                "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowCompleted", "End_WorkflowActionBB");
+    }
+
+    @Test
+    public void sunnyDayRollback() throws InterruptedException, IOException {
+        variables.put("isTopLevelFlow", false);
+        variables.put("isRollbackNeeded", false);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("handlingCode", "Rollback");
+        mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
+
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
+        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
+                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SelectBB", "Call_ExecuteBB",
+                "ExclusiveGateway_Finished", "Task_RollbackExecutionPath", "Task_UpdateRequestToFailed",
+                "End_RollbackFailed");
+
+    }
+
+    @Test
+    public void rainyDayAbort() throws Exception {
+        variables.put("isTopLevelFlow", true);
+        variables.put("completed", false);
+
+        Map<String, String> map = new HashMap<>();
+        map.put("handlingCode", "Abort");
+
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowActionBBFailure)
+                .abortCallErrorHandling(any(DelegateExecution.class));
+        mockSubprocess("ExecuteBuildingBlock", "Mocked ExecuteBuildingBlock", "GenericStub", map);
+
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
+        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
+                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB",
+                "Call_ExecuteBB", "ExclusiveGateway_Finished", "ExclusiveGateway_isTopLevelFlowAbort",
+                "Task_AbortAndCallErrorHandling", "ErrorStart", "Task_UpdateDb", "ErrorEnd");
+
+    }
+
+    @Test
+    public void retrieveBBExecutionListerrorHandling() throws Exception {
+        variables.put("isTopLevelFlow", true);
+        variables.put("sentSyncResponse", false);
+        doThrow(new IllegalStateException("TESTING ERRORS")).when(workflowAction)
+                .selectExecutionList(any(DelegateExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("Start_WorkflowActionBB", "Task_RetrieveBBExectuionList",
+                "StartEvent_runtimeError", "ServiceTask_HandleRuntimeError", "EndEvent__runtimeError",
+                "SubProcess_0rze15o");
+
+    }
+
+    @Test
+    public void errorCatchSubprocessHandlingTest() throws Exception {
+        variables.put("isTopLevelFlow", true);
+        variables.put("sentSyncResponse", false);
+        doThrow(new IllegalStateException("TESTING ERRORS")).when(workflowAction)
+                .selectExecutionList(any(DelegateExecution.class));
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowAction)
+                .handleRuntimeException(any(DelegateExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
+        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
+                "Task_RetrieveBBExectuionList", "StartEvent_runtimeError", "ServiceTask_HandleRuntimeError",
+                "SubProcess_0fuugr9", "ErrorStart", "ExclusiveGateway_10q79b6", "Task_SendSyncAckError",
+                "Task_UpdateDb", "ErrorEnd", "SubProcess_18226x4");
+
+    }
+
+    @Test
+    public void errorCatchBpmnSubprocessHandlingTest() throws Exception {
+        variables.put("isTopLevelFlow", true);
+        variables.put("sentSyncResponse", false);
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(workflowActionBBTasks)
+                .selectBB(any(DelegateExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("WorkflowActionBB", variables);
+        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_WorkflowActionBB",
+                "Task_RetrieveBBExectuionList", "ExclusiveGateway_isTopLevelFlow", "Task_SendSync", "Task_SelectBB",
+                "ErrorStart", "ExclusiveGateway_10q79b6", "Task_SendSyncAckError", "Task_UpdateDb", "ErrorEnd",
+                "SubProcess_18226x4");
+
+    }
 }

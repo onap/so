@@ -2,7 +2,6 @@ package org.onap.so.client.cds.beans;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 
 public class ConfigDeployPropertiesForVnfTest {

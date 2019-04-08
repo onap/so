@@ -26,6 +26,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 @RepositoryRestResource(collectionResourceRel = "archivedInfraRequests", path = "archivedInfraRequests")
-public interface ArchivedInfraRequestsRepository extends JpaRepository<ArchivedInfraRequests, String> {	
+public interface ArchivedInfraRequestsRepository extends JpaRepository<ArchivedInfraRequests, String> {
 
 }

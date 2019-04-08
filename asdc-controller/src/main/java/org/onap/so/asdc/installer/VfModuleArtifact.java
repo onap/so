@@ -22,7 +22,6 @@ package org.onap.so.asdc.installer;
 
 
 import java.io.UnsupportedEncodingException;
-
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.HeatFiles;
 import org.onap.so.db.catalog.beans.HeatTemplate;
@@ -30,68 +29,70 @@ import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.results.IDistributionClientDownloadResult;
 
 /**
- * The structure that contains the artifactInfo and its associated DownloadedResult. 
+ * The structure that contains the artifactInfo and its associated DownloadedResult.
  *
  */
 public final class VfModuleArtifact {
-	private final IArtifactInfo artifactInfo;
-	private int deployedInDb=0;
-	private final String result;			
-	private HeatFiles heatFiles;
-	private HeatTemplate heatTemplate;
-	private HeatEnvironment heatEnvironment;
-		
-	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
-		this(artifactinfo, clientResult, null);
-	}
-	
-	public VfModuleArtifact(IArtifactInfo artifactinfo,IDistributionClientDownloadResult clientResult, String modifiedHeatTemplate) throws UnsupportedEncodingException {
-		artifactInfo=artifactinfo;
-		if(modifiedHeatTemplate != null){
-			result = modifiedHeatTemplate;
-		}else{
-			result = new String(clientResult.getArtifactPayload(), "UTF-8");
-		}
-	}	
+    private final IArtifactInfo artifactInfo;
+    private int deployedInDb = 0;
+    private final String result;
+    private HeatFiles heatFiles;
+    private HeatTemplate heatTemplate;
+    private HeatEnvironment heatEnvironment;
 
-	public HeatFiles getHeatFiles() {
-		return heatFiles;
-	}
+    public VfModuleArtifact(IArtifactInfo artifactinfo, IDistributionClientDownloadResult clientResult)
+            throws UnsupportedEncodingException {
+        this(artifactinfo, clientResult, null);
+    }
 
-	public void setHeatFiles(HeatFiles heatFiles) {
-		this.heatFiles = heatFiles;
-	}
+    public VfModuleArtifact(IArtifactInfo artifactinfo, IDistributionClientDownloadResult clientResult,
+            String modifiedHeatTemplate) throws UnsupportedEncodingException {
+        artifactInfo = artifactinfo;
+        if (modifiedHeatTemplate != null) {
+            result = modifiedHeatTemplate;
+        } else {
+            result = new String(clientResult.getArtifactPayload(), "UTF-8");
+        }
+    }
 
-	public HeatTemplate getHeatTemplate() {
-		return heatTemplate;
-	}
+    public HeatFiles getHeatFiles() {
+        return heatFiles;
+    }
 
-	public void setHeatTemplate(HeatTemplate heatTemplate) {
-		this.heatTemplate = heatTemplate;
-	}
+    public void setHeatFiles(HeatFiles heatFiles) {
+        this.heatFiles = heatFiles;
+    }
 
-	public IArtifactInfo getArtifactInfo() {
-		return artifactInfo;
-	}
+    public HeatTemplate getHeatTemplate() {
+        return heatTemplate;
+    }
 
-	public String getResult() {
-		return result;
-	}
+    public void setHeatTemplate(HeatTemplate heatTemplate) {
+        this.heatTemplate = heatTemplate;
+    }
 
-	public int getDeployedInDb() {
-		return deployedInDb;
-	}
+    public IArtifactInfo getArtifactInfo() {
+        return artifactInfo;
+    }
 
-	public void incrementDeployedInDB() {
-		++deployedInDb;
-	}
+    public String getResult() {
+        return result;
+    }
 
-	public HeatEnvironment getHeatEnvironment() {
-		return heatEnvironment;
-	}
+    public int getDeployedInDb() {
+        return deployedInDb;
+    }
 
-	public void setHeatEnvironment(HeatEnvironment heatEnvironment) {
-		this.heatEnvironment=heatEnvironment;		
-	}
-	
+    public void incrementDeployedInDB() {
+        ++deployedInDb;
+    }
+
+    public HeatEnvironment getHeatEnvironment() {
+        return heatEnvironment;
+    }
+
+    public void setHeatEnvironment(HeatEnvironment heatEnvironment) {
+        this.heatEnvironment = heatEnvironment;
+    }
+
 }

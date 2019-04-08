@@ -25,23 +25,25 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-@SpringBootApplication(scanBasePackages = {"org.onap.so.adapters.catalogdb", "org.onap.so.db.catalog.client","org.onap.so.logging.jaxrs.filter","org.onap.so.logging.spring.interceptor","org.onap.so.client","org.onap.so.configuration"})
+@SpringBootApplication(scanBasePackages = {"org.onap.so.adapters.catalogdb", "org.onap.so.db.catalog.client",
+        "org.onap.so.logging.jaxrs.filter", "org.onap.so.logging.spring.interceptor", "org.onap.so.client",
+        "org.onap.so.configuration"})
 @EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
 @EntityScan("org.onap.so.db.catalog.beans")
 public class CatalogDBApplication {
-	
-	private static final String LOGS_DIR = "logs_dir";
 
-	private static void setLogsDir() {
-		if (System.getProperty(LOGS_DIR) == null) {
-			System.getProperties().setProperty(LOGS_DIR, "./logs/catdb/");
-		}
-	}
-	
+    private static final String LOGS_DIR = "logs_dir";
+
+    private static void setLogsDir() {
+        if (System.getProperty(LOGS_DIR) == null) {
+            System.getProperties().setProperty(LOGS_DIR, "./logs/catdb/");
+        }
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(CatalogDBApplication.class, args);
         System.getProperties().setProperty("mso.db", "MARIADB");
-        System.getProperties().setProperty("server.name", "Springboot");       
+        System.getProperties().setProperty("server.name", "Springboot");
         setLogsDir();
     }
 }

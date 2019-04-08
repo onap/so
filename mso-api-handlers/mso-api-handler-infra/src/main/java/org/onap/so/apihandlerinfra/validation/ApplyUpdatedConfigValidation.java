@@ -25,25 +25,26 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.RequestInfo;
 import org.onap.so.serviceinstancebeans.RequestParameters;
 
-public class ApplyUpdatedConfigValidation implements ValidationRule{
+public class ApplyUpdatedConfigValidation implements ValidationRule {
     private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-    	RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
-    	RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
-    	
-    	if(requestInfo == null){
-    		throw new ValidationException("requestInfo");
-    	}else if(empty(requestInfo.getRequestorId())) {
-        	throw new ValidationException ("requestorId");
-        }else if (empty (requestInfo.getSource ())) {
-        	throw new ValidationException ("source");
+
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
+        RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
+
+        if (requestInfo == null) {
+            throw new ValidationException("requestInfo");
+        } else if (empty(requestInfo.getRequestorId())) {
+            throw new ValidationException("requestorId");
+        } else if (empty(requestInfo.getSource())) {
+            throw new ValidationException("source");
         }
-    	if(requestParameters == null){
-    		throw new ValidationException("requestParameters");
-    	}
+        if (requestParameters == null) {
+            throw new ValidationException("requestParameters");
+        }
         return info;
-	}
+    }
 }

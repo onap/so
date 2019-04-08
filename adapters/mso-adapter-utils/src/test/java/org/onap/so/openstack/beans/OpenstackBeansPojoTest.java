@@ -30,18 +30,15 @@ import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 
 public class OpenstackBeansPojoTest {
-	@Test
-	public void pojoStructure() {
-		test(PojoClassFactory.getPojoClass(VnfRollback.class));
-		test(PojoClassFactory.getPojoClass(NeutronCacheEntry.class));
-		test(PojoClassFactory.getPojoClass(HeatCacheEntry.class));
-	}
-	
-	private void test(PojoClass pojoClass) {
-		Validator validator = ValidatorBuilder.create()
-				.with(new SetterTester())
-				.with(new GetterTester())
-				.build();
-		validator.validate(pojoClass);
-	}
+    @Test
+    public void pojoStructure() {
+        test(PojoClassFactory.getPojoClass(VnfRollback.class));
+        test(PojoClassFactory.getPojoClass(NeutronCacheEntry.class));
+        test(PojoClassFactory.getPojoClass(HeatCacheEntry.class));
+    }
+
+    private void test(PojoClass pojoClass) {
+        Validator validator = ValidatorBuilder.create().with(new SetterTester()).with(new GetterTester()).build();
+        validator.validate(pojoClass);
+    }
 }

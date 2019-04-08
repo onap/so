@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Ignore;
@@ -34,37 +33,36 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 
-public class HomingBBTest extends BaseBPMNTest{
+public class HomingBBTest extends BaseBPMNTest {
 
-	@Test
-	public void testHomingV2_success(){
-		mockSubprocess("ReceiveWorkflowMessage", "Mock ReceiveWorkflowMessage", "GenericStub");
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("start", "sniroOofCheck", "callSniro", "ExclusiveGateway_1ckp059", "receiveAsyncCallback", "sniroOofCheck2", "processSniroSolution", "ExclusiveGateway_1kvzxpb", "end");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void testHomingV2_success() {
+        mockSubprocess("ReceiveWorkflowMessage", "Mock ReceiveWorkflowMessage", "GenericStub");
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("start", "sniroOofCheck", "callSniro", "ExclusiveGateway_1ckp059",
+                "receiveAsyncCallback", "sniroOofCheck2", "processSniroSolution", "ExclusiveGateway_1kvzxpb", "end");
+        assertThat(pi).isEnded();
+    }
 
-	@Test
-	public void testHomingV2_error_bpmnError(){
-		doThrow(new BpmnError("MSOWorkflowException")).when(sniroHoming).callSniro(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassed("start", "sniroOofCheck", "startBpmnError", "bpmnErrorSubprocess", "processMsoWorkflowException", "endBpmnError")
-				.hasNotPassed("callReceiveAsync");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test
-	public void testHomingV2_error_javaException(){
-		doThrow(new RuntimeException("Test")).when(sniroHoming).callSniro(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassed("start", "sniroOofCheck", "callSniro", "startJavaError", "processJavaException", "javaExceptionSubProcess", "endJavaError")
-				.hasNotPassed("callReceiveAsync");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void testHomingV2_error_bpmnError() {
+        doThrow(new BpmnError("MSOWorkflowException")).when(sniroHoming).callSniro(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassed("start", "sniroOofCheck", "startBpmnError", "bpmnErrorSubprocess",
+                "processMsoWorkflowException", "endBpmnError").hasNotPassed("callReceiveAsync");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void testHomingV2_error_javaException() {
+        doThrow(new RuntimeException("Test")).when(sniroHoming).callSniro(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassed("start", "sniroOofCheck", "callSniro", "startJavaError",
+                "processJavaException", "javaExceptionSubProcess", "endJavaError").hasNotPassed("callReceiveAsync");
+        assertThat(pi).isEnded();
+    }
 
 }

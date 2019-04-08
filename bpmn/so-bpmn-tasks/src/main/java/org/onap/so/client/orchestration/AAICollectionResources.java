@@ -32,27 +32,29 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAICollectionResources {
-	@Autowired
-	private InjectionHelper injectionHelper;
-	
-	@Autowired
-	private AAIObjectMapper aaiObjectMapper;
-	
-	public void createCollection(Collection collection) {
-		AAIResourceUri networkCollectionURI = AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, collection.getId());
-		collection.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-		org.onap.aai.domain.yang.Collection aaiCollection = aaiObjectMapper.mapCollection(collection);
-		injectionHelper.getAaiClient().create(networkCollectionURI, aaiCollection);
-	}
-	
-	public void updateCollection(Collection collection) {
-		AAIResourceUri networkCollectionURI = AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, collection.getId());
-		org.onap.aai.domain.yang.Collection aaiCollection = aaiObjectMapper.mapCollection(collection);
-		injectionHelper.getAaiClient().update(networkCollectionURI, aaiCollection);
-	}
-	
-	public void deleteCollection(Collection collection) {
-		AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, collection.getId());
-		injectionHelper.getAaiClient().delete(instanceGroupUri);
-	}
+    @Autowired
+    private InjectionHelper injectionHelper;
+
+    @Autowired
+    private AAIObjectMapper aaiObjectMapper;
+
+    public void createCollection(Collection collection) {
+        AAIResourceUri networkCollectionURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, collection.getId());
+        collection.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
+        org.onap.aai.domain.yang.Collection aaiCollection = aaiObjectMapper.mapCollection(collection);
+        injectionHelper.getAaiClient().create(networkCollectionURI, aaiCollection);
+    }
+
+    public void updateCollection(Collection collection) {
+        AAIResourceUri networkCollectionURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, collection.getId());
+        org.onap.aai.domain.yang.Collection aaiCollection = aaiObjectMapper.mapCollection(collection);
+        injectionHelper.getAaiClient().update(networkCollectionURI, aaiCollection);
+    }
+
+    public void deleteCollection(Collection collection) {
+        AAIResourceUri instanceGroupUri = AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, collection.getId());
+        injectionHelper.getAaiClient().delete(instanceGroupUri);
+    }
 }

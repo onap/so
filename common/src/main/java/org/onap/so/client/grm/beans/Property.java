@@ -21,7 +21,6 @@
 package org.onap.so.client.grm.beans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -29,36 +28,36 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({ "name", "value" })
-public class Property implements Serializable{
+@JsonPropertyOrder({"name", "value"})
+public class Property implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6060749559638446881L;
-	@JsonProperty("name")
-	private String name;
-	@JsonProperty("value")
-	private String value;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6060749559638446881L;
+    @JsonProperty("name")
+    private String name;
+    @JsonProperty("value")
+    private String value;
 
-	@JsonProperty("name")
-	public String getName() {
-		return name;
-	}
+    @JsonProperty("name")
+    public String getName() {
+        return name;
+    }
 
-	@JsonProperty("name")
-	public void setName(String name) {
-		this.name = name;
-	}
+    @JsonProperty("name")
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@JsonProperty("value")
-	public String getValue() {
-		return value;
-	}
+    @JsonProperty("value")
+    public String getValue() {
+        return value;
+    }
 
-	@JsonProperty("value")
-	public void setValue(String value) {
-		this.value = value;
-	}
+    @JsonProperty("value")
+    public void setValue(String value) {
+        this.value = value;
+    }
 
 }

@@ -22,13 +22,13 @@ package org.onap.so.client.graphinventory.exceptions;
 
 public class GraphInventoryUriComputationException extends RuntimeException {
 
-	private static final long serialVersionUID = 5187931752227522034L;
+    private static final long serialVersionUID = 5187931752227522034L;
 
-	public GraphInventoryUriComputationException(String s) {
-		super(s);
-	}
-	
-	public GraphInventoryUriComputationException(Throwable t) {
-		super(t);
-	}
+    public GraphInventoryUriComputationException(String s) {
+        super(s);
+    }
+
+    public GraphInventoryUriComputationException(Throwable t) {
+        super(t);
+    }
 }

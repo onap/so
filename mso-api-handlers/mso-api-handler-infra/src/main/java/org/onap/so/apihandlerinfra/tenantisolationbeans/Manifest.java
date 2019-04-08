@@ -23,7 +23,6 @@ package org.onap.so.apihandlerinfra.tenantisolationbeans;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,21 +32,21 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class Manifest implements Serializable {
 
-	private static final long serialVersionUID = -3460949513229380541L;
-	@JsonProperty("serviceModelList")
-	private List<ServiceModelList> serviceModelList = new ArrayList<ServiceModelList>();		
+    private static final long serialVersionUID = -3460949513229380541L;
+    @JsonProperty("serviceModelList")
+    private List<ServiceModelList> serviceModelList = new ArrayList<ServiceModelList>();
 
-	public List<ServiceModelList> getServiceModelList() {
-		return serviceModelList;
-	}
+    public List<ServiceModelList> getServiceModelList() {
+        return serviceModelList;
+    }
 
-	public void setServiceModelList(List<ServiceModelList> serviceModelList) {
-		this.serviceModelList = serviceModelList;
-	}
-	
-	@Override
-	public String toString() {
-		return "Manifest [serviceModelList=" + serviceModelList.toString() + "]";
-	}		
-	
+    public void setServiceModelList(List<ServiceModelList> serviceModelList) {
+        this.serviceModelList = serviceModelList;
+    }
+
+    @Override
+    public String toString() {
+        return "Manifest [serviceModelList=" + serviceModelList.toString() + "]";
+    }
+
 }

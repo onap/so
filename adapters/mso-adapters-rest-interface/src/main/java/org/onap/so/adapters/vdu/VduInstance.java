@@ -26,55 +26,54 @@ import java.util.HashMap;
 /*
  * This Java bean class relays VDU status information in a cloud-agnostic format.
  * 
- * This bean is returned by all implementors of the VduPlugin interface operations
- * (instantiate, query, delete).
+ * This bean is returned by all implementors of the VduPlugin interface operations (instantiate, query, delete).
  */
 
 public class VduInstance {
-	// Set defaults for everything
-	protected String vduInstanceId;
-	protected String vduInstanceName;
-	protected VduStatus status;
-	protected Map<String, Object> outputs = new HashMap<>();
-	protected Map<String, Object> inputs = new HashMap<>();
+    // Set defaults for everything
+    protected String vduInstanceId;
+    protected String vduInstanceName;
+    protected VduStatus status;
+    protected Map<String, Object> outputs = new HashMap<>();
+    protected Map<String, Object> inputs = new HashMap<>();
 
-	public String getVduInstanceId() {
-		return vduInstanceId;
-	}
+    public String getVduInstanceId() {
+        return vduInstanceId;
+    }
 
-	public void setVduInstanceId(String vduInstanceId) {
-		this.vduInstanceId = vduInstanceId;
-	}
+    public void setVduInstanceId(String vduInstanceId) {
+        this.vduInstanceId = vduInstanceId;
+    }
 
-	public String getVduInstanceName() {
-		return vduInstanceName;
-	}
+    public String getVduInstanceName() {
+        return vduInstanceName;
+    }
 
-	public void setVduInstanceName(String vduInstanceName) {
-		this.vduInstanceName = vduInstanceName;
-	}
+    public void setVduInstanceName(String vduInstanceName) {
+        this.vduInstanceName = vduInstanceName;
+    }
 
-	public VduStatus getStatus() {
-		return status;
-	}
+    public VduStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(VduStatus status) {
-		this.status = status;
-	}
+    public void setStatus(VduStatus status) {
+        this.status = status;
+    }
 
-	public Map<String, Object> getOutputs() {
-		return outputs;
-	}
+    public Map<String, Object> getOutputs() {
+        return outputs;
+    }
 
-	public void setOutputs(Map<String, Object> outputs) {
-		this.outputs = outputs;
-	}
+    public void setOutputs(Map<String, Object> outputs) {
+        this.outputs = outputs;
+    }
 
-	public Map<String, Object> getInputs() {
-		return inputs;
-	}
+    public Map<String, Object> getInputs() {
+        return inputs;
+    }
 
-	public void setInputs(Map<String, Object> inputs) {
-		this.inputs = inputs;
-	}
+    public void setInputs(Map<String, Object> inputs) {
+        this.inputs = inputs;
+    }
 }

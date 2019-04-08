@@ -24,7 +24,6 @@ package org.onap.so.adapters.network.async.client;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,9 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for networkRollback complex type.
+ * <p>
+ * Java class for networkRollback complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="networkRollback">
@@ -62,20 +63,9 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "networkRollback", propOrder = {
-    "cloudId",
-    "msoRequest",
-    "networkCreated",
-    "networkId",
-    "networkStackId",
-    "networkName",
-    "networkType",
-    "networkUpdated",
-    "neutronNetworkId",
-    "physicalNetwork",
-    "tenantId",
-    "vlans"
-})
+@XmlType(name = "networkRollback",
+        propOrder = {"cloudId", "msoRequest", "networkCreated", "networkId", "networkStackId", "networkName",
+                "networkType", "networkUpdated", "neutronNetworkId", "physicalNetwork", "tenantId", "vlans"})
 public class NetworkRollback {
 
     protected String cloudId;
@@ -95,10 +85,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the cloudId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getCloudId() {
         return cloudId;
@@ -107,10 +95,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the cloudId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setCloudId(String value) {
         this.cloudId = value;
@@ -119,10 +105,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the msoRequest property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoRequest }
-     *     
+     * @return possible object is {@link MsoRequest }
+     * 
      */
     public MsoRequest getMsoRequest() {
         return msoRequest;
@@ -131,10 +115,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the msoRequest property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoRequest }
-     *     
+     * @param value allowed object is {@link MsoRequest }
+     * 
      */
     public void setMsoRequest(MsoRequest value) {
         this.msoRequest = value;
@@ -159,10 +141,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the networkId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getNetworkId() {
         return networkId;
@@ -171,10 +151,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the networkId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setNetworkId(String value) {
         this.networkId = value;
@@ -183,10 +161,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the networkStackId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getNetworkStackId() {
         return networkStackId;
@@ -195,10 +171,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the networkStackId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setNetworkStackId(String value) {
         this.networkStackId = value;
@@ -207,10 +181,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the networkName property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getNetworkName() {
         return networkName;
@@ -219,10 +191,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the networkName property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setNetworkName(String value) {
         this.networkName = value;
@@ -231,10 +201,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the networkType property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getNetworkType() {
         return networkType;
@@ -243,10 +211,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the networkType property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setNetworkType(String value) {
         this.networkType = value;
@@ -271,10 +237,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the neutronNetworkId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getNeutronNetworkId() {
         return neutronNetworkId;
@@ -283,10 +247,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the neutronNetworkId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setNeutronNetworkId(String value) {
         this.neutronNetworkId = value;
@@ -295,10 +257,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the physicalNetwork property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getPhysicalNetwork() {
         return physicalNetwork;
@@ -307,10 +267,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the physicalNetwork property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setPhysicalNetwork(String value) {
         this.physicalNetwork = value;
@@ -319,10 +277,8 @@ public class NetworkRollback {
     /**
      * Gets the value of the tenantId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getTenantId() {
         return tenantId;
@@ -331,10 +287,8 @@ public class NetworkRollback {
     /**
      * Sets the value of the tenantId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setTenantId(String value) {
         this.tenantId = value;
@@ -344,21 +298,20 @@ public class NetworkRollback {
      * Gets the value of the vlans property.
      * 
      * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the vlans property.
+     * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to
+     * the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE> method for
+     * the vlans property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
+     * 
      * <pre>
-     *    getVlans().add(newItem);
+     * getVlans().add(newItem);
      * </pre>
      * 
      * 
      * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Integer }
+     * Objects of the following type(s) are allowed in the list {@link Integer }
      * 
      * 
      */

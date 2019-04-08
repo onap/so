@@ -22,23 +22,17 @@ package org.onap.so.client.graphinventory;
 
 public enum Format {
 
-	RESOURCE("resource"),
-	RESOURCE_AND_URL("resource_and_url"),
-	SIMPLE("simple"),
-	RAW("raw"),
-	CONSOLE("console"),
-	PATHED("pathed"),
-	GRAPHSON("graphson"),
-	ID("id");
+    RESOURCE("resource"), RESOURCE_AND_URL("resource_and_url"), SIMPLE("simple"), RAW("raw"), CONSOLE(
+            "console"), PATHED("pathed"), GRAPHSON("graphson"), ID("id");
 
-	private final String name;
-	
-	private Format(String name) {
-		this.name = name;
-	}
-	
-	@Override
-	public String toString() {
-		return name;
-	}
+    private final String name;
+
+    private Format(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -27,9 +27,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,106 +47,111 @@ import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class AAIVfModuleResourcesTest extends TestDataSetup{
-	@InjectMocks
-	private AAIVfModuleResources aaiVfModuleResources = new AAIVfModuleResources();
+public class AAIVfModuleResourcesTest extends TestDataSetup {
+    @InjectMocks
+    private AAIVfModuleResources aaiVfModuleResources = new AAIVfModuleResources();
 
-	private VfModule vfModule;
-	private GenericVnf vnf;
+    private VfModule vfModule;
+    private GenericVnf vnf;
 
-	@Mock
-	protected AAIResourcesClient MOCK_aaiResourcesClient;
+    @Mock
+    protected AAIResourcesClient MOCK_aaiResourcesClient;
 
-	@Mock
-	protected AAIObjectMapper MOCK_aaiObjectMapper;
+    @Mock
+    protected AAIObjectMapper MOCK_aaiObjectMapper;
 
-	@Mock
-	protected InjectionHelper MOCK_injectionHelper;
+    @Mock
+    protected InjectionHelper MOCK_injectionHelper;
 
-	@Before
-	public void before() {
-		vfModule = buildVfModule();
-		vnf = buildGenericVnf();
-		 doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-	}
+    @Before
+    public void before() {
+        vfModule = buildVfModule();
+        vnf = buildGenericVnf();
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
+    }
 
-	@Test
-	public void updateOrchestrationStatusVfModuleTest() throws Exception {
-		vfModule.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+    @Test
+    public void updateOrchestrationStatusVfModuleTest() throws Exception {
+        vfModule.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
-		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
+        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VfModule.class));
 
-		aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ACTIVE);
+        aaiVfModuleResources.updateOrchestrationStatusVfModule(vfModule, vnf, OrchestrationStatus.ACTIVE);
 
-		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class),ArgumentMatchers.isNull());
+        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
 
-		assertEquals(OrchestrationStatus.ACTIVE, vfModule.getOrchestrationStatus());
-	}
+        assertEquals(OrchestrationStatus.ACTIVE, vfModule.getOrchestrationStatus());
+    }
 
-	@Test
-	public void createVfModuleTest() throws Exception {
-		vfModule.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
+    @Test
+    public void createVfModuleTest() throws Exception {
+        vfModule.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
 
-		doReturn(new org.onap.aai.domain.yang.VfModule()).when(MOCK_aaiObjectMapper).mapVfModule(vfModule);
-		doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class), any(Optional.class));
-		aaiVfModuleResources.createVfModule(vfModule, vnf);
+        doReturn(new org.onap.aai.domain.yang.VfModule()).when(MOCK_aaiObjectMapper).mapVfModule(vfModule);
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
+                any(Optional.class));
+        aaiVfModuleResources.createVfModule(vfModule, vnf);
 
-		verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
-		assertEquals(OrchestrationStatus.INVENTORIED, vfModule.getOrchestrationStatus());
-	}
+        verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
+        assertEquals(OrchestrationStatus.INVENTORIED, vfModule.getOrchestrationStatus());
+    }
 
-	@Test
-	public void deleteVfModuleTest() throws Exception {
-		doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
+    @Test
+    public void deleteVfModuleTest() throws Exception {
+        doNothing().when(MOCK_aaiResourcesClient).delete(isA(AAIResourceUri.class));
 
-		aaiVfModuleResources.deleteVfModule(vfModule, vnf);
+        aaiVfModuleResources.deleteVfModule(vfModule, vnf);
 
-		verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));		
-	}
+        verify(MOCK_aaiResourcesClient, times(1)).delete(any(AAIResourceUri.class));
+    }
 
-	@Test
-	public void changeAssignVfModuleTest() throws Exception {
-		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
+    @Test
+    public void changeAssignVfModuleTest() throws Exception {
+        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VfModule.class));
 
-		aaiVfModuleResources.changeAssignVfModule(vfModule, vnf);
+        aaiVfModuleResources.changeAssignVfModule(vfModule, vnf);
 
-		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());	
-	}
+        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
+    }
 
-	@Test
-	public void connectVfModuleToVolumeGroupTest() throws Exception {
-		VolumeGroup volumeGroup = buildVolumeGroup();
-		volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+    @Test
+    public void connectVfModuleToVolumeGroupTest() throws Exception {
+        VolumeGroup volumeGroup = buildVolumeGroup();
+        volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
 
-		CloudRegion cloudRegion = buildCloudRegion();
+        CloudRegion cloudRegion = buildCloudRegion();
 
-		aaiVfModuleResources.connectVfModuleToVolumeGroup(vnf, vfModule, volumeGroup, cloudRegion);
-		verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
-	}
-	
-	@Test
-	public void updateHeatStackIdVfModuleTest() throws Exception {
-		vfModule.setHeatStackId("testHeatStackId");
-		
-		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
-		
-		aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);
+        aaiVfModuleResources.connectVfModuleToVolumeGroup(vnf, vfModule, volumeGroup, cloudRegion);
+        verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
 
-		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class),ArgumentMatchers.isNull());
-		
-		assertEquals("testHeatStackId", vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
-		vfModule.setContrailServiceInstanceFqdn("testContrailServiceInstanceFqdn");
-		
-		doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VfModule.class));
-		
-		aaiVfModuleResources.updateContrailServiceInstanceFqdnVfModule(vfModule, vnf);
+    @Test
+    public void updateHeatStackIdVfModuleTest() throws Exception {
+        vfModule.setHeatStackId("testHeatStackId");
 
-		verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class),ArgumentMatchers.isNull());
-		
-		assertEquals("testContrailServiceInstanceFqdn", vfModule.getContrailServiceInstanceFqdn());
-	}
+        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VfModule.class));
+
+        aaiVfModuleResources.updateHeatStackIdVfModule(vfModule, vnf);
+
+        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
+
+        assertEquals("testHeatStackId", vfModule.getHeatStackId());
+    }
+
+    @Test
+    public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
+        vfModule.setContrailServiceInstanceFqdn("testContrailServiceInstanceFqdn");
+
+        doNothing().when(MOCK_aaiResourcesClient).update(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VfModule.class));
+
+        aaiVfModuleResources.updateContrailServiceInstanceFqdnVfModule(vfModule, vnf);
+
+        verify(MOCK_aaiResourcesClient, times(1)).update(any(AAIResourceUri.class), ArgumentMatchers.isNull());
+
+        assertEquals("testContrailServiceInstanceFqdn", vfModule.getContrailServiceInstanceFqdn());
+    }
 }

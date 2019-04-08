@@ -21,11 +21,8 @@
 package org.onap.so.utils;
 
 import static org.junit.Assert.*;
-
 import java.util.List;
-
 import org.junit.Test;
-
 import org.onap.so.utils.CheckResults.CheckResult;
 
 public class CheckResultsTest {
@@ -34,25 +31,25 @@ public class CheckResultsTest {
      * Test method for {@link org.onap.so.utils.CheckResults#getResults()}.
      */
     @Test
-    public final void testGetResults () {
-        CheckResults cr = new CheckResults ();
-        cr.addHostCheckResult ("host1", 0, "output");
-        cr.addHostCheckResult ("host2", 2, "output2");
-        cr.addServiceCheckResult ("host1", "service1", 0, "outputServ");
-        cr.addServiceCheckResult ("host1", "service2", 2, "outputServ2");
-        cr.addServiceCheckResult ("host2", "service1", 0, "output2Serv");
-        cr.addServiceCheckResult ("host2", "service2", 2, "output2Serv2");
-        List <CheckResult> res = cr.getResults ();
-        assertEquals(res.size (), 6);
-        assertEquals(res.get (0).getHostname (), "host1");
-        assertEquals(res.get (1).getHostname (), "host2");
-        assertEquals(res.get (2).getHostname (), "host1");
-        assertEquals(res.get (3).getHostname (), "host1");
-        assertEquals(res.get (4).getHostname (), "host2");
-        assertEquals(res.get (5).getHostname (), "host2");
-        assertEquals(res.get (0).getServicename (), null);
-        assertEquals(res.get (3).getServicename (), "service2");
-        assertEquals(res.get (5).getState (), 2);
+    public final void testGetResults() {
+        CheckResults cr = new CheckResults();
+        cr.addHostCheckResult("host1", 0, "output");
+        cr.addHostCheckResult("host2", 2, "output2");
+        cr.addServiceCheckResult("host1", "service1", 0, "outputServ");
+        cr.addServiceCheckResult("host1", "service2", 2, "outputServ2");
+        cr.addServiceCheckResult("host2", "service1", 0, "output2Serv");
+        cr.addServiceCheckResult("host2", "service2", 2, "output2Serv2");
+        List<CheckResult> res = cr.getResults();
+        assertEquals(res.size(), 6);
+        assertEquals(res.get(0).getHostname(), "host1");
+        assertEquals(res.get(1).getHostname(), "host2");
+        assertEquals(res.get(2).getHostname(), "host1");
+        assertEquals(res.get(3).getHostname(), "host1");
+        assertEquals(res.get(4).getHostname(), "host2");
+        assertEquals(res.get(5).getHostname(), "host2");
+        assertEquals(res.get(0).getServicename(), null);
+        assertEquals(res.get(3).getServicename(), "service2");
+        assertEquals(res.get(5).getState(), 2);
     }
 
 }

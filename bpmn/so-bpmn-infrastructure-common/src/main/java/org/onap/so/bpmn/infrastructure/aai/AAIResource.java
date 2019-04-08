@@ -24,17 +24,17 @@ import org.onap.so.client.aai.AAIResourcesClient;
 import org.springframework.stereotype.Component;
 
 @Component
-public abstract class AAIResource {	
-	private AAIResourcesClient aaiClient;
+public abstract class AAIResource {
+    private AAIResourcesClient aaiClient;
 
-	public AAIResourcesClient getAaiClient() {
-		if(aaiClient == null)
-			return new AAIResourcesClient();
-		else
-			return aaiClient;
-	}
+    public AAIResourcesClient getAaiClient() {
+        if (aaiClient == null)
+            return new AAIResourcesClient();
+        else
+            return aaiClient;
+    }
 
-	public void setAaiClient(AAIResourcesClient aaiClient) {
-		this.aaiClient = aaiClient;
-	}
+    public void setAaiClient(AAIResourcesClient aaiClient) {
+        this.aaiClient = aaiClient;
+    }
 }

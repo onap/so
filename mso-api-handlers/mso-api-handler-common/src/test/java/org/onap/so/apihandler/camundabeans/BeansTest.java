@@ -21,7 +21,6 @@
 package org.onap.so.apihandler.camundabeans;
 
 import org.junit.Test;
-
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.rule.impl.GetterMustExistRule;
@@ -39,34 +38,33 @@ import org.onap.so.openpojo.rules.ToStringTester;
 public class BeansTest {
 
 
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
-	
-	private PojoClassFilter  enumFilter = new FilterEnum();
-	
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void pojoStructure() {	
-		test("org.onap.so.apihandler.camundabeans");					
-	}
+    private PojoClassFilter enumFilter = new FilterEnum();
 
-	private void test(String pojoPackage) {
-		Validator validator = ValidatorBuilder.create()
-				
-				
-				
-			 
-				.with(new SetterTester())
-				.with(new GetterTester())	
-				.with(new ToStringTester())
-			     
-				.build();
-		
-	
-		validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses,enumFilter,new FilterNonConcrete());
-	}
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
+
+    @Test
+    public void pojoStructure() {
+        test("org.onap.so.apihandler.camundabeans");
+    }
+
+    private void test(String pojoPackage) {
+        Validator validator = ValidatorBuilder.create()
+
+
+
+                .with(new SetterTester()).with(new GetterTester()).with(new ToStringTester())
+
+                .build();
+
+
+        validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, enumFilter,
+                new FilterNonConcrete());
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
 }

@@ -24,46 +24,46 @@ import java.io.Serializable;
 
 public class Subscriber implements Serializable {
 
-	private static final long serialVersionUID = -2416018315129127022L;
-	private String globalId;
-	private String name;
-	private String commonSiteId;
+    private static final long serialVersionUID = -2416018315129127022L;
+    private String globalId;
+    private String name;
+    private String commonSiteId;
 
-	public Subscriber(String globalId, String name, String commonSiteId){
-		super();
-		this.globalId = globalId;
-		this.name = name;
-		this.commonSiteId = commonSiteId;
-	}
-
-
-	public String getGlobalId(){
-		return globalId;
-	}
+    public Subscriber(String globalId, String name, String commonSiteId) {
+        super();
+        this.globalId = globalId;
+        this.name = name;
+        this.commonSiteId = commonSiteId;
+    }
 
 
-	public void setGlobalId(String globalId){
-		this.globalId = globalId;
-	}
+    public String getGlobalId() {
+        return globalId;
+    }
 
 
-	public String getName(){
-		return name;
-	}
+    public void setGlobalId(String globalId) {
+        this.globalId = globalId;
+    }
 
 
-	public void setName(String name){
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
 
-	public String getCommonSiteId(){
-		return commonSiteId;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setCommonSiteId(String commonSiteId){
-		this.commonSiteId = commonSiteId;
-	}
+
+    public String getCommonSiteId() {
+        return commonSiteId;
+    }
+
+    public void setCommonSiteId(String commonSiteId) {
+        this.commonSiteId = commonSiteId;
+    }
 
 
 }

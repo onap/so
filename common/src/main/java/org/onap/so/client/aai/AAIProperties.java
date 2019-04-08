@@ -24,11 +24,14 @@ import org.onap.so.client.RestProperties;
 
 public interface AAIProperties extends RestProperties {
 
-	public AAIVersion getDefaultVersion();
-	public String getAuth();
-	public String getKey();
-	@Override
-	public default boolean mapNotFoundToEmpty() {
-		return true;
-	}
+    public AAIVersion getDefaultVersion();
+
+    public String getAuth();
+
+    public String getKey();
+
+    @Override
+    public default boolean mapNotFoundToEmpty() {
+        return true;
+    }
 }

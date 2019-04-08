@@ -22,7 +22,6 @@ package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 
 import java.io.IOException;
 import java.util.Optional;
-
 import org.onap.so.client.dmaap.DmaapPublisher;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -31,31 +30,31 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class OperationalEnvironmentPublisher extends DmaapPublisher {
 
-	
-	public OperationalEnvironmentPublisher() throws IOException {
-		super();
-	}
-	
-	@Override
-	public String getAuth() {
 
-		return this.msoProperties.get("mso.so.operational-environment.dmaap.auth");
-	}
+    public OperationalEnvironmentPublisher() throws IOException {
+        super();
+    }
 
-	@Override
-	public String getKey() {
+    @Override
+    public String getAuth() {
 
-		return this.msoProperties.get("mso.msoKey");
-	}
+        return this.msoProperties.get("mso.so.operational-environment.dmaap.auth");
+    }
 
-	@Override
-	public String getTopic() {
-		
-		return this.msoProperties.get("mso.so.operational-environment.publisher.topic");
-	}
+    @Override
+    public String getKey() {
 
-	@Override
-	public Optional<String> getHost() {
-		return Optional.ofNullable(this.msoProperties.get("mso.so.operational-environment.dmaap.host"));
-	}
+        return this.msoProperties.get("mso.msoKey");
+    }
+
+    @Override
+    public String getTopic() {
+
+        return this.msoProperties.get("mso.so.operational-environment.publisher.topic");
+    }
+
+    @Override
+    public Optional<String> getHost() {
+        return Optional.ofNullable(this.msoProperties.get("mso.so.operational-environment.dmaap.host"));
+    }
 }

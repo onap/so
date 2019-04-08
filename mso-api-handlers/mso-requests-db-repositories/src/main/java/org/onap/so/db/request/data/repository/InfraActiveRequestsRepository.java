@@ -22,7 +22,6 @@ package org.onap.so.db.request.data.repository;
 
 import java.util.Date;
 import java.util.List;
-
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,12 +29,19 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 
 @RepositoryRestResource(collectionResourceRel = "infraActiveRequests", path = "infraActiveRequests")
-public interface InfraActiveRequestsRepository extends JpaRepository<InfraActiveRequests, String>, InfraActiveRequestsRepositoryCustom {
-	
-	InfraActiveRequests findOneByRequestIdOrClientRequestId(String requestId, String clientRequestId);
-	InfraActiveRequests findOneByRequestIdOrClientRequestIdAndRequestType(String requestId,String clientRequestId, String requestType);
-	InfraActiveRequests findOneByRequestId(String string);
-	InfraActiveRequests findOneByRequestBody(String requestBody);
-	List<InfraActiveRequests> findByEndTimeLessThan(Date endTime, Pageable request);
-	List<InfraActiveRequests> findByStartTimeLessThanAndEndTime(Date startTime, Date endTime, Pageable request);
+public interface InfraActiveRequestsRepository
+        extends JpaRepository<InfraActiveRequests, String>, InfraActiveRequestsRepositoryCustom {
+
+    InfraActiveRequests findOneByRequestIdOrClientRequestId(String requestId, String clientRequestId);
+
+    InfraActiveRequests findOneByRequestIdOrClientRequestIdAndRequestType(String requestId, String clientRequestId,
+            String requestType);
+
+    InfraActiveRequests findOneByRequestId(String string);
+
+    InfraActiveRequests findOneByRequestBody(String requestBody);
+
+    List<InfraActiveRequests> findByEndTimeLessThan(Date endTime, Pageable request);
+
+    List<InfraActiveRequests> findByStartTimeLessThanAndEndTime(Date startTime, Date endTime, Pageable request);
 }

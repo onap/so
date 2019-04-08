@@ -25,42 +25,41 @@ package org.onap.so.adapters.tenantrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.entity.MsoRequest;
 
 @XmlRootElement(name = "deleteTenantRequest")
 public class DeleteTenantRequest extends TenantRequestCommon {
 
-	private String cloudSiteId;
-	private String tenantId;
+    private String cloudSiteId;
+    private String tenantId;
 
-	private MsoRequest msoRequest = new MsoRequest();
+    private MsoRequest msoRequest = new MsoRequest();
 
-	public DeleteTenantRequest() {
-		//empty constructor
-	}
-	
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public DeleteTenantRequest() {
+        // empty constructor
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
+
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
 }

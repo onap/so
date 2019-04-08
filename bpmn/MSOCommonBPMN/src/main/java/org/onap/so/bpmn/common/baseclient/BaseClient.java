@@ -22,7 +22,6 @@ package org.onap.so.bpmn.common.baseclient;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.onap.so.logging.jaxrs.filter.SpringClientFilter;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -35,18 +34,18 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-//TODO move to common location
-public class BaseClient<I,O> {
+// TODO move to common location
+public class BaseClient<I, O> {
 
-	private HttpHeaders httpHeader;
-	private String targetUrl;
+    private HttpHeaders httpHeader;
+    private String targetUrl;
 
-	public HttpHeaders getHttpHeader() {
-		return httpHeader;
-	}
-	
+    public HttpHeaders getHttpHeader() {
+        return httpHeader;
+    }
+
     public HttpHeaders setDefaultHttpHeaders(String auth) {
-    	httpHeader = new HttpHeaders();
+        httpHeader = new HttpHeaders();
         httpHeader.set("Authorization", auth);
         httpHeader.setContentType(MediaType.APPLICATION_JSON);
         List<MediaType> acceptMediaTypes = new ArrayList<MediaType>();
@@ -56,34 +55,36 @@ public class BaseClient<I,O> {
         return httpHeader;
     }
 
-	public void setHttpHeader(HttpHeaders httpHeader) {
-		this.httpHeader = httpHeader;
-	}
+    public void setHttpHeader(HttpHeaders httpHeader) {
+        this.httpHeader = httpHeader;
+    }
 
-	public String getTargetUrl() {
-		return targetUrl;
-	}
+    public String getTargetUrl() {
+        return targetUrl;
+    }
 
-	public void setTargetUrl(String targetUrl) {
-		this.targetUrl = targetUrl;
-	}
+    public void setTargetUrl(String targetUrl) {
+        this.targetUrl = targetUrl;
+    }
 
-	public O get(I data, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
-		return run(data, HttpMethod.GET, typeRef, uriVariables);
-	}
+    public O get(I data, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
+        return run(data, HttpMethod.GET, typeRef, uriVariables);
+    }
 
-	public O post(I data, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
-		return run(data, HttpMethod.POST, typeRef, uriVariables);
-	}
-	
-	public O run(I data, HttpMethod method, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
-		HttpEntity<I> requestEntity = new HttpEntity<I>(data, getHttpHeader());
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
-		restTemplate.getInterceptors().add(new SpringClientFilter());
-		ResponseEntity<O> responseEntity = restTemplate.exchange(getTargetUrl(), method, requestEntity, typeRef,
-				uriVariables);
-		return responseEntity.getBody();
-	}
+    public O post(I data, ParameterizedTypeReference<O> typeRef, Object... uriVariables) throws RestClientException {
+        return run(data, HttpMethod.POST, typeRef, uriVariables);
+    }
+
+    public O run(I data, HttpMethod method, ParameterizedTypeReference<O> typeRef, Object... uriVariables)
+            throws RestClientException {
+        HttpEntity<I> requestEntity = new HttpEntity<I>(data, getHttpHeader());
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate
+                .setRequestFactory(new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory()));
+        restTemplate.getInterceptors().add(new SpringClientFilter());
+        ResponseEntity<O> responseEntity =
+                restTemplate.exchange(getTargetUrl(), method, requestEntity, typeRef, uriVariables);
+        return responseEntity.getBody();
+    }
 
 }

@@ -30,8 +30,10 @@ import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 
 public interface IArtifactOrchestrator {
 
-	void installTheArtifact (INotificationData iNotif, IResourceInstance resource, IArtifactInfo artifact, IDistributionClientDownloadResult downloadResult) throws ArtifactInstallerException;
+    void installTheArtifact(INotificationData iNotif, IResourceInstance resource, IArtifactInfo artifact,
+            IDistributionClientDownloadResult downloadResult) throws ArtifactInstallerException;
 
-	boolean isArtifactAlreadyDeployed (INotificationData iNotif,IResourceInstance resource,IArtifactInfo artifact) throws ArtifactInstallerException;
+    boolean isArtifactAlreadyDeployed(INotificationData iNotif, IResourceInstance resource, IArtifactInfo artifact)
+            throws ArtifactInstallerException;
 
 }

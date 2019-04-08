@@ -28,11 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "template_type",
-        "workload_id",
-        "workload_status"
-})
+@JsonPropertyOrder({"template_type", "workload_id", "workload_status"})
 public class MulticloudQueryResponse implements Serializable {
     private final static long serialVersionUID = -5215028275577848311L;
 
@@ -44,10 +40,8 @@ public class MulticloudQueryResponse implements Serializable {
     private String workloadStatus;
 
     @JsonCreator
-    public MulticloudQueryResponse(
-            @JsonProperty("template_type") String templateType,
-            @JsonProperty("workload_id") String workloadId,
-            @JsonProperty("workload_status") String workloadStatus) {
+    public MulticloudQueryResponse(@JsonProperty("template_type") String templateType,
+            @JsonProperty("workload_id") String workloadId, @JsonProperty("workload_status") String workloadStatus) {
         this.templateType = templateType;
         this.workloadId = workloadId;
         this.workloadStatus = workloadStatus;
@@ -85,6 +79,7 @@ public class MulticloudQueryResponse implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("templateType", templateType).append("workloadId", workloadId).append("workloadStatus", workloadStatus).toString();
+        return new ToStringBuilder(this).append("templateType", templateType).append("workloadId", workloadId)
+                .append("workloadStatus", workloadStatus).toString();
     }
 }

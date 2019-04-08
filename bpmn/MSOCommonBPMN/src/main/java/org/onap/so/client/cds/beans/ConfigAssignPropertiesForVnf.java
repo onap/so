@@ -2,23 +2,16 @@ package org.onap.so.client.cds.beans;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-"service-instance-id",
-"vnf-id",
-"vnf-name",
-"service-model-uuid",
-"vnf-customization-uuid"
-})
+@JsonPropertyOrder({"service-instance-id", "vnf-id", "vnf-name", "service-model-uuid", "vnf-customization-uuid"})
 
 public class ConfigAssignPropertiesForVnf {
-	
+
     @JsonProperty("service-instance-id")
     private String serviceInstanceId;
 

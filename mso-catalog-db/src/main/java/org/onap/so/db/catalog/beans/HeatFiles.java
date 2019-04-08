@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -31,127 +30,125 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
 @Table(name = "heat_files")
 public class HeatFiles implements Serializable {
 
-	private static final long serialVersionUID = 768026109321305392L;
+    private static final long serialVersionUID = 768026109321305392L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "ARTIFACT_UUID")
-	private String artifactUuid;
+    @BusinessKey
+    @Id
+    @Column(name = "ARTIFACT_UUID")
+    private String artifactUuid;
 
-	@Column(name = "DESCRIPTION")
-	private String description = null;
+    @Column(name = "DESCRIPTION")
+    private String description = null;
 
-	@Column(name = "NAME")
-	private String fileName;
+    @Column(name = "NAME")
+    private String fileName;
 
-	@Lob
-	@Column(name = "BODY", columnDefinition = "LONGTEXT")
-	private String fileBody;
+    @Lob
+    @Column(name = "BODY", columnDefinition = "LONGTEXT")
+    private String fileBody;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@Column(name = "ARTIFACT_CHECKSUM")
-	private String artifactChecksum;
+    @Column(name = "ARTIFACT_CHECKSUM")
+    private String artifactChecksum;
 
-	@Column(name = "VERSION")
-	private String version;
+    @Column(name = "VERSION")
+    private String version;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("artifactUuid", artifactUuid).append("description", description)
-				.append("fileName", fileName).append("fileBody", fileBody).append("created", created)
-				.append("artifactChecksum", artifactChecksum).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("artifactUuid", artifactUuid).append("description", description)
+                .append("fileName", fileName).append("fileBody", fileBody).append("created", created)
+                .append("artifactChecksum", artifactChecksum).toString();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof HeatFiles)) {
-			return false;
-		}
-		HeatFiles castOther = (HeatFiles) other;
-		return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof HeatFiles)) {
+            return false;
+        }
+        HeatFiles castOther = (HeatFiles) other;
+        return new EqualsBuilder().append(artifactUuid, castOther.artifactUuid).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(artifactUuid).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(artifactUuid).toHashCode();
+    }
 
-	public String getArtifactUuid() {
-		return this.artifactUuid;
-	}
+    public String getArtifactUuid() {
+        return this.artifactUuid;
+    }
 
-	public void setArtifactUuid(String artifactUuid) {
-		this.artifactUuid = artifactUuid;
-	}
+    public void setArtifactUuid(String artifactUuid) {
+        this.artifactUuid = artifactUuid;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public String getDescription() {
+        return this.description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getFileName() {
-		return this.fileName;
-	}
+    public String getFileName() {
+        return this.fileName;
+    }
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
 
-	public String getFileBody() {
-		return this.fileBody;
-	}
+    public String getFileBody() {
+        return this.fileBody;
+    }
 
-	public void setFileBody(String fileBody) {
-		this.fileBody = fileBody;
-	}
+    public void setFileBody(String fileBody) {
+        this.fileBody = fileBody;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public String getAsdcUuid() {
-		return this.artifactUuid;
-	}
+    public String getAsdcUuid() {
+        return this.artifactUuid;
+    }
 
-	public void setAsdcUuid(String artifactUuid) {
-		this.artifactUuid = artifactUuid;
-	}
+    public void setAsdcUuid(String artifactUuid) {
+        this.artifactUuid = artifactUuid;
+    }
 
-	public String getArtifactChecksum() {
-		return artifactChecksum;
-	}
+    public String getArtifactChecksum() {
+        return artifactChecksum;
+    }
 
-	public void setArtifactChecksum(String artifactChecksum) {
-		this.artifactChecksum = artifactChecksum;
-	}
+    public void setArtifactChecksum(String artifactChecksum) {
+        this.artifactChecksum = artifactChecksum;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 }

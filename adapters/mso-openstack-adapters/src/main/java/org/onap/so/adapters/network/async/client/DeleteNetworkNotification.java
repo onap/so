@@ -27,9 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for deleteNetworkNotification complex type.
+ * <p>
+ * Java class for deleteNetworkNotification complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="deleteNetworkNotification">
@@ -50,13 +52,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteNetworkNotification", propOrder = {
-    "messageId",
-    "completed",
-    "exception",
-    "errorMessage",
-    "networkDeleted"
-})
+@XmlType(name = "deleteNetworkNotification",
+        propOrder = {"messageId", "completed", "exception", "errorMessage", "networkDeleted"})
 public class DeleteNetworkNotification {
 
     @XmlElement(required = true)
@@ -69,10 +66,8 @@ public class DeleteNetworkNotification {
     /**
      * Gets the value of the messageId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getMessageId() {
         return messageId;
@@ -81,10 +76,8 @@ public class DeleteNetworkNotification {
     /**
      * Sets the value of the messageId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setMessageId(String value) {
         this.messageId = value;
@@ -109,10 +102,8 @@ public class DeleteNetworkNotification {
     /**
      * Gets the value of the exception property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @return possible object is {@link MsoExceptionCategory }
+     * 
      */
     public MsoExceptionCategory getException() {
         return exception;
@@ -121,10 +112,8 @@ public class DeleteNetworkNotification {
     /**
      * Sets the value of the exception property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @param value allowed object is {@link MsoExceptionCategory }
+     * 
      */
     public void setException(MsoExceptionCategory value) {
         this.exception = value;
@@ -133,10 +122,8 @@ public class DeleteNetworkNotification {
     /**
      * Gets the value of the errorMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getErrorMessage() {
         return errorMessage;
@@ -145,10 +132,8 @@ public class DeleteNetworkNotification {
     /**
      * Sets the value of the errorMessage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setErrorMessage(String value) {
         this.errorMessage = value;
@@ -157,10 +142,8 @@ public class DeleteNetworkNotification {
     /**
      * Gets the value of the networkDeleted property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     * @return possible object is {@link Boolean }
+     * 
      */
     public Boolean isNetworkDeleted() {
         return networkDeleted;
@@ -169,10 +152,8 @@ public class DeleteNetworkNotification {
     /**
      * Sets the value of the networkDeleted property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     * @param value allowed object is {@link Boolean }
+     * 
      */
     public void setNetworkDeleted(Boolean value) {
         this.networkDeleted = value;

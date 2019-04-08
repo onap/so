@@ -25,49 +25,57 @@ import java.io.Serializable;
 
 public class SDNCResponse implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private String reqId = null;
-	private int respCode = 0;
-	private String respMsg = null;
-	private String sdncRespXml = null;
+    private static final long serialVersionUID = 1L;
+    private String reqId = null;
+    private int respCode = 0;
+    private String respMsg = null;
+    private String sdncRespXml = null;
 
-	public SDNCResponse(String reqId) {
-		this.reqId = reqId;
-	}
-	public SDNCResponse(String reqId, int respCode, String respMsg) {
-		this.reqId = reqId;
-		this.respCode = respCode;
-		this.respMsg = respMsg;
-	}
+    public SDNCResponse(String reqId) {
+        this.reqId = reqId;
+    }
 
-	public String getReqId() {
-		return reqId;
-	}
-	public void setReqId(String reqId) {
-		this.reqId = reqId;
-	}
-	public int getRespCode() {
-		return respCode;
-	}
-	public void setRespCode(int respCode) {
-		this.respCode = respCode;
-	}
-	public String getRespMsg() {
-		return respMsg;
-	}
-	public void setRespMsg(String respMsg) {
-		this.respMsg = respMsg;
-	}
-	public String getSdncRespXml() {
-		return sdncRespXml;
-	}
-	public void setSdncRespXml(String sdncRespXml) {
-		this.sdncRespXml = sdncRespXml;
-	}
+    public SDNCResponse(String reqId, int respCode, String respMsg) {
+        this.reqId = reqId;
+        this.respCode = respCode;
+        this.respMsg = respMsg;
+    }
 
-	@Override
-	public String toString() {
-		return "SDNCResponse [reqId=" + reqId + ", respCode=" + respCode
-				+ ", respMsg=" + respMsg + ", sdncRespXml=" + sdncRespXml + "]";
-	}
+    public String getReqId() {
+        return reqId;
+    }
+
+    public void setReqId(String reqId) {
+        this.reqId = reqId;
+    }
+
+    public int getRespCode() {
+        return respCode;
+    }
+
+    public void setRespCode(int respCode) {
+        this.respCode = respCode;
+    }
+
+    public String getRespMsg() {
+        return respMsg;
+    }
+
+    public void setRespMsg(String respMsg) {
+        this.respMsg = respMsg;
+    }
+
+    public String getSdncRespXml() {
+        return sdncRespXml;
+    }
+
+    public void setSdncRespXml(String sdncRespXml) {
+        this.sdncRespXml = sdncRespXml;
+    }
+
+    @Override
+    public String toString() {
+        return "SDNCResponse [reqId=" + reqId + ", respCode=" + respCode + ", respMsg=" + respMsg + ", sdncRespXml="
+                + sdncRespXml + "]";
+    }
 }

@@ -22,114 +22,109 @@ package org.onap.so.apihandler.camundabeans;
 
 
 
-
-
 import org.onap.so.apihandler.common.CommonConstants;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
- * JavaBean JSON class for a "variables" which contains the xml payload that
- * will be passed to the Camunda process
+ * JavaBean JSON class for a "variables" which contains the xml payload that will be passed to the Camunda process
  * 
  */
-@JsonPropertyOrder({ CommonConstants.CAMUNDA_SERVICE_INPUT, CommonConstants.CAMUNDA_HOST, 
-	CommonConstants.SCHEMA_VERSION_HEADER, CommonConstants.REQUEST_ID_HEADER, CommonConstants.SERVICE_INSTANCE_ID_HEADER,
-	CommonConstants. REQUEST_TIMEOUT_HEADER, CommonConstants.CAMUNDA_SERVICE_INPUT})
+@JsonPropertyOrder({CommonConstants.CAMUNDA_SERVICE_INPUT, CommonConstants.CAMUNDA_HOST,
+        CommonConstants.SCHEMA_VERSION_HEADER, CommonConstants.REQUEST_ID_HEADER,
+        CommonConstants.SERVICE_INSTANCE_ID_HEADER, CommonConstants.REQUEST_TIMEOUT_HEADER,
+        CommonConstants.CAMUNDA_SERVICE_INPUT})
 @JsonRootName(CommonConstants.CAMUNDA_ROOT_INPUT)
 public class CamundaRequest {
 
-	@JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
-	private CamundaInput serviceInput;
-	
-	@JsonProperty(CommonConstants.CAMUNDA_HOST)
-	private CamundaInput host;
-	
-	@JsonProperty(CommonConstants.SCHEMA_VERSION_HEADER)
-	private CamundaInput schema;
-	
-	@JsonProperty(CommonConstants.REQUEST_ID_HEADER)
-	private CamundaInput reqid;
-	
-	@JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_HEADER)
-	private CamundaInput svcid;
-	
-	@JsonProperty(CommonConstants.REQUEST_TIMEOUT_HEADER)
-	private CamundaInput timeout;
-	
-	public CamundaRequest() {
-	}
-	
-	@JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
-	public CamundaInput getServiceInput() {
-		return serviceInput;
-	}
+    @JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
+    private CamundaInput serviceInput;
 
-	@JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
-	public void setServiceInput(CamundaInput serviceInput) {
-		this.serviceInput = serviceInput;
-	}
-	
-	@JsonProperty(CommonConstants.CAMUNDA_HOST)
-	public CamundaInput getHost() {
-		return host;
-	}
+    @JsonProperty(CommonConstants.CAMUNDA_HOST)
+    private CamundaInput host;
 
-	@JsonProperty(CommonConstants.CAMUNDA_HOST)
-	public void setHost(CamundaInput host) {
-		this.host = host;
-	}
+    @JsonProperty(CommonConstants.SCHEMA_VERSION_HEADER)
+    private CamundaInput schema;
 
-	@JsonProperty(CommonConstants.SCHEMA_VERSION_HEADER)
-	public CamundaInput getSchema() {
-		return schema;
-	}
+    @JsonProperty(CommonConstants.REQUEST_ID_HEADER)
+    private CamundaInput reqid;
 
-	@JsonProperty(CommonConstants.SCHEMA_VERSION_HEADER)
-	public void setSchema(CamundaInput schema) {
-		this.schema = schema;
-	}
+    @JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_HEADER)
+    private CamundaInput svcid;
 
-	@JsonProperty(CommonConstants.REQUEST_ID_HEADER)
-	public CamundaInput getReqid() {
-		return reqid;
-	}
+    @JsonProperty(CommonConstants.REQUEST_TIMEOUT_HEADER)
+    private CamundaInput timeout;
 
-	@JsonProperty(CommonConstants.REQUEST_ID_HEADER)
-	public void setReqid(CamundaInput reqid) {
-		this.reqid = reqid;
-	}
+    public CamundaRequest() {}
 
-	@JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_HEADER)
-	public CamundaInput getSvcid() {
-		return svcid;
-	}
+    @JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
+    public CamundaInput getServiceInput() {
+        return serviceInput;
+    }
 
-	@JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_HEADER)
-	public void setSvcid(CamundaInput svcid) {
-		this.svcid = svcid;
-	}
-	
+    @JsonProperty(CommonConstants.CAMUNDA_SERVICE_INPUT)
+    public void setServiceInput(CamundaInput serviceInput) {
+        this.serviceInput = serviceInput;
+    }
 
-	@JsonProperty(CommonConstants.REQUEST_TIMEOUT_HEADER)
-	public CamundaInput getTimeout() {
-		return timeout;
-	}
+    @JsonProperty(CommonConstants.CAMUNDA_HOST)
+    public CamundaInput getHost() {
+        return host;
+    }
 
-	@JsonProperty(CommonConstants.REQUEST_TIMEOUT_HEADER)
-	public void setTimeout(CamundaInput timeout) {
-		this.timeout = timeout;
-	}
+    @JsonProperty(CommonConstants.CAMUNDA_HOST)
+    public void setHost(CamundaInput host) {
+        this.host = host;
+    }
 
-		
-	
-	@Override
-	public String toString() {
-		return "CamundaRequest [serviceInput=" + serviceInput + ", host="
-				+ host + ", schema=" + schema + ", reqid=" + reqid + ", svcid="
-				+ svcid + ", timeout=" + timeout + "]";
-	}	
-	
+    @JsonProperty(CommonConstants.SCHEMA_VERSION_HEADER)
+    public CamundaInput getSchema() {
+        return schema;
+    }
+
+    @JsonProperty(CommonConstants.SCHEMA_VERSION_HEADER)
+    public void setSchema(CamundaInput schema) {
+        this.schema = schema;
+    }
+
+    @JsonProperty(CommonConstants.REQUEST_ID_HEADER)
+    public CamundaInput getReqid() {
+        return reqid;
+    }
+
+    @JsonProperty(CommonConstants.REQUEST_ID_HEADER)
+    public void setReqid(CamundaInput reqid) {
+        this.reqid = reqid;
+    }
+
+    @JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_HEADER)
+    public CamundaInput getSvcid() {
+        return svcid;
+    }
+
+    @JsonProperty(CommonConstants.SERVICE_INSTANCE_ID_HEADER)
+    public void setSvcid(CamundaInput svcid) {
+        this.svcid = svcid;
+    }
+
+
+    @JsonProperty(CommonConstants.REQUEST_TIMEOUT_HEADER)
+    public CamundaInput getTimeout() {
+        return timeout;
+    }
+
+    @JsonProperty(CommonConstants.REQUEST_TIMEOUT_HEADER)
+    public void setTimeout(CamundaInput timeout) {
+        this.timeout = timeout;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "CamundaRequest [serviceInput=" + serviceInput + ", host=" + host + ", schema=" + schema + ", reqid="
+                + reqid + ", svcid=" + svcid + ", timeout=" + timeout + "]";
+    }
+
 }

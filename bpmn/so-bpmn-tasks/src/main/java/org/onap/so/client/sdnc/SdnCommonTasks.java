@@ -25,7 +25,6 @@ package org.onap.so.client.sdnc;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpStatus;
 import org.onap.so.client.exception.BadResponseException;
@@ -38,7 +37,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -52,7 +50,8 @@ public class SdnCommonTasks {
     private static final String NO_RESPONSE_FROM_SDNC = "Error did not receive a response from SDNC.";
     private static final String BAD_RESPONSE_FROM_SDNC = "Error received a bad response from SDNC.";
     private static final String SDNC_CODE_NOT_0_OR_IN_200_299 = "Error from SDNC: %s";
-    private static final String COULD_NOT_CONVERT_SDNC_POJO_TO_JSON = "ERROR: Could not convert SDNC pojo to json string.";
+    private static final String COULD_NOT_CONVERT_SDNC_POJO_TO_JSON =
+            "ERROR: Could not convert SDNC pojo to json string.";
 
     /***
      * 
@@ -67,8 +66,7 @@ public class SdnCommonTasks {
         try {
             jsonRequest = objMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
         } catch (JsonProcessingException e) {
-            logger.error("{} {} {} {} {}", MessageEnum.JAXB_EXCEPTION.toString(),
-                COULD_NOT_CONVERT_SDNC_POJO_TO_JSON,
+            logger.error("{} {} {} {} {}", MessageEnum.JAXB_EXCEPTION.toString(), COULD_NOT_CONVERT_SDNC_POJO_TO_JSON,
                     "BPMN", ErrorCode.DataError.getValue(), e.getMessage());
             throw new MapperException(COULD_NOT_CONVERT_SDNC_POJO_TO_JSON);
         }
@@ -98,41 +96,41 @@ public class SdnCommonTasks {
      * @return
      * @throws BadResponseException
      */
-	public String validateSDNResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
-		if (CollectionUtils.isEmpty(output)) {
-			logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
-					ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
-			throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
-		}
-        LinkedHashMap<String, Object> embeddedResponse =(LinkedHashMap<String, Object>) output.get("output");
+    public String validateSDNResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
+        if (CollectionUtils.isEmpty(output)) {
+            logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
+                    ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
+            throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
+        }
+        LinkedHashMap<String, Object> embeddedResponse = (LinkedHashMap<String, Object>) output.get("output");
         String responseCode = "";
         String responseMessage = "";
         if (embeddedResponse != null) {
-        	responseCode = (String) embeddedResponse.get(RESPONSE_CODE);
+            responseCode = (String) embeddedResponse.get(RESPONSE_CODE);
             responseMessage = (String) embeddedResponse.get(RESPONSE_MESSAGE);
         }
         ObjectMapper objMapper = new ObjectMapper();
         String jsonResponse;
-		try {
-			jsonResponse = objMapper.writeValueAsString(output);
-			logger.debug(jsonResponse);
-		} catch (JsonProcessingException e) {
-			logger.warn("Could not convert SDNC Response to String", e);
-			jsonResponse = "";
-		}
-		logger.info("ResponseCode: {} ResponseMessage: {}", responseCode, responseMessage);
-		int code = StringUtils.isNotEmpty(responseCode) ? Integer.parseInt(responseCode) : 0;
-		if (isHttpCodeSuccess(code)) {
-			logger.info("Successful Response from SDNC");
-			return jsonResponse;
-		} else {
-			String errorMessage = String.format(SDNC_CODE_NOT_0_OR_IN_200_299, responseMessage);
-        logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), errorMessage, "BPMN",
-            ErrorCode.DataError.getValue(), errorMessage);
-        throw new BadResponseException(errorMessage);
-		}
-	}
-    
+        try {
+            jsonResponse = objMapper.writeValueAsString(output);
+            logger.debug(jsonResponse);
+        } catch (JsonProcessingException e) {
+            logger.warn("Could not convert SDNC Response to String", e);
+            jsonResponse = "";
+        }
+        logger.info("ResponseCode: {} ResponseMessage: {}", responseCode, responseMessage);
+        int code = StringUtils.isNotEmpty(responseCode) ? Integer.parseInt(responseCode) : 0;
+        if (isHttpCodeSuccess(code)) {
+            logger.info("Successful Response from SDNC");
+            return jsonResponse;
+        } else {
+            String errorMessage = String.format(SDNC_CODE_NOT_0_OR_IN_200_299, responseMessage);
+            logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), errorMessage, "BPMN",
+                    ErrorCode.DataError.getValue(), errorMessage);
+            throw new BadResponseException(errorMessage);
+        }
+    }
+
     /***
      * 
      * @param output
@@ -149,18 +147,16 @@ public class SdnCommonTasks {
         logger.debug("Using object mapper");
         String stringOutput = "";
         try {
-        	stringOutput = objMapper.writeValueAsString(output);
-        }
-        catch (Exception e) {
-            logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), BAD_RESPONSE_FROM_SDNC,
-                "BPMN", ErrorCode.UnknownError.getValue(),
-                BAD_RESPONSE_FROM_SDNC);
+            stringOutput = objMapper.writeValueAsString(output);
+        } catch (Exception e) {
+            logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), BAD_RESPONSE_FROM_SDNC, "BPMN",
+                    ErrorCode.UnknownError.getValue(), BAD_RESPONSE_FROM_SDNC);
             throw new BadResponseException(BAD_RESPONSE_FROM_SDNC);
         }
         logger.debug("Received from GET request: {}", stringOutput);
         return stringOutput;
     }
-	
+
 
     private boolean isHttpCodeSuccess(int code) {
         return code >= HttpStatus.SC_OK && code < HttpStatus.SC_MULTIPLE_CHOICES || code == 0;

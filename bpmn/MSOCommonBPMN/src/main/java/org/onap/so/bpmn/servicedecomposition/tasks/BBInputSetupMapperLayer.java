@@ -28,7 +28,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.AllottedResource;
@@ -90,432 +89,443 @@ import org.springframework.stereotype.Component;
 
 @Component("BBInputSetupMapperLayer")
 public class BBInputSetupMapperLayer {
-	private static final String USER_PARAM_NAME_KEY = "name";
+    private static final String USER_PARAM_NAME_KEY = "name";
     private static final String USER_PARAM_VALUE_KEY = "value";
 
-	private static final Logger logger = LoggerFactory.getLogger(BBInputSetupMapperLayer.class);
+    private static final Logger logger = LoggerFactory.getLogger(BBInputSetupMapperLayer.class);
 
-	private ModelMapper modelMapper = new ModelMapper();
+    private ModelMapper modelMapper = new ModelMapper();
 
-	public Customer mapAAICustomer(org.onap.aai.domain.yang.Customer customerAAI) {
-		return modelMapper.map(customerAAI, Customer.class);
-	}
+    public Customer mapAAICustomer(org.onap.aai.domain.yang.Customer customerAAI) {
+        return modelMapper.map(customerAAI, Customer.class);
+    }
 
-	public ServiceSubscription mapAAIServiceSubscription(
-			org.onap.aai.domain.yang.ServiceSubscription serviceSubscriptionAAI) {
-		return modelMapper.map(serviceSubscriptionAAI, ServiceSubscription.class);
-	}
+    public ServiceSubscription mapAAIServiceSubscription(
+            org.onap.aai.domain.yang.ServiceSubscription serviceSubscriptionAAI) {
+        return modelMapper.map(serviceSubscriptionAAI, ServiceSubscription.class);
+    }
 
-	protected Project mapAAIProject(org.onap.aai.domain.yang.Project aaiProject) {
-		return modelMapper.map(aaiProject, Project.class);
-	}
+    protected Project mapAAIProject(org.onap.aai.domain.yang.Project aaiProject) {
+        return modelMapper.map(aaiProject, Project.class);
+    }
 
-	protected OwningEntity mapAAIOwningEntity(org.onap.aai.domain.yang.OwningEntity aaiOwningEntity) {
-		return modelMapper.map(aaiOwningEntity, OwningEntity.class);
-	}
+    protected OwningEntity mapAAIOwningEntity(org.onap.aai.domain.yang.OwningEntity aaiOwningEntity) {
+        return modelMapper.map(aaiOwningEntity, OwningEntity.class);
+    }
 
-	protected Platform mapAAIPlatform(org.onap.aai.domain.yang.Platform aaiPlatform) {
-		return modelMapper.map(aaiPlatform, Platform.class);
-	}
+    protected Platform mapAAIPlatform(org.onap.aai.domain.yang.Platform aaiPlatform) {
+        return modelMapper.map(aaiPlatform, Platform.class);
+    }
 
-	protected LineOfBusiness mapAAILineOfBusiness(org.onap.aai.domain.yang.LineOfBusiness aaiLineOfBusiness) {
-		return modelMapper.map(aaiLineOfBusiness, LineOfBusiness.class);
-	}
+    protected LineOfBusiness mapAAILineOfBusiness(org.onap.aai.domain.yang.LineOfBusiness aaiLineOfBusiness) {
+        return modelMapper.map(aaiLineOfBusiness, LineOfBusiness.class);
+    }
 
-	protected SegmentationAssignment mapAAISegmentationAssignment(
-			org.onap.aai.domain.yang.SegmentationAssignment aaiSegmentationAssignment) {
-		return modelMapper.map(aaiSegmentationAssignment, SegmentationAssignment.class);
-	}
+    protected SegmentationAssignment mapAAISegmentationAssignment(
+            org.onap.aai.domain.yang.SegmentationAssignment aaiSegmentationAssignment) {
+        return modelMapper.map(aaiSegmentationAssignment, SegmentationAssignment.class);
+    }
 
-	protected CtagAssignment mapAAICtagAssignment(org.onap.aai.domain.yang.CtagAssignment aaiCtagAssignment) {
-		return modelMapper.map(aaiCtagAssignment, CtagAssignment.class);
-	}
+    protected CtagAssignment mapAAICtagAssignment(org.onap.aai.domain.yang.CtagAssignment aaiCtagAssignment) {
+        return modelMapper.map(aaiCtagAssignment, CtagAssignment.class);
+    }
 
-	protected Subnet mapAAISubnet(org.onap.aai.domain.yang.Subnet aaiSubnet) {
-		return modelMapper.map(aaiSubnet, Subnet.class);
-	}
+    protected Subnet mapAAISubnet(org.onap.aai.domain.yang.Subnet aaiSubnet) {
+        return modelMapper.map(aaiSubnet, Subnet.class);
+    }
 
-	protected License mapAAILicense(org.onap.aai.domain.yang.License aaiLicense) {
-		return modelMapper.map(aaiLicense, License.class);
-	}
+    protected License mapAAILicense(org.onap.aai.domain.yang.License aaiLicense) {
+        return modelMapper.map(aaiLicense, License.class);
+    }
 
-	protected Entitlement mapAAIEntitlement(org.onap.aai.domain.yang.Entitlement aaiEntitlement) {
-		return modelMapper.map(aaiEntitlement, Entitlement.class);
-	}
+    protected Entitlement mapAAIEntitlement(org.onap.aai.domain.yang.Entitlement aaiEntitlement) {
+        return modelMapper.map(aaiEntitlement, Entitlement.class);
+    }
 
-	protected LagInterface mapAAILagInterface(org.onap.aai.domain.yang.LagInterface aaiLagInterface) {
-		return modelMapper.map(aaiLagInterface, LagInterface.class);
-	}
+    protected LagInterface mapAAILagInterface(org.onap.aai.domain.yang.LagInterface aaiLagInterface) {
+        return modelMapper.map(aaiLagInterface, LagInterface.class);
+    }
 
-	protected VfModule mapAAIVfModule(org.onap.aai.domain.yang.VfModule aaiVfModule) {
-		VfModule vfModule = modelMapper.map(aaiVfModule, VfModule.class);
-		vfModule.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiVfModule.getOrchestrationStatus()));
-		
-		ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
-		modelInfoVfModule.setIsBaseBoolean(aaiVfModule.isIsBaseVfModule());		
-		vfModule.setModelInfoVfModule(modelInfoVfModule);		
-		return vfModule;
-	}
+    protected VfModule mapAAIVfModule(org.onap.aai.domain.yang.VfModule aaiVfModule) {
+        VfModule vfModule = modelMapper.map(aaiVfModule, VfModule.class);
+        vfModule.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiVfModule.getOrchestrationStatus()));
 
-	public NetworkPolicy mapAAINetworkPolicy(org.onap.aai.domain.yang.NetworkPolicy aaiNetworkPolicy) {
-		return modelMapper.map(aaiNetworkPolicy, NetworkPolicy.class);
-	}
+        ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+        modelInfoVfModule.setIsBaseBoolean(aaiVfModule.isIsBaseVfModule());
+        vfModule.setModelInfoVfModule(modelInfoVfModule);
+        return vfModule;
+    }
 
-	protected VolumeGroup mapAAIVolumeGroup(org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup) {
-		VolumeGroup volumeGroup = modelMapper.map(aaiVolumeGroup, VolumeGroup.class);
-		volumeGroup.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiVolumeGroup.getOrchestrationStatus()));
-		return volumeGroup;
-	}
+    public NetworkPolicy mapAAINetworkPolicy(org.onap.aai.domain.yang.NetworkPolicy aaiNetworkPolicy) {
+        return modelMapper.map(aaiNetworkPolicy, NetworkPolicy.class);
+    }
 
-	protected void setPlatformAndLOBIntoServiceInstance(Platform platformMSO, LineOfBusiness lineOfBusinessMSO,
-			ServiceInstance serviceInstance, Map<ResourceKey, String> resourcesToBeOrchestrated) {
-		String vnfId = resourcesToBeOrchestrated.get(ResourceKey.GENERIC_VNF_ID);
-		if (vnfId != null && !serviceInstance.getVnfs().isEmpty()) {
-			for (GenericVnf vnf : serviceInstance.getVnfs()) {
-				if (vnf.getVnfId().equalsIgnoreCase(vnfId)) {
-					vnf.setPlatform(platformMSO);
-					vnf.setLineOfBusiness(lineOfBusinessMSO);
-					break;
-				}
-			}
-		}
-	}
+    protected VolumeGroup mapAAIVolumeGroup(org.onap.aai.domain.yang.VolumeGroup aaiVolumeGroup) {
+        VolumeGroup volumeGroup = modelMapper.map(aaiVolumeGroup, VolumeGroup.class);
+        volumeGroup.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiVolumeGroup.getOrchestrationStatus()));
+        return volumeGroup;
+    }
 
-	public ModelInfoServiceInstance mapCatalogServiceIntoServiceInstance(Service service) {
-		return modelMapper.map(service, ModelInfoServiceInstance.class);
-	}
+    protected void setPlatformAndLOBIntoServiceInstance(Platform platformMSO, LineOfBusiness lineOfBusinessMSO,
+            ServiceInstance serviceInstance, Map<ResourceKey, String> resourcesToBeOrchestrated) {
+        String vnfId = resourcesToBeOrchestrated.get(ResourceKey.GENERIC_VNF_ID);
+        if (vnfId != null && !serviceInstance.getVnfs().isEmpty()) {
+            for (GenericVnf vnf : serviceInstance.getVnfs()) {
+                if (vnf.getVnfId().equalsIgnoreCase(vnfId)) {
+                    vnf.setPlatform(platformMSO);
+                    vnf.setLineOfBusiness(lineOfBusinessMSO);
+                    break;
+                }
+            }
+        }
+    }
 
-	protected ModelInfoInstanceGroup mapCatalogInstanceGroupToInstanceGroup(CollectionResourceCustomization collectionCust, InstanceGroup instanceGroup) {
-		ModelInfoInstanceGroup modelInfoInstanceGroup = modelMapper.map(instanceGroup, ModelInfoInstanceGroup.class);
-		if(instanceGroup.getType() != null && instanceGroup.getType().equals(InstanceGroupType.L3_NETWORK))
-			modelInfoInstanceGroup.setType(ModelInfoInstanceGroup.TYPE_L3_NETWORK);
-		else
-			modelInfoInstanceGroup.setType(ModelInfoInstanceGroup.TYPE_VNFC);
-		if(collectionCust != null) {
-			List<CollectionResourceInstanceGroupCustomization> instanceGroupCustList = instanceGroup.getCollectionInstanceGroupCustomizations();
-			for(CollectionResourceInstanceGroupCustomization collectionInsatnceGroupCust : instanceGroupCustList) {
-				if(collectionInsatnceGroupCust.getModelCustomizationUUID().equalsIgnoreCase(collectionCust.getModelCustomizationUUID())) {
-					modelInfoInstanceGroup.setFunction(collectionInsatnceGroupCust.getFunction());
-					modelInfoInstanceGroup.setDescription(collectionInsatnceGroupCust.getDescription());
-					break;
-				}
-			}
-		}
-		return modelInfoInstanceGroup;
-	}
+    public ModelInfoServiceInstance mapCatalogServiceIntoServiceInstance(Service service) {
+        return modelMapper.map(service, ModelInfoServiceInstance.class);
+    }
 
-	protected ModelInfoCollection mapCatalogCollectionToCollection(CollectionResourceCustomization collectionCust,
-			CollectionResource collectionResource) {
-		ModelInfoCollection modelInfoCollection = new ModelInfoCollection();
-		modelInfoCollection.setCollectionFunction(collectionCust.getFunction());
-		modelInfoCollection.setCollectionRole(collectionCust.getRole());
-		modelInfoCollection.setCollectionType(collectionCust.getType());
-		modelInfoCollection.setDescription(collectionResource.getDescription());
-		modelInfoCollection.setModelInvariantUUID(collectionResource.getModelInvariantUUID());
-		modelInfoCollection.setModelVersionId(collectionResource.getModelUUID());
-		modelInfoCollection.setModelCustomizationUUID(collectionCust.getModelCustomizationUUID());
-		return modelInfoCollection;
-	}
+    protected ModelInfoInstanceGroup mapCatalogInstanceGroupToInstanceGroup(
+            CollectionResourceCustomization collectionCust, InstanceGroup instanceGroup) {
+        ModelInfoInstanceGroup modelInfoInstanceGroup = modelMapper.map(instanceGroup, ModelInfoInstanceGroup.class);
+        if (instanceGroup.getType() != null && instanceGroup.getType().equals(InstanceGroupType.L3_NETWORK))
+            modelInfoInstanceGroup.setType(ModelInfoInstanceGroup.TYPE_L3_NETWORK);
+        else
+            modelInfoInstanceGroup.setType(ModelInfoInstanceGroup.TYPE_VNFC);
+        if (collectionCust != null) {
+            List<CollectionResourceInstanceGroupCustomization> instanceGroupCustList =
+                    instanceGroup.getCollectionInstanceGroupCustomizations();
+            for (CollectionResourceInstanceGroupCustomization collectionInsatnceGroupCust : instanceGroupCustList) {
+                if (collectionInsatnceGroupCust.getModelCustomizationUUID()
+                        .equalsIgnoreCase(collectionCust.getModelCustomizationUUID())) {
+                    modelInfoInstanceGroup.setFunction(collectionInsatnceGroupCust.getFunction());
+                    modelInfoInstanceGroup.setDescription(collectionInsatnceGroupCust.getDescription());
+                    break;
+                }
+            }
+        }
+        return modelInfoInstanceGroup;
+    }
 
-	public ServiceInstance mapAAIServiceInstanceIntoServiceInstance(
-			org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance) {
-		ServiceInstance serviceInstance = modelMapper.map(aaiServiceInstance, ServiceInstance.class);
-		if (aaiServiceInstance.getAllottedResources() != null) {
-			for (org.onap.aai.domain.yang.AllottedResource allottedResource : aaiServiceInstance.getAllottedResources()
-					.getAllottedResource()) {
-				serviceInstance.getAllottedResources().add(mapAAIAllottedResource(allottedResource));
-			}
-		}
-		serviceInstance.setOrchestrationStatus(
-				this.mapOrchestrationStatusFromAAI(aaiServiceInstance.getOrchestrationStatus()));
-		return serviceInstance;
-	}
+    protected ModelInfoCollection mapCatalogCollectionToCollection(CollectionResourceCustomization collectionCust,
+            CollectionResource collectionResource) {
+        ModelInfoCollection modelInfoCollection = new ModelInfoCollection();
+        modelInfoCollection.setCollectionFunction(collectionCust.getFunction());
+        modelInfoCollection.setCollectionRole(collectionCust.getRole());
+        modelInfoCollection.setCollectionType(collectionCust.getType());
+        modelInfoCollection.setDescription(collectionResource.getDescription());
+        modelInfoCollection.setModelInvariantUUID(collectionResource.getModelInvariantUUID());
+        modelInfoCollection.setModelVersionId(collectionResource.getModelUUID());
+        modelInfoCollection.setModelCustomizationUUID(collectionCust.getModelCustomizationUUID());
+        return modelInfoCollection;
+    }
 
-	protected AllottedResource mapAAIAllottedResource(org.onap.aai.domain.yang.AllottedResource aaiAllottedResource) {
-		AllottedResource allottedResource = modelMapper.map(aaiAllottedResource, AllottedResource.class);
-		return allottedResource;
-	}
+    public ServiceInstance mapAAIServiceInstanceIntoServiceInstance(
+            org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance) {
+        ServiceInstance serviceInstance = modelMapper.map(aaiServiceInstance, ServiceInstance.class);
+        if (aaiServiceInstance.getAllottedResources() != null) {
+            for (org.onap.aai.domain.yang.AllottedResource allottedResource : aaiServiceInstance.getAllottedResources()
+                    .getAllottedResource()) {
+                serviceInstance.getAllottedResources().add(mapAAIAllottedResource(allottedResource));
+            }
+        }
+        serviceInstance.setOrchestrationStatus(
+                this.mapOrchestrationStatusFromAAI(aaiServiceInstance.getOrchestrationStatus()));
+        return serviceInstance;
+    }
 
-	protected L3Network mapAAIL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network) {
-		L3Network network = modelMapper.map(aaiL3Network, L3Network.class);
-		mapAllSubnetsIntoL3Network(aaiL3Network, network);
-		mapAllCtagAssignmentsIntoL3Network(aaiL3Network, network);
-		mapAllSegmentationAssignmentsIntoL3Network(aaiL3Network, network);
-		network.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiL3Network.getOrchestrationStatus()));
-		return network;
-	}
+    protected AllottedResource mapAAIAllottedResource(org.onap.aai.domain.yang.AllottedResource aaiAllottedResource) {
+        AllottedResource allottedResource = modelMapper.map(aaiAllottedResource, AllottedResource.class);
+        return allottedResource;
+    }
 
-	protected void mapAllSegmentationAssignmentsIntoL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network,
-			L3Network network) {
-		if (aaiL3Network.getSegmentationAssignments() != null) {
-			for (org.onap.aai.domain.yang.SegmentationAssignment aaiSegmentationAssignment : aaiL3Network
-					.getSegmentationAssignments().getSegmentationAssignment()) {
-				network.getSegmentationAssignments().add(mapAAISegmentationAssignment(aaiSegmentationAssignment));
-			}
-		}
-	}
+    protected L3Network mapAAIL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network) {
+        L3Network network = modelMapper.map(aaiL3Network, L3Network.class);
+        mapAllSubnetsIntoL3Network(aaiL3Network, network);
+        mapAllCtagAssignmentsIntoL3Network(aaiL3Network, network);
+        mapAllSegmentationAssignmentsIntoL3Network(aaiL3Network, network);
+        network.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiL3Network.getOrchestrationStatus()));
+        return network;
+    }
 
-	protected void mapAllCtagAssignmentsIntoL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network,
-			L3Network network) {
-		if (aaiL3Network.getCtagAssignments() != null) {
-			for (org.onap.aai.domain.yang.CtagAssignment aaiCtagAssignment : aaiL3Network.getCtagAssignments()
-					.getCtagAssignment()) {
-				network.getCtagAssignments().add(mapAAICtagAssignment(aaiCtagAssignment));
-			}
-		}
-	}
+    protected void mapAllSegmentationAssignmentsIntoL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network,
+            L3Network network) {
+        if (aaiL3Network.getSegmentationAssignments() != null) {
+            for (org.onap.aai.domain.yang.SegmentationAssignment aaiSegmentationAssignment : aaiL3Network
+                    .getSegmentationAssignments().getSegmentationAssignment()) {
+                network.getSegmentationAssignments().add(mapAAISegmentationAssignment(aaiSegmentationAssignment));
+            }
+        }
+    }
 
-	protected void mapAllSubnetsIntoL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network, L3Network network) {
-		if (aaiL3Network.getSubnets() != null) {
-			for (org.onap.aai.domain.yang.Subnet aaiSubnet : aaiL3Network.getSubnets().getSubnet()) {
-				network.getSubnets().add(mapAAISubnet(aaiSubnet));
-			}
-		}
-	}
+    protected void mapAllCtagAssignmentsIntoL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network,
+            L3Network network) {
+        if (aaiL3Network.getCtagAssignments() != null) {
+            for (org.onap.aai.domain.yang.CtagAssignment aaiCtagAssignment : aaiL3Network.getCtagAssignments()
+                    .getCtagAssignment()) {
+                network.getCtagAssignments().add(mapAAICtagAssignment(aaiCtagAssignment));
+            }
+        }
+    }
 
-	protected GenericVnf mapAAIGenericVnfIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf) {
-		GenericVnf genericVnf = modelMapper.map(aaiGenericVnf, GenericVnf.class);
-		mapAllVfModulesIntoGenericVnf(aaiGenericVnf, genericVnf);
-		mapAllLagInterfacesIntoGenericVnf(aaiGenericVnf, genericVnf);
-		mapAllEntitlementsIntoGenericVnf(aaiGenericVnf, genericVnf);
-		mapAllLicensesIntoGenericVnf(aaiGenericVnf, genericVnf);
-		genericVnf.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiGenericVnf.getOrchestrationStatus()));
-		return genericVnf;
-	}
+    protected void mapAllSubnetsIntoL3Network(org.onap.aai.domain.yang.L3Network aaiL3Network, L3Network network) {
+        if (aaiL3Network.getSubnets() != null) {
+            for (org.onap.aai.domain.yang.Subnet aaiSubnet : aaiL3Network.getSubnets().getSubnet()) {
+                network.getSubnets().add(mapAAISubnet(aaiSubnet));
+            }
+        }
+    }
 
-	protected void mapAllLicensesIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
-			GenericVnf genericVnf) {
-		if (aaiGenericVnf.getLicenses() != null) {
-			for (org.onap.aai.domain.yang.License aaiLicense : aaiGenericVnf.getLicenses().getLicense()) {
-				genericVnf.setLicense(mapAAILicense(aaiLicense));
-			}
-		}
-	}
+    protected GenericVnf mapAAIGenericVnfIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf) {
+        GenericVnf genericVnf = modelMapper.map(aaiGenericVnf, GenericVnf.class);
+        mapAllVfModulesIntoGenericVnf(aaiGenericVnf, genericVnf);
+        mapAllLagInterfacesIntoGenericVnf(aaiGenericVnf, genericVnf);
+        mapAllEntitlementsIntoGenericVnf(aaiGenericVnf, genericVnf);
+        mapAllLicensesIntoGenericVnf(aaiGenericVnf, genericVnf);
+        genericVnf.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiGenericVnf.getOrchestrationStatus()));
+        return genericVnf;
+    }
 
-	protected void mapAllEntitlementsIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
-			GenericVnf genericVnf) {
-		if (aaiGenericVnf.getEntitlements() != null) {
-			for (org.onap.aai.domain.yang.Entitlement aaiEntitlement : aaiGenericVnf.getEntitlements()
-					.getEntitlement()) {
-				genericVnf.getEntitlements().add(mapAAIEntitlement(aaiEntitlement));
-			}
-		}
-	}
+    protected void mapAllLicensesIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
+            GenericVnf genericVnf) {
+        if (aaiGenericVnf.getLicenses() != null) {
+            for (org.onap.aai.domain.yang.License aaiLicense : aaiGenericVnf.getLicenses().getLicense()) {
+                genericVnf.setLicense(mapAAILicense(aaiLicense));
+            }
+        }
+    }
 
-	protected void mapAllLagInterfacesIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
-			GenericVnf genericVnf) {
-		if (aaiGenericVnf.getLagInterfaces() != null) {
-			for (org.onap.aai.domain.yang.LagInterface aaiLagInterface : aaiGenericVnf.getLagInterfaces()
-					.getLagInterface()) {
-				genericVnf.getLagInterfaces().add(mapAAILagInterface(aaiLagInterface));
-			}
-		}
-	}
+    protected void mapAllEntitlementsIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
+            GenericVnf genericVnf) {
+        if (aaiGenericVnf.getEntitlements() != null) {
+            for (org.onap.aai.domain.yang.Entitlement aaiEntitlement : aaiGenericVnf.getEntitlements()
+                    .getEntitlement()) {
+                genericVnf.getEntitlements().add(mapAAIEntitlement(aaiEntitlement));
+            }
+        }
+    }
 
-	protected void mapAllVfModulesIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
-			GenericVnf genericVnf) {
-		if (aaiGenericVnf.getVfModules() != null) {
-			for (org.onap.aai.domain.yang.VfModule aaiVfModule : aaiGenericVnf.getVfModules().getVfModule()) {
-				VfModule vfModule = mapAAIVfModule(aaiVfModule);
-				genericVnf.getVfModules().add(vfModule);
-			}
-		}
-	}
+    protected void mapAllLagInterfacesIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
+            GenericVnf genericVnf) {
+        if (aaiGenericVnf.getLagInterfaces() != null) {
+            for (org.onap.aai.domain.yang.LagInterface aaiLagInterface : aaiGenericVnf.getLagInterfaces()
+                    .getLagInterface()) {
+                genericVnf.getLagInterfaces().add(mapAAILagInterface(aaiLagInterface));
+            }
+        }
+    }
 
-	public OrchestrationStatus mapOrchestrationStatusFromAAI(String orchestrationStatus) {
+    protected void mapAllVfModulesIntoGenericVnf(org.onap.aai.domain.yang.GenericVnf aaiGenericVnf,
+            GenericVnf genericVnf) {
+        if (aaiGenericVnf.getVfModules() != null) {
+            for (org.onap.aai.domain.yang.VfModule aaiVfModule : aaiGenericVnf.getVfModules().getVfModule()) {
+                VfModule vfModule = mapAAIVfModule(aaiVfModule);
+                genericVnf.getVfModules().add(vfModule);
+            }
+        }
+    }
 
-		Optional<OrchestrationStatus> result = Arrays.asList(OrchestrationStatus.values()).stream()
-		.filter(item -> item.fuzzyMap(orchestrationStatus))
-		.findFirst();
+    public OrchestrationStatus mapOrchestrationStatusFromAAI(String orchestrationStatus) {
 
-		return result.orElse(null);
+        Optional<OrchestrationStatus> result = Arrays.asList(OrchestrationStatus.values()).stream()
+                .filter(item -> item.fuzzyMap(orchestrationStatus)).findFirst();
 
-	}
+        return result.orElse(null);
 
-	public RequestContext mapRequestContext(RequestDetails requestDetails) {
-		RequestContext context = new RequestContext();
-		modelMapper.map(requestDetails.getRequestInfo(), context);
-		org.onap.so.serviceinstancebeans.RequestParameters requestParameters = requestDetails.getRequestParameters();
-		if (null != requestParameters) {
-			context.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
-			context.setRequestParameters(this.mapRequestParameters(requestDetails.getRequestParameters()));
-			context.setUserParams(this.mapNameValueUserParams(requestDetails.getRequestParameters()));
-		}
-		if (requestDetails.getConfigurationParameters() != null) {
-			context.setConfigurationParameters(requestDetails.getConfigurationParameters());
-		}
-		return context;
-	}
+    }
 
-	protected RequestParameters mapRequestParameters(org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {
-		RequestParameters requestParams = new RequestParameters();
-		requestParams.setaLaCarte(requestParameters.getALaCarte());
-		requestParams.setUsePreload(requestParameters.getUsePreload());
-		requestParams.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
-		requestParams.setUserParams(requestParameters.getUserParams());
-		requestParams.setPayload(requestParameters.getPayload());
-		return requestParams;
-	}
-	
-	protected Map<String,Object> mapNameValueUserParams(org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {		
-		Map<String,Object> userParamsResult = new HashMap<String,Object>();
-		if (requestParameters.getUserParams() != null) {
-			List<Map<String, Object>> userParams = requestParameters.getUserParams();
-			for (Map<String, Object> userParamsMap : userParams) {
-				if ( userParamsMap.containsKey(USER_PARAM_NAME_KEY) && (userParamsMap.get(USER_PARAM_NAME_KEY) instanceof String)
-						&& userParamsMap.containsKey(USER_PARAM_VALUE_KEY)) {
-					userParamsResult.put((String) userParamsMap.get(USER_PARAM_NAME_KEY), userParamsMap.get(USER_PARAM_VALUE_KEY));
-				}
-			}
-		}
-		return userParamsResult;
-	}
+    public RequestContext mapRequestContext(RequestDetails requestDetails) {
+        RequestContext context = new RequestContext();
+        modelMapper.map(requestDetails.getRequestInfo(), context);
+        org.onap.so.serviceinstancebeans.RequestParameters requestParameters = requestDetails.getRequestParameters();
+        if (null != requestParameters) {
+            context.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
+            context.setRequestParameters(this.mapRequestParameters(requestDetails.getRequestParameters()));
+            context.setUserParams(this.mapNameValueUserParams(requestDetails.getRequestParameters()));
+        }
+        if (requestDetails.getConfigurationParameters() != null) {
+            context.setConfigurationParameters(requestDetails.getConfigurationParameters());
+        }
+        return context;
+    }
 
-	protected OrchestrationContext mapOrchestrationContext(RequestDetails requestDetails) {
-		OrchestrationContext context = new OrchestrationContext();
-		context.setIsRollbackEnabled(!(requestDetails.getRequestInfo().getSuppressRollback()));
-		return context;
-	}
+    protected RequestParameters mapRequestParameters(
+            org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {
+        RequestParameters requestParams = new RequestParameters();
+        requestParams.setaLaCarte(requestParameters.getALaCarte());
+        requestParams.setUsePreload(requestParameters.getUsePreload());
+        requestParams.setSubscriptionServiceType(requestParameters.getSubscriptionServiceType());
+        requestParams.setUserParams(requestParameters.getUserParams());
+        requestParams.setPayload(requestParameters.getPayload());
+        return requestParams;
+    }
 
-	protected CloudRegion mapCloudRegion(CloudConfiguration cloudConfiguration, org.onap.aai.domain.yang.CloudRegion aaiCloudRegion) {
-		CloudRegion cloudRegion = new CloudRegion();
-		if(cloudConfiguration != null)
-			cloudRegion = modelMapper.map(cloudConfiguration, CloudRegion.class);
-		if(aaiCloudRegion != null)
-			modelMapper.map(aaiCloudRegion, cloudRegion);
-		return cloudRegion;
-	}
-	
-	protected Tenant mapTenant(org.onap.aai.domain.yang.Tenant aaiTenant) {
-		Tenant tenant = new Tenant();
-		if(aaiTenant != null) {
-			modelMapper.map(aaiTenant, tenant);
-		}
-		return tenant;
-	}
+    protected Map<String, Object> mapNameValueUserParams(
+            org.onap.so.serviceinstancebeans.RequestParameters requestParameters) {
+        Map<String, Object> userParamsResult = new HashMap<String, Object>();
+        if (requestParameters.getUserParams() != null) {
+            List<Map<String, Object>> userParams = requestParameters.getUserParams();
+            for (Map<String, Object> userParamsMap : userParams) {
+                if (userParamsMap.containsKey(USER_PARAM_NAME_KEY)
+                        && (userParamsMap.get(USER_PARAM_NAME_KEY) instanceof String)
+                        && userParamsMap.containsKey(USER_PARAM_VALUE_KEY)) {
+                    userParamsResult.put((String) userParamsMap.get(USER_PARAM_NAME_KEY),
+                            userParamsMap.get(USER_PARAM_VALUE_KEY));
+                }
+            }
+        }
+        return userParamsResult;
+    }
 
-	protected Collection mapAAICollectionIntoCollection(org.onap.aai.domain.yang.Collection aaiCollection) {
-		Collection collection = new Collection();
-		collection.setId(aaiCollection.getCollectionId());
-		collection.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiCollection.getOrchestrationStatus()));
-		return collection;
-	}
+    protected OrchestrationContext mapOrchestrationContext(RequestDetails requestDetails) {
+        OrchestrationContext context = new OrchestrationContext();
+        context.setIsRollbackEnabled(!(requestDetails.getRequestInfo().getSuppressRollback()));
+        return context;
+    }
 
-	protected org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup mapAAIInstanceGroupIntoInstanceGroup(
-			org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup) {
-		return modelMapper.map(aaiInstanceGroup,
-				org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup.class);
-	}
+    protected CloudRegion mapCloudRegion(CloudConfiguration cloudConfiguration,
+            org.onap.aai.domain.yang.CloudRegion aaiCloudRegion) {
+        CloudRegion cloudRegion = new CloudRegion();
+        if (cloudConfiguration != null)
+            cloudRegion = modelMapper.map(cloudConfiguration, CloudRegion.class);
+        if (aaiCloudRegion != null)
+            modelMapper.map(aaiCloudRegion, cloudRegion);
+        return cloudRegion;
+    }
 
-	public RouteTableReference mapAAIRouteTableReferenceIntoRouteTableReference(
-			org.onap.aai.domain.yang.RouteTableReference aaiRouteTableReference) {
-		return modelMapper.map(aaiRouteTableReference, RouteTableReference.class);
-	}
+    protected Tenant mapTenant(org.onap.aai.domain.yang.Tenant aaiTenant) {
+        Tenant tenant = new Tenant();
+        if (aaiTenant != null) {
+            modelMapper.map(aaiTenant, tenant);
+        }
+        return tenant;
+    }
 
-	protected ModelInfoNetwork mapCatalogNetworkToNetwork(NetworkResourceCustomization networkResourceCustomization) {
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		ModelInfoNetwork modelInfoNetwork = modelMapper.map(networkResourceCustomization, ModelInfoNetwork.class);
-		modelMapper.map(networkResourceCustomization.getNetworkResource(), modelInfoNetwork);
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-		return modelInfoNetwork;
-	}
+    protected Collection mapAAICollectionIntoCollection(org.onap.aai.domain.yang.Collection aaiCollection) {
+        Collection collection = new Collection();
+        collection.setId(aaiCollection.getCollectionId());
+        collection.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(aaiCollection.getOrchestrationStatus()));
+        return collection;
+    }
 
-	protected ModelInfoGenericVnf mapCatalogVnfToVnf(VnfResourceCustomization vnfResourceCustomization) {
-		ModelInfoGenericVnf modelInfoVnf = modelMapper.map(vnfResourceCustomization, ModelInfoGenericVnf.class);
-		modelMapper.map(vnfResourceCustomization.getVnfResources(), modelInfoVnf);
-		return modelInfoVnf;
-	}
+    protected org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup mapAAIInstanceGroupIntoInstanceGroup(
+            org.onap.aai.domain.yang.InstanceGroup aaiInstanceGroup) {
+        return modelMapper.map(aaiInstanceGroup, org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup.class);
+    }
 
-	protected ModelInfoVfModule mapCatalogVfModuleToVfModule(VfModuleCustomization vfResourceCustomization) {
-		ModelInfoVfModule modelInfoVfModule = modelMapper.map(vfResourceCustomization, ModelInfoVfModule.class);
-		modelMapper.map(vfResourceCustomization.getVfModule(), modelInfoVfModule);
-		return modelInfoVfModule;
-	}
+    public RouteTableReference mapAAIRouteTableReferenceIntoRouteTableReference(
+            org.onap.aai.domain.yang.RouteTableReference aaiRouteTableReference) {
+        return modelMapper.map(aaiRouteTableReference, RouteTableReference.class);
+    }
 
-	protected Platform mapRequestPlatform(org.onap.so.serviceinstancebeans.Platform platform) {
-		return modelMapper.map(platform, Platform.class);
-	}
+    protected ModelInfoNetwork mapCatalogNetworkToNetwork(NetworkResourceCustomization networkResourceCustomization) {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        ModelInfoNetwork modelInfoNetwork = modelMapper.map(networkResourceCustomization, ModelInfoNetwork.class);
+        modelMapper.map(networkResourceCustomization.getNetworkResource(), modelInfoNetwork);
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+        return modelInfoNetwork;
+    }
 
-	protected LineOfBusiness mapRequestLineOfBusiness(
-			org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness) {
-		return modelMapper.map(lineOfBusiness, LineOfBusiness.class);
-	}
+    protected ModelInfoGenericVnf mapCatalogVnfToVnf(VnfResourceCustomization vnfResourceCustomization) {
+        ModelInfoGenericVnf modelInfoVnf = modelMapper.map(vnfResourceCustomization, ModelInfoGenericVnf.class);
+        modelMapper.map(vnfResourceCustomization.getVnfResources(), modelInfoVnf);
+        return modelInfoVnf;
+    }
 
-	public Configuration mapAAIConfiguration(org.onap.aai.domain.yang.Configuration configurationAAI) {
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-		Configuration configuration = modelMapper.map(configurationAAI, Configuration.class);
-		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
-		configuration.getForwarderEvcs().addAll(mapAllForwarderEvcs(configurationAAI));
-		configuration.getEvcs().addAll(mapAllEvcs(configurationAAI));
-		configuration.setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(configurationAAI.getOrchestrationStatus()));
-		return configuration;
-	}
+    protected ModelInfoVfModule mapCatalogVfModuleToVfModule(VfModuleCustomization vfResourceCustomization) {
+        ModelInfoVfModule modelInfoVfModule = modelMapper.map(vfResourceCustomization, ModelInfoVfModule.class);
+        modelMapper.map(vfResourceCustomization.getVfModule(), modelInfoVfModule);
+        return modelInfoVfModule;
+    }
 
-	protected List<Evc> mapAllEvcs(org.onap.aai.domain.yang.Configuration configurationAAI) {
-		List<Evc> listOfEvcs = new ArrayList<>();
-		if (configurationAAI.getEvcs() != null) {
-			for (org.onap.aai.domain.yang.Evc aaiEvc : configurationAAI.getEvcs().getEvc()) {
-				listOfEvcs.add(mapEvc(aaiEvc));
-			}
-		}
-		return listOfEvcs;
-	}
+    protected Platform mapRequestPlatform(org.onap.so.serviceinstancebeans.Platform platform) {
+        return modelMapper.map(platform, Platform.class);
+    }
 
-	protected Evc mapEvc(org.onap.aai.domain.yang.Evc aaiEvc) {
-		return modelMapper.map(aaiEvc, Evc.class);
-	}
+    protected LineOfBusiness mapRequestLineOfBusiness(org.onap.so.serviceinstancebeans.LineOfBusiness lineOfBusiness) {
+        return modelMapper.map(lineOfBusiness, LineOfBusiness.class);
+    }
 
-	protected List<ForwarderEvc> mapAllForwarderEvcs(org.onap.aai.domain.yang.Configuration configurationAAI) {
-		List<ForwarderEvc> listOfForwarderEvcs = new ArrayList<>();
-		if (configurationAAI.getForwarderEvcs() != null) {
-			for (org.onap.aai.domain.yang.ForwarderEvc aaiForwarderEvc : configurationAAI.getForwarderEvcs().getForwarderEvc()) {
-				listOfForwarderEvcs.add(mapForwarderEvc(aaiForwarderEvc));
-			}
-		}
-		return listOfForwarderEvcs;
-	}
+    public Configuration mapAAIConfiguration(org.onap.aai.domain.yang.Configuration configurationAAI) {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        Configuration configuration = modelMapper.map(configurationAAI, Configuration.class);
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+        configuration.getForwarderEvcs().addAll(mapAllForwarderEvcs(configurationAAI));
+        configuration.getEvcs().addAll(mapAllEvcs(configurationAAI));
+        configuration
+                .setOrchestrationStatus(this.mapOrchestrationStatusFromAAI(configurationAAI.getOrchestrationStatus()));
+        return configuration;
+    }
 
-	protected ForwarderEvc mapForwarderEvc(org.onap.aai.domain.yang.ForwarderEvc aaiForwarderEvc) {
-		return modelMapper.map(aaiForwarderEvc, ForwarderEvc.class);
-	}
+    protected List<Evc> mapAllEvcs(org.onap.aai.domain.yang.Configuration configurationAAI) {
+        List<Evc> listOfEvcs = new ArrayList<>();
+        if (configurationAAI.getEvcs() != null) {
+            for (org.onap.aai.domain.yang.Evc aaiEvc : configurationAAI.getEvcs().getEvc()) {
+                listOfEvcs.add(mapEvc(aaiEvc));
+            }
+        }
+        return listOfEvcs;
+    }
 
-	protected OwningEntity mapRequestOwningEntity(org.onap.so.serviceinstancebeans.OwningEntity owningEntity) {
-		return modelMapper.map(owningEntity, OwningEntity.class);
-	}
+    protected Evc mapEvc(org.onap.aai.domain.yang.Evc aaiEvc) {
+        return modelMapper.map(aaiEvc, Evc.class);
+    }
 
-	protected Project mapRequestProject(org.onap.so.serviceinstancebeans.Project project) {
-		return modelMapper.map(project, Project.class);
-	}
+    protected List<ForwarderEvc> mapAllForwarderEvcs(org.onap.aai.domain.yang.Configuration configurationAAI) {
+        List<ForwarderEvc> listOfForwarderEvcs = new ArrayList<>();
+        if (configurationAAI.getForwarderEvcs() != null) {
+            for (org.onap.aai.domain.yang.ForwarderEvc aaiForwarderEvc : configurationAAI.getForwarderEvcs()
+                    .getForwarderEvc()) {
+                listOfForwarderEvcs.add(mapForwarderEvc(aaiForwarderEvc));
+            }
+        }
+        return listOfForwarderEvcs;
+    }
 
-	protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
-			ConfigurationResourceCustomization configurationResourceCustomization, 
-			CvnfcConfigurationCustomization cvnfcConfigurationCustomization) {
-		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
-		modelInfoConfiguration.setModelVersionId(configurationResourceCustomization.getConfigurationResource().getModelUUID());
-		modelInfoConfiguration.setModelCustomizationId(configurationResourceCustomization.getModelCustomizationUUID());
-		modelInfoConfiguration.setModelInvariantId(configurationResourceCustomization.getConfigurationResource().getModelInvariantUUID());
-		modelInfoConfiguration.setPolicyName(cvnfcConfigurationCustomization.getPolicyName());
-		return modelInfoConfiguration;
-	}
-	
-	protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
-			CvnfcConfigurationCustomization cvnfcConfigurationCustomization) {
-		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
-		modelInfoConfiguration.setModelVersionId(cvnfcConfigurationCustomization.getConfigurationResource().getModelUUID());
-		modelInfoConfiguration.setModelCustomizationId(cvnfcConfigurationCustomization.getModelCustomizationUUID());
-		modelInfoConfiguration.setModelInvariantId(cvnfcConfigurationCustomization.getConfigurationResource().getModelInvariantUUID());
-		modelInfoConfiguration.setPolicyName(cvnfcConfigurationCustomization.getPolicyName());
-		modelInfoConfiguration.setConfigurationType(cvnfcConfigurationCustomization.getConfigurationType());
-		modelInfoConfiguration.setConfigurationRole(cvnfcConfigurationCustomization.getConfigurationRole());
-		return modelInfoConfiguration;
-	}
+    protected ForwarderEvc mapForwarderEvc(org.onap.aai.domain.yang.ForwarderEvc aaiForwarderEvc) {
+        return modelMapper.map(aaiForwarderEvc, ForwarderEvc.class);
+    }
 
-	public NetworkResourceCustomization mapCollectionNetworkResourceCustToNetworkResourceCust(
-			CollectionNetworkResourceCustomization collectionNetworkResourceCust) {
-		return modelMapper.map(collectionNetworkResourceCust, NetworkResourceCustomization.class);
-	}
+    protected OwningEntity mapRequestOwningEntity(org.onap.so.serviceinstancebeans.OwningEntity owningEntity) {
+        return modelMapper.map(owningEntity, OwningEntity.class);
+    }
 
-	public Vnfc mapAAIVnfc(org.onap.aai.domain.yang.Vnfc vnfcAAI) {
-		return modelMapper.map(vnfcAAI, Vnfc.class);
-	}
+    protected Project mapRequestProject(org.onap.so.serviceinstancebeans.Project project) {
+        return modelMapper.map(project, Project.class);
+    }
+
+    protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
+            ConfigurationResourceCustomization configurationResourceCustomization,
+            CvnfcConfigurationCustomization cvnfcConfigurationCustomization) {
+        ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
+        modelInfoConfiguration
+                .setModelVersionId(configurationResourceCustomization.getConfigurationResource().getModelUUID());
+        modelInfoConfiguration.setModelCustomizationId(configurationResourceCustomization.getModelCustomizationUUID());
+        modelInfoConfiguration.setModelInvariantId(
+                configurationResourceCustomization.getConfigurationResource().getModelInvariantUUID());
+        modelInfoConfiguration.setPolicyName(cvnfcConfigurationCustomization.getPolicyName());
+        return modelInfoConfiguration;
+    }
+
+    protected ModelInfoConfiguration mapCatalogConfigurationToConfiguration(
+            CvnfcConfigurationCustomization cvnfcConfigurationCustomization) {
+        ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
+        modelInfoConfiguration
+                .setModelVersionId(cvnfcConfigurationCustomization.getConfigurationResource().getModelUUID());
+        modelInfoConfiguration.setModelCustomizationId(cvnfcConfigurationCustomization.getModelCustomizationUUID());
+        modelInfoConfiguration.setModelInvariantId(
+                cvnfcConfigurationCustomization.getConfigurationResource().getModelInvariantUUID());
+        modelInfoConfiguration.setPolicyName(cvnfcConfigurationCustomization.getPolicyName());
+        modelInfoConfiguration.setConfigurationType(cvnfcConfigurationCustomization.getConfigurationType());
+        modelInfoConfiguration.setConfigurationRole(cvnfcConfigurationCustomization.getConfigurationRole());
+        return modelInfoConfiguration;
+    }
+
+    public NetworkResourceCustomization mapCollectionNetworkResourceCustToNetworkResourceCust(
+            CollectionNetworkResourceCustomization collectionNetworkResourceCust) {
+        return modelMapper.map(collectionNetworkResourceCust, NetworkResourceCustomization.class);
+    }
+
+    public Vnfc mapAAIVnfc(org.onap.aai.domain.yang.Vnfc vnfcAAI) {
+        return modelMapper.map(vnfcAAI, Vnfc.class);
+    }
 }

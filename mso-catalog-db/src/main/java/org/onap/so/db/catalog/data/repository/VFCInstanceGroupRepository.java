@@ -25,6 +25,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "vfcInstanceGroup", path = "vfcInstanceGroup")
-public interface VFCInstanceGroupRepository   extends JpaRepository<VFCInstanceGroup, String> {
-	VFCInstanceGroup findByModelUUID(String modelUUID);
+public interface VFCInstanceGroupRepository extends JpaRepository<VFCInstanceGroup, String> {
+    VFCInstanceGroup findByModelUUID(String modelUUID);
 }

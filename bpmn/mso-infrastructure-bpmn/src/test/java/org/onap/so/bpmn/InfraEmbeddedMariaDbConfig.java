@@ -19,6 +19,7 @@
  */
 
 package org.onap.so.bpmn;
+
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
@@ -35,38 +36,27 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-        entityManagerFactoryRef = "requestEntityManagerFactory",transactionManagerRef = "requestTransactionManager",
-        basePackages = { "org.onap.so.db.request.data.repository"}
-)
+@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory",
+        transactionManagerRef = "requestTransactionManager", basePackages = {"org.onap.so.db.request.data.repository"})
 @Profile({"test"})
 public class InfraEmbeddedMariaDbConfig {
 
     @Primary
     @Bean(name = "requestEntityManagerFactory")
-    public LocalContainerEntityManagerFactoryBean
-    entityManagerFactory(
-            EntityManagerFactoryBuilder builder,
-            DataSource dataSource
-    ) {
-        return builder
-                .dataSource(dataSource)
-                .packages("org.onap.so.db.request.beans")
-                .persistenceUnit("requestDB")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+            DataSource dataSource) {
+        return builder.dataSource(dataSource).packages("org.onap.so.db.request.beans").persistenceUnit("requestDB")
                 .build();
     }
 
     @Bean(name = "requestTransactionManager")
     public PlatformTransactionManager transactionManager(
-            @Qualifier("requestEntityManagerFactory") EntityManagerFactory
-                    entityManagerFactory
-    ) {
+            @Qualifier("requestEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
         return new JpaTransactionManager(entityManagerFactory);
     }
 }

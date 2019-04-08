@@ -24,12 +24,10 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -42,7 +40,6 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-
 import org.onap.sdnc.northbound.client.model.GenericResourceApiOnapmodelinformationOnapModelInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiServiceOperationInformation;
@@ -51,54 +48,56 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(MockitoJUnitRunner.class)
 public class ServiceTopologyOperationMapperTest {
 
-	@Spy
-	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
-	
-	@InjectMocks
-	private ServiceTopologyOperationMapper mapper = new ServiceTopologyOperationMapper();
+    @Spy
+    private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
-	@Test
-	public void reqMapperTest() throws Exception {
-		// prepare and set service instance
-		ServiceInstance serviceInstance = new ServiceInstance();
-		ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
-		modelInfoServiceInstance.setModelInvariantUuid("modelInvariantUuid");
-		modelInfoServiceInstance.setModelName("modelName");
-		modelInfoServiceInstance.setModelUuid("modelUuid");
-		modelInfoServiceInstance.setModelVersion("modelVersion");
-		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
+    @InjectMocks
+    private ServiceTopologyOperationMapper mapper = new ServiceTopologyOperationMapper();
 
-		// prepare Customer object
-		Customer customer = new Customer();
-		customer.setGlobalCustomerId("globalCustomerId");
+    @Test
+    public void reqMapperTest() throws Exception {
+        // prepare and set service instance
+        ServiceInstance serviceInstance = new ServiceInstance();
+        ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
+        modelInfoServiceInstance.setModelInvariantUuid("modelInvariantUuid");
+        modelInfoServiceInstance.setModelName("modelName");
+        modelInfoServiceInstance.setModelUuid("modelUuid");
+        modelInfoServiceInstance.setModelVersion("modelVersion");
+        serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
-		customer.setServiceSubscription(new ServiceSubscription());
-		// set Customer on service instance
-		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+        // prepare Customer object
+        Customer customer = new Customer();
+        customer.setGlobalCustomerId("globalCustomerId");
 
-		//prepare RequestContext
-		RequestContext requestContext = new RequestContext();
-		Map<String, Object> userParams = new HashMap<>();
-		userParams.put("key1", "value1");
-		requestContext.setUserParams(userParams);
-		requestContext.setProductFamilyId("productFamilyId");
-		requestContext.setMsoRequestId("MsoRequestId");
+        customer.setServiceSubscription(new ServiceSubscription());
+        // set Customer on service instance
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 
-		GenericResourceApiServiceOperationInformation serviceOpInformation = mapper.reqMapper(
-				SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
-				requestContext);
-		GenericResourceApiServiceOperationInformation serviceOpInformationNullReqContext = mapper.reqMapper(
-				SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
-				null);
+        // prepare RequestContext
+        RequestContext requestContext = new RequestContext();
+        Map<String, Object> userParams = new HashMap<>();
+        userParams.put("key1", "value1");
+        requestContext.setUserParams(userParams);
+        requestContext.setProductFamilyId("productFamilyId");
+        requestContext.setMsoRequestId("MsoRequestId");
 
-		String jsonToCompare = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/BuildingBlocks/genericResourceApiEcompModelInformation.json")));
+        GenericResourceApiServiceOperationInformation serviceOpInformation =
+                mapper.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
+                        GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
+                        requestContext);
+        GenericResourceApiServiceOperationInformation serviceOpInformationNullReqContext = mapper.reqMapper(
+                SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
+                GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer, null);
 
-		ObjectMapper omapper = new ObjectMapper();
-		GenericResourceApiOnapmodelinformationOnapModelInformation reqMapper1 = omapper.readValue(jsonToCompare,
-				GenericResourceApiOnapmodelinformationOnapModelInformation.class);
+        String jsonToCompare = new String(Files.readAllBytes(
+                Paths.get("src/test/resources/__files/BuildingBlocks/genericResourceApiEcompModelInformation.json")));
 
-		assertThat(reqMapper1, sameBeanAs(serviceOpInformation.getServiceInformation().getOnapModelInformation()));
-		assertEquals("MsoRequestId", serviceOpInformation.getRequestInformation().getRequestId());
-		assertNotNull(serviceOpInformationNullReqContext.getRequestInformation().getRequestId());
-	}
+        ObjectMapper omapper = new ObjectMapper();
+        GenericResourceApiOnapmodelinformationOnapModelInformation reqMapper1 =
+                omapper.readValue(jsonToCompare, GenericResourceApiOnapmodelinformationOnapModelInformation.class);
+
+        assertThat(reqMapper1, sameBeanAs(serviceOpInformation.getServiceInformation().getOnapModelInformation()));
+        assertEquals("MsoRequestId", serviceOpInformation.getRequestInformation().getRequestId());
+        assertNotNull(serviceOpInformationNullReqContext.getRequestInformation().getRequestId());
+    }
 }

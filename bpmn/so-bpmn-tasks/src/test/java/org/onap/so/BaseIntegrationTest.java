@@ -21,7 +21,6 @@ package org.onap.so;
 
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onap.so.bpmn.buildingblock.SniroHomingV2;
@@ -40,7 +39,6 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 
 @RunWith(SpringRunner.class)
@@ -50,60 +48,60 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseIntegrationTest extends TestDataSetup {
 
-	@Value("${wiremock.server.port}")
-	protected String wireMockPort;
+    @Value("${wiremock.server.port}")
+    protected String wireMockPort;
 
-	@SpyBean
-	protected SDNCClient SPY_sdncClient;
+    @SpyBean
+    protected SDNCClient SPY_sdncClient;
 
-	@SpyBean
-	protected SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
+    @SpyBean
+    protected SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
 
-	@SpyBean
-	protected SniroHomingV2 sniroHoming;
+    @SpyBean
+    protected SniroHomingV2 sniroHoming;
 
-	@SpyBean
-	protected SniroClient sniroClient;
+    @SpyBean
+    protected SniroClient sniroClient;
 
-	@MockBean
-	protected ApplicationControllerAction appCClient;
+    @MockBean
+    protected ApplicationControllerAction appCClient;
 
-	@MockBean
-	protected CatalogDbClient catalogDbClient;
-	
-	@Autowired
-	protected WireMockServer wireMockServer;
+    @MockBean
+    protected CatalogDbClient catalogDbClient;
 
-	@Before
-	public void baseTestBefore() {
-		wireMockServer.resetAll();
-	}
-	public String readResourceFile(String fileName) {
-		InputStream stream;
-		try {
-			stream = getResourceAsStream(fileName);
-			byte[] bytes;
-			bytes = new byte[stream.available()];
-			if(stream.read(bytes) > 0) {
-				stream.close();
-				return new String(bytes);
-			} else {
-				stream.close();
-				return "";
-			}
-		} catch (IOException e) {
-			return "";
-		}
-	}
+    @Autowired
+    protected WireMockServer wireMockServer;
 
-	private  InputStream getResourceAsStream(String resourceName) throws IOException {
-		InputStream stream =
-				FileUtil.class.getClassLoader().getResourceAsStream(resourceName);
-		if (stream == null) {
-			throw new IOException("Can't access resource '" + resourceName + "'");
-		}
-		return stream;
-	}
+    @Before
+    public void baseTestBefore() {
+        wireMockServer.resetAll();
+    }
+
+    public String readResourceFile(String fileName) {
+        InputStream stream;
+        try {
+            stream = getResourceAsStream(fileName);
+            byte[] bytes;
+            bytes = new byte[stream.available()];
+            if (stream.read(bytes) > 0) {
+                stream.close();
+                return new String(bytes);
+            } else {
+                stream.close();
+                return "";
+            }
+        } catch (IOException e) {
+            return "";
+        }
+    }
+
+    private InputStream getResourceAsStream(String resourceName) throws IOException {
+        InputStream stream = FileUtil.class.getClassLoader().getResourceAsStream(resourceName);
+        if (stream == null) {
+            throw new IOException("Can't access resource '" + resourceName + "'");
+        }
+        return stream;
+    }
 }
 
 

@@ -28,7 +28,6 @@ import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.ws.rs.core.Context;
 import javax.xml.ws.WebServiceContext;
-
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCAdapterCallbackRequest;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCAdapterResponse;
 import org.onap.so.bpmn.common.adapter.sdnc.SDNCCallbackAdapterPortType;
@@ -40,50 +39,53 @@ import org.springframework.stereotype.Service;
 /**
  * Implementation of SDNCAdapterCallbackService.
  */
-@WebService(serviceName="SDNCAdapterCallbackService", targetNamespace="http://org.onap/workflow/sdnc/adapter/schema/v1")
+@WebService(serviceName = "SDNCAdapterCallbackService",
+        targetNamespace = "http://org.onap/workflow/sdnc/adapter/schema/v1")
 @Service
 public class SDNCAdapterCallbackServiceImpl extends ProcessEngineAwareService implements SDNCCallbackAdapterPortType {
 
-	private final static String logMarker = "[SDNC-CALLBACK]";
+    private final static String logMarker = "[SDNC-CALLBACK]";
 
-	@Context WebServiceContext wsContext;
-	
-	@Autowired
-	CallbackHandlerService callback;
+    @Context
+    WebServiceContext wsContext;
 
-	@WebMethod(operationName = "SDNCAdapterCallback")
-    @WebResult(name = "SDNCAdapterResponse", targetNamespace = "http://org.onap/workflow/sdnc/adapter/schema/v1", partName = "SDNCAdapterCallbackResponse")
-    public SDNCAdapterResponse sdncAdapterCallback(
-            @WebParam(name = "SDNCAdapterCallbackRequest", targetNamespace = "http://org.onap/workflow/sdnc/adapter/schema/v1", partName = "SDNCAdapterCallbackRequest")
-            SDNCAdapterCallbackRequest sdncAdapterCallbackRequest) {
+    @Autowired
+    CallbackHandlerService callback;
 
-		String method = "sdncAdapterCallback";
-		Object message = sdncAdapterCallbackRequest;
-		String messageEventName = "sdncAdapterCallbackRequest";
-		String messageVariable = "sdncAdapterCallbackRequest";
-		String correlationVariable = "SDNCA_requestId";
-		String correlationValue = sdncAdapterCallbackRequest.getCallbackHeader().getRequestId();
+    @WebMethod(operationName = "SDNCAdapterCallback")
+    @WebResult(name = "SDNCAdapterResponse", targetNamespace = "http://org.onap/workflow/sdnc/adapter/schema/v1",
+            partName = "SDNCAdapterCallbackResponse")
+    public SDNCAdapterResponse sdncAdapterCallback(@WebParam(name = "SDNCAdapterCallbackRequest",
+            targetNamespace = "http://org.onap/workflow/sdnc/adapter/schema/v1",
+            partName = "SDNCAdapterCallbackRequest") SDNCAdapterCallbackRequest sdncAdapterCallbackRequest) {
 
-		CallbackResult result = callback.handleCallback(method, message, messageEventName,
-			messageVariable, correlationVariable, correlationValue, logMarker);
+        String method = "sdncAdapterCallback";
+        Object message = sdncAdapterCallbackRequest;
+        String messageEventName = "sdncAdapterCallbackRequest";
+        String messageVariable = "sdncAdapterCallbackRequest";
+        String correlationVariable = "SDNCA_requestId";
+        String correlationValue = sdncAdapterCallbackRequest.getCallbackHeader().getRequestId();
 
-		if (result instanceof CallbackError) {
-			return new SDNCAdapterErrorResponse(((CallbackError)result).getErrorMessage());
-		} else {
-			return new SDNCAdapterResponse();
-		}
-	}
+        CallbackResult result = callback.handleCallback(method, message, messageEventName, messageVariable,
+                correlationVariable, correlationValue, logMarker);
 
-	// This subclass allows unit tests to extract the error
-	public class SDNCAdapterErrorResponse extends SDNCAdapterResponse {
-		private String error;
+        if (result instanceof CallbackError) {
+            return new SDNCAdapterErrorResponse(((CallbackError) result).getErrorMessage());
+        } else {
+            return new SDNCAdapterResponse();
+        }
+    }
 
-		public SDNCAdapterErrorResponse(String error) {
-			this.error = error;
-		}
+    // This subclass allows unit tests to extract the error
+    public class SDNCAdapterErrorResponse extends SDNCAdapterResponse {
+        private String error;
 
-		public String getError() {
-			return error;
-		}
-	}
+        public SDNCAdapterErrorResponse(String error) {
+            this.error = error;
+        }
+
+        public String getError() {
+            return error;
+        }
+    }
 }

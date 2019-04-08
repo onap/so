@@ -27,43 +27,43 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "prefix",
-    "nextHop"
-})
+@XmlType(name = "", propOrder = {"prefix", "nextHop"})
 public class HostRoute {
 
-	private String prefix;
-	private String nextHop;
+    private String prefix;
+    private String nextHop;
 
-	/**
-	 * @return the prefix
-	 */
-	public String getPrefix() {
-		return prefix;
-	}
-	/**
-	 * @param prefix the prefix to set
-	 */
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
-	/**
-	 * @return the nextHop
-	 */
-	public String getNextHop() {
-		return nextHop;
-	}
-	/**
-	 * @param nextHop the nextHop to set
-	 */
-	public void setNextHop(String nextHop) {
-		this.nextHop = nextHop;
-	}
+    /**
+     * @return the prefix
+     */
+    public String getPrefix() {
+        return prefix;
+    }
 
-	@Override
-	public String toString() {
-		return "Host_route [prefix=" + prefix + ", nextHop=" + nextHop + "]";
-	}
+    /**
+     * @param prefix the prefix to set
+     */
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    /**
+     * @return the nextHop
+     */
+    public String getNextHop() {
+        return nextHop;
+    }
+
+    /**
+     * @param nextHop the nextHop to set
+     */
+    public void setNextHop(String nextHop) {
+        this.nextHop = nextHop;
+    }
+
+    @Override
+    public String toString() {
+        return "Host_route [prefix=" + prefix + ", nextHop=" + nextHop + "]";
+    }
 
 }

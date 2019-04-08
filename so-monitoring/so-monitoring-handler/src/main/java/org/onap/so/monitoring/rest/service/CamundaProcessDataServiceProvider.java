@@ -20,13 +20,11 @@
 package org.onap.so.monitoring.rest.service;
 
 import java.util.List;
-
 import org.onap.so.monitoring.model.ActivityInstanceDetail;
 import org.onap.so.monitoring.model.ProcessDefinitionDetail;
 import org.onap.so.monitoring.model.ProcessInstanceDetail;
 import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
 import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
-
 import com.google.common.base.Optional;
 
 /**
@@ -35,13 +33,13 @@ import com.google.common.base.Optional;
 public interface CamundaProcessDataServiceProvider {
 
     Optional<ProcessInstanceIdDetail> getProcessInstanceIdDetail(final String requestId);
-    
+
     Optional<ProcessInstanceDetail> getSingleProcessInstanceDetail(final String processInstanceId);
 
     Optional<ProcessDefinitionDetail> getProcessDefinition(final String processDefinitionId);
-    
+
     List<ActivityInstanceDetail> getActivityInstance(final String processInstanceId);
-    
+
     List<ProcessInstanceVariableDetail> getProcessInstanceVariable(final String processInstanceId);
 
 }

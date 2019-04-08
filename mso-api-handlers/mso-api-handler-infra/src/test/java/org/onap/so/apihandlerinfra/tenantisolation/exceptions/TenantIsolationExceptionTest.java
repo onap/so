@@ -22,24 +22,23 @@ package org.onap.so.apihandlerinfra.tenantisolation.exceptions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
 
-public class TenantIsolationExceptionTest extends BaseTest{
-	
-	@Test
-	public void testTenantIsolation() {
-		TenantIsolationException exception = new TenantIsolationException();
-		
-		assertNotNull(exception);
-	}
-	
-	@Test
-	public void testTenantIsolationException() {
-		TenantIsolationException exception = new TenantIsolationException("exception");
-		
-		assertEquals("Tenant Isolation error: exception", exception.getMessage());
-	}
+public class TenantIsolationExceptionTest extends BaseTest {
+
+    @Test
+    public void testTenantIsolation() {
+        TenantIsolationException exception = new TenantIsolationException();
+
+        assertNotNull(exception);
+    }
+
+    @Test
+    public void testTenantIsolationException() {
+        TenantIsolationException exception = new TenantIsolationException("exception");
+
+        assertEquals("Tenant Isolation error: exception", exception.getMessage());
+    }
 
 }

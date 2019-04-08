@@ -34,51 +34,51 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class BaseTest {
-    
-    protected VnfcCustomization setUpVnfcCustomization(){
-    	VnfcCustomization vnfcCustomization = new VnfcCustomization();
-    	vnfcCustomization.setModelInstanceName("testVnfcCustomizationModelInstanceName");
-    	vnfcCustomization.setModelUUID("321228a4-9f15-11e8-98d0-529269fb1459");
-    	vnfcCustomization.setModelInvariantUUID("c0659136-9f15-11e8-98d0-529269fb1459");
-    	vnfcCustomization.setModelVersion("testModelVersion");
-    	vnfcCustomization.setModelName("testModelName");
-    	vnfcCustomization.setToscaNodeType("testToscaModelType");
-    	vnfcCustomization.setDescription("testVnfcCustomizationDescription");
-    	return vnfcCustomization;
+
+    protected VnfcCustomization setUpVnfcCustomization() {
+        VnfcCustomization vnfcCustomization = new VnfcCustomization();
+        vnfcCustomization.setModelInstanceName("testVnfcCustomizationModelInstanceName");
+        vnfcCustomization.setModelUUID("321228a4-9f15-11e8-98d0-529269fb1459");
+        vnfcCustomization.setModelInvariantUUID("c0659136-9f15-11e8-98d0-529269fb1459");
+        vnfcCustomization.setModelVersion("testModelVersion");
+        vnfcCustomization.setModelName("testModelName");
+        vnfcCustomization.setToscaNodeType("testToscaModelType");
+        vnfcCustomization.setDescription("testVnfcCustomizationDescription");
+        return vnfcCustomization;
     }
-    
-    protected CvnfcCustomization setUpCvnfcCustomization(){
-    	CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
-    	cvnfcCustomization.setModelInstanceName("cvfncCustomizationTestModelInstanceName");
-    	cvnfcCustomization.setModelUUID("321228a4-9f15-11e8-98d0-529269fb1459");
-    	cvnfcCustomization.setModelInvariantUUID("c0659136-9f15-11e8-98d0-529269fb1459");
-    	cvnfcCustomization.setModelVersion("testModelVersion");
-    	cvnfcCustomization.setModelName("testModelName");
-    	cvnfcCustomization.setToscaNodeType("testToscaNodeType");
-    	cvnfcCustomization.setDescription("description");
-    	cvnfcCustomization.setNfcFunction("testNfcFunction");
-    	cvnfcCustomization.setNfcNamingCode("testNfcNamingCode");
-    	return cvnfcCustomization;
+
+    protected CvnfcCustomization setUpCvnfcCustomization() {
+        CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
+        cvnfcCustomization.setModelInstanceName("cvfncCustomizationTestModelInstanceName");
+        cvnfcCustomization.setModelUUID("321228a4-9f15-11e8-98d0-529269fb1459");
+        cvnfcCustomization.setModelInvariantUUID("c0659136-9f15-11e8-98d0-529269fb1459");
+        cvnfcCustomization.setModelVersion("testModelVersion");
+        cvnfcCustomization.setModelName("testModelName");
+        cvnfcCustomization.setToscaNodeType("testToscaNodeType");
+        cvnfcCustomization.setDescription("description");
+        cvnfcCustomization.setNfcFunction("testNfcFunction");
+        cvnfcCustomization.setNfcNamingCode("testNfcNamingCode");
+        return cvnfcCustomization;
     }
-    
-    protected VfModule setUpVfModule(){
-    	VfModule vFModule = new VfModule();
-    	vFModule.setModelUUID("cb82ffd8-252a-11e7-93ae-92361f002671");
-    	vFModule.setModelVersion("testModelVersion");
-    	vFModule.setModelName("testModelName");
-    	vFModule.setIsBase(false);
-    	return vFModule;
+
+    protected VfModule setUpVfModule() {
+        VfModule vFModule = new VfModule();
+        vFModule.setModelUUID("cb82ffd8-252a-11e7-93ae-92361f002671");
+        vFModule.setModelVersion("testModelVersion");
+        vFModule.setModelName("testModelName");
+        vFModule.setIsBase(false);
+        return vFModule;
     }
-    
-    protected VnfResource setUpVnfResource(){
-    	VnfResource vnfResource = new VnfResource();
-    	vnfResource.setModelUUID("cb82ffd8-252a-11e7-93ae-92361f002671");
-    	vnfResource.setModelInvariantUUID("az82ffd8-252a-11e7-93ae-92361f002677");
-    	vnfResource.setModelVersion("testModelVersion");
-    	vnfResource.setOrchestrationMode("HEAT");
-    	return vnfResource;
+
+    protected VnfResource setUpVnfResource() {
+        VnfResource vnfResource = new VnfResource();
+        vnfResource.setModelUUID("cb82ffd8-252a-11e7-93ae-92361f002671");
+        vnfResource.setModelInvariantUUID("az82ffd8-252a-11e7-93ae-92361f002677");
+        vnfResource.setModelVersion("testModelVersion");
+        vnfResource.setOrchestrationMode("HEAT");
+        return vnfResource;
     }
-    
+
     @Test
-    public void testNothing(){}
+    public void testNothing() {}
 }

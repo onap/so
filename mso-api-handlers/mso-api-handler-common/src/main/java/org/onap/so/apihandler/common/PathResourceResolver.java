@@ -27,40 +27,39 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.ls.LSInput;
 import org.w3c.dom.ls.LSResourceResolver;
 
 public class PathResourceResolver implements LSResourceResolver {
-	
+
     private static Logger logger = LoggerFactory.getLogger(PathResourceResolver.class);
 
     private String path;
-	
+
     public PathResourceResolver(String path) {
-    	
-    	this.path = path;
+
+        this.path = path;
     }
-    
+
     @Override
     public LSInput resolveResource(String type, String namespaceURI, String publicId, String systemId, String baseURI) {
- 
+
         LSInputImpl input = new LSInputImpl();
- 
+
         InputStream stream = null;
-		try {
-			stream = new FileInputStream(path + systemId);
-		} catch (FileNotFoundException e) {
-        logger.debug ("Could not resolve resource based on file: {}", path + systemId, e);
-		}
- 
+        try {
+            stream = new FileInputStream(path + systemId);
+        } catch (FileNotFoundException e) {
+            logger.debug("Could not resolve resource based on file: {}", path + systemId, e);
+        }
+
         input.setPublicId(publicId);
         input.setSystemId(systemId);
         input.setBaseURI(baseURI);
         input.setCharacterStream(new InputStreamReader(stream));
- 
+
         return input;
     }
 }

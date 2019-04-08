@@ -25,32 +25,32 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.Assert.assertEquals;
-
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class CloudifyClientTokenProviderTest {
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
-	
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
-	@Test
-	public void createTokenProvider() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl/api/v3/tokens")).willReturn(aResponse()
-				.withHeader("Content-Type", "application/json").withBody("{\"role\": \"user\", \"value\": \"tokenVal\"}").withStatus(HttpStatus.SC_OK)));
-		int port = wireMockRule.port();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-		CloudifyClientTokenProvider cctp = new CloudifyClientTokenProvider("http://localhost:"+port+"/testUrl", "user", "pswd");
-		String token = cctp.getToken();
-		assertEquals("tokenVal", token);
-		token = cctp.getToken();
-		assertEquals("tokenVal", token);
-		cctp.expireToken();
-	}
+    @Test
+    public void createTokenProvider() {
+        wireMockRule.stubFor(get(urlPathEqualTo("/testUrl/api/v3/tokens"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{\"role\": \"user\", \"value\": \"tokenVal\"}").withStatus(HttpStatus.SC_OK)));
+        int port = wireMockRule.port();
+
+        CloudifyClientTokenProvider cctp =
+                new CloudifyClientTokenProvider("http://localhost:" + port + "/testUrl", "user", "pswd");
+        String token = cctp.getToken();
+        assertEquals("tokenVal", token);
+        token = cctp.getToken();
+        assertEquals("tokenVal", token);
+        cctp.expireToken();
+    }
 }

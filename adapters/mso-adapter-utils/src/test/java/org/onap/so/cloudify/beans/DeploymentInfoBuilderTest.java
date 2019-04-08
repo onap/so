@@ -1,26 +1,20 @@
 /*
- * ============LICENSE_START=======================================================
- * ONAP : SO
- * ================================================================================
- * Copyright (C) 2018 Nokia.
- * =============================================================================
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * ============LICENSE_START======================================================= ONAP : SO
+ * ================================================================================ Copyright (C) 2018 Nokia.
+ * ============================================================================= Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  * ============LICENSE_END=========================================================
  */
 package org.onap.so.cloudify.beans;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
 import org.onap.so.cloudify.v3.model.Execution;
@@ -33,15 +27,10 @@ public class DeploymentInfoBuilderTest {
 
     @Test
     public void shouldConstructDeploymentInfo_withBasicValues() {
-        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
-            .withId("id")
-            .withStatus(DeploymentStatus.CREATED)
-            .withDeploymentOutputs(ImmutableMap.of())
-            .withDeploymentInputs(ImmutableMap.of())
-            .withActionStatus("started")
-            .withLastAction(INSTALL_WORKFLOW_ID)
-            .withErrorMessage(ERROR_MESSAGE)
-            .build();
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.CREATED)
+                .withDeploymentOutputs(ImmutableMap.of()).withDeploymentInputs(ImmutableMap.of())
+                .withActionStatus("started").withLastAction(INSTALL_WORKFLOW_ID).withErrorMessage(ERROR_MESSAGE)
+                .build();
 
         assertThat(deploymentInfo.getId()).isEqualTo("id");
         assertThat(deploymentInfo.getStatus()).isEqualTo(DeploymentStatus.CREATED);
@@ -54,9 +43,7 @@ public class DeploymentInfoBuilderTest {
 
     @Test
     public void shouldConstructDeploymentInfo_withCreateDeploymentStatus_fromNullExecution() {
-        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
-            .fromExecution(null)
-            .build();
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().fromExecution(null).build();
 
         assertThat(deploymentInfo.getStatus()).isEqualTo(DeploymentStatus.CREATED);
     }
@@ -156,15 +143,13 @@ public class DeploymentInfoBuilderTest {
     }
 
     private void verifyDeploymentInfoConstruction(String workflowIdLastAction, String actionStatus,
-        DeploymentStatus expectedDeploymentStatus) {
+            DeploymentStatus expectedDeploymentStatus) {
 
         Execution execution = new Execution();
         execution.setWorkflowId(workflowIdLastAction);
         execution.setStatus(actionStatus);
         execution.setError(ERROR_MESSAGE);
-        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
-            .fromExecution(execution)
-            .build();
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().fromExecution(execution).build();
 
         assertThat(deploymentInfo.getLastAction()).isEqualTo(workflowIdLastAction);
         assertThat(deploymentInfo.getActionStatus()).isEqualTo(actionStatus);

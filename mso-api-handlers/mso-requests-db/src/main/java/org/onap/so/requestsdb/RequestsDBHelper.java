@@ -23,7 +23,6 @@
 package org.onap.so.requestsdb;
 
 import java.sql.Timestamp;
-
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.slf4j.Logger;
@@ -34,79 +33,84 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RequestsDBHelper {
-		
-	private static final String UNKNOWN = "UNKNOWN";
-	private static Logger logger = LoggerFactory.getLogger(RequestsDBHelper.class);
-	private String className = this.getClass().getSimpleName() +" class\'s ";
-	private String methodName = "";
-	private String classMethodMessage = "";
-	@Autowired
-	@Qualifier("RequestsDbClient")
-	private RequestsDbClient requestsDbClient;
-	/**
-	 * This util method is to update the InfraRequest table to Complete
-	 * @param msg - string, unique message for each caller
-	 * @param requestId - string
-	 * @param operationalEnvironmentId - string   
-	 * @return void - nothing 
-	 * @throws Exception 
-	 */	
-	public void updateInfraSuccessCompletion(String msg, String requestId, String operationalEnvironmentId) {
-		methodName = "updateInfraSuccessCompletion() method.";
-		classMethodMessage = className + " " + methodName;
-		logger.debug("Begin of {}", classMethodMessage);
-			
-		InfraActiveRequests request = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
-	
-		request.setRequestStatus("COMPLETE");
-		request.setStatusMessage("SUCCESSFUL, operationalEnvironmentId - " + operationalEnvironmentId + "; Success Message: " + msg);
-		request.setProgress(100L);
-		request.setLastModifiedBy("APIH");
-		request.setOperationalEnvId(operationalEnvironmentId);
-		if(request.getAction() == null){
-			request.setRequestAction(UNKNOWN);
-		}
-		if(request.getRequestScope() == null){
-			request.setRequestScope(UNKNOWN);
-		}
-		Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
+
+    private static final String UNKNOWN = "UNKNOWN";
+    private static Logger logger = LoggerFactory.getLogger(RequestsDBHelper.class);
+    private String className = this.getClass().getSimpleName() + " class\'s ";
+    private String methodName = "";
+    private String classMethodMessage = "";
+    @Autowired
+    @Qualifier("RequestsDbClient")
+    private RequestsDbClient requestsDbClient;
+
+    /**
+     * This util method is to update the InfraRequest table to Complete
+     * 
+     * @param msg - string, unique message for each caller
+     * @param requestId - string
+     * @param operationalEnvironmentId - string
+     * @return void - nothing
+     * @throws Exception
+     */
+    public void updateInfraSuccessCompletion(String msg, String requestId, String operationalEnvironmentId) {
+        methodName = "updateInfraSuccessCompletion() method.";
+        classMethodMessage = className + " " + methodName;
+        logger.debug("Begin of {}", classMethodMessage);
+
+        InfraActiveRequests request = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+
+        request.setRequestStatus("COMPLETE");
+        request.setStatusMessage(
+                "SUCCESSFUL, operationalEnvironmentId - " + operationalEnvironmentId + "; Success Message: " + msg);
+        request.setProgress(100L);
+        request.setLastModifiedBy("APIH");
+        request.setOperationalEnvId(operationalEnvironmentId);
+        if (request.getAction() == null) {
+            request.setRequestAction(UNKNOWN);
+        }
+        if (request.getRequestScope() == null) {
+            request.setRequestScope(UNKNOWN);
+        }
+        Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
         request.setEndTime(endTimeStamp);
-		requestsDbClient.save(request);
-		
-		logger.debug("End of {}", classMethodMessage);
-		
-	}
-	
-	/**
-	 * This util method is to update the InfraRequest table to Failure
-	 * @param msg - string, unique message for each caller
-	 * @param requestId - string
-	 * @param operationalEnvironmentId - string   
-	 * @return void - nothing 
-	 * @throws Exception 
-	 */	
-	public void updateInfraFailureCompletion(String msg, String requestId, String operationalEnvironmentId) {
-		methodName = "updateInfraFailureCompletion() method.";
-		classMethodMessage = className + " " + methodName;
-		logger.debug("Begin of {}", classMethodMessage);
-		
-		InfraActiveRequests request = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
-		request.setRequestStatus("FAILED");
-		request.setStatusMessage("FAILURE, operationalEnvironmentId - " + operationalEnvironmentId + "; Error message: " + msg);
-		request.setProgress(100L);
-		request.setLastModifiedBy("APIH");
-		request.setOperationalEnvId(operationalEnvironmentId);
-		if(request.getAction() == null){
-			request.setRequestAction(UNKNOWN);
-		}
-		if(request.getRequestScope() == null){
-			request.setRequestScope(UNKNOWN);
-		}
-		Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
+        requestsDbClient.save(request);
+
+        logger.debug("End of {}", classMethodMessage);
+
+    }
+
+    /**
+     * This util method is to update the InfraRequest table to Failure
+     * 
+     * @param msg - string, unique message for each caller
+     * @param requestId - string
+     * @param operationalEnvironmentId - string
+     * @return void - nothing
+     * @throws Exception
+     */
+    public void updateInfraFailureCompletion(String msg, String requestId, String operationalEnvironmentId) {
+        methodName = "updateInfraFailureCompletion() method.";
+        classMethodMessage = className + " " + methodName;
+        logger.debug("Begin of {}", classMethodMessage);
+
+        InfraActiveRequests request = requestsDbClient.getInfraActiveRequestbyRequestId(requestId);
+        request.setRequestStatus("FAILED");
+        request.setStatusMessage(
+                "FAILURE, operationalEnvironmentId - " + operationalEnvironmentId + "; Error message: " + msg);
+        request.setProgress(100L);
+        request.setLastModifiedBy("APIH");
+        request.setOperationalEnvId(operationalEnvironmentId);
+        if (request.getAction() == null) {
+            request.setRequestAction(UNKNOWN);
+        }
+        if (request.getRequestScope() == null) {
+            request.setRequestScope(UNKNOWN);
+        }
+        Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
         request.setEndTime(endTimeStamp);
-		requestsDbClient.save(request);
-		
-		logger.debug("End of {}", classMethodMessage);
-		
-	}	
+        requestsDbClient.save(request);
+
+        logger.debug("End of {}", classMethodMessage);
+
+    }
 }

@@ -27,53 +27,61 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelType;
 
-public class CloudConfigurationValidation implements ValidationRule{
-	public boolean empty(String s) {
-		return (s == null || s.trim().isEmpty());
-	}
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-		CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails().getCloudConfiguration();
-		String requestScope = info.getRequestScope();
-		int reqVersion = info.getReqVersion();
-		Actions action = info.getAction();
-		Boolean aLaCarteFlag = info.getALaCarteFlag();
-	
-		if(!requestScope.equals(ModelType.instanceGroup.toString())){
-			if(cloudConfiguration == null && reqVersion >= 5 && (aLaCarteFlag != null && aLaCarteFlag)){
-				if((!requestScope.equalsIgnoreCase(ModelType.service.name()) && !requestScope.equalsIgnoreCase(ModelType.configuration.name())) &&
-						(action == Action.createInstance || action == Action.deleteInstance || action == Action.updateInstance)){
-					throw new ValidationException ("cloudConfiguration");
-				}
-				if((requestScope.equalsIgnoreCase(ModelType.vnf.name()) || requestScope.equalsIgnoreCase(ModelType.vfModule.name())) &&
-						action == Action.replaceInstance){
-					throw new ValidationException ("cloudConfiguration");
-				}
-				if(requestScope.equalsIgnoreCase(ModelType.configuration.name()) &&
-						(action == Action.enablePort || action == Action.disablePort || action == Action.activateInstance || action == Action.deactivateInstance)){
-					throw new ValidationException ("cloudConfiguration");
-				}
-				if(requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && (action == Action.deactivateAndCloudDelete || action == Action.scaleOut)){
-					throw new ValidationException("cloudConfiguration");
-				}
-				if(requestScope.equals(ModelType.vnf.name()) && action == Action.recreateInstance){
-					throw new ValidationException("cloudConfiguration", true);
-				}
-			}
-		}
-		
-		if (cloudConfiguration == null && ((aLaCarteFlag != null && !aLaCarteFlag) && requestScope.equalsIgnoreCase (ModelType.service.name ()) && reqVersion < 5)) {
-			throw new ValidationException ("cloudConfiguration");
+public class CloudConfigurationValidation implements ValidationRule {
+    public boolean empty(String s) {
+        return (s == null || s.trim().isEmpty());
+    }
+
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails().getCloudConfiguration();
+        String requestScope = info.getRequestScope();
+        int reqVersion = info.getReqVersion();
+        Actions action = info.getAction();
+        Boolean aLaCarteFlag = info.getALaCarteFlag();
+
+        if (!requestScope.equals(ModelType.instanceGroup.toString())) {
+            if (cloudConfiguration == null && reqVersion >= 5 && (aLaCarteFlag != null && aLaCarteFlag)) {
+                if ((!requestScope.equalsIgnoreCase(ModelType.service.name())
+                        && !requestScope.equalsIgnoreCase(ModelType.configuration.name()))
+                        && (action == Action.createInstance || action == Action.deleteInstance
+                                || action == Action.updateInstance)) {
+                    throw new ValidationException("cloudConfiguration");
+                }
+                if ((requestScope.equalsIgnoreCase(ModelType.vnf.name())
+                        || requestScope.equalsIgnoreCase(ModelType.vfModule.name()))
+                        && action == Action.replaceInstance) {
+                    throw new ValidationException("cloudConfiguration");
+                }
+                if (requestScope.equalsIgnoreCase(ModelType.configuration.name())
+                        && (action == Action.enablePort || action == Action.disablePort
+                                || action == Action.activateInstance || action == Action.deactivateInstance)) {
+                    throw new ValidationException("cloudConfiguration");
+                }
+                if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())
+                        && (action == Action.deactivateAndCloudDelete || action == Action.scaleOut)) {
+                    throw new ValidationException("cloudConfiguration");
+                }
+                if (requestScope.equals(ModelType.vnf.name()) && action == Action.recreateInstance) {
+                    throw new ValidationException("cloudConfiguration", true);
+                }
+            }
+        }
+
+        if (cloudConfiguration == null && ((aLaCarteFlag != null && !aLaCarteFlag)
+                && requestScope.equalsIgnoreCase(ModelType.service.name()) && reqVersion < 5)) {
+            throw new ValidationException("cloudConfiguration");
         }
 
         if (cloudConfiguration != null) {
-        	if (empty (cloudConfiguration.getLcpCloudRegionId ())) {
-        		throw new ValidationException ("lcpCloudRegionId");
-        	}
-        	if (empty (cloudConfiguration.getTenantId ()) && !(requestScope.equalsIgnoreCase(ModelType.configuration.name()))) {
-        		throw new ValidationException ("tenantId");
-        	}
-       }
-       return info;
-	}
+            if (empty(cloudConfiguration.getLcpCloudRegionId())) {
+                throw new ValidationException("lcpCloudRegionId");
+            }
+            if (empty(cloudConfiguration.getTenantId())
+                    && !(requestScope.equalsIgnoreCase(ModelType.configuration.name()))) {
+                throw new ValidationException("tenantId");
+            }
+        }
+        return info;
+    }
 }

@@ -26,69 +26,68 @@ import java.io.Serializable;
  * An object that represents a workflow exception.
  */
 public class WorkflowException implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final String processKey;
-	private final int errorCode;
-	private final String errorMessage;
-	private final String workStep;
+    private final String processKey;
+    private final int errorCode;
+    private final String errorMessage;
+    private final String workStep;
 
-	/**
-	 * Constructor
-	 * @param processKey the process key for the process that generated the exception
-	 * @param errorCode the numeric error code (normally 1xxx or greater)
-	 * @param errorMessage a short error message
-	 */
-	public WorkflowException(String processKey, int errorCode,
-			String errorMessage) {
-		this.processKey = processKey;
-		this.errorCode = errorCode;
-		this.errorMessage = errorMessage;
-		workStep = "*";
-	}
-	
-	public WorkflowException(String processKey, int errorCode,
-			String errorMessage, String workStep) {
-		this.processKey = processKey;
-		this.errorCode = errorCode;
-		this.errorMessage = errorMessage;
-		this.workStep = workStep;
-	}
+    /**
+     * Constructor
+     * 
+     * @param processKey the process key for the process that generated the exception
+     * @param errorCode the numeric error code (normally 1xxx or greater)
+     * @param errorMessage a short error message
+     */
+    public WorkflowException(String processKey, int errorCode, String errorMessage) {
+        this.processKey = processKey;
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        workStep = "*";
+    }
 
-	/**
-	 * Returns the process key.
-	 */
-	public String getProcessKey() {
-		return processKey;
-	}
+    public WorkflowException(String processKey, int errorCode, String errorMessage, String workStep) {
+        this.processKey = processKey;
+        this.errorCode = errorCode;
+        this.errorMessage = errorMessage;
+        this.workStep = workStep;
+    }
 
-	/**
-	 * Returns the error code.
-	 */
-	public int getErrorCode() {
-		return errorCode;
-	}
+    /**
+     * Returns the process key.
+     */
+    public String getProcessKey() {
+        return processKey;
+    }
 
-	/**
-	 * Returns the error message.
-	 */
-	public String getErrorMessage() {
-		return errorMessage;
-	}
-	
-	/**
-	 * Returns the error message.
-	 */
-	public String getWorkStep() {
-		return workStep;
-	}
+    /**
+     * Returns the error code.
+     */
+    public int getErrorCode() {
+        return errorCode;
+    }
 
-	/**
-	 * Returns a string representation of this object.
-	 */
+    /**
+     * Returns the error message.
+     */
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    /**
+     * Returns the error message.
+     */
+    public String getWorkStep() {
+        return workStep;
+    }
+
+    /**
+     * Returns a string representation of this object.
+     */
     @Override
-	public String toString() {
-		return getClass().getSimpleName() + "[processKey=" + getProcessKey() + ",errorCode=" + getErrorCode()
-			+ ",errorMessage=" + getErrorMessage() + ",workStep=" + getWorkStep() + "]";
-	}
+    public String toString() {
+        return getClass().getSimpleName() + "[processKey=" + getProcessKey() + ",errorCode=" + getErrorCode()
+                + ",errorMessage=" + getErrorMessage() + ",workStep=" + getWorkStep() + "]";
+    }
 }

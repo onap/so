@@ -27,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,173 +45,188 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class VnfAdapterImplTest extends BaseTaskTest {
-	
-	@InjectMocks
-	private VnfAdapterImpl vnfAdapterImpl = new VnfAdapterImpl();
 
-	private RequestContext requestContext;
-	private ServiceInstance serviceInstance;
-	private GenericVnf genericVnf;
-	private VfModule vfModule;
+    @InjectMocks
+    private VnfAdapterImpl vnfAdapterImpl = new VnfAdapterImpl();
+
+    private RequestContext requestContext;
+    private ServiceInstance serviceInstance;
+    private GenericVnf genericVnf;
+    private VfModule vfModule;
     private VolumeGroup volumeGroup;
-	
-	private static final String VNF_ADAPTER_REST_DELETE_RESPONSE = FileUtil.readResourceFile("__files/VfModularity/VNFAdapterRestDeleteResponse.xml");
-	private static final String VNF_ADAPTER_REST_CREATE_RESPONSE =  FileUtil.readResourceFile("__files/VfModularity/VNFAdapterRestCreateCallback.xml");
-    private static final String VNF_ADAPTER_VOLUME_CREATE_RESPONSE =  FileUtil.readResourceFile("__files/VfModularity/CreateVfModuleVolumeCallbackResponse.xml");
-    private static final String VNF_ADAPTER_VOLUME_DELETE_RESPONSE =  FileUtil.readResourceFile("__files/VfModularity/DeleteVfModuleVolumeCallbackResponse.xml");
-	private static final String TEST_VFMODULE_HEATSTACK_ID = "slowburn";
+
+    private static final String VNF_ADAPTER_REST_DELETE_RESPONSE =
+            FileUtil.readResourceFile("__files/VfModularity/VNFAdapterRestDeleteResponse.xml");
+    private static final String VNF_ADAPTER_REST_CREATE_RESPONSE =
+            FileUtil.readResourceFile("__files/VfModularity/VNFAdapterRestCreateCallback.xml");
+    private static final String VNF_ADAPTER_VOLUME_CREATE_RESPONSE =
+            FileUtil.readResourceFile("__files/VfModularity/CreateVfModuleVolumeCallbackResponse.xml");
+    private static final String VNF_ADAPTER_VOLUME_DELETE_RESPONSE =
+            FileUtil.readResourceFile("__files/VfModularity/DeleteVfModuleVolumeCallbackResponse.xml");
+    private static final String TEST_VFMODULE_HEATSTACK_ID = "slowburn";
     private static final String TEST_VOLUME_HEATSTACK_ID = "testHeatStackId1";
     private static final String TEST_CONTRAIL_SERVICE_INSTANCE_FQDN = "default-domain:MSOTest:MsoNW-RA";
     private static final String TEST_OAM_MANAGEMENT_V4_ADDRESS = "127.0.0.1";
     private static final String TEST_OAM_MANAGEMENT_V6_ADDRESS = "2000:abc:bce:1111";
-    private static final String TEST_CONTRAIL_NETWORK_POLICY_FQDNS = "MSOTest:DefaultPolicyFQDN2,MSOTest:DefaultPolicyFQDN1";
+    private static final String TEST_CONTRAIL_NETWORK_POLICY_FQDNS =
+            "MSOTest:DefaultPolicyFQDN2,MSOTest:DefaultPolicyFQDN1";
 
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		requestContext = setRequestContext();
-		serviceInstance = setServiceInstance();
-		genericVnf = setGenericVnf();
-		vfModule = setVfModule();
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        requestContext = setRequestContext();
+        serviceInstance = setServiceInstance();
+        genericVnf = setGenericVnf();
+        vfModule = setVfModule();
         volumeGroup = setVolumeGroup();
-		vfModule.setHeatStackId(null);
-		volumeGroup.setHeatStackId(null);
-        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID))).thenReturn(volumeGroup);
-    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
-    	when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
-	}
+        vfModule.setHeatStackId(null);
+        volumeGroup.setHeatStackId(null);
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID)))
+                .thenReturn(volumeGroup);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+    }
 
-	@Test
-	public void preProcessVnfAdapterTest() {
-		vnfAdapterImpl.preProcessVnfAdapter(execution);
+    @Test
+    public void preProcessVnfAdapterTest() {
+        vnfAdapterImpl.preProcessVnfAdapter(execution);
 
-		assertEquals(requestContext.getMsoRequestId(), execution.getVariable("mso-request-id"));
-		assertEquals(serviceInstance.getServiceInstanceId(), execution.getVariable("mso-service-instance-id"));
-	}
+        assertEquals(requestContext.getMsoRequestId(), execution.getVariable("mso-request-id"));
+        assertEquals(serviceInstance.getServiceInstanceId(), execution.getVariable("mso-service-instance-id"));
+    }
 
-	@Test
-	public void postProcessVnfAdapter_CreateResponseTest() {
-		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_CREATE_RESPONSE);
-		vnfAdapterImpl.postProcessVnfAdapter(execution);		
-		assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
-		assertEquals(TEST_CONTRAIL_SERVICE_INSTANCE_FQDN, vfModule.getContrailServiceInstanceFqdn());
-		assertEquals(TEST_CONTRAIL_SERVICE_INSTANCE_FQDN, execution.getVariable("contrailServiceInstanceFqdn"));
-		assertEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, genericVnf.getIpv4OamAddress());
-		assertEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, execution.getVariable("oamManagementV4Address"));
-		assertEquals(TEST_OAM_MANAGEMENT_V6_ADDRESS, genericVnf.getManagementV6Address());
-		assertEquals(TEST_OAM_MANAGEMENT_V6_ADDRESS, execution.getVariable("oamManagementV6Address"));
-		assertEquals(TEST_CONTRAIL_NETWORK_POLICY_FQDNS, execution.getVariable("contrailNetworkPolicyFqdnList"));		
-	}
-	
+    @Test
+    public void postProcessVnfAdapter_CreateResponseTest() {
+        execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_CREATE_RESPONSE);
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
+        assertEquals(TEST_CONTRAIL_SERVICE_INSTANCE_FQDN, vfModule.getContrailServiceInstanceFqdn());
+        assertEquals(TEST_CONTRAIL_SERVICE_INSTANCE_FQDN, execution.getVariable("contrailServiceInstanceFqdn"));
+        assertEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, genericVnf.getIpv4OamAddress());
+        assertEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, execution.getVariable("oamManagementV4Address"));
+        assertEquals(TEST_OAM_MANAGEMENT_V6_ADDRESS, genericVnf.getManagementV6Address());
+        assertEquals(TEST_OAM_MANAGEMENT_V6_ADDRESS, execution.getVariable("oamManagementV6Address"));
+        assertEquals(TEST_CONTRAIL_NETWORK_POLICY_FQDNS, execution.getVariable("contrailNetworkPolicyFqdnList"));
+    }
 
-	@Test
-	public void postProcessVnfAdapter_CreateResponseTest_EmptyCreateVfModuleResponseTag() {
+
+    @Test
+    public void postProcessVnfAdapter_CreateResponseTest_EmptyCreateVfModuleResponseTag() {
         expectedException.expect(BpmnError.class);
-		execution.setVariable("vnfAdapterRestV1Response", "<vfModuleStackId></vfModuleStackId>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_CreateResponseTest_EmptyVfModuleStackIdTag() {
-		execution.setVariable("vnfAdapterRestV1Response", "<createVfModuleResponse></createVfModuleResponse>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_CreateResponseTest_EmptyHeatStackId() {
-		execution.setVariable("vnfAdapterRestV1Response", "<createVfModuleResponse><vfModuleStackId></vfModuleStackId></createVfModuleResponse>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_CreateResponseTest_EmptyVfModuleOutputs() {
-		execution.setVariable("vnfAdapterRestV1Response", "<createVfModuleResponse><vfModuleOutputs></vfModuleOutputs></createVfModuleResponse>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(vfModule.getHeatStackId());
-		assertNull(vfModule.getContrailServiceInstanceFqdn());
-		assertNull(execution.getVariable("contrailServiceInstanceFqdn"));
-		assertNotEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, genericVnf.getIpv4OamAddress());		
-		assertNull(execution.getVariable("oamManagementV4Address"));
-		assertNull(genericVnf.getManagementV6Address());
-		assertNull(execution.getVariable("oamManagementV6Address"));
-		assertNull(execution.getVariable("contrailNetworkPolicyFqdnList"));
-	}
+        execution.setVariable("vnfAdapterRestV1Response", "<vfModuleStackId></vfModuleStackId>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+    }
 
-	@Test
-	public void postProcessVnfAdapter_DeleteResponseTest() {
-		vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
-		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_DELETE_RESPONSE);
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(vfModule.getHeatStackId());
-		assertEquals(vfModule.getContrailServiceInstanceFqdn(), "");
-		assertEquals(execution.getVariable("contrailServiceInstanceFqdn"), "");
-		assertEquals(genericVnf.getIpv4OamAddress(), "");
-		assertEquals(execution.getVariable("oamManagementV4Address"), "");
-		assertEquals(genericVnf.getManagementV6Address(), "");
-		assertEquals(execution.getVariable("oamManagementV6Address"), "");				
-		assertEquals(TEST_CONTRAIL_NETWORK_POLICY_FQDNS, execution.getVariable("contrailNetworkPolicyFqdnList"));
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_DeleteResponseTest_EmptyVfModuleOutputs() {
-		execution.setVariable("vnfAdapterRestV1Response", "<createVfModuleResponse><vfModuleOutputs></vfModuleOutputs></createVfModuleResponse>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(vfModule.getHeatStackId());
-		assertNull(vfModule.getContrailServiceInstanceFqdn());
-		assertNull(execution.getVariable("contrailServiceInstanceFqdn"));				
-		assertNull(execution.getVariable("oamManagementV4Address"));		
-		assertNull(execution.getVariable("oamManagementV6Address"));
-		assertNull(execution.getVariable("contrailNetworkPolicyFqdnList"));
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_ResponseNullTest() {		
-		execution.setVariable("vnfAdapterRestV1Response", null);
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_ResponseEmptyTest() {
-        execution.setVariable("vnfAdapterRestV1Response", "");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
+    @Test
+    public void postProcessVnfAdapter_CreateResponseTest_EmptyVfModuleStackIdTag() {
+        execution.setVariable("vnfAdapterRestV1Response", "<createVfModuleResponse></createVfModuleResponse>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
         assertNull(vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_DeleteResponseTest_VfModuleDeletedFalse() {
-		vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
-		execution.setVariable("vnfAdapterRestV1Response", "<deleteVfModuleResponse><vfModuleDeleted>false</vfModuleDeleted></deleteVfModuleResponse>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_DeleteResponseTest_EmptyDeleteVfModuleResponseTag() {
-        expectedException.expect(BpmnError.class);
-		execution.setVariable("vnfAdapterRestV1Response", "<vfModuleDeleted></vfModuleDeleted>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_DeleteResponseTest_EmptyVfModuleDeletedTag() {
-		vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
-		execution.setVariable("vnfAdapterRestV1Response", "<deleteVfModuleResponse></deleteVfModuleResponse>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
-	}
+    }
 
-	@Test
-	public void preProcessVnfAdapterExceptionTest() throws BBObjectNotFoundException {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID));
-		
-		vnfAdapterImpl.preProcessVnfAdapter(execution);
-	}
+    @Test
+    public void postProcessVnfAdapter_CreateResponseTest_EmptyHeatStackId() {
+        execution.setVariable("vnfAdapterRestV1Response",
+                "<createVfModuleResponse><vfModuleStackId></vfModuleStackId></createVfModuleResponse>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertNull(vfModule.getHeatStackId());
+    }
+
+    @Test
+    public void postProcessVnfAdapter_CreateResponseTest_EmptyVfModuleOutputs() {
+        execution.setVariable("vnfAdapterRestV1Response",
+                "<createVfModuleResponse><vfModuleOutputs></vfModuleOutputs></createVfModuleResponse>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertNull(vfModule.getHeatStackId());
+        assertNull(vfModule.getContrailServiceInstanceFqdn());
+        assertNull(execution.getVariable("contrailServiceInstanceFqdn"));
+        assertNotEquals(TEST_OAM_MANAGEMENT_V4_ADDRESS, genericVnf.getIpv4OamAddress());
+        assertNull(execution.getVariable("oamManagementV4Address"));
+        assertNull(genericVnf.getManagementV6Address());
+        assertNull(execution.getVariable("oamManagementV6Address"));
+        assertNull(execution.getVariable("contrailNetworkPolicyFqdnList"));
+    }
+
+    @Test
+    public void postProcessVnfAdapter_DeleteResponseTest() {
+        vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
+        execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_DELETE_RESPONSE);
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertNull(vfModule.getHeatStackId());
+        assertEquals(vfModule.getContrailServiceInstanceFqdn(), "");
+        assertEquals(execution.getVariable("contrailServiceInstanceFqdn"), "");
+        assertEquals(genericVnf.getIpv4OamAddress(), "");
+        assertEquals(execution.getVariable("oamManagementV4Address"), "");
+        assertEquals(genericVnf.getManagementV6Address(), "");
+        assertEquals(execution.getVariable("oamManagementV6Address"), "");
+        assertEquals(TEST_CONTRAIL_NETWORK_POLICY_FQDNS, execution.getVariable("contrailNetworkPolicyFqdnList"));
+    }
+
+    @Test
+    public void postProcessVnfAdapter_DeleteResponseTest_EmptyVfModuleOutputs() {
+        execution.setVariable("vnfAdapterRestV1Response",
+                "<createVfModuleResponse><vfModuleOutputs></vfModuleOutputs></createVfModuleResponse>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertNull(vfModule.getHeatStackId());
+        assertNull(vfModule.getContrailServiceInstanceFqdn());
+        assertNull(execution.getVariable("contrailServiceInstanceFqdn"));
+        assertNull(execution.getVariable("oamManagementV4Address"));
+        assertNull(execution.getVariable("oamManagementV6Address"));
+        assertNull(execution.getVariable("contrailNetworkPolicyFqdnList"));
+    }
+
+    @Test
+    public void postProcessVnfAdapter_ResponseNullTest() {
+        execution.setVariable("vnfAdapterRestV1Response", null);
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertNull(vfModule.getHeatStackId());
+    }
+
+    @Test
+    public void postProcessVnfAdapter_ResponseEmptyTest() {
+        execution.setVariable("vnfAdapterRestV1Response", "");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertNull(vfModule.getHeatStackId());
+    }
+
+    @Test
+    public void postProcessVnfAdapter_DeleteResponseTest_VfModuleDeletedFalse() {
+        vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
+        execution.setVariable("vnfAdapterRestV1Response",
+                "<deleteVfModuleResponse><vfModuleDeleted>false</vfModuleDeleted></deleteVfModuleResponse>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
+    }
+
+    @Test
+    public void postProcessVnfAdapter_DeleteResponseTest_EmptyDeleteVfModuleResponseTag() {
+        expectedException.expect(BpmnError.class);
+        execution.setVariable("vnfAdapterRestV1Response", "<vfModuleDeleted></vfModuleDeleted>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+    }
+
+    @Test
+    public void postProcessVnfAdapter_DeleteResponseTest_EmptyVfModuleDeletedTag() {
+        vfModule.setHeatStackId(TEST_VFMODULE_HEATSTACK_ID);
+        execution.setVariable("vnfAdapterRestV1Response", "<deleteVfModuleResponse></deleteVfModuleResponse>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertEquals(TEST_VFMODULE_HEATSTACK_ID, vfModule.getHeatStackId());
+    }
+
+    @Test
+    public void preProcessVnfAdapterExceptionTest() throws BBObjectNotFoundException {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),
+                ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID));
+
+        vnfAdapterImpl.preProcessVnfAdapter(execution);
+    }
 
     @Test
     public void postProcessVnfAdapter_CreateVolumeResponseTest() {
@@ -222,52 +236,54 @@ public class VnfAdapterImplTest extends BaseTaskTest {
     }
 
     @Test
-    public void postProcessVnfAdapter_CreateVolumeEmptyResponseTest()  {
+    public void postProcessVnfAdapter_CreateVolumeEmptyResponseTest() {
         expectedException.expect(BpmnError.class);
         execution.setVariable("vnfAdapterRestV1Response", "<createVolumeGroupResponse></createVolumeGroupResponse>");
         vnfAdapterImpl.postProcessVnfAdapter(execution);
         assertNull(volumeGroup.getHeatStackId());
     }
-    
+
     @Test
-	public void postProcessVnfAdapter_DeleteResponseTest_DeleteVolumeGroup() {
-    	volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
-		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_VOLUME_DELETE_RESPONSE);
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertNull(volumeGroup.getHeatStackId());
-	}
-	
-    
+    public void postProcessVnfAdapter_DeleteResponseTest_DeleteVolumeGroup() {
+        volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
+        execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_VOLUME_DELETE_RESPONSE);
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertNull(volumeGroup.getHeatStackId());
+    }
+
+
     @Test
-	public void postProcessVnfAdapter_DeleteResponseTest_VolumeGroupDeletedFalse() {
-    	volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
-		execution.setVariable("vnfAdapterRestV1Response", "<deleteVolumeGroupResponse><volumeGroupDeleted>false</volumeGroupDeleted></deleteVolumeGroupResponse>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertEquals(TEST_VOLUME_HEATSTACK_ID, volumeGroup.getHeatStackId());		
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_DeleteResponseTest_EmptyDeleteVolumeGroupResponseTag() {
+    public void postProcessVnfAdapter_DeleteResponseTest_VolumeGroupDeletedFalse() {
+        volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
+        execution.setVariable("vnfAdapterRestV1Response",
+                "<deleteVolumeGroupResponse><volumeGroupDeleted>false</volumeGroupDeleted></deleteVolumeGroupResponse>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertEquals(TEST_VOLUME_HEATSTACK_ID, volumeGroup.getHeatStackId());
+    }
+
+    @Test
+    public void postProcessVnfAdapter_DeleteResponseTest_EmptyDeleteVolumeGroupResponseTag() {
         expectedException.expect(BpmnError.class);
-		execution.setVariable("vnfAdapterRestV1Response", "<volumeGroupDeleted></volumeGroupDeleted>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);	
-	}
-	
-	@Test
-	public void postProcessVnfAdapter_DeleteResponseTest_EmptyVolumeGroupDeletedTag() {
-		volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
-		execution.setVariable("vnfAdapterRestV1Response", "<deleteVolumeGroupResponse></deleteVolumeGroupResponse>");
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-		assertEquals(TEST_VOLUME_HEATSTACK_ID, volumeGroup.getHeatStackId());
-	}
+        execution.setVariable("vnfAdapterRestV1Response", "<volumeGroupDeleted></volumeGroupDeleted>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+    }
 
-	@Test
-	public void postProcessVnfAdapterExceptionTest() throws BBObjectNotFoundException {	
-		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID));
+    @Test
+    public void postProcessVnfAdapter_DeleteResponseTest_EmptyVolumeGroupDeletedTag() {
+        volumeGroup.setHeatStackId(TEST_VOLUME_HEATSTACK_ID);
+        execution.setVariable("vnfAdapterRestV1Response", "<deleteVolumeGroupResponse></deleteVolumeGroupResponse>");
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+        assertEquals(TEST_VOLUME_HEATSTACK_ID, volumeGroup.getHeatStackId());
+    }
 
-		execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_CREATE_RESPONSE);
-		expectedException.expect(BpmnError.class);
-		
-		vnfAdapterImpl.postProcessVnfAdapter(execution);
-	}
+    @Test
+    public void postProcessVnfAdapterExceptionTest() throws BBObjectNotFoundException {
+        doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),
+                ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID));
+
+        execution.setVariable("vnfAdapterRestV1Response", VNF_ADAPTER_REST_CREATE_RESPONSE);
+        expectedException.expect(BpmnError.class);
+
+        vnfAdapterImpl.postProcessVnfAdapter(execution);
+    }
 }

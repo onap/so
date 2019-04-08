@@ -26,10 +26,8 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
@@ -43,52 +41,53 @@ import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 
-public class WorkflowActionBBTasksUpdateReqDbTest extends BaseTaskTest{
+public class WorkflowActionBBTasksUpdateReqDbTest extends BaseTaskTest {
 
-	protected WorkflowAction workflowAction = new WorkflowAction();
-	
-	@Spy
-	@InjectMocks
-	protected WorkflowActionBBTasks workflowActionBBTasks;
-	
-	private DelegateExecution execution;
-	
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-	
-	@Before
-	public void before() throws Exception {
-		execution = new DelegateExecutionFake();
-		org.onap.aai.domain.yang.ServiceInstance servInstance = new org.onap.aai.domain.yang.ServiceInstance();
-		servInstance.setServiceInstanceId("TEST");
-		when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), any())).thenReturn(servInstance);
-		workflowAction.setBbInputSetupUtils(bbSetupUtils);
-		workflowAction.setBbInputSetup(bbInputSetup);
-	}
-	
-	@Test
-	public void getUpdatedRequestTest() throws Exception{
-		List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
-		ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
-		BuildingBlock bb1 = new BuildingBlock();
-		bb1.setBpmnFlowName("CreateNetworkBB");
-		flowsToExecute.add(ebb1);
-		ebb1.setBuildingBlock(bb1);
-		ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
-		BuildingBlock bb2 = new BuildingBlock();
-		bb2.setBpmnFlowName("ActivateNetworkBB");
-		flowsToExecute.add(ebb2);
-		ebb2.setBuildingBlock(bb2);
-		String requestId = "requestId";
-		execution.setVariable("mso-request-id", requestId);
-		execution.setVariable("flowsToExecute", flowsToExecute);
-		int currentSequence = 2;
-		String expectedStatusMessage = "Execution of CreateNetworkBB has completed successfully, next invoking ActivateNetworkBB (Execution Path progress: BBs completed = 1; BBs remaining = 1).";
-		Long expectedLong = new Long(52);
-		InfraActiveRequests mockedRequest = new InfraActiveRequests();
-		doReturn(mockedRequest).when(requestsDbClient).getInfraActiveRequestbyRequestId(isA(String.class));
-		InfraActiveRequests actual = workflowActionBBTasks.getUpdatedRequest(execution, currentSequence);
-		assertEquals(expectedStatusMessage, actual.getFlowStatus());
-		assertEquals(expectedLong, actual.getProgress());
-	}
+    protected WorkflowAction workflowAction = new WorkflowAction();
+
+    @Spy
+    @InjectMocks
+    protected WorkflowActionBBTasks workflowActionBBTasks;
+
+    private DelegateExecution execution;
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Before
+    public void before() throws Exception {
+        execution = new DelegateExecutionFake();
+        org.onap.aai.domain.yang.ServiceInstance servInstance = new org.onap.aai.domain.yang.ServiceInstance();
+        servInstance.setServiceInstanceId("TEST");
+        when(bbSetupUtils.getAAIServiceInstanceByName(anyString(), any())).thenReturn(servInstance);
+        workflowAction.setBbInputSetupUtils(bbSetupUtils);
+        workflowAction.setBbInputSetup(bbInputSetup);
+    }
+
+    @Test
+    public void getUpdatedRequestTest() throws Exception {
+        List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
+        ExecuteBuildingBlock ebb1 = new ExecuteBuildingBlock();
+        BuildingBlock bb1 = new BuildingBlock();
+        bb1.setBpmnFlowName("CreateNetworkBB");
+        flowsToExecute.add(ebb1);
+        ebb1.setBuildingBlock(bb1);
+        ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
+        BuildingBlock bb2 = new BuildingBlock();
+        bb2.setBpmnFlowName("ActivateNetworkBB");
+        flowsToExecute.add(ebb2);
+        ebb2.setBuildingBlock(bb2);
+        String requestId = "requestId";
+        execution.setVariable("mso-request-id", requestId);
+        execution.setVariable("flowsToExecute", flowsToExecute);
+        int currentSequence = 2;
+        String expectedStatusMessage =
+                "Execution of CreateNetworkBB has completed successfully, next invoking ActivateNetworkBB (Execution Path progress: BBs completed = 1; BBs remaining = 1).";
+        Long expectedLong = new Long(52);
+        InfraActiveRequests mockedRequest = new InfraActiveRequests();
+        doReturn(mockedRequest).when(requestsDbClient).getInfraActiveRequestbyRequestId(isA(String.class));
+        InfraActiveRequests actual = workflowActionBBTasks.getUpdatedRequest(execution, currentSequence);
+        assertEquals(expectedStatusMessage, actual.getFlowStatus());
+        assertEquals(expectedLong, actual.getProgress());
+    }
 }

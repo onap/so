@@ -33,18 +33,17 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * The CDS processing client is using gRPC for communication between SO and CDS.
- * That communication is configured to use a streaming approach, meaning that
- * client can send an event to which server can reply will multiple sub-responses,
+ * The CDS processing client is using gRPC for communication between SO and CDS. That communication is configured to use
+ * a streaming approach, meaning that client can send an event to which server can reply will multiple sub-responses,
  * until full completion of the processing.
  * </p>
  * <p>
- * In order for the caller to manage the callback, it is the responsibility of the
- * caller to implement and provide a {@link CDSProcessingListener} so received messages
- * can be handled appropriately.
+ * In order for the caller to manage the callback, it is the responsibility of the caller to implement and provide a
+ * {@link CDSProcessingListener} so received messages can be handled appropriately.
  * </p>
  *
  * Here is an example of implementation of such listener:
+ * 
  * <pre>
  * new CDSProcessingListener {
  *
@@ -72,15 +71,12 @@ public class CDSProcessingClient implements AutoCloseable {
         CDSProperties props = RestPropertiesLoader.getInstance().getNewImpl(CDSProperties.class);
         if (props == null) {
             throw new PreconditionFailedException(
-                "No RestProperty.CDSProperties implementation found on classpath, can't create client.");
+                    "No RestProperty.CDSProperties implementation found on classpath, can't create client.");
         }
-        this.channel = NettyChannelBuilder
-            .forAddress(props.getHost(), props.getPort())
-            .nameResolverFactory(new DnsNameResolverProvider())
-            .loadBalancerFactory(new PickFirstLoadBalancerProvider())
-            .intercept(new BasicAuthClientInterceptor(props))
-            .usePlaintext()
-            .build();
+        this.channel = NettyChannelBuilder.forAddress(props.getHost(), props.getPort())
+                .nameResolverFactory(new DnsNameResolverProvider())
+                .loadBalancerFactory(new PickFirstLoadBalancerProvider())
+                .intercept(new BasicAuthClientInterceptor(props)).usePlaintext().build();
         this.handler = new CDSProcessingHandler(listener);
         log.info("CDSProcessingClient started");
     }
@@ -93,16 +89,14 @@ public class CDSProcessingClient implements AutoCloseable {
     /**
      * Sends a request to the CDS backend micro-service.
      *
-     * The caller will be returned a CountDownLatch that can be used
-     * to define how long the processing can wait. The CountDownLatch is
-     * initiated with just 1 count. When the client receives an #onCompleted callback,
-     * the counter will decrement.
+     * The caller will be returned a CountDownLatch that can be used to define how long the processing can wait. The
+     * CountDownLatch is initiated with just 1 count. When the client receives an #onCompleted callback, the counter
+     * will decrement.
      *
      * It is the user responsibility to close the client.
      *
      * @param input request to send
-     * @return CountDownLatch instance that can be use to #await for
-     * completeness of processing
+     * @return CountDownLatch instance that can be use to #await for completeness of processing
      */
     public CountDownLatch sendRequest(ExecutionServiceInput input) {
         return handler.process(input, channel);

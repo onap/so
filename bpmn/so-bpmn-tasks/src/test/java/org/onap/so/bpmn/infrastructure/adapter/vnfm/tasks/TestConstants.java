@@ -21,9 +21,7 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.DUMMY_URL;
-
 import java.util.UUID;
-
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.VnfmBasicHttpConfigProvider;
 
 /**
@@ -36,7 +34,7 @@ public class TestConstants {
     public static final String DUMMY_BASIC_AUTH = "Basic 123abc";
     public static final String DUMMY_URL = "http://localhost:30406/so/vnfm-adapter/v1/";
     public static final String EXPECTED_URL = DUMMY_URL + "vnfs/" + DUMMY_GENERIC_VND_ID;
-    
+
     public static final String DUMMY_JOB_ID = UUID.randomUUID().toString();
     public static final String JOB_STATUS_EXPECTED_URL = DUMMY_URL + "jobs/" + DUMMY_JOB_ID;
 

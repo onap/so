@@ -35,7 +35,6 @@ import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,56 +47,57 @@ import java.sql.Statement;
 import java.util.Collection;
 
 /**
- * Performs migration using JDBC Connection from the cloud config provided in the environment (application-{profile}.yaml) and persist data (when not already present) to the catalod database.
+ * Performs migration using JDBC Connection from the cloud config provided in the environment
+ * (application-{profile}.yaml) and persist data (when not already present) to the catalod database.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoProvider, MigrationChecksumProvider {
+public class R__CloudConfigMigration implements JdbcMigration, MigrationInfoProvider, MigrationChecksumProvider {
     public static final String FLYWAY = "FLYWAY";
 
     private static final Logger logger = LoggerFactory.getLogger(R__CloudConfigMigration.class);
     @JsonProperty("cloud_config")
     private CloudConfig cloudConfig;
-    
+
     @Override
-    public boolean isUndo(){
-    	return false;
+    public boolean isUndo() {
+        return false;
     }
 
     @Override
     public void migrate(Connection connection) throws Exception {
         logger.debug("Starting migration for CloudConfig");
-        
+
         CloudConfig cloudConfig = null;
-        
+
         String tableQuery = "SELECT * FROM identity_services";
         int totalRetries = 20;
         boolean tableExists = false;
         int count = 1;
-        while(!tableExists && count != totalRetries) {
-        	try(Statement stmt = connection.createStatement();) {
-            	stmt.executeQuery(tableQuery);
-            	tableExists = true;
+        while (!tableExists && count != totalRetries) {
+            try (Statement stmt = connection.createStatement();) {
+                stmt.executeQuery(tableQuery);
+                tableExists = true;
             } catch (SQLException e) {
-            	count++;
-            	// Wait 5 mintues
-            	Thread.sleep(300000);
+                count++;
+                // Wait 5 mintues
+                Thread.sleep(300000);
             }
         }
-        
+
         // Try the override file
         String configLocation = System.getProperty("spring.config.additional-location");
         if (configLocation != null) {
             try (InputStream stream = new FileInputStream(Paths.get(configLocation).normalize().toString())) {
                 cloudConfig = loadCloudConfig(stream);
-            }catch(Exception e){
+            } catch (Exception e) {
                 logger.warn("Error Loading override.yaml", e);
-            } 
+            }
         }
-        
+
         if (cloudConfig == null) {
             logger.debug("No CloudConfig defined in {}", configLocation);
 
-        	// Try the application.yaml file
+            // Try the application.yaml file
             try (InputStream stream = R__CloudConfigMigration.class.getResourceAsStream(getApplicationYamlName())) {
                 cloudConfig = loadCloudConfig(stream);
             }
@@ -106,8 +106,8 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
                 logger.debug("No CloudConfig defined in {}", getApplicationYamlName());
             }
         }
- 
-        if(cloudConfig != null){
+
+        if (cloudConfig != null) {
             migrateCloudIdentity(cloudConfig.getIdentityServices().values(), connection);
             migrateCloudSite(cloudConfig.getCloudSites().values(), connection);
             migrateCloudifyManagers(cloudConfig.getCloudifyManagers().values(), connection);
@@ -122,32 +122,35 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         this.cloudConfig = cloudConfig;
     }
 
-    private CloudConfig loadCloudConfig(InputStream stream) throws IOException  {
-    	ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        R__CloudConfigMigration cloudConfigMigration =
-        		mapper.readValue(stream, R__CloudConfigMigration.class);
+    private CloudConfig loadCloudConfig(InputStream stream) throws IOException {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        R__CloudConfigMigration cloudConfigMigration = mapper.readValue(stream, R__CloudConfigMigration.class);
         CloudConfig cloudConfig = cloudConfigMigration.getCloudConfig();
 
-        if(cloudConfig != null){
-        	cloudConfig.populateId();
+        if (cloudConfig != null) {
+            cloudConfig.populateId();
         }
 
         return cloudConfig;
     }
 
     private String getApplicationYamlName() {
-        String profile = System.getProperty("spring.profiles.active") == null ? "" : "-" + System.getProperty("spring.profiles.active");
+        String profile = System.getProperty("spring.profiles.active") == null ? ""
+                : "-" + System.getProperty("spring.profiles.active");
         return "/application" + profile + ".yaml";
     }
 
-    private void migrateCloudIdentity(Collection<CloudIdentity> entities, Connection connection) throws SQLException  {
+    private void migrateCloudIdentity(Collection<CloudIdentity> entities, Connection connection) throws SQLException {
         logger.debug("Starting migration for CloudConfig-->IdentityService");
-        String insert = "INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `ADMIN_TENANT`, `MEMBER_ROLE`, `TENANT_METADATA`, `IDENTITY_SERVER_TYPE`, `IDENTITY_AUTHENTICATION_TYPE`, `LAST_UPDATED_BY`) " +
-                "VALUES (?,?,?,?,?,?,?,?,?,?);";
+        String insert =
+                "INSERT INTO `identity_services` (`ID`, `IDENTITY_URL`, `MSO_ID`, `MSO_PASS`, `ADMIN_TENANT`, `MEMBER_ROLE`, `TENANT_METADATA`, `IDENTITY_SERVER_TYPE`, `IDENTITY_AUTHENTICATION_TYPE`, `LAST_UPDATED_BY`) "
+                        + "VALUES (?,?,?,?,?,?,?,?,?,?);";
 
-        try (Statement stmt = connection.createStatement();PreparedStatement ps = connection.prepareStatement(insert)) {
+        try (Statement stmt = connection.createStatement();
+                PreparedStatement ps = connection.prepareStatement(insert)) {
             for (CloudIdentity cloudIdentity : entities) {
-                try (ResultSet rows = stmt.executeQuery("Select count(1) from identity_services where id='" + cloudIdentity.getId() + "'")) {
+                try (ResultSet rows = stmt.executeQuery(
+                        "Select count(1) from identity_services where id='" + cloudIdentity.getId() + "'")) {
                     int count = 0;
                     while (rows.next()) {
                         count = rows.getInt(1);
@@ -160,8 +163,14 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
                         ps.setString(5, cloudIdentity.getAdminTenant());
                         ps.setString(6, cloudIdentity.getMemberRole());
                         ps.setBoolean(7, cloudIdentity.getTenantMetadata());
-                        ps.setString(8, cloudIdentity.getIdentityServerType() != null ? cloudIdentity.getIdentityServerType().name() : null);
-                        ps.setString(9, cloudIdentity.getIdentityAuthenticationType() != null ? cloudIdentity.getIdentityAuthenticationType().name() : null);
+                        ps.setString(8,
+                                cloudIdentity.getIdentityServerType() != null
+                                        ? cloudIdentity.getIdentityServerType().name()
+                                        : null);
+                        ps.setString(9,
+                                cloudIdentity.getIdentityAuthenticationType() != null
+                                        ? cloudIdentity.getIdentityAuthenticationType().name()
+                                        : null);
                         ps.setString(10, FLYWAY);
                         ps.executeUpdate();
                     }
@@ -170,14 +179,17 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         }
     }
 
-    private void migrateCloudSite(Collection<CloudSite> entities, Connection connection) throws SQLException  {
+    private void migrateCloudSite(Collection<CloudSite> entities, Connection connection) throws SQLException {
         logger.debug("Starting migration for CloudConfig-->CloudSite");
-        String insert = "INSERT INTO `cloud_sites` (`ID`, `REGION_ID`, `IDENTITY_SERVICE_ID`, `CLOUD_VERSION`, `CLLI`, `CLOUDIFY_ID`, `PLATFORM`, `ORCHESTRATOR`, `LAST_UPDATED_BY`) " +
-                "VALUES (?,?,?,?,?,?,?,?,?);";
+        String insert =
+                "INSERT INTO `cloud_sites` (`ID`, `REGION_ID`, `IDENTITY_SERVICE_ID`, `CLOUD_VERSION`, `CLLI`, `CLOUDIFY_ID`, `PLATFORM`, `ORCHESTRATOR`, `LAST_UPDATED_BY`) "
+                        + "VALUES (?,?,?,?,?,?,?,?,?);";
 
-        try (Statement stmt = connection.createStatement();PreparedStatement ps = connection.prepareStatement(insert)) {
+        try (Statement stmt = connection.createStatement();
+                PreparedStatement ps = connection.prepareStatement(insert)) {
             for (CloudSite cloudSite : entities) {
-                try (ResultSet rows = stmt.executeQuery("Select count(1) from cloud_sites where id='" + cloudSite.getId() + "'")) {
+                try (ResultSet rows =
+                        stmt.executeQuery("Select count(1) from cloud_sites where id='" + cloudSite.getId() + "'")) {
                     int count = 0;
                     while (rows.next()) {
                         count = rows.getInt(1);
@@ -199,13 +211,17 @@ public class R__CloudConfigMigration implements JdbcMigration , MigrationInfoPro
         }
     }
 
-    private void migrateCloudifyManagers(Collection<CloudifyManager> entities, Connection connection) throws SQLException  {
-        String insert = "INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `LAST_UPDATED_BY`)" +
-                " VALUES (?,?,?,?,?,?);";
+    private void migrateCloudifyManagers(Collection<CloudifyManager> entities, Connection connection)
+            throws SQLException {
+        String insert =
+                "INSERT INTO `cloudify_managers` (`ID`, `CLOUDIFY_URL`, `USERNAME`, `PASSWORD`, `VERSION`, `LAST_UPDATED_BY`)"
+                        + " VALUES (?,?,?,?,?,?);";
 
-        try (Statement stmt = connection.createStatement();PreparedStatement ps = connection.prepareStatement(insert)) {
+        try (Statement stmt = connection.createStatement();
+                PreparedStatement ps = connection.prepareStatement(insert)) {
             for (CloudifyManager cloudifyManager : entities) {
-                try (ResultSet rows = stmt.executeQuery("Select count(1) from cloudify_managers where id='" + cloudifyManager.getId() + "'")) {
+                try (ResultSet rows = stmt.executeQuery(
+                        "Select count(1) from cloudify_managers where id='" + cloudifyManager.getId() + "'")) {
                     int count = 0;
                     while (rows.next()) {
                         count = rows.getInt(1);

@@ -20,15 +20,14 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 public class HeaderUtilTest {
 
     @Test
     public void getAuthorizationTest() throws Exception {
-    	String authorization = HeaderUtil.getAuthorization(HeaderUtil.USER, HeaderUtil.PASS);
-    	assertEquals("Basic YWRtaW46S3A4Yko0U1hzek0wV1hsaGFrM2VIbGNzZTJnQXc4NHZhb0dHbUp2VXkyVQ==", authorization);
+        String authorization = HeaderUtil.getAuthorization(HeaderUtil.USER, HeaderUtil.PASS);
+        assertEquals("Basic YWRtaW46S3A4Yko0U1hzek0wV1hsaGFrM2VIbGNzZTJnQXc4NHZhb0dHbUp2VXkyVQ==", authorization);
     }
 
 }

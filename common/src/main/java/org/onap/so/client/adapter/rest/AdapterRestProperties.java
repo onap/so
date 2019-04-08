@@ -24,6 +24,7 @@ import org.onap.so.client.RestProperties;
 
 public interface AdapterRestProperties extends RestProperties {
 
-	public String getAuth();
-	public String getKey();
+    public String getAuth();
+
+    public String getKey();
 }

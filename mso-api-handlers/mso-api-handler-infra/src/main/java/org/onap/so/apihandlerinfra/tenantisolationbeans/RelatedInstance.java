@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,39 +29,43 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName(value = "relatedInstance")
 @JsonInclude(Include.NON_DEFAULT)
 public class RelatedInstance implements Serializable {
-	
-	private static final long serialVersionUID = -6775477105573153067L;
-	@JsonProperty("instanceName")
-	protected String instanceName;
-	@JsonProperty("instanceId")
-	protected String instanceId;
-	@JsonProperty("resourceType")
-	protected ResourceType resourceType;
 
-	public String getInstanceName() {
-		return instanceName;
-	}
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-	public String getInstanceId() {
-		return instanceId;
-	}
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-	public ResourceType getResourceType() {
-		return resourceType;
-	}
-	public void setResourceType(ResourceType resourceType) {
-		this.resourceType = resourceType;
-	}	
+    private static final long serialVersionUID = -6775477105573153067L;
+    @JsonProperty("instanceName")
+    protected String instanceName;
+    @JsonProperty("instanceId")
+    protected String instanceId;
+    @JsonProperty("resourceType")
+    protected ResourceType resourceType;
 
-	@Override
-	public String toString() {
-		return "RelatedInstance [instanceName=" + instanceName + 
-				              ", instanceId=" + instanceId + 
-				              ", resourceType=" + resourceType + "]";
-	}	
-	
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
+
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(ResourceType resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    @Override
+    public String toString() {
+        return "RelatedInstance [instanceName=" + instanceName + ", instanceId=" + instanceId + ", resourceType="
+                + resourceType + "]";
+    }
+
 }

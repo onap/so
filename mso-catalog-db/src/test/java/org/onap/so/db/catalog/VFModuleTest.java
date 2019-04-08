@@ -21,9 +21,7 @@
 package org.onap.so.db.catalog;
 
 import static org.junit.Assert.assertEquals;
-
 import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.db.catalog.beans.VfModule;
@@ -37,20 +35,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class VFModuleTest {
-	@Autowired
-	private VFModuleRepository vfModuleRepo;
-	
-	@Test
-	public void VFModule_Versioned_LookUp() {
-		VfModule latestModule = vfModuleRepo.findFirstByModelNameOrderByModelVersionDesc("vSAMP10aDEV::PCM::module-1");
-		assertEquals("066de97e-253e-11e7-93ae-92361f002675",latestModule.getModelUUID());
-	}
-	
-	@Test
-	public void VFModule_Versioned_LookUp_LIst() {
-		List<VfModule> moduleList = vfModuleRepo.findByModelInvariantUUIDOrderByModelVersionDesc("64efd51a-2544-11e7-93ae-92361f002671");
-		assertEquals("066de97e-253e-11e7-93ae-92361f002675",moduleList.get(0).getModelUUID());
-		assertEquals("066de97e-253e-11e7-93ae-92361f002674",moduleList.get(1).getModelUUID());
-		assertEquals("066de97e-253e-11e7-93ae-92361f002673",moduleList.get(2).getModelUUID());
-	}
+    @Autowired
+    private VFModuleRepository vfModuleRepo;
+
+    @Test
+    public void VFModule_Versioned_LookUp() {
+        VfModule latestModule = vfModuleRepo.findFirstByModelNameOrderByModelVersionDesc("vSAMP10aDEV::PCM::module-1");
+        assertEquals("066de97e-253e-11e7-93ae-92361f002675", latestModule.getModelUUID());
+    }
+
+    @Test
+    public void VFModule_Versioned_LookUp_LIst() {
+        List<VfModule> moduleList =
+                vfModuleRepo.findByModelInvariantUUIDOrderByModelVersionDesc("64efd51a-2544-11e7-93ae-92361f002671");
+        assertEquals("066de97e-253e-11e7-93ae-92361f002675", moduleList.get(0).getModelUUID());
+        assertEquals("066de97e-253e-11e7-93ae-92361f002674", moduleList.get(1).getModelUUID());
+        assertEquals("066de97e-253e-11e7-93ae-92361f002673", moduleList.get(2).getModelUUID());
+    }
 }

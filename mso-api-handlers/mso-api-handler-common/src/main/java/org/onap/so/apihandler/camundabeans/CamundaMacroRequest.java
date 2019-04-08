@@ -98,10 +98,7 @@ public class CamundaMacroRequest {
 
     @Override
     public String toString() {
-        return "CamundaMacroRequest{" +
-                "requestId=" + requestId +
-                ", action=" + action +
-                ", serviceInstanceId=" + serviceInstanceId +
-                '}';
+        return "CamundaMacroRequest{" + "requestId=" + requestId + ", action=" + action + ", serviceInstanceId="
+                + serviceInstanceId + '}';
     }
 }

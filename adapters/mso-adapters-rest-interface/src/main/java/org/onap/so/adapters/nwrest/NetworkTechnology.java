@@ -22,5 +22,5 @@ package org.onap.so.adapters.nwrest;
 
 
 public enum NetworkTechnology {
-	NEUTRON, VMWARE, CONTRAIL
+    NEUTRON, VMWARE, CONTRAIL
 }

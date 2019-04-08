@@ -21,12 +21,9 @@
 package org.onap.so.adapters.requestdb.rest;
 
 import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.transaction.Transactional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,50 +40,50 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = MSORequestDBApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class RequestProcessingDataRequestDbQueryTest {
-	@Autowired
-	private RequestsDbClient client;
-	
-	@LocalServerPort
-	private int port;
-	
-	@Before
-	public void setPort() {
-		client.removePortFromEndpoint();
-		client.setPortToEndpoint(Integer.toString(port));
-	}
-	
-	@Test
-	@Transactional
-	public void RequestProcessingDataBySoRequestIdTest() {
-		String soRequestId = "00032ab7-na18-42e5-965d-8ea592502018";
-		String tag = "pincFabricConfigRequest";
-		RequestProcessingData firstEntry = new RequestProcessingData();
-		RequestProcessingData secondEntry = new RequestProcessingData();
-		List<RequestProcessingData> expectedList = new ArrayList<>();
-		firstEntry.setSoRequestId(soRequestId);
-		firstEntry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca715");
-		firstEntry.setName("configurationId");
-		firstEntry.setValue("52234bc0-d6a6-41d4-a901-79015e4877e2");
-		firstEntry.setTag(tag);
-		secondEntry.setSoRequestId(soRequestId);
-		secondEntry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca714");
-		secondEntry.setName("requestAction");
-		secondEntry.setValue("assign");
-		secondEntry.setTag(tag);
-		expectedList.add(firstEntry);
-		expectedList.add(secondEntry);
+    @Autowired
+    private RequestsDbClient client;
 
-		List<RequestProcessingData> dataFound = client.getRequestProcessingDataBySoRequestId(soRequestId);
-		//bean comparison with shazam fails serialization: Forgot to register a type adapter?
-		assertEquals(dataFound.get(0).getSoRequestId(), firstEntry.getSoRequestId());
-		assertEquals(dataFound.get(0).getGroupingId(), firstEntry.getGroupingId());
-		assertEquals(dataFound.get(0).getName(), firstEntry.getName());
-		assertEquals(dataFound.get(0).getValue(), firstEntry.getValue());
-		assertEquals(dataFound.get(0).getTag(), firstEntry.getTag());
-		assertEquals(dataFound.get(1).getSoRequestId(), secondEntry.getSoRequestId());
-		assertEquals(dataFound.get(1).getGroupingId(), secondEntry.getGroupingId());
-		assertEquals(dataFound.get(1).getName(), secondEntry.getName());
-		assertEquals(dataFound.get(1).getValue(), secondEntry.getValue());
-		assertEquals(dataFound.get(1).getTag(), secondEntry.getTag());
-	}
+    @LocalServerPort
+    private int port;
+
+    @Before
+    public void setPort() {
+        client.removePortFromEndpoint();
+        client.setPortToEndpoint(Integer.toString(port));
+    }
+
+    @Test
+    @Transactional
+    public void RequestProcessingDataBySoRequestIdTest() {
+        String soRequestId = "00032ab7-na18-42e5-965d-8ea592502018";
+        String tag = "pincFabricConfigRequest";
+        RequestProcessingData firstEntry = new RequestProcessingData();
+        RequestProcessingData secondEntry = new RequestProcessingData();
+        List<RequestProcessingData> expectedList = new ArrayList<>();
+        firstEntry.setSoRequestId(soRequestId);
+        firstEntry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca715");
+        firstEntry.setName("configurationId");
+        firstEntry.setValue("52234bc0-d6a6-41d4-a901-79015e4877e2");
+        firstEntry.setTag(tag);
+        secondEntry.setSoRequestId(soRequestId);
+        secondEntry.setGroupingId("7d2e8c07-4d10-456d-bddc-37abf38ca714");
+        secondEntry.setName("requestAction");
+        secondEntry.setValue("assign");
+        secondEntry.setTag(tag);
+        expectedList.add(firstEntry);
+        expectedList.add(secondEntry);
+
+        List<RequestProcessingData> dataFound = client.getRequestProcessingDataBySoRequestId(soRequestId);
+        // bean comparison with shazam fails serialization: Forgot to register a type adapter?
+        assertEquals(dataFound.get(0).getSoRequestId(), firstEntry.getSoRequestId());
+        assertEquals(dataFound.get(0).getGroupingId(), firstEntry.getGroupingId());
+        assertEquals(dataFound.get(0).getName(), firstEntry.getName());
+        assertEquals(dataFound.get(0).getValue(), firstEntry.getValue());
+        assertEquals(dataFound.get(0).getTag(), firstEntry.getTag());
+        assertEquals(dataFound.get(1).getSoRequestId(), secondEntry.getSoRequestId());
+        assertEquals(dataFound.get(1).getGroupingId(), secondEntry.getGroupingId());
+        assertEquals(dataFound.get(1).getName(), secondEntry.getName());
+        assertEquals(dataFound.get(1).getValue(), secondEntry.getValue());
+        assertEquals(dataFound.get(1).getTag(), secondEntry.getTag());
+    }
 }

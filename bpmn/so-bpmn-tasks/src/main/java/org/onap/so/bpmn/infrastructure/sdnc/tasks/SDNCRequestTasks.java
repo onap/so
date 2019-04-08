@@ -21,12 +21,10 @@
 package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import java.io.StringReader;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.sdnc.exceptions.SDNCErrorResponseException;
 import org.onap.so.client.exception.BadResponseException;
@@ -41,93 +39,95 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
- 
+
 @Component
 public class SDNCRequestTasks {
-	
-	private static final Logger logger = LoggerFactory.getLogger(SDNCRequestTasks.class);
-	
-	private static final String SDNC_REQUEST = "SDNCRequest";
-	private static final String MESSAGE = "_MESSAGE";
-	private static final String CORRELATOR = "_CORRELATOR";
-	protected static final String IS_CALLBACK_COMPLETED = "isCallbackCompleted";
-	protected static final String SDNC_SUCCESS = "200";
-	
-	@Autowired
-	private ExceptionBuilder exceptionBuilder;
-	
-	@Autowired
-	private SDNCClient sdncClient;
-	
-	public void createCorrelationVariables (DelegateExecution execution) {
-		SDNCRequest request = (SDNCRequest)execution.getVariable(SDNC_REQUEST);
-		execution.setVariable(request.getCorrelationName()+CORRELATOR, request.getCorrelationValue());
-		execution.setVariable("sdncTimeout", request.getTimeOut());
-	}
-	
-	public void callSDNC (DelegateExecution execution) {
-		SDNCRequest request = (SDNCRequest)execution.getVariable(SDNC_REQUEST);
-		try {
-			String response = sdncClient.post(request.getSDNCPayload(),request.getTopology());
-			String finalMessageIndicator = JsonPath.read(response, "$.output.ack-final-indicator");		
-			execution.setVariable("isSDNCCompleted", convertIndicatorToBoolean(finalMessageIndicator));
-		} catch(PathNotFoundException e) {
-			logger.error("Error Parsing SDNC Response. Could not find read final ack indicator from JSON.", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,"Recieved invalid response from SDNC, unable to read message content.");
-		} catch (MapperException e) {
-			logger.error("Failed to map SDNC object to JSON prior to POST.", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,"Failed to map SDNC object to JSON prior to POST.");
-		} catch (BadResponseException e) {
-			logger.error("Did not receive a successful response from SDNC.", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getLocalizedMessage());
-		} catch (HttpClientErrorException e){
-			logger.error("HttpClientErrorException: 404 Not Found, Failed to contact SDNC", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,  "SDNC cannot be contacted.");
-		}
-	}
-	
-	public void processCallback (DelegateExecution execution) {
-		try {
-			SDNCRequest request = (SDNCRequest)execution.getVariable(SDNC_REQUEST);
-			String asyncRequest = (String) execution.getVariable(request.getCorrelationName()+MESSAGE);
-			
-	        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance ();
-	        DocumentBuilder db = dbf.newDocumentBuilder();
-	        Document doc = db.parse(new InputSource(new StringReader(asyncRequest)));
 
-	        String finalMessageIndicator = getXmlElement(doc, "/input/ack-final-indicator");
-			boolean isCallbackCompleted = convertIndicatorToBoolean(finalMessageIndicator);
-			execution.setVariable(IS_CALLBACK_COMPLETED, isCallbackCompleted);
-			if(isCallbackCompleted) {
-				String responseCode = getXmlElement(doc, "/input/response-code");
-				String responseMessage = getXmlElement(doc, "/input/response-message"); 
-				if(!SDNC_SUCCESS.equalsIgnoreCase(responseCode)) {
-					throw new SDNCErrorResponseException(responseMessage);
-				}
-			}
-		} catch (SDNCErrorResponseException e) {
-			logger.error("SDNC error response - " + e.getMessage());
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage());
-		} catch (Exception e) {
-			logger.error("Error procesing SDNC callback", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "Error procesing SDNC callback");
-		}
-	}
-	
-	public void handleTimeOutException (DelegateExecution execution) {		
-		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "Error timed out waiting on SDNC Async-Response");
-	}
+    private static final Logger logger = LoggerFactory.getLogger(SDNCRequestTasks.class);
 
-	protected boolean convertIndicatorToBoolean(String finalMessageIndicator) {
-		return "Y".equals(finalMessageIndicator);
-	}
-	
-	protected String getXmlElement(Document doc, String exp) throws Exception {
-		XPath xPath = XPathFactory.newInstance().newXPath();
-		return xPath.evaluate(exp, doc);
-	}
-	
+    private static final String SDNC_REQUEST = "SDNCRequest";
+    private static final String MESSAGE = "_MESSAGE";
+    private static final String CORRELATOR = "_CORRELATOR";
+    protected static final String IS_CALLBACK_COMPLETED = "isCallbackCompleted";
+    protected static final String SDNC_SUCCESS = "200";
+
+    @Autowired
+    private ExceptionBuilder exceptionBuilder;
+
+    @Autowired
+    private SDNCClient sdncClient;
+
+    public void createCorrelationVariables(DelegateExecution execution) {
+        SDNCRequest request = (SDNCRequest) execution.getVariable(SDNC_REQUEST);
+        execution.setVariable(request.getCorrelationName() + CORRELATOR, request.getCorrelationValue());
+        execution.setVariable("sdncTimeout", request.getTimeOut());
+    }
+
+    public void callSDNC(DelegateExecution execution) {
+        SDNCRequest request = (SDNCRequest) execution.getVariable(SDNC_REQUEST);
+        try {
+            String response = sdncClient.post(request.getSDNCPayload(), request.getTopology());
+            String finalMessageIndicator = JsonPath.read(response, "$.output.ack-final-indicator");
+            execution.setVariable("isSDNCCompleted", convertIndicatorToBoolean(finalMessageIndicator));
+        } catch (PathNotFoundException e) {
+            logger.error("Error Parsing SDNC Response. Could not find read final ack indicator from JSON.", e);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
+                    "Recieved invalid response from SDNC, unable to read message content.");
+        } catch (MapperException e) {
+            logger.error("Failed to map SDNC object to JSON prior to POST.", e);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
+                    "Failed to map SDNC object to JSON prior to POST.");
+        } catch (BadResponseException e) {
+            logger.error("Did not receive a successful response from SDNC.", e);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getLocalizedMessage());
+        } catch (HttpClientErrorException e) {
+            logger.error("HttpClientErrorException: 404 Not Found, Failed to contact SDNC", e);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "SDNC cannot be contacted.");
+        }
+    }
+
+    public void processCallback(DelegateExecution execution) {
+        try {
+            SDNCRequest request = (SDNCRequest) execution.getVariable(SDNC_REQUEST);
+            String asyncRequest = (String) execution.getVariable(request.getCorrelationName() + MESSAGE);
+
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder db = dbf.newDocumentBuilder();
+            Document doc = db.parse(new InputSource(new StringReader(asyncRequest)));
+
+            String finalMessageIndicator = getXmlElement(doc, "/input/ack-final-indicator");
+            boolean isCallbackCompleted = convertIndicatorToBoolean(finalMessageIndicator);
+            execution.setVariable(IS_CALLBACK_COMPLETED, isCallbackCompleted);
+            if (isCallbackCompleted) {
+                String responseCode = getXmlElement(doc, "/input/response-code");
+                String responseMessage = getXmlElement(doc, "/input/response-message");
+                if (!SDNC_SUCCESS.equalsIgnoreCase(responseCode)) {
+                    throw new SDNCErrorResponseException(responseMessage);
+                }
+            }
+        } catch (SDNCErrorResponseException e) {
+            logger.error("SDNC error response - " + e.getMessage());
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage());
+        } catch (Exception e) {
+            logger.error("Error procesing SDNC callback", e);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "Error procesing SDNC callback");
+        }
+    }
+
+    public void handleTimeOutException(DelegateExecution execution) {
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
+                "Error timed out waiting on SDNC Async-Response");
+    }
+
+    protected boolean convertIndicatorToBoolean(String finalMessageIndicator) {
+        return "Y".equals(finalMessageIndicator);
+    }
+
+    protected String getXmlElement(Document doc, String exp) throws Exception {
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        return xPath.evaluate(exp, doc);
+    }
+
 }

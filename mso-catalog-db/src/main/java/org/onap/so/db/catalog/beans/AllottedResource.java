@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,148 +33,145 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "allotted_resource")
 public class AllottedResource implements Serializable {
 
-	private static final long serialVersionUID = 768026109321305392L;
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_UUID")
-	private String modelUUID;
+    private static final long serialVersionUID = 768026109321305392L;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_UUID")
+    private String modelUUID;
 
-	@Column(name = "MODEL_INVARIANT_UUID")
-	private String modelInvariantUUID;
+    @Column(name = "MODEL_INVARIANT_UUID")
+    private String modelInvariantUUID;
 
-	@Column(name = "MODEL_VERSION")
-	private String modelVersion;
+    @Column(name = "MODEL_VERSION")
+    private String modelVersion;
 
-	@Column(name = "MODEL_NAME")
-	private String modelName;
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	@Column(name = "TOSCA_NODE_TYPE")
-	private String toscaNodeType;
+    @Column(name = "TOSCA_NODE_TYPE")
+    private String toscaNodeType;
 
-	@Column(name = "SUBCATEGORY")
-	private String subcategory;
+    @Column(name = "SUBCATEGORY")
+    private String subcategory;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
-	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "allottedResource")
-	private Set<AllottedResourceCustomization> allotedResourceCustomization;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-				.append("modelVersion", modelVersion).append("modelName", modelName)
-				.append("toscaNodeType", toscaNodeType).append("subcategory", subcategory)
-				.append("description", description).append("created", created)
-				.append("allotedResourceCustomization", allotedResourceCustomization).toString();
-	}
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "allottedResource")
+    private Set<AllottedResourceCustomization> allotedResourceCustomization;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof AllottedResource)) {
-			return false;
-		}
-		AllottedResource castOther = (AllottedResource) other;
-		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelVersion", modelVersion).append("modelName", modelName)
+                .append("toscaNodeType", toscaNodeType).append("subcategory", subcategory)
+                .append("description", description).append("created", created)
+                .append("allotedResourceCustomization", allotedResourceCustomization).toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelUUID).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof AllottedResource)) {
+            return false;
+        }
+        AllottedResource castOther = (AllottedResource) other;
+        return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
+    }
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelUUID).toHashCode();
+    }
 
-	@LinkedResource
-	public Set<AllottedResourceCustomization> getAllotedResourceCustomization() {
-		if (allotedResourceCustomization == null)
-			allotedResourceCustomization = new HashSet<>();
-		return allotedResourceCustomization;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setAllotedResourceCustomization(Set<AllottedResourceCustomization> allotedResourceCustomization) {
-		this.allotedResourceCustomization = allotedResourceCustomization;
-	}
+    @LinkedResource
+    public Set<AllottedResourceCustomization> getAllotedResourceCustomization() {
+        if (allotedResourceCustomization == null)
+            allotedResourceCustomization = new HashSet<>();
+        return allotedResourceCustomization;
+    }
 
-	public String getModelUUID() {
-		return this.modelUUID;
-	}
+    public void setAllotedResourceCustomization(Set<AllottedResourceCustomization> allotedResourceCustomization) {
+        this.allotedResourceCustomization = allotedResourceCustomization;
+    }
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    public String getModelUUID() {
+        return this.modelUUID;
+    }
 
-	public String getModelInvariantUUID() {
-		return this.modelInvariantUUID;
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	public void setModelInvariantUUID(String modelInvariantUUID) {
-		this.modelInvariantUUID = modelInvariantUUID;
-	}
+    public String getModelInvariantUUID() {
+        return this.modelInvariantUUID;
+    }
 
-	public String getModelVersion() {
-		return this.modelVersion;
-	}
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
 
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
+    public String getModelVersion() {
+        return this.modelVersion;
+    }
 
-	public String getModelName() {
-		return this.modelName;
-	}
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    public String getModelName() {
+        return this.modelName;
+    }
 
-	public String getToscaNodeType() {
-		return this.toscaNodeType;
-	}
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
-	public void setToscaNodeType(String toscaNodeType) {
-		this.toscaNodeType = toscaNodeType;
-	}
+    public String getToscaNodeType() {
+        return this.toscaNodeType;
+    }
 
-	public String getSubcategory() {
-		return this.subcategory;
-	}
+    public void setToscaNodeType(String toscaNodeType) {
+        this.toscaNodeType = toscaNodeType;
+    }
 
-	public void setSubcategory(String subcategory) {
-		this.subcategory = subcategory;
-	}
+    public String getSubcategory() {
+        return this.subcategory;
+    }
 
-	public String getDescription() {
-		return this.description;
-	}
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return this.description;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
 }

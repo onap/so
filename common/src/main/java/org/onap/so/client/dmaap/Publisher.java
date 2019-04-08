@@ -17,10 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client.dmaap;
 
 public interface Publisher {
 
-	public void send(String json);
+    public void send(String json);
 }

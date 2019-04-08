@@ -28,15 +28,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class PoConfigTest extends BaseTest {
 
-	
-	@Autowired
-	private PoConfig poConfig;
-	
-	
-	@Test
-	public void tenantConfigValues() {
-		assertEquals("504", poConfig.getRetryCodes());
-		assertEquals(5, poConfig.getRetryDelay());
 
-	}
+    @Autowired
+    private PoConfig poConfig;
+
+
+    @Test
+    public void tenantConfigValues() {
+        assertEquals("504", poConfig.getRetryCodes());
+        assertEquals(5, poConfig.getRetryDelay());
+
+    }
 }

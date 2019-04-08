@@ -38,19 +38,17 @@ public abstract class MsoTenantUtils extends MsoCommonUtils {
     @Autowired
     protected CloudConfig cloudConfig;
 
-    public abstract String createTenant (String tenantName, String cloudSiteId, Map <String, String> metadata, boolean backout) 
-    		throws MsoException;
-       
-    public abstract MsoTenant queryTenant (String tenantId, String cloudSiteId) 
-    		throws MsoException, MsoCloudSiteNotFound;
-    
-    public abstract MsoTenant queryTenantByName (String tenantName, String cloudSiteId) 
-    		throws MsoException, MsoCloudSiteNotFound;
+    public abstract String createTenant(String tenantName, String cloudSiteId, Map<String, String> metadata,
+            boolean backout) throws MsoException;
 
-    public abstract boolean deleteTenant (String tenantId, String cloudSiteId) 
-    		throws MsoException;
+    public abstract MsoTenant queryTenant(String tenantId, String cloudSiteId)
+            throws MsoException, MsoCloudSiteNotFound;
 
-    public abstract String getKeystoneUrl (String regionId, CloudIdentity cloudIdentity)
-    		throws MsoException;
+    public abstract MsoTenant queryTenantByName(String tenantName, String cloudSiteId)
+            throws MsoException, MsoCloudSiteNotFound;
+
+    public abstract boolean deleteTenant(String tenantId, String cloudSiteId) throws MsoException;
+
+    public abstract String getKeystoneUrl(String regionId, CloudIdentity cloudIdentity) throws MsoException;
 
 }

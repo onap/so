@@ -21,14 +21,12 @@ package org.onap.so.bpmn.common.data;
 
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.impl.pvm.runtime.ExecutionImpl;
 import org.junit.Before;
@@ -75,540 +73,543 @@ import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
-public class TestDataSetup{
-	private int collectionCounter;
-	private int configurationCounter;
-	private int customerCounter;
-	private int genericVnfCounter;
-	private int instanceGroupCounter;
-	private int l3NetworkCounter;
-	private int owningEntityCounter;
-	private int pnfCounter;
-	private int projectCounter;
-	private int serviceInstanceCounter;
-	private int serviceProxyCounter;
-	private int serviceSubscriptionCounter;
-	private int vfModuleCounter;
-	private int volumeGroupCounter;
-	private int vpnBindingCounter;
-	private int vpnBondingLinkCounter;
+public class TestDataSetup {
+    private int collectionCounter;
+    private int configurationCounter;
+    private int customerCounter;
+    private int genericVnfCounter;
+    private int instanceGroupCounter;
+    private int l3NetworkCounter;
+    private int owningEntityCounter;
+    private int pnfCounter;
+    private int projectCounter;
+    private int serviceInstanceCounter;
+    private int serviceProxyCounter;
+    private int serviceSubscriptionCounter;
+    private int vfModuleCounter;
+    private int volumeGroupCounter;
+    private int vpnBindingCounter;
+    private int vpnBondingLinkCounter;
 
-	protected BuildingBlockExecution execution;
+    protected BuildingBlockExecution execution;
 
-	protected GeneralBuildingBlock gBBInput;
+    protected GeneralBuildingBlock gBBInput;
 
-	protected HashMap<ResourceKey, String> lookupKeyMap;
+    protected HashMap<ResourceKey, String> lookupKeyMap;
 
-	protected ExtractPojosForBB extractPojosForBB = new ExtractPojosForBB();
+    protected ExtractPojosForBB extractPojosForBB = new ExtractPojosForBB();
 
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
-	protected DelegateExecution delegateExecution;
+    protected DelegateExecution delegateExecution;
 
-	@Before
-	public void buildingBlockTestDataSetupBefore() {
-		collectionCounter = 0;
-		configurationCounter = 0;
-		customerCounter = 0;
-		genericVnfCounter = 0;
-		instanceGroupCounter = 0;
-		l3NetworkCounter = 0;
-		owningEntityCounter = 0;
-		pnfCounter = 0;
-		projectCounter = 0;
-		serviceInstanceCounter = 0;
-		serviceProxyCounter = 0;
-		serviceSubscriptionCounter = 0;
-		vfModuleCounter = 0;
-		volumeGroupCounter = 0;
-		vpnBindingCounter = 0;
-		vpnBondingLinkCounter = 0;
+    @Before
+    public void buildingBlockTestDataSetupBefore() {
+        collectionCounter = 0;
+        configurationCounter = 0;
+        customerCounter = 0;
+        genericVnfCounter = 0;
+        instanceGroupCounter = 0;
+        l3NetworkCounter = 0;
+        owningEntityCounter = 0;
+        pnfCounter = 0;
+        projectCounter = 0;
+        serviceInstanceCounter = 0;
+        serviceProxyCounter = 0;
+        serviceSubscriptionCounter = 0;
+        vfModuleCounter = 0;
+        volumeGroupCounter = 0;
+        vpnBindingCounter = 0;
+        vpnBondingLinkCounter = 0;
 
-		execution = new DelegateExecutionImpl(new ExecutionImpl());
-		execution.setVariable("testProcessKey", "testProcessKeyValue");
+        execution = new DelegateExecutionImpl(new ExecutionImpl());
+        execution.setVariable("testProcessKey", "testProcessKeyValue");
 
-		gBBInput = new GeneralBuildingBlock();
-		execution.setVariable("gBBInput", gBBInput);
+        gBBInput = new GeneralBuildingBlock();
+        execution.setVariable("gBBInput", gBBInput);
 
-		lookupKeyMap = new HashMap<ResourceKey, String>();
-		execution.setVariable("lookupKeyMap", lookupKeyMap);
+        lookupKeyMap = new HashMap<ResourceKey, String>();
+        execution.setVariable("lookupKeyMap", lookupKeyMap);
 
-	    ExecutionImpl mockExecutionImpl = mock(ExecutionImpl.class);
-    	doReturn("test").when(mockExecutionImpl).getProcessInstanceId();
+        ExecutionImpl mockExecutionImpl = mock(ExecutionImpl.class);
+        doReturn("test").when(mockExecutionImpl).getProcessInstanceId();
 
-    	ExecutionImpl executionImpl = new ExecutionImpl();
-    	executionImpl.setProcessInstance(mockExecutionImpl);
+        ExecutionImpl executionImpl = new ExecutionImpl();
+        executionImpl.setProcessInstance(mockExecutionImpl);
 
-    	delegateExecution = (DelegateExecution) executionImpl;
-    	delegateExecution.setVariable("testProcessKey", "testProcessKeyValue");
-	}
+        delegateExecution = (DelegateExecution) executionImpl;
+        delegateExecution.setVariable("testProcessKey", "testProcessKeyValue");
+    }
 
-	public Map<String, String> buildUserInput() {
-		Map<String, String> userInput = new HashMap<>();
-		userInput.put("testUserInputKey", "testUserInputValue");
+    public Map<String, String> buildUserInput() {
+        Map<String, String> userInput = new HashMap<>();
+        userInput.put("testUserInputKey", "testUserInputValue");
 
-		return userInput;
-	}
+        return userInput;
+    }
 
-	public Map<String, String> setUserInput() {
-		Map<String, String> userInput = buildUserInput();
+    public Map<String, String> setUserInput() {
+        Map<String, String> userInput = buildUserInput();
 
-		gBBInput.setUserInput(userInput);
+        gBBInput.setUserInput(userInput);
 
-		return userInput;
-	}
+        return userInput;
+    }
 
-	public RequestContext buildRequestContext() {
-		RequestContext requestContext = new RequestContext();
-		requestContext.setMsoRequestId(UUID.randomUUID().toString());
-		requestContext.setProductFamilyId("testProductFamilyId");
-		requestContext.setRequestorId("testRequestorId");
+    public RequestContext buildRequestContext() {
+        RequestContext requestContext = new RequestContext();
+        requestContext.setMsoRequestId(UUID.randomUUID().toString());
+        requestContext.setProductFamilyId("testProductFamilyId");
+        requestContext.setRequestorId("testRequestorId");
 
-		requestContext.setUserParams(new HashMap<>());
+        requestContext.setUserParams(new HashMap<>());
 
-        Map<String,Object> dataMap = new HashMap<>();
-        dataMap.put("vpnId","testVpnId");
-        dataMap.put("vpnRegion","testVpnRegion");
-        dataMap.put("vpnRt","testVpnRt");
-        dataMap.put("vpnName","vpnName");
+        Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("vpnId", "testVpnId");
+        dataMap.put("vpnRegion", "testVpnRegion");
+        dataMap.put("vpnRt", "testVpnRt");
+        dataMap.put("vpnName", "vpnName");
         dataMap.put("vpnRegion", Arrays.asList(new String[] {"USA", "EMEA", "APAC"}));
 
-        HashMap<String,Object> userParams = new HashMap<>();
-        userParams.put("vpnData",dataMap);
+        HashMap<String, Object> userParams = new HashMap<>();
+        userParams.put("vpnData", dataMap);
 
-		List<Map<String,Object>> userParamsList = new ArrayList<>();
-		userParamsList.add(userParams);
+        List<Map<String, Object>> userParamsList = new ArrayList<>();
+        userParamsList.add(userParams);
 
-		RequestParameters requestParameters = new RequestParameters();
-		requestParameters.setUserParams(userParamsList);
-		requestContext.setRequestParameters(requestParameters);
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setUserParams(userParamsList);
+        requestContext.setRequestParameters(requestParameters);
 
-		return requestContext;
-	}
+        return requestContext;
+    }
 
-	public RequestContext setRequestContext() {
-		RequestContext requestContext = buildRequestContext();
+    public RequestContext setRequestContext() {
+        RequestContext requestContext = buildRequestContext();
 
-		gBBInput.setRequestContext(requestContext);
+        gBBInput.setRequestContext(requestContext);
 
-		return requestContext;
-	}
+        return requestContext;
+    }
 
-	public CloudRegion buildCloudRegion() {
-		CloudRegion cloudRegion = new CloudRegion();
-		cloudRegion.setLcpCloudRegionId("testLcpCloudRegionId");
-		cloudRegion.setTenantId("testTenantId");
-		cloudRegion.setCloudOwner("testCloudOwner");
+    public CloudRegion buildCloudRegion() {
+        CloudRegion cloudRegion = new CloudRegion();
+        cloudRegion.setLcpCloudRegionId("testLcpCloudRegionId");
+        cloudRegion.setTenantId("testTenantId");
+        cloudRegion.setCloudOwner("testCloudOwner");
 
-		return cloudRegion;
-	}
+        return cloudRegion;
+    }
 
-	public CloudRegion setCloudRegion() {
-		CloudRegion cloudRegion = buildCloudRegion();
+    public CloudRegion setCloudRegion() {
+        CloudRegion cloudRegion = buildCloudRegion();
 
-		gBBInput.setCloudRegion(cloudRegion);
+        gBBInput.setCloudRegion(cloudRegion);
 
-		return cloudRegion;
-	}
+        return cloudRegion;
+    }
 
-	public OrchestrationContext buildOrchestrationContext() {
-		OrchestrationContext orchestrationContext = new OrchestrationContext();
+    public OrchestrationContext buildOrchestrationContext() {
+        OrchestrationContext orchestrationContext = new OrchestrationContext();
 
-		return orchestrationContext;
-	}
+        return orchestrationContext;
+    }
 
-	public OrchestrationContext setOrchestrationContext() {
-		OrchestrationContext orchestrationContext = buildOrchestrationContext();
+    public OrchestrationContext setOrchestrationContext() {
+        OrchestrationContext orchestrationContext = buildOrchestrationContext();
 
-		gBBInput.setOrchContext(orchestrationContext);
+        gBBInput.setOrchContext(orchestrationContext);
 
-		return orchestrationContext;
-	}
+        return orchestrationContext;
+    }
 
-	public Collection buildCollection() {
-		collectionCounter++;
+    public Collection buildCollection() {
+        collectionCounter++;
 
-		Collection collection = new Collection();
-		collection.setId("testId" + collectionCounter);
-		collection.setInstanceGroup(buildInstanceGroup());
+        Collection collection = new Collection();
+        collection.setId("testId" + collectionCounter);
+        collection.setInstanceGroup(buildInstanceGroup());
 
-		return collection;
-	}
+        return collection;
+    }
 
-	public Configuration buildConfiguration() {
-		configurationCounter++;
+    public Configuration buildConfiguration() {
+        configurationCounter++;
 
-		Configuration configuration = new Configuration();
-		configuration.setConfigurationId("testConfigurationId" + configurationCounter);
-		configuration.setConfigurationName("testConfigurationName" + configurationCounter);
+        Configuration configuration = new Configuration();
+        configuration.setConfigurationId("testConfigurationId" + configurationCounter);
+        configuration.setConfigurationName("testConfigurationName" + configurationCounter);
 
-		ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
-		modelInfoConfiguration.setModelVersionId("testModelVersionId" + configurationCounter);
-		modelInfoConfiguration.setModelInvariantId("testModelInvariantId" + configurationCounter);
-		modelInfoConfiguration.setModelCustomizationId("testModelCustomizationId" + configurationCounter);
+        ModelInfoConfiguration modelInfoConfiguration = new ModelInfoConfiguration();
+        modelInfoConfiguration.setModelVersionId("testModelVersionId" + configurationCounter);
+        modelInfoConfiguration.setModelInvariantId("testModelInvariantId" + configurationCounter);
+        modelInfoConfiguration.setModelCustomizationId("testModelCustomizationId" + configurationCounter);
 
-		configuration.setModelInfoConfiguration(modelInfoConfiguration);
+        configuration.setModelInfoConfiguration(modelInfoConfiguration);
 
-		return configuration;
-	}
+        return configuration;
+    }
 
-	public OwningEntity buildOwningEntity() {
-		owningEntityCounter++;
+    public OwningEntity buildOwningEntity() {
+        owningEntityCounter++;
 
-		OwningEntity owningEntity = new OwningEntity();
-		owningEntity.setOwningEntityId("testOwningEntityId" + owningEntityCounter);
-		owningEntity.setOwningEntityName("testOwningEntityName" + owningEntityCounter);
+        OwningEntity owningEntity = new OwningEntity();
+        owningEntity.setOwningEntityId("testOwningEntityId" + owningEntityCounter);
+        owningEntity.setOwningEntityName("testOwningEntityName" + owningEntityCounter);
 
-		return owningEntity;
-	}
+        return owningEntity;
+    }
 
-	public Project buildProject() {
-		projectCounter++;
+    public Project buildProject() {
+        projectCounter++;
 
-		Project project = new Project();
-		project.setProjectName("testProjectName1 , testProjectName2      , testProjectName3" + projectCounter);
+        Project project = new Project();
+        project.setProjectName("testProjectName1 , testProjectName2      , testProjectName3" + projectCounter);
 
-		return project;
-	}
+        return project;
+    }
 
-	public ServiceSubscription buildServiceSubscription() {
-		serviceSubscriptionCounter++;
+    public ServiceSubscription buildServiceSubscription() {
+        serviceSubscriptionCounter++;
 
-		ServiceSubscription serviceSubscription = new ServiceSubscription();
-		serviceSubscription.setTempUbSubAccountId("testTempUbSubAccountId" + serviceSubscriptionCounter);
-		serviceSubscription.setServiceType("testServiceType" + serviceSubscriptionCounter);
+        ServiceSubscription serviceSubscription = new ServiceSubscription();
+        serviceSubscription.setTempUbSubAccountId("testTempUbSubAccountId" + serviceSubscriptionCounter);
+        serviceSubscription.setServiceType("testServiceType" + serviceSubscriptionCounter);
 
-		return serviceSubscription;
-	}
+        return serviceSubscription;
+    }
 
-	public Customer buildCustomer() {
-		customerCounter++;
+    public Customer buildCustomer() {
+        customerCounter++;
 
-		Customer customer = new Customer();
-		customer.setGlobalCustomerId("testGlobalCustomerId" + customerCounter);
-		customer.setSubscriberType("testSubscriberType" + customerCounter);
+        Customer customer = new Customer();
+        customer.setGlobalCustomerId("testGlobalCustomerId" + customerCounter);
+        customer.setSubscriberType("testSubscriberType" + customerCounter);
 
-		customer.setServiceSubscription(buildServiceSubscription());
+        customer.setServiceSubscription(buildServiceSubscription());
 
-		return customer;
-	}
+        return customer;
+    }
 
-	public ServiceInstance buildServiceInstance() {
-		serviceInstanceCounter++;
+    public ServiceInstance buildServiceInstance() {
+        serviceInstanceCounter++;
 
-		ServiceInstance serviceInstance = new ServiceInstance();
-		serviceInstance.setServiceInstanceId("testServiceInstanceId" + serviceInstanceCounter);
-		serviceInstance.setServiceInstanceName("testServiceInstanceName" + serviceInstanceCounter);
+        ServiceInstance serviceInstance = new ServiceInstance();
+        serviceInstance.setServiceInstanceId("testServiceInstanceId" + serviceInstanceCounter);
+        serviceInstance.setServiceInstanceName("testServiceInstanceName" + serviceInstanceCounter);
 
-		ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
-		modelInfoServiceInstance.setModelInvariantUuid("testModelInvariantUUID" + serviceInstanceCounter);
-		modelInfoServiceInstance.setModelUuid("testModelUUID" + serviceInstanceCounter);
-		modelInfoServiceInstance.setModelVersion("testModelVersion" + serviceInstanceCounter);
-		modelInfoServiceInstance.setModelName("testModelName" + serviceInstanceCounter);
-		modelInfoServiceInstance.setServiceType("testServiceType" + serviceInstanceCounter);
-		modelInfoServiceInstance.setServiceRole("testServiceRole" + serviceInstanceCounter);
-		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
+        ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
+        modelInfoServiceInstance.setModelInvariantUuid("testModelInvariantUUID" + serviceInstanceCounter);
+        modelInfoServiceInstance.setModelUuid("testModelUUID" + serviceInstanceCounter);
+        modelInfoServiceInstance.setModelVersion("testModelVersion" + serviceInstanceCounter);
+        modelInfoServiceInstance.setModelName("testModelName" + serviceInstanceCounter);
+        modelInfoServiceInstance.setServiceType("testServiceType" + serviceInstanceCounter);
+        modelInfoServiceInstance.setServiceRole("testServiceRole" + serviceInstanceCounter);
+        serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
-		serviceInstance.setProject(buildProject());
+        serviceInstance.setProject(buildProject());
 
-		serviceInstance.setOwningEntity(buildOwningEntity());
+        serviceInstance.setOwningEntity(buildOwningEntity());
 
-		serviceInstance.setCollection(buildCollection());
+        serviceInstance.setCollection(buildCollection());
 
-		serviceInstance.getConfigurations().add(buildConfiguration());
+        serviceInstance.getConfigurations().add(buildConfiguration());
 
-		return serviceInstance;
-	}
+        return serviceInstance;
+    }
 
-	public ServiceInstance setServiceInstance() {
-		ServiceInstance serviceInstance = buildServiceInstance();
+    public ServiceInstance setServiceInstance() {
+        ServiceInstance serviceInstance = buildServiceInstance();
 
-		if(gBBInput.getCustomer() == null) {
-			gBBInput.setCustomer(buildCustomer());
-		}
-		gBBInput.getCustomer().getServiceSubscription().getServiceInstances().add(serviceInstance);
-		lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstance.getServiceInstanceId());
+        if (gBBInput.getCustomer() == null) {
+            gBBInput.setCustomer(buildCustomer());
+        }
+        gBBInput.getCustomer().getServiceSubscription().getServiceInstances().add(serviceInstance);
+        lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstance.getServiceInstanceId());
 
-		return serviceInstance;
-	}
+        return serviceInstance;
+    }
 
-	public Customer setCustomer() {
-		if(gBBInput.getCustomer() != null) return gBBInput.getCustomer();
-		Customer customer = new Customer();
-		customer.setGlobalCustomerId("testGlobalCustomerId");
-		customer.setSubscriberType("testSubscriberType");
+    public Customer setCustomer() {
+        if (gBBInput.getCustomer() != null)
+            return gBBInput.getCustomer();
+        Customer customer = new Customer();
+        customer.setGlobalCustomerId("testGlobalCustomerId");
+        customer.setSubscriberType("testSubscriberType");
 
-		customer.setServiceSubscription(buildServiceSubscription());
+        customer.setServiceSubscription(buildServiceSubscription());
 
-		gBBInput.setCustomer(customer);
+        gBBInput.setCustomer(customer);
 
-		return customer;
-	}
+        return customer;
+    }
 
-	public Collection setCollection() {
-		Collection collection = new Collection();
-		collection.setId("testId");
+    public Collection setCollection() {
+        Collection collection = new Collection();
+        collection.setId("testId");
 
-		ServiceInstance serviceInstance = null;
+        ServiceInstance serviceInstance = null;
 
-		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-		} catch(BBObjectNotFoundException e) {
-			serviceInstance = setServiceInstance();
-		}
+        try {
+            serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        } catch (BBObjectNotFoundException e) {
+            serviceInstance = setServiceInstance();
+        }
 
-		serviceInstance.setCollection(collection);
+        serviceInstance.setCollection(collection);
 
-		return collection;
-	}
+        return collection;
+    }
 
-	public InstanceGroup setInstanceGroup() {
-		InstanceGroup instanceGroup = new InstanceGroup();
-		instanceGroup.setId("testId");
-		instanceGroup.setInstanceGroupFunction("testInstanceGroupFunction");
+    public InstanceGroup setInstanceGroup() {
+        InstanceGroup instanceGroup = new InstanceGroup();
+        instanceGroup.setId("testId");
+        instanceGroup.setInstanceGroupFunction("testInstanceGroupFunction");
 
-		Collection collection = null;
+        Collection collection = null;
 
-		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			collection = serviceInstance.getCollection();
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            collection = serviceInstance.getCollection();
 
-			if (collection == null) {
-				collection = setCollection();
-			}
-		} catch(BBObjectNotFoundException e) {
-			collection = setCollection();
-		}
+            if (collection == null) {
+                collection = setCollection();
+            }
+        } catch (BBObjectNotFoundException e) {
+            collection = setCollection();
+        }
 
-		collection.setInstanceGroup(instanceGroup);
-		
+        collection.setInstanceGroup(instanceGroup);
 
-		return instanceGroup;
-	}
 
-	public InstanceGroup setInstanceGroupVnf() {
-		InstanceGroup instanceGroup = buildInstanceGroup();
+        return instanceGroup;
+    }
 
-		ServiceInstance serviceInstance = null;
+    public InstanceGroup setInstanceGroupVnf() {
+        InstanceGroup instanceGroup = buildInstanceGroup();
 
-		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-		} catch(BBObjectNotFoundException e) {
-			serviceInstance = setServiceInstance();
-		}
+        ServiceInstance serviceInstance = null;
 
-		serviceInstance.getInstanceGroups().add(instanceGroup);
-		lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, instanceGroup.getId());
+        try {
+            serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        } catch (BBObjectNotFoundException e) {
+            serviceInstance = setServiceInstance();
+        }
 
-		return instanceGroup;
-	}
+        serviceInstance.getInstanceGroups().add(instanceGroup);
+        lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, instanceGroup.getId());
 
-	public VpnBinding buildVpnBinding() {
-		vpnBindingCounter++;
+        return instanceGroup;
+    }
 
-		VpnBinding vpnBinding = new VpnBinding();
-		vpnBinding.setVpnId("testVpnId" + vpnBindingCounter);
-		vpnBinding.setVpnName("testVpnName" + vpnBindingCounter);
-		vpnBinding.setCustomerVpnId("testCustomerVpnId" + vpnBindingCounter);
+    public VpnBinding buildVpnBinding() {
+        vpnBindingCounter++;
 
-		return vpnBinding;
-	}
+        VpnBinding vpnBinding = new VpnBinding();
+        vpnBinding.setVpnId("testVpnId" + vpnBindingCounter);
+        vpnBinding.setVpnName("testVpnName" + vpnBindingCounter);
+        vpnBinding.setCustomerVpnId("testCustomerVpnId" + vpnBindingCounter);
 
-	public VpnBinding setVpnBinding() {
-		VpnBinding vpnBinding = buildVpnBinding();
+        return vpnBinding;
+    }
 
-		Customer customer = gBBInput.getCustomer();
+    public VpnBinding setVpnBinding() {
+        VpnBinding vpnBinding = buildVpnBinding();
 
-		if(customer == null){
-			customer = buildCustomer();
-		}
+        Customer customer = gBBInput.getCustomer();
 
-		customer.getVpnBindings().add(vpnBinding);
-		lookupKeyMap.put(ResourceKey.VPN_ID, vpnBinding.getVpnId());
+        if (customer == null) {
+            customer = buildCustomer();
+        }
 
-		return vpnBinding;
-	}
+        customer.getVpnBindings().add(vpnBinding);
+        lookupKeyMap.put(ResourceKey.VPN_ID, vpnBinding.getVpnId());
 
-	public InstanceGroup buildInstanceGroup() {
-		instanceGroupCounter++;
+        return vpnBinding;
+    }
 
-		InstanceGroup instanceGroup = new InstanceGroup();
-		instanceGroup.setId("testId" + instanceGroupCounter);
-		instanceGroup.setInstanceGroupFunction("testInstanceGroupFunction" + instanceGroupCounter);
+    public InstanceGroup buildInstanceGroup() {
+        instanceGroupCounter++;
 
-		return instanceGroup;
-	}
+        InstanceGroup instanceGroup = new InstanceGroup();
+        instanceGroup.setId("testId" + instanceGroupCounter);
+        instanceGroup.setInstanceGroupFunction("testInstanceGroupFunction" + instanceGroupCounter);
 
-	public L3Network buildL3Network() {
-		l3NetworkCounter++;
+        return instanceGroup;
+    }
 
-		L3Network network = new L3Network();
-		network.setNetworkId("testNetworkId" + l3NetworkCounter);
-		network.setNetworkName("testNetworkName" + l3NetworkCounter);
-		network.setNetworkType("testNetworkType" + l3NetworkCounter);
+    public L3Network buildL3Network() {
+        l3NetworkCounter++;
 
-		ModelInfoNetwork modelInfoNetwork = new ModelInfoNetwork();
-		modelInfoNetwork.setModelInvariantUUID("testModelInvariantUUID" + l3NetworkCounter);
-		modelInfoNetwork.setModelName("testModelName" + l3NetworkCounter);
-		modelInfoNetwork.setModelVersion("testModelVersion" + l3NetworkCounter);
-		modelInfoNetwork.setModelUUID("testModelUUID" + l3NetworkCounter);
-		network.setModelInfoNetwork(modelInfoNetwork);
+        L3Network network = new L3Network();
+        network.setNetworkId("testNetworkId" + l3NetworkCounter);
+        network.setNetworkName("testNetworkName" + l3NetworkCounter);
+        network.setNetworkType("testNetworkType" + l3NetworkCounter);
 
-		return network;
-	}
+        ModelInfoNetwork modelInfoNetwork = new ModelInfoNetwork();
+        modelInfoNetwork.setModelInvariantUUID("testModelInvariantUUID" + l3NetworkCounter);
+        modelInfoNetwork.setModelName("testModelName" + l3NetworkCounter);
+        modelInfoNetwork.setModelVersion("testModelVersion" + l3NetworkCounter);
+        modelInfoNetwork.setModelUUID("testModelUUID" + l3NetworkCounter);
+        network.setModelInfoNetwork(modelInfoNetwork);
 
-	public L3Network setL3Network() {
-		L3Network network = buildL3Network();
+        return network;
+    }
 
-		ServiceInstance serviceInstance = null;
+    public L3Network setL3Network() {
+        L3Network network = buildL3Network();
 
-		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-		} catch(BBObjectNotFoundException e) {
-			serviceInstance = setServiceInstance();
-		}
+        ServiceInstance serviceInstance = null;
 
-		serviceInstance.getNetworks().add(network);
-		lookupKeyMap.put(ResourceKey.NETWORK_ID, network.getNetworkId());
+        try {
+            serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        } catch (BBObjectNotFoundException e) {
+            serviceInstance = setServiceInstance();
+        }
 
-		return network;
-	}
+        serviceInstance.getNetworks().add(network);
+        lookupKeyMap.put(ResourceKey.NETWORK_ID, network.getNetworkId());
 
-	public GenericVnf buildGenericVnf() {
-		genericVnfCounter++;
+        return network;
+    }
 
-		GenericVnf genericVnf = new GenericVnf();
-		genericVnf.setVnfId("testVnfId" + genericVnfCounter);
-		genericVnf.setVnfName("testVnfName" + genericVnfCounter);
-		genericVnf.setVnfType("testVnfType" + genericVnfCounter);
-		genericVnf.setIpv4OamAddress("10.222.22.2");
+    public GenericVnf buildGenericVnf() {
+        genericVnfCounter++;
 
-		Platform platform = new Platform();
-		platform.setPlatformName(" testPlatformName, testPlatformName2   ,   testPlatformName3   , testPlatformName4");
-		genericVnf.setPlatform(platform);
+        GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setVnfId("testVnfId" + genericVnfCounter);
+        genericVnf.setVnfName("testVnfName" + genericVnfCounter);
+        genericVnf.setVnfType("testVnfType" + genericVnfCounter);
+        genericVnf.setIpv4OamAddress("10.222.22.2");
 
-		LineOfBusiness lob = new LineOfBusiness();
-		lob.setLineOfBusinessName("  testLineOfBusinessName   , testLineOfBusinessName2,    testLineOfBusinessName3,   testLineOfBusinessName4");
-		genericVnf.setLineOfBusiness(lob);
+        Platform platform = new Platform();
+        platform.setPlatformName(" testPlatformName, testPlatformName2   ,   testPlatformName3   , testPlatformName4");
+        genericVnf.setPlatform(platform);
 
-		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-		modelInfoGenericVnf.setModelName("testModelName" + genericVnfCounter);
-		modelInfoGenericVnf.setModelCustomizationUuid("testModelCustomizationUUID" + genericVnfCounter);
-		modelInfoGenericVnf.setModelInvariantUuid("testModelInvariantUUID" + genericVnfCounter);
-		modelInfoGenericVnf.setModelVersion("testModelVersion" + genericVnfCounter);
-		modelInfoGenericVnf.setModelUuid("testModelUUID" + genericVnfCounter);
-		modelInfoGenericVnf.setModelInstanceName("testInstanceName" + genericVnfCounter);
+        LineOfBusiness lob = new LineOfBusiness();
+        lob.setLineOfBusinessName(
+                "  testLineOfBusinessName   , testLineOfBusinessName2,    testLineOfBusinessName3,   testLineOfBusinessName4");
+        genericVnf.setLineOfBusiness(lob);
 
-		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+        ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+        modelInfoGenericVnf.setModelName("testModelName" + genericVnfCounter);
+        modelInfoGenericVnf.setModelCustomizationUuid("testModelCustomizationUUID" + genericVnfCounter);
+        modelInfoGenericVnf.setModelInvariantUuid("testModelInvariantUUID" + genericVnfCounter);
+        modelInfoGenericVnf.setModelVersion("testModelVersion" + genericVnfCounter);
+        modelInfoGenericVnf.setModelUuid("testModelUUID" + genericVnfCounter);
+        modelInfoGenericVnf.setModelInstanceName("testInstanceName" + genericVnfCounter);
 
-		License license = new License();
-		List<String> array = new ArrayList<String>();
-		array.add("testPoolUuid");
-		license.setEntitlementPoolUuids(array);
-		genericVnf.setLicense(license);
+        genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
 
-		return genericVnf;
-	}
+        License license = new License();
+        List<String> array = new ArrayList<String>();
+        array.add("testPoolUuid");
+        license.setEntitlementPoolUuids(array);
+        genericVnf.setLicense(license);
 
-	public GenericVnf setGenericVnf() {
-		GenericVnf genericVnf = buildGenericVnf();
+        return genericVnf;
+    }
 
-		ServiceInstance serviceInstance = null;
+    public GenericVnf setGenericVnf() {
+        GenericVnf genericVnf = buildGenericVnf();
 
-		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-		} catch(BBObjectNotFoundException e) {
-			serviceInstance = setServiceInstance();
-		}
+        ServiceInstance serviceInstance = null;
 
-		serviceInstance.getVnfs().add(genericVnf);
-		lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, genericVnf.getVnfId());
+        try {
+            serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        } catch (BBObjectNotFoundException e) {
+            serviceInstance = setServiceInstance();
+        }
 
-		return genericVnf;
-	}
+        serviceInstance.getVnfs().add(genericVnf);
+        lookupKeyMap.put(ResourceKey.GENERIC_VNF_ID, genericVnf.getVnfId());
 
-	public VfModule buildVfModule() {
-		vfModuleCounter++;
+        return genericVnf;
+    }
 
-		VfModule vfModule = new VfModule();
-		vfModule.setVfModuleId("testVfModuleId" + vfModuleCounter);
-		vfModule.setVfModuleName("testVfModuleName" + vfModuleCounter);
-		vfModule.setModuleIndex(0);
-		ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
-		modelInfoVfModule.setModelInvariantUUID("testModelInvariantUUID" + vfModuleCounter);
-		modelInfoVfModule.setModelVersion("testModelVersion" + vfModuleCounter);
-		modelInfoVfModule.setModelUUID("testModelUUID" + vfModuleCounter);
-		modelInfoVfModule.setModelName("testModelName" + vfModuleCounter);
-		modelInfoVfModule.setModelCustomizationUUID("testModelCustomizationUUID" + vfModuleCounter);
-		vfModule.setModelInfoVfModule(modelInfoVfModule);
+    public VfModule buildVfModule() {
+        vfModuleCounter++;
 
-		return vfModule;
-	}
+        VfModule vfModule = new VfModule();
+        vfModule.setVfModuleId("testVfModuleId" + vfModuleCounter);
+        vfModule.setVfModuleName("testVfModuleName" + vfModuleCounter);
+        vfModule.setModuleIndex(0);
+        ModelInfoVfModule modelInfoVfModule = new ModelInfoVfModule();
+        modelInfoVfModule.setModelInvariantUUID("testModelInvariantUUID" + vfModuleCounter);
+        modelInfoVfModule.setModelVersion("testModelVersion" + vfModuleCounter);
+        modelInfoVfModule.setModelUUID("testModelUUID" + vfModuleCounter);
+        modelInfoVfModule.setModelName("testModelName" + vfModuleCounter);
+        modelInfoVfModule.setModelCustomizationUUID("testModelCustomizationUUID" + vfModuleCounter);
+        vfModule.setModelInfoVfModule(modelInfoVfModule);
 
-	public VfModule setVfModule() {
-		return setVfModule(true);
-	}
-	
-	public VfModule setVfModule(boolean addToGenericVnf) {
-		VfModule vfModule = buildVfModule();
+        return vfModule;
+    }
 
-		GenericVnf genericVnf = null;
+    public VfModule setVfModule() {
+        return setVfModule(true);
+    }
 
-		try {
-			genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-		} catch(BBObjectNotFoundException e) {
-			genericVnf = setGenericVnf();
-		}
+    public VfModule setVfModule(boolean addToGenericVnf) {
+        VfModule vfModule = buildVfModule();
 
-		if (addToGenericVnf) {
-			genericVnf.getVfModules().add(vfModule);
-		}
-		lookupKeyMap.put(ResourceKey.VF_MODULE_ID, vfModule.getVfModuleId());
+        GenericVnf genericVnf = null;
 
-		return vfModule;
-	}
+        try {
+            genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+        } catch (BBObjectNotFoundException e) {
+            genericVnf = setGenericVnf();
+        }
 
-	public VolumeGroup buildVolumeGroup() {
-		volumeGroupCounter++;
+        if (addToGenericVnf) {
+            genericVnf.getVfModules().add(vfModule);
+        }
+        lookupKeyMap.put(ResourceKey.VF_MODULE_ID, vfModule.getVfModuleId());
 
-		VolumeGroup volumeGroup = new VolumeGroup();
-		volumeGroup.setVolumeGroupId("testVolumeGroupId" + volumeGroupCounter);
-		volumeGroup.setVolumeGroupName("testVolumeGroupName" + volumeGroupCounter);
-		volumeGroup.setHeatStackId("testHeatStackId" + volumeGroupCounter);
+        return vfModule;
+    }
 
-		return volumeGroup;
-	}
+    public VolumeGroup buildVolumeGroup() {
+        volumeGroupCounter++;
 
-	public VolumeGroup setVolumeGroup() {
-		VolumeGroup volumeGroup = buildVolumeGroup();
+        VolumeGroup volumeGroup = new VolumeGroup();
+        volumeGroup.setVolumeGroupId("testVolumeGroupId" + volumeGroupCounter);
+        volumeGroup.setVolumeGroupName("testVolumeGroupName" + volumeGroupCounter);
+        volumeGroup.setHeatStackId("testHeatStackId" + volumeGroupCounter);
 
-		GenericVnf genericVnf = null;
+        return volumeGroup;
+    }
 
-		try {
-			genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-		} catch(BBObjectNotFoundException e) {
-			genericVnf = setGenericVnf();
-		}
+    public VolumeGroup setVolumeGroup() {
+        VolumeGroup volumeGroup = buildVolumeGroup();
 
-		genericVnf.getVolumeGroups().add(volumeGroup);
-		lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroup.getVolumeGroupId());
+        GenericVnf genericVnf = null;
 
-		return volumeGroup;
-	}
+        try {
+            genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+        } catch (BBObjectNotFoundException e) {
+            genericVnf = setGenericVnf();
+        }
 
-	public Pnf buildPnf() {
-		pnfCounter++;
+        genericVnf.getVolumeGroups().add(volumeGroup);
+        lookupKeyMap.put(ResourceKey.VOLUME_GROUP_ID, volumeGroup.getVolumeGroupId());
 
-		Pnf pnf = new Pnf();
-		pnf.setPnfId("testPnfId" + pnfCounter);
-		pnf.setPnfName("testPnfName" + pnfCounter);
+        return volumeGroup;
+    }
 
-		return pnf;
-	}
+    public Pnf buildPnf() {
+        pnfCounter++;
 
-	public ServiceProxy buildServiceProxy() {
-		serviceProxyCounter++;
+        Pnf pnf = new Pnf();
+        pnf.setPnfId("testPnfId" + pnfCounter);
+        pnf.setPnfName("testPnfName" + pnfCounter);
+
+        return pnf;
+    }
+
+    public ServiceProxy buildServiceProxy() {
+        serviceProxyCounter++;
 
         ServiceProxy serviceProxy = new ServiceProxy();
         serviceProxy.setServiceInstance(buildServiceInstance());
@@ -623,115 +624,115 @@ public class TestDataSetup{
         serviceProxy.getServiceInstance().getPnfs().add(secondaryPnf);
 
         return serviceProxy;
-	}
+    }
 
-	public VpnBondingLink buildVpnBondingLink() {
-		vpnBondingLinkCounter++;
+    public VpnBondingLink buildVpnBondingLink() {
+        vpnBondingLinkCounter++;
 
-		VpnBondingLink vpnBondingLink = new VpnBondingLink();
-		vpnBondingLink.setVpnBondingLinkId("testVpnBondingLinkId" + vpnBondingLinkCounter);
+        VpnBondingLink vpnBondingLink = new VpnBondingLink();
+        vpnBondingLink.setVpnBondingLinkId("testVpnBondingLinkId" + vpnBondingLinkCounter);
 
-		Configuration vnrConfiguration = buildConfiguration();
-		vnrConfiguration.setNetwork(buildL3Network());
-		vpnBondingLink.setVnrConfiguration(vnrConfiguration);
+        Configuration vnrConfiguration = buildConfiguration();
+        vnrConfiguration.setNetwork(buildL3Network());
+        vpnBondingLink.setVnrConfiguration(vnrConfiguration);
 
-		vpnBondingLink.setVrfConfiguration(buildConfiguration());
+        vpnBondingLink.setVrfConfiguration(buildConfiguration());
 
         vpnBondingLink.setInfrastructureServiceProxy(buildServiceProxy());
 
         vpnBondingLink.setTransportServiceProxy(buildServiceProxy());
 
-		return vpnBondingLink;
-	}
+        return vpnBondingLink;
+    }
 
-	public VpnBondingLink setVpnBondingLink() {
-		VpnBondingLink vpnBondingLink = buildVpnBondingLink();
+    public VpnBondingLink setVpnBondingLink() {
+        VpnBondingLink vpnBondingLink = buildVpnBondingLink();
 
-		ServiceInstance serviceInstance = null;
+        ServiceInstance serviceInstance = null;
 
-		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-		} catch(BBObjectNotFoundException e) {
-			serviceInstance = setServiceInstance();
-		}
+        try {
+            serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        } catch (BBObjectNotFoundException e) {
+            serviceInstance = setServiceInstance();
+        }
 
-		serviceInstance.getVpnBondingLinks().add(vpnBondingLink);
-		lookupKeyMap.put(ResourceKey.VPN_BONDING_LINK_ID, vpnBondingLink.getVpnBondingLinkId());
+        serviceInstance.getVpnBondingLinks().add(vpnBondingLink);
+        lookupKeyMap.put(ResourceKey.VPN_BONDING_LINK_ID, vpnBondingLink.getVpnBondingLinkId());
 
 
-		return vpnBondingLink;
-	}
+        return vpnBondingLink;
+    }
 
-	public Customer setAvpnCustomer() {
-		Customer customer = buildCustomer();
+    public Customer setAvpnCustomer() {
+        Customer customer = buildCustomer();
 
-		gBBInput.setCustomer(customer);
+        gBBInput.setCustomer(customer);
 
-		return customer;
-	}
+        return customer;
+    }
 
-	public ServiceProxy setServiceProxy(String uniqueIdentifier, String type) {
-		ServiceProxy serviceProxy = new ServiceProxy();
-		serviceProxy.setId("testProxyId" + uniqueIdentifier);
-		serviceProxy.setType(type);
+    public ServiceProxy setServiceProxy(String uniqueIdentifier, String type) {
+        ServiceProxy serviceProxy = new ServiceProxy();
+        serviceProxy.setId("testProxyId" + uniqueIdentifier);
+        serviceProxy.setType(type);
 
-		ModelInfoServiceProxy modelInfo = new ModelInfoServiceProxy();
-		modelInfo.setModelInvariantUuid("testProxyModelInvariantUuid" + uniqueIdentifier);
-		modelInfo.setModelName("testProxyModelName" + uniqueIdentifier);
-		modelInfo.setModelUuid("testProxyModelUuid" + uniqueIdentifier);
-		modelInfo.setModelVersion("testProxyModelVersion" + uniqueIdentifier);
-		modelInfo.setModelInstanceName("testProxyInstanceName" + uniqueIdentifier);
+        ModelInfoServiceProxy modelInfo = new ModelInfoServiceProxy();
+        modelInfo.setModelInvariantUuid("testProxyModelInvariantUuid" + uniqueIdentifier);
+        modelInfo.setModelName("testProxyModelName" + uniqueIdentifier);
+        modelInfo.setModelUuid("testProxyModelUuid" + uniqueIdentifier);
+        modelInfo.setModelVersion("testProxyModelVersion" + uniqueIdentifier);
+        modelInfo.setModelInstanceName("testProxyInstanceName" + uniqueIdentifier);
 
-		serviceProxy.setModelInfoServiceProxy(modelInfo);
+        serviceProxy.setModelInfoServiceProxy(modelInfo);
 
-		return serviceProxy;
-	}
+        return serviceProxy;
+    }
 
-	public AllottedResource setAllottedResource(String uniqueIdentifier) {
-		AllottedResource ar = new AllottedResource();
-		ar.setId("testAllottedResourceId" + uniqueIdentifier);
+    public AllottedResource setAllottedResource(String uniqueIdentifier) {
+        AllottedResource ar = new AllottedResource();
+        ar.setId("testAllottedResourceId" + uniqueIdentifier);
 
-		ModelInfoAllottedResource modelInfo = new ModelInfoAllottedResource();
-		modelInfo.setModelInvariantUuid("testAllottedModelInvariantUuid" + uniqueIdentifier);
-		modelInfo.setModelName("testAllottedModelName" + uniqueIdentifier);
-		modelInfo.setModelUuid("testAllottedModelUuid" + uniqueIdentifier);
-		modelInfo.setModelVersion("testAllottedModelVersion" + uniqueIdentifier);
-		modelInfo.setModelInstanceName("testAllottedModelInstanceName" + uniqueIdentifier);
+        ModelInfoAllottedResource modelInfo = new ModelInfoAllottedResource();
+        modelInfo.setModelInvariantUuid("testAllottedModelInvariantUuid" + uniqueIdentifier);
+        modelInfo.setModelName("testAllottedModelName" + uniqueIdentifier);
+        modelInfo.setModelUuid("testAllottedModelUuid" + uniqueIdentifier);
+        modelInfo.setModelVersion("testAllottedModelVersion" + uniqueIdentifier);
+        modelInfo.setModelInstanceName("testAllottedModelInstanceName" + uniqueIdentifier);
 
-		ar.setModelInfoAllottedResource(modelInfo);
+        ar.setModelInfoAllottedResource(modelInfo);
 
-		return ar;
-	}
+        return ar;
+    }
 
-	public Configuration setConfiguration () {
-		Configuration config = new Configuration();
-		config.setConfigurationId("testConfigurationId");
-		List<Configuration> configurations = new ArrayList<>();
-		configurations.add(config);
-		ServiceInstance serviceInstance = new ServiceInstance();
-		try {
-			serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-		} catch(BBObjectNotFoundException e) {
-			serviceInstance = setServiceInstance();
-		}
-		lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "testConfigurationId");
-		serviceInstance.setConfigurations(configurations);
-		return config;
-	}
+    public Configuration setConfiguration() {
+        Configuration config = new Configuration();
+        config.setConfigurationId("testConfigurationId");
+        List<Configuration> configurations = new ArrayList<>();
+        configurations.add(config);
+        ServiceInstance serviceInstance = new ServiceInstance();
+        try {
+            serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+        } catch (BBObjectNotFoundException e) {
+            serviceInstance = setServiceInstance();
+        }
+        lookupKeyMap.put(ResourceKey.CONFIGURATION_ID, "testConfigurationId");
+        serviceInstance.setConfigurations(configurations);
+        return config;
+    }
 
-	public Subnet buildSubnet() {
+    public Subnet buildSubnet() {
         Subnet subnet = new Subnet();
         subnet.setSubnetId("testSubnetId");
         subnet.setOrchestrationStatus(OrchestrationStatus.PENDING);
         subnet.setNeutronSubnetId("testNeutronSubnetId");
-		return subnet;
-	}
-	
-	public NetworkPolicy buildNetworkPolicy() {
-		NetworkPolicy networkPolicy = new NetworkPolicy();
-		networkPolicy.setNetworkPolicyId("testNetworkPolicyId");
-		networkPolicy.setNetworkPolicyFqdn("testNetworkPolicyFqdn");
-		networkPolicy.setHeatStackId("testHeatStackId");		
-		return networkPolicy;
-	}
+        return subnet;
+    }
+
+    public NetworkPolicy buildNetworkPolicy() {
+        NetworkPolicy networkPolicy = new NetworkPolicy();
+        networkPolicy.setNetworkPolicyId("testNetworkPolicyId");
+        networkPolicy.setNetworkPolicyFqdn("testNetworkPolicyFqdn");
+        networkPolicy.setHeatStackId("testHeatStackId");
+        return networkPolicy;
+    }
 }

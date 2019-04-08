@@ -27,6 +27,7 @@ public interface OpenstackClient {
 
     /**
      * Get a server object by server ID
+     * 
      * @param serverId Unique server-name (simple name) or server-id (UUID)
      * @return Server object
      */
@@ -34,6 +35,7 @@ public interface OpenstackClient {
 
     /**
      * Get a port object by port ID
+     * 
      * @param portId Unique UUID of the port.
      * @return Port object.
      */
@@ -41,12 +43,14 @@ public interface OpenstackClient {
 
     /**
      * Returns a list of all ports we have the right to see
+     * 
      * @return List of all Openstack ports
      */
     List<Port> getAllPorts();
 
     /**
      * Returns a list of all the resources for the stack
+     * 
      * @param stackId Stack name or unique UUID
      * @param nestingDepth The recursion level for which resources will be listed.
      * @return List of Openstack Stack resources
@@ -55,6 +59,7 @@ public interface OpenstackClient {
 
     /**
      * Get a network instance by network ID
+     * 
      * @param networkId Unique UUID of the network.
      * @return Network object.
      */
@@ -62,6 +67,7 @@ public interface OpenstackClient {
 
     /**
      * List networks by filtering parameters
+     * 
      * @param filterParams key-value pairs for filtering params
      * @return List of filtered Network objects
      */

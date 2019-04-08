@@ -28,7 +28,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,97 +52,113 @@ import org.onap.so.client.sdnc.beans.SDNCRequest;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 
 public class SDNCDeactivateTaskTest extends BaseTaskTest {
-	@InjectMocks
-	private SDNCDeactivateTasks sdncDeactivateTasks = new SDNCDeactivateTasks();
-	
-	private ServiceInstance serviceInstance;
-	private CloudRegion cloudRegion;
-	private RequestContext requestContext;
-	private GenericVnf genericVnf;
-	private VfModule vfModule;
-	private L3Network network;
-	private Customer customer;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		customer = setCustomer();
-		serviceInstance = setServiceInstance();
-		cloudRegion = setCloudRegion();
-		requestContext = setRequestContext();
-		genericVnf = setGenericVnf();
-		vfModule = setVfModule();
-		network = setL3Network();
-		
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
+    @InjectMocks
+    private SDNCDeactivateTasks sdncDeactivateTasks = new SDNCDeactivateTasks();
 
-	}
-	
-	@Test
-	public void deactivateVfModuleTest() throws Exception {
-		doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).deactivateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncDeactivateTasks.deactivateVfModule(execution);
-		verify(sdncVfModuleResources, times(1)).deactivateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.VFMODULE,sdncRequest.getTopology());
-	}
-	
-	@Test
-	public void deactivateVfModuleExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(sdncVfModuleResources).deactivateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncDeactivateTasks.deactivateVfModule(execution);
-	}
-	
-	@Test
-	public void deactivateVnfTest() throws Exception {
-		doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncDeactivateTasks.deactivateVnf(execution);
-		verify(sdncVnfResources, times(1)).deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.VNF,sdncRequest.getTopology());
-	}
-	
-	@Test
-	public void deactivateVnfExceptionTest() throws Exception {
-		doThrow(RuntimeException.class).when(sdncVnfResources).deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		expectedException.expect(BpmnError.class);
-		sdncDeactivateTasks.deactivateVnf(execution);
-	}
-	
-	@Test
-	public void deactivateServiceInstanceTest() throws Exception {
-		doReturn(new GenericResourceApiServiceOperationInformation()).when(sdncServiceInstanceResources).deactivateServiceInstance(serviceInstance, customer, requestContext);
-		sdncDeactivateTasks.deactivateServiceInstance(execution);
-		verify(sdncServiceInstanceResources, times(1)).deactivateServiceInstance(serviceInstance, customer, requestContext);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.SERVICE,sdncRequest.getTopology());
-	}
-	
-	@Test
-	public void deactivateServiceInstanceExceptionTest() throws Exception {
-		doThrow(RuntimeException.class).when(sdncServiceInstanceResources).deactivateServiceInstance(serviceInstance, customer, requestContext);
-		expectedException.expect(BpmnError.class);
-		sdncDeactivateTasks.deactivateServiceInstance(execution);
-	}
-	
-	@Test
-	public void test_deactivateNetwork() throws Exception {
-		doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources).deactivateNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
-		sdncDeactivateTasks.deactivateNetwork(execution);
-		verify(sdncNetworkResources, times(1)).deactivateNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.NETWORK,sdncRequest.getTopology());
-	}
-	
-	@Test
-	public void test_deactivateNetwork_exception() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID));
-		sdncDeactivateTasks.deactivateNetwork(execution);
-		verify(sdncNetworkResources, times(0)).deactivateNetwork(network, serviceInstance, customer, requestContext, cloudRegion);	
-	}
+    private ServiceInstance serviceInstance;
+    private CloudRegion cloudRegion;
+    private RequestContext requestContext;
+    private GenericVnf genericVnf;
+    private VfModule vfModule;
+    private L3Network network;
+    private Customer customer;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        customer = setCustomer();
+        serviceInstance = setServiceInstance();
+        cloudRegion = setCloudRegion();
+        requestContext = setRequestContext();
+        genericVnf = setGenericVnf();
+        vfModule = setVfModule();
+        network = setL3Network();
+
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+
+    }
+
+    @Test
+    public void deactivateVfModuleTest() throws Exception {
+        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources)
+                .deactivateVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+        sdncDeactivateTasks.deactivateVfModule(execution);
+        verify(sdncVfModuleResources, times(1)).deactivateVfModule(vfModule, genericVnf, serviceInstance, customer,
+                cloudRegion, requestContext);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.VFMODULE, sdncRequest.getTopology());
+    }
+
+    @Test
+    public void deactivateVfModuleExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(sdncVfModuleResources).deactivateVfModule(vfModule, genericVnf,
+                serviceInstance, customer, cloudRegion, requestContext);
+        sdncDeactivateTasks.deactivateVfModule(execution);
+    }
+
+    @Test
+    public void deactivateVnfTest() throws Exception {
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).deactivateVnf(genericVnf,
+                serviceInstance, customer, cloudRegion, requestContext);
+        sdncDeactivateTasks.deactivateVnf(execution);
+        verify(sdncVnfResources, times(1)).deactivateVnf(genericVnf, serviceInstance, customer, cloudRegion,
+                requestContext);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.VNF, sdncRequest.getTopology());
+    }
+
+    @Test
+    public void deactivateVnfExceptionTest() throws Exception {
+        doThrow(RuntimeException.class).when(sdncVnfResources).deactivateVnf(genericVnf, serviceInstance, customer,
+                cloudRegion, requestContext);
+        expectedException.expect(BpmnError.class);
+        sdncDeactivateTasks.deactivateVnf(execution);
+    }
+
+    @Test
+    public void deactivateServiceInstanceTest() throws Exception {
+        doReturn(new GenericResourceApiServiceOperationInformation()).when(sdncServiceInstanceResources)
+                .deactivateServiceInstance(serviceInstance, customer, requestContext);
+        sdncDeactivateTasks.deactivateServiceInstance(execution);
+        verify(sdncServiceInstanceResources, times(1)).deactivateServiceInstance(serviceInstance, customer,
+                requestContext);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.SERVICE, sdncRequest.getTopology());
+    }
+
+    @Test
+    public void deactivateServiceInstanceExceptionTest() throws Exception {
+        doThrow(RuntimeException.class).when(sdncServiceInstanceResources).deactivateServiceInstance(serviceInstance,
+                customer, requestContext);
+        expectedException.expect(BpmnError.class);
+        sdncDeactivateTasks.deactivateServiceInstance(execution);
+    }
+
+    @Test
+    public void test_deactivateNetwork() throws Exception {
+        doReturn(new GenericResourceApiNetworkOperationInformation()).when(sdncNetworkResources)
+                .deactivateNetwork(network, serviceInstance, customer, requestContext, cloudRegion);
+        sdncDeactivateTasks.deactivateNetwork(execution);
+        verify(sdncNetworkResources, times(1)).deactivateNetwork(network, serviceInstance, customer, requestContext,
+                cloudRegion);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.NETWORK, sdncRequest.getTopology());
+    }
+
+    @Test
+    public void test_deactivateNetwork_exception() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),
+                ArgumentMatchers.eq(ResourceKey.NETWORK_ID));
+        sdncDeactivateTasks.deactivateNetwork(execution);
+        verify(sdncNetworkResources, times(0)).deactivateNetwork(network, serviceInstance, customer, requestContext,
+                cloudRegion);
+    }
 }

@@ -24,12 +24,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 
 public class GraphInventoryCommonObjectMapperPatchProvider extends GraphInventoryCommonObjectMapperProvider {
 
-	
-	public GraphInventoryCommonObjectMapperPatchProvider() {
-		super();
-		EmptyStringToNullSerializer sp = new EmptyStringToNullSerializer(); 
-		SimpleModule emptyStringModule = new SimpleModule();
-		emptyStringModule.addSerializer(String.class, sp);
-		mapper.registerModule(emptyStringModule);
-	}
+
+    public GraphInventoryCommonObjectMapperPatchProvider() {
+        super();
+        EmptyStringToNullSerializer sp = new EmptyStringToNullSerializer();
+        SimpleModule emptyStringModule = new SimpleModule();
+        emptyStringModule.addSerializer(String.class, sp);
+        mapper.registerModule(emptyStringModule);
+    }
 }

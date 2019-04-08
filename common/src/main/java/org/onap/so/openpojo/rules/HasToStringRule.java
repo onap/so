@@ -22,51 +22,50 @@ package org.onap.so.openpojo.rules;
 
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.anything;
-
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-
 import org.hamcrest.Matcher;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.validation.affirm.Affirm;
 import com.openpojo.validation.rule.Rule;
 
 public class HasToStringRule implements Rule {
-	
-	private final Matcher m;
-	public HasToStringRule() {
-		m = anything();
-	}
-	
-	public HasToStringRule(Matcher m) {
-		this.m = m;
-	}
-	@Override
-	public void evaluate(PojoClass pojoClass) {
-		Class<?> clazz = pojoClass.getClazz();
-		if (anyOf(m).matches(clazz)) { 
-			boolean hasToString = false;
-			final String name = clazz.getSimpleName();
-			final Method[] methods;
-			if (clazz.getSuperclass().equals(Object.class)) {
-				methods = clazz.getDeclaredMethods();
-			} else {
-				methods = clazz.getMethods();
-			}
-			for (Method method : methods) {
-				Parameter[] parameters = method.getParameters();
-				if ("toString".equals(method.getName()) && String.class.equals(method.getReturnType()) && parameters.length == 0) {
-					hasToString = true;
-					break;
-				}
-			}
-			
-			if (!hasToString) {
-				Affirm.fail(String.format(
-						"[%s] does not override toString", name));
-			}
-		}
-	}
+
+    private final Matcher m;
+
+    public HasToStringRule() {
+        m = anything();
+    }
+
+    public HasToStringRule(Matcher m) {
+        this.m = m;
+    }
+
+    @Override
+    public void evaluate(PojoClass pojoClass) {
+        Class<?> clazz = pojoClass.getClazz();
+        if (anyOf(m).matches(clazz)) {
+            boolean hasToString = false;
+            final String name = clazz.getSimpleName();
+            final Method[] methods;
+            if (clazz.getSuperclass().equals(Object.class)) {
+                methods = clazz.getDeclaredMethods();
+            } else {
+                methods = clazz.getMethods();
+            }
+            for (Method method : methods) {
+                Parameter[] parameters = method.getParameters();
+                if ("toString".equals(method.getName()) && String.class.equals(method.getReturnType())
+                        && parameters.length == 0) {
+                    hasToString = true;
+                    break;
+                }
+            }
+
+            if (!hasToString) {
+                Affirm.fail(String.format("[%s] does not override toString", name));
+            }
+        }
+    }
 
 }

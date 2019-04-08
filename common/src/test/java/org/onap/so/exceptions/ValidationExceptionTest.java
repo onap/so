@@ -28,25 +28,25 @@ import org.junit.Test;
  */
 public class ValidationExceptionTest {
     @Test
-    public void validationExceptionOverrideMessageFalse(){
+    public void validationExceptionOverrideMessageFalse() {
         ValidationException e = new ValidationException("testMessage", false);
         Assert.assertEquals("testMessage", e.getMessage());
     }
 
     @Test
-    public void validationExceptionOverrideMessageTrue(){
+    public void validationExceptionOverrideMessageTrue() {
         ValidationException e = new ValidationException("testMessage", true);
         Assert.assertEquals("No valid testMessage is specified", e.getMessage());
     }
 
     @Test
-    public void validationException(){
+    public void validationException() {
         ValidationException e = new ValidationException("testMessage");
         Assert.assertEquals("No valid testMessage is specified", e.getMessage());
     }
 
     @Test
-    public void validationExceptionVersion(){
+    public void validationExceptionVersion() {
         ValidationException e = new ValidationException("testMessage", "secondTestMessage");
         Assert.assertEquals("testMessage does not match secondTestMessage", e.getMessage());
     }

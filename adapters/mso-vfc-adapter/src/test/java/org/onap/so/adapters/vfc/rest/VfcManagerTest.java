@@ -36,7 +36,6 @@ import org.onap.so.adapters.vfc.util.RestfulUtil;
 import org.onap.so.db.request.beans.ResourceOperationStatus;
 import org.onap.so.db.request.data.repository.ResourceOperationStatusRepository;
 import org.springframework.http.HttpStatus;
-
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -122,12 +121,12 @@ public class VfcManagerTest {
 
         RestfulResponse restfulResponse = new RestfulResponse();
         restfulResponse.setStatus(HttpStatus.OK.value());
-        restfulResponse
-            .setResponseContent("{\"" + CommonConstant.JOB_ID + "\": \"someJobId\", " + "\"responseDescriptor\" : {}}");
+        restfulResponse.setResponseContent(
+                "{\"" + CommonConstant.JOB_ID + "\": \"someJobId\", " + "\"responseDescriptor\" : {}}");
         when(restfulUtil.send(any(), any(), any())).thenReturn(restfulResponse);
 
         when(resourceOperationStatusRepository.findOne(any()))
-            .thenReturn(java.util.Optional.ofNullable(resourceOperationStatus));
+                .thenReturn(java.util.Optional.ofNullable(resourceOperationStatus));
 
         RestfulResponse response = vfcManager.getNsProgress(nsOperationKey, "someJobId");
         assertEquals(HttpStatus.OK.value(), response.getStatus());
@@ -148,7 +147,7 @@ public class VfcManagerTest {
         when(restfulUtil.send(any(), any(), any())).thenReturn(restfulResponse);
 
         when(resourceOperationStatusRepository.findOne(any()))
-            .thenReturn(java.util.Optional.ofNullable(resourceOperationStatus));
+                .thenReturn(java.util.Optional.ofNullable(resourceOperationStatus));
 
         RestfulResponse response = vfcManager.scaleNs("someNsInstanceId", segInput);
         assertEquals(HttpStatus.OK.value(), restfulResponse.getStatus());

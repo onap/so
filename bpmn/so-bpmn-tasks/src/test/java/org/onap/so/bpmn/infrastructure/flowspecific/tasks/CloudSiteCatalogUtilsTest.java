@@ -25,64 +25,63 @@ import java.util.Optional;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
-
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 
 public class CloudSiteCatalogUtilsTest extends BaseTaskTest {
-	
-	@InjectMocks
-	private CloudSiteCatalogUtils cloudSiteCatalogUtils = new CloudSiteCatalogUtils();
-	
-	@Test
-	public void testGetCloudSiteGetVersion30Test() throws Exception {
-		CloudSite cloudSite = new CloudSite();
-		String testCloudSiteId = "testCloudSiteId";		
-		cloudSite.setClli(testCloudSiteId);				
-		doReturn(cloudSite).when(catalogDbClient).getCloudSite(testCloudSiteId);		
-		Optional<CloudSite> actualCloudSite = cloudSiteCatalogUtils.getCloudSite(testCloudSiteId);		
-		assertEquals(actualCloudSite.get().getClli(), testCloudSiteId);		
-	}
-	
-	@Test
-	public void testGetCloudSiteGetVersion25Test() throws Exception {
-		CloudSite cloudSite = new CloudSite();
-		String testCloudSiteId = "testCloudSiteId";		
-		cloudSite.setClli(testCloudSiteId);
-		doReturn(null).when(catalogDbClient).getCloudSite(testCloudSiteId);
-		doReturn(cloudSite).when(catalogDbClient).getCloudSiteByClliAndAicVersion(testCloudSiteId, "2.5");		
-		Optional<CloudSite> actualCloudSite = cloudSiteCatalogUtils.getCloudSite(testCloudSiteId);		
-		assertEquals(actualCloudSite.get().getClli(), testCloudSiteId);		
-	}
-	
-	@Test
-	public void testGetIdentityUrlFromCloudSiteSuccessTest() throws Exception {		
-		CloudSite cloudSite = new CloudSite();
-		String testCloudSiteId = "testCloudSiteId";
-		String testIdentityUrl = "testIdentityUrl";
-		delegateExecution.setVariable("lcpCloudRegionId", testCloudSiteId);
-		cloudSite.setClli(testCloudSiteId);
-		CloudIdentity cloudIdentity = new CloudIdentity();
-		cloudIdentity.setIdentityUrl(testIdentityUrl);
-		cloudSite.setIdentityService(cloudIdentity);
-		doReturn(cloudSite).when(catalogDbClient).getCloudSite(testCloudSiteId);		
-		cloudSiteCatalogUtils.getIdentityUrlFromCloudSite(delegateExecution);
-		String actualIdentityUrl = (String) delegateExecution.getVariable("identityUrl");
-		assertEquals(testIdentityUrl, actualIdentityUrl);		
-	}
-	
-	@Test
-	public void testGetIdentityUrlFromCloudSiteNoCloudIdProvidedTest() throws Exception {		
-		CloudSite cloudSite = new CloudSite();
-		String testCloudSiteId = "testCloudSiteId";
-		String testIdentityUrl = "testIdentityUrl";		
-		cloudSite.setClli(testCloudSiteId);
-		CloudIdentity cloudIdentity = new CloudIdentity();
-		cloudIdentity.setIdentityUrl(testIdentityUrl);
-		cloudSite.setIdentityService(cloudIdentity);
-		doReturn(cloudSite).when(catalogDbClient).getCloudSite(testCloudSiteId);		
-		cloudSiteCatalogUtils.getIdentityUrlFromCloudSite(delegateExecution);
-		String actualIdentityUrl = (String) delegateExecution.getVariable("identityUrl");
-		assertEquals(null, actualIdentityUrl);		
-	}
+
+    @InjectMocks
+    private CloudSiteCatalogUtils cloudSiteCatalogUtils = new CloudSiteCatalogUtils();
+
+    @Test
+    public void testGetCloudSiteGetVersion30Test() throws Exception {
+        CloudSite cloudSite = new CloudSite();
+        String testCloudSiteId = "testCloudSiteId";
+        cloudSite.setClli(testCloudSiteId);
+        doReturn(cloudSite).when(catalogDbClient).getCloudSite(testCloudSiteId);
+        Optional<CloudSite> actualCloudSite = cloudSiteCatalogUtils.getCloudSite(testCloudSiteId);
+        assertEquals(actualCloudSite.get().getClli(), testCloudSiteId);
+    }
+
+    @Test
+    public void testGetCloudSiteGetVersion25Test() throws Exception {
+        CloudSite cloudSite = new CloudSite();
+        String testCloudSiteId = "testCloudSiteId";
+        cloudSite.setClli(testCloudSiteId);
+        doReturn(null).when(catalogDbClient).getCloudSite(testCloudSiteId);
+        doReturn(cloudSite).when(catalogDbClient).getCloudSiteByClliAndAicVersion(testCloudSiteId, "2.5");
+        Optional<CloudSite> actualCloudSite = cloudSiteCatalogUtils.getCloudSite(testCloudSiteId);
+        assertEquals(actualCloudSite.get().getClli(), testCloudSiteId);
+    }
+
+    @Test
+    public void testGetIdentityUrlFromCloudSiteSuccessTest() throws Exception {
+        CloudSite cloudSite = new CloudSite();
+        String testCloudSiteId = "testCloudSiteId";
+        String testIdentityUrl = "testIdentityUrl";
+        delegateExecution.setVariable("lcpCloudRegionId", testCloudSiteId);
+        cloudSite.setClli(testCloudSiteId);
+        CloudIdentity cloudIdentity = new CloudIdentity();
+        cloudIdentity.setIdentityUrl(testIdentityUrl);
+        cloudSite.setIdentityService(cloudIdentity);
+        doReturn(cloudSite).when(catalogDbClient).getCloudSite(testCloudSiteId);
+        cloudSiteCatalogUtils.getIdentityUrlFromCloudSite(delegateExecution);
+        String actualIdentityUrl = (String) delegateExecution.getVariable("identityUrl");
+        assertEquals(testIdentityUrl, actualIdentityUrl);
+    }
+
+    @Test
+    public void testGetIdentityUrlFromCloudSiteNoCloudIdProvidedTest() throws Exception {
+        CloudSite cloudSite = new CloudSite();
+        String testCloudSiteId = "testCloudSiteId";
+        String testIdentityUrl = "testIdentityUrl";
+        cloudSite.setClli(testCloudSiteId);
+        CloudIdentity cloudIdentity = new CloudIdentity();
+        cloudIdentity.setIdentityUrl(testIdentityUrl);
+        cloudSite.setIdentityService(cloudIdentity);
+        doReturn(cloudSite).when(catalogDbClient).getCloudSite(testCloudSiteId);
+        cloudSiteCatalogUtils.getIdentityUrlFromCloudSite(delegateExecution);
+        String actualIdentityUrl = (String) delegateExecution.getVariable("identityUrl");
+        assertEquals(null, actualIdentityUrl);
+    }
 }

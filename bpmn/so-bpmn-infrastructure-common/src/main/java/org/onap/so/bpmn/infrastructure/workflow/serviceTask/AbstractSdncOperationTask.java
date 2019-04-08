@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -52,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,30 +67,31 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
     private static final String TOPOLOGY_PROPERTIES = "topology.properties";
     public static final String ONAP_IP = "ONAP_IP";
 
-    private static final String POST_BODY_TEMPLATE = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://org.onap.so/requestsdb\"><soapenv:Header/><soapenv:Body>\n"+
-            "     <ns:updateResourceOperationStatus>\n"+
-            "                <errorCode>$errorCode</errorCode>\n"+
-            "                <jobId>$jobId</jobId>\n"+
-            "                <operType>$operType</operType>\n"+
-            "                <operationId>$operationId</operationId>\n"+
-            "                <progress>$progress</progress>\n"+
-            "                <resourceTemplateUUID>$resourceTemplateUUID</resourceTemplateUUID>\n"+
-            "                <serviceId>$serviceId</serviceId>\n"+
-            "                <status>$status</status>\n"+
-            "                <statusDescription>$statusDescription</statusDescription>\n"+
-            "     </ns:updateResourceOperationStatus></soapenv:Body></soapenv:Envelope>";
+    private static final String POST_BODY_TEMPLATE =
+            "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://org.onap.so/requestsdb\"><soapenv:Header/><soapenv:Body>\n"
+                    + "     <ns:updateResourceOperationStatus>\n"
+                    + "                <errorCode>$errorCode</errorCode>\n" + "                <jobId>$jobId</jobId>\n"
+                    + "                <operType>$operType</operType>\n"
+                    + "                <operationId>$operationId</operationId>\n"
+                    + "                <progress>$progress</progress>\n"
+                    + "                <resourceTemplateUUID>$resourceTemplateUUID</resourceTemplateUUID>\n"
+                    + "                <serviceId>$serviceId</serviceId>\n"
+                    + "                <status>$status</status>\n"
+                    + "                <statusDescription>$statusDescription</statusDescription>\n"
+                    + "     </ns:updateResourceOperationStatus></soapenv:Body></soapenv:Envelope>";
 
-    private static final String GET_BODY_TEMPLATE = " <soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://org.onap.so/requestsdb\"><soapenv:Header/><soapenv:Body>\n" +
-            "     <ns:getResourceOperationStatus>\n" +
-            "                <operationId>$operationId</operationId>\n" +
-            "                <resourceTemplateUUID>$resourceTemplateUUID</resourceTemplateUUID>\n" +
-            "                <serviceId>$serviceId</serviceId>\n" +
-            "     </ns:getResourceOperationStatus></soapenv:Body></soapenv:Envelope>";
+    private static final String GET_BODY_TEMPLATE =
+            " <soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns=\"http://org.onap.so/requestsdb\"><soapenv:Header/><soapenv:Body>\n"
+                    + "     <ns:getResourceOperationStatus>\n"
+                    + "                <operationId>$operationId</operationId>\n"
+                    + "                <resourceTemplateUUID>$resourceTemplateUUID</resourceTemplateUUID>\n"
+                    + "                <serviceId>$serviceId</serviceId>\n"
+                    + "     </ns:getResourceOperationStatus></soapenv:Body></soapenv:Envelope>";
 
 
     private void updateResOperStatus(ResourceOperationStatus resourceOperationStatus) throws RouteException {
         logger.info("AbstractSdncOperationTask.updateResOperStatus begin!");
-		String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
+        String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
         HttpPost httpPost = new HttpPost(requestsdbEndPoint);
         httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
@@ -119,12 +118,13 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         String result = null;
 
         String errorMsg;
-        try(CloseableHttpClient httpClient = HttpClients.createDefault()) {
+        try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             CloseableHttpResponse closeableHttpResponse = httpClient.execute(httpPost);
             result = EntityUtils.toString(closeableHttpResponse.getEntity());
             logger.info("result = {}", result);
-            if(closeableHttpResponse.getStatusLine().getStatusCode() != 200) {
-                logger.info("exception: fail for status code = {}", closeableHttpResponse.getStatusLine().getStatusCode());
+            if (closeableHttpResponse.getStatusLine().getStatusCode() != 200) {
+                logger.info("exception: fail for status code = {}",
+                        closeableHttpResponse.getStatusLine().getStatusCode());
                 throw new RouteException(result, "SERVICE_GET_ERR");
             }
 
@@ -171,9 +171,10 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         return getBody;
     }
 
-    private ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId, String resourceTemplateUUID) throws RouteException {
+    private ResourceOperationStatus getResourceOperationStatus(String serviceId, String operationId,
+            String resourceTemplateUUID) throws RouteException {
         logger.info("AbstractSdncOperationTask.getResourceOperationStatus begin!");
-		String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
+        String requestsdbEndPoint = env.getProperty("mso.adapters.openecomp.db.endpoint");
         HttpPost httpPost = new HttpPost(requestsdbEndPoint);
         httpPost.addHeader("Authorization", "Basic YnBlbDpwYXNzd29yZDEk");
         httpPost.addHeader("Content-type", "application/soap+xml");
@@ -224,7 +225,8 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             logger.error("exception: AbstractSdncOperationTask.fail!:", e);
             logger.error(Arrays.toString(e.getStackTrace()));
             execution.setVariable("SDNCA_SuccessIndicator", false);
-            updateProgress(execution, RequestsDbConstant.Status.ERROR, null, "100", "sendRestrequestAndHandleResponse finished!");
+            updateProgress(execution, RequestsDbConstant.Status.ERROR, null, "100",
+                    "sendRestrequestAndHandleResponse finished!");
 
         }
         logger.info("AbstractSdncOperationTask.execute end!");
@@ -247,15 +249,11 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         return inputs;
     }
 
-    public abstract void sendRestrequestAndHandleResponse(DelegateExecution execution,
-                                                          Map<String, String> inputs,
-                                                          GenericResourceApi genericResourceApiClient) throws Exception;
+    public abstract void sendRestrequestAndHandleResponse(DelegateExecution execution, Map<String, String> inputs,
+            GenericResourceApi genericResourceApiClient) throws Exception;
 
-    public void updateProgress(DelegateExecution execution,
-                               String status,
-                               String errorCode,
-                               String progress,
-                               String statusDescription) {
+    public void updateProgress(DelegateExecution execution, String status, String errorCode, String progress,
+            String statusDescription) {
         logger.info("AbstractSdncOperationTask.updateProgress begin!");
         String serviceId = (String) execution.getVariable("serviceId");
         serviceId = StringUtils.isBlank(serviceId) ? (String) execution.getVariable("serviceInstanceId") : serviceId;
@@ -265,7 +263,8 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
         resourceTemplateId = StringUtils.isBlank(resourceTemplateId) ? "" : resourceTemplateUUID;
         resourceTemplateUUID = StringUtils.isBlank(resourceTemplateUUID) ? resourceTemplateId : resourceTemplateUUID;
         try {
-            ResourceOperationStatus resourceOperationStatus = getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
+            ResourceOperationStatus resourceOperationStatus =
+                    getResourceOperationStatus(serviceId, operationId, resourceTemplateUUID);
             if (!StringUtils.isBlank(status)) {
                 resourceOperationStatus.setStatus(status);
             }
@@ -284,8 +283,8 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             logger.info("exception: AbstractSdncOperationTask.updateProgress fail!");
             logger.error("exception: AbstractSdncOperationTask.updateProgress fail:", exception);
             logger.error("{} {} {} {} {}", MessageEnum.GENERAL_EXCEPTION.toString(),
-                " updateProgress catch exception: ", this.getTaskName(),
-                ErrorCode.UnknownError.getValue(), exception.getClass().toString());
+                    " updateProgress catch exception: ", this.getTaskName(), ErrorCode.UnknownError.getValue(),
+                    exception.getClass().toString());
         }
     }
 
@@ -293,11 +292,11 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
     protected boolean isSend2SdncDirectly() {
         logger.info("AbstractSdncOperationTask.isSend2SdncDirectly begin!");
         String sdncHost = UrnPropertiesReader.getVariable("sdnc.host");
-            if (!StringUtils.isBlank(sdncHost)) {
-                logger.info("AbstractSdncOperationTask.isSend2SdncDirectly = true.");
-                return true;
-            }
-        
+        if (!StringUtils.isBlank(sdncHost)) {
+            logger.info("AbstractSdncOperationTask.isSend2SdncDirectly = true.");
+            return true;
+        }
+
         logger.info("AbstractSdncOperationTask.isSend2SdncDirectly = false.");
         return false;
     }
@@ -305,7 +304,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
     protected String getSdncIp() {
         logger.info("AbstractSdncOperationTask.getSdncIp begin.");
         String sdncIp = null;
-         sdncIp = UrnPropertiesReader.getVariable("sdnc-ip");
+        sdncIp = UrnPropertiesReader.getVariable("sdnc-ip");
         String returnIp = StringUtils.isBlank(sdncIp) || !isIp(sdncIp) ? null : sdncIp;
         logger.info("AbstractSdncOperationTask.getSdncIp: sdncIp = {}", returnIp);
         return returnIp;
@@ -340,7 +339,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
             strMsbPort = env.getProperty("msb.port", String.valueOf(DEFAULT_MSB_PORT));
         }
         msbPort = Integer.valueOf(strMsbPort);
-        
+
         logger.info("AbstractSdncOperationTask.getGenericResourceApiClient msbIp = " + msbIp + " msbPort = " + msbPort);
         MSBServiceClient msbClient = new MSBServiceClient(msbIp, msbPort);
         RestServiceCreater restServiceCreater = new RestServiceCreater(msbClient);
@@ -353,6 +352,7 @@ public abstract class AbstractSdncOperationTask extends BaseTask {
     }
 
     public String getProcessKey(DelegateExecution execution) {
-        return execution.getProcessEngineServices().getRepositoryService().getProcessDefinition(execution.getProcessDefinitionId()).getKey();
+        return execution.getProcessEngineServices().getRepositoryService()
+                .getProcessDefinition(execution.getProcessDefinitionId()).getKey();
     }
 }

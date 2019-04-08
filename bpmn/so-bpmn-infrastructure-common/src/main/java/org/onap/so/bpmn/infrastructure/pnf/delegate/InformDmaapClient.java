@@ -36,12 +36,8 @@ public class InformDmaapClient implements JavaDelegate {
     public void execute(DelegateExecution execution) {
         String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
         RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
-        dmaapClient.registerForUpdate(pnfCorrelationId, () ->
-            runtimeService
-                .createMessageCorrelation("WorkflowMessage")
-                .processInstanceBusinessKey(execution.getProcessBusinessKey())
-                .correlateWithResult()
-        );
+        dmaapClient.registerForUpdate(pnfCorrelationId, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
+                .processInstanceBusinessKey(execution.getProcessBusinessKey()).correlateWithResult());
     }
 
     @Autowired

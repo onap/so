@@ -24,11 +24,9 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.appc.client.lcm.model.Action;
@@ -40,62 +38,66 @@ import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class AppcRunTasksIT extends BaseIntegrationTest {
-	
-	@Autowired
-	private AppcRunTasks appcRunTasks;
-	
-	private GenericVnf genericVnf;
-	private RequestContext requestContext;
-	private String msoRequestId;
 
-	@Before
-	public void before() {
-		genericVnf = setGenericVnf();
-		msoRequestId = UUID.randomUUID().toString();
-		requestContext = setRequestContext();
-		requestContext.setMsoRequestId(msoRequestId);
-		gBBInput.setRequestContext(requestContext);
-	}
-	
-	@Test 
-	public void preProcessActivityTest() throws Exception {
-		appcRunTasks.preProcessActivity(execution);
-		assertEquals(execution.getVariable("actionQuiesceTraffic"), Action.QuiesceTraffic);
-		assertEquals(execution.getVariable("rollbackQuiesceTraffic"), false);		
-	}
-	
-	@Test
-	public void runAppcCommandTest() throws Exception {
-		Action action = Action.QuiesceTraffic;
-		ControllerSelectionReference controllerSelectionReference = new ControllerSelectionReference();
-		controllerSelectionReference.setControllerName("testName");
-		controllerSelectionReference.setActionCategory(action.toString());
-		controllerSelectionReference.setVnfType("testVnfType");
-		
-		doReturn(controllerSelectionReference).when(catalogDbClient).getControllerSelectionReferenceByVnfTypeAndActionCategory(genericVnf.getVnfType(), Action.QuiesceTraffic.toString());
-		
-		execution.setVariable("aicIdentity", "testAicIdentity");		
-		
-		String vnfId = genericVnf.getVnfId();
-		genericVnf.setIpv4OamAddress("testOamIpAddress");
-		String payload = "{\"testName\":\"testValue\",}";
-		RequestParameters requestParameters = new RequestParameters();
-		requestParameters.setPayload(payload);
-		gBBInput.getRequestContext().setRequestParameters(requestParameters);
-		
-		String controllerType = "testName";
-		HashMap<String, String> payloadInfo = new HashMap<String, String>();
-		payloadInfo.put("vnfName", "testVnfName1");		
-		payloadInfo.put("aicIdentity", "testAicIdentity");
-		payloadInfo.put("vnfHostIpAddress", "testOamIpAddress");
-		payloadInfo.put("vserverIdList", null);
-		payloadInfo.put("vfModuleId", null);
-		payloadInfo.put("identityUrl", null);
-		payloadInfo.put("vmIdList", null);
-		
-		doNothing().when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
-		
-		appcRunTasks.runAppcCommand(execution, action);
-		verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo, controllerType);
-	}
+    @Autowired
+    private AppcRunTasks appcRunTasks;
+
+    private GenericVnf genericVnf;
+    private RequestContext requestContext;
+    private String msoRequestId;
+
+    @Before
+    public void before() {
+        genericVnf = setGenericVnf();
+        msoRequestId = UUID.randomUUID().toString();
+        requestContext = setRequestContext();
+        requestContext.setMsoRequestId(msoRequestId);
+        gBBInput.setRequestContext(requestContext);
+    }
+
+    @Test
+    public void preProcessActivityTest() throws Exception {
+        appcRunTasks.preProcessActivity(execution);
+        assertEquals(execution.getVariable("actionQuiesceTraffic"), Action.QuiesceTraffic);
+        assertEquals(execution.getVariable("rollbackQuiesceTraffic"), false);
+    }
+
+    @Test
+    public void runAppcCommandTest() throws Exception {
+        Action action = Action.QuiesceTraffic;
+        ControllerSelectionReference controllerSelectionReference = new ControllerSelectionReference();
+        controllerSelectionReference.setControllerName("testName");
+        controllerSelectionReference.setActionCategory(action.toString());
+        controllerSelectionReference.setVnfType("testVnfType");
+
+        doReturn(controllerSelectionReference).when(catalogDbClient)
+                .getControllerSelectionReferenceByVnfTypeAndActionCategory(genericVnf.getVnfType(),
+                        Action.QuiesceTraffic.toString());
+
+        execution.setVariable("aicIdentity", "testAicIdentity");
+
+        String vnfId = genericVnf.getVnfId();
+        genericVnf.setIpv4OamAddress("testOamIpAddress");
+        String payload = "{\"testName\":\"testValue\",}";
+        RequestParameters requestParameters = new RequestParameters();
+        requestParameters.setPayload(payload);
+        gBBInput.getRequestContext().setRequestParameters(requestParameters);
+
+        String controllerType = "testName";
+        HashMap<String, String> payloadInfo = new HashMap<String, String>();
+        payloadInfo.put("vnfName", "testVnfName1");
+        payloadInfo.put("aicIdentity", "testAicIdentity");
+        payloadInfo.put("vnfHostIpAddress", "testOamIpAddress");
+        payloadInfo.put("vserverIdList", null);
+        payloadInfo.put("vfModuleId", null);
+        payloadInfo.put("identityUrl", null);
+        payloadInfo.put("vmIdList", null);
+
+        doNothing().when(appCClient).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo,
+                controllerType);
+
+        appcRunTasks.runAppcCommand(execution, action);
+        verify(appCClient, times(1)).runAppCCommand(action, msoRequestId, vnfId, Optional.of(payload), payloadInfo,
+                controllerType);
+    }
 }

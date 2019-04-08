@@ -27,7 +27,6 @@ import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -52,13 +51,12 @@ public final class CryptoUtils {
     private static final String AES_GCM_NO_PADDING = "AES/GCM/NoPadding";
 
     /**
-     * encrypt a value and generate a keyfile
-     * if the keyfile is not found then a new one is created
+     * encrypt a value and generate a keyfile if the keyfile is not found then a new one is created
      * 
      * @throws GeneralSecurityException
      */
-    public static String encrypt (String value, String keyString) throws GeneralSecurityException {
-        SecretKeySpec sks = getSecretKeySpec (keyString);
+    public static String encrypt(String value, String keyString) throws GeneralSecurityException {
+        SecretKeySpec sks = getSecretKeySpec(keyString);
         Cipher cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
         byte[] initVector = new byte[GCM_IV_LENGTH];
         (new SecureRandom()).nextBytes(initVector);
@@ -76,8 +74,8 @@ public final class CryptoUtils {
      * 
      * @throws GeneralSecurityException
      */
-    public static String decrypt (String message, String keyString) throws GeneralSecurityException {
-        SecretKeySpec sks = getSecretKeySpec (keyString);
+    public static String decrypt(String message, String keyString) throws GeneralSecurityException {
+        SecretKeySpec sks = getSecretKeySpec(keyString);
         byte[] cipherText = hexStringToByteArray(message);
         Cipher cipher = Cipher.getInstance(AES_GCM_NO_PADDING);
         byte[] initVector = Arrays.copyOfRange(cipherText, 0, GCM_IV_LENGTH);
@@ -86,31 +84,33 @@ public final class CryptoUtils {
         byte[] plaintext = cipher.doFinal(cipherText, GCM_IV_LENGTH, cipherText.length - GCM_IV_LENGTH);
         return new String(plaintext);
     }
-    
+
     public static String encryptCloudConfigPassword(String message) {
-    	try {
-	    	return CryptoUtils.encrypt(message, CLOUD_KEY);
-	    } catch (GeneralSecurityException e) {
-          logger.error("{} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(),
-              ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
-          return null;
-      }
-    }
-    public static String decryptCloudConfigPassword(String message) {
-    	try {
-	    	return CryptoUtils.decrypt(message, CLOUD_KEY);
-	    } catch (GeneralSecurityException e) {
-          logger.error("{} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(),
-              ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
-          return null;
-      }
-    }
-    private static SecretKeySpec getSecretKeySpec (String keyString) {
-        byte[] key = hexStringToByteArray (keyString);
-        return new SecretKeySpec (key, AES);
+        try {
+            return CryptoUtils.encrypt(message, CLOUD_KEY);
+        } catch (GeneralSecurityException e) {
+            logger.error("{} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(),
+                    ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
+            return null;
+        }
     }
 
-    public static String byteArrayToHexString (byte[] b) {
+    public static String decryptCloudConfigPassword(String message) {
+        try {
+            return CryptoUtils.decrypt(message, CLOUD_KEY);
+        } catch (GeneralSecurityException e) {
+            logger.error("{} {} {}", MessageEnum.RA_GENERAL_EXCEPTION.toString(),
+                    ErrorCode.BusinessProcesssError.getValue(), "Exception in encryptPassword ", e);
+            return null;
+        }
+    }
+
+    private static SecretKeySpec getSecretKeySpec(String keyString) {
+        byte[] key = hexStringToByteArray(keyString);
+        return new SecretKeySpec(key, AES);
+    }
+
+    public static String byteArrayToHexString(byte[] b) {
         StringBuilder sb = new StringBuilder(b.length * 2);
         for (byte aB : b) {
             int v = aB & 0xff;
@@ -119,14 +119,14 @@ public final class CryptoUtils {
             }
             sb.append(Integer.toHexString(v));
         }
-        return sb.toString ().toUpperCase ();
+        return sb.toString().toUpperCase();
     }
 
-    private static byte[] hexStringToByteArray (String s) {
-        byte[] b = new byte[s.length () / 2];
+    private static byte[] hexStringToByteArray(String s) {
+        byte[] b = new byte[s.length() / 2];
         for (int i = 0; i < b.length; i++) {
             int index = i * 2;
-            int v = Integer.parseInt (s.substring (index, index + 2), 16);
+            int v = Integer.parseInt(s.substring(index, index + 2), 16);
             b[i] = (byte) v;
         }
         return b;

@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -30,156 +29,154 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
 @Table(name = "network_recipe")
 public class NetworkRecipe implements Serializable, Recipe {
-	private static final long serialVersionUID = 768026109321305392L;
+    private static final long serialVersionUID = 768026109321305392L;
 
-	@Id
-	@Column(name = "id")
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    private Integer id;
 
-	@BusinessKey
-	@Column(name = "ACTION")
-	protected String action;
+    @BusinessKey
+    @Column(name = "ACTION")
+    protected String action;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@BusinessKey
-	@Column(name = "ORCHESTRATION_URI")
-	protected String orchestrationUri;
+    @BusinessKey
+    @Column(name = "ORCHESTRATION_URI")
+    protected String orchestrationUri;
 
-	@Column(name = "RECIPE_TIMEOUT")
-	private Integer recipeTimeout;
+    @Column(name = "RECIPE_TIMEOUT")
+    private Integer recipeTimeout;
 
-	@Column(name = "VERSION_STR")
-	private String versionStr;
+    @Column(name = "VERSION_STR")
+    private String versionStr;
 
-	@BusinessKey
-	@Column(name = "SERVICE_TYPE")
-	private String serviceType;
+    @BusinessKey
+    @Column(name = "SERVICE_TYPE")
+    private String serviceType;
 
-	@BusinessKey
-	@Column(name = "MODEL_NAME")
-	private String modelName;
+    @BusinessKey
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	@Column(name = "NETWORK_PARAM_XSD")
-	private String paramXsd;
+    @Column(name = "NETWORK_PARAM_XSD")
+    private String paramXsd;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof NetworkRecipe)) {
-			return false;
-		}
-		NetworkRecipe castOther = (NetworkRecipe) other;
-		return new EqualsBuilder().append(action, castOther.action).append(orchestrationUri, castOther.orchestrationUri)
-				.append(serviceType, castOther.serviceType).append(modelName, castOther.modelName).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof NetworkRecipe)) {
+            return false;
+        }
+        NetworkRecipe castOther = (NetworkRecipe) other;
+        return new EqualsBuilder().append(action, castOther.action).append(orchestrationUri, castOther.orchestrationUri)
+                .append(serviceType, castOther.serviceType).append(modelName, castOther.modelName).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(action).append(orchestrationUri).append(serviceType).append(modelName)
-				.toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(action).append(orchestrationUri).append(serviceType).append(modelName)
+                .toHashCode();
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getOrchestrationUri() {
-		return orchestrationUri;
-	}
+    public String getOrchestrationUri() {
+        return orchestrationUri;
+    }
 
-	public void setOrchestrationUri(String orchestrationUri) {
-		this.orchestrationUri = orchestrationUri;
-	}
+    public void setOrchestrationUri(String orchestrationUri) {
+        this.orchestrationUri = orchestrationUri;
+    }
 
-	public Integer getRecipeTimeout() {
-		return recipeTimeout;
-	}
+    public Integer getRecipeTimeout() {
+        return recipeTimeout;
+    }
 
-	public void setRecipeTimeout(Integer recipeTimeout) {
-		this.recipeTimeout = recipeTimeout;
-	}
+    public void setRecipeTimeout(Integer recipeTimeout) {
+        this.recipeTimeout = recipeTimeout;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public String getModelName() {
-		return modelName;
-	}
+    public String getModelName() {
+        return modelName;
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
-	public String getParamXsd() {
-		return paramXsd;
-	}
+    public String getParamXsd() {
+        return paramXsd;
+    }
 
-	public void setParamXsd(String paramXsd) {
-		this.paramXsd = paramXsd;
-	}
+    public void setParamXsd(String paramXsd) {
+        this.paramXsd = paramXsd;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(super.toString());
-		sb.append(",modelName=" + modelName);
-		sb.append(",networkParamXSD=" + paramXsd);
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(super.toString());
+        sb.append(",modelName=" + modelName);
+        sb.append(",networkParamXSD=" + paramXsd);
+        return sb.toString();
+    }
 
-	public String getVersionStr() {
-		return versionStr;
-	}
+    public String getVersionStr() {
+        return versionStr;
+    }
 
-	public void setVersionStr(String versionStr) {
-		this.versionStr = versionStr;
-	}
+    public void setVersionStr(String versionStr) {
+        this.versionStr = versionStr;
+    }
 }

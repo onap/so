@@ -20,9 +20,7 @@
 package org.onap.so.adapters.tenant;
 
 import java.util.HashMap;
-
 import javax.xml.ws.Holder;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -35,10 +33,10 @@ import org.onap.so.entity.MsoRequest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MsoTenantAdapterImplTest {
-	
+
     @Mock
-	private CloudConfig cloudConfig;
-    
+    private CloudConfig cloudConfig;
+
     @Spy
     @InjectMocks
     private MsoTenantAdapterImpl msoTenantAdapter;
@@ -50,14 +48,14 @@ public class MsoTenantAdapterImplTest {
 
     @Test(expected = NullPointerException.class)
     public void createTenant() throws Exception {
-        msoTenantAdapter.createTenant("site", "tenant", new HashMap<>(),
-                true, true, new MsoRequest(), new Holder<String>(), new Holder<TenantRollback>());
+        msoTenantAdapter.createTenant("site", "tenant", new HashMap<>(), true, true, new MsoRequest(),
+                new Holder<String>(), new Holder<TenantRollback>());
     }
 
     @Test(expected = NullPointerException.class)
     public void queryTenant() throws Exception {
-        msoTenantAdapter.queryTenant("site", "tenant", new MsoRequest(),
-                new Holder<>(), new Holder<>(), new Holder<>());
+        msoTenantAdapter.queryTenant("site", "tenant", new MsoRequest(), new Holder<>(), new Holder<>(),
+                new Holder<>());
     }
 
     @Test(expected = NullPointerException.class)

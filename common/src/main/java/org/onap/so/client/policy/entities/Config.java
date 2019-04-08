@@ -26,22 +26,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "configName",
-    "riskLevel",
-    "policyName",
-    "policyScope",
-    "guard",
-    "description",
-    "priority",
-    "uuid",
-    "version",
-    "content",
-    "riskType",
-    "service",
-    "location",
-    "templateVersion"
-})
+@JsonPropertyOrder({"configName", "riskLevel", "policyName", "policyScope", "guard", "description", "priority", "uuid",
+        "version", "content", "riskType", "service", "location", "templateVersion"})
 @JsonRootName(value = "config")
 public class Config {
 

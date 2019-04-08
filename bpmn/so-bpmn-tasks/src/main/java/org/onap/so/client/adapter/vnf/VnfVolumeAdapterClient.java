@@ -31,18 +31,18 @@ import org.onap.so.adapters.vnfrest.UpdateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupResponse;
 
 public interface VnfVolumeAdapterClient {
-	CreateVolumeGroupResponse createVNFVolumes(CreateVolumeGroupRequest req) throws VnfAdapterClientException;
+    CreateVolumeGroupResponse createVNFVolumes(CreateVolumeGroupRequest req) throws VnfAdapterClientException;
 
-	DeleteVolumeGroupResponse deleteVNFVolumes(String aaiVolumeGroupId, DeleteVolumeGroupRequest req)
-			throws VnfAdapterClientException;
+    DeleteVolumeGroupResponse deleteVNFVolumes(String aaiVolumeGroupId, DeleteVolumeGroupRequest req)
+            throws VnfAdapterClientException;
 
-	RollbackVolumeGroupResponse rollbackVNFVolumes(String aaiVolumeGroupId, RollbackVolumeGroupRequest req)
-			throws VnfAdapterClientException;
+    RollbackVolumeGroupResponse rollbackVNFVolumes(String aaiVolumeGroupId, RollbackVolumeGroupRequest req)
+            throws VnfAdapterClientException;
 
-	UpdateVolumeGroupResponse updateVNFVolumes(String aaiVolumeGroupId, UpdateVolumeGroupRequest req)
-			throws VnfAdapterClientException;
+    UpdateVolumeGroupResponse updateVNFVolumes(String aaiVolumeGroupId, UpdateVolumeGroupRequest req)
+            throws VnfAdapterClientException;
 
-	QueryVolumeGroupResponse queryVNFVolumes(String aaiVolumeGroupId, String cloudSiteId, String tenantId,
-			String volumeGroupStackId, Boolean skipAAI, String requestId, String serviceInstanceId)
-			throws VnfAdapterClientException;
+    QueryVolumeGroupResponse queryVNFVolumes(String aaiVolumeGroupId, String cloudSiteId, String tenantId,
+            String volumeGroupStackId, Boolean skipAAI, String requestId, String serviceInstanceId)
+            throws VnfAdapterClientException;
 }

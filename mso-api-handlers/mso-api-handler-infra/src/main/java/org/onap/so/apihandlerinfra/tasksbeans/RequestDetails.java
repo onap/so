@@ -24,16 +24,15 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonRootName(value = "requestDetails")
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class RequestDetails {
 
-	protected RequestInfo requestInfo;
-	 /**
+    protected RequestInfo requestInfo;
+
+    /**
      * Gets the value of the requestInfo property.
      *
-     * @return
-     *     possible object is
-     *     {@link RequestInfo }
+     * @return possible object is {@link RequestInfo }
      *
      */
     public RequestInfo getRequestInfo() {
@@ -43,9 +42,7 @@ public class RequestDetails {
     /**
      * Sets the value of the requestInfo property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link RequestInfo }
+     * @param value allowed object is {@link RequestInfo }
      *
      */
     public void setRequestInfo(RequestInfo value) {

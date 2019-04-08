@@ -27,32 +27,32 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonPropertyOrder({ "serviceEndPoint", "env" })
+@JsonPropertyOrder({"serviceEndPoint", "env"})
 public class ServiceEndPointRequest {
 
-	@JsonProperty("serviceEndPoint")
-	private ServiceEndPoint serviceEndPoint;
-	@JsonProperty("env")
-	private String env;
+    @JsonProperty("serviceEndPoint")
+    private ServiceEndPoint serviceEndPoint;
+    @JsonProperty("env")
+    private String env;
 
-	@JsonProperty("serviceEndPoint")
-	public ServiceEndPoint getServiceEndPoint() {
-		return serviceEndPoint;
-	}
+    @JsonProperty("serviceEndPoint")
+    public ServiceEndPoint getServiceEndPoint() {
+        return serviceEndPoint;
+    }
 
-	@JsonProperty("serviceEndPoint")
-	public void setServiceEndPoint(ServiceEndPoint serviceEndPoint) {
-		this.serviceEndPoint = serviceEndPoint;
-	}
+    @JsonProperty("serviceEndPoint")
+    public void setServiceEndPoint(ServiceEndPoint serviceEndPoint) {
+        this.serviceEndPoint = serviceEndPoint;
+    }
 
-	@JsonProperty("env")
-	public String getEnv() {
-		return env;
-	}
+    @JsonProperty("env")
+    public String getEnv() {
+        return env;
+    }
 
-	@JsonProperty("env")
-	public void setEnv(String env) {
-		this.env = env;
-	}
+    @JsonProperty("env")
+    public void setEnv(String env) {
+        this.env = env;
+    }
 
 }

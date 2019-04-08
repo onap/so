@@ -31,11 +31,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,39 +41,38 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 /**
- * A temporary interface to support notifications from SNIRO to BPMN.
- * We added this to the SDNC adapter because we didn't have time to
- * develop a SNIRO adapter in 1702.
+ * A temporary interface to support notifications from SNIRO to BPMN. We added this to the SDNC adapter because we
+ * didn't have time to develop a SNIRO adapter in 1702.
  */
 @Path("/")
 @Component
 public class SNIROResponse {
-	private static final Logger logger = LoggerFactory.getLogger(SNIROResponse.class);
+    private static final Logger logger = LoggerFactory.getLogger(SNIROResponse.class);
 
-	
-	@Autowired
-	private Environment env;
-	
-	@Autowired
-	private BPRestCallback callback;
 
-	@POST
-	@Path("/SDNCNotify/SNIROResponse/{correlator}")
-	@Consumes("*/*")
-	@Produces({MediaType.TEXT_PLAIN})
-	public Response serviceNotification(@PathParam("correlator") String correlator, String content) {
-		logger.info("{} {} {} {}", MessageEnum.RA_RECEIVE_SDNC_NOTIF.toString(), content, "SDNC",
-			"SDNCNotify/SNIROResponse");
+    @Autowired
+    private Environment env;
 
-		String bpUrl = env.getProperty(Constants.BPEL_REST_URL_PROP, ""); 
+    @Autowired
+    private BPRestCallback callback;
 
-		if (bpUrl == null || ("").equals(bpUrl)) {
-			String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
-			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), Constants.BPEL_REST_URL_PROP,
-				"SDNC", ErrorCode.DataError.getValue(), "Missing config param");
+    @POST
+    @Path("/SDNCNotify/SNIROResponse/{correlator}")
+    @Consumes("*/*")
+    @Produces({MediaType.TEXT_PLAIN})
+    public Response serviceNotification(@PathParam("correlator") String correlator, String content) {
+        logger.info("{} {} {} {}", MessageEnum.RA_RECEIVE_SDNC_NOTIF.toString(), content, "SDNC",
+                "SDNCNotify/SNIROResponse");
 
-			return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(error).build();
-		}
-		return Response.status(204).build();
-	}
+        String bpUrl = env.getProperty(Constants.BPEL_REST_URL_PROP, "");
+
+        if (bpUrl == null || ("").equals(bpUrl)) {
+            String error = "Missing configuration for: " + Constants.BPEL_REST_URL_PROP;
+            logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(),
+                    Constants.BPEL_REST_URL_PROP, "SDNC", ErrorCode.DataError.getValue(), "Missing config param");
+
+            return Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(error).build();
+        }
+        return Response.status(204).build();
+    }
 }

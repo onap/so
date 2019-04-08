@@ -22,21 +22,12 @@ package org.onap.so.client.policy.entities;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "configAttributes",
-    "configName",
-    "ecompName",
-    "onapName",
-    "policyName",
-    "requestID",
-    "unique"
-})
+@JsonPropertyOrder({"configAttributes", "configName", "ecompName", "onapName", "policyName", "requestID", "unique"})
 public class ConfigRequestParameters {
 
     @JsonProperty("configAttributes")

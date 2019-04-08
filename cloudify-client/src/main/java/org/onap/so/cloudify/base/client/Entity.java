@@ -21,51 +21,51 @@
 package org.onap.so.cloudify.base.client;
 
 public class Entity<T> {
-	
-	private T entity;
-	
-	private String contentType;
-	
-	public static <T> Entity<T> json(T entity) {
-		return new Entity<T>(entity, "application/json");
-	}
-	
-	public static <T> Entity<T> stream(T entity) {
-		return new Entity<T>(entity, "application/octet-stream");
-	}
 
-	public Entity(T entity, String contentType) {
-		super();
-		this.entity = entity;
-		this.contentType = contentType;
-	}
+    private T entity;
 
-	/**
-	 * @return the entity
-	 */
-	public T getEntity() {
-		return entity;
-	}
+    private String contentType;
 
-	/**
-	 * @param entity the entity to set
-	 */
-	public void setEntity(T entity) {
-		this.entity = entity;
-	}
+    public static <T> Entity<T> json(T entity) {
+        return new Entity<T>(entity, "application/json");
+    }
 
-	/**
-	 * @return the contentType
-	 */
-	public String getContentType() {
-		return contentType;
-	}
+    public static <T> Entity<T> stream(T entity) {
+        return new Entity<T>(entity, "application/octet-stream");
+    }
 
-	/**
-	 * @param contentType the contentType to set
-	 */
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
-	
+    public Entity(T entity, String contentType) {
+        super();
+        this.entity = entity;
+        this.contentType = contentType;
+    }
+
+    /**
+     * @return the entity
+     */
+    public T getEntity() {
+        return entity;
+    }
+
+    /**
+     * @param entity the entity to set
+     */
+    public void setEntity(T entity) {
+        this.entity = entity;
+    }
+
+    /**
+     * @return the contentType
+     */
+    public String getContentType() {
+        return contentType;
+    }
+
+    /**
+     * @param contentType the contentType to set
+     */
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
 }

@@ -29,49 +29,52 @@ import org.onap.so.BaseTest;
 
 public class ExceptionBuilderTest extends BaseTest {
 
-	private static final String RESOURCE_PATH = "__files/";
-	private static final String VALID_ERROR_MESSAGE = "{test error message}";
+    private static final String RESOURCE_PATH = "__files/";
+    private static final String VALID_ERROR_MESSAGE = "{test error message}";
 
 
-	@Test
-	public void buildAndThrowWorkflowExceptionTest() {
-		try {
-			ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, new NullPointerException(VALID_ERROR_MESSAGE));
-		} catch (BpmnError bpmnException){
-			assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
-		}
-	}
+    @Test
+    public void buildAndThrowWorkflowExceptionTest() {
+        try {
+            ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
+                    new NullPointerException(VALID_ERROR_MESSAGE));
+        } catch (BpmnError bpmnException) {
+            assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
+        }
+    }
 
-	@Test
-	public void buildAndThrowWorkflowExceptionInvalidMessageTest() {
-		try{
-			ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
-			String invalidErrorMessage = FileUtil.readResourceFile(RESOURCE_PATH + "invalidErrorMessage.txt");
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, new NullPointerException(invalidErrorMessage));
-		} catch (BpmnError bpmnException){
-			assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
-		}
-	}
-	
-	@Test
-	public void buildAndThrowWorkflowExceptionInvalidMessageFlagTest() {
-		try{
-			ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
-			String invalidErrorMessage = FileUtil.readResourceFile(RESOURCE_PATH + "invalidErrorMessageFlag.txt");
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, new NullPointerException(invalidErrorMessage));
-		} catch (BpmnError bpmnException){
-			assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
-		}
-	}
-	
-	@Test
-	public void buildAndThrowWorkflowExceptionNullMessageTest() {
-		try{
-			ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, new NullPointerException());
-		} catch (BpmnError bpmnException){
-			assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
-		}
-	}
+    @Test
+    public void buildAndThrowWorkflowExceptionInvalidMessageTest() {
+        try {
+            ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
+            String invalidErrorMessage = FileUtil.readResourceFile(RESOURCE_PATH + "invalidErrorMessage.txt");
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
+                    new NullPointerException(invalidErrorMessage));
+        } catch (BpmnError bpmnException) {
+            assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
+        }
+    }
+
+    @Test
+    public void buildAndThrowWorkflowExceptionInvalidMessageFlagTest() {
+        try {
+            ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
+            String invalidErrorMessage = FileUtil.readResourceFile(RESOURCE_PATH + "invalidErrorMessageFlag.txt");
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
+                    new NullPointerException(invalidErrorMessage));
+        } catch (BpmnError bpmnException) {
+            assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
+        }
+    }
+
+    @Test
+    public void buildAndThrowWorkflowExceptionNullMessageTest() {
+        try {
+            ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, new NullPointerException());
+        } catch (BpmnError bpmnException) {
+            assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
+        }
+    }
 }

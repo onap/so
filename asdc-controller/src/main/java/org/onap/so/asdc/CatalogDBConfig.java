@@ -39,41 +39,31 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-		entityManagerFactoryRef = "entityManagerFactory",
-		basePackages = {"org.onap.so.db.catalog.data.repository"}
-		)
+@EnableJpaRepositories(entityManagerFactoryRef = "entityManagerFactory",
+        basePackages = {"org.onap.so.db.catalog.data.repository"})
 @Profile({"!test"})
 public class CatalogDBConfig {
-	
-	@Primary
-	@Bean(name = "dataSource")
-	@ConfigurationProperties(prefix = "spring.datasource")
-	public DataSource dataSource() {
-		return DataSourceBuilder.create().build();
-	}
 
-	@Primary
-	@Bean(name = "entityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean 
-	entityManagerFactory(
-			EntityManagerFactoryBuilder builder,
-			@Qualifier("dataSource") DataSource dataSource
-			) {
-		return builder
-				.dataSource(dataSource)
-				.packages("org.onap.so.db.catalog.beans")
-				.persistenceUnit("catalogDB")
-				.build();
-	}
+    @Primary
+    @Bean(name = "dataSource")
+    @ConfigurationProperties(prefix = "spring.datasource")
+    public DataSource dataSource() {
+        return DataSourceBuilder.create().build();
+    }
 
-	@Primary
-	@Bean(name = "transactionManager")
-	public PlatformTransactionManager transactionManager(
-			@Qualifier("entityManagerFactory") EntityManagerFactory 
-			entityManagerFactory
-			) {
-		return new JpaTransactionManager(entityManagerFactory);
-	}
+    @Primary
+    @Bean(name = "entityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+            @Qualifier("dataSource") DataSource dataSource) {
+        return builder.dataSource(dataSource).packages("org.onap.so.db.catalog.beans").persistenceUnit("catalogDB")
+                .build();
+    }
+
+    @Primary
+    @Bean(name = "transactionManager")
+    public PlatformTransactionManager transactionManager(
+            @Qualifier("entityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
 
 }

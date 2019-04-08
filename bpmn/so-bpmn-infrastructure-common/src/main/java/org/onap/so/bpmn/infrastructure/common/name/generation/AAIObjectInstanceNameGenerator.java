@@ -27,14 +27,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class AAIObjectInstanceNameGenerator {
 
-	public String generateInstanceGroupName(InstanceGroup instanceGroup, GenericVnf vnf) {
-		if(vnf.getVnfName() != null && instanceGroup.getModelInfoInstanceGroup().getFunction() != null) {
-		return vnf.getVnfName() + "_" + instanceGroup.getModelInfoInstanceGroup().getFunction();
-		} else {
-			throw new IllegalArgumentException("Cannot generate instance group name because either one or both fields are null: "
-					+ " Vnf Instance Name: " + vnf.getVnfName()
-					+ ", Instance Group Function: " + instanceGroup.getModelInfoInstanceGroup().getFunction());
-		}
-	}
-	
+    public String generateInstanceGroupName(InstanceGroup instanceGroup, GenericVnf vnf) {
+        if (vnf.getVnfName() != null && instanceGroup.getModelInfoInstanceGroup().getFunction() != null) {
+            return vnf.getVnfName() + "_" + instanceGroup.getModelInfoInstanceGroup().getFunction();
+        } else {
+            throw new IllegalArgumentException(
+                    "Cannot generate instance group name because either one or both fields are null: "
+                            + " Vnf Instance Name: " + vnf.getVnfName() + ", Instance Group Function: "
+                            + instanceGroup.getModelInfoInstanceGroup().getFunction());
+        }
+    }
+
 }

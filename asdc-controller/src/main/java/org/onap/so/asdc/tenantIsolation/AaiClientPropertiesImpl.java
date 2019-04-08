@@ -22,7 +22,6 @@ package org.onap.so.asdc.tenantIsolation;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.onap.so.client.aai.AAIProperties;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.spring.SpringContextHelper;
@@ -30,42 +29,42 @@ import org.springframework.context.ApplicationContext;
 
 public class AaiClientPropertiesImpl implements AAIProperties {
 
-	private String aaiEndpoint;
-	private String auth;
-	private String key;
-	private static final String SYSTEM_NAME = "MSO";
-	
-	public AaiClientPropertiesImpl() {
-		ApplicationContext context = SpringContextHelper.getAppContext();
-		aaiEndpoint = context.getEnvironment().getProperty("mso.aai.endpoint");
-		this.auth = context.getEnvironment().getProperty("aai.auth");
-		this.key = context.getEnvironment().getProperty("mso.msoKey");
-	}
+    private String aaiEndpoint;
+    private String auth;
+    private String key;
+    private static final String SYSTEM_NAME = "MSO";
 
-	@Override
-	public URL getEndpoint() throws MalformedURLException {
-		ApplicationContext context = SpringContextHelper.getAppContext();
-		aaiEndpoint = context.getEnvironment().getProperty("mso.aai.endpoint");
-		return new URL(aaiEndpoint);
-	}
+    public AaiClientPropertiesImpl() {
+        ApplicationContext context = SpringContextHelper.getAppContext();
+        aaiEndpoint = context.getEnvironment().getProperty("mso.aai.endpoint");
+        this.auth = context.getEnvironment().getProperty("aai.auth");
+        this.key = context.getEnvironment().getProperty("mso.msoKey");
+    }
 
-	@Override
-	public String getSystemName() {
-		return SYSTEM_NAME;
-	}
-	
-	@Override
-	public AAIVersion getDefaultVersion() {
-		return AAIVersion.LATEST;
-	}
-	
-	@Override
-	public String getAuth() {
-		return this.auth;
-	}
+    @Override
+    public URL getEndpoint() throws MalformedURLException {
+        ApplicationContext context = SpringContextHelper.getAppContext();
+        aaiEndpoint = context.getEnvironment().getProperty("mso.aai.endpoint");
+        return new URL(aaiEndpoint);
+    }
 
-	@Override
-	public String getKey() {
-		return this.key;
-	}
+    @Override
+    public String getSystemName() {
+        return SYSTEM_NAME;
+    }
+
+    @Override
+    public AAIVersion getDefaultVersion() {
+        return AAIVersion.LATEST;
+    }
+
+    @Override
+    public String getAuth() {
+        return this.auth;
+    }
+
+    @Override
+    public String getKey() {
+        return this.key;
+    }
 }

@@ -21,7 +21,6 @@
 package org.onap.so.client.aai.entities;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -29,7 +28,6 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,75 +37,74 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.springframework.util.SerializationUtils;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(MockitoJUnitRunner.class) 
+@RunWith(MockitoJUnitRunner.class)
 public class AAIResultWrapperTest {
-	String json;
-	@Rule
-    public ExpectedException thrown= ExpectedException.none();
-	
-	AAIResultWrapper aaiResultWrapper;
-	AAIResultWrapper aaiResultWrapperEmpty;
-	
-	@Before
-	public void init() throws IOException {
-		final String RESOURCE_PATH = "src/test/resources/__files/aai/resources/";
-		json = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "e2e-complex.json")));
-		
-		aaiResultWrapper = new AAIResultWrapper(json);
-		aaiResultWrapperEmpty = new AAIResultWrapper("{}");
-	}
-	
-	@Test
-	public void testAAIResultWrapperIsSerializable() throws IOException {
-		AAIResultWrapper original = new AAIResultWrapper("");
-		byte[] serialized = SerializationUtils.serialize(original);
-		AAIResultWrapper deserialized = (AAIResultWrapper) SerializationUtils.deserialize(serialized);
-		assertEquals(deserialized.getJson(), original.getJson());
-	}
-	
-	@Test
-	public void testGetRelationshipsEmpty() {
-		Optional<Relationships> relationships = aaiResultWrapperEmpty.getRelationships();
-		assertEquals("Compare relationships", Optional.empty(), relationships);
-	}
+    String json;
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-	@Test
-	public void testAsMap() throws JsonParseException, JsonMappingException, IOException {
-		ObjectMapper mapper = new AAICommonObjectMapperProvider().getMapper();
-		Map<String, Object> expected = mapper.readValue(json, new TypeReference<Map<String, Object>>(){});
-		
-		Map<String, Object> actual = aaiResultWrapper.asMap();
-		assertEquals(expected, actual);
-	}
-	
-	@Test
-	public void testAsMapEmpty() {
-		Map<String, Object> actual = aaiResultWrapperEmpty.asMap();
-		assertEquals(new HashMap<>(), actual);
-	}
-	
-	@Test
-	public void nullCases() {
-		
-		AAIResultWrapper wrapper = new AAIResultWrapper(null);
-		
-		assertEquals(Optional.empty(), wrapper.getRelationships());
-		assertEquals("{}", wrapper.getJson());
-		assertEquals(Optional.empty(), wrapper.asBean(GenericVnf.class));
-		assertEquals(true, wrapper.asMap().isEmpty());
-		assertEquals("{}", wrapper.toString());
-		
-	}
-	
-	@Test
-	public void objectConstructor() {
-		AAIResultWrapper wrapper = new AAIResultWrapper(new GenericVnf());
-		assertEquals("{}", wrapper.getJson());
-	}
+    AAIResultWrapper aaiResultWrapper;
+    AAIResultWrapper aaiResultWrapperEmpty;
+
+    @Before
+    public void init() throws IOException {
+        final String RESOURCE_PATH = "src/test/resources/__files/aai/resources/";
+        json = new String(Files.readAllBytes(Paths.get(RESOURCE_PATH + "e2e-complex.json")));
+
+        aaiResultWrapper = new AAIResultWrapper(json);
+        aaiResultWrapperEmpty = new AAIResultWrapper("{}");
+    }
+
+    @Test
+    public void testAAIResultWrapperIsSerializable() throws IOException {
+        AAIResultWrapper original = new AAIResultWrapper("");
+        byte[] serialized = SerializationUtils.serialize(original);
+        AAIResultWrapper deserialized = (AAIResultWrapper) SerializationUtils.deserialize(serialized);
+        assertEquals(deserialized.getJson(), original.getJson());
+    }
+
+    @Test
+    public void testGetRelationshipsEmpty() {
+        Optional<Relationships> relationships = aaiResultWrapperEmpty.getRelationships();
+        assertEquals("Compare relationships", Optional.empty(), relationships);
+    }
+
+    @Test
+    public void testAsMap() throws JsonParseException, JsonMappingException, IOException {
+        ObjectMapper mapper = new AAICommonObjectMapperProvider().getMapper();
+        Map<String, Object> expected = mapper.readValue(json, new TypeReference<Map<String, Object>>() {});
+
+        Map<String, Object> actual = aaiResultWrapper.asMap();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testAsMapEmpty() {
+        Map<String, Object> actual = aaiResultWrapperEmpty.asMap();
+        assertEquals(new HashMap<>(), actual);
+    }
+
+    @Test
+    public void nullCases() {
+
+        AAIResultWrapper wrapper = new AAIResultWrapper(null);
+
+        assertEquals(Optional.empty(), wrapper.getRelationships());
+        assertEquals("{}", wrapper.getJson());
+        assertEquals(Optional.empty(), wrapper.asBean(GenericVnf.class));
+        assertEquals(true, wrapper.asMap().isEmpty());
+        assertEquals("{}", wrapper.toString());
+
+    }
+
+    @Test
+    public void objectConstructor() {
+        AAIResultWrapper wrapper = new AAIResultWrapper(new GenericVnf());
+        assertEquals("{}", wrapper.getJson());
+    }
 }

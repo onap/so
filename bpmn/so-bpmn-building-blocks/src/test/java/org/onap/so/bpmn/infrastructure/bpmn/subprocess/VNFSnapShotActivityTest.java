@@ -19,10 +19,10 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -30,28 +30,25 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.appc.client.lcm.model.Action;
 
-public class VNFSnapShotActivityTest extends BaseBPMNTest{
-	@Test
-	public void sunnyDayVNFSnapShotActivity_Test() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSnapShotActivity", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFSnapShotActivity_Start",
-				"TaskPreProcessActivity",
-				"TaskSnapShot",								   
-				"VNFSnapShotActivity_End");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test	
-	public void rainyDayVNFSnapShotActivity_Test() throws Exception {
-		variables.put("actionSnapshot", Action.Snapshot);
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
-				.runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSnapShotActivity", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFSnapShotActivity_Start",
-				"TaskPreProcessActivity",
-				"TaskSnapShot").hasNotPassed(								   
-				"VNFSnapShotActivity_End");		
-	}
-	
+public class VNFSnapShotActivityTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayVNFSnapShotActivity_Test() throws InterruptedException {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSnapShotActivity", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("VNFSnapShotActivity_Start", "TaskPreProcessActivity",
+                "TaskSnapShot", "VNFSnapShotActivity_End");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void rainyDayVNFSnapShotActivity_Test() throws Exception {
+        variables.put("actionSnapshot", Action.Snapshot);
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
+                .runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFSnapShotActivity", variables);
+        assertThat(pi).isNotNull().isStarted()
+                .hasPassedInOrder("VNFSnapShotActivity_Start", "TaskPreProcessActivity", "TaskSnapShot")
+                .hasNotPassed("VNFSnapShotActivity_End");
+    }
+
 }

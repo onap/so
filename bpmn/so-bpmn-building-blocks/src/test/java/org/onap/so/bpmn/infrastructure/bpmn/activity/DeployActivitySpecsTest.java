@@ -24,7 +24,6 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.HttpClient;
@@ -35,34 +34,34 @@ import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 
 
-public class DeployActivitySpecsTest extends BaseBPMNTest{
-	private static final String RESULT_STRING = "HTTP/1.1 404 ";
+public class DeployActivitySpecsTest extends BaseBPMNTest {
+    private static final String RESULT_STRING = "HTTP/1.1 404 ";
 
-	
-	@Test 
-    public void DeployActivitySpecsMain_Test() throws Exception {    	
-		String HOSTNAME = createURLWithPort("");
-		ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
-		HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
-		response.setStatusCode(404);
-		response.setStatusLine(protocolVersion, 1, "");
-		HttpClient clientMock = mock(HttpClient.class);		
-    	when(clientMock.execute(any(HttpPost.class))).thenReturn(response);
-    	String[] args = new String[] {HOSTNAME};    	
-    	DeployActivitySpecs.main(args);    	
+
+    @Test
+    public void DeployActivitySpecsMain_Test() throws Exception {
+        String HOSTNAME = createURLWithPort("");
+        ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
+        HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
+        response.setStatusCode(404);
+        response.setStatusLine(protocolVersion, 1, "");
+        HttpClient clientMock = mock(HttpClient.class);
+        when(clientMock.execute(any(HttpPost.class))).thenReturn(response);
+        String[] args = new String[] {HOSTNAME};
+        DeployActivitySpecs.main(args);
     }
-	
-	@Test 
-	@Ignore
-    public void DeployActivitySpec_Test() throws Exception {    	
-		String HOSTNAME = createURLWithPort("");
-		ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
-		HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
-		response.setStatusCode(404);
-		response.setStatusLine(protocolVersion, 1, "");
-		HttpClient clientMock = mock(HttpClient.class);		
-    	when(clientMock.execute(any(HttpPost.class))).thenReturn(response);    	 	;
-    	String result = DeployActivitySpecs.deployActivitySpec(HOSTNAME, "VNFQuiesceTrafficActivitySpec.json");
-    	assertEquals(result, RESULT_STRING);
+
+    @Test
+    @Ignore
+    public void DeployActivitySpec_Test() throws Exception {
+        String HOSTNAME = createURLWithPort("");
+        ProtocolVersion protocolVersion = new ProtocolVersion("", 1, 1);
+        HttpResponse response = new BasicHttpResponse(protocolVersion, 1, "");
+        response.setStatusCode(404);
+        response.setStatusLine(protocolVersion, 1, "");
+        HttpClient clientMock = mock(HttpClient.class);
+        when(clientMock.execute(any(HttpPost.class))).thenReturn(response);;
+        String result = DeployActivitySpecs.deployActivitySpec(HOSTNAME, "VNFQuiesceTrafficActivitySpec.json");
+        assertEquals(result, RESULT_STRING);
     }
 }

@@ -23,9 +23,7 @@ package org.onap.so.client.orchestration;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.ws.rs.core.Response;
-
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
@@ -48,66 +46,95 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NetworkAdapterResources {
-	
-	@Autowired
-	private NetworkAdapterClientImpl networkAdapterClient;
-	
-	@Autowired
-	private NetworkAdapterObjectMapper networkAdapterObjectMapper;
-	
-	public Optional<CreateNetworkResponse> createNetwork(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, L3Network l3Network, Map<String, String> userInput, String cloudRegionPo, Customer customer) throws UnsupportedEncodingException, NetworkAdapterClientException {
 
-		CreateNetworkRequest createNetworkRequest = networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, customer);
-		return Optional.of(networkAdapterClient.createNetwork(createNetworkRequest));
-	}
+    @Autowired
+    private NetworkAdapterClientImpl networkAdapterClient;
 
-	public Optional<RollbackNetworkResponse> rollbackCreateNetwork(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, L3Network l3Network, Map<String, String> userInput, String cloudRegionPo, CreateNetworkResponse createNetworkResponse) throws UnsupportedEncodingException, NetworkAdapterClientException {
+    @Autowired
+    private NetworkAdapterObjectMapper networkAdapterObjectMapper;
 
-		RollbackNetworkRequest rollbackNetworkRequest = null;
-		rollbackNetworkRequest = networkAdapterObjectMapper.createNetworkRollbackRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo, createNetworkResponse);
+    public Optional<CreateNetworkResponse> createNetwork(RequestContext requestContext, CloudRegion cloudRegion,
+            OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, L3Network l3Network,
+            Map<String, String> userInput, String cloudRegionPo, Customer customer)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
 
-		return Optional.of(networkAdapterClient.rollbackNetwork(l3Network.getNetworkId(), rollbackNetworkRequest));
-	}
-	
-	public Optional<UpdateNetworkResponse> updateNetwork(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, L3Network l3Network, Map<String, String> userInput, Customer customer) throws UnsupportedEncodingException, NetworkAdapterClientException {
-		UpdateNetworkRequest updateNetworkRequest = networkAdapterObjectMapper.createNetworkUpdateRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, customer);
-		
-		return Optional.of(networkAdapterClient.updateNetwork(l3Network.getNetworkId(), updateNetworkRequest));
-	}
-	
-	public Optional<DeleteNetworkResponse> deleteNetwork(RequestContext requestContext, CloudRegion cloudRegion, ServiceInstance serviceInstance, L3Network l3Network) throws UnsupportedEncodingException, NetworkAdapterClientException {
-		
-		DeleteNetworkRequest deleteNetworkRequest = networkAdapterObjectMapper.deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
-		return Optional.of(networkAdapterClient.deleteNetwork(l3Network.getNetworkId(), deleteNetworkRequest));
-	}
-	
-	public Optional<Response> createNetworkAsync(CreateNetworkRequest createNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+        CreateNetworkRequest createNetworkRequest =
+                networkAdapterObjectMapper.createNetworkRequestMapper(requestContext, cloudRegion, orchestrationContext,
+                        serviceInstance, l3Network, userInput, cloudRegionPo, customer);
+        return Optional.of(networkAdapterClient.createNetwork(createNetworkRequest));
+    }
 
-		return Optional.of(networkAdapterClient.createNetworkAsync(createNetworkRequest));
-	}
-	
-	public Optional<Response> deleteNetworkAsync(DeleteNetworkRequest deleteNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+    public Optional<RollbackNetworkResponse> rollbackCreateNetwork(RequestContext requestContext,
+            CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance,
+            L3Network l3Network, Map<String, String> userInput, String cloudRegionPo,
+            CreateNetworkResponse createNetworkResponse)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
 
-		return Optional.of(networkAdapterClient.deleteNetworkAsync(deleteNetworkRequest.getNetworkId(), deleteNetworkRequest));
-	}
-	
-	public Optional<Response> updateNetworkAsync(UpdateNetworkRequest updateNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+        RollbackNetworkRequest rollbackNetworkRequest = null;
+        rollbackNetworkRequest = networkAdapterObjectMapper.createNetworkRollbackRequestMapper(requestContext,
+                cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, cloudRegionPo,
+                createNetworkResponse);
 
-		return Optional.of(networkAdapterClient.updateNetworkAsync(updateNetworkRequest.getNetworkId(), updateNetworkRequest));
-	}
+        return Optional.of(networkAdapterClient.rollbackNetwork(l3Network.getNetworkId(), rollbackNetworkRequest));
+    }
 
-	public Optional<RollbackNetworkResponse> rollbackCreateNetwork(String networkId, RollbackNetworkRequest rollbackNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
+    public Optional<UpdateNetworkResponse> updateNetwork(RequestContext requestContext, CloudRegion cloudRegion,
+            OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, L3Network l3Network,
+            Map<String, String> userInput, Customer customer)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
+        UpdateNetworkRequest updateNetworkRequest = networkAdapterObjectMapper.createNetworkUpdateRequestMapper(
+                requestContext, cloudRegion, orchestrationContext, serviceInstance, l3Network, userInput, customer);
 
-		return Optional.of(networkAdapterClient.rollbackNetwork(networkId, rollbackNetworkRequest));
-	}
-	
-	public Optional<UpdateNetworkResponse> updateNetwork(UpdateNetworkRequest updateNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
-		
-		return Optional.of(networkAdapterClient.updateNetwork(updateNetworkRequest.getNetworkId(), updateNetworkRequest));
-	}
-	
-	public Optional<DeleteNetworkResponse> deleteNetwork(DeleteNetworkRequest deleteNetworkRequest) throws UnsupportedEncodingException, NetworkAdapterClientException {
-		
-		return Optional.of(networkAdapterClient.deleteNetwork(deleteNetworkRequest.getNetworkId(), deleteNetworkRequest));
-	}
+        return Optional.of(networkAdapterClient.updateNetwork(l3Network.getNetworkId(), updateNetworkRequest));
+    }
+
+    public Optional<DeleteNetworkResponse> deleteNetwork(RequestContext requestContext, CloudRegion cloudRegion,
+            ServiceInstance serviceInstance, L3Network l3Network)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+        DeleteNetworkRequest deleteNetworkRequest = networkAdapterObjectMapper
+                .deleteNetworkRequestMapper(requestContext, cloudRegion, serviceInstance, l3Network);
+        return Optional.of(networkAdapterClient.deleteNetwork(l3Network.getNetworkId(), deleteNetworkRequest));
+    }
+
+    public Optional<Response> createNetworkAsync(CreateNetworkRequest createNetworkRequest)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+        return Optional.of(networkAdapterClient.createNetworkAsync(createNetworkRequest));
+    }
+
+    public Optional<Response> deleteNetworkAsync(DeleteNetworkRequest deleteNetworkRequest)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+        return Optional
+                .of(networkAdapterClient.deleteNetworkAsync(deleteNetworkRequest.getNetworkId(), deleteNetworkRequest));
+    }
+
+    public Optional<Response> updateNetworkAsync(UpdateNetworkRequest updateNetworkRequest)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+        return Optional
+                .of(networkAdapterClient.updateNetworkAsync(updateNetworkRequest.getNetworkId(), updateNetworkRequest));
+    }
+
+    public Optional<RollbackNetworkResponse> rollbackCreateNetwork(String networkId,
+            RollbackNetworkRequest rollbackNetworkRequest)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+        return Optional.of(networkAdapterClient.rollbackNetwork(networkId, rollbackNetworkRequest));
+    }
+
+    public Optional<UpdateNetworkResponse> updateNetwork(UpdateNetworkRequest updateNetworkRequest)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+        return Optional
+                .of(networkAdapterClient.updateNetwork(updateNetworkRequest.getNetworkId(), updateNetworkRequest));
+    }
+
+    public Optional<DeleteNetworkResponse> deleteNetwork(DeleteNetworkRequest deleteNetworkRequest)
+            throws UnsupportedEncodingException, NetworkAdapterClientException {
+
+        return Optional
+                .of(networkAdapterClient.deleteNetwork(deleteNetworkRequest.getNetworkId(), deleteNetworkRequest));
+    }
 }

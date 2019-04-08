@@ -19,35 +19,36 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
-public class ChangeModelVnfBBTest extends BaseBPMNTest{
-	@Test
-	public void changeModelVnfBBTest() {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ChangeModelVnfBB", variables);
-		assertThat(processInstance).isNotNull();
-		assertThat(processInstance).isStarted().hasPassedInOrder("ChangeModelVnf_Start" ,"SDNCChangeModel", "CallActivity_sdncHandlerCall", "AAIUpdateModel", "ChangeModelVnf_End");
-		assertThat(processInstance).isEnded();
-	}
-	
-	@Test
-	public void changeModelVnfBBExceptionTest() {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncChangeAssignTasks).changeModelVnf(any(BuildingBlockExecution.class));
-		
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ChangeModelVnfBB", variables);
-		assertThat(processInstance).isNotNull();
-		assertThat(processInstance).isStarted()
-			.hasPassedInOrder("ChangeModelVnf_Start", "SDNCChangeModel")
-			.hasNotPassed("AAIUpdateModel", "ChangeModelVnf_End");
-		assertThat(processInstance).isEnded();
-	}
+public class ChangeModelVnfBBTest extends BaseBPMNTest {
+    @Test
+    public void changeModelVnfBBTest() {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ChangeModelVnfBB", variables);
+        assertThat(processInstance).isNotNull();
+        assertThat(processInstance).isStarted().hasPassedInOrder("ChangeModelVnf_Start", "SDNCChangeModel",
+                "CallActivity_sdncHandlerCall", "AAIUpdateModel", "ChangeModelVnf_End");
+        assertThat(processInstance).isEnded();
+    }
+
+    @Test
+    public void changeModelVnfBBExceptionTest() {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncChangeAssignTasks)
+                .changeModelVnf(any(BuildingBlockExecution.class));
+
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("ChangeModelVnfBB", variables);
+        assertThat(processInstance).isNotNull();
+        assertThat(processInstance).isStarted().hasPassedInOrder("ChangeModelVnf_Start", "SDNCChangeModel")
+                .hasNotPassed("AAIUpdateModel", "ChangeModelVnf_End");
+        assertThat(processInstance).isEnded();
+    }
 }

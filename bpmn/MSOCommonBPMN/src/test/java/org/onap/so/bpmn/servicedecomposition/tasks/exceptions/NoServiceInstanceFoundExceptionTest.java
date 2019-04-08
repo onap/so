@@ -21,46 +21,45 @@
 package org.onap.so.bpmn.servicedecomposition.tasks.exceptions;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 public class NoServiceInstanceFoundExceptionTest {
-	private static final String MESSAGE = "message";
-	private static final Throwable CAUSE = new Throwable();
-	private NoServiceInstanceFoundException NoObjectFoundException;
-	
-	@Test
-	public void defaultConstructorTest() {
-		NoObjectFoundException = new NoServiceInstanceFoundException();
-		assertEquals(null, NoObjectFoundException.getMessage());
-		assertEquals(null, NoObjectFoundException.getCause());
-	}
-	
-	@Test
-	public void messageConstructorTest() {
-		NoObjectFoundException = new NoServiceInstanceFoundException(MESSAGE);
-		assertEquals(MESSAGE, NoObjectFoundException.getMessage());
-		assertEquals(null, NoObjectFoundException.getCause());
-	}
-	
-	@Test
-	public void causeConstructorTest() {
-		NoObjectFoundException = new NoServiceInstanceFoundException(CAUSE);
-		assertEquals(CAUSE.toString(), NoObjectFoundException.getMessage()); 
-		assertEquals(CAUSE, NoObjectFoundException.getCause());
-	}
-	
-	@Test
-	public void messageAndCauseConstructorTest() {
-		NoObjectFoundException = new NoServiceInstanceFoundException(MESSAGE, CAUSE);
-		assertEquals(MESSAGE, NoObjectFoundException.getMessage());
-		assertEquals(CAUSE, NoObjectFoundException.getCause());
-	}
-	
-	@Test
-	public void messageAndCauseAndFlagsConstructorTest() {
-		NoObjectFoundException = new NoServiceInstanceFoundException(MESSAGE, CAUSE, true, true);
-		assertEquals(MESSAGE, NoObjectFoundException.getMessage());
-		assertEquals(CAUSE, NoObjectFoundException.getCause());
-	}
+    private static final String MESSAGE = "message";
+    private static final Throwable CAUSE = new Throwable();
+    private NoServiceInstanceFoundException NoObjectFoundException;
+
+    @Test
+    public void defaultConstructorTest() {
+        NoObjectFoundException = new NoServiceInstanceFoundException();
+        assertEquals(null, NoObjectFoundException.getMessage());
+        assertEquals(null, NoObjectFoundException.getCause());
+    }
+
+    @Test
+    public void messageConstructorTest() {
+        NoObjectFoundException = new NoServiceInstanceFoundException(MESSAGE);
+        assertEquals(MESSAGE, NoObjectFoundException.getMessage());
+        assertEquals(null, NoObjectFoundException.getCause());
+    }
+
+    @Test
+    public void causeConstructorTest() {
+        NoObjectFoundException = new NoServiceInstanceFoundException(CAUSE);
+        assertEquals(CAUSE.toString(), NoObjectFoundException.getMessage());
+        assertEquals(CAUSE, NoObjectFoundException.getCause());
+    }
+
+    @Test
+    public void messageAndCauseConstructorTest() {
+        NoObjectFoundException = new NoServiceInstanceFoundException(MESSAGE, CAUSE);
+        assertEquals(MESSAGE, NoObjectFoundException.getMessage());
+        assertEquals(CAUSE, NoObjectFoundException.getCause());
+    }
+
+    @Test
+    public void messageAndCauseAndFlagsConstructorTest() {
+        NoObjectFoundException = new NoServiceInstanceFoundException(MESSAGE, CAUSE, true, true);
+        assertEquals(MESSAGE, NoObjectFoundException.getMessage());
+        assertEquals(CAUSE, NoObjectFoundException.getCause());
+    }
 }

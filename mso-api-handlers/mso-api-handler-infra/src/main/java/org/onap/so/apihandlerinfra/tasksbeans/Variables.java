@@ -22,20 +22,19 @@ package org.onap.so.apihandlerinfra.tasksbeans;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 @JsonRootName(value = "variables")
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class Variables {
 
-	protected Value source;
-	protected Value responseValue;
+    protected Value source;
+    protected Value responseValue;
     protected Value requestorId;
-   
+
     /**
      * Gets the value of the source property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public Value getSource() {
@@ -45,30 +44,28 @@ public class Variables {
     /**
      * Sets the value of the source property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setSource(Value value) {
         this.source = value;
     }
 
-	public Value getResponseValue() {
-		return responseValue;
-	}
+    public Value getResponseValue() {
+        return responseValue;
+    }
 
-	public void setResponseValue(Value responseValue) {
-		this.responseValue = responseValue;
-	}
+    public void setResponseValue(Value responseValue) {
+        this.responseValue = responseValue;
+    }
 
-	
-	public Value getRequestorId() {
-		return requestorId;
-	}
 
-	public void setRequestorId(Value requestorId) {
-		this.requestorId = requestorId;
-	}
+    public Value getRequestorId() {
+        return requestorId;
+    }
+
+    public void setRequestorId(Value requestorId) {
+        this.requestorId = requestorId;
+    }
 
 }

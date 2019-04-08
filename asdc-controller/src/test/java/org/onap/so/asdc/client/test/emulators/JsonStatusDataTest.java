@@ -21,7 +21,6 @@
 package org.onap.so.asdc.client.test.emulators;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class JsonStatusDataTest {
@@ -39,17 +38,16 @@ public class JsonStatusDataTest {
     }
 
     @Test
-    public void setGetAttributes()
-    {
+    public void setGetAttributes() {
         JsonStatusData jsonStatusData = new JsonStatusData();
-        jsonStatusData.setAttribute("test","test");
+        jsonStatusData.setAttribute("test", "test");
         jsonStatusData.getStatus();
         jsonStatusData.getTimestamp();
         jsonStatusData.getComponentName();
         jsonStatusData.getConsumerID();
         jsonStatusData.getDistributionID();
         String errReason = jsonStatusData.getErrorReason();
-        assertEquals(errReason,"MSO FAILURE");
+        assertEquals(errReason, "MSO FAILURE");
 
     }
 

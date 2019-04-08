@@ -20,7 +20,6 @@
 package org.onap.so.monitoring.configuration;
 
 import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 import org.onap.so.monitoring.configuration.rest.HttpServiceProviderConfiguration;
 import org.onap.so.rest.service.HttpRestServiceProvider;

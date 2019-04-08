@@ -25,21 +25,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-"configuration-parameters"
-})
+@JsonPropertyOrder({"configuration-parameters"})
 public class ResumeTrafficAction {
 
-@JsonProperty("configuration-parameters")
-private ConfigurationParametersResumeTraffic configurationParameters;
+    @JsonProperty("configuration-parameters")
+    private ConfigurationParametersResumeTraffic configurationParameters;
 
-@JsonProperty("configuration-parameters")
-public ConfigurationParametersResumeTraffic getConfigurationParameters() {
-return configurationParameters;
-}
+    @JsonProperty("configuration-parameters")
+    public ConfigurationParametersResumeTraffic getConfigurationParameters() {
+        return configurationParameters;
+    }
 
-@JsonProperty("configuration-parameters")
-public void setConfigurationParameters(ConfigurationParametersResumeTraffic configurationParameters) {
-this.configurationParameters = configurationParameters;
-}
+    @JsonProperty("configuration-parameters")
+    public void setConfigurationParameters(ConfigurationParametersResumeTraffic configurationParameters) {
+        this.configurationParameters = configurationParameters;
+    }
 }

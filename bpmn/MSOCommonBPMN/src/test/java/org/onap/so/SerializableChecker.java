@@ -29,78 +29,65 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public final class SerializableChecker
-{
-    public static class SerializationFailure
-    {
+public final class SerializableChecker {
+    public static class SerializationFailure {
         private final String mContainingClass;
         private final String mMemberName;
 
-        public SerializationFailure(String inNonSerializableClass, String inMemberName)
-        {
+        public SerializationFailure(String inNonSerializableClass, String inMemberName) {
             mContainingClass = inNonSerializableClass;
             mMemberName = inMemberName;
         }
 
-        public String getContainingClass()
-        {
+        public String getContainingClass() {
             return mContainingClass;
         }
 
-        public String getMemberName()
-        {
+        public String getMemberName() {
             return mMemberName;
         }
 
-        public String getBadMemberString()
-        {
+        public String getBadMemberString() {
             if (mMemberName == null)
                 return mContainingClass;
             return mContainingClass + "." + mMemberName;
         }
 
         @Override
-        public String toString()
-        {
-            return "SerializationFailure [mNonSerializableClass=" + mContainingClass + ", mMemberName=" + mMemberName + "]";
+        public String toString() {
+            return "SerializationFailure [mNonSerializableClass=" + mContainingClass + ", mMemberName=" + mMemberName
+                    + "]";
         }
     }
 
-    private static class SerializationCheckerData
-    {
+    private static class SerializationCheckerData {
         private Set<Class<?>> mSerializableClasses;
 
-        SerializationCheckerData()
-        {
+        SerializationCheckerData() {
             mSerializableClasses = new HashSet<Class<?>>();
         }
 
-        boolean isAlreadyChecked(Class<?> inClass)
-        {
+        boolean isAlreadyChecked(Class<?> inClass) {
             return mSerializableClasses.contains(inClass);
         }
 
-        void addSerializableClass(Class<?> inClass)
-        {
+        void addSerializableClass(Class<?> inClass) {
             mSerializableClasses.add(inClass);
         }
     }
 
-    private SerializableChecker()
-    { }
+    private SerializableChecker() {}
 
-    public static SerializationFailure isFullySerializable(Class<?> inClass)
-    {
+    public static SerializationFailure isFullySerializable(Class<?> inClass) {
         if (!isSerializable(inClass))
             return new SerializationFailure(inClass.getName(), null);
 
         return isFullySerializable(inClass, new SerializationCheckerData());
     }
 
-    private static SerializationFailure isFullySerializable(Class<?> inClass, SerializationCheckerData inSerializationCheckerData)
-    {
-        for (Field field : declaredFields(inClass))
-        {
+    private static SerializationFailure isFullySerializable(Class<?> inClass,
+            SerializationCheckerData inSerializationCheckerData) {
+        for (Field field : declaredFields(inClass)) {
             Class<?> fieldDeclaringClass = field.getType();
 
             if (field.getType() == Object.class)
@@ -121,8 +108,7 @@ public final class SerializableChecker
             if (inSerializationCheckerData.isAlreadyChecked(fieldDeclaringClass))
                 continue;
 
-            if (isSerializable(fieldDeclaringClass))
-            {
+            if (isSerializable(fieldDeclaringClass)) {
                 inSerializationCheckerData.addSerializableClass(inClass);
 
                 SerializationFailure failure = isFullySerializable(field.getType(), inSerializationCheckerData);
@@ -140,8 +126,7 @@ public final class SerializableChecker
         return null;
     }
 
-    private static boolean isSerializable(Class<?> inClass)
-    {
+    private static boolean isSerializable(Class<?> inClass) {
         Set<Class<?>> interfaces = getInterfaces(inClass);
         if (interfaces == null)
             return false;
@@ -149,8 +134,7 @@ public final class SerializableChecker
         if (isSerializable)
             return true;
 
-        for (Class<?> classInterface : interfaces)
-        {
+        for (Class<?> classInterface : interfaces) {
             if (isSerializable(classInterface))
                 return true;
         }
@@ -161,13 +145,11 @@ public final class SerializableChecker
         return false;
     }
 
-    private static Set<Class<?>> getInterfaces(Class<?> inFieldDeclaringClass)
-    {
+    private static Set<Class<?>> getInterfaces(Class<?> inFieldDeclaringClass) {
         return new HashSet<Class<?>>(Arrays.asList(inFieldDeclaringClass.getInterfaces()));
     }
 
-    private static List<Field> declaredFields(Class<?> inClass)
-    {
+    private static List<Field> declaredFields(Class<?> inClass) {
         List<Field> fields = new ArrayList<Field>(Arrays.asList(inClass.getDeclaredFields()));
 
         Class<?> parentClasses = inClass.getSuperclass();
@@ -177,5 +159,5 @@ public final class SerializableChecker
         fields.addAll(declaredFields(parentClasses));
 
         return fields;
-        }
     }
+}

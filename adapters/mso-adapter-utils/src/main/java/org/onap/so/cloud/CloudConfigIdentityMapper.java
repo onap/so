@@ -20,11 +20,11 @@
 package org.onap.so.cloud;
 
 /**
- * This interface provides the method signature for mapping registration.
- * All mappings should be registered by the implementing class.
+ * This interface provides the method signature for mapping registration. All mappings should be registered by the
+ * implementing class.
  */
 @FunctionalInterface
 public interface CloudConfigIdentityMapper {
 
-	public void registerAllMappings();
+    public void registerAllMappings();
 }

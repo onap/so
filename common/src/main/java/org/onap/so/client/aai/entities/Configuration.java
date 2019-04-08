@@ -25,24 +25,16 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "configuration-id",
-    "configuration-type",
-    "configuration-sub-type",
-    "model-invariant-id",
-    "model-version-id",
-    "orchestration-status",
-    "operational-status",
-    "configuration-selflink",
-    "model-customization-id"
-})
+@JsonPropertyOrder({"configuration-id", "configuration-type", "configuration-sub-type", "model-invariant-id",
+        "model-version-id", "orchestration-status", "operational-status", "configuration-selflink",
+        "model-customization-id"})
 public class Configuration {
 
     @JsonProperty("configuration-id")
     private String configurationId;
     @JsonProperty("configuration-name")
     private String configurationName;
-	@JsonProperty("configuration-type")
+    @JsonProperty("configuration-type")
     private String configurationType;
     @JsonProperty("configuration-sub-type")
     private String configurationSubType;
@@ -52,13 +44,13 @@ public class Configuration {
     private String modelVersionId;
     @JsonProperty("orchestration-status")
     private String orchestrationStatus;
-	@JsonProperty("operational-status")
+    @JsonProperty("operational-status")
     private String operationalStatus;
-	@JsonProperty("configuration-selflink")
+    @JsonProperty("configuration-selflink")
     private String configurationSelflink;
     @JsonProperty("model-customization-id")
     private String modelCustomizationId;
-    
+
     @JsonProperty("configuration-id")
     public String getConfigurationId() {
         return configurationId;
@@ -68,16 +60,16 @@ public class Configuration {
     public void setConfigurationId(String configurationId) {
         this.configurationId = configurationId;
     }
-    
-    @JsonProperty("configuration-name")
-    public String getConfigurationName() {
-		return configurationName;
-	}
 
     @JsonProperty("configuration-name")
-	public void setConfigurationName(String configurationName) {
-		this.configurationName = configurationName;
-	}
+    public String getConfigurationName() {
+        return configurationName;
+    }
+
+    @JsonProperty("configuration-name")
+    public void setConfigurationName(String configurationName) {
+        this.configurationName = configurationName;
+    }
 
     @JsonProperty("configuration-type")
     public String getConfigurationType() {
@@ -118,36 +110,36 @@ public class Configuration {
     public void setModelVersionId(String modelVersionId) {
         this.modelVersionId = modelVersionId;
     }
-    
+
     @JsonProperty("orchestration-status")
     public String getOrchestrationStatus() {
-		return orchestrationStatus;
-	}
+        return orchestrationStatus;
+    }
 
     @JsonProperty("orchestration-status")
-	public void setOrchestrationStatus(String orchestrationStatus) {
-		this.orchestrationStatus = orchestrationStatus;
-	}
+    public void setOrchestrationStatus(String orchestrationStatus) {
+        this.orchestrationStatus = orchestrationStatus;
+    }
 
     @JsonProperty("operational-status")
-	public String getOperationalStatus() {
-		return operationalStatus;
-	}
+    public String getOperationalStatus() {
+        return operationalStatus;
+    }
 
     @JsonProperty("operational-status")
-	public void setOperationalStatus(String operationalStatus) {
-		this.operationalStatus = operationalStatus;
-	}
-    
+    public void setOperationalStatus(String operationalStatus) {
+        this.operationalStatus = operationalStatus;
+    }
+
     @JsonProperty("model-customization-id")
     public String getModelCustomizationId() {
-		return modelCustomizationId;
-	}
+        return modelCustomizationId;
+    }
 
     @JsonProperty("model-customization-id")
-	public void setModelCustomizationId(String modelCustomizationId) {
-		this.modelCustomizationId = modelCustomizationId;
-	}
+    public void setModelCustomizationId(String modelCustomizationId) {
+        this.modelCustomizationId = modelCustomizationId;
+    }
 
     @JsonProperty("configuration-selflink")
     public String getConfigurationSelflink() {

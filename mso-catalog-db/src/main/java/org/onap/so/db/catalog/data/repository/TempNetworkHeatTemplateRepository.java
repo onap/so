@@ -27,5 +27,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "tempNetworkHeatTemplateLookup", path = "tempNetworkHeatTemplateLookup")
 public interface TempNetworkHeatTemplateRepository extends JpaRepository<TempNetworkHeatTemplateLookup, String> {
 
-	TempNetworkHeatTemplateLookup findFirstBynetworkResourceModelName(String networkResourceModelName);
+    TempNetworkHeatTemplateLookup findFirstBynetworkResourceModelName(String networkResourceModelName);
 }

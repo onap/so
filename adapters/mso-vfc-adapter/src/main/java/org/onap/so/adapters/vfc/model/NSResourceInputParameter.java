@@ -23,10 +23,8 @@
 package org.onap.so.adapters.vfc.model;
 
 import java.io.ByteArrayOutputStream;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
@@ -42,20 +40,20 @@ import org.slf4j.LoggerFactory;
 public class NSResourceInputParameter {
 
     private static final Logger logger = LoggerFactory.getLogger(NSResourceInputParameter.class);
-    
+
     private NsOperationKey nsOperationKey;
 
     private String nsServiceName;
 
     private String nsServiceDescription;
-    
+
     private String nsServiceModelUUID;
 
     private NsParameters nsParameters;
 
     private NsScaleParameters nsScaleParameters;
 
-    
+
     /**
      * @return Returns the nsServiceName.
      */
@@ -63,7 +61,7 @@ public class NSResourceInputParameter {
         return nsServiceName;
     }
 
-    
+
     /**
      * @param nsServiceName The nsServiceName to set.
      */
@@ -71,7 +69,7 @@ public class NSResourceInputParameter {
         this.nsServiceName = nsServiceName;
     }
 
-    
+
     /**
      * @return Returns the nsServiceDescription.
      */
@@ -79,7 +77,7 @@ public class NSResourceInputParameter {
         return nsServiceDescription;
     }
 
-    
+
     /**
      * @param nsServiceDescription The nsServiceDescription to set.
      */
@@ -108,6 +106,7 @@ public class NSResourceInputParameter {
     public void setNsOperationKey(NsOperationKey nsOperationKey) {
         this.nsOperationKey = nsOperationKey;
     }
+
     public String toJsonString() {
         String jsonString = null;
         try {
@@ -125,7 +124,7 @@ public class NSResourceInputParameter {
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
             JAXBContext context = JAXBContext.newInstance(this.getClass());
             Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); //pretty print XML
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty print XML
             marshaller.marshal(this, bs);
             return bs.toString();
         } catch (Exception e) {
@@ -143,13 +142,13 @@ public class NSResourceInputParameter {
     }
 
 
-	public String getNsServiceModelUUID() {
-		return nsServiceModelUUID;
-	}
+    public String getNsServiceModelUUID() {
+        return nsServiceModelUUID;
+    }
 
 
-	public void setNsServiceModelUUID(String nsServiceModelUUID) {
-		this.nsServiceModelUUID = nsServiceModelUUID;
-	}
-    
+    public void setNsServiceModelUUID(String nsServiceModelUUID) {
+        this.nsServiceModelUUID = nsServiceModelUUID;
+    }
+
 }

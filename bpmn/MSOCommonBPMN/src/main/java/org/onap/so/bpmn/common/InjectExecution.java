@@ -26,9 +26,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class InjectExecution {
 
-	public DelegateExecutionImpl execute (DelegateExecution execution, DelegateExecutionImpl impl) {
-		
-		impl.setDelegateExecution(execution);
-		return impl;
-	}
+    public DelegateExecutionImpl execute(DelegateExecution execution, DelegateExecutionImpl impl) {
+
+        impl.setDelegateExecution(execution);
+        return impl;
+    }
 }

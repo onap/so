@@ -25,6 +25,6 @@ package org.onap.so.openstack.beans;
  * Enum status values to mirror the Openstack Heat stack status values
  */
 public enum HeatStatus {
-	INIT, CREATED, NOTFOUND, FAILED, BUILDING, DELETING, UNKNOWN, UPDATING, UPDATED
+    INIT, CREATED, NOTFOUND, FAILED, BUILDING, DELETING, UNKNOWN, UPDATING, UPDATED
 }
 

@@ -30,31 +30,31 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-@RunWith(MockitoJUnitRunner.class) 
+@RunWith(MockitoJUnitRunner.class)
 public class AAIUpdatorTest {
-	
-	@Mock
-	protected AAIRestClientI client;
-	String vnfName = "testVnf";
-	AAIUpdatorImpl updator;
-	
-	@Before
-	public void init(){
-		updator = new AAIUpdatorImpl();
-		updator.setClient(client);
-	}
 
-	@Test
-	public void testUpdateVnfToLocked() throws Exception{		
-		doNothing().when(client).updateMaintenceFlagVnfId(isA(String.class), isA(Boolean.class));
-		updator.updateVnfToLocked(vnfName);
-		verify(client, times(1)).updateMaintenceFlagVnfId(vnfName, true);
-	}
-	
-	@Test
-	public void testUpdateVnfToUnLocked() throws Exception {
-		doNothing().when(client).updateMaintenceFlagVnfId(isA(String.class), isA(Boolean.class));
-		updator.updateVnfToUnLocked(vnfName);
-		verify(client, times(1)).updateMaintenceFlagVnfId(vnfName, false);
-	}
+    @Mock
+    protected AAIRestClientI client;
+    String vnfName = "testVnf";
+    AAIUpdatorImpl updator;
+
+    @Before
+    public void init() {
+        updator = new AAIUpdatorImpl();
+        updator.setClient(client);
+    }
+
+    @Test
+    public void testUpdateVnfToLocked() throws Exception {
+        doNothing().when(client).updateMaintenceFlagVnfId(isA(String.class), isA(Boolean.class));
+        updator.updateVnfToLocked(vnfName);
+        verify(client, times(1)).updateMaintenceFlagVnfId(vnfName, true);
+    }
+
+    @Test
+    public void testUpdateVnfToUnLocked() throws Exception {
+        doNothing().when(client).updateMaintenceFlagVnfId(isA(String.class), isA(Boolean.class));
+        updator.updateVnfToUnLocked(vnfName);
+        verify(client, times(1)).updateMaintenceFlagVnfId(vnfName, false);
+    }
 }

@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-
 import java.io.IOException;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;

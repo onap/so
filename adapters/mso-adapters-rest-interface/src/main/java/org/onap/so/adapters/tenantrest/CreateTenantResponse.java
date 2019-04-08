@@ -23,63 +23,61 @@ package org.onap.so.adapters.tenantrest;
 
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "createTenantResponse")
 public class CreateTenantResponse implements Serializable {
-	private static final long serialVersionUID = -456155026754759682L;
-	private String cloudSiteId;
-	private String tenantId;
-	private Boolean tenantCreated;
-	private TenantRollback tenantRollback = new TenantRollback();
-	
-	public CreateTenantResponse() {}
+    private static final long serialVersionUID = -456155026754759682L;
+    private String cloudSiteId;
+    private String tenantId;
+    private Boolean tenantCreated;
+    private TenantRollback tenantRollback = new TenantRollback();
 
-	public CreateTenantResponse(String cloudSiteId, String tenantId,
-			Boolean tenantCreated, TenantRollback tenantRollback) {
-		this.cloudSiteId = cloudSiteId;
-		this.tenantId = tenantId;
-		this.tenantCreated = tenantCreated;
-		this.tenantRollback = tenantRollback;
-	}
+    public CreateTenantResponse() {}
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public CreateTenantResponse(String cloudSiteId, String tenantId, Boolean tenantCreated,
+            TenantRollback tenantRollback) {
+        this.cloudSiteId = cloudSiteId;
+        this.tenantId = tenantId;
+        this.tenantCreated = tenantCreated;
+        this.tenantRollback = tenantRollback;
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public Boolean getTenantCreated() {
-		return tenantCreated;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public void setTenantCreated(Boolean tenantCreated) {
-		this.tenantCreated = tenantCreated;
-	}
+    public Boolean getTenantCreated() {
+        return tenantCreated;
+    }
 
-	public TenantRollback getTenantRollback() {
-		return tenantRollback;
-	}
+    public void setTenantCreated(Boolean tenantCreated) {
+        this.tenantCreated = tenantCreated;
+    }
 
-	public void setTenantRollback(TenantRollback tenantRollback) {
-		this.tenantRollback = tenantRollback;
-	}
+    public TenantRollback getTenantRollback() {
+        return tenantRollback;
+    }
 
-	@Override
-	public String toString() {
-		return "CreateTenantResponse [cloudSiteId=" + cloudSiteId
-				+ ", tenantId=" + tenantId + ", tenantCreated=" + tenantCreated
-				+ ", tenantRollback=" + tenantRollback.toString() +  "]";
-	}
+    public void setTenantRollback(TenantRollback tenantRollback) {
+        this.tenantRollback = tenantRollback;
+    }
+
+    @Override
+    public String toString() {
+        return "CreateTenantResponse [cloudSiteId=" + cloudSiteId + ", tenantId=" + tenantId + ", tenantCreated="
+                + tenantCreated + ", tenantRollback=" + tenantRollback.toString() + "]";
+    }
 }

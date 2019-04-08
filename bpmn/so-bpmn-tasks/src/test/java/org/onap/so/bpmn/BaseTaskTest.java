@@ -58,96 +58,96 @@ import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
 public abstract class BaseTaskTest extends TestDataSetup {
-	@Mock
-	protected AAIVolumeGroupResources aaiVolumeGroupResources;
+    @Mock
+    protected AAIVolumeGroupResources aaiVolumeGroupResources;
 
-	@Mock
-	protected AAIServiceInstanceResources aaiServiceInstanceResources;
+    @Mock
+    protected AAIServiceInstanceResources aaiServiceInstanceResources;
 
-	@Mock
-	protected AAIVnfResources aaiVnfResources;
+    @Mock
+    protected AAIVnfResources aaiVnfResources;
 
-	@Mock
-	protected AAIVfModuleResources aaiVfModuleResources;
+    @Mock
+    protected AAIVfModuleResources aaiVfModuleResources;
 
-	@Mock
-	protected AAIVpnBindingResources aaiVpnBindingResources;
+    @Mock
+    protected AAIVpnBindingResources aaiVpnBindingResources;
 
-	@Mock
-	protected AAINetworkResources aaiNetworkResources;
+    @Mock
+    protected AAINetworkResources aaiNetworkResources;
 
-	@Mock
-	protected AAICollectionResources aaiCollectionResources;
+    @Mock
+    protected AAICollectionResources aaiCollectionResources;
 
-	@Mock
-	protected NetworkAdapterResources networkAdapterResources;
+    @Mock
+    protected NetworkAdapterResources networkAdapterResources;
 
-	@Mock
-	protected VnfAdapterVolumeGroupResources vnfAdapterVolumeGroupResources;
+    @Mock
+    protected VnfAdapterVolumeGroupResources vnfAdapterVolumeGroupResources;
 
-	@Mock
-	protected VnfAdapterVfModuleResources vnfAdapterVfModuleResources;
+    @Mock
+    protected VnfAdapterVfModuleResources vnfAdapterVfModuleResources;
 
-	@Mock
-	protected SDNCVnfResources sdncVnfResources;
+    @Mock
+    protected SDNCVnfResources sdncVnfResources;
 
-	@Mock
-	protected SDNCNetworkResources sdncNetworkResources;
+    @Mock
+    protected SDNCNetworkResources sdncNetworkResources;
 
-	@Mock
-	protected SDNCVfModuleResources sdncVfModuleResources;
+    @Mock
+    protected SDNCVfModuleResources sdncVfModuleResources;
 
-	@Mock
-	protected SDNCServiceInstanceResources sdncServiceInstanceResources;
+    @Mock
+    protected SDNCServiceInstanceResources sdncServiceInstanceResources;
 
-	@Mock
-	protected AssignNetworkBBUtils assignNetworkBBUtils;
+    @Mock
+    protected AssignNetworkBBUtils assignNetworkBBUtils;
 
-	@Mock
-	protected NetworkAdapterObjectMapper networkAdapterObjectMapper;
+    @Mock
+    protected NetworkAdapterObjectMapper networkAdapterObjectMapper;
 
-	@Mock
-	protected AAIInstanceGroupResources aaiInstanceGroupResources;
-	
-	@Mock
-	protected NamingServiceResources namingServiceResources;
+    @Mock
+    protected AAIInstanceGroupResources aaiInstanceGroupResources;
 
-	@Mock
-	protected ApplicationControllerAction appCClient;
+    @Mock
+    protected NamingServiceResources namingServiceResources;
 
-	@Mock
-	protected CatalogDbClient catalogDbClient;
+    @Mock
+    protected ApplicationControllerAction appCClient;
 
-	@Mock
-	protected RequestsDbClient requestsDbClient;
+    @Mock
+    protected CatalogDbClient catalogDbClient;
 
-	@Mock
-	protected BBInputSetupUtils bbSetupUtils;
+    @Mock
+    protected RequestsDbClient requestsDbClient;
 
-	@Mock
-	protected BBInputSetup bbInputSetup;
+    @Mock
+    protected BBInputSetupUtils bbSetupUtils;
 
-	@Mock
-	protected AAIConfigurationResources aaiConfigurationResources;
+    @Mock
+    protected BBInputSetup bbInputSetup;
 
-	@Mock
-	protected AAIObjectMapper MOCK_aaiObjectMapper;
+    @Mock
+    protected AAIConfigurationResources aaiConfigurationResources;
 
-	@Mock
-	protected InjectionHelper MOCK_injectionHelper;
+    @Mock
+    protected AAIObjectMapper MOCK_aaiObjectMapper;
 
-	@Mock
-	protected AAIResourcesClient MOCK_aaiResourcesClient;
+    @Mock
+    protected InjectionHelper MOCK_injectionHelper;
 
-	@Mock
-	protected ExtractPojosForBB extractPojosForBB;
+    @Mock
+    protected AAIResourcesClient MOCK_aaiResourcesClient;
 
-	@Mock
-	protected ExceptionBuilder exceptionUtil;
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
 
-	@Mock
-	protected WorkflowActionExtractResourcesAAI workflowActionUtils;
-	
-	@Mock
-	protected Environment env;
+    @Mock
+    protected ExceptionBuilder exceptionUtil;
+
+    @Mock
+    protected WorkflowActionExtractResourcesAAI workflowActionUtils;
+
+    @Mock
+    protected Environment env;
 }

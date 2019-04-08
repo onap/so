@@ -64,8 +64,7 @@ public class ApplicationException extends Exception {
     }
 
     /**
-     * build error Response
-     * <br>
+     * build error Response <br>
      * 
      * @return
      * @since ONAP Amsterdam Release

@@ -19,22 +19,21 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
-
 import java.io.IOException;
-
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 
-public class ActivateServiceInstanceBBTest extends BaseBPMNTest{
-	
-	@Test
-	public void sunnyDaySDNC() throws InterruptedException, IOException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateServiceInstanceBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_ActivateServiceInstanceBB", "Task_NoOpServiceInstance",
-				"Task_UpdateServiceOrchestrationStatusToActive", "End_ActivateServiceInstanceBB");
-		assertThat(pi).isEnded();
-	}
+public class ActivateServiceInstanceBBTest extends BaseBPMNTest {
+
+    @Test
+    public void sunnyDaySDNC() throws InterruptedException, IOException {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("ActivateServiceInstanceBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("Start_ActivateServiceInstanceBB", "Task_NoOpServiceInstance",
+                "Task_UpdateServiceOrchestrationStatusToActive", "End_ActivateServiceInstanceBB");
+        assertThat(pi).isEnded();
+    }
 }

@@ -28,34 +28,34 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * Everything that is common between all VfModule and VolumeGroup Requests.
  */
 public abstract class VfRequestCommon extends VfResponseCommon {
-	private Boolean skipAAI;
-	private String notificationUrl;
+    private Boolean skipAAI;
+    private String notificationUrl;
 
-	public Boolean getSkipAAI() {
-		return skipAAI;
-	}
+    public Boolean getSkipAAI() {
+        return skipAAI;
+    }
 
-	public void setSkipAAI(Boolean skipAAI) {
-		this.skipAAI = skipAAI;
-	}
+    public void setSkipAAI(Boolean skipAAI) {
+        this.skipAAI = skipAAI;
+    }
 
-	public String getNotificationUrl() {
-		return notificationUrl;
-	}
+    public String getNotificationUrl() {
+        return notificationUrl;
+    }
 
-	public void setNotificationUrl(String notificationUrl) {
-		this.notificationUrl = notificationUrl;
-	}
+    public void setNotificationUrl(String notificationUrl) {
+        this.notificationUrl = notificationUrl;
+    }
 
-	public boolean isSynchronous() {
-		return notificationUrl == null || notificationUrl.isEmpty();
-	}
+    public boolean isSynchronous() {
+        return notificationUrl == null || notificationUrl.isEmpty();
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("skipAAI", skipAAI).append("notificationUrl", notificationUrl)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("skipAAI", skipAAI).append("notificationUrl", notificationUrl)
+                .toString();
+    }
 
-	// getMessageId, setMessageId, toJsonString, toJsonString are all defined in VfResponseCommon.
+    // getMessageId, setMessageId, toJsonString, toJsonString are all defined in VfResponseCommon.
 }

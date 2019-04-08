@@ -32,7 +32,7 @@ public class MarshallerException extends Exception {
     }
 
     public MarshallerException(String message, int errorCode, Exception e) {
-        super (e);
+        super(e);
         this.message = message;
         this.errorCode = errorCode;
 

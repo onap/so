@@ -32,45 +32,42 @@ import org.onap.so.client.sdno.SDNOValidatorImpl;
 import org.springframework.stereotype.Component;
 
 /*
- * This object is intended to be a helper for acquiring classes
- * that cannot be acquired via Spring injection.
+ * This object is intended to be a helper for acquiring classes that cannot be acquired via Spring injection.
  *
  * It brings two benefits:
  *
- * 1) Enforces acquisition of a new copy of these classes every
- *    time to help with picking up properties files changes, etc
- * 2) The classes are exposed in such a way that mocks of them can
- *    still be injected when testing the Spring objects that use
- *    them
+ * 1) Enforces acquisition of a new copy of these classes every time to help with picking up properties files changes,
+ * etc 2) The classes are exposed in such a way that mocks of them can still be injected when testing the Spring objects
+ * that use them
  */
 
 @Component
 public class InjectionHelper {
-	public AAIResourcesClient getAaiClient() {
-		return new AAIResourcesClient();
-	}
+    public AAIResourcesClient getAaiClient() {
+        return new AAIResourcesClient();
+    }
 
-	public AAIQueryClient getAaiQueryClient() {
-		return new AAIQueryClient();
-	}
+    public AAIQueryClient getAaiQueryClient() {
+        return new AAIQueryClient();
+    }
 
-	public SDNOValidator getSdnoValidator() {
-		return new SDNOValidatorImpl();
-	}
+    public SDNOValidator getSdnoValidator() {
+        return new SDNOValidatorImpl();
+    }
 
-	public AAICommonObjectMapperProvider getAaiCommonObjectMapperProvider() {
-		return new AAICommonObjectMapperProvider();
-	}
+    public AAICommonObjectMapperProvider getAaiCommonObjectMapperProvider() {
+        return new AAICommonObjectMapperProvider();
+    }
 
-	public AAIResultWrapper getAaiResultWrapper(String json) {
-		return new AAIResultWrapper(json);
-	}
+    public AAIResultWrapper getAaiResultWrapper(String json) {
+        return new AAIResultWrapper(json);
+    }
 
-	public PolicyClientImpl getPolicyClient() {
-		return new PolicyClientImpl();
-	}
+    public PolicyClientImpl getPolicyClient() {
+        return new PolicyClientImpl();
+    }
 
-	public CDSProcessingClient getCdsClient(CDSProcessingListener listener) {
-		return new CDSProcessingClient(listener);
-	}
+    public CDSProcessingClient getCdsClient(CDSProcessingListener listener) {
+        return new CDSProcessingClient(listener);
+    }
 }

@@ -21,61 +21,64 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 public class VnfResourceWorkflowId implements Serializable {
-	
-	private static final long serialVersionUID = -594459957997483601L;
-	
-	private Integer ID;
 
-	@BusinessKey
-	private String vnfResourceModelUUID;
-	@BusinessKey
-	private Integer workflowId;
-	
-	public String getVnfResourceModelUUID() {
-		return vnfResourceModelUUID;
-	}
-	public void setVnfResourceModelUUID(String vnfResourceModelUUID) {
-		this.vnfResourceModelUUID = vnfResourceModelUUID;
-	}
-	public Integer getWorkflowId() {
-		return workflowId;
-	}
-	public void setWorkflowId(Integer workflowId) {
-		this.workflowId = workflowId;
-	}
-	public Integer getID() {
-		return ID;
-	}
-	public void setID(Integer ID) {
-		this.ID = ID;
-	}
+    private static final long serialVersionUID = -594459957997483601L;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("vnfResourceModelUUID", vnfResourceModelUUID)
-				.append("workflowId", workflowId).toString();
-	}
+    private Integer ID;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VnfResourceWorkflowId)) {
-			return false;
-		}
-		VnfResourceWorkflowId castOther = (VnfResourceWorkflowId) other;
-		return new EqualsBuilder().append(vnfResourceModelUUID, castOther.vnfResourceModelUUID)
-				.append(workflowId, castOther.workflowId).isEquals();
-	}
+    @BusinessKey
+    private String vnfResourceModelUUID;
+    @BusinessKey
+    private Integer workflowId;
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(vnfResourceModelUUID).append(workflowId).toHashCode();
-	}
+    public String getVnfResourceModelUUID() {
+        return vnfResourceModelUUID;
+    }
+
+    public void setVnfResourceModelUUID(String vnfResourceModelUUID) {
+        this.vnfResourceModelUUID = vnfResourceModelUUID;
+    }
+
+    public Integer getWorkflowId() {
+        return workflowId;
+    }
+
+    public void setWorkflowId(Integer workflowId) {
+        this.workflowId = workflowId;
+    }
+
+    public Integer getID() {
+        return ID;
+    }
+
+    public void setID(Integer ID) {
+        this.ID = ID;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("vnfResourceModelUUID", vnfResourceModelUUID)
+                .append("workflowId", workflowId).toString();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VnfResourceWorkflowId)) {
+            return false;
+        }
+        VnfResourceWorkflowId castOther = (VnfResourceWorkflowId) other;
+        return new EqualsBuilder().append(vnfResourceModelUUID, castOther.vnfResourceModelUUID)
+                .append(workflowId, castOther.workflowId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(vnfResourceModelUUID).append(workflowId).toHashCode();
+    }
 }

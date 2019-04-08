@@ -21,5 +21,5 @@
 package org.onap.so.db.catalog.beans;
 
 public enum ServerType {
-	KEYSTONE, ORM, KEYSTONE_V3;
+    KEYSTONE, ORM, KEYSTONE_V3;
 }

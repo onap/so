@@ -23,7 +23,7 @@ package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RequestInformationEntity {
-	@JsonProperty("GENERIC-RESOURCE-API:request-id")
+    @JsonProperty("GENERIC-RESOURCE-API:request-id")
     private String requestId;
 
     @JsonProperty("GENERIC-RESOURCE-API:request-action")
@@ -40,7 +40,7 @@ public class RequestInformationEntity {
 
     @JsonProperty("GENERIC-RESOURCE-API:order-version")
     private String orerVersion;
-    
+
     public String getRequestId() {
         return requestId;
     }

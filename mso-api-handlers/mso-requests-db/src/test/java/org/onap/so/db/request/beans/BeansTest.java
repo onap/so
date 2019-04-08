@@ -21,16 +21,13 @@
 package org.onap.so.db.request.beans;
 
 import static org.onap.so.openpojo.rules.HasAnnotationMatcher.hasAnnotation;
-
 import javax.persistence.Temporal;
-
 import org.junit.Test;
 import org.onap.so.openpojo.rules.CustomSetterMustExistRule;
 import org.onap.so.openpojo.rules.EqualsAndHashCodeTester;
 import org.onap.so.openpojo.rules.HasEqualsAndHashCodeRule;
 import org.onap.so.openpojo.rules.HasToStringRule;
 import org.onap.so.openpojo.rules.ToStringTester;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -43,29 +40,24 @@ import com.openpojo.validation.test.impl.SetterTester;
 
 public class BeansTest {
 
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void pojoStructure() {
-		test("org.onap.so.db.request.beans");
-	}
+    @Test
+    public void pojoStructure() {
+        test("org.onap.so.db.request.beans");
+    }
 
-	private void test(String pojoPackage) {
-		Validator validator = ValidatorBuilder.create()
-				.with(new GetterMustExistRule())
-				.with(new CustomSetterMustExistRule().exclude(hasAnnotation(Temporal.class)))
-				.with(new HasEqualsAndHashCodeRule())
-				.with(new HasToStringRule())
-				.with(new SetterTester())
-				.with(new GetterTester())
-				.with(new EqualsAndHashCodeTester())
-				.with(new ToStringTester())
-				.build();
-		validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterEnum());
-	}
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
+    private void test(String pojoPackage) {
+        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule())
+                .with(new CustomSetterMustExistRule().exclude(hasAnnotation(Temporal.class)))
+                .with(new HasEqualsAndHashCodeRule()).with(new HasToStringRule()).with(new SetterTester())
+                .with(new GetterTester()).with(new EqualsAndHashCodeTester()).with(new ToStringTester()).build();
+        validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterEnum());
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
 }

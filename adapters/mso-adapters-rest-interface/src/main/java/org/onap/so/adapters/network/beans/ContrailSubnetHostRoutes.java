@@ -23,31 +23,29 @@ package org.onap.so.adapters.network.beans;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ContrailSubnetHostRoutes {
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route")
-	private List<ContrailSubnetHostRoute> hostRoutes  = new ArrayList<>();
 
-	public List<ContrailSubnetHostRoute> getHostRoutes() {
-		return hostRoutes;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route")
+    private List<ContrailSubnetHostRoute> hostRoutes = new ArrayList<>();
 
-	public void setHostRoutes(List<ContrailSubnetHostRoute> hostRoutes) {
-		this.hostRoutes = hostRoutes;
-	}
+    public List<ContrailSubnetHostRoute> getHostRoutes() {
+        return hostRoutes;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder buf = new StringBuilder ();
-		if (hostRoutes != null)
-		{
-			for (ContrailSubnetHostRoute hr : hostRoutes)
-			{
-				buf.append(hr.toString());
-			}
-		}
-		return "ContrailSubnetHostRoutes [" + buf.toString() + "]";
-	}
+    public void setHostRoutes(List<ContrailSubnetHostRoute> hostRoutes) {
+        this.hostRoutes = hostRoutes;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        if (hostRoutes != null) {
+            for (ContrailSubnetHostRoute hr : hostRoutes) {
+                buf.append(hr.toString());
+            }
+        }
+        return "ContrailSubnetHostRoutes [" + buf.toString() + "]";
+    }
 }

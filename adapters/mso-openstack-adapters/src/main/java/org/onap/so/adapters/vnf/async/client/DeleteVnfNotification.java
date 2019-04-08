@@ -27,9 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for deleteVnfNotification complex type.
+ * <p>
+ * Java class for deleteVnfNotification complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="deleteVnfNotification">
@@ -49,12 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteVnfNotification", propOrder = {
-    "messageId",
-    "completed",
-    "exception",
-    "errorMessage"
-})
+@XmlType(name = "deleteVnfNotification", propOrder = {"messageId", "completed", "exception", "errorMessage"})
 public class DeleteVnfNotification {
 
     @XmlElement(required = true)
@@ -66,10 +63,8 @@ public class DeleteVnfNotification {
     /**
      * Gets the value of the messageId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getMessageId() {
         return messageId;
@@ -78,10 +73,8 @@ public class DeleteVnfNotification {
     /**
      * Sets the value of the messageId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setMessageId(String value) {
         this.messageId = value;
@@ -106,10 +99,8 @@ public class DeleteVnfNotification {
     /**
      * Gets the value of the exception property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @return possible object is {@link MsoExceptionCategory }
+     * 
      */
     public MsoExceptionCategory getException() {
         return exception;
@@ -118,10 +109,8 @@ public class DeleteVnfNotification {
     /**
      * Sets the value of the exception property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @param value allowed object is {@link MsoExceptionCategory }
+     * 
      */
     public void setException(MsoExceptionCategory value) {
         this.exception = value;
@@ -130,10 +119,8 @@ public class DeleteVnfNotification {
     /**
      * Gets the value of the errorMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getErrorMessage() {
         return errorMessage;
@@ -142,10 +129,8 @@ public class DeleteVnfNotification {
     /**
      * Sets the value of the errorMessage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setErrorMessage(String value) {
         this.errorMessage = value;

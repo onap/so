@@ -26,17 +26,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-
 import org.junit.Test;
 
 public class ObjectFactoryTest {
@@ -48,45 +45,44 @@ public class ObjectFactoryTest {
      * Test method for {@link org.onap.so.adapters.sdnc.ObjectFactory#createRequestHeader()}.
      */
     @Test
-    public final void testCreateRequestHeader () {
-        ObjectFactory of = new ObjectFactory ();
-        RequestHeader rh = of.createRequestHeader ();
-        rh.setCallbackUrl ("callback");
-        rh.setMsoAction ("action");
-        rh.setRequestId ("reqid");
-        rh.setSvcAction ("svcAction");
-        rh.setSvcInstanceId ("svcId");
-        rh.setSvcOperation ("op");
-        
+    public final void testCreateRequestHeader() {
+        ObjectFactory of = new ObjectFactory();
+        RequestHeader rh = of.createRequestHeader();
+        rh.setCallbackUrl("callback");
+        rh.setMsoAction("action");
+        rh.setRequestId("reqid");
+        rh.setSvcAction("svcAction");
+        rh.setSvcInstanceId("svcId");
+        rh.setSvcOperation("op");
+
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(RequestHeader.class);
             jaxbMarshaller = jaxbContext.createMarshaller();
-        
+
             JAXBContext jaxbContext2 = JAXBContext.newInstance(RequestHeader.class);
             jaxbUnmarshaller = jaxbContext2.createUnmarshaller();
-        }
-        catch (JAXBException e) {
-            e.printStackTrace ();
+        } catch (JAXBException e) {
+            e.printStackTrace();
             fail();
             return;
         }
 
         StringWriter writer = new StringWriter();
         try {
-            jaxbMarshaller.marshal (rh, writer);
+            jaxbMarshaller.marshal(rh, writer);
         } catch (JAXBException e) {
             e.printStackTrace();
-            fail ();
+            fail();
         }
-        String marshalled = writer.toString ();
+        String marshalled = writer.toString();
         assertThat(marshalled, containsString("<RequestId>reqid</RequestId>"));
-        
+
         InputStream inputStream = new ByteArrayInputStream(marshalled.getBytes(Charset.forName("UTF-8")));
         try {
-            RequestHeader res2 = (RequestHeader) jaxbUnmarshaller.unmarshal (inputStream);
-            assertEquals("callback", res2.getCallbackUrl ());
-            assertEquals("action", res2.getMsoAction ());
-            assertEquals("op", res2.getSvcOperation ());
+            RequestHeader res2 = (RequestHeader) jaxbUnmarshaller.unmarshal(inputStream);
+            assertEquals("callback", res2.getCallbackUrl());
+            assertEquals("action", res2.getMsoAction());
+            assertEquals("op", res2.getSvcOperation());
         } catch (JAXBException e) {
             e.printStackTrace();
             fail();
@@ -97,17 +93,17 @@ public class ObjectFactoryTest {
      * Test method for {@link org.onap.so.adapters.sdnc.ObjectFactory#createSDNCAdapterResponse()}.
      */
     @Test
-    public final void testCreateSDNCAdapterResponse () {
-        ObjectFactory of = new ObjectFactory ();
-        SDNCAdapterResponse ar = of.createSDNCAdapterResponse ();
+    public final void testCreateSDNCAdapterResponse() {
+        ObjectFactory of = new ObjectFactory();
+        SDNCAdapterResponse ar = of.createSDNCAdapterResponse();
         assertNotNull(ar);
     }
-    
+
     @Test
-    public final void testCreateSDNCAdapterRequest () {
-        ObjectFactory of = new ObjectFactory ();
-        SDNCAdapterRequest ar = of.createSDNCAdapterRequest ();
+    public final void testCreateSDNCAdapterRequest() {
+        ObjectFactory of = new ObjectFactory();
+        SDNCAdapterRequest ar = of.createSDNCAdapterRequest();
         assertNotNull(ar);
     }
-    
+
 }

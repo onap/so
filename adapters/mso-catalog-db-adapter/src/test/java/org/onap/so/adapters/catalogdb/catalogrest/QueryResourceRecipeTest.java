@@ -22,7 +22,6 @@ package org.onap.so.adapters.catalogdb.catalogrest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -62,7 +61,7 @@ public class QueryResourceRecipeTest {
     }
 
     private Recipe createRecipe() {
-    	ServiceRecipe recipe = new ServiceRecipe();
+        ServiceRecipe recipe = new ServiceRecipe();
         recipe.setId(RECIPE_ID);
         recipe.setAction(RECIPE_ACTION);
         recipe.setOrchestrationUri(RECIPE_URI);
@@ -76,8 +75,9 @@ public class QueryResourceRecipeTest {
     public void convertToJson() {
         Recipe recipe = createRecipe();
         QueryResourceRecipe queryResourceRecipe = new QueryResourceRecipe(recipe);
-        assertEquals("{\"orchestrationUri\":\"uriTest\",\"action\":\"actionTest\",\"description\":\"descrTest\",\"id\":\"123\",\"recipeTimeout\":\"100\",\"paramXSD\":\"paramsXsdTest\"}",
-                queryResourceRecipe.JSON2(false,false));
+        assertEquals(
+                "{\"orchestrationUri\":\"uriTest\",\"action\":\"actionTest\",\"description\":\"descrTest\",\"id\":\"123\",\"recipeTimeout\":\"100\",\"paramXSD\":\"paramsXsdTest\"}",
+                queryResourceRecipe.JSON2(false, false));
     }
 
     @Test
@@ -86,10 +86,11 @@ public class QueryResourceRecipeTest {
         QueryResourceRecipe networkQueryRR = new QueryResourceRecipe(new NetworkRecipe());
         QueryResourceRecipe arQueryRR = new QueryResourceRecipe(new ArRecipe());
 
-        String expected = "{\"orchestrationUri\":\"\",\"action\":\"\",\"description\":\"\",\"id\":\"\",\"recipeTimeout\":\"\",\"paramXSD\":\"\"}";
+        String expected =
+                "{\"orchestrationUri\":\"\",\"action\":\"\",\"description\":\"\",\"id\":\"\",\"recipeTimeout\":\"\",\"paramXSD\":\"\"}";
         assertEquals(expected, vnfQueryRR.JSON2(false, false));
-        assertEquals(expected, networkQueryRR.JSON2(false,false));
-        assertEquals(expected, arQueryRR.JSON2(false,false));
+        assertEquals(expected, networkQueryRR.JSON2(false, false));
+        assertEquals(expected, arQueryRR.JSON2(false, false));
     }
 
 }

@@ -22,8 +22,8 @@ package org.onap.so.apihandlerinfra.tenantisolation.exceptions;
 
 public class AAIClientCallFailed extends Exception {
 
-	public AAIClientCallFailed(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public AAIClientCallFailed(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }

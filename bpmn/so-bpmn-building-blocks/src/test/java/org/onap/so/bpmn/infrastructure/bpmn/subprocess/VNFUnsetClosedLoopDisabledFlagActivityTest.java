@@ -19,36 +19,38 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
 
-public class VNFUnsetClosedLoopDisabledFlagActivityTest extends BaseBPMNTest{
-	@Test
-	public void sunnyDayVNFUnsetClosedLoopDisabledFlagActivity_Test() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUnsetInClosedLoopDisabledFlagActivity", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetClosedLoopDisabledFlagActivity_Start",				
-				"TaskVNFUnsetClosedLoopDisabledFlagActivity",								   
-				"VNFUnsetClosedLoopDisabledFlagActivity_End");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test
-	public void rainyDayVNFUnsetClosedLoopFlag_Test() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
-				.modifyVnfClosedLoopDisabledFlag(any(BuildingBlockExecution.class), any(boolean.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUnsetInClosedLoopDisabledFlagActivity", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetClosedLoopDisabledFlagActivity_Start",				
-				"TaskVNFUnsetClosedLoopDisabledFlagActivity").hasNotPassed(								   
-				"VNFUnsetClosedLoopDisabledFlagActivity_End");		
-		assertThat(pi).isEnded();
-	}
+public class VNFUnsetClosedLoopDisabledFlagActivityTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayVNFUnsetClosedLoopDisabledFlagActivity_Test() throws InterruptedException {
+        ProcessInstance pi =
+                runtimeService.startProcessInstanceByKey("VNFUnsetInClosedLoopDisabledFlagActivity", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetClosedLoopDisabledFlagActivity_Start",
+                "TaskVNFUnsetClosedLoopDisabledFlagActivity", "VNFUnsetClosedLoopDisabledFlagActivity_End");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void rainyDayVNFUnsetClosedLoopFlag_Test() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
+                .modifyVnfClosedLoopDisabledFlag(any(BuildingBlockExecution.class), any(boolean.class));
+        ProcessInstance pi =
+                runtimeService.startProcessInstanceByKey("VNFUnsetInClosedLoopDisabledFlagActivity", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted()
+                .hasPassedInOrder("VNFUnsetClosedLoopDisabledFlagActivity_Start",
+                        "TaskVNFUnsetClosedLoopDisabledFlagActivity")
+                .hasNotPassed("VNFUnsetClosedLoopDisabledFlagActivity_End");
+        assertThat(pi).isEnded();
+    }
 }

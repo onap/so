@@ -30,14 +30,14 @@ import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
 @Profile("test")
-@ComponentScan(basePackages = {"org.onap.so"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class, excludeFilters = {
-		@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
+@ComponentScan(basePackages = {"org.onap.so"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class,
+        excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
 public class TestApplication {
-	public static void main(String... args) {
-		SpringApplication.run(TestApplication.class, args);
-		System.getProperties().setProperty("mso.db", "MARIADB");
-		System.getProperties().setProperty("server.name", "Springboot");
-		
-		
-	}
+    public static void main(String... args) {
+        SpringApplication.run(TestApplication.class, args);
+        System.getProperties().setProperty("mso.db", "MARIADB");
+        System.getProperties().setProperty("server.name", "Springboot");
+
+
+    }
 }

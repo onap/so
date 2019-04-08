@@ -22,5 +22,5 @@ package org.onap.so.client.dmaap;
 
 public interface Consumer {
 
-	public Iterable<String> fetch();
+    public Iterable<String> fetch();
 }

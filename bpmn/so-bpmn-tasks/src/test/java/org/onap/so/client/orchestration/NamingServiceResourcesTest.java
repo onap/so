@@ -26,9 +26,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,57 +47,58 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class NamingServiceResourcesTest extends TestDataSetup{
-	@InjectMocks
-	private NamingServiceResources namingServiceResources = new NamingServiceResources();	
-	
-	private InstanceGroup instanceGroup;
-	
-	@Mock
-	protected NamingRequestObjectBuilder MOCK_namingRequestObjectBuilder;	
-	
-	@Mock
-	protected NamingClient MOCK_namingClient;	
+public class NamingServiceResourcesTest extends TestDataSetup {
+    @InjectMocks
+    private NamingServiceResources namingServiceResources = new NamingServiceResources();
 
-	@Before
-	public void before() {		
-		instanceGroup = buildInstanceGroup();
-	}	
+    private InstanceGroup instanceGroup;
 
-	@Test
-	public void generateInstanceGroupNameTest() throws Exception {
-		NameGenResponse name = new NameGenResponse();
-		ResponseEntity<NameGenResponse> resp = new ResponseEntity<>(name, null, HttpStatus.OK);
-		Element element = new Element();
-		
-		NameGenRequest req = new NameGenRequest();
-		doReturn(element).when(MOCK_namingRequestObjectBuilder).elementMapper(isA(String.class), isA(String.class),
-				isA(String.class), isA(String.class), isA(String.class));
-		doReturn("generatedInstanceGroupName").when(MOCK_namingClient).postNameGenRequest(isA(NameGenRequest.class));		
-		doReturn(req).when(MOCK_namingRequestObjectBuilder).nameGenRequestMapper(isA(List.class));
+    @Mock
+    protected NamingRequestObjectBuilder MOCK_namingRequestObjectBuilder;
 
-		String generatedName = namingServiceResources.generateInstanceGroupName(instanceGroup, "policyInstanceName", "nfNamingCode");
+    @Mock
+    protected NamingClient MOCK_namingClient;
 
-		verify(MOCK_namingClient, times(1)).postNameGenRequest(any(NameGenRequest.class));
-		assertEquals(generatedName, "generatedInstanceGroupName");
-	}
+    @Before
+    public void before() {
+        instanceGroup = buildInstanceGroup();
+    }
 
-	@Test
-	public void deleteInstanceGroupNameTest() throws Exception {		
-		NameGenDeleteResponse name = new NameGenDeleteResponse();
-		ResponseEntity<NameGenDeleteResponse> resp = new ResponseEntity<>(name, null, HttpStatus.OK);
-		Deleteelement deleteElement = new Deleteelement();
-		deleteElement.setExternalKey(instanceGroup.getId());
-		NameGenDeleteRequest req = new NameGenDeleteRequest();
-		doReturn(deleteElement).when(MOCK_namingRequestObjectBuilder).deleteElementMapper(isA(String.class));
-		doReturn("").when(MOCK_namingClient).deleteNameGenRequest(isA(NameGenDeleteRequest.class));		
-		doReturn(req).when(MOCK_namingRequestObjectBuilder).nameGenDeleteRequestMapper(isA(List.class));
+    @Test
+    public void generateInstanceGroupNameTest() throws Exception {
+        NameGenResponse name = new NameGenResponse();
+        ResponseEntity<NameGenResponse> resp = new ResponseEntity<>(name, null, HttpStatus.OK);
+        Element element = new Element();
 
-		namingServiceResources.deleteInstanceGroupName(instanceGroup);
+        NameGenRequest req = new NameGenRequest();
+        doReturn(element).when(MOCK_namingRequestObjectBuilder).elementMapper(isA(String.class), isA(String.class),
+                isA(String.class), isA(String.class), isA(String.class));
+        doReturn("generatedInstanceGroupName").when(MOCK_namingClient).postNameGenRequest(isA(NameGenRequest.class));
+        doReturn(req).when(MOCK_namingRequestObjectBuilder).nameGenRequestMapper(isA(List.class));
 
-		verify(MOCK_namingClient, times(1)).deleteNameGenRequest(any(NameGenDeleteRequest.class));
-		
-	}
+        String generatedName =
+                namingServiceResources.generateInstanceGroupName(instanceGroup, "policyInstanceName", "nfNamingCode");
 
-	
+        verify(MOCK_namingClient, times(1)).postNameGenRequest(any(NameGenRequest.class));
+        assertEquals(generatedName, "generatedInstanceGroupName");
+    }
+
+    @Test
+    public void deleteInstanceGroupNameTest() throws Exception {
+        NameGenDeleteResponse name = new NameGenDeleteResponse();
+        ResponseEntity<NameGenDeleteResponse> resp = new ResponseEntity<>(name, null, HttpStatus.OK);
+        Deleteelement deleteElement = new Deleteelement();
+        deleteElement.setExternalKey(instanceGroup.getId());
+        NameGenDeleteRequest req = new NameGenDeleteRequest();
+        doReturn(deleteElement).when(MOCK_namingRequestObjectBuilder).deleteElementMapper(isA(String.class));
+        doReturn("").when(MOCK_namingClient).deleteNameGenRequest(isA(NameGenDeleteRequest.class));
+        doReturn(req).when(MOCK_namingRequestObjectBuilder).nameGenDeleteRequestMapper(isA(List.class));
+
+        namingServiceResources.deleteInstanceGroupName(instanceGroup);
+
+        verify(MOCK_namingClient, times(1)).deleteNameGenRequest(any(NameGenDeleteRequest.class));
+
+    }
+
+
 }

@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.List;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.common.name.generation.AAIObjectInstanceNameGenerator;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -37,35 +36,36 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AssignVnf {
-	
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private AAIInstanceGroupResources aaiInstanceGroupResources;
-	@Autowired
-	private AAIObjectInstanceNameGenerator aaiObjectInstanceNameGenerator;
-	
-	
-	public void createInstanceGroups(BuildingBlockExecution execution) {
-		try {
-			GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-			List<InstanceGroup> instanceGroups = vnf.getInstanceGroups();
-			for(InstanceGroup instanceGroup : instanceGroups) {
-				if(ModelInfoInstanceGroup.TYPE_VNFC.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
-					instanceGroup.setInstanceGroupName(aaiObjectInstanceNameGenerator.generateInstanceGroupName(instanceGroup, vnf));
-					aaiInstanceGroupResources.createInstanceGroup(instanceGroup);
-					aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.BELONGS_TO);
-				}
-				else if(ModelInfoInstanceGroup.TYPE_L3_NETWORK.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
-					aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.USES);
-				}
-			}
-		} 
-		catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private AAIInstanceGroupResources aaiInstanceGroupResources;
+    @Autowired
+    private AAIObjectInstanceNameGenerator aaiObjectInstanceNameGenerator;
+
+
+    public void createInstanceGroups(BuildingBlockExecution execution) {
+        try {
+            GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+            List<InstanceGroup> instanceGroups = vnf.getInstanceGroups();
+            for (InstanceGroup instanceGroup : instanceGroups) {
+                if (ModelInfoInstanceGroup.TYPE_VNFC
+                        .equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
+                    instanceGroup.setInstanceGroupName(
+                            aaiObjectInstanceNameGenerator.generateInstanceGroupName(instanceGroup, vnf));
+                    aaiInstanceGroupResources.createInstanceGroup(instanceGroup);
+                    aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.BELONGS_TO);
+                } else if (ModelInfoInstanceGroup.TYPE_L3_NETWORK
+                        .equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
+                    aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.USES);
+                }
+            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 
 }

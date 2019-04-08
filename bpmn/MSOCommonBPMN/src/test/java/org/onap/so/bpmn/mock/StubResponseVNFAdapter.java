@@ -26,7 +26,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
@@ -34,150 +33,101 @@ import com.github.tomakehurst.wiremock.WireMockServer;
  */
 public class StubResponseVNFAdapter {
 
-	public static void mockVNFAdapter(WireMockServer wireMockServer) {
-		wireMockServer.stubFor(post(urlEqualTo("/vnfs/VnfAdapterAsync"))
-				.willReturn(aResponse()
-						.withStatus(200)));
-	}
+    public static void mockVNFAdapter(WireMockServer wireMockServer) {
+        wireMockServer.stubFor(post(urlEqualTo("/vnfs/VnfAdapterAsync")).willReturn(aResponse().withStatus(200)));
+    }
 
-	public static void mockVNFAdapter(WireMockServer wireMockServer, String responseFile) {
-		wireMockServer.stubFor(post(urlEqualTo("/vnfs/VnfAdapterAsync"))
-				  .willReturn(aResponse()
-				  .withStatus(200)
-				  .withHeader("Content-Type", "text/xml")
-				  .withBodyFile(responseFile)));
-	}
+    public static void mockVNFAdapter(WireMockServer wireMockServer, String responseFile) {
+        wireMockServer.stubFor(post(urlEqualTo("/vnfs/VnfAdapterAsync")).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "text/xml").withBodyFile(responseFile)));
+    }
 
-	public static void mockVNFAdapter_500(WireMockServer wireMockServer) {
-		wireMockServer.stubFor(post(urlEqualTo("/vnfs/VnfAdapterAsync"))
-				.willReturn(aResponse()
-						.withStatus(500)));
-	}
-	
-	public static void mockVNFPost(WireMockServer wireMockServer, String vfModuleId, int statusCode, String vnfId) {
-		wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-	}
-	
-	public static void mockVNFPut(WireMockServer wireMockServer, String vfModuleId, int statusCode) {
-		wireMockServer.stubFor(put(urlEqualTo("/services/rest/v1/vnfsvnfId/vf-modules" + vfModuleId))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(put(urlEqualTo("/services/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-	}
-	
-	public static void mockVNFPut(WireMockServer wireMockServer, String vnfId, String vfModuleId, int statusCode) {
-		wireMockServer.stubFor(put(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(put(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-	}
-	
-	public static void mockVNFDelete(WireMockServer wireMockServer, String vnfId, String vfModuleId, int statusCode) {
-		wireMockServer.stubFor(delete(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(delete(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-	}
-	
-	public static void mockVNFRollbackDelete(WireMockServer wireMockServer, String vfModuleId, int statusCode) {
-		wireMockServer.stubFor(delete(urlEqualTo("/services/rest/v1/vnfsvnfId/vf-modules" + vfModuleId + "/rollback"))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(delete(urlEqualTo("/services/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId + "/rollback"))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-	}
-	
-	public static void mockPutVNFVolumeGroup(WireMockServer wireMockServer, String volumeGroupId, int statusCode) {
-		wireMockServer.stubFor(put(urlEqualTo("/vnfs/v1/volume-groups/" + volumeGroupId))
-				.willReturn(aResponse()
-					.withStatus(statusCode)
-					.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(put(urlEqualTo("/vnfs/rest/v1/volume-groups/" + volumeGroupId))
-				.willReturn(aResponse()
-					.withStatus(statusCode)
-					.withHeader("Content-Type", "application/xml")));
-	}
-	
-	public static void mockPutVNFVolumeGroupRollback(WireMockServer wireMockServer, String volumeGroupId, int statusCode) {
-		wireMockServer.stubFor(delete(urlMatching("/vnfs/v1/volume-groups/" + volumeGroupId + "/rollback"))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/" + volumeGroupId + "/rollback"))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-	}
-	public static void mockPostVNFVolumeGroup(WireMockServer wireMockServer, int statusCode) {
-		wireMockServer.stubFor(post(urlEqualTo("/vnfs/v1/volume-groups"))
-				.willReturn(aResponse()
-					.withStatus(statusCode)
-					.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(post(urlEqualTo("/vnfs/rest/v1/volume-groups"))
-				.willReturn(aResponse()
-					.withStatus(statusCode)
-					.withHeader("Content-Type", "application/xml")));
-	}
-	
-	public static void mockVNFAdapterRest(WireMockServer wireMockServer, String vnfId) {
-		wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules"))
-				.willReturn(aResponse()
-						.withStatus(200)));
-		wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules"))
-				.willReturn(aResponse()
-						.withStatus(200)));
-	}
+    public static void mockVNFAdapter_500(WireMockServer wireMockServer) {
+        wireMockServer.stubFor(post(urlEqualTo("/vnfs/VnfAdapterAsync")).willReturn(aResponse().withStatus(500)));
+    }
 
-	public static void mockVNFAdapterRest_500(WireMockServer wireMockServer, String vnfId) {
-		wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules"))
-				.willReturn(aResponse()
-						.withStatus(500)));
-		wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules"))
-				.willReturn(aResponse()
-						.withStatus(500)));
-	}
-	
-	public static void mockVfModuleDelete(WireMockServer wireMockServer, String volumeGroupId) {
-		wireMockServer.stubFor(delete(urlMatching("/vnfs/v1/volume-groups/"+ volumeGroupId))
-				.willReturn(aResponse()
-				.withStatus(202)
-				.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/"+ volumeGroupId))
-				.willReturn(aResponse()
-				.withStatus(202)
-				.withHeader("Content-Type", "application/xml")));
-	}
-	
-	public static void mockVfModuleDelete(WireMockServer wireMockServer, String volumeGroupId, int statusCode) {
-		wireMockServer.stubFor(delete(urlMatching("/vnfs/v1/volume-groups/78987"))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-		wireMockServer.stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/78987"))
-				.willReturn(aResponse()
-				.withStatus(statusCode)
-				.withHeader("Content-Type", "application/xml")));
-	}
+    public static void mockVNFPost(WireMockServer wireMockServer, String vfModuleId, int statusCode, String vnfId) {
+        wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockVNFPut(WireMockServer wireMockServer, String vfModuleId, int statusCode) {
+        wireMockServer.stubFor(put(urlEqualTo("/services/rest/v1/vnfsvnfId/vf-modules" + vfModuleId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(put(urlEqualTo("/services/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockVNFPut(WireMockServer wireMockServer, String vnfId, String vfModuleId, int statusCode) {
+        wireMockServer.stubFor(put(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(put(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockVNFDelete(WireMockServer wireMockServer, String vnfId, String vfModuleId, int statusCode) {
+        wireMockServer.stubFor(delete(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules" + vfModuleId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(delete(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules" + vfModuleId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockVNFRollbackDelete(WireMockServer wireMockServer, String vfModuleId, int statusCode) {
+        wireMockServer.stubFor(delete(urlEqualTo("/services/rest/v1/vnfsvnfId/vf-modules" + vfModuleId + "/rollback"))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(delete(urlEqualTo("/services/rest/v1/vnfs/vnfId/vf-modules" + vfModuleId + "/rollback"))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockPutVNFVolumeGroup(WireMockServer wireMockServer, String volumeGroupId, int statusCode) {
+        wireMockServer.stubFor(put(urlEqualTo("/vnfs/v1/volume-groups/" + volumeGroupId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(put(urlEqualTo("/vnfs/rest/v1/volume-groups/" + volumeGroupId))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockPutVNFVolumeGroupRollback(WireMockServer wireMockServer, String volumeGroupId,
+            int statusCode) {
+        wireMockServer.stubFor(delete(urlMatching("/vnfs/v1/volume-groups/" + volumeGroupId + "/rollback"))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/" + volumeGroupId + "/rollback"))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockPostVNFVolumeGroup(WireMockServer wireMockServer, int statusCode) {
+        wireMockServer.stubFor(post(urlEqualTo("/vnfs/v1/volume-groups"))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(post(urlEqualTo("/vnfs/rest/v1/volume-groups"))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockVNFAdapterRest(WireMockServer wireMockServer, String vnfId) {
+        wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules"))
+                .willReturn(aResponse().withStatus(200)));
+        wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules"))
+                .willReturn(aResponse().withStatus(200)));
+    }
+
+    public static void mockVNFAdapterRest_500(WireMockServer wireMockServer, String vnfId) {
+        wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs" + vnfId + "/vf-modules"))
+                .willReturn(aResponse().withStatus(500)));
+        wireMockServer.stubFor(post(urlEqualTo("/services/rest/v1/vnfs/" + vnfId + "/vf-modules"))
+                .willReturn(aResponse().withStatus(500)));
+    }
+
+    public static void mockVfModuleDelete(WireMockServer wireMockServer, String volumeGroupId) {
+        wireMockServer.stubFor(delete(urlMatching("/vnfs/v1/volume-groups/" + volumeGroupId))
+                .willReturn(aResponse().withStatus(202).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/" + volumeGroupId))
+                .willReturn(aResponse().withStatus(202).withHeader("Content-Type", "application/xml")));
+    }
+
+    public static void mockVfModuleDelete(WireMockServer wireMockServer, String volumeGroupId, int statusCode) {
+        wireMockServer.stubFor(delete(urlMatching("/vnfs/v1/volume-groups/78987"))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+        wireMockServer.stubFor(delete(urlMatching("/vnfs/rest/v1/volume-groups/78987"))
+                .willReturn(aResponse().withStatus(statusCode).withHeader("Content-Type", "application/xml")));
+    }
 }

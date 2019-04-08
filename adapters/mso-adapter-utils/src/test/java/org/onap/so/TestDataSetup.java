@@ -23,18 +23,17 @@ package org.onap.so;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class TestDataSetup {
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
-	public static final String RESOURCE_PATH = "src/test/resources/__files/";
-	public ObjectMapper mapper;
-	
-	@Before
-	public void testDataSetupBefore() {
-		mapper = new ObjectMapper();
-	}
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
+    public static final String RESOURCE_PATH = "src/test/resources/__files/";
+    public ObjectMapper mapper;
+
+    @Before
+    public void testDataSetupBefore() {
+        mapper = new ObjectMapper();
+    }
 }

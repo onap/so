@@ -37,8 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Manages jobs enabling the status of jobs to be queried. A job is associated with an operation on
- * a VNFM.
+ * Manages jobs enabling the status of jobs to be queried. A job is associated with an operation on a VNFM.
  */
 @Component
 public class JobManager {
@@ -57,9 +56,8 @@ public class JobManager {
      *
      * @param vnfmId the VNFM the operation relates to
      * @param operationId the ID of the associated VNFM operation
-     * @param waitForNotificationForSuccess if set to <code>true</code> the
-     *        {@link QueryJobResponse#getOperationState()} shall not return
-     *        {@link org.onap.vnfmadapter.v1.model.OperationStateEnum#COMPLETED} unless a required
+     * @param waitForNotificationForSuccess if set to <code>true</code> the {@link QueryJobResponse#getOperationState()}
+     *        shall not return {@link org.onap.vnfmadapter.v1.model.OperationStateEnum#COMPLETED} unless a required
      *        notification has been processed
      * @return the ID of the job. Can be used to query the job using {@link #getVnfmOperation(String)}
      */
@@ -75,8 +73,8 @@ public class JobManager {
      * Get the operation, associated with the given job ID, from the VNFM.
      *
      * @param jobId the job ID
-     * @return the associated operation from the VNFM, or <code>null</code> of no operation is
-     *         associated with the given job ID
+     * @return the associated operation from the VNFM, or <code>null</code> of no operation is associated with the given
+     *         job ID
      */
     public QueryJobResponse getVnfmOperation(final String jobId) {
         final VnfmOperation vnfmOperation = mapOfJobIdToVnfmOperation.get(jobId);

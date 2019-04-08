@@ -26,13 +26,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +46,6 @@ import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.AAIResultWrapper;
 import org.onap.so.client.aai.entities.Relationships;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -57,106 +54,106 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RunWith(MockitoJUnitRunner.class)
 public class CloudInfoFromAAITest {
 
-	private static final String RESOURCE_PATH = "src/test/resources/__files/ExecuteBuildingBlock/";
+    private static final String RESOURCE_PATH = "src/test/resources/__files/ExecuteBuildingBlock/";
 
-	@Spy
-	private CloudInfoFromAAI SPY_CloudInfoFromAAI = new CloudInfoFromAAI();
+    @Spy
+    private CloudInfoFromAAI SPY_CloudInfoFromAAI = new CloudInfoFromAAI();
 
-	protected ObjectMapper mapper = new ObjectMapper();
-	
-	@Mock
-	private BBInputSetupUtils SPY_bbInputSetupUtils;
+    protected ObjectMapper mapper = new ObjectMapper();
 
-	@Before
-	public void setup(){
-		SPY_CloudInfoFromAAI.setBbInputSetupUtils(SPY_bbInputSetupUtils);
-	}
-	
-	@Test
-	public void testGetCloudInfoFromAAI() throws JsonParseException, JsonMappingException, IOException {
-		//Test vnfs
-		ServiceInstance serviceInstance = mapper.readValue(
-				new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
-				ServiceInstance.class);
-		CloudRegion expected = new CloudRegion();
-		GenericVnf vnf = new GenericVnf();
-		String vnfId = "vnfId";
-		vnf.setVnfId(vnfId);
-		serviceInstance.getVnfs().add(vnf);
-		org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
-		aaiVnf.setVnfId(vnfId);
-		Relationships relationships = Mockito.mock(Relationships.class);
-		Optional<Relationships> relationshipsOp= Optional.of(relationships);
-		doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
-		doReturn(relationshipsOp).when(SPY_CloudInfoFromAAI).getRelationshipsFromWrapper(isA(AAIResultWrapper.class));
-		doReturn(Optional.of(expected)).when(SPY_CloudInfoFromAAI).getRelatedCloudRegionAndTenant(relationships);
-		Optional<CloudRegion> actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
-		assertThat(actual.get(), sameBeanAs(expected));
-		
-		//Test networks
-		serviceInstance = mapper.readValue(
-				new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
-				ServiceInstance.class);
-		L3Network l3Network = new L3Network();
-		String networkId = "networkId";
-		l3Network.setNetworkId(networkId);
-		serviceInstance.getNetworks().add(l3Network);
-		org.onap.aai.domain.yang.L3Network aaiL3Network = new org.onap.aai.domain.yang.L3Network();
-		aaiL3Network.setNetworkId(networkId);
-		doReturn(aaiL3Network).when(SPY_bbInputSetupUtils).getAAIL3Network(l3Network.getNetworkId());
-		actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
-		assertThat(actual.get(), sameBeanAs(expected));
-		
-		//Test no relationships
-		
-		doReturn(Optional.empty()).when(SPY_CloudInfoFromAAI).getRelationshipsFromWrapper(isA(AAIResultWrapper.class));
-		actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
-		assertEquals(actual, Optional.empty());
-		
-		//Test null
-		serviceInstance = mapper.readValue(
-				new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
-				ServiceInstance.class);
-		actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
-		assertEquals(actual, Optional.empty());
-	}
-	
-	@Test
-	public void testGetRelatedCloudRegionAndTenant() throws JsonProcessingException {
-		String cloudOwner = "cloudOwner";
-		String cloudRegionId = "cloudRegionId";
-		String cloudRegionVersion = "cloudRegionVersion";
-		String cloudRegionComplexName = "cloudRegionComplexName";
-		String tenantId = "tenantId";
-		CloudRegion expected = new CloudRegion();
-		expected.setCloudOwner(cloudOwner);
-		expected.setCloudRegionVersion(cloudRegionVersion);
-		expected.setComplex(cloudRegionComplexName);
-		expected.setLcpCloudRegionId(cloudRegionId);
-		expected.setTenantId(tenantId);
-		
-		Relationships relationships = Mockito.mock(Relationships.class);
-		List<AAIResultWrapper> cloudRegions = new ArrayList<>();
-		org.onap.aai.domain.yang.CloudRegion cloudRegion = new org.onap.aai.domain.yang.CloudRegion();
-		cloudRegion.setCloudOwner(cloudOwner);
-		cloudRegion.setCloudRegionId(cloudRegionId);
-		cloudRegion.setCloudRegionVersion(cloudRegionVersion);
-		cloudRegion.setComplexName(cloudRegionComplexName);
-		AAIResultWrapper cloudRegionWrapper = new AAIResultWrapper(
-				new AAICommonObjectMapperProvider().getMapper().writeValueAsString(cloudRegion));
-		cloudRegions.add(cloudRegionWrapper);
-		
-		doReturn(cloudRegions).when(relationships).getByType(AAIObjectType.CLOUD_REGION);
-		List<AAIResultWrapper> tenants = new ArrayList<>();
-		org.onap.aai.domain.yang.Tenant tenant = new org.onap.aai.domain.yang.Tenant();
-		tenant.setTenantId(tenantId);
-		AAIResultWrapper tenantWrapper = new AAIResultWrapper(
-				new AAICommonObjectMapperProvider().getMapper().writeValueAsString(tenant));
-		tenants.add(tenantWrapper);
-		doReturn(tenants).when(relationships).getByType(AAIObjectType.TENANT);
-		
-		Optional<CloudRegion> actual = SPY_CloudInfoFromAAI.getRelatedCloudRegionAndTenant(relationships);
-		
-		assertThat(actual.get(), sameBeanAs(expected));
-	}
+    @Mock
+    private BBInputSetupUtils SPY_bbInputSetupUtils;
+
+    @Before
+    public void setup() {
+        SPY_CloudInfoFromAAI.setBbInputSetupUtils(SPY_bbInputSetupUtils);
+    }
+
+    @Test
+    public void testGetCloudInfoFromAAI() throws JsonParseException, JsonMappingException, IOException {
+        // Test vnfs
+        ServiceInstance serviceInstance =
+                mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
+                        ServiceInstance.class);
+        CloudRegion expected = new CloudRegion();
+        GenericVnf vnf = new GenericVnf();
+        String vnfId = "vnfId";
+        vnf.setVnfId(vnfId);
+        serviceInstance.getVnfs().add(vnf);
+        org.onap.aai.domain.yang.GenericVnf aaiVnf = new org.onap.aai.domain.yang.GenericVnf();
+        aaiVnf.setVnfId(vnfId);
+        Relationships relationships = Mockito.mock(Relationships.class);
+        Optional<Relationships> relationshipsOp = Optional.of(relationships);
+        doReturn(aaiVnf).when(SPY_bbInputSetupUtils).getAAIGenericVnf(vnf.getVnfId());
+        doReturn(relationshipsOp).when(SPY_CloudInfoFromAAI).getRelationshipsFromWrapper(isA(AAIResultWrapper.class));
+        doReturn(Optional.of(expected)).when(SPY_CloudInfoFromAAI).getRelatedCloudRegionAndTenant(relationships);
+        Optional<CloudRegion> actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
+        assertThat(actual.get(), sameBeanAs(expected));
+
+        // Test networks
+        serviceInstance =
+                mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
+                        ServiceInstance.class);
+        L3Network l3Network = new L3Network();
+        String networkId = "networkId";
+        l3Network.setNetworkId(networkId);
+        serviceInstance.getNetworks().add(l3Network);
+        org.onap.aai.domain.yang.L3Network aaiL3Network = new org.onap.aai.domain.yang.L3Network();
+        aaiL3Network.setNetworkId(networkId);
+        doReturn(aaiL3Network).when(SPY_bbInputSetupUtils).getAAIL3Network(l3Network.getNetworkId());
+        actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
+        assertThat(actual.get(), sameBeanAs(expected));
+
+        // Test no relationships
+
+        doReturn(Optional.empty()).when(SPY_CloudInfoFromAAI).getRelationshipsFromWrapper(isA(AAIResultWrapper.class));
+        actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
+        assertEquals(actual, Optional.empty());
+
+        // Test null
+        serviceInstance =
+                mapper.readValue(new File(RESOURCE_PATH + "ServiceInstance_getServiceInstanceNOAAIExpected.json"),
+                        ServiceInstance.class);
+        actual = SPY_CloudInfoFromAAI.getCloudInfoFromAAI(serviceInstance);
+        assertEquals(actual, Optional.empty());
+    }
+
+    @Test
+    public void testGetRelatedCloudRegionAndTenant() throws JsonProcessingException {
+        String cloudOwner = "cloudOwner";
+        String cloudRegionId = "cloudRegionId";
+        String cloudRegionVersion = "cloudRegionVersion";
+        String cloudRegionComplexName = "cloudRegionComplexName";
+        String tenantId = "tenantId";
+        CloudRegion expected = new CloudRegion();
+        expected.setCloudOwner(cloudOwner);
+        expected.setCloudRegionVersion(cloudRegionVersion);
+        expected.setComplex(cloudRegionComplexName);
+        expected.setLcpCloudRegionId(cloudRegionId);
+        expected.setTenantId(tenantId);
+
+        Relationships relationships = Mockito.mock(Relationships.class);
+        List<AAIResultWrapper> cloudRegions = new ArrayList<>();
+        org.onap.aai.domain.yang.CloudRegion cloudRegion = new org.onap.aai.domain.yang.CloudRegion();
+        cloudRegion.setCloudOwner(cloudOwner);
+        cloudRegion.setCloudRegionId(cloudRegionId);
+        cloudRegion.setCloudRegionVersion(cloudRegionVersion);
+        cloudRegion.setComplexName(cloudRegionComplexName);
+        AAIResultWrapper cloudRegionWrapper =
+                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(cloudRegion));
+        cloudRegions.add(cloudRegionWrapper);
+
+        doReturn(cloudRegions).when(relationships).getByType(AAIObjectType.CLOUD_REGION);
+        List<AAIResultWrapper> tenants = new ArrayList<>();
+        org.onap.aai.domain.yang.Tenant tenant = new org.onap.aai.domain.yang.Tenant();
+        tenant.setTenantId(tenantId);
+        AAIResultWrapper tenantWrapper =
+                new AAIResultWrapper(new AAICommonObjectMapperProvider().getMapper().writeValueAsString(tenant));
+        tenants.add(tenantWrapper);
+        doReturn(tenants).when(relationships).getByType(AAIObjectType.TENANT);
+
+        Optional<CloudRegion> actual = SPY_CloudInfoFromAAI.getRelatedCloudRegionAndTenant(relationships);
+
+        assertThat(actual.get(), sameBeanAs(expected));
+    }
 }

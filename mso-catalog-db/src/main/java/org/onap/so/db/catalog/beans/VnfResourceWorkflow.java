@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,101 +36,97 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @IdClass(VnfResourceWorkflowId.class)
 @Table(name = "VNF_RESOURCE_TO_WORKFLOW")
 public class VnfResourceWorkflow implements Serializable {
-	
-	private static final long serialVersionUID = -1326433350241927676L;
 
-	@Id
-	@Column(name = "ID", nullable = false, updatable = false)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer ID;
+    private static final long serialVersionUID = -1326433350241927676L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "VNF_RESOURCE_MODEL_UUID")
-	private String vnfResourceModelUUID;
+    @Id
+    @Column(name = "ID", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer ID;
 
-	@BusinessKey
-	@Id
-	@Column(name = "WORKFLOW_ID")
-	private Integer workflowId;
+    @BusinessKey
+    @Id
+    @Column(name = "VNF_RESOURCE_MODEL_UUID")
+    private String vnfResourceModelUUID;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VNF_RESOURCE_MODEL_UUID", updatable = false, insertable = false)
-	private VnfResource vnfResource;
+    @BusinessKey
+    @Id
+    @Column(name = "WORKFLOW_ID")
+    private Integer workflowId;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "WORKFLOW_ID", updatable = false, insertable = false)
-	private Workflow workflow;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "VNF_RESOURCE_MODEL_UUID", updatable = false, insertable = false)
+    private VnfResource vnfResource;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("vnfResourceModelUUID", vnfResourceModelUUID)
-				.append("workflowId", workflowId)
-				.toString();
-	}
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "WORKFLOW_ID", updatable = false, insertable = false)
+    private Workflow workflow;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VnfResourceWorkflow)) {
-			return false;
-		}
-		VnfResourceWorkflow castOther = (VnfResourceWorkflow) other;
-		return new EqualsBuilder().append(vnfResourceModelUUID, castOther.vnfResourceModelUUID)
-				.append(workflowId, castOther.workflowId).isEquals();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("vnfResourceModelUUID", vnfResourceModelUUID)
+                .append("workflowId", workflowId).toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(vnfResourceModelUUID).append(workflowId).toHashCode();
-	}
-	
-	public Integer getID() {
-		return ID;
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VnfResourceWorkflow)) {
+            return false;
+        }
+        VnfResourceWorkflow castOther = (VnfResourceWorkflow) other;
+        return new EqualsBuilder().append(vnfResourceModelUUID, castOther.vnfResourceModelUUID)
+                .append(workflowId, castOther.workflowId).isEquals();
+    }
 
-	public String getVnfResourceModelUUID() {
-		return vnfResourceModelUUID;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(vnfResourceModelUUID).append(workflowId).toHashCode();
+    }
 
-	public void setVnfResourceModelUUID(String vnfResourceModelUUID) {
-		this.vnfResourceModelUUID = vnfResourceModelUUID;
-	}
+    public Integer getID() {
+        return ID;
+    }
 
-	public Integer getWorkflowId() {
-		return workflowId;
-	}
+    public String getVnfResourceModelUUID() {
+        return vnfResourceModelUUID;
+    }
 
-	public void setWorkflowId(Integer workflowId) {
-		this.workflowId = workflowId;
-	}
+    public void setVnfResourceModelUUID(String vnfResourceModelUUID) {
+        this.vnfResourceModelUUID = vnfResourceModelUUID;
+    }
 
-	public VnfResource getVnfResource() {
-		return vnfResource;
-	}
+    public Integer getWorkflowId() {
+        return workflowId;
+    }
 
-	public void setVnfResource(VnfResource vnfResource) {
-		this.vnfResource = vnfResource;
-	}
+    public void setWorkflowId(Integer workflowId) {
+        this.workflowId = workflowId;
+    }
 
-	public Workflow getWorkflow() {
-		return workflow;
-	}
+    public VnfResource getVnfResource() {
+        return vnfResource;
+    }
 
-	public void setWorkflow(Workflow workflow) {
-		this.workflow = workflow;
-	}
-	
+    public void setVnfResource(VnfResource vnfResource) {
+        this.vnfResource = vnfResource;
+    }
+
+    public Workflow getWorkflow() {
+        return workflow;
+    }
+
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
+    }
+
 }

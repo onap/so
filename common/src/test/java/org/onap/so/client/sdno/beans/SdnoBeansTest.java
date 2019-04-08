@@ -21,7 +21,6 @@
 package org.onap.so.client.sdno.beans;
 
 import org.junit.Test;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -35,25 +34,22 @@ import com.openpojo.validation.test.impl.SetterTester;
 
 public class SdnoBeansTest {
 
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void pojoStructure() {
-		test("org.onap.so.client.sdno.beans");
-	}
+    @Test
+    public void pojoStructure() {
+        test("org.onap.so.client.sdno.beans");
+    }
 
-	private void test(String pojoPackage) {
-		Validator validator = ValidatorBuilder.create()
-				.with(new GetterMustExistRule())
-				.with(new SetterMustExistRule())
-				.with(new SetterTester())
-				.with(new GetterTester())
-				.build();
-		validator.validate(pojoPackage, new FilterPackageInfo(), new FilterEnum(), filterTestClasses);
-	}
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
+    private void test(String pojoPackage) {
+        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
+                .with(new SetterTester()).with(new GetterTester()).build();
+        validator.validate(pojoPackage, new FilterPackageInfo(), new FilterEnum(), filterTestClasses);
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
 }

@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -36,13 +35,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
@@ -51,228 +47,225 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 @Table(name = "vnf_resource")
 public class VnfResource implements Serializable {
 
-	private static final long serialVersionUID = 768026109321305392L;
+    private static final long serialVersionUID = 768026109321305392L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_UUID")
-	private String modelUUID;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_UUID")
+    private String modelUUID;
 
-	@Column(name = "MODEL_INVARIANT_UUID")
-	private String modelInvariantUUID;
+    @Column(name = "MODEL_INVARIANT_UUID")
+    private String modelInvariantUUID;
 
-	@Column(name = "MODEL_NAME")
-	private String modelName;
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	@Column(name = "MODEL_VERSION")
-	private String modelVersion;
+    @Column(name = "MODEL_VERSION")
+    private String modelVersion;
 
-	@Column(name = "TOSCA_NODE_TYPE")
-	private String toscaNodeType;
+    @Column(name = "TOSCA_NODE_TYPE")
+    private String toscaNodeType;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@Column(name = "ORCHESTRATION_MODE")
-	private String orchestrationMode;
+    @Column(name = "ORCHESTRATION_MODE")
+    private String orchestrationMode;
 
-	@Column(name = "AIC_VERSION_MIN")
-	private String aicVersionMin;
+    @Column(name = "AIC_VERSION_MIN")
+    private String aicVersionMin;
 
-	@Column(name = "AIC_VERSION_MAX")
-	private String aicVersionMax;
+    @Column(name = "AIC_VERSION_MAX")
+    private String aicVersionMax;
 
-	@Column(name = "RESOURCE_CATEGORY")
-	private String category;
+    @Column(name = "RESOURCE_CATEGORY")
+    private String category;
 
-	@Column(name = "RESOURCE_SUB_CATEGORY")
-	private String subCategory;
+    @Column(name = "RESOURCE_SUB_CATEGORY")
+    private String subCategory;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@NotFound(action = NotFoundAction.IGNORE)
-	@JoinColumn(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
-	private HeatTemplate heatTemplates;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @NotFound(action = NotFoundAction.IGNORE)
+    @JoinColumn(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
+    private HeatTemplate heatTemplates;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResources")
-	private List<VnfResourceCustomization> vnfResourceCustomizations;
-	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResource")
-	private List<VnfResourceWorkflow> vnfResourceWorkflow;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResources")
+    private List<VnfResourceCustomization> vnfResourceCustomizations;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResource")
+    private List<VnfResourceWorkflow> vnfResourceWorkflow;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-				.append("modelName", modelName).append("modelVersion", modelVersion)
-				.append("toscaNodeType", toscaNodeType).append("description", description)
-				.append("orchestrationMode", orchestrationMode).append("aicVersionMin", aicVersionMin)
-				.append("aicVersionMax", aicVersionMax).append("created", created)
-				.append("heatTemplates", heatTemplates).append("vnfResourceCustomizations", vnfResourceCustomizations)
-				.append("vnfResourceWorkflow",vnfResourceWorkflow)
-				.toString();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VnfResource)) {
-			return false;
-		}
-		VnfResource castOther = (VnfResource) other;
-		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelName", modelName).append("modelVersion", modelVersion)
+                .append("toscaNodeType", toscaNodeType).append("description", description)
+                .append("orchestrationMode", orchestrationMode).append("aicVersionMin", aicVersionMin)
+                .append("aicVersionMax", aicVersionMax).append("created", created)
+                .append("heatTemplates", heatTemplates).append("vnfResourceCustomizations", vnfResourceCustomizations)
+                .append("vnfResourceWorkflow", vnfResourceWorkflow).toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelUUID).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VnfResource)) {
+            return false;
+        }
+        VnfResource castOther = (VnfResource) other;
+        return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
+    }
 
-	public String getOrchestrationMode() {
-		return orchestrationMode;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelUUID).toHashCode();
+    }
 
-	public void setOrchestrationMode(String orchestrationMode) {
-		this.orchestrationMode = orchestrationMode;
-	}
+    public String getOrchestrationMode() {
+        return orchestrationMode;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setOrchestrationMode(String orchestrationMode) {
+        this.orchestrationMode = orchestrationMode;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getAicVersionMin() {
-		return this.aicVersionMin;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public void setAicVersionMin(String aicVersionMin) {
-		this.aicVersionMin = aicVersionMin;
-	}
+    public String getAicVersionMin() {
+        return this.aicVersionMin;
+    }
 
-	public String getAicVersionMax() {
-		return this.aicVersionMax;
-	}
+    public void setAicVersionMin(String aicVersionMin) {
+        this.aicVersionMin = aicVersionMin;
+    }
 
-	public void setAicVersionMax(String aicVersionMax) {
-		this.aicVersionMax = aicVersionMax;
-	}
+    public String getAicVersionMax() {
+        return this.aicVersionMax;
+    }
 
-	/**
-	 * @return Returns the category.
-	 */
-	public String getCategory() {
-		return category;
-	}
+    public void setAicVersionMax(String aicVersionMax) {
+        this.aicVersionMax = aicVersionMax;
+    }
 
-	/**
-	 * @param category
-	 *            The category to set.
-	 */
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    /**
+     * @return Returns the category.
+     */
+    public String getCategory() {
+        return category;
+    }
 
-	/**
-	 * @return Returns the subCategory.
-	 */
-	public String getSubCategory() {
-		return subCategory;
-	}
+    /**
+     * @param category The category to set.
+     */
+    public void setCategory(String category) {
+        this.category = category;
+    }
 
-	/**
-	 * @param subCategory
-	 *            The subCategory to set.
-	 */
-	public void setSubCategory(String subCategory) {
-		this.subCategory = subCategory;
-	}
+    /**
+     * @return Returns the subCategory.
+     */
+    public String getSubCategory() {
+        return subCategory;
+    }
 
-	public String getModelInvariantUUID() {
-		return this.modelInvariantUUID;
-	}
+    /**
+     * @param subCategory The subCategory to set.
+     */
+    public void setSubCategory(String subCategory) {
+        this.subCategory = subCategory;
+    }
 
-	public void setModelInvariantUUID(String modelInvariantUUID) {
-		this.modelInvariantUUID = modelInvariantUUID;
-	}
+    public String getModelInvariantUUID() {
+        return this.modelInvariantUUID;
+    }
 
-	public String getModelName() {
-		return modelName;
-	}
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    public String getModelName() {
+        return modelName;
+    }
 
-	public String getModelUUID() {
-		return modelUUID;
-	}
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
 
-	public String getModelInvariantId() {
-		return this.modelInvariantUUID;
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	public String getToscaNodeType() {
-		return toscaNodeType;
-	}
+    public String getModelInvariantId() {
+        return this.modelInvariantUUID;
+    }
 
-	public void setToscaNodeType(String toscaNodeType) {
-		this.toscaNodeType = toscaNodeType;
-	}
+    public String getToscaNodeType() {
+        return toscaNodeType;
+    }
 
-	@LinkedResource
-	public List<VnfResourceCustomization> getVnfResourceCustomizations() {
-		if (vnfResourceCustomizations == null)
-			vnfResourceCustomizations = new ArrayList<>();
-		return vnfResourceCustomizations;
-	}
+    public void setToscaNodeType(String toscaNodeType) {
+        this.toscaNodeType = toscaNodeType;
+    }
 
-	public void setVnfResourceCustomizations(List<VnfResourceCustomization> vnfResourceCustomizations) {
-		this.vnfResourceCustomizations = vnfResourceCustomizations;
-	}
+    @LinkedResource
+    public List<VnfResourceCustomization> getVnfResourceCustomizations() {
+        if (vnfResourceCustomizations == null)
+            vnfResourceCustomizations = new ArrayList<>();
+        return vnfResourceCustomizations;
+    }
 
-	@LinkedResource
-	public HeatTemplate getHeatTemplates() {
-		return heatTemplates;
-	}
+    public void setVnfResourceCustomizations(List<VnfResourceCustomization> vnfResourceCustomizations) {
+        this.vnfResourceCustomizations = vnfResourceCustomizations;
+    }
 
-	public void setHeatTemplates(HeatTemplate heatTemplates) {
-		this.heatTemplates = heatTemplates;
-	}
+    @LinkedResource
+    public HeatTemplate getHeatTemplates() {
+        return heatTemplates;
+    }
 
-	public String getModelVersion() {
-		return modelVersion;
-	}
+    public void setHeatTemplates(HeatTemplate heatTemplates) {
+        this.heatTemplates = heatTemplates;
+    }
 
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
-	
-	@LinkedResource
-	public List<VnfResourceWorkflow> getVnfResourceWorkflow() {
-		if (vnfResourceWorkflow == null)
-			vnfResourceWorkflow = new ArrayList<>();
-		return vnfResourceWorkflow;
-	}
+    public String getModelVersion() {
+        return modelVersion;
+    }
 
-	public void setVnfResourceWorkflow(List<VnfResourceWorkflow> vnfResourceWorkflow) {
-		this.vnfResourceWorkflow = vnfResourceWorkflow;
-	}
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
+    }
+
+    @LinkedResource
+    public List<VnfResourceWorkflow> getVnfResourceWorkflow() {
+        if (vnfResourceWorkflow == null)
+            vnfResourceWorkflow = new ArrayList<>();
+        return vnfResourceWorkflow;
+    }
+
+    public void setVnfResourceWorkflow(List<VnfResourceWorkflow> vnfResourceWorkflow) {
+        this.vnfResourceWorkflow = vnfResourceWorkflow;
+    }
 
 }

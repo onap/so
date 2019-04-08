@@ -21,10 +21,8 @@
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 
 public class E2EUserParamTest {
@@ -35,13 +33,13 @@ public class E2EUserParamTest {
     public void verifyE2EParam() throws Exception {
 
         test.setName("name");
-        assertEquals(test.getName(),"name");
+        assertEquals(test.getName(), "name");
         test.setValue("value");
-        assertEquals(test.getValue(),"value");
+        assertEquals(test.getValue(), "value");
         Map<String, Object> additionalProperties = new HashMap<>();
         additionalProperties.put("name", test);
-        test.setAdditionalProperty("name",test);
-        assertEquals(test.getAdditionalProperties(),additionalProperties);
+        test.setAdditionalProperty("name", test);
+        assertEquals(test.getAdditionalProperties(), additionalProperties);
 
     }
 

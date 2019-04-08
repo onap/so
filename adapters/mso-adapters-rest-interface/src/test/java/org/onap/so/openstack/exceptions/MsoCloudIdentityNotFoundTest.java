@@ -27,16 +27,16 @@ public class MsoCloudIdentityNotFoundTest {
     @Test
     public void testConstructor() {
         MsoCloudIdentityNotFound msoCloudIdentityNotFound = new MsoCloudIdentityNotFound();
-        Assert.assertEquals("Cloud Identity not found",msoCloudIdentityNotFound.getMessage());
-        Assert.assertEquals("Cloud Identity not found",msoCloudIdentityNotFound.toString());
+        Assert.assertEquals("Cloud Identity not found", msoCloudIdentityNotFound.getMessage());
+        Assert.assertEquals("Cloud Identity not found", msoCloudIdentityNotFound.toString());
         Assert.assertEquals(MsoExceptionCategory.USERDATA, msoCloudIdentityNotFound.category);
     }
 
     @Test
     public void testOverloadedConstructor() {
         MsoCloudIdentityNotFound msoCloudIdentityNotFound = new MsoCloudIdentityNotFound("test");
-        Assert.assertEquals("Cloud Identity [test] not found",msoCloudIdentityNotFound.getMessage());
-        Assert.assertEquals("Cloud Identity [test] not found",msoCloudIdentityNotFound.toString());
+        Assert.assertEquals("Cloud Identity [test] not found", msoCloudIdentityNotFound.getMessage());
+        Assert.assertEquals("Cloud Identity [test] not found", msoCloudIdentityNotFound.toString());
         Assert.assertEquals(MsoExceptionCategory.USERDATA, msoCloudIdentityNotFound.category);
     }
 

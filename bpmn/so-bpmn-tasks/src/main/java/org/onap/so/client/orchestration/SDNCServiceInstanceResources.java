@@ -36,82 +36,81 @@ import org.springframework.stereotype.Component;
 @Component
 public class SDNCServiceInstanceResources {
 
-	@Autowired
-	private ServiceTopologyOperationMapper sdncRM;
+    @Autowired
+    private ServiceTopologyOperationMapper sdncRM;
 
-	/**
-	 * SDNC call to perform Service Topology Assign for ServiceInsatnce
-	 * 
-	 * @param serviceInstance
-	 * @param customer
-	 * @param requestContext
-	 * @throws MapperException
-	 * @throws BadResponseException
-	 * @return the response as a String
-	 */
-	public GenericResourceApiServiceOperationInformation assignServiceInstance(ServiceInstance serviceInstance,
-			Customer customer, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
-				GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
-				requestContext);
-	}
+    /**
+     * SDNC call to perform Service Topology Assign for ServiceInsatnce
+     * 
+     * @param serviceInstance
+     * @param customer
+     * @param requestContext
+     * @throws MapperException
+     * @throws BadResponseException
+     * @return the response as a String
+     */
+    public GenericResourceApiServiceOperationInformation assignServiceInstance(ServiceInstance serviceInstance,
+            Customer customer, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
+                GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
+                requestContext);
+    }
 
-	/**
-	 * SDNC call to perform Service Topology Delete for ServiceInsatnce
-	 * 
-	 * @param serviceInstance
-	 * @param customer
-	 * @param requestContext
-	 * @throws MapperException
-	 * @throws BadResponseException
-	 * @return the response as a String
-	 */
-	public GenericResourceApiServiceOperationInformation deleteServiceInstance(ServiceInstance serviceInstance,
-			Customer customer, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.DELETE,
-				GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE, serviceInstance, customer,
-				requestContext);
-	}
+    /**
+     * SDNC call to perform Service Topology Delete for ServiceInsatnce
+     * 
+     * @param serviceInstance
+     * @param customer
+     * @param requestContext
+     * @throws MapperException
+     * @throws BadResponseException
+     * @return the response as a String
+     */
+    public GenericResourceApiServiceOperationInformation deleteServiceInstance(ServiceInstance serviceInstance,
+            Customer customer, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.DELETE,
+                GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE, serviceInstance, customer,
+                requestContext);
+    }
 
-	public GenericResourceApiServiceOperationInformation unassignServiceInstance(ServiceInstance serviceInstance,
-			Customer customer, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.DELETE,
-				GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE, serviceInstance, customer,
-				requestContext);
-	}
+    public GenericResourceApiServiceOperationInformation unassignServiceInstance(ServiceInstance serviceInstance,
+            Customer customer, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.DELETE,
+                GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE, serviceInstance, customer,
+                requestContext);
+    }
 
-	/**
-	 * SDNC call to perform Service Topology Deactivate for ServiceInstance
-	 * 
-	 * @param serviceInstance
-	 * @param customer
-	 * @param requestContext
-	 * @throws MapperException
-	 * @throws BadResponseException
-	 * @return the response as a String
-	 */
-	public GenericResourceApiServiceOperationInformation deactivateServiceInstance(ServiceInstance serviceInstance,
-			Customer customer, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
-				GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE, serviceInstance, customer,
-				requestContext);
-	}
+    /**
+     * SDNC call to perform Service Topology Deactivate for ServiceInstance
+     * 
+     * @param serviceInstance
+     * @param customer
+     * @param requestContext
+     * @throws MapperException
+     * @throws BadResponseException
+     * @return the response as a String
+     */
+    public GenericResourceApiServiceOperationInformation deactivateServiceInstance(ServiceInstance serviceInstance,
+            Customer customer, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
+                GenericResourceApiRequestActionEnumeration.DELETESERVICEINSTANCE, serviceInstance, customer,
+                requestContext);
+    }
 
-	/**
-	 * SDNC call to perform Service Topology Change Assign for the
-	 * ServiceInstance
-	 * 
-	 * @param serviceInstance
-	 * @param customer
-	 * @param requestContext
-	 * @throws MapperException
-	 * @throws BadResponseException
-	 * @return the response as a String
-	 */
-	public GenericResourceApiServiceOperationInformation changeModelServiceInstance(ServiceInstance serviceInstance,
-			Customer customer, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN,
-				GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
-				requestContext);
-	}
+    /**
+     * SDNC call to perform Service Topology Change Assign for the ServiceInstance
+     * 
+     * @param serviceInstance
+     * @param customer
+     * @param requestContext
+     * @throws MapperException
+     * @throws BadResponseException
+     * @return the response as a String
+     */
+    public GenericResourceApiServiceOperationInformation changeModelServiceInstance(ServiceInstance serviceInstance,
+            Customer customer, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.SERVICE_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN,
+                GenericResourceApiRequestActionEnumeration.CREATESERVICEINSTANCE, serviceInstance, customer,
+                requestContext);
+    }
 }

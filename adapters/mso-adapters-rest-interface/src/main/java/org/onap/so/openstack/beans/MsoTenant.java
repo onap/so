@@ -25,42 +25,44 @@ package org.onap.so.openstack.beans;
 import java.util.Map;
 
 /**
- * This bean class represents the Openstack tenant properties that are
- * needed by MSO.
+ * This bean class represents the Openstack tenant properties that are needed by MSO.
  * 
  *
  */
 public class MsoTenant {
-	private String tenantId;
-	private String tenantName;
-	private Map<String,String> metadata;
-	
-	public MsoTenant() {}
-	
-	public MsoTenant (String id, String name, Map<String,String> metadata) {
-		this.tenantId = id;
-		this.tenantName = name;
-		this.metadata = metadata;
-	}
-	
-	public String getTenantId() {
-		return tenantId;
-	}
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
-	
-	public String getTenantName() {
-		return tenantName;
-	}
-	public void setTenantName(String tenantName) {
-		this.tenantName = tenantName;
-	}
-	
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
+    private String tenantId;
+    private String tenantName;
+    private Map<String, String> metadata;
+
+    public MsoTenant() {}
+
+    public MsoTenant(String id, String name, Map<String, String> metadata) {
+        this.tenantId = id;
+        this.tenantName = name;
+        this.metadata = metadata;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getTenantName() {
+        return tenantName;
+    }
+
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
 }

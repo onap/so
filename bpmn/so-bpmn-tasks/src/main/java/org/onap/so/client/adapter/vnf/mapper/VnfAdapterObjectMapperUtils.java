@@ -22,7 +22,6 @@ package org.onap.so.client.adapter.vnf.mapper;
 
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
-
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
@@ -30,25 +29,25 @@ import org.springframework.web.util.UriUtils;
 @Component("VnfAdapterObjectMapperUtils")
 public class VnfAdapterObjectMapperUtils {
 
-	public String getRandomUuid() {
-		return UUID.randomUUID().toString();
-	}
+    public String getRandomUuid() {
+        return UUID.randomUUID().toString();
+    }
 
-	public String createCallbackUrl(String messageType, String correlator) throws UnsupportedEncodingException {
-		String endpoint = getProperty("mso.workflow.message.endpoint");
-		if (endpoint != null) {
-			while (endpoint.endsWith("/")) {
-				endpoint = endpoint.substring(0, endpoint.length() - 1);
-			}
-		}
+    public String createCallbackUrl(String messageType, String correlator) throws UnsupportedEncodingException {
+        String endpoint = getProperty("mso.workflow.message.endpoint");
+        if (endpoint != null) {
+            while (endpoint.endsWith("/")) {
+                endpoint = endpoint.substring(0, endpoint.length() - 1);
+            }
+        }
 
-		return endpoint + "/" + UriUtils.encodePathSegment(messageType, "UTF-8") + "/"
-				+ UriUtils.encodePathSegment(correlator, "UTF-8");
-	}
+        return endpoint + "/" + UriUtils.encodePathSegment(messageType, "UTF-8") + "/"
+                + UriUtils.encodePathSegment(correlator, "UTF-8");
+    }
 
-	protected String getProperty(String key) {
+    protected String getProperty(String key) {
 
-		return UrnPropertiesReader.getVariable(key);
-	}
+        return UrnPropertiesReader.getVariable(key);
+    }
 
 }

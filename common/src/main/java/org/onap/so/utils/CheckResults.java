@@ -24,7 +24,6 @@ package org.onap.so.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -33,33 +32,33 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class CheckResults {
 
     @XmlElement(name = "checkresult")
-    private List <CheckResult> results;
+    private List<CheckResult> results;
 
-    public CheckResults () {
+    public CheckResults() {
         results = new ArrayList<>();
     }
 
-    public List <CheckResult> getResults () {
+    public List<CheckResult> getResults() {
         return results;
     }
 
-    public void addHostCheckResult (String hostname, int state, String output) {
-        CheckResult newResult = new CheckResult ();
-        newResult.setType ("host");
-        newResult.setHostname (hostname);
-        newResult.setState (state);
-        newResult.setOutput (output);
-        results.add (newResult);
+    public void addHostCheckResult(String hostname, int state, String output) {
+        CheckResult newResult = new CheckResult();
+        newResult.setType("host");
+        newResult.setHostname(hostname);
+        newResult.setState(state);
+        newResult.setOutput(output);
+        results.add(newResult);
     }
 
-    public void addServiceCheckResult (String hostname, String servicename, int state, String output) {
-        CheckResult newResult = new CheckResult ();
-        newResult.setType ("service");
-        newResult.setHostname (hostname);
-        newResult.setServicename (servicename);
-        newResult.setState (state);
-        newResult.setOutput (output);
-        results.add (newResult);
+    public void addServiceCheckResult(String hostname, String servicename, int state, String output) {
+        CheckResult newResult = new CheckResult();
+        newResult.setType("service");
+        newResult.setHostname(hostname);
+        newResult.setServicename(servicename);
+        newResult.setState(state);
+        newResult.setOutput(output);
+        results.add(newResult);
     }
 
     public static class CheckResult {
@@ -71,47 +70,47 @@ public class CheckResults {
         private String output;
 
         @XmlAttribute(required = true)
-        public String getType () {
+        public String getType() {
             return type;
         }
 
-        public void setType (String type) {
+        public void setType(String type) {
             this.type = type;
         }
 
         @XmlElement(required = true)
-        public String getHostname () {
+        public String getHostname() {
             return hostname;
         }
 
-        public void setHostname (String hostname) {
+        public void setHostname(String hostname) {
             this.hostname = hostname;
         }
 
         @XmlElement(required = false)
-        public String getServicename () {
+        public String getServicename() {
             return servicename;
         }
 
-        public void setServicename (String servicename) {
+        public void setServicename(String servicename) {
             this.servicename = servicename;
         }
 
         @XmlElement(required = true)
-        public int getState () {
+        public int getState() {
             return state;
         }
 
-        public void setState (int state) {
+        public void setState(int state) {
             this.state = state;
         }
 
         @XmlElement(required = true)
-        public String getOutput () {
+        public String getOutput() {
             return output;
         }
 
-        public void setOutput (String output) {
+        public void setOutput(String output) {
             this.output = output;
         }
     }

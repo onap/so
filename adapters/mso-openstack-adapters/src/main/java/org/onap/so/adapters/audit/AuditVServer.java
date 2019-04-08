@@ -22,7 +22,6 @@ package org.onap.so.adapters.audit;
 
 import java.util.Optional;
 import java.util.Set;
-
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.client.aai.AAIObjectType;
@@ -33,97 +32,100 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 @Component
 public class AuditVServer extends AbstractAudit {
-	private static final Logger logger = LoggerFactory.getLogger(AuditVServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuditVServer.class);
 
-	public Optional<AAIObjectAuditList> auditVservers(Set<Vserver> vServersToAudit, String tenantId, String cloudOwner, String cloudRegion) {
-		if (vServersToAudit == null || vServersToAudit.isEmpty()){
-			return Optional.empty();
-		}
-		GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
-		vServersToAudit.stream().forEach(vserver -> {
-			try {
-				logger.debug("Vserver to Audit: {}",objectMapper.getMapper().writeValueAsString(vserver));
-			} catch (JsonProcessingException e) {
-				
-			}
-		});
-		AAIObjectAuditList auditList = new AAIObjectAuditList();		
-		vServersToAudit.stream()
-				.forEach(vServer -> auditList.getAuditList().addAll(doesVServerExistInAAI(vServer, tenantId, cloudOwner, cloudRegion).getAuditList()));
-		return Optional.of(auditList);
-	}
+    public Optional<AAIObjectAuditList> auditVservers(Set<Vserver> vServersToAudit, String tenantId, String cloudOwner,
+            String cloudRegion) {
+        if (vServersToAudit == null || vServersToAudit.isEmpty()) {
+            return Optional.empty();
+        }
+        GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
+        vServersToAudit.stream().forEach(vserver -> {
+            try {
+                logger.debug("Vserver to Audit: {}", objectMapper.getMapper().writeValueAsString(vserver));
+            } catch (JsonProcessingException e) {
 
-	private AAIObjectAuditList doesVServerExistInAAI(Vserver vServer, String tenantId, String cloudOwner, String cloudRegion) {
-		AAIObjectAuditList auditList = new AAIObjectAuditList();
-		AAIObjectAudit vServerAudit = new AAIObjectAudit();
-		AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion,
-				tenantId, vServer.getVserverId());
-		Vserver vServerShallow = new Vserver();
-		BeanUtils.copyProperties(vServer,vServerShallow,"LInterfaces");
-		boolean vServerExists = getAaiClient().exists(vserverURI);
-		logger.info("v-server {} exists: {}", vServer.getVserverId(), vServerExists);
-		vServerAudit.setAaiObject(vServerShallow);
-		vServerAudit.setDoesObjectExist(vServerExists);
-		vServerAudit.setResourceURI(vserverURI.build());
-		vServerAudit.setAaiObjectType(AAIObjectType.VSERVER.typeName());
-		auditList.getAuditList().add(vServerAudit);
-		if (vServer.getLInterfaces() != null) {
-			vServer.getLInterfaces().getLInterface().stream().forEach(lInterface -> auditList.getAuditList().addAll(doesLinterfaceExistinAAI(lInterface,
-							vServer.getVserverId(), tenantId, cloudOwner, cloudRegion).getAuditList()));
-		}
-		return auditList;
-	}
+            }
+        });
+        AAIObjectAuditList auditList = new AAIObjectAuditList();
+        vServersToAudit.stream().forEach(vServer -> auditList.getAuditList()
+                .addAll(doesVServerExistInAAI(vServer, tenantId, cloudOwner, cloudRegion).getAuditList()));
+        return Optional.of(auditList);
+    }
 
-	private AAIObjectAuditList doesLinterfaceExistinAAI(LInterface lInterface, String vServerId, String tenantId,
-			String cloudOwner, String cloudRegion) {
-		AAIObjectAuditList auditList = new AAIObjectAuditList();
-		AAIObjectAudit lInterfaceAudit = new AAIObjectAudit();
-		AAIResourceUri linterfaceURI = AAIUriFactory
-				.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner, cloudRegion, tenantId, vServerId, lInterface.getInterfaceName());
-		Optional<LInterface> queriedLInterface = getAaiClient().get(LInterface.class, linterfaceURI);
-		if (queriedLInterface.isPresent()) {
-				lInterfaceAudit.setDoesObjectExist(true);
-				lInterface.setInterfaceName(lInterface.getInterfaceName());	
-		}
-		LInterface lInterfaceShallow = new LInterface();
-		BeanUtils.copyProperties(lInterface,lInterfaceShallow,"LInterfaces");
-		lInterfaceAudit.setAaiObject(lInterface);
-		lInterfaceAudit.setResourceURI(linterfaceURI.build());
-		lInterfaceAudit.setAaiObjectType(AAIObjectType.L_INTERFACE.typeName());
-		auditList.getAuditList().add(lInterfaceAudit);
-		logger.info("l-interface id:{} name: {} exists: {} ", lInterface.getInterfaceId(), lInterface.getInterfaceName(),
-				lInterfaceAudit.isDoesObjectExist());
+    private AAIObjectAuditList doesVServerExistInAAI(Vserver vServer, String tenantId, String cloudOwner,
+            String cloudRegion) {
+        AAIObjectAuditList auditList = new AAIObjectAuditList();
+        AAIObjectAudit vServerAudit = new AAIObjectAudit();
+        AAIResourceUri vserverURI = AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner, cloudRegion,
+                tenantId, vServer.getVserverId());
+        Vserver vServerShallow = new Vserver();
+        BeanUtils.copyProperties(vServer, vServerShallow, "LInterfaces");
+        boolean vServerExists = getAaiClient().exists(vserverURI);
+        logger.info("v-server {} exists: {}", vServer.getVserverId(), vServerExists);
+        vServerAudit.setAaiObject(vServerShallow);
+        vServerAudit.setDoesObjectExist(vServerExists);
+        vServerAudit.setResourceURI(vserverURI.build());
+        vServerAudit.setAaiObjectType(AAIObjectType.VSERVER.typeName());
+        auditList.getAuditList().add(vServerAudit);
+        if (vServer.getLInterfaces() != null) {
+            vServer.getLInterfaces().getLInterface().stream().forEach(lInterface -> auditList.getAuditList().addAll(
+                    doesLinterfaceExistinAAI(lInterface, vServer.getVserverId(), tenantId, cloudOwner, cloudRegion)
+                            .getAuditList()));
+        }
+        return auditList;
+    }
 
-		if (lInterface.getLInterfaces() != null) {
-			lInterface.getLInterfaces().getLInterface().stream()
-					.forEach(subInterface -> auditList.getAuditList().add(doesSubInterfaceExistinAAI(subInterface,
-							lInterface.getInterfaceName(), vServerId, tenantId, cloudOwner, cloudRegion)));
-		}
-		logger.debug("l-interface {} does not contain any sub-iterfaces, skipping audit of sub-interfaces", lInterface.getInterfaceId());
+    private AAIObjectAuditList doesLinterfaceExistinAAI(LInterface lInterface, String vServerId, String tenantId,
+            String cloudOwner, String cloudRegion) {
+        AAIObjectAuditList auditList = new AAIObjectAuditList();
+        AAIObjectAudit lInterfaceAudit = new AAIObjectAudit();
+        AAIResourceUri linterfaceURI = AAIUriFactory.createResourceUri(AAIObjectType.L_INTERFACE, cloudOwner,
+                cloudRegion, tenantId, vServerId, lInterface.getInterfaceName());
+        Optional<LInterface> queriedLInterface = getAaiClient().get(LInterface.class, linterfaceURI);
+        if (queriedLInterface.isPresent()) {
+            lInterfaceAudit.setDoesObjectExist(true);
+            lInterface.setInterfaceName(lInterface.getInterfaceName());
+        }
+        LInterface lInterfaceShallow = new LInterface();
+        BeanUtils.copyProperties(lInterface, lInterfaceShallow, "LInterfaces");
+        lInterfaceAudit.setAaiObject(lInterface);
+        lInterfaceAudit.setResourceURI(linterfaceURI.build());
+        lInterfaceAudit.setAaiObjectType(AAIObjectType.L_INTERFACE.typeName());
+        auditList.getAuditList().add(lInterfaceAudit);
+        logger.info("l-interface id:{} name: {} exists: {} ", lInterface.getInterfaceId(),
+                lInterface.getInterfaceName(), lInterfaceAudit.isDoesObjectExist());
 
-		return auditList;
-	}
+        if (lInterface.getLInterfaces() != null) {
+            lInterface.getLInterfaces().getLInterface().stream()
+                    .forEach(subInterface -> auditList.getAuditList().add(doesSubInterfaceExistinAAI(subInterface,
+                            lInterface.getInterfaceName(), vServerId, tenantId, cloudOwner, cloudRegion)));
+        }
+        logger.debug("l-interface {} does not contain any sub-iterfaces, skipping audit of sub-interfaces",
+                lInterface.getInterfaceId());
 
-	private AAIObjectAudit doesSubInterfaceExistinAAI(LInterface subInterface, String linterfaceName, String vServerId,
-			String tenantId, String cloudOwner, String cloudRegion) {
-		logger.info("checking if sub-l-interface {} , linterfaceName: {} vserverId: {}  exists",
-				subInterface.getInterfaceName(), linterfaceName, vServerId);
-		AAIObjectAudit subInterfaceAudit = new AAIObjectAudit();
-		
-		
-		AAIResourceUri subInterfaceURI = AAIUriFactory.createResourceUri(AAIObjectType.SUB_L_INTERFACE, cloudOwner,
-				cloudRegion, tenantId, vServerId, linterfaceName, subInterface.getInterfaceName());
-		subInterfaceAudit.setResourceURI(subInterfaceURI.build());
-		boolean doesExist = getAaiClient().exists(subInterfaceURI);
-		logger.info("sub-l-interface-id:{} exists: {}", subInterface.getInterfaceId(), doesExist);
-		subInterfaceAudit.setAaiObject(subInterface);
-		subInterfaceAudit.setDoesObjectExist(doesExist);
-		subInterfaceAudit.setAaiObjectType(AAIObjectType.SUB_L_INTERFACE.typeName());
-		return subInterfaceAudit;
-	}
+        return auditList;
+    }
+
+    private AAIObjectAudit doesSubInterfaceExistinAAI(LInterface subInterface, String linterfaceName, String vServerId,
+            String tenantId, String cloudOwner, String cloudRegion) {
+        logger.info("checking if sub-l-interface {} , linterfaceName: {} vserverId: {}  exists",
+                subInterface.getInterfaceName(), linterfaceName, vServerId);
+        AAIObjectAudit subInterfaceAudit = new AAIObjectAudit();
+
+
+        AAIResourceUri subInterfaceURI = AAIUriFactory.createResourceUri(AAIObjectType.SUB_L_INTERFACE, cloudOwner,
+                cloudRegion, tenantId, vServerId, linterfaceName, subInterface.getInterfaceName());
+        subInterfaceAudit.setResourceURI(subInterfaceURI.build());
+        boolean doesExist = getAaiClient().exists(subInterfaceURI);
+        logger.info("sub-l-interface-id:{} exists: {}", subInterface.getInterfaceId(), doesExist);
+        subInterfaceAudit.setAaiObject(subInterface);
+        subInterfaceAudit.setDoesObjectExist(doesExist);
+        subInterfaceAudit.setAaiObjectType(AAIObjectType.SUB_L_INTERFACE.typeName());
+        return subInterfaceAudit;
+    }
 }

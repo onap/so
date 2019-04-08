@@ -22,12 +22,13 @@ package org.onap.so.cloudify.exceptions;
 
 public class MsoDeploymentAlreadyExists extends MsoCloudifyException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Constructor to create a new MsoCloudifyException instance
-	public MsoDeploymentAlreadyExists (String deploymentId, String cloud) {
-		// Set the detailed error as the Exception 'message'
-		super(409, "Conflict", "Deployment " + deploymentId + " already exists in Cloudify Manager suppporting cloud " + cloud);
-	}
-		
+    // Constructor to create a new MsoCloudifyException instance
+    public MsoDeploymentAlreadyExists(String deploymentId, String cloud) {
+        // Set the detailed error as the Exception 'message'
+        super(409, "Conflict",
+                "Deployment " + deploymentId + " already exists in Cloudify Manager suppporting cloud " + cloud);
+    }
+
 }

@@ -21,7 +21,6 @@
 package org.onap.so.adapters.vfc;
 
 import java.util.Arrays;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
@@ -34,7 +33,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
@@ -42,45 +40,45 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 @Configuration
 public class CXFConfiguration {
 
-	@Autowired
-	private Bus bus;
+    @Autowired
+    private Bus bus;
 
-	@Autowired
+    @Autowired
     private VfcAdapterRest vfcAdapterRest;
-    
+
     @Autowired
     private JaxRsFilterLogging jaxRsFilterLogging;
-    
+
     @Autowired
-    private ObjectMapper mapper; 
-	
-	@Bean
-	public ServletRegistrationBean cxfServlet() {	
-		return new ServletRegistrationBean(new CXFServlet(), "/services/*");
-	}
-	
+    private ObjectMapper mapper;
+
+    @Bean
+    public ServletRegistrationBean cxfServlet() {
+        return new ServletRegistrationBean(new CXFServlet(), "/services/*");
+    }
+
     @Bean
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
         endpoint.setServiceBeans(Arrays.<Object>asList(vfcAdapterRest));
-        endpoint.setAddress("/");       
+        endpoint.setAddress("/");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
-        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper),jaxRsFilterLogging));
+        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), jaxRsFilterLogging));
         return endpoint.create();
     }
-	
-	@Bean
-	public Swagger2Feature createSwaggerFeature() {
-		Swagger2Feature swagger2Feature = new Swagger2Feature();
-		swagger2Feature.setPrettyPrint(true);
-		swagger2Feature.setTitle("SO VFC Adapter");
-		swagger2Feature.setContact("The ONAP SO team");
-		swagger2Feature.setDescription("This project is the SO Orchestration Engine");
-		swagger2Feature.setVersion("1.0.0");
-		swagger2Feature.setResourcePackage("org.onap.so.adapters.vfc.rest");
-		swagger2Feature.setScan(true);
-		return swagger2Feature;
-	}
+
+    @Bean
+    public Swagger2Feature createSwaggerFeature() {
+        Swagger2Feature swagger2Feature = new Swagger2Feature();
+        swagger2Feature.setPrettyPrint(true);
+        swagger2Feature.setTitle("SO VFC Adapter");
+        swagger2Feature.setContact("The ONAP SO team");
+        swagger2Feature.setDescription("This project is the SO Orchestration Engine");
+        swagger2Feature.setVersion("1.0.0");
+        swagger2Feature.setResourcePackage("org.onap.so.adapters.vfc.rest");
+        swagger2Feature.setScan(true);
+        return swagger2Feature;
+    }
 
 }

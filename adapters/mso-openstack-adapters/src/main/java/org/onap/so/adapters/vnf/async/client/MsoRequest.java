@@ -26,9 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for msoRequest complex type.
+ * <p>
+ * Java class for msoRequest complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="msoRequest">
@@ -46,10 +48,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "msoRequest", propOrder = {
-    "requestId",
-    "serviceInstanceId"
-})
+@XmlType(name = "msoRequest", propOrder = {"requestId", "serviceInstanceId"})
 public class MsoRequest {
 
     protected String requestId;
@@ -58,10 +57,8 @@ public class MsoRequest {
     /**
      * Gets the value of the requestId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getRequestId() {
         return requestId;
@@ -70,10 +67,8 @@ public class MsoRequest {
     /**
      * Sets the value of the requestId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setRequestId(String value) {
         this.requestId = value;
@@ -82,10 +77,8 @@ public class MsoRequest {
     /**
      * Gets the value of the serviceInstanceId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getServiceInstanceId() {
         return serviceInstanceId;
@@ -94,10 +87,8 @@ public class MsoRequest {
     /**
      * Sets the value of the serviceInstanceId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setServiceInstanceId(String value) {
         this.serviceInstanceId = value;

@@ -21,10 +21,8 @@ package org.onap.so.client.dmaapproperties;
 
 import java.io.IOException;
 import java.util.Optional;
-
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.dmaap.DmaapPublisher;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -32,32 +30,32 @@ import org.springframework.stereotype.Component;
 @Scope("prototype")
 public class GlobalDmaapPublisher extends DmaapPublisher {
 
-	
-	public GlobalDmaapPublisher() throws IOException {
-		super();
-	}
-	
-	@Override
-	public String getAuth() {
 
-		return UrnPropertiesReader.getVariable("mso.global.dmaap.auth");
-	}
+    public GlobalDmaapPublisher() throws IOException {
+        super();
+    }
+
+    @Override
+    public String getAuth() {
+
+        return UrnPropertiesReader.getVariable("mso.global.dmaap.auth");
+    }
 
 
 
-	@Override
-	public String getKey() {
+    @Override
+    public String getKey() {
 
-		return UrnPropertiesReader.getVariable("mso.msoKey");
-	}
+        return UrnPropertiesReader.getVariable("mso.msoKey");
+    }
 
-	@Override
-	public String getTopic() {
-		return UrnPropertiesReader.getVariable("mso.global.dmaap.publisher.topic");
-	}
+    @Override
+    public String getTopic() {
+        return UrnPropertiesReader.getVariable("mso.global.dmaap.publisher.topic");
+    }
 
-	@Override
-	public Optional<String> getHost() {
-		return Optional.ofNullable(UrnPropertiesReader.getVariable("mso.global.dmaap.host"));
-	}
+    @Override
+    public Optional<String> getHost() {
+        return Optional.ofNullable(UrnPropertiesReader.getVariable("mso.global.dmaap.host"));
+    }
 }

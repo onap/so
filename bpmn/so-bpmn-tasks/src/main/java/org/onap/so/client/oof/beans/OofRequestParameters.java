@@ -24,15 +24,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-
 import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "customerLatitude",
-    "customerLongitude",
-    "customerName"
-})
+@JsonPropertyOrder({"customerLatitude", "customerLongitude", "customerName"})
 @JsonRootName("requestParameters")
 public class OofRequestParameters implements Serializable {
 

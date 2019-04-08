@@ -23,45 +23,42 @@ package org.onap.so.adapters.vnfrest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.mappers.MapAdapter;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateVolumeGroupRequest")
 @XmlRootElement(name = "updateVolumeGroupRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UpdateVolumeGroupRequest extends VfRequestCommon {
-	private String cloudSiteId;
-	private String cloudOwner;
-	private String tenantId;
-	private String volumeGroupId;
-	private String volumeGroupStackId;
-	private String vnfType;
-	private String vnfVersion;
-	private String vfModuleType;
-	private String modelCustomizationUuid;
-	@XmlJavaTypeAdapter(MapAdapter.class)
-	private Map<String,Object> volumeGroupParams = new HashMap<>();
-	private MsoRequest msoRequest = new MsoRequest();
+    private String cloudSiteId;
+    private String cloudOwner;
+    private String tenantId;
+    private String volumeGroupId;
+    private String volumeGroupStackId;
+    private String vnfType;
+    private String vnfVersion;
+    private String vfModuleType;
+    private String modelCustomizationUuid;
+    @XmlJavaTypeAdapter(MapAdapter.class)
+    private Map<String, Object> volumeGroupParams = new HashMap<>();
+    private MsoRequest msoRequest = new MsoRequest();
 
-	public UpdateVolumeGroupRequest() {
-		super();
-	}
+    public UpdateVolumeGroupRequest() {
+        super();
+    }
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
     public String getCloudOwner() {
         return cloudOwner;
@@ -71,75 +68,75 @@ public class UpdateVolumeGroupRequest extends VfRequestCommon {
         this.cloudOwner = cloudOwner;
     }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getVolumeGroupId() {
-		return volumeGroupId;
-	}
+    public String getVolumeGroupId() {
+        return volumeGroupId;
+    }
 
-	public void setVolumeGroupId(String volumeGroupId) {
-		this.volumeGroupId = volumeGroupId;
-	}
+    public void setVolumeGroupId(String volumeGroupId) {
+        this.volumeGroupId = volumeGroupId;
+    }
 
-	public String getVolumeGroupStackId() {
-		return volumeGroupStackId;
-	}
+    public String getVolumeGroupStackId() {
+        return volumeGroupStackId;
+    }
 
-	public void setVolumeGroupStackId(String volumeGroupStackId) {
-		this.volumeGroupStackId = volumeGroupStackId;
-	}
+    public void setVolumeGroupStackId(String volumeGroupStackId) {
+        this.volumeGroupStackId = volumeGroupStackId;
+    }
 
-	public String getVnfType() {
-		return vnfType;
-	}
+    public String getVnfType() {
+        return vnfType;
+    }
 
-	public void setVnfType(String vnfType) {
-		this.vnfType = vnfType;
-	}
+    public void setVnfType(String vnfType) {
+        this.vnfType = vnfType;
+    }
 
-	public String getVnfVersion() {
-		return vnfVersion;
-	}
+    public String getVnfVersion() {
+        return vnfVersion;
+    }
 
-	public void setVnfVersion(String vnfVersion) {
-		this.vnfVersion = vnfVersion;
-	}
+    public void setVnfVersion(String vnfVersion) {
+        this.vnfVersion = vnfVersion;
+    }
 
-	public String getVfModuleType() {
-		return vfModuleType;
-	}
+    public String getVfModuleType() {
+        return vfModuleType;
+    }
 
-	public void setVfModuleType(String vfModuleType) {
-		this.vfModuleType = vfModuleType;
-	}
+    public void setVfModuleType(String vfModuleType) {
+        this.vfModuleType = vfModuleType;
+    }
 
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
+    public String getModelCustomizationUuid() {
+        return this.modelCustomizationUuid;
+    }
 
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
-	}
+    public void setModelCustomizationUuid(String modelCustomizationUuid) {
+        this.modelCustomizationUuid = modelCustomizationUuid;
+    }
 
-	public Map<String, Object> getVolumeGroupParams() {
-		return volumeGroupParams;
-	}
+    public Map<String, Object> getVolumeGroupParams() {
+        return volumeGroupParams;
+    }
 
-	public void setVolumeGroupParams(Map<String, Object> volumeGroupParams) {
-		this.volumeGroupParams = volumeGroupParams;
-	}
+    public void setVolumeGroupParams(Map<String, Object> volumeGroupParams) {
+        this.volumeGroupParams = volumeGroupParams;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
 }

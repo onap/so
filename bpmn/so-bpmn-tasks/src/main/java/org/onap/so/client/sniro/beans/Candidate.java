@@ -22,45 +22,43 @@ package org.onap.so.client.sniro.beans;
 
 import java.io.Serializable;
 import java.util.List;
-
 import org.onap.so.bpmn.servicedecomposition.homingobjects.CandidateType;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Candidate implements Serializable{
+public class Candidate implements Serializable {
 
-	private static final long serialVersionUID = -5474502255533410907L;
+    private static final long serialVersionUID = -5474502255533410907L;
 
-	@JsonProperty("identifierType")
-	private CandidateType identifierType;
-	@JsonProperty("identifiers")
-	private List<String> identifiers;
-	@JsonProperty("cloudOwner")
-	private String cloudOwner;
+    @JsonProperty("identifierType")
+    private CandidateType identifierType;
+    @JsonProperty("identifiers")
+    private List<String> identifiers;
+    @JsonProperty("cloudOwner")
+    private String cloudOwner;
 
 
-	public CandidateType getIdentifierType(){
-		return identifierType;
-	}
+    public CandidateType getIdentifierType() {
+        return identifierType;
+    }
 
-	public void setIdentifierType(CandidateType identifierType){
-		this.identifierType = identifierType;
-	}
+    public void setIdentifierType(CandidateType identifierType) {
+        this.identifierType = identifierType;
+    }
 
-	public List<String> getIdentifiers(){
-		return identifiers;
-	}
+    public List<String> getIdentifiers() {
+        return identifiers;
+    }
 
-	public void setIdentifiers(List<String> identifiers){
-		this.identifiers = identifiers;
-	}
+    public void setIdentifiers(List<String> identifiers) {
+        this.identifiers = identifiers;
+    }
 
-	public String getCloudOwner(){
-		return cloudOwner;
-	}
+    public String getCloudOwner() {
+        return cloudOwner;
+    }
 
-	public void setCloudOwner(String cloudOwner){
-		this.cloudOwner = cloudOwner;
-	}
+    public void setCloudOwner(String cloudOwner) {
+        this.cloudOwner = cloudOwner;
+    }
 
 }

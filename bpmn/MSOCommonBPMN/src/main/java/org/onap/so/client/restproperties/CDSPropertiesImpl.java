@@ -75,9 +75,9 @@ public class CDSPropertiesImpl implements CDSProperties {
     public boolean mapNotFoundToEmpty() {
         return false;
     }
-    
+
     @Override
-	public int getTimeout() {
-		return Integer.parseInt(Objects.requireNonNull(UrnPropertiesReader.getVariable(TIMEOUT)));
-	}
+    public int getTimeout() {
+        return Integer.parseInt(Objects.requireNonNull(UrnPropertiesReader.getVariable(TIMEOUT)));
+    }
 }

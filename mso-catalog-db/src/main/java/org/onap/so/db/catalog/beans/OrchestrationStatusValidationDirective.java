@@ -20,18 +20,18 @@
 
 package org.onap.so.db.catalog.beans;
 
-//TODO find this file a new location?
+// TODO find this file a new location?
 public enum OrchestrationStatusValidationDirective {
-	SILENT_SUCCESS("SilentSuccess"), CONTINUE("Continue"), FAIL("Fail"), VALIDATION_SKIPPED("ValidationSkiPped");
+    SILENT_SUCCESS("SilentSuccess"), CONTINUE("Continue"), FAIL("Fail"), VALIDATION_SKIPPED("ValidationSkiPped");
 
-	private final String name;
+    private final String name;
 
-	private OrchestrationStatusValidationDirective(String name) {
-		this.name = name;
-	}
+    private OrchestrationStatusValidationDirective(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 }

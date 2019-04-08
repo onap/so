@@ -23,23 +23,23 @@ package org.onap.so.adapters.tenant.exceptions;
 
 
 import javax.xml.ws.WebFault;
-
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 
 /**
- * This class reports an exception when trying to create a VNF when another
- * VNF of the same name already exists in the target cloud/tenant.  Note that
- * the createVnf method suppresses this exception by default.
+ * This class reports an exception when trying to create a VNF when another VNF of the same name already exists in the
+ * target cloud/tenant. Note that the createVnf method suppresses this exception by default.
  * 
  *
  */
-@WebFault (name="TenantAlreadyExists", faultBean="org.onap.so.adapters.tenant.exceptions.TenantExceptionBean", targetNamespace="http://org.onap.so/tenant")
+@WebFault(name = "TenantAlreadyExists", faultBean = "org.onap.so.adapters.tenant.exceptions.TenantExceptionBean",
+        targetNamespace = "http://org.onap.so/tenant")
 public class TenantAlreadyExists extends TenantException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public TenantAlreadyExists (String name, String cloudId, String tenantId) {
-		super("Tenant " + name + " already exists in " + cloudId + " with ID " + tenantId, MsoExceptionCategory.USERDATA);
-	}
+    public TenantAlreadyExists(String name, String cloudId, String tenantId) {
+        super("Tenant " + name + " already exists in " + cloudId + " with ID " + tenantId,
+                MsoExceptionCategory.USERDATA);
+    }
 }

@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.vfcmodel;
 
 
 
-
 /**
  * NS Create Input Parameter For VFC Adapter<br>
  * <p>
@@ -41,7 +40,6 @@ public class NSResourceInputParameter {
     private NsParameters nsParameters;
 
     private NsScaleParameters nsScaleParameters;
-
 
 
 

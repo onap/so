@@ -24,17 +24,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "artifactType",
-    "artifactUuid",
-    "artifactName",
-    "artifactVersion",
-    "artifactDescription",
-    "workflowName",
-    "operationName",
-    "workflowSource",
-    "workflowResourceTarget"
-})
+@JsonPropertyOrder({"artifactType", "artifactUuid", "artifactName", "artifactVersion", "artifactDescription",
+        "workflowName", "operationName", "workflowSource", "workflowResourceTarget"})
 public class ArtifactInfo {
 
     @JsonProperty("artifactType")
@@ -60,8 +51,7 @@ public class ArtifactInfo {
      * No args constructor for use in serialization
      * 
      */
-    public ArtifactInfo() {
-    }
+    public ArtifactInfo() {}
 
     /**
      * 
@@ -75,7 +65,9 @@ public class ArtifactInfo {
      * @param artifactUuid
      * @param artifactDescription
      */
-    public ArtifactInfo(String artifactType, String artifactUuid, String artifactName, String artifactVersion, String artifactDescription, String workflowName, String operationName, String workflowSource, String workflowResourceTarget) {
+    public ArtifactInfo(String artifactType, String artifactUuid, String artifactName, String artifactVersion,
+            String artifactDescription, String workflowName, String operationName, String workflowSource,
+            String workflowResourceTarget) {
         super();
         this.artifactType = artifactType;
         this.artifactUuid = artifactUuid;

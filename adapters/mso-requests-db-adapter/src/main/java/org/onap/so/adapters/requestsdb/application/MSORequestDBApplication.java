@@ -23,13 +23,10 @@
 package org.onap.so.adapters.requestsdb.application;
 
 import java.time.Duration;
-
 import javax.sql.DataSource;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
 import net.javacrumbs.shedlock.core.LockProvider;
 import net.javacrumbs.shedlock.provider.jdbctemplate.JdbcTemplateLockProvider;
 import net.javacrumbs.shedlock.spring.ScheduledLockConfiguration;
@@ -40,35 +37,32 @@ import net.javacrumbs.shedlock.spring.ScheduledLockConfigurationBuilder;
  *
  */
 
-@SpringBootApplication(scanBasePackages = { "org.onap.so"})
+@SpringBootApplication(scanBasePackages = {"org.onap.so"})
 public class MSORequestDBApplication {
 
-	private static final String LOGS_DIR = "logs_dir";
+    private static final String LOGS_DIR = "logs_dir";
 
-	private static void setLogsDir() {
-		if (System.getProperty(LOGS_DIR) == null) {
-			System.getProperties().setProperty(LOGS_DIR, "./logs/reqdb/");
-		}
-	}
+    private static void setLogsDir() {
+        if (System.getProperty(LOGS_DIR) == null) {
+            System.getProperties().setProperty(LOGS_DIR, "./logs/reqdb/");
+        }
+    }
 
-	public static void main(String... args) {
-		SpringApplication.run(MSORequestDBApplication.class, args);
-		setLogsDir();
-	}
+    public static void main(String... args) {
+        SpringApplication.run(MSORequestDBApplication.class, args);
+        setLogsDir();
+    }
 
-	@Bean
-	public LockProvider lockProvider(DataSource dataSource) {
-	    return new JdbcTemplateLockProvider(dataSource);
-	}
-	
-	@Bean
-	public ScheduledLockConfiguration taskScheduler(LockProvider lockProvider) {
-	    return ScheduledLockConfigurationBuilder
-	        .withLockProvider(lockProvider)
-	        .withPoolSize(10)
-	        .withDefaultLockAtMostFor(Duration.ofMinutes(10))
-	        .build();
-	}
+    @Bean
+    public LockProvider lockProvider(DataSource dataSource) {
+        return new JdbcTemplateLockProvider(dataSource);
+    }
+
+    @Bean
+    public ScheduledLockConfiguration taskScheduler(LockProvider lockProvider) {
+        return ScheduledLockConfigurationBuilder.withLockProvider(lockProvider).withPoolSize(10)
+                .withDefaultLockAtMostFor(Duration.ofMinutes(10)).build();
+    }
 
 
 }

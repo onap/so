@@ -22,7 +22,6 @@ package org.onap.so.openstack.utils;
 
 import java.io.Serializable;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,10 +29,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "id",
-        "links"
-})
+@JsonPropertyOrder({"id", "links"})
 public class MulticloudCreateHeatResponse implements Serializable {
     private final static long serialVersionUID = -5215028275577848311L;
 
@@ -43,8 +39,7 @@ public class MulticloudCreateHeatResponse implements Serializable {
     private List<MulticloudCreateLinkResponse> links;
 
     @JsonCreator
-    public MulticloudCreateHeatResponse(
-            @JsonProperty("id") String id,
+    public MulticloudCreateHeatResponse(@JsonProperty("id") String id,
             @JsonProperty("links") List<MulticloudCreateLinkResponse> links) {
         this.id = id;
         this.links = links;

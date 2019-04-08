@@ -21,51 +21,50 @@
 package org.onap.so.openpojo.rules;
 
 import static org.hamcrest.CoreMatchers.anything;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-
 import com.openpojo.reflection.PojoField;
 
 public class HasAnnotationMatcher<T extends PojoField> extends TypeSafeDiagnosingMatcher<T> {
-	private final Class<? extends Annotation> annotationType;
-	private final Matcher<? super T> annotationMatcher;
+    private final Class<? extends Annotation> annotationType;
+    private final Matcher<? super T> annotationMatcher;
 
-	public HasAnnotationMatcher(final Class<? extends Annotation> annotationType, final Matcher<? super T> annotationMatcher) {
-		this.annotationType = annotationType;
-		this.annotationMatcher = annotationMatcher;
-	}
+    public HasAnnotationMatcher(final Class<? extends Annotation> annotationType,
+            final Matcher<? super T> annotationMatcher) {
+        this.annotationType = annotationType;
+        this.annotationMatcher = annotationMatcher;
+    }
 
-	@Override
-	protected boolean matchesSafely(final PojoField item, final Description mismatchDescription) {
-		final Annotation annotation = item.getAnnotation(this.annotationType);
-		if (annotation == null) {
-			mismatchDescription.appendText("does not have annotation ").appendText(this.annotationType.getName());
-			return false;
-		}
+    @Override
+    protected boolean matchesSafely(final PojoField item, final Description mismatchDescription) {
+        final Annotation annotation = item.getAnnotation(this.annotationType);
+        if (annotation == null) {
+            mismatchDescription.appendText("does not have annotation ").appendText(this.annotationType.getName());
+            return false;
+        }
 
-		if (!this.annotationMatcher.matches(annotation)) {
-			this.annotationMatcher.describeMismatch(annotation, mismatchDescription);
-			return false;
-		}
+        if (!this.annotationMatcher.matches(annotation)) {
+            this.annotationMatcher.describeMismatch(annotation, mismatchDescription);
+            return false;
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public void describeTo(final Description description) {
-		// Intentionally left blank.
-	}
+    @Override
+    public void describeTo(final Description description) {
+        // Intentionally left blank.
+    }
 
-	public static <T extends PojoField> Matcher<T> hasAnnotation(final Class<? extends Annotation> annotationType) {
-		return hasAnnotation(annotationType, anything(""));
-	}
+    public static <T extends PojoField> Matcher<T> hasAnnotation(final Class<? extends Annotation> annotationType) {
+        return hasAnnotation(annotationType, anything(""));
+    }
 
-	public static <T extends PojoField> Matcher<T> hasAnnotation(final Class<? extends Annotation> annotationType, final Matcher<? super T> annotationMatcher) {
-		return new HasAnnotationMatcher<T>(annotationType, annotationMatcher);
-	}
+    public static <T extends PojoField> Matcher<T> hasAnnotation(final Class<? extends Annotation> annotationType,
+            final Matcher<? super T> annotationMatcher) {
+        return new HasAnnotationMatcher<T>(annotationType, annotationMatcher);
+    }
 }

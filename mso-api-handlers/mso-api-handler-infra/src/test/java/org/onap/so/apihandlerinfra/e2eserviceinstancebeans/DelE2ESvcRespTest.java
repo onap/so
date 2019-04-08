@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class DelE2ESvcRespTest {
@@ -31,7 +30,7 @@ public class DelE2ESvcRespTest {
     @Test
     public void verifyDelE2ESvcResp() throws Exception {
         test.setOperationId("operationId");
-        assertEquals(test.getOperationId(),"operationId");
+        assertEquals(test.getOperationId(), "operationId");
     }
 
 

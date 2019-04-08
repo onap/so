@@ -21,9 +21,7 @@
 package org.onap.so.client.aai.entities;
 
 import java.util.List;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
@@ -31,44 +29,46 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryObjectName;
 import org.onap.so.client.graphinventory.entities.GraphInventoryRelationships;
 
-public class Relationships extends GraphInventoryRelationships<AAIResultWrapper, AAIResourceUri, AAIObjectType>{
+public class Relationships extends GraphInventoryRelationships<AAIResultWrapper, AAIResourceUri, AAIObjectType> {
 
-	public Relationships(String json) {
-		super(json);
-	}
-	
-	@Deprecated
-	/**
-	 * Use getRelatedUris instead
-	 * @return
-	 */
-	public List<AAIResourceUri> getRelatedAAIUris() {
-		return this.getRelatedUris();
-	}
-	
-	@Deprecated
-	/**
-	 * Use getRelatedUris instead
-	 * @return
-	 */
-	public List<AAIResourceUri> getRelatedAAIUris(GraphInventoryObjectName type) {
-		return this.getRelatedUris(type);
-	}
-	
-	
-	protected AAIResultWrapper get(AAIResourceUri uri) {
-		return new AAIResourcesClient().get(uri);
-		
-	}
+    public Relationships(String json) {
+        super(json);
+    }
 
-	@Override
-	protected AAIResourceUri createUri(AAIObjectType type, String relatedLink) {
-		
-		return AAIUriFactory.createResourceFromExistingURI(type, UriBuilder.fromPath(relatedLink).build());
-	}
+    @Deprecated
+    /**
+     * Use getRelatedUris instead
+     * 
+     * @return
+     */
+    public List<AAIResourceUri> getRelatedAAIUris() {
+        return this.getRelatedUris();
+    }
 
-	@Override
-	protected AAIObjectType fromTypeName(String name) {
-		return AAIObjectType.fromTypeName(name);
-	}
+    @Deprecated
+    /**
+     * Use getRelatedUris instead
+     * 
+     * @return
+     */
+    public List<AAIResourceUri> getRelatedAAIUris(GraphInventoryObjectName type) {
+        return this.getRelatedUris(type);
+    }
+
+
+    protected AAIResultWrapper get(AAIResourceUri uri) {
+        return new AAIResourcesClient().get(uri);
+
+    }
+
+    @Override
+    protected AAIResourceUri createUri(AAIObjectType type, String relatedLink) {
+
+        return AAIUriFactory.createResourceFromExistingURI(type, UriBuilder.fromPath(relatedLink).build());
+    }
+
+    @Override
+    protected AAIObjectType fromTypeName(String name) {
+        return AAIObjectType.fromTypeName(name);
+    }
 }

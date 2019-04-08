@@ -29,9 +29,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -42,76 +40,84 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBinding;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
 
-public class AAIVpnBindingResourcesTest extends BaseTaskTest{
-	
-	@InjectMocks
-	private AAIVpnBindingResources aaiVpnBindingResources = new AAIVpnBindingResources();
-	
-	private Customer customer;
+public class AAIVpnBindingResourcesTest extends BaseTaskTest {
 
-	@Before
-	public void before() {
-		customer = buildCustomer();
-		doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-	}
+    @InjectMocks
+    private AAIVpnBindingResources aaiVpnBindingResources = new AAIVpnBindingResources();
 
-	@Test
-	public void createCustomerTest() {
-		org.onap.aai.domain.yang.Customer mappedCustomer = new org.onap.aai.domain.yang.Customer();
-		mappedCustomer.setGlobalCustomerId(customer.getGlobalCustomerId());
-		
-		doReturn(mappedCustomer).when(MOCK_aaiObjectMapper).mapCustomer(customer);
-		doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Customer.class));
-		
-		aaiVpnBindingResources.createCustomer(customer);
-		
-		verify(MOCK_aaiResourcesClient, times(1)).create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.Customer.class));
-		verify(MOCK_aaiObjectMapper, times(1)).mapCustomer(customer);
-	}
+    private Customer customer;
 
-	@Test
-	public void getVpnBindingTest () {
-		org.onap.aai.domain.yang.VpnBinding vpnBinding = new org.onap.aai.domain.yang.VpnBinding();
-		vpnBinding.setVpnId("vnfId");
-		when(MOCK_aaiResourcesClient.get(eq(org.onap.aai.domain.yang.VpnBinding.class),isA(AAIResourceUri.class))).thenReturn(Optional.of(vpnBinding));
-		aaiVpnBindingResources.getVpnBinding("vpnId");
-		verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.VpnBinding.class),isA(AAIResourceUri.class));
-	}
+    @Before
+    public void before() {
+        customer = buildCustomer();
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
+    }
+
+    @Test
+    public void createCustomerTest() {
+        org.onap.aai.domain.yang.Customer mappedCustomer = new org.onap.aai.domain.yang.Customer();
+        mappedCustomer.setGlobalCustomerId(customer.getGlobalCustomerId());
+
+        doReturn(mappedCustomer).when(MOCK_aaiObjectMapper).mapCustomer(customer);
+        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.Customer.class));
+
+        aaiVpnBindingResources.createCustomer(customer);
+
+        verify(MOCK_aaiResourcesClient, times(1)).create(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.Customer.class));
+        verify(MOCK_aaiObjectMapper, times(1)).mapCustomer(customer);
+    }
+
+    @Test
+    public void getVpnBindingTest() {
+        org.onap.aai.domain.yang.VpnBinding vpnBinding = new org.onap.aai.domain.yang.VpnBinding();
+        vpnBinding.setVpnId("vnfId");
+        when(MOCK_aaiResourcesClient.get(eq(org.onap.aai.domain.yang.VpnBinding.class), isA(AAIResourceUri.class)))
+                .thenReturn(Optional.of(vpnBinding));
+        aaiVpnBindingResources.getVpnBinding("vpnId");
+        verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.VpnBinding.class),
+                isA(AAIResourceUri.class));
+    }
 
     @Test
     public void existsCustomerTest() {
-		when(MOCK_aaiResourcesClient.exists(isA(AAIResourceUri.class))).thenReturn(true);
-		boolean isCustomerExist = aaiVpnBindingResources.existsCustomer(customer);
-		verify(MOCK_aaiResourcesClient, times(1)).exists(isA(AAIResourceUri.class));
-		assertEquals(true,isCustomerExist);
-	}
+        when(MOCK_aaiResourcesClient.exists(isA(AAIResourceUri.class))).thenReturn(true);
+        boolean isCustomerExist = aaiVpnBindingResources.existsCustomer(customer);
+        verify(MOCK_aaiResourcesClient, times(1)).exists(isA(AAIResourceUri.class));
+        assertEquals(true, isCustomerExist);
+    }
 
     @Test
     public void getVpnBindingByCustomerVpnIdTest() {
-		when(MOCK_aaiResourcesClient.get(eq(VpnBindings.class),isA(AAIResourceUri.class))).thenReturn(Optional.of(new VpnBindings()));
-		Optional<VpnBindings> vpnBindings = aaiVpnBindingResources.getVpnBindingByCustomerVpnId("testCustomerVpnId");
-		assertNotNull(vpnBindings.get());
-		verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.VpnBindings.class),isA(AAIResourceUri.class));
-	}
+        when(MOCK_aaiResourcesClient.get(eq(VpnBindings.class), isA(AAIResourceUri.class)))
+                .thenReturn(Optional.of(new VpnBindings()));
+        Optional<VpnBindings> vpnBindings = aaiVpnBindingResources.getVpnBindingByCustomerVpnId("testCustomerVpnId");
+        assertNotNull(vpnBindings.get());
+        verify(MOCK_aaiResourcesClient, times(1)).get(eq(org.onap.aai.domain.yang.VpnBindings.class),
+                isA(AAIResourceUri.class));
+    }
 
-	@Test
-	public void createVpnBindingTest() {
-		doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VpnBinding.class));
-		org.onap.aai.domain.yang.VpnBinding mappedVpnBinding = new org.onap.aai.domain.yang.VpnBinding();
-		mappedVpnBinding.setVpnName("test");
+    @Test
+    public void createVpnBindingTest() {
+        doNothing().when(MOCK_aaiResourcesClient).create(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VpnBinding.class));
+        org.onap.aai.domain.yang.VpnBinding mappedVpnBinding = new org.onap.aai.domain.yang.VpnBinding();
+        mappedVpnBinding.setVpnName("test");
 
-		doReturn(mappedVpnBinding).when(MOCK_aaiObjectMapper).mapVpnBinding(isA(VpnBinding.class));
-		VpnBinding vpnBinding = buildVpnBinding();
-		aaiVpnBindingResources.createVpnBinding(vpnBinding);
+        doReturn(mappedVpnBinding).when(MOCK_aaiObjectMapper).mapVpnBinding(isA(VpnBinding.class));
+        VpnBinding vpnBinding = buildVpnBinding();
+        aaiVpnBindingResources.createVpnBinding(vpnBinding);
 
-		verify(MOCK_aaiResourcesClient, times(1)).create(isA(AAIResourceUri.class), isA(org.onap.aai.domain.yang.VpnBinding.class));
-		verify(MOCK_aaiObjectMapper, times(1)).mapVpnBinding(isA(VpnBinding.class));
-	}
+        verify(MOCK_aaiResourcesClient, times(1)).create(isA(AAIResourceUri.class),
+                isA(org.onap.aai.domain.yang.VpnBinding.class));
+        verify(MOCK_aaiObjectMapper, times(1)).mapVpnBinding(isA(VpnBinding.class));
+    }
 
-	@Test
-	public void connectCustomerToVpnBinding() {
-		doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
-		aaiVpnBindingResources.connectCustomerToVpnBinding("testCustId","testVpnId");
-		verify(MOCK_aaiResourcesClient,times(1)).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
-	}
+    @Test
+    public void connectCustomerToVpnBinding() {
+        doNothing().when(MOCK_aaiResourcesClient).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
+        aaiVpnBindingResources.connectCustomerToVpnBinding("testCustId", "testVpnId");
+        verify(MOCK_aaiResourcesClient, times(1)).connect(isA(AAIResourceUri.class), isA(AAIResourceUri.class));
+    }
 }

@@ -22,45 +22,45 @@
 package org.onap.so.bpmn.common.workflow.service;
 
 import java.util.Optional;
-
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.ProcessEngines;
 import org.springframework.stereotype.Service;
 
 /**
- * Base class for services that must be process-engine aware. The only
- * process engine currently supported is the "default" process engine.
+ * Base class for services that must be process-engine aware. The only process engine currently supported is the
+ * "default" process engine.
  */
 @Service
 public class ProcessEngineAwareService {
-	
-	private final String processEngineName = "default";
-	private volatile Optional<ProcessEngineServices> pes4junit = Optional.empty();
-	
-	/**
-	 * Gets the process engine name.
-	 * @return the process engine name
-	 */
-	public String getProcessEngineName() {
-		return processEngineName;
-	}
 
-	/**
-	 * Gets process engine services.
-	 * @return process engine services
-	 */
-	public ProcessEngineServices getProcessEngineServices() {
-		return pes4junit.orElse(ProcessEngines.getProcessEngine(
-				getProcessEngineName()));
-	}
+    private final String processEngineName = "default";
+    private volatile Optional<ProcessEngineServices> pes4junit = Optional.empty();
 
-	/**
-	 * Allows a particular process engine to be specified, overriding the
-	 * usual process engine lookup by name.  Intended primarily for the
-	 * unit test environment.
-	 * @param pes process engine services
-	 */
-	public void setProcessEngineServices4junit(ProcessEngineServices pes) {
-		pes4junit = Optional.ofNullable(pes);
-	}
+    /**
+     * Gets the process engine name.
+     * 
+     * @return the process engine name
+     */
+    public String getProcessEngineName() {
+        return processEngineName;
+    }
+
+    /**
+     * Gets process engine services.
+     * 
+     * @return process engine services
+     */
+    public ProcessEngineServices getProcessEngineServices() {
+        return pes4junit.orElse(ProcessEngines.getProcessEngine(getProcessEngineName()));
+    }
+
+    /**
+     * Allows a particular process engine to be specified, overriding the usual process engine lookup by name. Intended
+     * primarily for the unit test environment.
+     * 
+     * @param pes process engine services
+     */
+    public void setProcessEngineServices4junit(ProcessEngineServices pes) {
+        pes4junit = Optional.ofNullable(pes);
+    }
 }

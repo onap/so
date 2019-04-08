@@ -26,5 +26,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "buildingBlockDetail", path = "buildingBlockDetail")
 public interface BuildingBlockDetailRepository extends JpaRepository<BuildingBlockDetail, String> {
-	BuildingBlockDetail findOneByBuildingBlockName(String buildingBlockName);
+    BuildingBlockDetail findOneByBuildingBlockName(String buildingBlockName);
 }

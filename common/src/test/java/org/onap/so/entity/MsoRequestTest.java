@@ -23,7 +23,6 @@ package org.onap.so.entity;
 import org.junit.Test;
 import org.onap.so.openpojo.rules.HasToStringRule;
 import org.onap.so.openpojo.rules.ToStringTester;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -46,14 +45,11 @@ public class MsoRequestTest {
     }
 
     private void test(String pojoPackage) {
-        Validator validator = ValidatorBuilder.create()
-                .with(new GetterMustExistRule())
-                .with(new SetterMustExistRule())
-                .with(new SetterTester())
-                .with(new GetterTester())
-                .build();
+        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
+                .with(new SetterTester()).with(new GetterTester()).build();
         validator.validate(pojoPackage, new FilterPackageInfo(), new FilterEnum(), filterTestClasses);
     }
+
     private static class FilterTestClasses implements PojoClassFilter {
         public boolean include(PojoClass pojoClass) {
             return !pojoClass.getSourcePath().contains("/test-classes/");

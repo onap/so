@@ -28,10 +28,10 @@ public class InstanceNameDuplicateCheckRequest {
     private String instanceName;
     private String requestScope;
 
-    public InstanceNameDuplicateCheckRequest() {
-    }
+    public InstanceNameDuplicateCheckRequest() {}
 
-    public InstanceNameDuplicateCheckRequest(HashMap<String, String> instanceIdMap, String instanceName, String requestScope) {
+    public InstanceNameDuplicateCheckRequest(HashMap<String, String> instanceIdMap, String instanceName,
+            String requestScope) {
         this.instanceIdMap = instanceIdMap;
         this.instanceName = instanceName;
         this.requestScope = requestScope;

@@ -33,14 +33,14 @@ import org.slf4j.MDC;
 
 
 
-public class SOAPLoggingOutInterceptor extends AbstractSoapInterceptor{
+public class SOAPLoggingOutInterceptor extends AbstractSoapInterceptor {
 
     private static final String _500 = "500";
 
     protected static Logger logger = LoggerFactory.getLogger(SOAPLoggingOutInterceptor.class);
-    
 
-    
+
+
     public SOAPLoggingOutInterceptor() {
         super(Phase.WRITE);
     }
@@ -50,15 +50,16 @@ public class SOAPLoggingOutInterceptor extends AbstractSoapInterceptor{
         try {
             Exception ex = message.getContent(Exception.class);
             if (ex == null) {
-                MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.COMPLETED.toString());
-            }else{
+                MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE,
+                        ONAPLogConstants.ResponseStatus.COMPLETED.toString());
+            } else {
                 int responseCode = 0;
                 responseCode = (int) message.get(Message.RESPONSE_CODE);
-                if(responseCode != 0 )
+                if (responseCode != 0)
                     MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(responseCode));
                 else
                     MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, _500);
-                
+
                 MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.ERROR.toString());
             }
             logger.info(ONAPLogConstants.Markers.EXIT, "Exiting");

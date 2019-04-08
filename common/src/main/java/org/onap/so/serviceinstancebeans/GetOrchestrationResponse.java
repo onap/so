@@ -27,21 +27,21 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class GetOrchestrationResponse {
-	
-	protected Request request;
 
-	public Request getRequest() {
-		return request;
-	}
+    protected Request request;
 
-	public void setRequest(Request request) {
-		this.request = request;
-	}
+    public Request getRequest() {
+        return request;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("request", request).toString();
-	}
+    public void setRequest(Request request) {
+        this.request = request;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("request", request).toString();
+    }
 
 
 }

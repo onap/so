@@ -28,42 +28,50 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestStatus {
 
-	@JsonProperty("requestState")
-	protected String requestState;
-	@JsonProperty("statusMessage")
+    @JsonProperty("requestState")
+    protected String requestState;
+    @JsonProperty("statusMessage")
     protected String statusMessage;
-	@JsonProperty("percentProgress")
+    @JsonProperty("percentProgress")
     protected Integer percentProgress;
-	@JsonProperty("timestamp")
+    @JsonProperty("timestamp")
     protected String timeStamp;
 
-	public String getRequestState() {
-		return requestState;
-	}
-	public void setRequestState(String requestState) {
-		this.requestState = requestState;
-	}
-	public String getStatusMessage() {
-		return statusMessage;
-	}
-	public void setStatusMessage(String statusMessage) {
-		this.statusMessage = statusMessage;
-	}
-	public Integer getPercentProgress() {
-		return percentProgress;
-	}
-	public void setPercentProgress(Integer percentProgress) {
-		this.percentProgress = percentProgress;
-	}
-	public String getTimeStamp() {
-		return timeStamp;
-	}
-	public void setTimeStamp(String timeStamp) {
-		this.timeStamp = timeStamp;
-	}
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
-				.append("percentProgress", percentProgress).append("timestamp", timeStamp).toString();
-	}
+    public String getRequestState() {
+        return requestState;
+    }
+
+    public void setRequestState(String requestState) {
+        this.requestState = requestState;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
+    public Integer getPercentProgress() {
+        return percentProgress;
+    }
+
+    public void setPercentProgress(Integer percentProgress) {
+        this.percentProgress = percentProgress;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("requestState", requestState).append("statusMessage", statusMessage)
+                .append("percentProgress", percentProgress).append("timestamp", timeStamp).toString();
+    }
 }

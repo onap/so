@@ -40,7 +40,6 @@ import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
-
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -86,13 +85,14 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         infraActiveRequests.setRequestStatus("IN_PROGRESS");
         infraActiveRequests.setAction("create");
         infraActiveRequests.setRequestAction("someaction");
-        infraActiveRequests.setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");        
+        infraActiveRequests
+                .setRequestUrl("http://localhost:8080/onap/so/infra/serviceInstantiation/v7/serviceInstances");
         requestsDbClient.save(infraActiveRequests);
     }
 
-    private void verifyOperationStatus(OperationStatus request,OperationStatus response){
+    private void verifyOperationStatus(OperationStatus request, OperationStatus response) {
         assertThat(request, sameBeanAs(response).ignoring("operateAt").ignoring("finishedAt"));
-   }
+    }
 
 
     private void verifyInfraActiveRequests(InfraActiveRequests infraActiveRequestsResponse) {
@@ -116,14 +116,16 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
 
     @Test
     public void checkVnfIdStatusTest() {
-        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.checkVnfIdStatus(infraActiveRequests.getOperationalEnvId());
+        InfraActiveRequests infraActiveRequestsResponse =
+                requestsDbClient.checkVnfIdStatus(infraActiveRequests.getOperationalEnvId());
         verifyInfraActiveRequests(infraActiveRequestsResponse);
         assertNull(requestsDbClient.checkVnfIdStatus(UUID.randomUUID().toString()));
     }
 
     @Test
     public void checkInstanceNameDuplicateTest() {
-        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.checkInstanceNameDuplicate(null,infraActiveRequests.getOperationalEnvName(),infraActiveRequests.getRequestScope());
+        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.checkInstanceNameDuplicate(null,
+                infraActiveRequests.getOperationalEnvName(), infraActiveRequests.getRequestScope());
 
         verifyInfraActiveRequests(infraActiveRequestsResponse);
     }
@@ -133,7 +135,8 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         Map<String, String> requestMap = new HashMap<>();
         requestMap.put("operationalEnvironmentId", infraActiveRequests.getOperationalEnvId());
 
-        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.checkInstanceNameDuplicate((HashMap<String, String>)requestMap,null,infraActiveRequests.getRequestScope());
+        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.checkInstanceNameDuplicate(
+                (HashMap<String, String>) requestMap, null, infraActiveRequests.getRequestScope());
 
         verifyInfraActiveRequests(infraActiveRequestsResponse);
     }
@@ -165,27 +168,30 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
     }
 
     @Test
-    public void getInfraActiveRequestbyRequestIdTest(){
-        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
-        verifyInfraActiveRequests(infraActiveRequestsResponse);       
-        infraActiveRequestsResponse = requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
-        
+    public void getInfraActiveRequestbyRequestIdTest() {
+        InfraActiveRequests infraActiveRequestsResponse =
+                requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
+        verifyInfraActiveRequests(infraActiveRequestsResponse);
+        infraActiveRequestsResponse =
+                requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
+
         assertNull(requestsDbClient.getInfraActiveRequestbyRequestId(UUID.randomUUID().toString()));
     }
-    
+
     @Test
-    public void getInfraActiveRequestbyRequestIdWhereRequestUrlNullTest(){
+    public void getInfraActiveRequestbyRequestIdWhereRequestUrlNullTest() {
         // requestUrl setup to null and save
-    	infraActiveRequests.setRequestUrl(null);        
+        infraActiveRequests.setRequestUrl(null);
         requestsDbClient.save(infraActiveRequests);
-        InfraActiveRequests infraActiveRequestsResponse = requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
+        InfraActiveRequests infraActiveRequestsResponse =
+                requestsDbClient.getInfraActiveRequestbyRequestId(infraActiveRequests.getRequestId());
         verifyInfraActiveRequests(infraActiveRequestsResponse);
 
         assertNull(infraActiveRequestsResponse.getRequestUrl());
     }
-    
+
     @Test
-    public void getOneByServiceIdAndOperationIdTest(){
+    public void getOneByServiceIdAndOperationIdTest() {
         OperationStatus operationStatus = new OperationStatus();
         operationStatus.setProgress("IN_PROGRESS");
         operationStatus.setResult("FAILED");
@@ -198,51 +204,59 @@ public class RequestsDbClientTest extends RequestsAdapterBase {
         operationStatus.setServiceName("test-service");
         requestsDbClient.save(operationStatus);
 
-        OperationStatus operationStatusResponse = requestsDbClient.getOneByServiceIdAndOperationId(operationStatus.getServiceId(),operationStatus.getOperationId());
+        OperationStatus operationStatusResponse = requestsDbClient
+                .getOneByServiceIdAndOperationId(operationStatus.getServiceId(), operationStatus.getOperationId());
 
-        verifyOperationStatus(operationStatus,operationStatusResponse);
+        verifyOperationStatus(operationStatus, operationStatusResponse);
 
-        assertNull(requestsDbClient.getOneByServiceIdAndOperationId(UUID.randomUUID().toString(),operationStatus.getOperationId()));
+        assertNull(requestsDbClient.getOneByServiceIdAndOperationId(UUID.randomUUID().toString(),
+                operationStatus.getOperationId()));
     }
 
 
     @Test
-    public void getRequestProcessingDataBySoRequestIdTest(){
-        List<RequestProcessingData> requestProcessingDataList = requestsDbClient
-                .getRequestProcessingDataBySoRequestId("00032ab7-na18-42e5-965d-8ea592502018");
+    public void getRequestProcessingDataBySoRequestIdTest() {
+        List<RequestProcessingData> requestProcessingDataList =
+                requestsDbClient.getRequestProcessingDataBySoRequestId("00032ab7-na18-42e5-965d-8ea592502018");
         assertNotNull(requestProcessingDataList);
         assertFalse(requestProcessingDataList.isEmpty());
-        assertEquals(2,requestProcessingDataList.size());
+        assertEquals(2, requestProcessingDataList.size());
     }
 
     @Test
-    public void findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdTest(){
-        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus =requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234","TEST1234", "00032ab7-3fb3-42e5-965d-8ea592502017");
+    public void findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestIdTest() {
+        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus =
+                requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234", "TEST1234",
+                        "00032ab7-3fb3-42e5-965d-8ea592502017");
         assertNotNull(operationalEnvServiceModelStatus);
-        assertEquals("1234",operationalEnvServiceModelStatus.getOperationalEnvId());
-        assertEquals("TEST1234",operationalEnvServiceModelStatus.getServiceModelVersionId());
-        
-        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus1 =requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234","TEST1235", "00032ab7-3fb3-42e5-965d-8ea592502018");
+        assertEquals("1234", operationalEnvServiceModelStatus.getOperationalEnvId());
+        assertEquals("TEST1234", operationalEnvServiceModelStatus.getServiceModelVersionId());
+
+        OperationalEnvServiceModelStatus operationalEnvServiceModelStatus1 =
+                requestsDbClient.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("1234", "TEST1235",
+                        "00032ab7-3fb3-42e5-965d-8ea592502018");
         assertNotNull(operationalEnvServiceModelStatus1);
-        assertEquals("00032ab7-3fb3-42e5-965d-8ea592502018",operationalEnvServiceModelStatus1.getRequestId());
-        assertEquals("1234",operationalEnvServiceModelStatus1.getOperationalEnvId());
-        assertEquals("TEST1235",operationalEnvServiceModelStatus1.getServiceModelVersionId());        
+        assertEquals("00032ab7-3fb3-42e5-965d-8ea592502018", operationalEnvServiceModelStatus1.getRequestId());
+        assertEquals("1234", operationalEnvServiceModelStatus1.getOperationalEnvId());
+        assertEquals("TEST1235", operationalEnvServiceModelStatus1.getServiceModelVersionId());
     }
 
     @Test
-    public void getAllByOperationalEnvIdAndRequestId(){
-        List<OperationalEnvServiceModelStatus> operationalEnvServiceModelStatuses =requestsDbClient.getAllByOperationalEnvIdAndRequestId("1234","00032ab7-3fb3-42e5-965d-8ea592502017");
+    public void getAllByOperationalEnvIdAndRequestId() {
+        List<OperationalEnvServiceModelStatus> operationalEnvServiceModelStatuses =
+                requestsDbClient.getAllByOperationalEnvIdAndRequestId("1234", "00032ab7-3fb3-42e5-965d-8ea592502017");
         assertNotNull(operationalEnvServiceModelStatuses);
         assertFalse(operationalEnvServiceModelStatuses.isEmpty());
-        assertEquals(2,operationalEnvServiceModelStatuses.size());
+        assertEquals(2, operationalEnvServiceModelStatuses.size());
     }
 
     @Test
-    public void getDistributionStatusByIdTest(){
-        OperationalEnvDistributionStatus operationalEnvDistributionStatus =requestsDbClient.getDistributionStatusById("111");
+    public void getDistributionStatusByIdTest() {
+        OperationalEnvDistributionStatus operationalEnvDistributionStatus =
+                requestsDbClient.getDistributionStatusById("111");
         assertNotNull(operationalEnvDistributionStatus);
-        assertEquals("111",operationalEnvDistributionStatus.getDistributionId());
-        assertEquals("ERROR",operationalEnvDistributionStatus.getDistributionIdErrorReason());
-        assertEquals("00032ab7-3fb3-42e5-965d-8ea592502017",operationalEnvDistributionStatus.getRequestId());        
+        assertEquals("111", operationalEnvDistributionStatus.getDistributionId());
+        assertEquals("ERROR", operationalEnvDistributionStatus.getDistributionIdErrorReason());
+        assertEquals("00032ab7-3fb3-42e5-965d-8ea592502017", operationalEnvDistributionStatus.getRequestId());
     }
 }

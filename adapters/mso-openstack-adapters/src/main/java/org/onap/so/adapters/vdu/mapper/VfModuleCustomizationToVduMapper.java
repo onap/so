@@ -21,7 +21,6 @@
 package org.onap.so.adapters.vdu.mapper;
 
 import java.util.List;
-
 import org.onap.so.adapters.vdu.VduModelInfo;
 import org.onap.so.adapters.vdu.VduArtifact;
 import org.onap.so.adapters.vdu.VduArtifact.ArtifactType;
@@ -34,98 +33,96 @@ import org.springframework.stereotype.Component;
 @Component
 public class VfModuleCustomizationToVduMapper {
 
-	public VduModelInfo mapVfModuleCustomizationToVdu(VfModuleCustomization vfModuleCustom)
-	{
-		VduModelInfo vduModel = new VduModelInfo();
-		vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUUID());
-		vduModel.setModelUUID(vfModuleCustom.getVfModule().getModelUUID());
-		vduModel.setModelInvariantUUID(vfModuleCustom.getVfModule().getModelInvariantUUID());
+    public VduModelInfo mapVfModuleCustomizationToVdu(VfModuleCustomization vfModuleCustom) {
+        VduModelInfo vduModel = new VduModelInfo();
+        vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUUID());
+        vduModel.setModelUUID(vfModuleCustom.getVfModule().getModelUUID());
+        vduModel.setModelInvariantUUID(vfModuleCustom.getVfModule().getModelInvariantUUID());
 
-		// Map the cloud templates, attached files, and environment file
-		mapCloudTemplates(vfModuleCustom.getVfModule().getModuleHeatTemplate(), vduModel);
-		mapCloudFiles(vfModuleCustom,vduModel);
-		mapEnvironment(vfModuleCustom.getHeatEnvironment(), vduModel);
+        // Map the cloud templates, attached files, and environment file
+        mapCloudTemplates(vfModuleCustom.getVfModule().getModuleHeatTemplate(), vduModel);
+        mapCloudFiles(vfModuleCustom, vduModel);
+        mapEnvironment(vfModuleCustom.getHeatEnvironment(), vduModel);
 
-		return vduModel;
-	}
+        return vduModel;
+    }
 
-	public VduModelInfo mapVfModuleCustVolumeToVdu(VfModuleCustomization vfModuleCustom)
-	{
-		VduModelInfo vduModel = new VduModelInfo();
-		vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUUID());
-		vduModel.setModelUUID(vfModuleCustom.getVfModule().getModelUUID());
-		vduModel.setModelInvariantUUID(vfModuleCustom.getVfModule().getModelInvariantUUID());
+    public VduModelInfo mapVfModuleCustVolumeToVdu(VfModuleCustomization vfModuleCustom) {
+        VduModelInfo vduModel = new VduModelInfo();
+        vduModel.setModelCustomizationUUID(vfModuleCustom.getModelCustomizationUUID());
+        vduModel.setModelUUID(vfModuleCustom.getVfModule().getModelUUID());
+        vduModel.setModelInvariantUUID(vfModuleCustom.getVfModule().getModelInvariantUUID());
 
-		// Map the cloud templates, attached files, and environment file
-		mapCloudTemplates(vfModuleCustom.getVfModule().getVolumeHeatTemplate(), vduModel);
-		mapCloudFiles(vfModuleCustom,vduModel);
-		mapEnvironment(vfModuleCustom.getVolumeHeatEnv(), vduModel);
+        // Map the cloud templates, attached files, and environment file
+        mapCloudTemplates(vfModuleCustom.getVfModule().getVolumeHeatTemplate(), vduModel);
+        mapCloudFiles(vfModuleCustom, vduModel);
+        mapEnvironment(vfModuleCustom.getVolumeHeatEnv(), vduModel);
 
-		return vduModel;
-	}
+        return vduModel;
+    }
 
-	private void mapCloudTemplates(HeatTemplate heatTemplate, VduModelInfo vduModel) {
-		// TODO:  These catalog objects will be refactored to be non-Heat-specific
+    private void mapCloudTemplates(HeatTemplate heatTemplate, VduModelInfo vduModel) {
+        // TODO: These catalog objects will be refactored to be non-Heat-specific
 
-		List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
+        List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
 
-		// Main template.  Also set the VDU timeout based on the main template.
-		vduArtifacts.add(mapHeatTemplateToVduArtifact(heatTemplate, ArtifactType.MAIN_TEMPLATE));
-		vduModel.setTimeoutMinutes(heatTemplate.getTimeoutMinutes());
+        // Main template. Also set the VDU timeout based on the main template.
+        vduArtifacts.add(mapHeatTemplateToVduArtifact(heatTemplate, ArtifactType.MAIN_TEMPLATE));
+        vduModel.setTimeoutMinutes(heatTemplate.getTimeoutMinutes());
 
-		// Nested templates
-		List<HeatTemplate> childTemplates = heatTemplate.getChildTemplates();
-		if (childTemplates != null) {
-			for(HeatTemplate childTemplate : childTemplates){
-				vduArtifacts.add(mapHeatTemplateToVduArtifact(childTemplate, ArtifactType.NESTED_TEMPLATE));
-			}
-		}
-	}
+        // Nested templates
+        List<HeatTemplate> childTemplates = heatTemplate.getChildTemplates();
+        if (childTemplates != null) {
+            for (HeatTemplate childTemplate : childTemplates) {
+                vduArtifacts.add(mapHeatTemplateToVduArtifact(childTemplate, ArtifactType.NESTED_TEMPLATE));
+            }
+        }
+    }
 
-	private VduArtifact mapHeatTemplateToVduArtifact(HeatTemplate heatTemplate, ArtifactType artifactType) {
-		VduArtifact vduArtifact = new VduArtifact();
-		vduArtifact.setName(heatTemplate.getTemplateName());
-		vduArtifact.setContent(heatTemplate.getHeatTemplate().getBytes());
-		vduArtifact.setType(artifactType);
-		return vduArtifact;
-	}
+    private VduArtifact mapHeatTemplateToVduArtifact(HeatTemplate heatTemplate, ArtifactType artifactType) {
+        VduArtifact vduArtifact = new VduArtifact();
+        vduArtifact.setName(heatTemplate.getTemplateName());
+        vduArtifact.setContent(heatTemplate.getHeatTemplate().getBytes());
+        vduArtifact.setType(artifactType);
+        return vduArtifact;
+    }
 
-	private void mapCloudFiles(VfModuleCustomization vfModuleCustom, VduModelInfo vduModel) {
-		// TODO:  These catalog objects will be refactored to be non-Heat-specific
+    private void mapCloudFiles(VfModuleCustomization vfModuleCustom, VduModelInfo vduModel) {
+        // TODO: These catalog objects will be refactored to be non-Heat-specific
 
-		List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
+        List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
 
-		// Attached Files
-		List<HeatFiles> heatFiles = vfModuleCustom.getVfModule().getHeatFiles();
-		if (heatFiles != null) {
-			for(HeatFiles file : heatFiles){
-				vduArtifacts.add(mapCloudFileToVduArtifact(file, ArtifactType.TEXT_FILE));
-			}
-		}
-	}
+        // Attached Files
+        List<HeatFiles> heatFiles = vfModuleCustom.getVfModule().getHeatFiles();
+        if (heatFiles != null) {
+            for (HeatFiles file : heatFiles) {
+                vduArtifacts.add(mapCloudFileToVduArtifact(file, ArtifactType.TEXT_FILE));
+            }
+        }
+    }
 
-	private VduArtifact mapCloudFileToVduArtifact(HeatFiles heatFile, ArtifactType artifactType) {
-		VduArtifact vduArtifact = new VduArtifact();
-		vduArtifact.setName(heatFile.getFileName());
-		vduArtifact.setContent(heatFile.getFileBody().getBytes());
-		vduArtifact.setType(artifactType);
-		return vduArtifact;
-	}
+    private VduArtifact mapCloudFileToVduArtifact(HeatFiles heatFile, ArtifactType artifactType) {
+        VduArtifact vduArtifact = new VduArtifact();
+        vduArtifact.setName(heatFile.getFileName());
+        vduArtifact.setContent(heatFile.getFileBody().getBytes());
+        vduArtifact.setType(artifactType);
+        return vduArtifact;
+    }
 
-	private void mapEnvironment(HeatEnvironment heatEnvironment, VduModelInfo vduModel) {
-		// TODO:  These catalog objects will be refactored to be non-Heat-specific
-		if (heatEnvironment != null) {
-			List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
-			vduArtifacts.add(mapEnvironmentFileToVduArtifact(heatEnvironment));
-		}
-	}
+    private void mapEnvironment(HeatEnvironment heatEnvironment, VduModelInfo vduModel) {
+        // TODO: These catalog objects will be refactored to be non-Heat-specific
+        if (heatEnvironment != null) {
+            List<VduArtifact> vduArtifacts = vduModel.getArtifacts();
+            vduArtifacts.add(mapEnvironmentFileToVduArtifact(heatEnvironment));
+        }
+    }
 
-	private VduArtifact mapEnvironmentFileToVduArtifact(HeatEnvironment heatEnv) {
-		VduArtifact vduArtifact = new VduArtifact();
-		vduArtifact.setName(heatEnv.getName());
-		vduArtifact.setContent(heatEnv.getEnvironment().getBytes());
-		vduArtifact.setType(ArtifactType.ENVIRONMENT);
-		return vduArtifact;
-	}
+    private VduArtifact mapEnvironmentFileToVduArtifact(HeatEnvironment heatEnv) {
+        VduArtifact vduArtifact = new VduArtifact();
+        vduArtifact.setName(heatEnv.getName());
+        vduArtifact.setContent(heatEnv.getEnvironment().getBytes());
+        vduArtifact.setType(ArtifactType.ENVIRONMENT);
+        return vduArtifact;
+    }
 
 }

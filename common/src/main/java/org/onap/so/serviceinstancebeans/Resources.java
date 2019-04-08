@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,28 +32,32 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName(value = "resources")
 @JsonInclude(Include.NON_DEFAULT)
-public class Resources implements Serializable{
-	
-	private static final long serialVersionUID = 2194797231782624520L;
-	@JsonProperty("vnfs")
-	private List<Vnfs> vnfs = new ArrayList<>();
-	@JsonProperty("networks")
-	private List<Networks> networks = new ArrayList<>();
-	
-	public List<Vnfs> getVnfs() {
-		return vnfs;
-	}
-	public void setVnfs(List<Vnfs> vnfs) {
-		this.vnfs = vnfs;
-	}
-	public List<Networks> getNetworks() {
-		return networks;
-	}
-	public void setNetworks(List<Networks> networks) {
-		this.networks = networks;
-	}
-	@Override
-	public String toString() {
-		return "Resources [vnfs=" + vnfs + ", networks=" + networks + "]";
-	}
+public class Resources implements Serializable {
+
+    private static final long serialVersionUID = 2194797231782624520L;
+    @JsonProperty("vnfs")
+    private List<Vnfs> vnfs = new ArrayList<>();
+    @JsonProperty("networks")
+    private List<Networks> networks = new ArrayList<>();
+
+    public List<Vnfs> getVnfs() {
+        return vnfs;
+    }
+
+    public void setVnfs(List<Vnfs> vnfs) {
+        this.vnfs = vnfs;
+    }
+
+    public List<Networks> getNetworks() {
+        return networks;
+    }
+
+    public void setNetworks(List<Networks> networks) {
+        this.networks = networks;
+    }
+
+    @Override
+    public String toString() {
+        return "Resources [vnfs=" + vnfs + ", networks=" + networks + "]";
+    }
 }

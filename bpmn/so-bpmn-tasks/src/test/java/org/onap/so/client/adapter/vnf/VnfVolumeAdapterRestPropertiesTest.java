@@ -21,26 +21,24 @@
 package org.onap.so.client.adapter.vnf;
 
 import static org.junit.Assert.assertEquals;
-
 import java.net.MalformedURLException;
-
 import org.junit.Test;
 
-public class VnfVolumeAdapterRestPropertiesTest{
-	private VnfVolumeAdapterRestProperties props = new VnfVolumeAdapterRestProperties();
-	
-	@Test
-	public void testGetAuth(){
-		assertEquals("mso.adapters.po.auth", VnfVolumeAdapterRestProperties.authProp);
-	}
-	
-	@Test
-	public void testGetKey(){
-		assertEquals("mso.msoKey", VnfVolumeAdapterRestProperties.keyProp);
-	}
-	
-	@Test
-	public void testGetUrl() throws MalformedURLException{	
-		assertEquals("mso.adapters.volume-groups.rest.endpoint", VnfVolumeAdapterRestProperties.endpointProp);
-	}
+public class VnfVolumeAdapterRestPropertiesTest {
+    private VnfVolumeAdapterRestProperties props = new VnfVolumeAdapterRestProperties();
+
+    @Test
+    public void testGetAuth() {
+        assertEquals("mso.adapters.po.auth", VnfVolumeAdapterRestProperties.authProp);
+    }
+
+    @Test
+    public void testGetKey() {
+        assertEquals("mso.msoKey", VnfVolumeAdapterRestProperties.keyProp);
+    }
+
+    @Test
+    public void testGetUrl() throws MalformedURLException {
+        assertEquals("mso.adapters.volume-groups.rest.endpoint", VnfVolumeAdapterRestProperties.endpointProp);
+    }
 }

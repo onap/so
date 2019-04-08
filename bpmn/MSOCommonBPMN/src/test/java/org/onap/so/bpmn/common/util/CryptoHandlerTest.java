@@ -23,34 +23,33 @@ package org.onap.so.bpmn.common.util;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class CryptoHandlerTest {
-	private static final String plainPswd = "mso0206";
-	private CryptoHandler cryptoHandler;
-	private static String encryptPwd;
+    private static final String plainPswd = "mso0206";
+    private CryptoHandler cryptoHandler;
+    private static String encryptPwd;
 
 
-	@Before
-	public void setup() {
-		cryptoHandler = new CryptoHandler();
-		encryptPwd = cryptoHandler.encryptMsoPassword(plainPswd);
-	}
-	
-	@Test
-	@Ignore // ignored until we can mock the properties file.
-	public void getMsoAaiPasswordTest() {
-		assertEquals(plainPswd, cryptoHandler.getMsoAaiPassword());
-	}
-	
-	@Test
-	public void encryptMsoPasswordTest() {
-		assertEquals(plainPswd,cryptoHandler.decryptMsoPassword(cryptoHandler.encryptMsoPassword(plainPswd)));
-	}
-	
-	@Test
-	public void decryptMsoPasswordTest() {
-		assertEquals(plainPswd, cryptoHandler.decryptMsoPassword(encryptPwd));
-	}
+    @Before
+    public void setup() {
+        cryptoHandler = new CryptoHandler();
+        encryptPwd = cryptoHandler.encryptMsoPassword(plainPswd);
+    }
+
+    @Test
+    @Ignore // ignored until we can mock the properties file.
+    public void getMsoAaiPasswordTest() {
+        assertEquals(plainPswd, cryptoHandler.getMsoAaiPassword());
+    }
+
+    @Test
+    public void encryptMsoPasswordTest() {
+        assertEquals(plainPswd, cryptoHandler.decryptMsoPassword(cryptoHandler.encryptMsoPassword(plainPswd)));
+    }
+
+    @Test
+    public void decryptMsoPasswordTest() {
+        assertEquals(plainPswd, cryptoHandler.decryptMsoPassword(encryptPwd));
+    }
 }

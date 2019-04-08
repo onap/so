@@ -31,31 +31,25 @@ import org.onap.so.bpmn.core.internal.VariableNameExtractor;
 public class BaseTask implements JavaDelegate {
 
     /**
-     * Get the value of a required field.  This method throws
-     * MissingInjectedFieldException if the expression is null, and
-     * BadInjectedFieldException if the expression evaluates to a null
-     * value.
+     * Get the value of a required field. This method throws MissingInjectedFieldException if the expression is null,
+     * and BadInjectedFieldException if the expression evaluates to a null value.
      *
      * @param expression the expression
      * @param execution the execution
      * @param fieldName the field name (for logging and exceptions)
      * @return the field value
      */
-    protected Object getField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected Object getField(Expression expression, DelegateExecution execution, String fieldName) {
         return getFieldImpl(expression, execution, fieldName, false);
     }
 
     /**
-     * Gets the value of an optional field.  There are three conditions
-     * in which this method returns null:
+     * Gets the value of an optional field. There are three conditions in which this method returns null:
      * <p>
      * <ol>
-     * <li> The expression itself is null (i.e. the field is missing
-     * altogether.</li>
+     * <li>The expression itself is null (i.e. the field is missing altogether.</li>
      * <li>The expression evaluates to a null value.</li>
-     * <li>The expression references a single variable which has not
-     * been set.</li>
+     * <li>The expression references a single variable which has not been set.</li>
      * </ol>
      * <p>
      * Examples:<br>
@@ -68,77 +62,65 @@ public class BaseTask implements JavaDelegate {
      * @param fieldName the field name (for logging and exceptions)
      * @return the field value, possibly null
      */
-    protected Object getOptionalField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected Object getOptionalField(Expression expression, DelegateExecution execution, String fieldName) {
         return getFieldImpl(expression, execution, fieldName, true);
     }
 
     /**
-     * Get the value of a required output variable field. This method
-     * throws MissingInjectedFieldException if the expression is null, and
-     * BadInjectedFieldException if the expression produces a null or
-     * illegal variable name.  Legal variable names contain only letters,
-     * numbers, and the underscore character ('_').
+     * Get the value of a required output variable field. This method throws MissingInjectedFieldException if the
+     * expression is null, and BadInjectedFieldException if the expression produces a null or illegal variable name.
+     * Legal variable names contain only letters, numbers, and the underscore character ('_').
      *
      * @param expression the expression
      * @param execution the execution
      * @param fieldName the field name (for logging and exceptions)
      * @return the output variable name
      */
-    protected String getOutputField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected String getOutputField(Expression expression, DelegateExecution execution, String fieldName) {
         Object o = getFieldImpl(expression, execution, fieldName, false);
         if (o instanceof String) {
             String variable = (String) o;
             if (!isLegalVariable(variable)) {
-                throw new BadInjectedFieldException(
-                        fieldName, getTaskName(), "'" + variable
-                        + "' is not a legal variable name");
+                throw new BadInjectedFieldException(fieldName, getTaskName(),
+                        "'" + variable + "' is not a legal variable name");
             }
             return variable;
         } else {
-            throw new BadInjectedFieldException(
-                    fieldName, getTaskName(), "expected a variable name string"
-                    + ", got object of type " + o.getClass().getName());
+            throw new BadInjectedFieldException(fieldName, getTaskName(),
+                    "expected a variable name string" + ", got object of type " + o.getClass().getName());
         }
     }
 
     /**
-     * Get the value of an optional output variable field. This method
-     * throws BadInjectedFieldException if the expression produces an illegal
-     * variable name.  Legal variable names contain only letters, numbers,
-     * and the underscore character ('_').
+     * Get the value of an optional output variable field. This method throws BadInjectedFieldException if the
+     * expression produces an illegal variable name. Legal variable names contain only letters, numbers, and the
+     * underscore character ('_').
      *
      * @param expression the expression
      * @param execution the execution
      * @param fieldName the field name (for logging and exceptions)
      * @return the output variable name, possibly null
      */
-    protected String getOptionalOutputField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected String getOptionalOutputField(Expression expression, DelegateExecution execution, String fieldName) {
         Object o = getFieldImpl(expression, execution, fieldName, true);
         if (o instanceof String) {
             String variable = (String) o;
             if (!isLegalVariable(variable)) {
-                throw new BadInjectedFieldException(
-                        fieldName, getTaskName(), "'" + variable
-                        + "' is not a legal variable name");
+                throw new BadInjectedFieldException(fieldName, getTaskName(),
+                        "'" + variable + "' is not a legal variable name");
             }
             return variable;
         } else if (o == null) {
             return null;
         } else {
-            throw new BadInjectedFieldException(
-                    fieldName, getTaskName(), "expected a variable name string"
-                    + ", got object of type " + o.getClass().getName());
+            throw new BadInjectedFieldException(fieldName, getTaskName(),
+                    "expected a variable name string" + ", got object of type " + o.getClass().getName());
         }
     }
 
     /**
-     * Get the value of a required string field.  This method throws
-     * MissingInjectedFieldException if the expression is null, and
-     * BadInjectedFieldException if the expression evaluates to a null
-     * value.
+     * Get the value of a required string field. This method throws MissingInjectedFieldException if the expression is
+     * null, and BadInjectedFieldException if the expression evaluates to a null value.
      * <p>
      * Note: the result is coerced to a string value, if necessary.
      *
@@ -147,28 +129,23 @@ public class BaseTask implements JavaDelegate {
      * @param fieldName the field name (for logging and exceptions)
      * @return the field value
      */
-    protected String getStringField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected String getStringField(Expression expression, DelegateExecution execution, String fieldName) {
         Object o = getFieldImpl(expression, execution, fieldName, false);
         if (o instanceof String) {
             return (String) o;
         } else {
-            throw new BadInjectedFieldException(
-                    fieldName, getTaskName(), "cannot convert '" + o.toString()
-                    + "' to Integer");
+            throw new BadInjectedFieldException(fieldName, getTaskName(),
+                    "cannot convert '" + o.toString() + "' to Integer");
         }
     }
 
     /**
-     * Gets the value of an optional string field.  There are three conditions
-     * in which this method returns null:
+     * Gets the value of an optional string field. There are three conditions in which this method returns null:
      * <p>
      * <ol>
-     * <li> The expression itself is null (i.e. the field is missing
-     * altogether.</li>
+     * <li>The expression itself is null (i.e. the field is missing altogether.</li>
      * <li>The expression evaluates to a null value.</li>
-     * <li>The expression references a single variable which has not
-     * been set.</li>
+     * <li>The expression references a single variable which has not been set.</li>
      * </ol>
      * <p>
      * Examples:<br>
@@ -183,8 +160,7 @@ public class BaseTask implements JavaDelegate {
      * @param fieldName the field name (for logging and exceptions)
      * @return the field value, possibly null
      */
-    protected String getOptionalStringField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected String getOptionalStringField(Expression expression, DelegateExecution execution, String fieldName) {
         Object o = getFieldImpl(expression, execution, fieldName, true);
         if (o instanceof String) {
             return (String) o;
@@ -196,60 +172,52 @@ public class BaseTask implements JavaDelegate {
     }
 
     /**
-     * Get the value of a required integer field. This method throws
-     * MissingInjectedFieldException if the expression is null, and
-     * BadInjectedFieldException if the expression evaluates to a null
-     * value or a value that cannot be coerced to an integer.
-     *
-     * @param expression the expression
-     * @param execution the execution
-     * @param fieldName the field name (for logging and exceptions)
-     * @return the field value
-     */
-    protected Integer getIntegerField(Expression expression,
-            DelegateExecution execution, String fieldName) {
-        Object o = getFieldImpl(expression, execution, fieldName, false);
-        if (o instanceof Integer) {
-            return (Integer) o;
-        } else {
-            try {
-                return Integer.parseInt(o.toString());
-            } catch (NumberFormatException e) {
-                throw new BadInjectedFieldException(
-                        fieldName, getTaskName(), "cannot convert '" + o.toString()
-                        + "' to Integer");
-            }
-        }
-    }
-
-    /**
-     * Gets the value of an optional integer field.  There are three conditions
-     * in which this method returns null:
-     * <p>
-     * <ol>
-     * <li> The expression itself is null (i.e. the field is missing
-     * altogether.</li>
-     * <li>The expression evaluates to a null value.</li>
-     * <li>The expression references a single variable which has not
-     * been set.</li>
-     * </ol>
-     * <p>
-     * Examples:<br>
-     * Expression ${x} when x is null: return null<br>
-     * Expression ${x} when x is unset: return null<br>
-     * Expression ${x+y} when x and/or y are unset: exception<br>
-     * <p>
-     * Note: the result is coerced to an integer value, if necessary. This
-     * method throws BadInjectedFieldException if the result cannot be coerced
+     * Get the value of a required integer field. This method throws MissingInjectedFieldException if the expression is
+     * null, and BadInjectedFieldException if the expression evaluates to a null value or a value that cannot be coerced
      * to an integer.
      *
      * @param expression the expression
      * @param execution the execution
      * @param fieldName the field name (for logging and exceptions)
+     * @return the field value
+     */
+    protected Integer getIntegerField(Expression expression, DelegateExecution execution, String fieldName) {
+        Object o = getFieldImpl(expression, execution, fieldName, false);
+        if (o instanceof Integer) {
+            return (Integer) o;
+        } else {
+            try {
+                return Integer.parseInt(o.toString());
+            } catch (NumberFormatException e) {
+                throw new BadInjectedFieldException(fieldName, getTaskName(),
+                        "cannot convert '" + o.toString() + "' to Integer");
+            }
+        }
+    }
+
+    /**
+     * Gets the value of an optional integer field. There are three conditions in which this method returns null:
+     * <p>
+     * <ol>
+     * <li>The expression itself is null (i.e. the field is missing altogether.</li>
+     * <li>The expression evaluates to a null value.</li>
+     * <li>The expression references a single variable which has not been set.</li>
+     * </ol>
+     * <p>
+     * Examples:<br>
+     * Expression ${x} when x is null: return null<br>
+     * Expression ${x} when x is unset: return null<br>
+     * Expression ${x+y} when x and/or y are unset: exception<br>
+     * <p>
+     * Note: the result is coerced to an integer value, if necessary. This method throws BadInjectedFieldException if
+     * the result cannot be coerced to an integer.
+     *
+     * @param expression the expression
+     * @param execution the execution
+     * @param fieldName the field name (for logging and exceptions)
      * @return the field value, possibly null
      */
-    protected Integer getOptionalIntegerField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected Integer getOptionalIntegerField(Expression expression, DelegateExecution execution, String fieldName) {
         Object o = getFieldImpl(expression, execution, fieldName, true);
         if (o instanceof Integer) {
             return (Integer) o;
@@ -259,23 +227,19 @@ public class BaseTask implements JavaDelegate {
             try {
                 return Integer.parseInt(o.toString());
             } catch (NumberFormatException e) {
-                throw new BadInjectedFieldException(
-                        fieldName, getTaskName(), "cannot convert '" + o.toString()
-                        + "' to Integer");
+                throw new BadInjectedFieldException(fieldName, getTaskName(),
+                        "cannot convert '" + o.toString() + "' to Integer");
             }
         }
     }
 
     /**
-     * Gets the value of an optional long field.  There are three conditions
-     * in which this method returns null:
+     * Gets the value of an optional long field. There are three conditions in which this method returns null:
      * <p>
      * <ol>
-     * <li> The expression itself is null (i.e. the field is missing
-     * altogether.</li>
+     * <li>The expression itself is null (i.e. the field is missing altogether.</li>
      * <li>The expression evaluates to a null value.</li>
-     * <li>The expression references a single variable which has not
-     * been set.</li>
+     * <li>The expression references a single variable which has not been set.</li>
      * </ol>
      * <p>
      * Examples:<br>
@@ -283,17 +247,15 @@ public class BaseTask implements JavaDelegate {
      * Expression ${x} when x is unset: return null<br>
      * Expression ${x+y} when x and/or y are unset: exception<br>
      * <p>
-     * Note: the result is coerced to a long value, if necessary. This
-     * method throws BadInjectedFieldException if the result cannot be coerced
-     * to a long.
+     * Note: the result is coerced to a long value, if necessary. This method throws BadInjectedFieldException if the
+     * result cannot be coerced to a long.
      *
      * @param expression the expression
      * @param execution the execution
      * @param fieldName the field name (for logging and exceptions)
      * @return the field value, possibly null
      */
-    protected Long getOptionalLongField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected Long getOptionalLongField(Expression expression, DelegateExecution execution, String fieldName) {
         Object o = getFieldImpl(expression, execution, fieldName, true);
         if (o instanceof Long) {
             return (Long) o;
@@ -303,26 +265,23 @@ public class BaseTask implements JavaDelegate {
             try {
                 return Long.parseLong(o.toString());
             } catch (NumberFormatException e) {
-                throw new BadInjectedFieldException(
-                        fieldName, getTaskName(), "cannot convert '" + o.toString()
-                        + "' to Long");
+                throw new BadInjectedFieldException(fieldName, getTaskName(),
+                        "cannot convert '" + o.toString() + "' to Long");
             }
         }
     }
 
     /**
-     * Get the value of a required long field. This method throws
-     * MissingInjectedFieldException if the expression is null, and
-     * BadInjectedFieldException if the expression evaluates to a null
-     * value or a value that cannot be coerced to a long.
+     * Get the value of a required long field. This method throws MissingInjectedFieldException if the expression is
+     * null, and BadInjectedFieldException if the expression evaluates to a null value or a value that cannot be coerced
+     * to a long.
      *
      * @param expression the expression
      * @param execution the execution
      * @param fieldName the field name (for logging and exceptions)
      * @return the field value
      */
-    protected Long getLongField(Expression expression,
-            DelegateExecution execution, String fieldName) {
+    protected Long getLongField(Expression expression, DelegateExecution execution, String fieldName) {
         Object o = getFieldImpl(expression, execution, fieldName, false);
         if (o instanceof Long) {
             return (Long) o;
@@ -330,9 +289,8 @@ public class BaseTask implements JavaDelegate {
             try {
                 return Long.parseLong(o.toString());
             } catch (NumberFormatException e) {
-                throw new BadInjectedFieldException(
-                        fieldName, getTaskName(), "cannot convert '" + o.toString()
-                        + "' to Long");
+                throw new BadInjectedFieldException(fieldName, getTaskName(),
+                        "cannot convert '" + o.toString() + "' to Long");
             }
         }
     }
@@ -346,12 +304,11 @@ public class BaseTask implements JavaDelegate {
      * @param optional true if the field is optional
      * @return the field value, possibly null
      */
-    private Object getFieldImpl(Expression expression,
-            DelegateExecution execution, String fieldName, boolean optional) {
+    private Object getFieldImpl(Expression expression, DelegateExecution execution, String fieldName,
+            boolean optional) {
         if (expression == null) {
             if (!optional) {
-                throw new MissingInjectedFieldException(
-                        fieldName, getTaskName());
+                throw new MissingInjectedFieldException(fieldName, getTaskName());
             }
             return null;
         }
@@ -362,8 +319,7 @@ public class BaseTask implements JavaDelegate {
             value = expression.getValue(execution);
         } catch (Exception e) {
             if (!optional) {
-                throw new BadInjectedFieldException(
-                        fieldName, getTaskName(), e.getClass().getSimpleName(), e);
+                throw new BadInjectedFieldException(fieldName, getTaskName(), e.getClass().getSimpleName(), e);
             }
 
             // At this point, we have an exception that occurred while
@@ -373,7 +329,7 @@ public class BaseTask implements JavaDelegate {
             // ${x}. The normal activiti behavior is to throw an exception,
             // but we don't like that, so we have the following workaround,
             // which parses the expression text to see if it is a "simple"
-            // variable reference, and if so, returns null.  If the
+            // variable reference, and if so, returns null. If the
             // expression is anything other than a single variable
             // reference, then an exception is thrown, as it would have
             // been without this workaround.
@@ -382,15 +338,13 @@ public class BaseTask implements JavaDelegate {
             String s = expression.getExpressionText();
             new VariableNameExtractor(s).extract().ifPresent(name -> {
                 if (execution.hasVariable(name)) {
-                    throw new BadInjectedFieldException(
-                            fieldName, getTaskName(), e.getClass().getSimpleName(), e);
+                    throw new BadInjectedFieldException(fieldName, getTaskName(), e.getClass().getSimpleName(), e);
                 }
             });
         }
 
         if (value == null && !optional) {
-            throw new BadInjectedFieldException(
-                    fieldName, getTaskName(), "required field has null value");
+            throw new BadInjectedFieldException(fieldName, getTaskName(), "required field has null value");
         }
 
         return value;
@@ -449,6 +403,5 @@ public class BaseTask implements JavaDelegate {
     }
 
     @Override
-    public void execute(DelegateExecution execution) throws Exception {
-    }
+    public void execute(DelegateExecution execution) throws Exception {}
 }

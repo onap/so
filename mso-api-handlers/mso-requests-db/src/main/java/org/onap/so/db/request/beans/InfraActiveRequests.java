@@ -21,10 +21,8 @@
 package org.onap.so.db.request.beans;
 
 import java.util.Objects;
-
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -89,7 +87,6 @@ public class InfraActiveRequests extends InfraRequests {
                 .append("networkName", getNetworkName()).append("networkType", getNetworkType())
                 .append("requestorId", getRequestorId()).append("configurationId", getConfigurationId())
                 .append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
-                .append("operationalEnvName", getOperationalEnvName())
-                .append("requestUrl", getRequestUrl()).toString();
+                .append("operationalEnvName", getOperationalEnvName()).append("requestUrl", getRequestUrl()).toString();
     }
 }

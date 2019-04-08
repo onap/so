@@ -20,12 +20,10 @@
 package org.onap.so.monitoring.db.service;
 
 import static org.onap.so.monitoring.configuration.rest.HttpServiceProviderConfiguration.DATABASE_HTTP_REST_SERVICE_PROVIDER;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import org.onap.so.monitoring.camunda.model.SoActiveInfraRequests;
 import org.onap.so.monitoring.configuration.database.DatabaseUrlProvider;
 import org.onap.so.monitoring.model.SoInfraRequest;
@@ -34,7 +32,6 @@ import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
 import com.google.common.base.Optional;
 
 /**

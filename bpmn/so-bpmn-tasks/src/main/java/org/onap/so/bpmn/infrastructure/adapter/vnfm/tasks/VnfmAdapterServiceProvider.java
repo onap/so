@@ -34,10 +34,10 @@ import com.google.common.base.Optional;
  */
 public interface VnfmAdapterServiceProvider {
 
-  Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId, final CreateVnfRequest request);
+    Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId, final CreateVnfRequest request);
 
-  Optional<DeleteVnfResponse> invokeDeleteRequest(final String vnfId);
+    Optional<DeleteVnfResponse> invokeDeleteRequest(final String vnfId);
 
-  Optional<QueryJobResponse> getInstantiateOperationJobStatus(final String jobId);
+    Optional<QueryJobResponse> getInstantiateOperationJobStatus(final String jobId);
 
 }

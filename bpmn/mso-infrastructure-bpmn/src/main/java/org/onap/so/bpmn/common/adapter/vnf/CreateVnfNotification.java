@@ -22,7 +22,6 @@ package org.onap.so.bpmn.common.adapter.vnf;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,9 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for createVnfNotification complex type.
+ * <p>
+ * Java class for createVnfNotification complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="createVnfNotification">
@@ -76,15 +77,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createVnfNotification1", propOrder = {
-    "messageId",
-    "completed",
-    "exception",
-    "errorMessage",
-    "vnfId",
-    "outputs",
-    "rollback"
-})
+@XmlType(name = "createVnfNotification1",
+        propOrder = {"messageId", "completed", "exception", "errorMessage", "vnfId", "outputs", "rollback"})
 public class CreateVnfNotification {
 
     @XmlElement(required = true)
@@ -99,10 +93,8 @@ public class CreateVnfNotification {
     /**
      * Gets the value of the messageId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getMessageId() {
         return messageId;
@@ -111,10 +103,8 @@ public class CreateVnfNotification {
     /**
      * Sets the value of the messageId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setMessageId(String value) {
         this.messageId = value;
@@ -139,10 +129,8 @@ public class CreateVnfNotification {
     /**
      * Gets the value of the exception property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @return possible object is {@link MsoExceptionCategory }
+     * 
      */
     public MsoExceptionCategory getException() {
         return exception;
@@ -151,10 +139,8 @@ public class CreateVnfNotification {
     /**
      * Sets the value of the exception property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @param value allowed object is {@link MsoExceptionCategory }
+     * 
      */
     public void setException(MsoExceptionCategory value) {
         this.exception = value;
@@ -163,10 +149,8 @@ public class CreateVnfNotification {
     /**
      * Gets the value of the errorMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getErrorMessage() {
         return errorMessage;
@@ -175,10 +159,8 @@ public class CreateVnfNotification {
     /**
      * Sets the value of the errorMessage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setErrorMessage(String value) {
         this.errorMessage = value;
@@ -187,10 +169,8 @@ public class CreateVnfNotification {
     /**
      * Gets the value of the vnfId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getVnfId() {
         return vnfId;
@@ -199,10 +179,8 @@ public class CreateVnfNotification {
     /**
      * Sets the value of the vnfId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setVnfId(String value) {
         this.vnfId = value;
@@ -211,10 +189,8 @@ public class CreateVnfNotification {
     /**
      * Gets the value of the outputs property.
      * 
-     * @return
-     *     possible object is
-     *     {@link CreateVnfNotification.Outputs }
-     *     
+     * @return possible object is {@link CreateVnfNotification.Outputs }
+     * 
      */
     public CreateVnfNotification.Outputs getOutputs() {
         return outputs;
@@ -223,10 +199,8 @@ public class CreateVnfNotification {
     /**
      * Sets the value of the outputs property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link CreateVnfNotification.Outputs }
-     *     
+     * @param value allowed object is {@link CreateVnfNotification.Outputs }
+     * 
      */
     public void setOutputs(CreateVnfNotification.Outputs value) {
         this.outputs = value;
@@ -235,10 +209,8 @@ public class CreateVnfNotification {
     /**
      * Gets the value of the rollback property.
      * 
-     * @return
-     *     possible object is
-     *     {@link VnfRollback }
-     *     
+     * @return possible object is {@link VnfRollback }
+     * 
      */
     public VnfRollback getRollback() {
         return rollback;
@@ -247,10 +219,8 @@ public class CreateVnfNotification {
     /**
      * Sets the value of the rollback property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link VnfRollback }
-     *     
+     * @param value allowed object is {@link VnfRollback }
+     * 
      */
     public void setRollback(VnfRollback value) {
         this.rollback = value;
@@ -258,9 +228,11 @@ public class CreateVnfNotification {
 
 
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType>
@@ -288,32 +260,29 @@ public class CreateVnfNotification {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "entry"
-    })
+    @XmlType(name = "", propOrder = {"entry"})
     public static class Outputs {
 
         protected List<CreateVnfNotification.Outputs.Entry> entry;
-        
+
         /**
          * Gets the value of the entry property.
          * 
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the entry property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the entry property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getEntry().add(newItem);
+         * getEntry().add(newItem);
          * </pre>
          * 
          * 
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link CreateVnfNotification.Outputs.Entry }
+         * Objects of the following type(s) are allowed in the list {@link CreateVnfNotification.Outputs.Entry }
          * 
          * 
          */
@@ -325,24 +294,26 @@ public class CreateVnfNotification {
         }
 
         // Not a generated method
-	@Override
+        @Override
         public String toString() {
-        	StringBuilder out = new StringBuilder();
-        	out.append("<outputs>\n");
-        	if (entry != null) {
-        		for (Entry e : entry) {
-        			out.append(e.toString());
-        			out.append('\n');
-        		}
-        	}
-        	out.append("</outputs>");
-        	return out.toString();
+            StringBuilder out = new StringBuilder();
+            out.append("<outputs>\n");
+            if (entry != null) {
+                for (Entry e : entry) {
+                    out.append(e.toString());
+                    out.append('\n');
+                }
+            }
+            out.append("</outputs>");
+            return out.toString();
         }
 
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -360,10 +331,7 @@ public class CreateVnfNotification {
          * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "key",
-            "value"
-        })
+        @XmlType(name = "", propOrder = {"key", "value"})
         public static class Entry {
 
             protected String key;
@@ -372,10 +340,8 @@ public class CreateVnfNotification {
             /**
              * Gets the value of the key property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getKey() {
                 return key;
@@ -384,10 +350,8 @@ public class CreateVnfNotification {
             /**
              * Sets the value of the key property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setKey(String value) {
                 this.key = value;
@@ -396,10 +360,8 @@ public class CreateVnfNotification {
             /**
              * Gets the value of the value property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getValue() {
                 return value;
@@ -408,55 +370,45 @@ public class CreateVnfNotification {
             /**
              * Sets the value of the value property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setValue(String value) {
                 this.value = value;
-                
+
             }
-            
+
             // Not a generated method
             @Override
             public String toString() {
-            	String entrystr;
-            		entrystr =
-               "<entry>"+ '\n' +
-    	       "   <key>"+key+"</key>" + '\n' +
-    	       "   <value>"+value+"</value>" + '\n' +
-    	       "</entry>";
-            	return entrystr;
+                String entrystr;
+                entrystr = "<entry>" + '\n' + "   <key>" + key + "</key>" + '\n' + "   <value>" + value + "</value>"
+                        + '\n' + "</entry>";
+                return entrystr;
             }
 
         }
 
     }
 
-	// Not a generated method
-	@Override
-	public String toString() {
-    	String createVnfNotification;
-    	if (exception==null) {
-    		createVnfNotification = "<ns2:createVnfNotification xmlns:ns2=\"http://org.onap.so/vnfNotify\"" + '\n' +
-    				       "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' +
-    				       "   <messageId>"+messageId+"</messageId>" + '\n' +
-    				       "   <completed>"+completed+"</completed>" + '\n' +
-    				       "   <vnfId>"+vnfId+"</vnfId>" + '\n' +
-    				       (outputs == null ? "" : outputs.toString() + '\n') +
-    				       "   <rollback>"+rollback+"</rollback>" + '\n' +
-    				       "</ns2:createVnfNotification>";
-    	} else {
-    		createVnfNotification = "<ns2:createVnfNotification xmlns:ns2=\"http://org.onap.so/vnfNotify\"" + '\n' +
-				       "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' +
-				       "   <messageId>"+messageId+"</messageId>" + '\n' +
-				       "   <completed>"+completed+"</completed>" + '\n' +
-    				       (outputs == null ? "" : outputs.toString() + '\n') +
-    				   "   <exception>"+exception+"</exception>" + '\n' +
-    				   "   <errorMessage>"+errorMessage+"</errorMessage>" + '\n' +
-				       "</ns2:createVnfNotification>";
-    	}
-    	return createVnfNotification;
-   	}    
+    // Not a generated method
+    @Override
+    public String toString() {
+        String createVnfNotification;
+        if (exception == null) {
+            createVnfNotification = "<ns2:createVnfNotification xmlns:ns2=\"http://org.onap.so/vnfNotify\"" + '\n'
+                    + "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' + "   <messageId>"
+                    + messageId + "</messageId>" + '\n' + "   <completed>" + completed + "</completed>" + '\n'
+                    + "   <vnfId>" + vnfId + "</vnfId>" + '\n' + (outputs == null ? "" : outputs.toString() + '\n')
+                    + "   <rollback>" + rollback + "</rollback>" + '\n' + "</ns2:createVnfNotification>";
+        } else {
+            createVnfNotification = "<ns2:createVnfNotification xmlns:ns2=\"http://org.onap.so/vnfNotify\"" + '\n'
+                    + "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' + "   <messageId>"
+                    + messageId + "</messageId>" + '\n' + "   <completed>" + completed + "</completed>" + '\n'
+                    + (outputs == null ? "" : outputs.toString() + '\n') + "   <exception>" + exception + "</exception>"
+                    + '\n' + "   <errorMessage>" + errorMessage + "</errorMessage>" + '\n'
+                    + "</ns2:createVnfNotification>";
+        }
+        return createVnfNotification;
+    }
 }

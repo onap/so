@@ -22,10 +22,10 @@ package org.onap.so.cloudify.beans;
 
 
 /*
- * Enum status values to capture the state of a deployment, based on last known workflow
- * (assume only INSTALL and UNINSTALL at this point).
+ * Enum status values to capture the state of a deployment, based on last known workflow (assume only INSTALL and
+ * UNINSTALL at this point).
  */
 public enum DeploymentStatus {
-	NOTFOUND, CREATED, INSTALLED, FAILED, INSTALLING, UNINSTALLING, UNKNOWN
+    NOTFOUND, CREATED, INSTALLED, FAILED, INSTALLING, UNINSTALLING, UNKNOWN
 }
 

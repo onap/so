@@ -22,5 +22,5 @@ package org.onap.so.client.graphinventory;
 
 public interface GraphInventoryObjectUriPartial {
 
-	public String partialUri();
+    public String partialUri();
 }

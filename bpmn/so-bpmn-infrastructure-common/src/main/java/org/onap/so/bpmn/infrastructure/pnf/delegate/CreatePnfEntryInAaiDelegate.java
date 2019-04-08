@@ -24,7 +24,6 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.onap.aai.domain.yang.Pnf;
@@ -37,9 +36,7 @@ import org.springframework.stereotype.Component;
 /**
  * Implementation of "Create Pnf entry in AAI" task in CreateAndActivatePnfResource.bpmn
  *
- * Inputs:
- *  - pnfCorrelationId - String
- *  - pnfUuid - String
+ * Inputs: - pnfCorrelationId - String - pnfUuid - String
  */
 @Component
 public class CreatePnfEntryInAaiDelegate implements JavaDelegate {

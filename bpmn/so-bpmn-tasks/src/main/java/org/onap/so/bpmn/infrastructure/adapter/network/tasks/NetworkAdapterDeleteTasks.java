@@ -34,26 +34,28 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NetworkAdapterDeleteTasks {
-	
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private NetworkAdapterObjectMapper networkAdapterObjectMapper;
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	
-	public void deleteNetwork(BuildingBlockExecution execution) {
-		try {
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			
-			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			
-			DeleteNetworkRequest deleteNetworkRequest = networkAdapterObjectMapper.deleteNetworkRequestMapper(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, l3Network);	
-			
-			execution.setVariable("networkAdapterRequest", deleteNetworkRequest);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private NetworkAdapterObjectMapper networkAdapterObjectMapper;
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+
+    public void deleteNetwork(BuildingBlockExecution execution) {
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+
+            L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+
+            DeleteNetworkRequest deleteNetworkRequest = networkAdapterObjectMapper.deleteNetworkRequestMapper(
+                    gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, l3Network);
+
+            execution.setVariable("networkAdapterRequest", deleteNetworkRequest);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 }

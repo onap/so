@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,151 +32,149 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "configuration")
 public class ConfigurationResource implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6675926401792679171L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6675926401792679171L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_UUID")
-	private String modelUUID;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_UUID")
+    private String modelUUID;
 
-	@Column(name = "MODEL_INVARIANT_UUID")
-	private String modelInvariantUUID;
+    @Column(name = "MODEL_INVARIANT_UUID")
+    private String modelInvariantUUID;
 
-	@Column(name = "MODEL_VERSION")
-	private String modelVersion;
+    @Column(name = "MODEL_VERSION")
+    private String modelVersion;
 
-	@Column(name = "MODEL_NAME")
-	private String modelName;
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	@Column(name = "TOSCA_NODE_TYPE")
-	private String toscaNodeType;
+    @Column(name = "TOSCA_NODE_TYPE")
+    private String toscaNodeType;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "configurationResource")
-	private Set<ConfigurationResourceCustomization> configurationResourceCustomization;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "configurationResource")
-	private Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configurationResource")
+    private Set<ConfigurationResourceCustomization> configurationResourceCustomization;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "configurationResource")
+    private Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization;
 
-	public String getModelUUID() {
-		return modelUUID;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
 
-	public String getModelInvariantUUID() {
-		return modelInvariantUUID;
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	public void setModelInvariantUUID(String modelInvariantUUID) {
-		this.modelInvariantUUID = modelInvariantUUID;
-	}
+    public String getModelInvariantUUID() {
+        return modelInvariantUUID;
+    }
 
-	public String getModelVersion() {
-		return modelVersion;
-	}
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
 
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
+    public String getModelVersion() {
+        return modelVersion;
+    }
 
-	public String getModelName() {
-		return modelName;
-	}
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    public String getModelName() {
+        return modelName;
+    }
 
-	public String getToscaNodeType() {
-		return toscaNodeType;
-	}
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
-	public void setToscaNodeType(String toscaNodeType) {
-		this.toscaNodeType = toscaNodeType;
-	}
+    public String getToscaNodeType() {
+        return toscaNodeType;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setToscaNodeType(String toscaNodeType) {
+        this.toscaNodeType = toscaNodeType;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@LinkedResource
-	public Set<ConfigurationResourceCustomization> getConfigurationResourceCustomization() {
-		return configurationResourceCustomization;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public void setConfigurationResourceCustomization(
-			Set<ConfigurationResourceCustomization> configurationResourceCustomization) {
-		this.configurationResourceCustomization = configurationResourceCustomization;
-	}
+    @LinkedResource
+    public Set<ConfigurationResourceCustomization> getConfigurationResourceCustomization() {
+        return configurationResourceCustomization;
+    }
 
-	@LinkedResource
-	public Set<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
-		return cvnfcConfigurationCustomization;
-	}
+    public void setConfigurationResourceCustomization(
+            Set<ConfigurationResourceCustomization> configurationResourceCustomization) {
+        this.configurationResourceCustomization = configurationResourceCustomization;
+    }
 
-	public void setCvnfcConfigurationCustomization(Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization) {
-		this.cvnfcConfigurationCustomization = cvnfcConfigurationCustomization;
-	}
+    @LinkedResource
+    public Set<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
+        return cvnfcConfigurationCustomization;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
-				.append("modelVersion", modelVersion).append("modelName", modelName)
-				.append("toscaNodeType", toscaNodeType).append("description", description).append("created", created)
-				.append("configurationResourceCustomization", configurationResourceCustomization).toString();
-	}
+    public void setCvnfcConfigurationCustomization(
+            Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization) {
+        this.cvnfcConfigurationCustomization = cvnfcConfigurationCustomization;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ConfigurationResource)) {
-			return false;
-		}
-		ConfigurationResource castOther = (ConfigurationResource) other;
-		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelVersion", modelVersion).append("modelName", modelName)
+                .append("toscaNodeType", toscaNodeType).append("description", description).append("created", created)
+                .append("configurationResourceCustomization", configurationResourceCustomization).toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelUUID).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ConfigurationResource)) {
+            return false;
+        }
+        ConfigurationResource castOther = (ConfigurationResource) other;
+        return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelUUID).toHashCode();
+    }
 }

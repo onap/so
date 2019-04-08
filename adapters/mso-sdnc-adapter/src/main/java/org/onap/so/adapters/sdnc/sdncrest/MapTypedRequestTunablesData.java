@@ -27,7 +27,6 @@ import org.onap.so.adapters.sdnc.exception.SDNCAdapterException;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,83 +35,83 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MapTypedRequestTunablesData {
-	
-	private static Logger logger = LoggerFactory.getLogger(MapTypedRequestTunablesData.class);
-	
-	private static final String MISSING_CONFIGURATION_ERROR_MSG= "Missing configuration for: ";
-	private static final String MISSING_CONFIG_PARAM_ERROR_MSG="Missing config param";
-	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
-		
-	@Autowired
-	private Environment env;
+
+    private static Logger logger = LoggerFactory.getLogger(MapTypedRequestTunablesData.class);
+
+    private static final String MISSING_CONFIGURATION_ERROR_MSG = "Missing configuration for: ";
+    private static final String MISSING_CONFIG_PARAM_ERROR_MSG = "Missing config param";
+    private static final String MSO_INTERNAL_ERROR = "MsoInternalError";
+
+    @Autowired
+    private Environment env;
 
 
-	public TypedRequestTunables setTunables(TypedRequestTunables reqTunableOriginal) throws SDNCAdapterException {	
-		TypedRequestTunables reqTunable = new TypedRequestTunables(reqTunableOriginal);		
-		
-		String error;
-		String value = env.getProperty(reqTunable.getKey().toLowerCase(), "");
+    public TypedRequestTunables setTunables(TypedRequestTunables reqTunableOriginal) throws SDNCAdapterException {
+        TypedRequestTunables reqTunable = new TypedRequestTunables(reqTunableOriginal);
 
-		if ("".equals(value)) {
-			error= MISSING_CONFIGURATION_ERROR_MSG + reqTunable.getKey();
-			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), reqTunable.getKey(), "SDNC",
-				ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
-		
-			throw new SDNCAdapterException(error);
-		}
+        String error;
+        String value = env.getProperty(reqTunable.getKey().toLowerCase(), "");
 
-		String[] parts = value.split("\\|");
+        if ("".equals(value)) {
+            error = MISSING_CONFIGURATION_ERROR_MSG + reqTunable.getKey();
+            logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), reqTunable.getKey(),
+                    "SDNC", ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 
-		if (parts.length != 5) {
-			error="Invalid configuration for: " + reqTunable.getKey();
-			logger.error("{} {} {} {} {} {}", MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), reqTunable.getKey(), value, "SDNC",
-					ErrorCode.DataError.getValue(), "Invalid config");
-			throw new SDNCAdapterException(error);
-		}
+            throw new SDNCAdapterException(error);
+        }
 
-		reqTunable.setReqMethod(parts[0]);
-		logger.trace("Request Method is set to: {}", reqTunable.getReqMethod());
+        String[] parts = value.split("\\|");
 
-		reqTunable.setTimeout(parts[1]);
-		logger.trace("Timeout is set to: {}", reqTunable.getTimeout());
+        if (parts.length != 5) {
+            error = "Invalid configuration for: " + reqTunable.getKey();
+            logger.error("{} {} {} {} {} {}", MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), reqTunable.getKey(), value,
+                    "SDNC", ErrorCode.DataError.getValue(), "Invalid config");
+            throw new SDNCAdapterException(error);
+        }
 
-		String urlPropKey = Constants.REQUEST_TUNABLES + "." + parts[2];
-		reqTunable.setSdncUrl(env.getProperty(urlPropKey, ""));
+        reqTunable.setReqMethod(parts[0]);
+        logger.trace("Request Method is set to: {}", reqTunable.getReqMethod());
 
-		if ("".equals(reqTunable.getSdncUrl())) {
-			error=MISSING_CONFIGURATION_ERROR_MSG + urlPropKey;
-			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), urlPropKey, "SDNC",
-				ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
+        reqTunable.setTimeout(parts[1]);
+        logger.trace("Timeout is set to: {}", reqTunable.getTimeout());
 
-			throw new SDNCAdapterException(error);
-		}
+        String urlPropKey = Constants.REQUEST_TUNABLES + "." + parts[2];
+        reqTunable.setSdncUrl(env.getProperty(urlPropKey, ""));
 
-		logger.trace("SDNC Url is set to: {}", reqTunable.getSdncUrl());
+        if ("".equals(reqTunable.getSdncUrl())) {
+            error = MISSING_CONFIGURATION_ERROR_MSG + urlPropKey;
+            logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), urlPropKey, "SDNC",
+                    ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 
-		reqTunable.setHeaderName(parts[3]);
-		logger.trace("Header Name is set to: {}", reqTunable.getHeaderName());
+            throw new SDNCAdapterException(error);
+        }
 
-		reqTunable.setNamespace(parts[4]);
-		logger.trace("Namespace is set to: {}", reqTunable.getNamespace());
+        logger.trace("SDNC Url is set to: {}", reqTunable.getSdncUrl());
 
-		reqTunable.setMyUrl(env.getProperty(Constants.MY_URL_PROP, ""));
+        reqTunable.setHeaderName(parts[3]);
+        logger.trace("Header Name is set to: {}", reqTunable.getHeaderName());
 
-		if ("".equals(reqTunable.getMyUrl())) {
-			error=MISSING_CONFIGURATION_ERROR_MSG + Constants.MY_URL_PROP;
-			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), Constants.MY_URL_PROP, "SDNC",
-				ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
-		
-			throw new SDNCAdapterException(error);
-		}
+        reqTunable.setNamespace(parts[4]);
+        logger.trace("Namespace is set to: {}", reqTunable.getNamespace());
 
-		while (reqTunable.getMyUrl().endsWith("/")) {
-			reqTunable.setMyUrl(reqTunable.getMyUrl().substring(0, reqTunable.getMyUrl().length()-1));
-		}
+        reqTunable.setMyUrl(env.getProperty(Constants.MY_URL_PROP, ""));
 
-		reqTunable.setMyUrl(reqTunable.getMyUrl().concat(reqTunable.getMyUrlSuffix()));
+        if ("".equals(reqTunable.getMyUrl())) {
+            error = MISSING_CONFIGURATION_ERROR_MSG + Constants.MY_URL_PROP;
+            logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), Constants.MY_URL_PROP,
+                    "SDNC", ErrorCode.DataError.getValue(), MISSING_CONFIG_PARAM_ERROR_MSG);
 
-		logger.debug(reqTunable.toString());
-		return reqTunable;
-	}
+            throw new SDNCAdapterException(error);
+        }
+
+        while (reqTunable.getMyUrl().endsWith("/")) {
+            reqTunable.setMyUrl(reqTunable.getMyUrl().substring(0, reqTunable.getMyUrl().length() - 1));
+        }
+
+        reqTunable.setMyUrl(reqTunable.getMyUrl().concat(reqTunable.getMyUrlSuffix()));
+
+        logger.debug(reqTunable.toString());
+        return reqTunable;
+    }
 
 }

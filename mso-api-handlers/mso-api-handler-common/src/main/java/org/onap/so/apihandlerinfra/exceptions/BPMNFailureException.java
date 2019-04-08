@@ -28,11 +28,11 @@ public class BPMNFailureException extends ApiException {
         super(builder);
     }
 
-    public static class Builder extends ApiException.Builder<Builder>{
+    public static class Builder extends ApiException.Builder<Builder> {
 
 
         public Builder(String message, int httpResponseCode, String messageID) {
-            super(bpmnFailMessage.replaceAll ("\\$HTTPSTATUS", message),httpResponseCode,messageID);
+            super(bpmnFailMessage.replaceAll("\\$HTTPSTATUS", message), httpResponseCode, messageID);
         }
 
         public BPMNFailureException build() {

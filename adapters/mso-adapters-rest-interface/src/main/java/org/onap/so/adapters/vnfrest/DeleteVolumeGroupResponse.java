@@ -22,28 +22,27 @@ package org.onap.so.adapters.vnfrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("deleteVolumeGroupResponse")
 @XmlRootElement(name = "deleteVolumeGroupResponse")
 public class DeleteVolumeGroupResponse extends VfResponseCommon {
-	private Boolean volumeGroupDeleted;
+    private Boolean volumeGroupDeleted;
 
-	public DeleteVolumeGroupResponse() {
-		super();
-	}
+    public DeleteVolumeGroupResponse() {
+        super();
+    }
 
-	public DeleteVolumeGroupResponse(Boolean volumeGroupDeleted, String messageId) {
-		super(messageId);
-		this.volumeGroupDeleted = volumeGroupDeleted;
-	}
+    public DeleteVolumeGroupResponse(Boolean volumeGroupDeleted, String messageId) {
+        super(messageId);
+        this.volumeGroupDeleted = volumeGroupDeleted;
+    }
 
-	public Boolean getVolumeGroupDeleted() {
-		return volumeGroupDeleted;
-	}
+    public Boolean getVolumeGroupDeleted() {
+        return volumeGroupDeleted;
+    }
 
-	public void setVolumeGroupDeleted(Boolean volumeGroupDeleted) {
-		this.volumeGroupDeleted = volumeGroupDeleted;
-	}
+    public void setVolumeGroupDeleted(Boolean volumeGroupDeleted) {
+        this.volumeGroupDeleted = volumeGroupDeleted;
+    }
 }

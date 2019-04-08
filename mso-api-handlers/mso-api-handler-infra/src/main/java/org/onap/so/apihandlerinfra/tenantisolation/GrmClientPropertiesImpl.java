@@ -22,54 +22,52 @@ package org.onap.so.apihandlerinfra.tenantisolation;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import javax.ws.rs.core.MediaType;
-
 import org.onap.so.client.grm.GRMProperties;
 import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 
 public class GrmClientPropertiesImpl implements GRMProperties {
 
-	private String grmEndpoint;
-	private String grmAuth;
-	private String grmKey;
-	
-	public GrmClientPropertiesImpl() {
-		ApplicationContext context = SpringContextHelper.getAppContext();		
-		grmEndpoint = context.getEnvironment().getProperty("mso.grm.endpoint");
-		grmAuth = context.getEnvironment().getProperty("mso.grm.auth");
-		grmKey = context.getEnvironment().getProperty("mso.msoKey");
-	}
-	
-	@Override
-	public URL getEndpoint() throws MalformedURLException {
-		return new URL(grmEndpoint);
-	}
+    private String grmEndpoint;
+    private String grmAuth;
+    private String grmKey;
 
-	@Override
-	public String getSystemName() {
-		return "MSO";
-	}
+    public GrmClientPropertiesImpl() {
+        ApplicationContext context = SpringContextHelper.getAppContext();
+        grmEndpoint = context.getEnvironment().getProperty("mso.grm.endpoint");
+        grmAuth = context.getEnvironment().getProperty("mso.grm.auth");
+        grmKey = context.getEnvironment().getProperty("mso.msoKey");
+    }
 
-	@Override
-	public String getDefaultVersion() {
-		return "v1";
-	}
+    @Override
+    public URL getEndpoint() throws MalformedURLException {
+        return new URL(grmEndpoint);
+    }
 
-	@Override
-	public String getAuth() {
-		return grmAuth;
-	}
+    @Override
+    public String getSystemName() {
+        return "MSO";
+    }
 
-	@Override
-	public String getKey() {
-		return grmKey;
-	}
+    @Override
+    public String getDefaultVersion() {
+        return "v1";
+    }
 
-	@Override
-	public String getContentType() {
-		return MediaType.APPLICATION_JSON;
-	}
+    @Override
+    public String getAuth() {
+        return grmAuth;
+    }
+
+    @Override
+    public String getKey() {
+        return grmKey;
+    }
+
+    @Override
+    public String getContentType() {
+        return MediaType.APPLICATION_JSON;
+    }
 
 }

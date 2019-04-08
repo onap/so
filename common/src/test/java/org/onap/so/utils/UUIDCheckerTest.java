@@ -23,18 +23,17 @@
 package org.onap.so.utils;
 
 import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class UUIDCheckerTest {
 
-	@Test
-	public void isValidUUIDTest(){
-		String nullID = null;
-		String badID = "This is not a UUID";
-		String id = UUIDChecker.getUUID();
-		assertFalse(UUIDChecker.isValidUUID(nullID));
-		assertFalse(UUIDChecker.isValidUUID(badID));
-		assertTrue(UUIDChecker.isValidUUID(id));
-	}
+    @Test
+    public void isValidUUIDTest() {
+        String nullID = null;
+        String badID = "This is not a UUID";
+        String id = UUIDChecker.getUUID();
+        assertFalse(UUIDChecker.isValidUUID(nullID));
+        assertFalse(UUIDChecker.isValidUUID(badID));
+        assertTrue(UUIDChecker.isValidUUID(id));
+    }
 }

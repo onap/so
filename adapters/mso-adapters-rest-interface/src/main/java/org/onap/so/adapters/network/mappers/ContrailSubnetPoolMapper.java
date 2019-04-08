@@ -25,19 +25,19 @@ import org.onap.so.openstack.beans.Pool;
 
 public class ContrailSubnetPoolMapper {
 
-	private final Pool pool;
-	
-	public ContrailSubnetPoolMapper(Pool pool) {
-		this.pool = pool;
-	}
-	
-	public ContrailSubnetPool map() {
-		
-		ContrailSubnetPool result = new ContrailSubnetPool();
-		if (pool != null) {
-			result.setStart(pool.getStart());
-			result.setEnd(pool.getEnd());
-		}
-		return result;
-	}
+    private final Pool pool;
+
+    public ContrailSubnetPoolMapper(Pool pool) {
+        this.pool = pool;
+    }
+
+    public ContrailSubnetPool map() {
+
+        ContrailSubnetPool result = new ContrailSubnetPool();
+        if (pool != null) {
+            result.setStart(pool.getStart());
+            result.setEnd(pool.getEnd());
+        }
+        return result;
+    }
 }

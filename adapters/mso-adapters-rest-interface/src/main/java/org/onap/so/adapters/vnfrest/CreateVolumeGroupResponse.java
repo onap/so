@@ -23,78 +23,70 @@ package org.onap.so.adapters.vnfrest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
 @JsonRootName("createVolumeGroupResponse")
 @XmlRootElement(name = "createVolumeGroupResponse")
 public class CreateVolumeGroupResponse extends VfResponseCommon {
-	private String volumeGroupId;
-	private String volumeGroupStackId;
-	private Boolean volumeGroupCreated;
-	private Map<String,String> volumeGroupOutputs = new HashMap<>();
-	private VolumeGroupRollback volumeGroupRollback = new VolumeGroupRollback();
+    private String volumeGroupId;
+    private String volumeGroupStackId;
+    private Boolean volumeGroupCreated;
+    private Map<String, String> volumeGroupOutputs = new HashMap<>();
+    private VolumeGroupRollback volumeGroupRollback = new VolumeGroupRollback();
 
-	public CreateVolumeGroupResponse() {
-		super();
-	}
+    public CreateVolumeGroupResponse() {
+        super();
+    }
 
-	public CreateVolumeGroupResponse(
-			String volumeGroupId,
-			String volumeGroupStackId,
-			Boolean volumeGroupCreated,
-			Map<String, String> volumeGroupOutputs,
-			VolumeGroupRollback volumeGroupRollback,
-			String messageId)
-	{
-		super(messageId);
-		this.volumeGroupId = volumeGroupId;
-		this.volumeGroupStackId = volumeGroupStackId;
-		this.volumeGroupCreated = volumeGroupCreated;
-		this.volumeGroupOutputs = volumeGroupOutputs;
-		this.volumeGroupRollback = volumeGroupRollback;
-	}
+    public CreateVolumeGroupResponse(String volumeGroupId, String volumeGroupStackId, Boolean volumeGroupCreated,
+            Map<String, String> volumeGroupOutputs, VolumeGroupRollback volumeGroupRollback, String messageId) {
+        super(messageId);
+        this.volumeGroupId = volumeGroupId;
+        this.volumeGroupStackId = volumeGroupStackId;
+        this.volumeGroupCreated = volumeGroupCreated;
+        this.volumeGroupOutputs = volumeGroupOutputs;
+        this.volumeGroupRollback = volumeGroupRollback;
+    }
 
-	public String getVolumeGroupId() {
-		return volumeGroupId;
-	}
+    public String getVolumeGroupId() {
+        return volumeGroupId;
+    }
 
-	public void setVolumeGroupId(String volumeGroupId) {
-		this.volumeGroupId = volumeGroupId;
-	}
+    public void setVolumeGroupId(String volumeGroupId) {
+        this.volumeGroupId = volumeGroupId;
+    }
 
-	public String getVolumeGroupStackId() {
-		return volumeGroupStackId;
-	}
+    public String getVolumeGroupStackId() {
+        return volumeGroupStackId;
+    }
 
-	public void setVolumeGroupStackId(String volumeGroupStackId) {
-		this.volumeGroupStackId = volumeGroupStackId;
-	}
+    public void setVolumeGroupStackId(String volumeGroupStackId) {
+        this.volumeGroupStackId = volumeGroupStackId;
+    }
 
-	public Boolean getVolumeGroupCreated() {
-		return volumeGroupCreated;
-	}
+    public Boolean getVolumeGroupCreated() {
+        return volumeGroupCreated;
+    }
 
-	public void setVolumeGroupCreated(Boolean volumeGroupCreated) {
-		this.volumeGroupCreated = volumeGroupCreated;
-	}
+    public void setVolumeGroupCreated(Boolean volumeGroupCreated) {
+        this.volumeGroupCreated = volumeGroupCreated;
+    }
 
-	public Map<String, String> getVolumeGroupOutputs() {
-		return volumeGroupOutputs;
-	}
+    public Map<String, String> getVolumeGroupOutputs() {
+        return volumeGroupOutputs;
+    }
 
-	public void setVolumeGroupOutputs(Map<String, String> volumeGroupOutputs) {
-		this.volumeGroupOutputs = volumeGroupOutputs;
-	}
+    public void setVolumeGroupOutputs(Map<String, String> volumeGroupOutputs) {
+        this.volumeGroupOutputs = volumeGroupOutputs;
+    }
 
-	public VolumeGroupRollback getVolumeGroupRollback() {
-		return volumeGroupRollback;
-	}
+    public VolumeGroupRollback getVolumeGroupRollback() {
+        return volumeGroupRollback;
+    }
 
-	public void setVolumeGroupRollback(VolumeGroupRollback volumeGroupRollback) {
-		this.volumeGroupRollback = volumeGroupRollback;
-	}
+    public void setVolumeGroupRollback(VolumeGroupRollback volumeGroupRollback) {
+        this.volumeGroupRollback = volumeGroupRollback;
+    }
 }

@@ -24,54 +24,62 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 
 import java.io.ByteArrayOutputStream;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public abstract class CatalogQueryExceptionCommon {
-	private String messageId;
-	protected static Logger logger = LoggerFactory.getLogger(CatalogQueryExceptionCommon.class);
+    private String messageId;
+    protected static Logger logger = LoggerFactory.getLogger(CatalogQueryExceptionCommon.class);
 
-	public CatalogQueryExceptionCommon() { messageId = null; }
-	public CatalogQueryExceptionCommon(String messageId) { this.messageId = messageId; }
+    public CatalogQueryExceptionCommon() {
+        messageId = null;
+    }
 
-	public String getMessageId() { return messageId; }
-	public void setMessageId(String messageId) { this.messageId = messageId; }
+    public CatalogQueryExceptionCommon(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public String toJsonString() {
-		try {
-			String jsonString;
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-			jsonString = mapper.writeValueAsString(this);
-			return jsonString;
-		} catch (Exception e) {
-		    logger.error ("Exception:", e);
-			return "";
-		}
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
-	public String toXmlString() {
-		try {
-			ByteArrayOutputStream bs = new ByteArrayOutputStream();
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); //pretty print XML
-			marshaller.marshal(this, bs);
-			return bs.toString();
-		} catch (Exception e) {
-		    logger.error ("Exception:", e);
-			return "";
-		}
-	}
-	
-	@Override 
-	public String toString(){
-		return toJsonString();		
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public String toJsonString() {
+        try {
+            String jsonString;
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+            jsonString = mapper.writeValueAsString(this);
+            return jsonString;
+        } catch (Exception e) {
+            logger.error("Exception:", e);
+            return "";
+        }
+    }
+
+    public String toXmlString() {
+        try {
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            JAXBContext context = JAXBContext.newInstance(this.getClass());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty print XML
+            marshaller.marshal(this, bs);
+            return bs.toString();
+        } catch (Exception e) {
+            logger.error("Exception:", e);
+            return "";
+        }
+    }
+
+    @Override
+    public String toString() {
+        return toJsonString();
+    }
 }

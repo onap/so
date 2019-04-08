@@ -23,12 +23,11 @@ package org.onap.so.db.catalog.data.repository;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
-
 import java.util.List;
 
 @RepositoryRestResource(collectionResourceRel = "orchestrationFlow", path = "orchestrationFlow")
 public interface OrchestrationFlowRepository extends JpaRepository<OrchestrationFlow, Integer> {
-	List<OrchestrationFlow> findByAction(String action);
+    List<OrchestrationFlow> findByAction(String action);
 
-	OrchestrationFlow findOneByAction(String action);
+    OrchestrationFlow findOneByAction(String action);
 }

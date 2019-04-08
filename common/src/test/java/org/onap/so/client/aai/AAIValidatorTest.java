@@ -22,7 +22,6 @@ package org.onap.so.client.aai;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,74 +33,74 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Pserver;
 
-@RunWith(MockitoJUnitRunner.class) 
+@RunWith(MockitoJUnitRunner.class)
 public class AAIValidatorTest {
-	
-	@Mock
-	protected AAIRestClientI client;
-	String vnfName = "testVnf";
-	String uuid = "UUID";
-	AAIValidatorImpl validator;
-	
-	@Before
-	public void init(){
-		validator = new AAIValidatorImpl();
-		validator.setClient(client);
-	}
-	
-	public List<Pserver> getPserversLocked(){
-		Pserver pserver1 = new Pserver();
-		pserver1.setInMaint(true);
-		Pserver pserver2 = new Pserver();
-		pserver2.setInMaint(false);
-		List<Pserver> pservers = new ArrayList<Pserver>();
-		pservers.add(pserver1);
-		pservers.add(pserver2);
-		return pservers;		
-	}
-	
-	public List<Pserver> getPserversNotLocked(){
-		Pserver pserver1 = new Pserver();
-		pserver1.setInMaint(false);
-		Pserver pserver2 = new Pserver();
-		pserver2.setInMaint(false);
-		List<Pserver> pservers = new ArrayList<Pserver>();
-		pservers.add(pserver1);
-		pservers.add(pserver2);
-		return pservers;		
-	}
-	
-	public GenericVnf createGenericVnfs(boolean locked){
-		GenericVnf genericVnf = new GenericVnf();
-		genericVnf.setInMaint(locked);
-		return genericVnf;
-	}
 
-	@Test
-	public void test_IsPhysicalServerLocked_True() throws IOException{	 	
-		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPserversLocked());
-		boolean locked = validator.isPhysicalServerLocked(vnfName);
-		assertEquals(true, locked);
-	}
-	
-	@Test
-	public void test_IsPhysicalServerLocked_False() throws IOException {
-		when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPserversNotLocked());
-		boolean locked = validator.isPhysicalServerLocked(vnfName);
-		assertEquals(false, locked);
-	}
-	
-	@Test
-	public void test_IsVNFLocked_False() {
-		when(client.getVnfByName(vnfName)).thenReturn(createGenericVnfs(false));
-		boolean locked = validator.isVNFLocked(vnfName);
-		assertEquals(false, locked);
-	}
+    @Mock
+    protected AAIRestClientI client;
+    String vnfName = "testVnf";
+    String uuid = "UUID";
+    AAIValidatorImpl validator;
 
-	@Test
-	public void test_IsVNFLocked_True() {
-		when(client.getVnfByName(vnfName)).thenReturn(createGenericVnfs(true));
-		boolean locked = validator.isVNFLocked(vnfName);
-		assertEquals(true,locked );
-	}
+    @Before
+    public void init() {
+        validator = new AAIValidatorImpl();
+        validator.setClient(client);
+    }
+
+    public List<Pserver> getPserversLocked() {
+        Pserver pserver1 = new Pserver();
+        pserver1.setInMaint(true);
+        Pserver pserver2 = new Pserver();
+        pserver2.setInMaint(false);
+        List<Pserver> pservers = new ArrayList<Pserver>();
+        pservers.add(pserver1);
+        pservers.add(pserver2);
+        return pservers;
+    }
+
+    public List<Pserver> getPserversNotLocked() {
+        Pserver pserver1 = new Pserver();
+        pserver1.setInMaint(false);
+        Pserver pserver2 = new Pserver();
+        pserver2.setInMaint(false);
+        List<Pserver> pservers = new ArrayList<Pserver>();
+        pservers.add(pserver1);
+        pservers.add(pserver2);
+        return pservers;
+    }
+
+    public GenericVnf createGenericVnfs(boolean locked) {
+        GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setInMaint(locked);
+        return genericVnf;
+    }
+
+    @Test
+    public void test_IsPhysicalServerLocked_True() throws IOException {
+        when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPserversLocked());
+        boolean locked = validator.isPhysicalServerLocked(vnfName);
+        assertEquals(true, locked);
+    }
+
+    @Test
+    public void test_IsPhysicalServerLocked_False() throws IOException {
+        when(client.getPhysicalServerByVnfId(vnfName)).thenReturn(getPserversNotLocked());
+        boolean locked = validator.isPhysicalServerLocked(vnfName);
+        assertEquals(false, locked);
+    }
+
+    @Test
+    public void test_IsVNFLocked_False() {
+        when(client.getVnfByName(vnfName)).thenReturn(createGenericVnfs(false));
+        boolean locked = validator.isVNFLocked(vnfName);
+        assertEquals(false, locked);
+    }
+
+    @Test
+    public void test_IsVNFLocked_True() {
+        when(client.getVnfByName(vnfName)).thenReturn(createGenericVnfs(true));
+        boolean locked = validator.isVNFLocked(vnfName);
+        assertEquals(true, locked);
+    }
 }

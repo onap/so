@@ -21,7 +21,6 @@ package org.onap.so.monitoring.rest.api;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -31,7 +30,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import org.onap.so.monitoring.db.service.DatabaseServiceProvider;
 import org.onap.so.monitoring.model.ActivityInstanceDetail;
 import org.onap.so.monitoring.model.ProcessDefinitionDetail;
@@ -46,7 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.google.common.base.Optional;
 
 /**

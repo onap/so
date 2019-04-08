@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
 import java.util.Map;
-
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -38,68 +37,74 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NetworkAdapterCreateTasks {
-	
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private NetworkAdapterObjectMapper networkAdapterObjectMapper;
-	@Autowired
-	private NetworkAdapterResources networkAdapterResources;
-	
-	public void createNetwork(BuildingBlockExecution execution) {
-		execution.setVariable("networkAdapterCreateRollback", false);
-		try {
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			L3Network l3Network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-     
-			Map<String, String> userInput = gBBInput.getUserInput();
-			String cloudRegionPo = execution.getVariable("cloudRegionPo");
-			
-			CreateNetworkRequest createNetworkRequest = networkAdapterObjectMapper.createNetworkRequestMapper(gBBInput.getRequestContext(), gBBInput.getCloudRegion(),  gBBInput.getOrchContext(), serviceInstance, l3Network, userInput, cloudRegionPo, gBBInput.getCustomer());
-			
-			execution.setVariable("networkAdapterRequest", createNetworkRequest);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void processResponseFromOpenstack(BuildingBlockExecution execution) {
-		try {
-			L3Network l3Network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-			
-			CreateNetworkResponse createNetworkResponse = execution.getVariable("createNetworkResponse");
-			if(createNetworkResponse != null) {
-				l3Network.setHeatStackId(createNetworkResponse.getNetworkStackId());
-				if (createNetworkResponse.getNetworkCreated()){
-					//setting rollback TRUE only if network was actually created (not a silent success OP)
-					execution.setVariable("networkAdapterCreateRollback", true);
-				}
-			} else {
-				throw new Exception("No response was sent back from NetworkAdapterRestV1 subflow.");
-			}
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void rollbackCreateNetwork(BuildingBlockExecution execution) {
-		try {
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			L3Network l3Network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-			CreateNetworkResponse createNetworkResponse = execution.getVariable("createNetworkResponse");
-     
-			Map<String, String> userInput = gBBInput.getUserInput();
-			String cloudRegionPo = execution.getVariable("cloudRegionPo");
-			networkAdapterResources.rollbackCreateNetwork(gBBInput.getRequestContext(), gBBInput.getCloudRegion(),  gBBInput.getOrchContext(), serviceInstance, l3Network, userInput, cloudRegionPo, createNetworkResponse);
-			
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private NetworkAdapterObjectMapper networkAdapterObjectMapper;
+    @Autowired
+    private NetworkAdapterResources networkAdapterResources;
+
+    public void createNetwork(BuildingBlockExecution execution) {
+        execution.setVariable("networkAdapterCreateRollback", false);
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+
+            Map<String, String> userInput = gBBInput.getUserInput();
+            String cloudRegionPo = execution.getVariable("cloudRegionPo");
+
+            CreateNetworkRequest createNetworkRequest = networkAdapterObjectMapper.createNetworkRequestMapper(
+                    gBBInput.getRequestContext(), gBBInput.getCloudRegion(), gBBInput.getOrchContext(), serviceInstance,
+                    l3Network, userInput, cloudRegionPo, gBBInput.getCustomer());
+
+            execution.setVariable("networkAdapterRequest", createNetworkRequest);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void processResponseFromOpenstack(BuildingBlockExecution execution) {
+        try {
+            L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+
+            CreateNetworkResponse createNetworkResponse = execution.getVariable("createNetworkResponse");
+            if (createNetworkResponse != null) {
+                l3Network.setHeatStackId(createNetworkResponse.getNetworkStackId());
+                if (createNetworkResponse.getNetworkCreated()) {
+                    // setting rollback TRUE only if network was actually created (not a silent success OP)
+                    execution.setVariable("networkAdapterCreateRollback", true);
+                }
+            } else {
+                throw new Exception("No response was sent back from NetworkAdapterRestV1 subflow.");
+            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void rollbackCreateNetwork(BuildingBlockExecution execution) {
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+            CreateNetworkResponse createNetworkResponse = execution.getVariable("createNetworkResponse");
+
+            Map<String, String> userInput = gBBInput.getUserInput();
+            String cloudRegionPo = execution.getVariable("cloudRegionPo");
+            networkAdapterResources.rollbackCreateNetwork(gBBInput.getRequestContext(), gBBInput.getCloudRegion(),
+                    gBBInput.getOrchContext(), serviceInstance, l3Network, userInput, cloudRegionPo,
+                    createNetworkResponse);
+
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 }

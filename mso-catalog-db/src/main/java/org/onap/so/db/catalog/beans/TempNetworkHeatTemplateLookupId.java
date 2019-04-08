@@ -21,58 +21,56 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 public class TempNetworkHeatTemplateLookupId implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -3660507980620002091L;
-	@BusinessKey
-	private String networkResourceModelName;
-	@BusinessKey
-	private String heatTemplateArtifactUuid;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3660507980620002091L;
+    @BusinessKey
+    private String networkResourceModelName;
+    @BusinessKey
+    private String heatTemplateArtifactUuid;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("networkResourceModelName", networkResourceModelName)
-				.append("heatTemplateArtifactUuid", heatTemplateArtifactUuid).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("networkResourceModelName", networkResourceModelName)
+                .append("heatTemplateArtifactUuid", heatTemplateArtifactUuid).toString();
+    }
 
-	public String getNetworkResourceModelName() {
-		return networkResourceModelName;
-	}
+    public String getNetworkResourceModelName() {
+        return networkResourceModelName;
+    }
 
-	public void setNetworkResourceModelName(String networkResourceModelName) {
-		this.networkResourceModelName = networkResourceModelName;
-	}
+    public void setNetworkResourceModelName(String networkResourceModelName) {
+        this.networkResourceModelName = networkResourceModelName;
+    }
 
-	public String getHeatTemplateArtifactUuid() {
-		return heatTemplateArtifactUuid;
-	}
+    public String getHeatTemplateArtifactUuid() {
+        return heatTemplateArtifactUuid;
+    }
 
-	public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
-		this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
-	}
+    public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
+        this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof TempNetworkHeatTemplateLookupId)) {
-			return false;
-		}
-		TempNetworkHeatTemplateLookupId castOther = (TempNetworkHeatTemplateLookupId) other;
-		return new EqualsBuilder().append(networkResourceModelName, castOther.networkResourceModelName)
-				.append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof TempNetworkHeatTemplateLookupId)) {
+            return false;
+        }
+        TempNetworkHeatTemplateLookupId castOther = (TempNetworkHeatTemplateLookupId) other;
+        return new EqualsBuilder().append(networkResourceModelName, castOther.networkResourceModelName)
+                .append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(networkResourceModelName).append(heatTemplateArtifactUuid).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(networkResourceModelName).append(heatTemplateArtifactUuid).toHashCode();
+    }
 }

@@ -21,5 +21,5 @@
 package org.onap.so.test.categories;
 
 public interface SpringAware {
-	/* category marker */
+    /* category marker */
 }

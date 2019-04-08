@@ -28,11 +28,11 @@ public class RequestDbFailureException extends ApiException {
         super(builder);
     }
 
-    public static class Builder extends ApiException.Builder<Builder>{
+    public static class Builder extends ApiException.Builder<Builder> {
 
 
         public Builder(String action, String error, int httpResponseCode, String messageID) {
-            super(requestDbFailMessage.format(requestDbFailMessage, action, error),httpResponseCode,messageID);
+            super(requestDbFailMessage.format(requestDbFailMessage, action, error), httpResponseCode, messageID);
         }
 
         public RequestDbFailureException build() {

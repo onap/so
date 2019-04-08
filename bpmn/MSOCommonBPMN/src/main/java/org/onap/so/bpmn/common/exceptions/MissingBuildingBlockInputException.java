@@ -21,27 +21,26 @@
 package org.onap.so.bpmn.common.exceptions;
 
 public class MissingBuildingBlockInputException extends RuntimeException {
-	private static final long serialVersionUID = 7098084383189271401L;
+    private static final long serialVersionUID = 7098084383189271401L;
 
-	public MissingBuildingBlockInputException() {
-		super();
-	}
+    public MissingBuildingBlockInputException() {
+        super();
+    }
 
-	public MissingBuildingBlockInputException(String message) {
-		super(message);
-	}
+    public MissingBuildingBlockInputException(String message) {
+        super(message);
+    }
 
-	public MissingBuildingBlockInputException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public MissingBuildingBlockInputException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public MissingBuildingBlockInputException(Throwable cause) {
-		super(cause);
-	}
+    public MissingBuildingBlockInputException(Throwable cause) {
+        super(cause);
+    }
 
-	protected MissingBuildingBlockInputException(String message, Throwable cause,
-			boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    protected MissingBuildingBlockInputException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

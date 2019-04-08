@@ -26,7 +26,6 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.TIMEOUT_FOR_NOTIFICATION;
-
 import com.google.common.base.Strings;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -38,7 +37,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class PnfCheckInputs implements JavaDelegate {
 
-    public static final String UUID_REGEX = "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
+    public static final String UUID_REGEX =
+            "(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[1-5]{1}[0-9a-f]{3}-[89ab]{1}[0-9a-f]{3}-[0-9a-f]{12}$";
 
     private String pnfEntryNotificationTimeout;
 
@@ -58,7 +58,8 @@ public class PnfCheckInputs implements JavaDelegate {
     private void validatePnfCorrelationId(DelegateExecution execution) {
         String pnfCorrelationId = (String) execution.getVariable(PNF_CORRELATION_ID);
         if (Strings.isNullOrEmpty(pnfCorrelationId)) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "pnfCorrelationId variable not defined");
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
+                    "pnfCorrelationId variable not defined");
         }
     }
 
@@ -83,7 +84,8 @@ public class PnfCheckInputs implements JavaDelegate {
     private void validateServiceInstanceId(DelegateExecution execution) {
         String serviceInstanceId = (String) execution.getVariable(SERVICE_INSTANCE_ID);
         if (Strings.isNullOrEmpty(serviceInstanceId)) {
-            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999, "serviceInstanceId variable not defined");
+            new ExceptionUtil().buildAndThrowWorkflowException(execution, 9999,
+                    "serviceInstanceId variable not defined");
         }
     }
 }

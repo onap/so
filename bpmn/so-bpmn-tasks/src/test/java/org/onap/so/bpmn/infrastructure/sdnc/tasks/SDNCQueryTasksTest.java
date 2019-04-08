@@ -29,7 +29,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Rule;
@@ -45,95 +44,99 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
-public class SDNCQueryTasksTest extends BaseTaskTest{
-	@InjectMocks
-	private SDNCQueryTasks sdncQueryTasks = new SDNCQueryTasks();
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-		
-	private ServiceInstance serviceInstance;
-	private GenericVnf genericVnf;
-	private VfModule vfModule;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		serviceInstance = setServiceInstance();
-		genericVnf = setGenericVnf();
-		vfModule = setVfModule();
-		
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-		
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
+public class SDNCQueryTasksTest extends BaseTaskTest {
+    @InjectMocks
+    private SDNCQueryTasks sdncQueryTasks = new SDNCQueryTasks();
 
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
-	}
-	
-	@Test
-	public void queryVfModuleTest() throws Exception {
-		String sdncQueryResponse = "response";
-		vfModule.setSelflink("vfModuleSelfLink");
-		
-		doReturn(sdncQueryResponse).when(sdncVfModuleResources).queryVfModule(vfModule);
-		
-		assertNotEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
-		sdncQueryTasks.queryVfModule(execution);
-		assertEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
+    private ServiceInstance serviceInstance;
+    private GenericVnf genericVnf;
+    private VfModule vfModule;
 
-		verify(sdncVfModuleResources, times(1)).queryVfModule(vfModule);
-	}
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        serviceInstance = setServiceInstance();
+        genericVnf = setGenericVnf();
+        vfModule = setVfModule();
 
-	@Test
-	public void queryVnfTest() throws Exception {
-		String sdncQueryResponse = "response";
-		
-		doReturn(sdncQueryResponse).when(sdncVnfResources).queryVnf(genericVnf);
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
 
-		assertNotEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + genericVnf.getVnfId()));
-		sdncQueryTasks.queryVnf(execution);
-		assertEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + genericVnf.getVnfId()));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
 
-		verify(sdncVnfResources, times(1)).queryVnf(genericVnf);
-	}	
-	
-	@Test
-	public void queryVfModuleForVolumeGroupTest() throws Exception {
-		String sdncQueryResponse = "response";
-		vfModule.setSelflink("vfModuleSelfLink");
-		
-		doReturn(sdncQueryResponse).when(sdncVfModuleResources).queryVfModule(vfModule);
-		
-		assertNotEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
-		sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
-		assertEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
 
-		verify(sdncVfModuleResources, times(1)).queryVfModule(vfModule);
-	}
-	
-	@Test
-	public void queryVfModuleForVolumeGroupNoSelfLinkExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
-		vfModule.setSelflink("");
-		
-		sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
-	}
-	
-	@Test
-	public void queryVfModuleForVolumeGroupVfObjectExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID));	
-		sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
-		
-		verify(sdncVfModuleResources, times(0)).queryVfModule(any(VfModule.class));
-	}
-	
-	@Test
-	public void queryVfModuleForVolumeGroupNonVfObjectExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
-		sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
-	}
+    }
+
+    @Test
+    public void queryVfModuleTest() throws Exception {
+        String sdncQueryResponse = "response";
+        vfModule.setSelflink("vfModuleSelfLink");
+
+        doReturn(sdncQueryResponse).when(sdncVfModuleResources).queryVfModule(vfModule);
+
+        assertNotEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
+        sdncQueryTasks.queryVfModule(execution);
+        assertEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
+
+        verify(sdncVfModuleResources, times(1)).queryVfModule(vfModule);
+    }
+
+    @Test
+    public void queryVnfTest() throws Exception {
+        String sdncQueryResponse = "response";
+
+        doReturn(sdncQueryResponse).when(sdncVnfResources).queryVnf(genericVnf);
+
+        assertNotEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + genericVnf.getVnfId()));
+        sdncQueryTasks.queryVnf(execution);
+        assertEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + genericVnf.getVnfId()));
+
+        verify(sdncVnfResources, times(1)).queryVnf(genericVnf);
+    }
+
+    @Test
+    public void queryVfModuleForVolumeGroupTest() throws Exception {
+        String sdncQueryResponse = "response";
+        vfModule.setSelflink("vfModuleSelfLink");
+
+        doReturn(sdncQueryResponse).when(sdncVfModuleResources).queryVfModule(vfModule);
+
+        assertNotEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
+        sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
+        assertEquals(sdncQueryResponse, execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId()));
+
+        verify(sdncVfModuleResources, times(1)).queryVfModule(vfModule);
+    }
+
+    @Test
+    public void queryVfModuleForVolumeGroupNoSelfLinkExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+
+        vfModule.setSelflink("");
+
+        sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
+    }
+
+    @Test
+    public void queryVfModuleForVolumeGroupVfObjectExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(extractPojosForBB).extractByKey(any(),
+                ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID));
+        sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
+
+        verify(sdncVfModuleResources, times(0)).queryVfModule(any(VfModule.class));
+    }
+
+    @Test
+    public void queryVfModuleForVolumeGroupNonVfObjectExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+
+        sdncQueryTasks.queryVfModuleForVolumeGroup(execution);
+    }
 }

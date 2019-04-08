@@ -23,9 +23,7 @@
 package org.onap.so.adapters.openstack;
 
 import java.util.Arrays;
-
 import javax.xml.ws.Endpoint;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
@@ -47,62 +45,59 @@ import org.onap.so.adapters.vnf.VnfAdapterRestV2;
 import org.onap.so.adapters.vnf.VolumeAdapterRest;
 import org.onap.so.adapters.vnf.VolumeAdapterRestV2;
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
-
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingInInterceptor;
 import org.onap.so.logging.cxf.interceptor.SOAPLoggingOutInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 
 @Configuration
 public class CXFConfiguration {
-	@Autowired
-	private NetworkAdapterRest networkAdapterRest;
-	@Autowired
-	private TenantAdapterRest tenantAdapterRest;
-	@Autowired
-	private VnfAdapterRest vnfAdapterRest;
-	@Autowired
-	private VnfAdapterRestV2 vnfAdapterRestV2;
-	@Autowired
-	private VolumeAdapterRest volumeAdapterRest;
-	@Autowired
-	private VolumeAdapterRestV2 volumeAdapterRestV2;
-	@Autowired
-	private MsoNetworkAdapterImpl networkAdapterImpl;
-	@Autowired
-	private MsoNetworkAdapterAsyncImpl networkAdapterAsyncImpl;
-	@Autowired
-	private MsoTenantAdapterImpl tenantAdapterImpl;
-	@Autowired
-	private MsoVnfAdapterImpl vnfAdapterImpl;
-	@Autowired
-	private MsoVnfAdapterAsyncImpl vnfAdapterAsyncImpl;
-	@Autowired
-	private MsoVnfCloudifyAdapterImpl vnfCloudifyAdapterImpl;
-	@Autowired
-	private JettisonStyleMapperProvider jettisonStyleObjectMapper; 	
+    @Autowired
+    private NetworkAdapterRest networkAdapterRest;
+    @Autowired
+    private TenantAdapterRest tenantAdapterRest;
+    @Autowired
+    private VnfAdapterRest vnfAdapterRest;
+    @Autowired
+    private VnfAdapterRestV2 vnfAdapterRestV2;
+    @Autowired
+    private VolumeAdapterRest volumeAdapterRest;
+    @Autowired
+    private VolumeAdapterRestV2 volumeAdapterRestV2;
+    @Autowired
+    private MsoNetworkAdapterImpl networkAdapterImpl;
+    @Autowired
+    private MsoNetworkAdapterAsyncImpl networkAdapterAsyncImpl;
+    @Autowired
+    private MsoTenantAdapterImpl tenantAdapterImpl;
+    @Autowired
+    private MsoVnfAdapterImpl vnfAdapterImpl;
+    @Autowired
+    private MsoVnfAdapterAsyncImpl vnfAdapterAsyncImpl;
+    @Autowired
+    private MsoVnfCloudifyAdapterImpl vnfCloudifyAdapterImpl;
+    @Autowired
+    private JettisonStyleMapperProvider jettisonStyleObjectMapper;
 
-    @Bean(name=Bus.DEFAULT_BUS_ID)
-    public SpringBus springBus() {      
+    @Bean(name = Bus.DEFAULT_BUS_ID)
+    public SpringBus springBus() {
         return new SpringBus();
-    }	
-	
-	@Bean
-	public ServletRegistrationBean SoapDispatcherServlet() {
-		ServletRegistrationBean servletRegistrationBean = 
-					new ServletRegistrationBean(new CXFServlet(), "/services/*");
-        servletRegistrationBean.setName("services");
-        return servletRegistrationBean;		
-	}
+    }
 
-	/*
-	 * network adapter endpoint 
-	 */	
+    @Bean
+    public ServletRegistrationBean SoapDispatcherServlet() {
+        ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new CXFServlet(), "/services/*");
+        servletRegistrationBean.setName("services");
+        return servletRegistrationBean;
+    }
+
+    /*
+     * network adapter endpoint
+     */
     @Bean
     public Endpoint networkAdapterEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterImpl);
@@ -112,8 +107,8 @@ public class CXFConfiguration {
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
-    }	
-	
+    }
+
     @Bean
     public Endpoint networkAdapterAsyncEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), networkAdapterAsyncImpl);
@@ -123,8 +118,8 @@ public class CXFConfiguration {
         endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
-    }		
-	
+    }
+
     /*
      * tenant adapter endpoint
      */
@@ -138,11 +133,9 @@ public class CXFConfiguration {
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
-    
+
     /*
-     * vnfAdapterEndpoint
-     * VnfAsyncAdapterEndpoint
-     * VnfCloudAdapterEndpoint
+     * vnfAdapterEndpoint VnfAsyncAdapterEndpoint VnfCloudAdapterEndpoint
      */
     @Bean
     public Endpoint vnfAdapterEndpoint() {
@@ -154,7 +147,7 @@ public class CXFConfiguration {
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
-    
+
     @Bean
     public Endpoint VnfAsyncAdapterEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterAsyncImpl);
@@ -165,7 +158,7 @@ public class CXFConfiguration {
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
-    
+
     @Bean
     public Endpoint VnfCloudAdapterEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfCloudifyAdapterImpl);
@@ -176,34 +169,31 @@ public class CXFConfiguration {
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
-    
+
     @Bean
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(springBus());
-        endpoint.setServiceBeans(Arrays.<Object>asList(networkAdapterRest, 
-        							tenantAdapterRest,
-        							vnfAdapterRest,
-        							vnfAdapterRestV2,
-        							volumeAdapterRest,
-        							volumeAdapterRestV2));
+        endpoint.setServiceBeans(Arrays.<Object>asList(networkAdapterRest, tenantAdapterRest, vnfAdapterRest,
+                vnfAdapterRestV2, volumeAdapterRest, volumeAdapterRestV2));
         endpoint.setAddress("/rest");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
         endpoint.setProvider(new JacksonJsonProvider(jettisonStyleObjectMapper.getMapper()));
         return endpoint.create();
-    }	
-	
-	
+    }
+
+
     @Bean
     public Swagger2Feature createSwaggerFeature() {
-    	Swagger2Feature swagger2Feature= new Swagger2Feature();
+        Swagger2Feature swagger2Feature = new Swagger2Feature();
         swagger2Feature.setPrettyPrint(true);
         swagger2Feature.setTitle("SO Orchestration Application");
         swagger2Feature.setContact("The ONAP SO team");
         swagger2Feature.setDescription("This project is the SO Orchestration Engine");
         swagger2Feature.setVersion("1.0.0");
-        swagger2Feature.setResourcePackage("org.onap.so.adapters.network,org.onap.so.adapters.tenant,org.onap.so.adapters.vnf");
+        swagger2Feature.setResourcePackage(
+                "org.onap.so.adapters.network,org.onap.so.adapters.tenant,org.onap.so.adapters.vnf");
         swagger2Feature.setScan(true);
         return swagger2Feature;
-    }	
+    }
 }

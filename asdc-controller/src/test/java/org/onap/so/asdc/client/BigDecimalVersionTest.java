@@ -24,30 +24,29 @@ package org.onap.so.asdc.client;
 import static org.junit.Assert.assertTrue;
 import java.math.BigDecimal;
 import org.junit.Test;
-
 import org.onap.so.asdc.installer.BigDecimalVersion;
 
 
 public class BigDecimalVersionTest {
 
     @Test
-    public final void versionCastTest () {
+    public final void versionCastTest() {
 
-    	BigDecimal versionDecimal = BigDecimalVersion.castAndCheckNotificationVersion("12.0");
-    	assertTrue(versionDecimal.equals(new BigDecimal("12.0")));
-    	assertTrue("12.0".equals(BigDecimalVersion.castAndCheckNotificationVersionToString("12.0")));
+        BigDecimal versionDecimal = BigDecimalVersion.castAndCheckNotificationVersion("12.0");
+        assertTrue(versionDecimal.equals(new BigDecimal("12.0")));
+        assertTrue("12.0".equals(BigDecimalVersion.castAndCheckNotificationVersionToString("12.0")));
 
-    	versionDecimal = BigDecimalVersion.castAndCheckNotificationVersion("12.0.2");
-    	assertTrue(versionDecimal.equals(new BigDecimal("12.02")));
-    	assertTrue("12.02".equals(BigDecimalVersion.castAndCheckNotificationVersionToString("12.0.2")));
+        versionDecimal = BigDecimalVersion.castAndCheckNotificationVersion("12.0.2");
+        assertTrue(versionDecimal.equals(new BigDecimal("12.02")));
+        assertTrue("12.02".equals(BigDecimalVersion.castAndCheckNotificationVersionToString("12.0.2")));
 
-    	versionDecimal = BigDecimalVersion.castAndCheckNotificationVersion("10");
-    	assertTrue(versionDecimal.equals(new BigDecimal("10")));
-    	assertTrue("10".equals(BigDecimalVersion.castAndCheckNotificationVersionToString("10")));
+        versionDecimal = BigDecimalVersion.castAndCheckNotificationVersion("10");
+        assertTrue(versionDecimal.equals(new BigDecimal("10")));
+        assertTrue("10".equals(BigDecimalVersion.castAndCheckNotificationVersionToString("10")));
 
-    	versionDecimal = BigDecimalVersion.castAndCheckNotificationVersion("10.1.2.6");
-    	assertTrue(versionDecimal.equals(new BigDecimal("10.126")));
-    	assertTrue("10.126".equals(BigDecimalVersion.castAndCheckNotificationVersionToString("10.1.2.6")));
+        versionDecimal = BigDecimalVersion.castAndCheckNotificationVersion("10.1.2.6");
+        assertTrue(versionDecimal.equals(new BigDecimal("10.126")));
+        assertTrue("10.126".equals(BigDecimalVersion.castAndCheckNotificationVersionToString("10.1.2.6")));
 
     }
 }

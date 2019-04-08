@@ -23,7 +23,6 @@ package org.onap.so.asdc;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -39,40 +38,30 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@EnableJpaRepositories(
-		entityManagerFactoryRef = "requestEntityManagerFactory",transactionManagerRef = "requestTransactionManager",
-		basePackages = { "org.onap.so.db.request.data.repository" }
-		)
+@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory",
+        transactionManagerRef = "requestTransactionManager", basePackages = {"org.onap.so.db.request.data.repository"})
 @Profile({"!test"})
 public class RequestDBConfig {
 
-	@Bean(name = "requestDataSource")
-	@ConfigurationProperties(prefix = "request.datasource")
-	public DataSource dataSource() {
-		return DataSourceBuilder.create().build();
-	}
+    @Bean(name = "requestDataSource")
+    @ConfigurationProperties(prefix = "request.datasource")
+    public DataSource dataSource() {
+        return DataSourceBuilder.create().build();
+    }
 
 
-	@Bean(name = "requestEntityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean 
-	entityManagerFactory(
-			EntityManagerFactoryBuilder builder,
-			@Qualifier("requestDataSource") DataSource dataSource
-			) {
-		return builder
-				.dataSource(dataSource)
-				.packages("org.onap.so.db.request.beans")
-				.persistenceUnit("requestDB")
-				.build();
-	}
+    @Bean(name = "requestEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+            @Qualifier("requestDataSource") DataSource dataSource) {
+        return builder.dataSource(dataSource).packages("org.onap.so.db.request.beans").persistenceUnit("requestDB")
+                .build();
+    }
 
 
-	@Bean(name = "requestTransactionManager")
-	public PlatformTransactionManager transactionManager(
-			@Qualifier("requestEntityManagerFactory") EntityManagerFactory 
-			entityManagerFactory
-			) {
-		return new JpaTransactionManager(entityManagerFactory);
-	}
+    @Bean(name = "requestTransactionManager")
+    public PlatformTransactionManager transactionManager(
+            @Qualifier("requestEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
 
 }

@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -30,105 +29,103 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
 @Table(name = "orchestration_status_state_transition_directive")
 public class OrchestrationStatusStateTransitionDirective implements Serializable {
-	private static final long serialVersionUID = -4626396955833442376L;
+    private static final long serialVersionUID = -4626396955833442376L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "RESOURCE_TYPE")
-	@BusinessKey
-	private ResourceType resourceType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "RESOURCE_TYPE")
+    @BusinessKey
+    private ResourceType resourceType;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "ORCHESTRATION_STATUS")
-	@BusinessKey
-	private OrchestrationStatus orchestrationStatus;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ORCHESTRATION_STATUS")
+    @BusinessKey
+    private OrchestrationStatus orchestrationStatus;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TARGET_ACTION")
-	@BusinessKey
-	private OrchestrationAction targetAction;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TARGET_ACTION")
+    @BusinessKey
+    private OrchestrationAction targetAction;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "FLOW_DIRECTIVE")
-	@BusinessKey
-	private OrchestrationStatusValidationDirective flowDirective;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "FLOW_DIRECTIVE")
+    @BusinessKey
+    private OrchestrationStatusValidationDirective flowDirective;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("resourceType", resourceType)
-				.append("orchestrationStatus", orchestrationStatus).append("targetAction", targetAction)
-				.append("flowDirective", flowDirective).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("resourceType", resourceType)
+                .append("orchestrationStatus", orchestrationStatus).append("targetAction", targetAction)
+                .append("flowDirective", flowDirective).toString();
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public ResourceType getResourceType() {
-		return resourceType;
-	}
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
 
-	public void setResourceType(ResourceType resourceType) {
-		this.resourceType = resourceType;
-	}
+    public void setResourceType(ResourceType resourceType) {
+        this.resourceType = resourceType;
+    }
 
-	public OrchestrationStatus getOrchestrationStatus() {
-		return orchestrationStatus;
-	}
+    public OrchestrationStatus getOrchestrationStatus() {
+        return orchestrationStatus;
+    }
 
-	public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
-		this.orchestrationStatus = orchestrationStatus;
-	}
+    public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
+        this.orchestrationStatus = orchestrationStatus;
+    }
 
-	public OrchestrationAction getTargetAction() {
-		return targetAction;
-	}
+    public OrchestrationAction getTargetAction() {
+        return targetAction;
+    }
 
-	public void setTargetAction(OrchestrationAction targetAction) {
-		this.targetAction = targetAction;
-	}
+    public void setTargetAction(OrchestrationAction targetAction) {
+        this.targetAction = targetAction;
+    }
 
-	public OrchestrationStatusValidationDirective getFlowDirective() {
-		return flowDirective;
-	}
+    public OrchestrationStatusValidationDirective getFlowDirective() {
+        return flowDirective;
+    }
 
-	public void setFlowDirective(OrchestrationStatusValidationDirective flowDirective) {
-		this.flowDirective = flowDirective;
-	}
+    public void setFlowDirective(OrchestrationStatusValidationDirective flowDirective) {
+        this.flowDirective = flowDirective;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof OrchestrationStatusStateTransitionDirective)) {
-			return false;
-		}
-		OrchestrationStatusStateTransitionDirective castOther = (OrchestrationStatusStateTransitionDirective) other;
-		return new EqualsBuilder().append(getResourceType(), castOther.getResourceType())
-				.append(getOrchestrationStatus(), castOther.getOrchestrationStatus())
-				.append(getTargetAction(), castOther.getTargetAction())
-				.append(getFlowDirective(), castOther.getFlowDirective()).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof OrchestrationStatusStateTransitionDirective)) {
+            return false;
+        }
+        OrchestrationStatusStateTransitionDirective castOther = (OrchestrationStatusStateTransitionDirective) other;
+        return new EqualsBuilder().append(getResourceType(), castOther.getResourceType())
+                .append(getOrchestrationStatus(), castOther.getOrchestrationStatus())
+                .append(getTargetAction(), castOther.getTargetAction())
+                .append(getFlowDirective(), castOther.getFlowDirective()).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(getResourceType()).append(getOrchestrationStatus())
-				.append(getTargetAction()).append(getFlowDirective()).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getResourceType()).append(getOrchestrationStatus())
+                .append(getTargetAction()).append(getFlowDirective()).toHashCode();
+    }
 }

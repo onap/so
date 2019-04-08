@@ -21,7 +21,6 @@
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,46 +30,54 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @JsonRootName(value = "relatedInstance")
 @JsonInclude(Include.NON_DEFAULT)
 public class RelatedInstance implements Serializable {
-	
-	private static final long serialVersionUID = 137250604008221644L;
-	@JsonProperty("instanceName")
-	protected String instanceName;
-	@JsonProperty("instanceId")
-	protected String instanceId;
-	@JsonProperty("modelInfo")
-	protected ModelInfo modelInfo;
-	//Configuration field
-	@JsonProperty("instanceDirection")
-	protected InstanceDirection instanceDirection;
-	
-	
-	public String getInstanceName() {
-		return instanceName;
-	}
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-	public String getInstanceId() {
-		return instanceId;
-	}
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-	public ModelInfo getModelInfo() {
-		return modelInfo;
-	}
-	public void setModelInfo(ModelInfo modelInfo) {
-		this.modelInfo = modelInfo;
-	}
-	public InstanceDirection getInstanceDirection() {
-		return instanceDirection;
-	}
-	public void setInstanceDirection(InstanceDirection instanceDirection) {
-		this.instanceDirection = instanceDirection;
-	}
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("instanceName", instanceName).append("instanceId", instanceId)
-				.append("modelInfo", modelInfo).append("instanceDirection", instanceDirection).toString();
-	}
+
+    private static final long serialVersionUID = 137250604008221644L;
+    @JsonProperty("instanceName")
+    protected String instanceName;
+    @JsonProperty("instanceId")
+    protected String instanceId;
+    @JsonProperty("modelInfo")
+    protected ModelInfo modelInfo;
+    // Configuration field
+    @JsonProperty("instanceDirection")
+    protected InstanceDirection instanceDirection;
+
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
+
+    public String getInstanceId() {
+        return instanceId;
+    }
+
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
+
+    public ModelInfo getModelInfo() {
+        return modelInfo;
+    }
+
+    public void setModelInfo(ModelInfo modelInfo) {
+        this.modelInfo = modelInfo;
+    }
+
+    public InstanceDirection getInstanceDirection() {
+        return instanceDirection;
+    }
+
+    public void setInstanceDirection(InstanceDirection instanceDirection) {
+        this.instanceDirection = instanceDirection;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("instanceName", instanceName).append("instanceId", instanceId)
+                .append("modelInfo", modelInfo).append("instanceDirection", instanceDirection).toString();
+    }
 }

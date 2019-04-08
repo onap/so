@@ -1,17 +1,14 @@
 /*
  * Copyright (C) 2018 Bell Canada. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package org.onap.so.heatbridge;
 
@@ -23,8 +20,8 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.heat.Resource;
 
 /**
- * Defines the contract to extract Heat Stack Resources from Openstack and inventory it to AAI.
- * This API is used only to "create" objects in AAI.
+ * Defines the contract to extract Heat Stack Resources from Openstack and inventory it to AAI. This API is used only to
+ * "create" objects in AAI.
  */
 public interface HeatBridgeApi {
 
@@ -54,8 +51,9 @@ public interface HeatBridgeApi {
     List<String> extractStackResourceIdsByResourceType(List<Resource> stackResources, String resourceType);
 
     /**
-     * Get network IDs for a given list of network names.
-     * It is assumed that there is a one to one mapping between the name and ID.
+     * Get network IDs for a given list of network names. It is assumed that there is a one to one mapping between the
+     * name and ID.
+     * 
      * @param networkNameList List of network names
      * @return List of matching network IDs
      */

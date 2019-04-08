@@ -22,33 +22,27 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 public enum WorkflowType {
 
-	SERVICE("Service"),
-	VNF("Vnf"),
-	VFMODULE("VfModule"),
-	VOLUMEGROUP("VolumeGroup"),
-	NETWORK("Network"),
-	VIRTUAL_LINK("VirtualLink"),
-	NETWORKCOLLECTION("NetworkCollection"),
-	CONFIGURATION("Configuration"),
-	INSTANCE_GROUP("InstanceGroup");
-	
-	private final String type;
-	
-	private WorkflowType (String type){
-		this.type = type;
-	}
-	
-	@Override
-	public String toString() {
-		return this.type;
-	}
-	
-	public static WorkflowType fromString (String text){
-		for (WorkflowType x : WorkflowType.values()) {
-			if (x.type.equalsIgnoreCase(text)) {
-		        return x;
-			}
-		}
-		return null;
-	}
+    SERVICE("Service"), VNF("Vnf"), VFMODULE("VfModule"), VOLUMEGROUP("VolumeGroup"), NETWORK("Network"), VIRTUAL_LINK(
+            "VirtualLink"), NETWORKCOLLECTION(
+                    "NetworkCollection"), CONFIGURATION("Configuration"), INSTANCE_GROUP("InstanceGroup");
+
+    private final String type;
+
+    private WorkflowType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return this.type;
+    }
+
+    public static WorkflowType fromString(String text) {
+        for (WorkflowType x : WorkflowType.values()) {
+            if (x.type.equalsIgnoreCase(text)) {
+                return x;
+            }
+        }
+        return null;
+    }
 }

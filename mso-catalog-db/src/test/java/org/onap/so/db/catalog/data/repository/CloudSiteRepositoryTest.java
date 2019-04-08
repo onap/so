@@ -27,28 +27,27 @@ import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-
 import java.util.List;
 
 public class CloudSiteRepositoryTest extends BaseTest {
-    
+
     @Autowired
     private CloudSiteRepository cloudSiteRepository;
-    
+
     @Test
     public void findByClliAndAicVersionTest() throws Exception {
-        CloudSite cloudSite = cloudSiteRepository.findByClliAndCloudVersion("MDT13","2.5");
+        CloudSite cloudSite = cloudSiteRepository.findByClliAndCloudVersion("MDT13", "2.5");
         Assert.assertNotNull(cloudSite);
-        Assert.assertEquals("mtn13",cloudSite.getId());
+        Assert.assertEquals("mtn13", cloudSite.getId());
     }
 
     @Test
     public void findOneTest() throws Exception {
-        CloudSite cloudSite = cloudSiteRepository.findById("mtn13").
-        		orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
-        
+        CloudSite cloudSite = cloudSiteRepository.findById("mtn13")
+                .orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+
         Assert.assertNotNull(cloudSite);
-        Assert.assertEquals("mtn13",cloudSite.getId());
+        Assert.assertEquals("mtn13", cloudSite.getId());
     }
 
     @Test

@@ -22,7 +22,6 @@ package org.onap.so.db.request.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -41,100 +40,100 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class WatchdogComponentDistributionStatus implements Serializable {
 
 
-	/**
-	 * Serialization id.
-	 */
-	private static final long serialVersionUID = -4344508954204488669L;
-	@Id
-	@Column(name = "DISTRIBUTION_ID", length=45)
-	private String distributionId;
-	@Id
-	@Column(name = "COMPONENT_NAME", length=45)
-	private String componentName;
-	@Column(name = "COMPONENT_DISTRIBUTION_STATUS", length=45)
-	private String componentDistributionStatus;
-	@Column(name = "CREATE_TIME", updatable=false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createTime;
-	@Column(name = "MODIFY_TIME")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date modifyTime;
-	
-	public WatchdogComponentDistributionStatus() {
-		
-	}
-	
-	public WatchdogComponentDistributionStatus(String distributionId, String componentName) {
-		this.distributionId = distributionId;
-		this.componentName = componentName;
-	}
+    /**
+     * Serialization id.
+     */
+    private static final long serialVersionUID = -4344508954204488669L;
+    @Id
+    @Column(name = "DISTRIBUTION_ID", length = 45)
+    private String distributionId;
+    @Id
+    @Column(name = "COMPONENT_NAME", length = 45)
+    private String componentName;
+    @Column(name = "COMPONENT_DISTRIBUTION_STATUS", length = 45)
+    private String componentDistributionStatus;
+    @Column(name = "CREATE_TIME", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createTime;
+    @Column(name = "MODIFY_TIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date modifyTime;
 
-	public String getDistributionId() {
-		return distributionId;
-	}
-	
-	public void setDistributionId(String distributionId) {
-		this.distributionId = distributionId;
-	}
-	
-	public String getComponentName() {
-		return componentName;
-	}
+    public WatchdogComponentDistributionStatus() {
 
-	public void setComponentName(String componentName) {
-		this.componentName = componentName;
-	}
+    }
 
-	public String getComponentDistributionStatus() {
-		return componentDistributionStatus;
-	}
+    public WatchdogComponentDistributionStatus(String distributionId, String componentName) {
+        this.distributionId = distributionId;
+        this.componentName = componentName;
+    }
 
-	public void setComponentDistributionStatus(String componentDistributionStatus) {
-		this.componentDistributionStatus = componentDistributionStatus;
-	}
-	
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public String getDistributionId() {
+        return distributionId;
+    }
 
-	public Date getModifyTime() {
-		return modifyTime;
-	}
-	
-	@PrePersist
-	protected void onCreate() {
-		this.createTime = this.modifyTime = new Date();
-	}
+    public void setDistributionId(String distributionId) {
+        this.distributionId = distributionId;
+    }
 
-	@PreUpdate
-	protected void onUpdate() {
-		this.modifyTime = new Date();
-	}
+    public String getComponentName() {
+        return componentName;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (this == other) {
-			return true;
-		}
-		if (!(other instanceof WatchdogComponentDistributionStatus)) {
-			return false;
-		}
-		WatchdogComponentDistributionStatus castOther = (WatchdogComponentDistributionStatus) other;
-		return Objects.equals(getDistributionId(), castOther.getDistributionId())
-				&& Objects.equals(getComponentName(), castOther.getComponentName());
-	}
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(getDistributionId(), getComponentName());
-	}
+    public String getComponentDistributionStatus() {
+        return componentDistributionStatus;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("distributionId", getDistributionId())
-				.append("componentName", getComponentName())
-				.append("componentDistributionStatus", getComponentDistributionStatus())
-				.append("createTime", getCreateTime()).append("modifyTime", getModifyTime()).toString();
-	}
+    public void setComponentDistributionStatus(String componentDistributionStatus) {
+        this.componentDistributionStatus = componentDistributionStatus;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public Date getModifyTime() {
+        return modifyTime;
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        this.createTime = this.modifyTime = new Date();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.modifyTime = new Date();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof WatchdogComponentDistributionStatus)) {
+            return false;
+        }
+        WatchdogComponentDistributionStatus castOther = (WatchdogComponentDistributionStatus) other;
+        return Objects.equals(getDistributionId(), castOther.getDistributionId())
+                && Objects.equals(getComponentName(), castOther.getComponentName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getDistributionId(), getComponentName());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("distributionId", getDistributionId())
+                .append("componentName", getComponentName())
+                .append("componentDistributionStatus", getComponentDistributionStatus())
+                .append("createTime", getCreateTime()).append("modifyTime", getModifyTime()).toString();
+    }
 
 }

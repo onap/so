@@ -23,43 +23,42 @@ package org.onap.so.adapters.nwrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("deleteNetworkResponse")
 @XmlRootElement(name = "deleteNetworkResponse")
 public class DeleteNetworkResponse extends NetworkResponseCommon {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 68336086339501537L;
-	private String networkId;
-	private Boolean networkDeleted;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 68336086339501537L;
+    private String networkId;
+    private Boolean networkDeleted;
 
-	public DeleteNetworkResponse() {
-		super();
-	}
+    public DeleteNetworkResponse() {
+        super();
+    }
 
-	public DeleteNetworkResponse(String networkId, Boolean networkDeleted, String messageId) {
-		super(messageId);
-		this.networkId = networkId;
-		this.networkDeleted = networkDeleted;
-	}
-	
-	public String getNetworkId() {
-		return networkId;
-	}
+    public DeleteNetworkResponse(String networkId, Boolean networkDeleted, String messageId) {
+        super(messageId);
+        this.networkId = networkId;
+        this.networkDeleted = networkDeleted;
+    }
 
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
-	}
+    public String getNetworkId() {
+        return networkId;
+    }
 
-	public Boolean getNetworkDeleted() {
-		return networkDeleted;
-	}
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 
-	public void setNetworkDeleted(Boolean networkDeleted) {
-		this.networkDeleted = networkDeleted;
-	}
+    public Boolean getNetworkDeleted() {
+        return networkDeleted;
+    }
+
+    public void setNetworkDeleted(Boolean networkDeleted) {
+        this.networkDeleted = networkDeleted;
+    }
 }

@@ -23,58 +23,58 @@ package org.onap.so.adapters.vnf.exceptions;
 
 
 import javax.xml.ws.WebFault;
-
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 /**
- * This class simply extends Exception (without addition additional functionality)
- * to provide an identifier for VNF related exceptions on create, delete, query.
+ * This class simply extends Exception (without addition additional functionality) to provide an identifier for VNF
+ * related exceptions on create, delete, query.
  * 
  *
  */
-@WebFault (name="VnfException", faultBean="org.onap.so.adapters.vnf.exceptions.VnfExceptionBean", targetNamespace="http://org.onap.so/vnf")
+@WebFault(name = "VnfException", faultBean = "org.onap.so.adapters.vnf.exceptions.VnfExceptionBean",
+        targetNamespace = "http://org.onap.so/vnf")
 public class VnfException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private VnfExceptionBean faultInfo;
-	
-	public VnfException (String msg) {
-		super(msg);
-		faultInfo = new VnfExceptionBean (msg);
-	}
-	
-	public VnfException (Throwable e) {
-		super(e);
-		faultInfo = new VnfExceptionBean (e.getMessage());
-	}
-	
-	public VnfException (String msg, Throwable e) {
-		super (msg, e);
-		faultInfo = new VnfExceptionBean (msg);
-	}
+    private VnfExceptionBean faultInfo;
 
-	public VnfException (String msg, MsoExceptionCategory category) {
-		super(msg);
-		faultInfo = new VnfExceptionBean (msg, category);
-	}
-	
-	public VnfException (String msg, MsoExceptionCategory category, Throwable e) {
-		super (msg, e);
-		faultInfo = new VnfExceptionBean (msg, category);
-	}
-	
-	public VnfException (MsoException e) {
-		super (e);
-		faultInfo = new VnfExceptionBean (e.getContextMessage(), e.getCategory());
-	}
-	
-	public VnfExceptionBean getFaultInfo() {
-		return faultInfo;
-	}
+    public VnfException(String msg) {
+        super(msg);
+        faultInfo = new VnfExceptionBean(msg);
+    }
 
-	public void setFaultInfo(VnfExceptionBean faultInfo) {
-		this.faultInfo = faultInfo;
-	}
+    public VnfException(Throwable e) {
+        super(e);
+        faultInfo = new VnfExceptionBean(e.getMessage());
+    }
+
+    public VnfException(String msg, Throwable e) {
+        super(msg, e);
+        faultInfo = new VnfExceptionBean(msg);
+    }
+
+    public VnfException(String msg, MsoExceptionCategory category) {
+        super(msg);
+        faultInfo = new VnfExceptionBean(msg, category);
+    }
+
+    public VnfException(String msg, MsoExceptionCategory category, Throwable e) {
+        super(msg, e);
+        faultInfo = new VnfExceptionBean(msg, category);
+    }
+
+    public VnfException(MsoException e) {
+        super(e);
+        faultInfo = new VnfExceptionBean(e.getContextMessage(), e.getCategory());
+    }
+
+    public VnfExceptionBean getFaultInfo() {
+        return faultInfo;
+    }
+
+    public void setFaultInfo(VnfExceptionBean faultInfo) {
+        this.faultInfo = faultInfo;
+    }
 }

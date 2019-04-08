@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,13 +36,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -51,87 +47,86 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 @Table(name = "workflow_activity_spec_sequence")
 public class WorkflowActivitySpecSequence implements Serializable {
 
-	private static final long serialVersionUID = -8788505759463286871L;
+    private static final long serialVersionUID = -8788505759463286871L;
 
-	@Id
-	@Column(name = "ID", nullable = false, updatable = false)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer ID;
+    @Id
+    @Column(name = "ID", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer ID;
 
-	@BusinessKey
-	@Id
-	@Column(name = "ACTIVITY_SPEC_ID")
-	private Integer activitySpecId;
+    @BusinessKey
+    @Id
+    @Column(name = "ACTIVITY_SPEC_ID")
+    private Integer activitySpecId;
 
-	@BusinessKey
-	@Id
-	@Column(name = "WORKFLOW_ID")
-	private Integer workflowId;
+    @BusinessKey
+    @Id
+    @Column(name = "WORKFLOW_ID")
+    private Integer workflowId;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ACTIVITY_SPEC_ID", updatable = false, insertable = false)
-	private ActivitySpec activitySpec;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACTIVITY_SPEC_ID", updatable = false, insertable = false)
+    private ActivitySpec activitySpec;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "WORKFLOW_ID", updatable = false, insertable = false)
-	private Workflow workflow;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "WORKFLOW_ID", updatable = false, insertable = false)
+    private Workflow workflow;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("workflowId", workflowId)
-				.append("activitySpecId", activitySpecId)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("workflowId", workflowId).append("activitySpecId", activitySpecId)
+                .toString();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof WorkflowActivitySpecSequence)) {
-			return false;
-		}
-		WorkflowActivitySpecSequence castOther = (WorkflowActivitySpecSequence) other;
-		return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
-				.append(workflowId, castOther.workflowId).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof WorkflowActivitySpecSequence)) {
+            return false;
+        }
+        WorkflowActivitySpecSequence castOther = (WorkflowActivitySpecSequence) other;
+        return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
+                .append(workflowId, castOther.workflowId).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(activitySpecId).append(workflowId).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(activitySpecId).append(workflowId).toHashCode();
+    }
 
-	public Integer getID() {
-		return ID;
-	}
+    public Integer getID() {
+        return ID;
+    }
 
-	public Integer getActivitySpecId() {
-		return activitySpecId;
-	}
+    public Integer getActivitySpecId() {
+        return activitySpecId;
+    }
 
-	public void setActivitySpecId(Integer activitySpecId) {
-		this.activitySpecId = activitySpecId;
-	}
+    public void setActivitySpecId(Integer activitySpecId) {
+        this.activitySpecId = activitySpecId;
+    }
 
-	public Integer getWorkflowId() {
-		return workflowId;
-	}
+    public Integer getWorkflowId() {
+        return workflowId;
+    }
 
-	public void setWorkflowId(Integer workflowId) {
-		this.workflowId = workflowId;
-	}
+    public void setWorkflowId(Integer workflowId) {
+        this.workflowId = workflowId;
+    }
 
-	public ActivitySpec getActivitySpec() {
-		return activitySpec;
-	}
+    public ActivitySpec getActivitySpec() {
+        return activitySpec;
+    }
 
-	public void setActivitySpec(ActivitySpec activitySpec) {
-		this.activitySpec = activitySpec;
-	}
+    public void setActivitySpec(ActivitySpec activitySpec) {
+        this.activitySpec = activitySpec;
+    }
 
-	public Workflow getWorkflow() {
-		return workflow;
-	}
+    public Workflow getWorkflow() {
+        return workflow;
+    }
 
-	public void setWorkflow(Workflow workflow) {
-		this.workflow = workflow;
-	}
-	
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
+    }
+
 }

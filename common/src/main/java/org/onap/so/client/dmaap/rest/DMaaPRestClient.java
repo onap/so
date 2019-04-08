@@ -22,32 +22,31 @@ package org.onap.so.client.dmaap.rest;
 
 import java.net.URL;
 import java.util.Map;
-
 import org.onap.so.client.RestClient;
 import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.TargetEntity;
 
 public class DMaaPRestClient extends RestClient {
 
-	private final String auth;
-	private final String key;
+    private final String auth;
+    private final String key;
 
-	public DMaaPRestClient(URL url, String contentType, String auth, String key) {
-		super(url, contentType);
-		this.auth = auth;
-		this.key = key;
-	}
+    public DMaaPRestClient(URL url, String contentType, String auth, String key) {
+        super(url, contentType);
+        this.auth = auth;
+        this.key = key;
+    }
 
-	@Override
-	public TargetEntity getTargetEntity() {
-		return TargetEntity.DMAAP;
-	}
+    @Override
+    public TargetEntity getTargetEntity() {
+        return TargetEntity.DMAAP;
+    }
 
-	@Override
-	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
-			addBasicAuthHeader(auth, key);
-		}	
-	}
+    @Override
+    protected void initializeHeaderMap(Map<String, String> headerMap) {
+        if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
+            addBasicAuthHeader(auth, key);
+        }
+    }
 
 }

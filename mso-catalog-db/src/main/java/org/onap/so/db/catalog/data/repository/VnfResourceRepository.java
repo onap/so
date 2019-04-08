@@ -27,15 +27,15 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "vnfResource", path = "vnfResource")
 public interface VnfResourceRepository extends JpaRepository<VnfResource, String> {
 
-	VnfResource findResourceByModelNameAndModelUUID(String modelName, String modelUUID);
+    VnfResource findResourceByModelNameAndModelUUID(String modelName, String modelUUID);
 
-	VnfResource findByModelName(String modelName);
+    VnfResource findByModelName(String modelName);
 
-	VnfResource findByModelNameAndModelVersion(String modelName, String modelVersion);
+    VnfResource findByModelNameAndModelVersion(String modelName, String modelVersion);
 
-	VnfResource findResourceByModelUUID(String modelUUID);
+    VnfResource findResourceByModelUUID(String modelUUID);
 
-	VnfResource findResourceByModelInvariantUUID(String modelInvariantUUID);
+    VnfResource findResourceByModelInvariantUUID(String modelInvariantUUID);
 
-	VnfResource findFirstResourceByModelInvariantUUIDAndModelVersion(String modelInvariantUUID, String modelVersion);
+    VnfResource findFirstResourceByModelInvariantUUIDAndModelVersion(String modelInvariantUUID, String modelVersion);
 }

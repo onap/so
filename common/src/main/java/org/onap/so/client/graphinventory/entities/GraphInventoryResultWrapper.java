@@ -27,97 +27,99 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.jsonpath.JsonPathUtil;
 import org.slf4j.Logger;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public abstract class GraphInventoryResultWrapper<R extends GraphInventoryRelationships<?, ?, ?>> implements Serializable {
+public abstract class GraphInventoryResultWrapper<R extends GraphInventoryRelationships<?, ?, ?>>
+        implements Serializable {
 
-	private static final long serialVersionUID = 5895841925807816727L;
-	protected final String jsonBody;
-	protected final ObjectMapper mapper;
-	private final transient Logger logger;
-	
-	protected GraphInventoryResultWrapper(String json, Logger logger) {
-		this.jsonBody = json;
-		this.mapper = new GraphInventoryCommonObjectMapperProvider().getMapper();
-		this.logger = logger;
-	}
-	
-	protected GraphInventoryResultWrapper(Object aaiObject, Logger logger) {
-		this.mapper = new GraphInventoryCommonObjectMapperProvider().getMapper();
-		this.jsonBody = mapObjectToString(aaiObject);
-		this.logger = logger;
-	}
-	
-	protected String mapObjectToString(Object aaiObject) {
-		try {
-			return mapper.writeValueAsString(aaiObject);
-		} catch (JsonProcessingException e) {
-			logger.warn("could not parse object into json - defaulting to empty object");
-			return "{}";
-		}
-	}
-	public Optional<R> getRelationships() {
-		final String path = "$.relationship-list";
-		if (isEmpty()) {
-			return Optional.empty();
-		}
-		Optional<String> result = JsonPathUtil.getInstance().locateResult(jsonBody, path);
-		if (result.isPresent()) {
-			return Optional.of(createRelationships(result.get()));
-		} else {
-			return Optional.empty();
-		}
-	}
-	protected abstract R createRelationships(String json);
-	
-	public String getJson() {
-		if(jsonBody == null) {
-			return "{}";
-		} else {
-			return jsonBody;
-		}
-	}
-	
-	public Map<String, Object> asMap() {
-		
-		return asBean(new TypeReference<Map<String, Object>>(){}).orElse(new HashMap<>());
-	}
-	
-	public <T> Optional<T> asBean(Class<T> clazz) {
-		if (isEmpty()) {
-			return Optional.empty();
-		}
-		try {
-			return Optional.of(mapper.readValue(this.jsonBody, clazz));
-		} catch (IOException e) {
-			return Optional.empty();
-		}
-	}
-	
-	public <T> Optional<T> asBean(TypeReference<T> reference) {
-		if (isEmpty()) {
-			return Optional.empty();
-		}
-		try {
-			return Optional.of(mapper.readValue(this.jsonBody, reference));
-		} catch (IOException e) {
-			return Optional.empty();
-		}
-	}
-	
-	public boolean isEmpty() {
-		return jsonBody == null;
-	}
-	@Override
-	public String toString() {
-		return this.getJson();
-	}
+    private static final long serialVersionUID = 5895841925807816727L;
+    protected final String jsonBody;
+    protected final ObjectMapper mapper;
+    private final transient Logger logger;
+
+    protected GraphInventoryResultWrapper(String json, Logger logger) {
+        this.jsonBody = json;
+        this.mapper = new GraphInventoryCommonObjectMapperProvider().getMapper();
+        this.logger = logger;
+    }
+
+    protected GraphInventoryResultWrapper(Object aaiObject, Logger logger) {
+        this.mapper = new GraphInventoryCommonObjectMapperProvider().getMapper();
+        this.jsonBody = mapObjectToString(aaiObject);
+        this.logger = logger;
+    }
+
+    protected String mapObjectToString(Object aaiObject) {
+        try {
+            return mapper.writeValueAsString(aaiObject);
+        } catch (JsonProcessingException e) {
+            logger.warn("could not parse object into json - defaulting to empty object");
+            return "{}";
+        }
+    }
+
+    public Optional<R> getRelationships() {
+        final String path = "$.relationship-list";
+        if (isEmpty()) {
+            return Optional.empty();
+        }
+        Optional<String> result = JsonPathUtil.getInstance().locateResult(jsonBody, path);
+        if (result.isPresent()) {
+            return Optional.of(createRelationships(result.get()));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    protected abstract R createRelationships(String json);
+
+    public String getJson() {
+        if (jsonBody == null) {
+            return "{}";
+        } else {
+            return jsonBody;
+        }
+    }
+
+    public Map<String, Object> asMap() {
+
+        return asBean(new TypeReference<Map<String, Object>>() {}).orElse(new HashMap<>());
+    }
+
+    public <T> Optional<T> asBean(Class<T> clazz) {
+        if (isEmpty()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(mapper.readValue(this.jsonBody, clazz));
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    public <T> Optional<T> asBean(TypeReference<T> reference) {
+        if (isEmpty()) {
+            return Optional.empty();
+        }
+        try {
+            return Optional.of(mapper.readValue(this.jsonBody, reference));
+        } catch (IOException e) {
+            return Optional.empty();
+        }
+    }
+
+    public boolean isEmpty() {
+        return jsonBody == null;
+    }
+
+    @Override
+    public String toString() {
+        return this.getJson();
+    }
 
 }

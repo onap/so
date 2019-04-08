@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -42,14 +41,11 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -57,13 +53,13 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 public class VnfResourceCustomization implements Serializable {
 
     private static final long serialVersionUID = 768026109321305392L;
-    
+
     @Id
     @BusinessKey
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    
+
     @Column(name = "MODEL_CUSTOMIZATION_UUID")
     private String modelCustomizationUUID;
 
@@ -105,17 +101,17 @@ public class VnfResourceCustomization implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "VNF_RESOURCE_MODEL_UUID")
     private VnfResource vnfResources;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "SERVICE_MODEL_UUID")
     private Service service;
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER, mappedBy = "vnfCustomization")
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "vnfCustomization")
     private List<VfModuleCustomization> vfModuleCustomizations;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "vnfResourceCust")
     private List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations = new ArrayList<>();
-    
+
     @Column(name = "CDS_BLUEPRINT_NAME")
     private String blueprintName;
 
@@ -175,7 +171,7 @@ public class VnfResourceCustomization implements Serializable {
     public void setId(Integer id) {
         this.id = id;
     }
-    
+
     @LinkedResource
     public Service getService() {
         return service;
@@ -295,7 +291,7 @@ public class VnfResourceCustomization implements Serializable {
             List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations) {
         this.vnfcInstanceGroupCustomizations = vnfcInstanceGroupCustomizations;
     }
-    
+
     public String getResourceInput() {
         return resourceInput;
     }

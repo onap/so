@@ -26,7 +26,6 @@ import org.onap.so.adapters.vnfrest.RollbackVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.UpdateVolumeGroupRequest;
 import org.onap.so.adapters.vnfrest.VolumeGroupRollback;
 import org.onap.so.entity.MsoRequest;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,11 +112,11 @@ public class VolumeGroupAdapterCommon extends BaseRestTestUtils {
     }
 
     private Map<String, Object> getVolumeGroupParamsMap() {
-        Map<String, Object> volumeGroupParams =  new HashMap<>();
-        volumeGroupParams.put("fsb_volume_type_0","volume_type");
-        volumeGroupParams.put("fsb_volume_image_name_1","vol_img_1");
-        volumeGroupParams.put("fsb_volume_image_name_0","vol_img_0");
-        volumeGroupParams.put("fsb_volume_size_0","100");
+        Map<String, Object> volumeGroupParams = new HashMap<>();
+        volumeGroupParams.put("fsb_volume_type_0", "volume_type");
+        volumeGroupParams.put("fsb_volume_image_name_1", "vol_img_1");
+        volumeGroupParams.put("fsb_volume_image_name_0", "vol_img_0");
+        volumeGroupParams.put("fsb_volume_size_0", "100");
         return volumeGroupParams;
     }
 

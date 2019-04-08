@@ -29,12 +29,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertThat;
-
 import java.util.UUID;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.apihandler.common.ErrorNumbers;
@@ -52,90 +49,93 @@ import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-public class CreateEcompOperationalEnvironmentTest extends BaseTest{
-	
-	@Autowired
-	private CreateEcompOperationalEnvironment createEcompOpEn;
-	private final ObjectMapper mapper = new ObjectMapper();
+public class CreateEcompOperationalEnvironmentTest extends BaseTest {
 
-	public CloudOrchestrationRequest getCloudOrchestrationRequest() {
-		CloudOrchestrationRequest request = new CloudOrchestrationRequest();
-		RequestDetails reqDetails = new RequestDetails();
-		RequestInfo reqInfo = new RequestInfo();
-		RequestParameters reqParams = new RequestParameters();
-		reqParams.setTenantContext("TEST");
-		reqParams.setWorkloadContext("ECOMP_TEST");
-		reqParams.setOperationalEnvironmentType(OperationalEnvironment.ECOMP);
-		reqInfo.setInstanceName("TEST_ECOMP_ENVIRONMENT");
-		reqDetails.setRequestInfo(reqInfo);
-		reqDetails.setRequestParameters(reqParams);
-		request.setRequestDetails(reqDetails);
-		request.setOperationalEnvironmentId("operationalEnvId");
-		
-		return request;
-	}
-	
-	@Test
-	public void testProcess() throws ApiException, JsonProcessingException {
-		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		wireMockServer.stubFor(post(urlPathMatching("/events/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId("123");
-		iar.setOperationalEnvName("myOpEnv");
-		iar.setRequestScope("create");
-		iar.setRequestStatus("PENDING");
-		iar.setRequestAction("UNKNOWN");
-		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/123"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(iar))
-						.withStatus(HttpStatus.SC_OK)));
-		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
-				.withRequestBody(containing("{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"rollbackStatusMessage\":null,\"flowStatus\":null,\"retryStatusMessage\":null,\"progress\":100"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withStatus(HttpStatus.SC_OK)));
-		
-		createEcompOpEn.execute("123", getCloudOrchestrationRequest());
-	}
-	
-	@Test
-	public void testProcessException() throws JsonProcessingException {
-		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		wireMockServer.stubFor(post(urlPathMatching("/events/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
-        ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
-        ValidateException expectedException = new ValidateException.Builder("Could not publish DMaap", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER)
-                .errorInfo(errorLoggerInfo).build();
-        
+    @Autowired
+    private CreateEcompOperationalEnvironment createEcompOpEn;
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    public CloudOrchestrationRequest getCloudOrchestrationRequest() {
+        CloudOrchestrationRequest request = new CloudOrchestrationRequest();
+        RequestDetails reqDetails = new RequestDetails();
+        RequestInfo reqInfo = new RequestInfo();
+        RequestParameters reqParams = new RequestParameters();
+        reqParams.setTenantContext("TEST");
+        reqParams.setWorkloadContext("ECOMP_TEST");
+        reqParams.setOperationalEnvironmentType(OperationalEnvironment.ECOMP);
+        reqInfo.setInstanceName("TEST_ECOMP_ENVIRONMENT");
+        reqDetails.setRequestInfo(reqInfo);
+        reqDetails.setRequestParameters(reqParams);
+        request.setRequestDetails(reqDetails);
+        request.setOperationalEnvironmentId("operationalEnvId");
+
+        return request;
+    }
+
+    @Test
+    public void testProcess() throws ApiException, JsonProcessingException {
+        wireMockServer.stubFor(
+                put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withStatus(HttpStatus.SC_ACCEPTED)));
+        wireMockServer.stubFor(post(urlPathMatching("/events/.*")).willReturn(
+                aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
+
+        InfraActiveRequests iar = new InfraActiveRequests();
+        iar.setRequestId("123");
+        iar.setOperationalEnvName("myOpEnv");
+        iar.setRequestScope("create");
+        iar.setRequestStatus("PENDING");
+        iar.setRequestAction("UNKNOWN");
+        wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/123"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/")).withRequestBody(containing(
+                "{\"requestId\":\"123\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL, operationalEnvironmentId - operationalEnvId; Success Message: SUCCESSFULLY Created ECOMP OperationalEnvironment.\",\"rollbackStatusMessage\":null,\"flowStatus\":null,\"retryStatusMessage\":null,\"progress\":100"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
+
+        createEcompOpEn.execute("123", getCloudOrchestrationRequest());
+    }
+
+    @Test
+    public void testProcessException() throws JsonProcessingException {
+        wireMockServer.stubFor(
+                put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withStatus(HttpStatus.SC_ACCEPTED)));
+        wireMockServer.stubFor(post(urlPathMatching("/events/.*")).willReturn(
+                aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_NOT_FOUND)));
+        ErrorLoggerInfo errorLoggerInfo =
+                new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
+        ValidateException expectedException = new ValidateException.Builder("Could not publish DMaap",
+                HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).errorInfo(errorLoggerInfo).build();
+
         InfraActiveRequests iar = new InfraActiveRequests();
         String uuid = UUID.randomUUID().toString();
-		iar.setRequestId(uuid);
-		iar.setOperationalEnvName("myOpEnv");
-		iar.setRequestScope("create");
-		iar.setRequestStatus("PENDING");
-		iar.setRequestAction("UNKNOWN");
-		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+uuid))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(iar))
-						.withStatus(HttpStatus.SC_OK)));
-		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
-				.withRequestBody(containing("{\"requestId\":\""+uuid+ "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message:"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withStatus(HttpStatus.SC_OK)));
+        iar.setRequestId(uuid);
+        iar.setOperationalEnvName("myOpEnv");
+        iar.setRequestScope("create");
+        iar.setRequestStatus("PENDING");
+        iar.setRequestAction("UNKNOWN");
+        wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + uuid))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+                .withRequestBody(containing("{\"requestId\":\"" + uuid
+                        + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE, operationalEnvironmentId - operationalEnvId; Error message:"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
 
-		try {
+        try {
             createEcompOpEn.execute(uuid, getCloudOrchestrationRequest());
-        }catch(ApiException e){
+        } catch (ApiException e) {
             assertThat(e, sameBeanAs((ApiException) expectedException).ignoring("cause"));
         }
-	}
+    }
 
 }

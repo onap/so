@@ -36,8 +36,7 @@ public class HeaderUtil {
     private static String base64Encode(String str) {
         String base64 = str;
         try {
-            base64 = Base64.getEncoder()
-                .encodeToString(str.getBytes("utf-8"));
+            base64 = Base64.getEncoder().encodeToString(str.getBytes("utf-8"));
         } catch (Exception ex) {
         }
         return base64;

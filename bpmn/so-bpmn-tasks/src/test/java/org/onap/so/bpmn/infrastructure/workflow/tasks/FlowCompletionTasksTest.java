@@ -26,7 +26,6 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -37,33 +36,33 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class FlowCompletionTasksTest extends BaseTaskTest {
 
-	@InjectMocks
-	protected FlowCompletionTasks flowCompletionTasks = new FlowCompletionTasks();	
+    @InjectMocks
+    protected FlowCompletionTasks flowCompletionTasks = new FlowCompletionTasks();
 
-	@Before
-	public void before() {
-		setRequestContext();
-	}
-	
-	@Test
-	public void updateRequestDbStatusComplete_Test() throws Exception{
-		InfraActiveRequests mockedRequest = new InfraActiveRequests();
-		when(requestsDbClient.getInfraActiveRequestbyRequestId(any(String.class))).thenReturn(mockedRequest);
-		doNothing().when(requestsDbClient).updateInfraActiveRequests(any(InfraActiveRequests.class));
-		flowCompletionTasks.updateRequestDbStatus(execution);		
-		verify(requestsDbClient, times(1)).updateInfraActiveRequests(any(InfraActiveRequests.class));
-		assertEquals(mockedRequest.getRequestStatus(), "COMPLETE");
-	}
-	
-	@Test
-	public void updateRequestDbStatusFailed_Test() throws Exception{
-		WorkflowException workflowException = new WorkflowException("testProcessKey", 7000, "Error");
-		execution.setVariable("WorkflowException", workflowException);
-		InfraActiveRequests mockedRequest = new InfraActiveRequests();
-		when(requestsDbClient.getInfraActiveRequestbyRequestId(any(String.class))).thenReturn(mockedRequest);
-		doNothing().when(requestsDbClient).updateInfraActiveRequests(any(InfraActiveRequests.class));
-		flowCompletionTasks.updateRequestDbStatus(execution);		
-		verify(requestsDbClient, times(1)).updateInfraActiveRequests(any(InfraActiveRequests.class));
-		assertEquals(mockedRequest.getRequestStatus(), "FAILED");
-	}
+    @Before
+    public void before() {
+        setRequestContext();
+    }
+
+    @Test
+    public void updateRequestDbStatusComplete_Test() throws Exception {
+        InfraActiveRequests mockedRequest = new InfraActiveRequests();
+        when(requestsDbClient.getInfraActiveRequestbyRequestId(any(String.class))).thenReturn(mockedRequest);
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(any(InfraActiveRequests.class));
+        flowCompletionTasks.updateRequestDbStatus(execution);
+        verify(requestsDbClient, times(1)).updateInfraActiveRequests(any(InfraActiveRequests.class));
+        assertEquals(mockedRequest.getRequestStatus(), "COMPLETE");
+    }
+
+    @Test
+    public void updateRequestDbStatusFailed_Test() throws Exception {
+        WorkflowException workflowException = new WorkflowException("testProcessKey", 7000, "Error");
+        execution.setVariable("WorkflowException", workflowException);
+        InfraActiveRequests mockedRequest = new InfraActiveRequests();
+        when(requestsDbClient.getInfraActiveRequestbyRequestId(any(String.class))).thenReturn(mockedRequest);
+        doNothing().when(requestsDbClient).updateInfraActiveRequests(any(InfraActiveRequests.class));
+        flowCompletionTasks.updateRequestDbStatus(execution);
+        verify(requestsDbClient, times(1)).updateInfraActiveRequests(any(InfraActiveRequests.class));
+        assertEquals(mockedRequest.getRequestStatus(), "FAILED");
+    }
 }

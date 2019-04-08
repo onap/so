@@ -25,20 +25,21 @@ import org.onap.so.openstack.beans.HostRoute;
 
 public class ContrailSubnetHostRouteMapper {
 
-	private final HostRoute hostRoute;
-	public ContrailSubnetHostRouteMapper(HostRoute hostRoute) {
-		this.hostRoute = hostRoute;
-	}
-	
-	public ContrailSubnetHostRoute map() {
-		
-		final ContrailSubnetHostRoute contrailSubnetHostRoute = new ContrailSubnetHostRoute();
-		
-		if (hostRoute != null) {
-			contrailSubnetHostRoute.setNextHop(hostRoute.getNextHop());
-			contrailSubnetHostRoute.setPrefix(hostRoute.getPrefix());
-		}
-		return contrailSubnetHostRoute;
-	}
-	
+    private final HostRoute hostRoute;
+
+    public ContrailSubnetHostRouteMapper(HostRoute hostRoute) {
+        this.hostRoute = hostRoute;
+    }
+
+    public ContrailSubnetHostRoute map() {
+
+        final ContrailSubnetHostRoute contrailSubnetHostRoute = new ContrailSubnetHostRoute();
+
+        if (hostRoute != null) {
+            contrailSubnetHostRoute.setNextHop(hostRoute.getNextHop());
+            contrailSubnetHostRoute.setPrefix(hostRoute.getPrefix());
+        }
+        return contrailSubnetHostRoute;
+    }
+
 }

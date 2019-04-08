@@ -21,6 +21,5 @@
 package org.onap.so.apihandlerinfra;
 
 public enum MsoException {
-	ServiceException,
-	PolicyException,
+    ServiceException, PolicyException,
 }

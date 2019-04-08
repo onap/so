@@ -1,4 +1,5 @@
 package org.onap.so.apihandlerinfra;
+
 /*-
  * ============LICENSE_START=======================================================
  * ONAP - SO
@@ -20,7 +21,6 @@ package org.onap.so.apihandlerinfra;
  */
 import org.junit.Before;
 import org.junit.Test;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -33,36 +33,34 @@ import com.openpojo.validation.test.impl.SetterTester;
 
 public class BeanMultiTest {
 
-	Validator validator;
-	PojoClassFilter enumFilter;
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
+    Validator validator;
+    PojoClassFilter enumFilter;
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Before
-	public void setup(){
-		enumFilter = new FilterEnum();
-		validator = ValidatorBuilder.create()
-				.with(new SetterMustExistRule(),
-						new GetterMustExistRule())
-				.with(new SetterTester(),
-						new GetterTester())
-				.build();
-	}
-	@Test
-	public void validateBeansMsoApihandlerBeans() {
-		test("org.onap.so.apihandlerinfra.e2eserviceinstancebeans");		
-		test("org.onap.so.apihandlerinfra.tasksbeans");
-		test("org.onap.so.apihandlerinfra.vnfbeans");
-		test("org.onap.so.apihandlerinfra.tenantisolationbeans");
-		test("org.onap.so.apihandlerinfra.workflowspecificationbeans");
-	}
+    @Before
+    public void setup() {
+        enumFilter = new FilterEnum();
+        validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
+                .with(new SetterTester(), new GetterTester()).build();
+    }
 
-	private void test(String packageName) {
-		validator.validate(packageName, enumFilter, filterTestClasses);
+    @Test
+    public void validateBeansMsoApihandlerBeans() {
+        test("org.onap.so.apihandlerinfra.e2eserviceinstancebeans");
+        test("org.onap.so.apihandlerinfra.tasksbeans");
+        test("org.onap.so.apihandlerinfra.vnfbeans");
+        test("org.onap.so.apihandlerinfra.tenantisolationbeans");
+        test("org.onap.so.apihandlerinfra.workflowspecificationbeans");
+    }
 
-	}
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
+    private void test(String packageName) {
+        validator.validate(packageName, enumFilter, filterTestClasses);
+
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
 }

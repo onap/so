@@ -37,37 +37,39 @@ import org.springframework.stereotype.Component;
 @Component
 public final class ASDCStatusCallBack implements IStatusCallback {
 
-	@Autowired
-	private ToscaResourceInstaller toscaInstaller;
+    @Autowired
+    private ToscaResourceInstaller toscaInstaller;
 
-	protected static final Logger logger = LoggerFactory.getLogger(ASDCStatusCallBack.class);
-	
-	@Autowired
-	private WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
+    protected static final Logger logger = LoggerFactory.getLogger(ASDCStatusCallBack.class);
 
-	@Override
-	public void activateCallback (IStatusData iStatus) {
-		String event = "Receive a callback componentStatus in ASDC, for componentName: " + iStatus.getComponentName() + " and status of " + iStatus.getStatus() + " distributionID of " + iStatus.getDistributionID();
+    @Autowired
+    private WatchdogDistributionStatusRepository watchdogDistributionStatusRepository;
 
-		try{
+    @Override
+    public void activateCallback(IStatusData iStatus) {
+        String event = "Receive a callback componentStatus in ASDC, for componentName: " + iStatus.getComponentName()
+                + " and status of " + iStatus.getStatus() + " distributionID of " + iStatus.getDistributionID();
 
-		  if(iStatus.getStatus() != null){	
-			if(iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_OK) || iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_ERROR)) {
-				WatchdogDistributionStatus watchdogDistributionStatus = watchdogDistributionStatusRepository.findById(iStatus.getDistributionID ())
-				        .orElseGet( () -> null);
-				if(watchdogDistributionStatus==null){
-					watchdogDistributionStatus = new WatchdogDistributionStatus();
-					watchdogDistributionStatus.setDistributionId(iStatus.getDistributionID ());
-					watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
-				}
-				logger.debug(event);
-				toscaInstaller.installTheComponentStatus(iStatus);
-				
-			}
-		  }
-		}catch(ArtifactInstallerException e){
-			logger.error("Error in ASDCStatusCallback {}", e.getMessage(), e);
-			logger.debug("Error in ASDCStatusCallback {}", e.getMessage());
-		}         
-	}
+        try {
+
+            if (iStatus.getStatus() != null) {
+                if (iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_OK)
+                        || iStatus.getStatus().equals(DistributionStatusEnum.COMPONENT_DONE_ERROR)) {
+                    WatchdogDistributionStatus watchdogDistributionStatus = watchdogDistributionStatusRepository
+                            .findById(iStatus.getDistributionID()).orElseGet(() -> null);
+                    if (watchdogDistributionStatus == null) {
+                        watchdogDistributionStatus = new WatchdogDistributionStatus();
+                        watchdogDistributionStatus.setDistributionId(iStatus.getDistributionID());
+                        watchdogDistributionStatusRepository.save(watchdogDistributionStatus);
+                    }
+                    logger.debug(event);
+                    toscaInstaller.installTheComponentStatus(iStatus);
+
+                }
+            }
+        } catch (ArtifactInstallerException e) {
+            logger.error("Error in ASDCStatusCallback {}", e.getMessage(), e);
+            logger.debug("Error in ASDCStatusCallback {}", e.getMessage());
+        }
+    }
 }

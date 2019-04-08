@@ -23,7 +23,6 @@ package org.onap.so.adapters.sdnc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
@@ -32,26 +31,26 @@ import org.onap.so.adapters.sdnc.RequestHeader;
 
 public class SDNCAdapterRequestTest {
 
-	static Object sd= new SDNCAdapterRequest();
-	static RequestHeader rh=new RequestHeader();
-	
-	@BeforeClass
-	public static final void RHeader()
-	{
-		rh.setCallbackUrl("callback");
-		rh.setMsoAction ("action");
-		rh.setRequestId ("reqid");
-		rh.setSvcAction ("svcAction");
-		rh.setSvcInstanceId ("svcId");
-		rh.setSvcOperation ("op");
-	}
-	@Test
-	public final void testtoString(){
-		((SDNCAdapterRequest) sd).setRequestData("data");
-		((SDNCAdapterRequest) sd).setRequestHeader(rh);
-        assertNotNull(((SDNCAdapterRequest) sd).getRequestData()) ;
+    static Object sd = new SDNCAdapterRequest();
+    static RequestHeader rh = new RequestHeader();
+
+    @BeforeClass
+    public static final void RHeader() {
+        rh.setCallbackUrl("callback");
+        rh.setMsoAction("action");
+        rh.setRequestId("reqid");
+        rh.setSvcAction("svcAction");
+        rh.setSvcInstanceId("svcId");
+        rh.setSvcOperation("op");
+    }
+
+    @Test
+    public final void testtoString() {
+        ((SDNCAdapterRequest) sd).setRequestData("data");
+        ((SDNCAdapterRequest) sd).setRequestHeader(rh);
+        assertNotNull(((SDNCAdapterRequest) sd).getRequestData());
         assertEquals("data", ((SDNCAdapterRequest) sd).getRequestData());
         assertEquals(rh, ((SDNCAdapterRequest) sd).getRequestHeader());
-	}
+    }
 
 }

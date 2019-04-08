@@ -27,12 +27,14 @@ import org.onap.so.exceptions.MSOException;
 import org.onap.so.logger.ErrorCode;
 
 /**
- * This class simply extends Exception (without addition additional functionality)
- * to provide an identifier for RequestsDB related exceptions on create, delete, query.
+ * This class simply extends Exception (without addition additional functionality) to provide an identifier for
+ * RequestsDB related exceptions on create, delete, query.
  * 
  *
  */
-@WebFault (name="MsoRequestsDbException", faultBean="org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbExceptionBean", targetNamespace="http://org.onap.so/requestsdb")
+@WebFault(name = "MsoRequestsDbException",
+        faultBean = "org.onap.so.adapters.requestsdb.exceptions.MsoRequestsDbExceptionBean",
+        targetNamespace = "http://org.onap.so/requestsdb")
 public class MsoRequestsDbException extends MSOException {
 
     private static final long serialVersionUID = 1L;
@@ -40,27 +42,27 @@ public class MsoRequestsDbException extends MSOException {
     private MsoRequestsDbExceptionBean faultInfo;
 
 
-    public MsoRequestsDbException (String msg) {
+    public MsoRequestsDbException(String msg) {
         super(msg);
-        faultInfo = new MsoRequestsDbExceptionBean (msg);
+        faultInfo = new MsoRequestsDbExceptionBean(msg);
     }
 
-    public MsoRequestsDbException (Throwable e) {
+    public MsoRequestsDbException(Throwable e) {
         super(e);
-        faultInfo = new MsoRequestsDbExceptionBean (e.getMessage());
+        faultInfo = new MsoRequestsDbExceptionBean(e.getMessage());
     }
 
-    public MsoRequestsDbException (String msg, Throwable e) {
-        super (msg, e);
-        faultInfo = new MsoRequestsDbExceptionBean (msg);
+    public MsoRequestsDbException(String msg, Throwable e) {
+        super(msg, e);
+        faultInfo = new MsoRequestsDbExceptionBean(msg);
     }
 
     public MsoRequestsDbException(String msg, ErrorCode errorCode) {
-        super(msg,errorCode.getValue());
+        super(msg, errorCode.getValue());
     }
 
     public MsoRequestsDbException(String msg, ErrorCode errorCode, Throwable t) {
-        super(msg,errorCode.getValue(), t);
+        super(msg, errorCode.getValue(), t);
     }
 
     public MsoRequestsDbExceptionBean getFaultInfo() {

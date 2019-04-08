@@ -26,5 +26,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "vnfcCustomization", path = "vnfcCustomization")
 public interface VnfcCustomizationRepository extends JpaRepository<VnfcCustomization, String> {
-	VnfcCustomization findOneByModelCustomizationUUID(String modelCustomizationUuid);
+    VnfcCustomization findOneByModelCustomizationUUID(String modelCustomizationUuid);
 }

@@ -23,11 +23,8 @@ package org.onap.so.db.request;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-
 import java.util.Date;
-
 import javax.transaction.Transactional;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
@@ -43,43 +40,43 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-public class OperationStatusTest {	
-	
-	@Autowired
-	private OperationStatusRepository repository;
-	
-	@Test
-	@Transactional
-	public void timeStampCreated() throws InterruptedException, NoEntityFoundException {
-		
-		final String testServiceId = "test-service-id";
-		final String testOperationId = "test-operation-id";
-		final OperationStatusId id = new OperationStatusId(testServiceId, testOperationId);
-		OperationStatus status = new OperationStatus();
-		
-		status.setServiceId(testServiceId);
-		status.setOperationId(testOperationId);
-		
-		status = repository.saveAndFlush(status);
-		
-		OperationStatus found = repository.findById(id).
-				orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
-		
-		Date operateAt = found.getOperateAt();
-		assertNotNull(operateAt);
-		assertEquals(testServiceId, found.getServiceId());
-		Date finishedAt = found.getFinishedAt();
-		status.setProgress("test-progress");
-		//timestamps only set to save on 1 second changes
-		Thread.sleep(1000);
-		repository.saveAndFlush(status);
-		
-		OperationStatus foundUpdate = repository.findById(id).
-				orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+public class OperationStatusTest {
 
-		assertEquals(operateAt.toString(), foundUpdate.getOperateAt().toString());
-		assertNotNull(foundUpdate.getFinishedAt());
-		assertNotEquals(finishedAt.toString(), foundUpdate.getFinishedAt().toString());
-		assertEquals("test-progress", foundUpdate.getProgress());
-	}
+    @Autowired
+    private OperationStatusRepository repository;
+
+    @Test
+    @Transactional
+    public void timeStampCreated() throws InterruptedException, NoEntityFoundException {
+
+        final String testServiceId = "test-service-id";
+        final String testOperationId = "test-operation-id";
+        final OperationStatusId id = new OperationStatusId(testServiceId, testOperationId);
+        OperationStatus status = new OperationStatus();
+
+        status.setServiceId(testServiceId);
+        status.setOperationId(testOperationId);
+
+        status = repository.saveAndFlush(status);
+
+        OperationStatus found =
+                repository.findById(id).orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+
+        Date operateAt = found.getOperateAt();
+        assertNotNull(operateAt);
+        assertEquals(testServiceId, found.getServiceId());
+        Date finishedAt = found.getFinishedAt();
+        status.setProgress("test-progress");
+        // timestamps only set to save on 1 second changes
+        Thread.sleep(1000);
+        repository.saveAndFlush(status);
+
+        OperationStatus foundUpdate =
+                repository.findById(id).orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+
+        assertEquals(operateAt.toString(), foundUpdate.getOperateAt().toString());
+        assertNotNull(foundUpdate.getFinishedAt());
+        assertNotEquals(finishedAt.toString(), foundUpdate.getFinishedAt().toString());
+        assertEquals("test-progress", foundUpdate.getProgress());
+    }
 }

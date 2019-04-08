@@ -22,16 +22,7 @@ package org.onap.so.serviceinstancebeans;
 
 /*
  * Enum for Model Type values returned by API Handler to BPMN
-*/
+ */
 public enum ModelType {
-	service,
-	vnf,
-	vfModule,
-	volumeGroup,
-	network,
-	configuration,
-	connectionPoint,
-	pnf,
-	networkInstanceGroup,
-	instanceGroup
+    service, vnf, vfModule, volumeGroup, network, configuration, connectionPoint, pnf, networkInstanceGroup, instanceGroup
 }

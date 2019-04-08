@@ -20,7 +20,6 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils;
 
 import org.junit.Test;
-
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 

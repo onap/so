@@ -56,9 +56,9 @@ public class VolumeAdapterRestTest extends VolumeGroupAdapterCommon {
         CreateVolumeGroupRequest request = buildCreateVfModuleRequest();
 
         HttpEntity<CreateVolumeGroupRequest> entity = new HttpEntity<>(request, headers);
-        ResponseEntity<CreateVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort("/services/rest/v1/volume-groups"), HttpMethod.POST,
-                entity, CreateVolumeGroupResponse.class);
+        ResponseEntity<CreateVolumeGroupResponse> response =
+                restTemplate.exchange(createURLWithPort("/services/rest/v1/volume-groups"), HttpMethod.POST, entity,
+                        CreateVolumeGroupResponse.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
@@ -72,43 +72,43 @@ public class VolumeAdapterRestTest extends VolumeGroupAdapterCommon {
         request.setNotificationUrl("http://localhost:8080");
 
         HttpEntity<CreateVolumeGroupRequest> entity = new HttpEntity<>(request, headers);
-        ResponseEntity<CreateVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort("/services/rest/v1/volume-groups"), HttpMethod.POST,
-                entity, CreateVolumeGroupResponse.class);
+        ResponseEntity<CreateVolumeGroupResponse> response =
+                restTemplate.exchange(createURLWithPort("/services/rest/v1/volume-groups"), HttpMethod.POST, entity,
+                        CreateVolumeGroupResponse.class);
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
-    public void testDeleteVNFVolumes() throws IOException  {
+    public void testDeleteVNFVolumes() throws IOException {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         DeleteVolumeGroupRequest request = buildDeleteVolumeGroupRequest();
         HttpEntity<DeleteVolumeGroupRequest> entity = new HttpEntity<>(request, headers);
-        ResponseEntity<DeleteVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort("/services/rest/v1/volume-groups/"+VOLUME_GROUP_ID), HttpMethod.DELETE,
-                entity, DeleteVolumeGroupResponse.class);
+        ResponseEntity<DeleteVolumeGroupResponse> response =
+                restTemplate.exchange(createURLWithPort("/services/rest/v1/volume-groups/" + VOLUME_GROUP_ID),
+                        HttpMethod.DELETE, entity, DeleteVolumeGroupResponse.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
-    public void testDeleteVNFVolumesAsync() throws IOException  {
+    public void testDeleteVNFVolumesAsync() throws IOException {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         DeleteVolumeGroupRequest request = buildDeleteVolumeGroupRequest();
         request.setNotificationUrl("http://localhost:8080");
         HttpEntity<DeleteVolumeGroupRequest> entity = new HttpEntity<>(request, headers);
-        ResponseEntity<DeleteVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort("/services/rest/v1/volume-groups/"+VOLUME_GROUP_ID), HttpMethod.DELETE,
-                entity, DeleteVolumeGroupResponse.class);
+        ResponseEntity<DeleteVolumeGroupResponse> response =
+                restTemplate.exchange(createURLWithPort("/services/rest/v1/volume-groups/" + VOLUME_GROUP_ID),
+                        HttpMethod.DELETE, entity, DeleteVolumeGroupResponse.class);
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
-    public void testRollbackVNFVolumes()  throws IOException {
+    public void testRollbackVNFVolumes() throws IOException {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         RollbackVolumeGroupRequest request = buildRollbackVolumeGroupRequest();
         HttpEntity<RollbackVolumeGroupRequest> entity = new HttpEntity<>(request, headers);
         ResponseEntity<RollbackVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort("/services/rest/v1/volume-groups/"+VOLUME_GROUP_ID+"/rollback"), HttpMethod.DELETE,
-                entity, RollbackVolumeGroupResponse.class);
+                createURLWithPort("/services/rest/v1/volume-groups/" + VOLUME_GROUP_ID + "/rollback"),
+                HttpMethod.DELETE, entity, RollbackVolumeGroupResponse.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
@@ -119,13 +119,13 @@ public class VolumeAdapterRestTest extends VolumeGroupAdapterCommon {
         request.setNotificationUrl("http://localhost:8080");
         HttpEntity<RollbackVolumeGroupRequest> entity = new HttpEntity<>(request, headers);
         ResponseEntity<RollbackVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort("/services/rest/v1/volume-groups/"+VOLUME_GROUP_ID+"/rollback"), HttpMethod.DELETE,
-                entity, RollbackVolumeGroupResponse.class);
+                createURLWithPort("/services/rest/v1/volume-groups/" + VOLUME_GROUP_ID + "/rollback"),
+                HttpMethod.DELETE, entity, RollbackVolumeGroupResponse.class);
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
-    public void testQueryVNFVolumes() throws IOException{
+    public void testQueryVNFVolumes() throws IOException {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStacksWithBody_200(wireMockServer, "UPDATE_COMPLETE");
         javax.ws.rs.core.UriBuilder builder = UriBuilder.fromPath("/services/rest/v1/volume-groups/" + VOLUME_GROUP_ID);
@@ -135,24 +135,22 @@ public class VolumeAdapterRestTest extends VolumeGroupAdapterCommon {
                 .queryParam("msoRequest.serviceInstanceId", MSO_SERVICE_INSTANCE_ID);
 
         ResponseEntity<QueryVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort(builder.build().toString()), HttpMethod.GET,
-                null,QueryVolumeGroupResponse.class);
+                createURLWithPort(builder.build().toString()), HttpMethod.GET, null, QueryVolumeGroupResponse.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
     @Test
-    public void testQueryVNFVolumesError() throws IOException{
+    public void testQueryVNFVolumesError() throws IOException {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStacksWithBody_200(wireMockServer, "UPDATE_COMPLETE");
         javax.ws.rs.core.UriBuilder builder = UriBuilder.fromPath("/services/rest/v1/volume-groups/" + VOLUME_GROUP_ID);
-        builder.queryParam("tenantId", TENANT_ID)
-                .queryParam("volumeGroupStackId", VOUME_GROUP_NAME).queryParam("skipAAI", true)
-                .queryParam("msoRequest.requestId", MSO_REQUEST_ID)
+        builder.queryParam("tenantId", TENANT_ID).queryParam("volumeGroupStackId", VOUME_GROUP_NAME)
+                .queryParam("skipAAI", true).queryParam("msoRequest.requestId", MSO_REQUEST_ID)
                 .queryParam("msoRequest.serviceInstanceId", MSO_SERVICE_INSTANCE_ID);
 
-        ResponseEntity<VolumeGroupExceptionResponse> response = restTemplate.exchange(
-                createURLWithPort(builder.build().toString()), HttpMethod.GET,
-                null,VolumeGroupExceptionResponse.class);
+        ResponseEntity<VolumeGroupExceptionResponse> response =
+                restTemplate.exchange(createURLWithPort(builder.build().toString()), HttpMethod.GET, null,
+                        VolumeGroupExceptionResponse.class);
         assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
     }
 
@@ -160,13 +158,13 @@ public class VolumeAdapterRestTest extends VolumeGroupAdapterCommon {
     public void testUpdateVNFVolumes() throws IOException {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStacksWithBody_200(wireMockServer, "CREATE_COMPLETE");
-        mockOpenStackPutStack(wireMockServer, VOUME_GROUP_NAME+"/stackId",200);
+        mockOpenStackPutStack(wireMockServer, VOUME_GROUP_NAME + "/stackId", 200);
         mockOpenStackGetStackWithBody_200(wireMockServer, "UPDATE_COMPLETE");
         UpdateVolumeGroupRequest request = buildUpdateVolumeGroupRequest();
         HttpEntity<UpdateVolumeGroupRequest> entity = new HttpEntity<>(request, headers);
-        ResponseEntity<UpdateVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort("/services/rest/v1/volume-groups/"+VOLUME_GROUP_ID), HttpMethod.PUT,
-                entity,UpdateVolumeGroupResponse.class);
+        ResponseEntity<UpdateVolumeGroupResponse> response =
+                restTemplate.exchange(createURLWithPort("/services/rest/v1/volume-groups/" + VOLUME_GROUP_ID),
+                        HttpMethod.PUT, entity, UpdateVolumeGroupResponse.class);
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
     }
 
@@ -174,14 +172,14 @@ public class VolumeAdapterRestTest extends VolumeGroupAdapterCommon {
     public void testUpdateVNFVolumesAsync() throws IOException {
         mockOpenStackResponseAccess(wireMockServer, wireMockPort);
         mockOpenStackGetStacksWithBody_200(wireMockServer, "CREATE_COMPLETE");
-        mockOpenStackPutStack(wireMockServer, VOUME_GROUP_NAME+"/stackId",200);
+        mockOpenStackPutStack(wireMockServer, VOUME_GROUP_NAME + "/stackId", 200);
         mockOpenStackGetStackWithBody_200(wireMockServer, "UPDATE_COMPLETE");
         UpdateVolumeGroupRequest request = buildUpdateVolumeGroupRequest();
         request.setNotificationUrl("http://localhost:8080");
         HttpEntity<UpdateVolumeGroupRequest> entity = new HttpEntity<>(request, headers);
-        ResponseEntity<UpdateVolumeGroupResponse> response = restTemplate.exchange(
-                createURLWithPort("/services/rest/v1/volume-groups/"+VOLUME_GROUP_ID), HttpMethod.PUT,
-                entity,UpdateVolumeGroupResponse.class);
+        ResponseEntity<UpdateVolumeGroupResponse> response =
+                restTemplate.exchange(createURLWithPort("/services/rest/v1/volume-groups/" + VOLUME_GROUP_ID),
+                        HttpMethod.PUT, entity, UpdateVolumeGroupResponse.class);
         assertEquals(Response.Status.ACCEPTED.getStatusCode(), response.getStatusCode().value());
     }
 

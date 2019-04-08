@@ -22,17 +22,21 @@ package org.onap.so.bpmn.common;
 
 import java.io.Serializable;
 import java.util.Map;
-
 import org.onap.so.bpmn.common.exceptions.RequiredExecutionVariableExeception;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 
 public interface BuildingBlockExecution {
 
-	public GeneralBuildingBlock getGeneralBuildingBlock();
-	public <T> T getVariable(String key);
-	public <T> T getRequiredVariable(String key) throws RequiredExecutionVariableExeception;
-	public void setVariable(String key, Serializable value);
-	public Map<ResourceKey, String> getLookupMap();
-	public String getFlowToBeCalled();
+    public GeneralBuildingBlock getGeneralBuildingBlock();
+
+    public <T> T getVariable(String key);
+
+    public <T> T getRequiredVariable(String key) throws RequiredExecutionVariableExeception;
+
+    public void setVariable(String key, Serializable value);
+
+    public Map<ResourceKey, String> getLookupMap();
+
+    public String getFlowToBeCalled();
 }

@@ -23,7 +23,6 @@ package org.onap.so.client.sdno.beans;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,18 +31,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "request-client-name",
-    "request-node-name",
-    "request-node-uuid",
-    "request-node-ip",
-    "request-id",
-    "request-user-id",
-    "request-node-type",
-    "health-diagnostic-code"
-})
-public class RequestHealthDiagnostic implements Serializable
-{
+@JsonPropertyOrder({"request-client-name", "request-node-name", "request-node-uuid", "request-node-ip", "request-id",
+        "request-user-id", "request-node-type", "health-diagnostic-code"})
+public class RequestHealthDiagnostic implements Serializable {
 
     @JsonProperty("request-client-name")
     private String requestClientName;
@@ -94,7 +84,7 @@ public class RequestHealthDiagnostic implements Serializable
         this.requestNodeName = requestNodeName;
         return this;
     }
-    
+
     @JsonProperty("request-node-uuid")
     public String getRequestNodeUuid() {
         return requestNodeUuid;
@@ -194,9 +184,9 @@ public class RequestHealthDiagnostic implements Serializable
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
-    
+
     public void setAdditionalProperties(Map<String, Object> map) {
-    	this.additionalProperties = map;
+        this.additionalProperties = map;
     }
 
     public RequestHealthDiagnostic withAdditionalProperty(String name, Object value) {

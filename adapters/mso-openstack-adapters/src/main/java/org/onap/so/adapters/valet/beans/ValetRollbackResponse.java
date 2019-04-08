@@ -21,9 +21,9 @@
 package org.onap.so.adapters.valet.beans;
 
 import java.io.Serializable;
-/* This class has no body - placeholder  - body of a Rollback response on a Valet Placement Operation */
+/* This class has no body - placeholder - body of a Rollback response on a Valet Placement Operation */
 
 public class ValetRollbackResponse implements Serializable {
-	private static final long serialVersionUID = 768026109321305392L;
+    private static final long serialVersionUID = 768026109321305392L;
 
 }

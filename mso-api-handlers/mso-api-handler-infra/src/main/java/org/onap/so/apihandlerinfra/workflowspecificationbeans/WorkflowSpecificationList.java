@@ -24,9 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "workflowSpecification"
-})
+@JsonPropertyOrder({"workflowSpecification"})
 public class WorkflowSpecificationList {
 
     @JsonProperty("workflowSpecification")
@@ -36,8 +34,7 @@ public class WorkflowSpecificationList {
      * No args constructor for use in serialization
      * 
      */
-    public WorkflowSpecificationList() {
-    }
+    public WorkflowSpecificationList() {}
 
     /**
      * 

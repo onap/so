@@ -22,52 +22,57 @@ package org.onap.so.db.request.beans;
 
 import java.io.Serializable;
 import java.util.Objects;
-
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class WatchdogComponentDistributionStatusId implements Serializable {
 
-	private static final long serialVersionUID = -4785382368168200031L;
-	
-	@BusinessKey
-	private String distributionId;
-	@BusinessKey
-	private String componentName;
-	
-	public String getDistributionId() {
-		return distributionId;
-	}
-	public void setDistributionId(String distributionId) {
-		this.distributionId = distributionId;
-	}
-	public String getComponentName() {
-		return componentName;
-	}
-	public void setComponentName(String componentName) {
-		this.componentName = componentName;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (this == other) {
-			return true;
-		}
-		if (!(other instanceof WatchdogComponentDistributionStatusId)) {
-			return false;
-		}
-		WatchdogComponentDistributionStatusId castOther = (WatchdogComponentDistributionStatusId) other;
-		return Objects.equals(this.getDistributionId(), castOther.getDistributionId())
-				&& Objects.equals(this.getComponentName(), castOther.getComponentName());
-	}
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getDistributionId(), this.getComponentName());
-	}
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("distributionId", getDistributionId())
-				.append("componentName", getComponentName()).toString();
-	}
+    private static final long serialVersionUID = -4785382368168200031L;
 
-	
+    @BusinessKey
+    private String distributionId;
+    @BusinessKey
+    private String componentName;
+
+    public String getDistributionId() {
+        return distributionId;
+    }
+
+    public void setDistributionId(String distributionId) {
+        this.distributionId = distributionId;
+    }
+
+    public String getComponentName() {
+        return componentName;
+    }
+
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof WatchdogComponentDistributionStatusId)) {
+            return false;
+        }
+        WatchdogComponentDistributionStatusId castOther = (WatchdogComponentDistributionStatusId) other;
+        return Objects.equals(this.getDistributionId(), castOther.getDistributionId())
+                && Objects.equals(this.getComponentName(), castOther.getComponentName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getDistributionId(), this.getComponentName());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("distributionId", getDistributionId())
+                .append("componentName", getComponentName()).toString();
+    }
+
+
 }

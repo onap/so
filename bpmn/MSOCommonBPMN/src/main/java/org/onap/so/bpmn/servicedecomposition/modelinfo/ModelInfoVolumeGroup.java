@@ -21,10 +21,9 @@
 package org.onap.so.bpmn.servicedecomposition.modelinfo;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ModelInfoVolumeGroup extends ModelInfoVfModule implements Serializable {
 
-	private static final long serialVersionUID = -1157856848495642223L;
+    private static final long serialVersionUID = -1157856848495642223L;
 }

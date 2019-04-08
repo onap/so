@@ -23,11 +23,10 @@ package org.onap.so.adapters.vfc.model;
 import java.util.List;
 
 /**
- * aim to wrap List<ScaleNsByStepsData> as a new list
- * then be provided for the usage of vfc json
+ * aim to wrap List<ScaleNsByStepsData> as a new list then be provided for the usage of vfc json
  *
  * added on 2018/01/30 by Qihui Zhao from CMCC
- * */
+ */
 
 public class ScaleNsData {
 

@@ -23,9 +23,7 @@
 package org.onap.so.bpmn.infrastructure;
 
 import java.util.Arrays;
-
 import javax.xml.ws.Endpoint;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
@@ -47,45 +45,44 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 
 @Configuration
 public class CXFConfiguration {
-    
-	private static final Logger logger = LoggerFactory.getLogger(CXFConfiguration.class);
-	
+
+    private static final Logger logger = LoggerFactory.getLogger(CXFConfiguration.class);
+
     @Autowired
-    private Bus bus;    
+    private Bus bus;
 
-	@Autowired
-	private WorkflowMessageResource wmr;
-	
-	@Autowired
-	private WorkflowResource workflowResource;
+    @Autowired
+    private WorkflowMessageResource wmr;
 
-	@Autowired
-	private WorkflowAsyncResource workflowAsyncResource;
-	
-	@Autowired
-	private JaxRsFilterLogging jaxRsFilterLogging;
-	
-	@Autowired
-	private ObjectMapper mapper; 
-	
-	@Autowired
-	private SDNCCallbackAdapterPortType sdncAdapterCallbackServiceImpl;
-	
-	@Autowired
-	private VnfAdapterNotify vnfAdapterNotifyServiceImpl;
-	
-	@Bean
+    @Autowired
+    private WorkflowResource workflowResource;
+
+    @Autowired
+    private WorkflowAsyncResource workflowAsyncResource;
+
+    @Autowired
+    private JaxRsFilterLogging jaxRsFilterLogging;
+
+    @Autowired
+    private ObjectMapper mapper;
+
+    @Autowired
+    private SDNCCallbackAdapterPortType sdncAdapterCallbackServiceImpl;
+
+    @Autowired
+    private VnfAdapterNotify vnfAdapterNotifyServiceImpl;
+
+    @Bean
     public ServletRegistrationBean cxfServlet() {
         return new ServletRegistrationBean(new CXFServlet(), "/mso/*");
     }
-    
+
     @Bean
     public Endpoint vnfAdapterCallback() {
         EndpointImpl endpoint = new EndpointImpl(bus, vnfAdapterNotifyServiceImpl);
@@ -95,7 +92,7 @@ public class CXFConfiguration {
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
-	
+
     @Bean
     public Endpoint sndcAdapterCallback() {
         EndpointImpl endpoint = new EndpointImpl(bus, sdncAdapterCallbackServiceImpl);
@@ -105,22 +102,22 @@ public class CXFConfiguration {
         endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
         return endpoint;
     }
-		
+
     @Bean
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
         endpoint.setServiceBeans(Arrays.<Object>asList(wmr, workflowResource, workflowAsyncResource));
-        endpoint.setAddress("/");       
+        endpoint.setAddress("/");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
-        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper),jaxRsFilterLogging));
-       
+        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), jaxRsFilterLogging));
+
         return endpoint.create();
     }
 
     @Bean
     public Swagger2Feature createSwaggerFeature() {
-    	Swagger2Feature swagger2Feature= new Swagger2Feature();
+        Swagger2Feature swagger2Feature = new Swagger2Feature();
         swagger2Feature.setPrettyPrint(true);
         swagger2Feature.setTitle("SO Orchestration Application");
         swagger2Feature.setContact("The ONAP SO team");

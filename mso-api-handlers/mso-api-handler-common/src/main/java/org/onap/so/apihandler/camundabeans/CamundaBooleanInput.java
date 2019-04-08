@@ -23,12 +23,10 @@ package org.onap.so.apihandler.camundabeans;
 
 
 import org.onap.so.apihandler.common.CommonConstants;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * JavaBean JSON class for a "gMyServiceInput" which contains the xml payload that
- * will be passed to the Camunda process
+ * JavaBean JSON class for a "gMyServiceInput" which contains the xml payload that will be passed to the Camunda process
  */
 
 
@@ -40,8 +38,7 @@ public class CamundaBooleanInput {
     private String type = "Boolean";
 
 
-    public CamundaBooleanInput() {
-    }
+    public CamundaBooleanInput() {}
 
     @JsonProperty(CommonConstants.CAMUNDA_VALUE)
     public boolean getValue() {
@@ -55,15 +52,15 @@ public class CamundaBooleanInput {
 
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
     public String getType() {
-		return type;
-	}
+        return type;
+    }
 
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return "CamundaInput [value=" + value + ", type=" + type + "]";
     }

@@ -24,7 +24,7 @@ import org.onap.so.bpmn.core.UrnPropertiesReader;
 
 public class UrnPropertiesReaderWrapper {
 
-	public String getVariable(String key) {
-		return UrnPropertiesReader.getVariable(key);
-	}
+    public String getVariable(String key) {
+        return UrnPropertiesReader.getVariable(key);
+    }
 }

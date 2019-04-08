@@ -27,10 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
 import javax.annotation.Priority;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.javatuples.Pair;
 import org.onap.so.client.exception.ExceptionBuilder;
@@ -45,29 +43,30 @@ import org.springframework.stereotype.Component;
 /**
  * Controls running all pre and post validation for workflows.
  * 
- * To define a validation you must make it a spring bean and implement either {@link org.onap.so.bpmn.common.validation.PreWorkflowValidator} or 
- * {@link org.onap.so.bpmn.common.validation.PostWorkflowValidator} your validation will automatically be
- * run by this class.
+ * To define a validation you must make it a spring bean and implement either
+ * {@link org.onap.so.bpmn.common.validation.PreWorkflowValidator} or
+ * {@link org.onap.so.bpmn.common.validation.PostWorkflowValidator} your validation will automatically be run by this
+ * class.
  *
  */
 @Component
 public class WorkflowValidatorRunner extends FlowValidatorRunner<PreWorkflowValidator, PostWorkflowValidator> {
 
-	@PostConstruct
-	protected void init() {
-		
-		preFlowValidators = new ArrayList<>(
-				Optional.ofNullable(context.getBeansOfType(PreWorkflowValidator.class)).orElse(new HashMap<>()).values());
-		postFlowValidators = new ArrayList<>(
-				Optional.ofNullable(context.getBeansOfType(PostWorkflowValidator.class)).orElse(new HashMap<>()).values());
-	}
+    @PostConstruct
+    protected void init() {
 
-	protected List<PreWorkflowValidator> getPreFlowValidators() {
-		return this.preFlowValidators;
-	}
-	
-	protected List<PostWorkflowValidator> getPostFlowValidators() {
-		return this.postFlowValidators;
-	}
-	
+        preFlowValidators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PreWorkflowValidator.class))
+                .orElse(new HashMap<>()).values());
+        postFlowValidators = new ArrayList<>(Optional.ofNullable(context.getBeansOfType(PostWorkflowValidator.class))
+                .orElse(new HashMap<>()).values());
+    }
+
+    protected List<PreWorkflowValidator> getPreFlowValidators() {
+        return this.preFlowValidators;
+    }
+
+    protected List<PostWorkflowValidator> getPostFlowValidators() {
+        return this.postFlowValidators;
+    }
+
 }

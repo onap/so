@@ -26,7 +26,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -37,34 +36,36 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
 public class NamingServiceDeleteTasksTest extends BaseTaskTest {
-	@InjectMocks
-	private NamingServiceDeleteTasks namingServiceDeleteTasks = new NamingServiceDeleteTasks();	
-	
-	private InstanceGroup instanceGroup;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		instanceGroup = setInstanceGroup();				
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID))).thenReturn(instanceGroup);	
-	}
-	
-	@Test
-	public void deleteInstanceGroupTest() throws Exception {
-		
-		doReturn("").when(namingServiceResources).deleteInstanceGroupName(instanceGroup);
-		
-		namingServiceDeleteTasks.deleteInstanceGroupName(execution);
-		verify(namingServiceResources, times(1)).deleteInstanceGroupName(instanceGroup);
-	}
-	
-	@Test
-	public void deleteInstanceGroupExceptionTest() throws Exception {
-		expectedException.expect(BBObjectNotFoundException.class);		
-		lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, "notfound");
-		doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));	
-		doReturn("").when(namingServiceResources).deleteInstanceGroupName(instanceGroup);
-		namingServiceDeleteTasks.deleteInstanceGroupName(execution);
-		verify(namingServiceResources, times(1)).deleteInstanceGroupName(instanceGroup);
-	}
-	
+    @InjectMocks
+    private NamingServiceDeleteTasks namingServiceDeleteTasks = new NamingServiceDeleteTasks();
+
+    private InstanceGroup instanceGroup;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        instanceGroup = setInstanceGroup();
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID)))
+                .thenReturn(instanceGroup);
+    }
+
+    @Test
+    public void deleteInstanceGroupTest() throws Exception {
+
+        doReturn("").when(namingServiceResources).deleteInstanceGroupName(instanceGroup);
+
+        namingServiceDeleteTasks.deleteInstanceGroupName(execution);
+        verify(namingServiceResources, times(1)).deleteInstanceGroupName(instanceGroup);
+    }
+
+    @Test
+    public void deleteInstanceGroupExceptionTest() throws Exception {
+        expectedException.expect(BBObjectNotFoundException.class);
+        lookupKeyMap.put(ResourceKey.INSTANCE_GROUP_ID, "notfound");
+        doThrow(BBObjectNotFoundException.class).when(extractPojosForBB).extractByKey(any(),
+                ArgumentMatchers.eq(ResourceKey.INSTANCE_GROUP_ID));
+        doReturn("").when(namingServiceResources).deleteInstanceGroupName(instanceGroup);
+        namingServiceDeleteTasks.deleteInstanceGroupName(execution);
+        verify(namingServiceResources, times(1)).deleteInstanceGroupName(instanceGroup);
+    }
+
 }

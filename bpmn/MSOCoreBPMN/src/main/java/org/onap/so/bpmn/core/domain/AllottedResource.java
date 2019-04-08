@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.core.domain;
 
 import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -33,104 +32,122 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("allottedResource")
 public class AllottedResource extends Resource {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/*
-	 * set resourceType for this object
-	 */
-	public AllottedResource(){
-		resourceType = ResourceType.ALLOTTED_RESOURCE;
-		setResourceId(UUID.randomUUID().toString());
-	}
+    /*
+     * set resourceType for this object
+     */
+    public AllottedResource() {
+        resourceType = ResourceType.ALLOTTED_RESOURCE;
+        setResourceId(UUID.randomUUID().toString());
+    }
 
-	/*
-	 * fields specific to Allotted Resource resource type
-	 */
-	private String allottedResourceType;
-	private String allottedResourceRole;
-	private String providingServiceModelName;
-	private String providingServiceModelInvariantUuid;
-	private String providingServiceModelUuid;
-	private String nfFunction;
-	private String nfType;
-	private String nfRole;
-	private String nfNamingCode;
-	private String orchestrationStatus;
+    /*
+     * fields specific to Allotted Resource resource type
+     */
+    private String allottedResourceType;
+    private String allottedResourceRole;
+    private String providingServiceModelName;
+    private String providingServiceModelInvariantUuid;
+    private String providingServiceModelUuid;
+    private String nfFunction;
+    private String nfType;
+    private String nfRole;
+    private String nfNamingCode;
+    private String orchestrationStatus;
 
-	@JsonIgnore
-	private String resourceInput;
+    @JsonIgnore
+    private String resourceInput;
 
-	/*
-	 * GET and SET
-	 */
-	public String getAllottedResourceType() {
-		return allottedResourceType;
-	}
-	public void setAllottedResourceType(String allottedResourceType) {
-		this.allottedResourceType = allottedResourceType;
-	}
-	public String getAllottedResourceRole() {
-		return allottedResourceRole;
-	}
-	public void setAllottedResourceRole(String allottedResourceRole) {
-		this.allottedResourceRole = allottedResourceRole;
-	}
-	public String getProvidingServiceModelName() {
-		return providingServiceModelName;
-	}
-	public void setProvidingServiceModelName(String providingServiceModelName) {
-		this.providingServiceModelName = providingServiceModelName;
-	}
-	public String getProvidingServiceModelInvariantUuid() {
-		return providingServiceModelInvariantUuid;
-	}
-	public void setProvidingServiceModelInvariantUuid(
-			String providingServiceModelInvariantUuid) {
-		this.providingServiceModelInvariantUuid = providingServiceModelInvariantUuid;
-	}
-	public String getProvidingServiceModelUuid() {
-		return providingServiceModelUuid;
-	}
-	public void setProvidingServiceModelUuid(String providingServiceModelUuid) {
-		this.providingServiceModelUuid = providingServiceModelUuid;
-	}
-	public String getNfFunction() {
-		return nfFunction;
-	}
-	public void setNfFunction(String nfFunction) {
-		this.nfFunction = nfFunction;
-	}
-	public String getNfType() {
-		return nfType;
-	}
-	public void setNfType(String nfType) {
-		this.nfType = nfType;
-	}
-	public String getNfRole() {
-		return nfRole;
-	}
-	public void setNfRole(String nfRole) {
-		this.nfRole = nfRole;
-	}
-	public String getNfNamingCode() {
-		return nfNamingCode;
-	}
-	public void setNfNamingCode(String nfNamingCode) {
-		this.nfNamingCode = nfNamingCode;
-	}
-	public String getOrchestrationStatus() {
-		return orchestrationStatus;
-	}
-	public void setOrchestrationStatus(String orchestrationStatus) {
-		this.orchestrationStatus = orchestrationStatus;
-	}
+    /*
+     * GET and SET
+     */
+    public String getAllottedResourceType() {
+        return allottedResourceType;
+    }
+
+    public void setAllottedResourceType(String allottedResourceType) {
+        this.allottedResourceType = allottedResourceType;
+    }
+
+    public String getAllottedResourceRole() {
+        return allottedResourceRole;
+    }
+
+    public void setAllottedResourceRole(String allottedResourceRole) {
+        this.allottedResourceRole = allottedResourceRole;
+    }
+
+    public String getProvidingServiceModelName() {
+        return providingServiceModelName;
+    }
+
+    public void setProvidingServiceModelName(String providingServiceModelName) {
+        this.providingServiceModelName = providingServiceModelName;
+    }
+
+    public String getProvidingServiceModelInvariantUuid() {
+        return providingServiceModelInvariantUuid;
+    }
+
+    public void setProvidingServiceModelInvariantUuid(String providingServiceModelInvariantUuid) {
+        this.providingServiceModelInvariantUuid = providingServiceModelInvariantUuid;
+    }
+
+    public String getProvidingServiceModelUuid() {
+        return providingServiceModelUuid;
+    }
+
+    public void setProvidingServiceModelUuid(String providingServiceModelUuid) {
+        this.providingServiceModelUuid = providingServiceModelUuid;
+    }
+
+    public String getNfFunction() {
+        return nfFunction;
+    }
+
+    public void setNfFunction(String nfFunction) {
+        this.nfFunction = nfFunction;
+    }
+
+    public String getNfType() {
+        return nfType;
+    }
+
+    public void setNfType(String nfType) {
+        this.nfType = nfType;
+    }
+
+    public String getNfRole() {
+        return nfRole;
+    }
+
+    public void setNfRole(String nfRole) {
+        this.nfRole = nfRole;
+    }
+
+    public String getNfNamingCode() {
+        return nfNamingCode;
+    }
+
+    public void setNfNamingCode(String nfNamingCode) {
+        this.nfNamingCode = nfNamingCode;
+    }
+
+    public String getOrchestrationStatus() {
+        return orchestrationStatus;
+    }
+
+    public void setOrchestrationStatus(String orchestrationStatus) {
+        this.orchestrationStatus = orchestrationStatus;
+    }
 
 
-	public String getResourceInput() {
-		return resourceInput;
-	}
+    public String getResourceInput() {
+        return resourceInput;
+    }
 
-	public void setResourceInput(String resourceInput) {
-		this.resourceInput = resourceInput;
-	}
+    public void setResourceInput(String resourceInput) {
+        this.resourceInput = resourceInput;
+    }
 }

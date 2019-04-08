@@ -21,13 +21,10 @@
 package org.onap.so.serviceinstancebeans;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
-
 import org.junit.Test;
 import org.onap.so.openpojo.rules.HasToStringRule;
 import org.onap.so.openpojo.rules.ToStringTester;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openpojo.reflection.PojoClass;
@@ -42,40 +39,37 @@ import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 
 public class ServiceInstanceBeansTest {
-	
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void pojoStructure() {
-		test("org.onap.so.serviceinstancebeans");
-	}
-	
-	@Test
-	public void cloudConfigurationkeepDefaultValues() throws IOException {
-		CloudConfiguration cloudConfiguration = new CloudConfiguration();
-		cloudConfiguration.setLcpCloudRegionId("myRegionId");
-		ObjectMapper mapper = new ObjectMapper();
-		
-		assertEquals("{\"cloudOwner\":\"CloudOwner\",\"lcpCloudRegionId\":\"myRegionId\"}", mapper.writeValueAsString(cloudConfiguration));
-		
-		
-	}
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	private void test(String pojoPackage) {
-		Validator validator = ValidatorBuilder.create()
-				.with(new GetterMustExistRule())
-				.with(new SetterMustExistRule())
-				.with(new HasToStringRule())
-				.with(new SetterTester())
-				.with(new GetterTester())
-				.with(new ToStringTester())
-				.build();
-		validator.validate(pojoPackage, new FilterPackageInfo(), new FilterEnum(), filterTestClasses);
-	}
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
-	
+    @Test
+    public void pojoStructure() {
+        test("org.onap.so.serviceinstancebeans");
+    }
+
+    @Test
+    public void cloudConfigurationkeepDefaultValues() throws IOException {
+        CloudConfiguration cloudConfiguration = new CloudConfiguration();
+        cloudConfiguration.setLcpCloudRegionId("myRegionId");
+        ObjectMapper mapper = new ObjectMapper();
+
+        assertEquals("{\"cloudOwner\":\"CloudOwner\",\"lcpCloudRegionId\":\"myRegionId\"}",
+                mapper.writeValueAsString(cloudConfiguration));
+
+
+    }
+
+    private void test(String pojoPackage) {
+        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterMustExistRule())
+                .with(new HasToStringRule()).with(new SetterTester()).with(new GetterTester())
+                .with(new ToStringTester()).build();
+        validator.validate(pojoPackage, new FilterPackageInfo(), new FilterEnum(), filterTestClasses);
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
+
 }

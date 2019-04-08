@@ -28,13 +28,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertNotNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,142 +54,142 @@ import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoIOException;
 import org.onap.so.openstack.exceptions.MsoOpenstackException;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.woorea.openstack.heat.Heat;
 import com.woorea.openstack.heat.model.CreateStackParam;
 
-public class MsoHeatUtilsTest extends BaseTest{
+public class MsoHeatUtilsTest extends BaseTest {
 
-	@Autowired
-	private MsoHeatUtils heatUtils;
-	
-	@Test
-	public void instantiateVduTest() throws MsoException, IOException {
-		VduInstance expected = new VduInstance();
-		expected.setVduInstanceId("name/da886914-efb2-4917-b335-c8381528d90b");
-		expected.setVduInstanceName("name");
-		VduStatus status = new VduStatus();
-		status.setState(VduStateType.INSTANTIATED);
-		status.setLastAction((new PluginAction("create", "complete", null)));
-		expected.setStatus(status);
+    @Autowired
+    private MsoHeatUtils heatUtils;
 
-		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("MTN13");
-		cloudInfo.setTenantId("tenantId");
-		VduModelInfo vduModel = new VduModelInfo();
-		vduModel.setModelCustomizationUUID("blueprintId");
-		vduModel.setTimeoutMinutes(1);
-		VduArtifact artifact = new VduArtifact();
-		artifact.setName("name");
-		artifact.setType(ArtifactType.MAIN_TEMPLATE);
-		byte[] content = new byte[1];
-		artifact.setContent(content);
-		List<VduArtifact> artifacts = new ArrayList<>();
-		artifacts.add(artifact);
-		vduModel.setArtifacts(artifacts);
-		Map<String, byte[]> blueprintFiles = new HashMap<>();
-		blueprintFiles.put(artifact.getName(), artifact.getContent());
-		String instanceName = "instanceName";
-		Map<String, Object> inputs = new HashMap<>();
-		boolean rollbackOnFailure = true;
+    @Test
+    public void instantiateVduTest() throws MsoException, IOException {
+        VduInstance expected = new VduInstance();
+        expected.setVduInstanceId("name/da886914-efb2-4917-b335-c8381528d90b");
+        expected.setVduInstanceName("name");
+        VduStatus status = new VduStatus();
+        status.setState(VduStateType.INSTANTIATED);
+        status.setLastAction((new PluginAction("create", "complete", null)));
+        expected.setStatus(status);
 
-		StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-		StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
-		
-		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceName/stackId"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json")
-						.withBodyFile("OpenstackResponse_StackId.json")
-						.withStatus(HttpStatus.SC_OK)));
-		
-		VduInstance actual = heatUtils.instantiateVdu(cloudInfo, instanceName, inputs, vduModel, rollbackOnFailure);
-		
-		assertThat(actual, sameBeanAs(expected));
-	}
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setCloudSiteId("MTN13");
+        cloudInfo.setTenantId("tenantId");
+        VduModelInfo vduModel = new VduModelInfo();
+        vduModel.setModelCustomizationUUID("blueprintId");
+        vduModel.setTimeoutMinutes(1);
+        VduArtifact artifact = new VduArtifact();
+        artifact.setName("name");
+        artifact.setType(ArtifactType.MAIN_TEMPLATE);
+        byte[] content = new byte[1];
+        artifact.setContent(content);
+        List<VduArtifact> artifacts = new ArrayList<>();
+        artifacts.add(artifact);
+        vduModel.setArtifacts(artifacts);
+        Map<String, byte[]> blueprintFiles = new HashMap<>();
+        blueprintFiles.put(artifact.getName(), artifact.getContent());
+        String instanceName = "instanceName";
+        Map<String, Object> inputs = new HashMap<>();
+        boolean rollbackOnFailure = true;
 
-	
-	@Test
-	public void queryVduTest() throws Exception {
-		VduInstance expected = new VduInstance();
-		expected.setVduInstanceId("name/da886914-efb2-4917-b335-c8381528d90b");
-		expected.setVduInstanceName("name");
-		VduStatus status = new VduStatus();
-		status.setState(VduStateType.INSTANTIATED);
-		status.setLastAction((new PluginAction("create", "complete",null)));
-		expected.setStatus(status);
+        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
 
-		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("mtn13");
-		cloudInfo.setTenantId("tenantId");
-		String instanceId = "instanceId";
+        wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceName/stackId"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
 
-		StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-		StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
+        VduInstance actual = heatUtils.instantiateVdu(cloudInfo, instanceName, inputs, vduModel, rollbackOnFailure);
 
-		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json")
-						.withBodyFile("OpenstackResponse_StackId.json")
-						.withStatus(HttpStatus.SC_OK)));
+        assertThat(actual, sameBeanAs(expected));
+    }
 
-		VduInstance actual = heatUtils.queryVdu(cloudInfo, instanceId);
-		
-		assertThat(actual, sameBeanAs(expected));
-	}
 
-	@Test
-	public void deleteVduTest() throws Exception {
-		VduInstance expected = new VduInstance();
-		expected.setVduInstanceId("instanceId");
-		expected.setVduInstanceName("instanceId");
-		VduStatus status = new VduStatus();
-		status.setState(VduStateType.DELETED);
-		expected.setStatus(status);
+    @Test
+    public void queryVduTest() throws Exception {
+        VduInstance expected = new VduInstance();
+        expected.setVduInstanceId("name/da886914-efb2-4917-b335-c8381528d90b");
+        expected.setVduInstanceName("name");
+        VduStatus status = new VduStatus();
+        status.setState(VduStateType.INSTANTIATED);
+        status.setLastAction((new PluginAction("create", "complete", null)));
+        expected.setStatus(status);
 
-		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("mtn13");
-		cloudInfo.setTenantId("tenantId");
-		String instanceId = "instanceId";
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setCloudSiteId("mtn13");
+        cloudInfo.setTenantId("tenantId");
+        String instanceId = "instanceId";
 
-		int timeoutInMinutes = 1;
+        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
 
-		StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId")).willReturn(aResponse().withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
-		StubOpenStack.mockOpenStackDelete(wireMockServer, "name/da886914-efb2-4917-b335-c8381528d90b");
-		wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/name/da886914-efb2-4917-b335-c8381528d90b")).willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_DeleteComplete.json").withStatus(HttpStatus.SC_OK)));
-		
-		VduInstance actual = heatUtils.deleteVdu(cloudInfo, instanceId, timeoutInMinutes);
-		
-		assertThat(actual, sameBeanAs(expected));
-	}
+        wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
 
-	@Test
-	public final void requestToStringBuilderTest() {
-		CreateStackParam param = new CreateStackParam();
-		param.setDisableRollback(false);
-		param.setEnvironment("environment");
-		param.setFiles(new HashMap<String, Object>());
-		param.setParameters(new HashMap<>());
-		param.setStackName("stackName");
-		param.setTemplate("template");
-		param.setTemplateUrl("http://templateUrl");
-		param.setTimeoutMinutes(1);
+        VduInstance actual = heatUtils.queryVdu(cloudInfo, instanceId);
 
-		StringBuilder stringBuilder =  heatUtils.requestToStringBuilder(param);
+        assertThat(actual, sameBeanAs(expected));
+    }
 
-		Assert.assertTrue(stringBuilder.toString().contains("StackName:"));
-	}
+    @Test
+    public void deleteVduTest() throws Exception {
+        VduInstance expected = new VduInstance();
+        expected.setVduInstanceId("instanceId");
+        expected.setVduInstanceName("instanceId");
+        VduStatus status = new VduStatus();
+        status.setState(VduStateType.DELETED);
+        expected.setStatus(status);
 
-	@Test
-	public final void copyBaseOutputsToInputsTest() {
-		Map<String, Object> inputs = new HashMap<>();
-		inputs.put("str1", "str");
-		Map<String, Object> otherStackOutputs = new HashMap<>();
-		otherStackOutputs.put("str", "str");
-		List<String> paramNames = new ArrayList<>();
-		Map<String, String> aliases = new HashMap<>();
-		aliases.put("str", "str");
-		heatUtils.copyBaseOutputsToInputs(inputs, otherStackOutputs, null, aliases);
-		Assert.assertEquals("str",otherStackOutputs.get("str"));
-	}
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setCloudSiteId("mtn13");
+        cloudInfo.setTenantId("tenantId");
+        String instanceId = "instanceId";
+
+        int timeoutInMinutes = 1;
+
+        StubOpenStack.mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/instanceId"))
+                .willReturn(aResponse().withBodyFile("OpenstackResponse_StackId.json").withStatus(HttpStatus.SC_OK)));
+        StubOpenStack.mockOpenStackDelete(wireMockServer, "name/da886914-efb2-4917-b335-c8381528d90b");
+        wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/name/da886914-efb2-4917-b335-c8381528d90b"))
+                .willReturn(aResponse().withBodyFile("OpenstackResponse_Stack_DeleteComplete.json")
+                        .withStatus(HttpStatus.SC_OK)));
+
+        VduInstance actual = heatUtils.deleteVdu(cloudInfo, instanceId, timeoutInMinutes);
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public final void requestToStringBuilderTest() {
+        CreateStackParam param = new CreateStackParam();
+        param.setDisableRollback(false);
+        param.setEnvironment("environment");
+        param.setFiles(new HashMap<String, Object>());
+        param.setParameters(new HashMap<>());
+        param.setStackName("stackName");
+        param.setTemplate("template");
+        param.setTemplateUrl("http://templateUrl");
+        param.setTimeoutMinutes(1);
+
+        StringBuilder stringBuilder = heatUtils.requestToStringBuilder(param);
+
+        Assert.assertTrue(stringBuilder.toString().contains("StackName:"));
+    }
+
+    @Test
+    public final void copyBaseOutputsToInputsTest() {
+        Map<String, Object> inputs = new HashMap<>();
+        inputs.put("str1", "str");
+        Map<String, Object> otherStackOutputs = new HashMap<>();
+        otherStackOutputs.put("str", "str");
+        List<String> paramNames = new ArrayList<>();
+        Map<String, String> aliases = new HashMap<>();
+        aliases.put("str", "str");
+        heatUtils.copyBaseOutputsToInputs(inputs, otherStackOutputs, null, aliases);
+        Assert.assertEquals("str", otherStackOutputs.get("str"));
+    }
 
     @Test
     public final void getHeatClientSuccessTest() throws MsoException, IOException {
@@ -231,8 +229,7 @@ public class MsoHeatUtilsTest extends BaseTest{
         StubOpenStack.mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack_Created.json");
         StubOpenStack.mockOpenStackGet(wireMockServer, "TEST-stack/stackId");
         StackInfo stackInfo = heatUtils.createStack(cloudSite.getId(), "CloudOwner", "tenantId", "TEST-stack", null,
-            "TEST-heat", new HashMap<>(), false, 1, "TEST-env",
-            new HashMap<>(), new HashMap<>(), false);
+                "TEST-heat", new HashMap<>(), false, 1, "TEST-env", new HashMap<>(), new HashMap<>(), false);
         assertNotNull(stackInfo);
     }
 }

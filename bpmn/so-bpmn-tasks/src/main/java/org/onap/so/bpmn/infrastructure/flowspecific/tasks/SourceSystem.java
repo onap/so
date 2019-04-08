@@ -21,6 +21,5 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 public enum SourceSystem {
-	PO,
-	SDNC
+    PO, SDNC
 }

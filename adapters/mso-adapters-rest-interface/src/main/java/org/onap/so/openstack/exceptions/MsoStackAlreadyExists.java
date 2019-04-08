@@ -24,12 +24,12 @@ package org.onap.so.openstack.exceptions;
 
 public class MsoStackAlreadyExists extends MsoOpenstackException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Constructor to create a new MsoOpenstackException instance
-	public MsoStackAlreadyExists (String stack, String tenant, String cloud) {
-		// Set the detailed error as the Exception 'message'
-		super(409, "Conflict", "Stack " + stack + " already exists in Tenant " + tenant + " in Cloud " + cloud);
-	}
-		
+    // Constructor to create a new MsoOpenstackException instance
+    public MsoStackAlreadyExists(String stack, String tenant, String cloud) {
+        // Set the detailed error as the Exception 'message'
+        super(409, "Conflict", "Stack " + stack + " already exists in Tenant " + tenant + " in Cloud " + cloud);
+    }
+
 }

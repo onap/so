@@ -34,19 +34,19 @@ import io.swagger.jaxrs.listing.SwaggerSerializers;
 public class JerseyConfiguration extends ResourceConfig {
 
 
-	@PostConstruct
-	public void setUp() {
-		register(ASDCRestInterface.class);	
-		register(ApiListingResource.class);
-		register(SwaggerSerializers.class);
-		
-		BeanConfig beanConfig = new BeanConfig();
-		beanConfig.setVersion("1.0.2");
-		beanConfig.setSchemes(new String[] { "http" });
-		beanConfig.setHost("localhost:8080");
-		beanConfig.setBasePath("/mso");
-		beanConfig.setResourcePackage("org.onap.so.apihandlerinfra");
-		beanConfig.setPrettyPrint(true);
-		beanConfig.setScan(true);
-	}
+    @PostConstruct
+    public void setUp() {
+        register(ASDCRestInterface.class);
+        register(ApiListingResource.class);
+        register(SwaggerSerializers.class);
+
+        BeanConfig beanConfig = new BeanConfig();
+        beanConfig.setVersion("1.0.2");
+        beanConfig.setSchemes(new String[] {"http"});
+        beanConfig.setHost("localhost:8080");
+        beanConfig.setBasePath("/mso");
+        beanConfig.setResourcePackage("org.onap.so.apihandlerinfra");
+        beanConfig.setPrettyPrint(true);
+        beanConfig.setScan(true);
+    }
 }

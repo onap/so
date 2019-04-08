@@ -23,9 +23,7 @@ package org.onap.so.bpmn.common;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.util.HashSet;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -37,29 +35,31 @@ import org.springframework.core.type.AnnotationMetadata;
 public class DefaultToShortClassNameBeanNameGeneratorTest {
 
 
-	@Mock
-	private BeanDefinitionRegistry beanDefinitionRegistry;
-	
-	private DefaultToShortClassNameBeanNameGenerator customBeanNameGenerator = new DefaultToShortClassNameBeanNameGenerator();
-	
-	@Before
-	public void before() {
-		MockitoAnnotations.initMocks(this);
-	}
-	
-	@Test
-	public void test_generateBeanName_notAnnotatedBeanDefinition() {
-		String expectedBeanName = "BeanName";
-		
-		AnnotatedBeanDefinition annotatedBeanDefinition = mock(AnnotatedBeanDefinition.class);
-		AnnotationMetadata metadata = mock(AnnotationMetadata.class);
-		when(metadata.getAnnotationTypes()).thenReturn(new HashSet<String>());
-		when(annotatedBeanDefinition.getBeanClassName()).thenReturn("org.onap.so.BeanName");
-		when(annotatedBeanDefinition.getMetadata()).thenReturn(metadata);
-		String actualBeanName = customBeanNameGenerator.generateBeanName(annotatedBeanDefinition, beanDefinitionRegistry);
-		
-		assertEquals(expectedBeanName, actualBeanName);
-	}
-	
+    @Mock
+    private BeanDefinitionRegistry beanDefinitionRegistry;
+
+    private DefaultToShortClassNameBeanNameGenerator customBeanNameGenerator =
+            new DefaultToShortClassNameBeanNameGenerator();
+
+    @Before
+    public void before() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void test_generateBeanName_notAnnotatedBeanDefinition() {
+        String expectedBeanName = "BeanName";
+
+        AnnotatedBeanDefinition annotatedBeanDefinition = mock(AnnotatedBeanDefinition.class);
+        AnnotationMetadata metadata = mock(AnnotationMetadata.class);
+        when(metadata.getAnnotationTypes()).thenReturn(new HashSet<String>());
+        when(annotatedBeanDefinition.getBeanClassName()).thenReturn("org.onap.so.BeanName");
+        when(annotatedBeanDefinition.getMetadata()).thenReturn(metadata);
+        String actualBeanName =
+                customBeanNameGenerator.generateBeanName(annotatedBeanDefinition, beanDefinitionRegistry);
+
+        assertEquals(expectedBeanName, actualBeanName);
+    }
+
 
 }

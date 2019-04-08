@@ -23,55 +23,56 @@ package org.onap.so.client.graphinventory.entities;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.onap.so.client.aai.entities.QueryStep;
 import org.onap.so.client.graphinventory.GraphInventoryObjectName;
 
 public class DSLNode implements QueryStep {
 
-	private final String nodeName;
-	private final List<DSLNodeKey> nodeKeys;
-	private final StringBuilder query = new StringBuilder();
-	private boolean output = false;
-	
-	public DSLNode() {
-		this.nodeName = "";
-		this.nodeKeys = new ArrayList<>();
-		
-	}
-	public DSLNode(GraphInventoryObjectName name) {
-		this.nodeName = name.typeName();
-		this.nodeKeys = new ArrayList<>();
-		query.append(nodeName);
-	}
-	public DSLNode(GraphInventoryObjectName name, DSLNodeKey... key) {
-		this.nodeName = name.typeName();
-		this.nodeKeys = Arrays.asList(key);
-		query.append(nodeName);
-	}
-	
-	public DSLNode output() {
-		this.output = true;
-		
-		return this;
-	}
+    private final String nodeName;
+    private final List<DSLNodeKey> nodeKeys;
+    private final StringBuilder query = new StringBuilder();
+    private boolean output = false;
 
-	public DSLNode and(DSLNodeKey... key) {
-		this.nodeKeys.addAll(Arrays.asList(key));
-		
-		return this;
-	}
-	
-	@Override
-	public String build() {
-		StringBuilder result = new StringBuilder(query);
-		if (output) {
-			result.append("*");
-		}
-		for (DSLNodeKey key : nodeKeys) {
-			result.append(key.build());
-		}
-		
-		return result.toString();
-	}
+    public DSLNode() {
+        this.nodeName = "";
+        this.nodeKeys = new ArrayList<>();
+
+    }
+
+    public DSLNode(GraphInventoryObjectName name) {
+        this.nodeName = name.typeName();
+        this.nodeKeys = new ArrayList<>();
+        query.append(nodeName);
+    }
+
+    public DSLNode(GraphInventoryObjectName name, DSLNodeKey... key) {
+        this.nodeName = name.typeName();
+        this.nodeKeys = Arrays.asList(key);
+        query.append(nodeName);
+    }
+
+    public DSLNode output() {
+        this.output = true;
+
+        return this;
+    }
+
+    public DSLNode and(DSLNodeKey... key) {
+        this.nodeKeys.addAll(Arrays.asList(key));
+
+        return this;
+    }
+
+    @Override
+    public String build() {
+        StringBuilder result = new StringBuilder(query);
+        if (output) {
+            result.append("*");
+        }
+        for (DSLNodeKey key : nodeKeys) {
+            result.append(key.build());
+        }
+
+        return result.toString();
+    }
 }

@@ -28,7 +28,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,43 +40,46 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 
-public class UnassignVnfTest extends BaseTaskTest{
-	@InjectMocks
-	private UnassignVnf unassignVnf = new UnassignVnf();
-	
-	@Before
-	public void setup(){
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
-	
-	}
+public class UnassignVnfTest extends BaseTaskTest {
+    @InjectMocks
+    private UnassignVnf unassignVnf = new UnassignVnf();
 
-	@Test
-	public void deleteInstanceGroupsSunnyDayTest() throws Exception {
-		GenericVnf genericVnf = setGenericVnf();
-		
-		ModelInfoInstanceGroup modelVnfc = new ModelInfoInstanceGroup();
-		modelVnfc.setType("VNFC");
-		
-		InstanceGroup instanceGroup1 = new InstanceGroup();
-		instanceGroup1.setId("test-001");
-		instanceGroup1.setModelInfoInstanceGroup(modelVnfc);
-		genericVnf.getInstanceGroups().add(instanceGroup1);
-		
-		InstanceGroup instanceGroup2 = new InstanceGroup();
-		instanceGroup2.setId("test-002");
-		instanceGroup2.setModelInfoInstanceGroup(modelVnfc);
-		genericVnf.getInstanceGroups().add(instanceGroup2);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);		
-		unassignVnf.deleteInstanceGroups(execution);
-		verify(aaiInstanceGroupResources, times(1)).deleteInstanceGroup(eq(instanceGroup1));
-		verify(aaiInstanceGroupResources, times(1)).deleteInstanceGroup(eq(instanceGroup2));	
-	}
-	
-	@Test
-	public void deletecreateVnfcInstanceGroupExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
-		unassignVnf.deleteInstanceGroups(execution);
-	}
+    @Before
+    public void setup() {
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(String.class));
+
+    }
+
+    @Test
+    public void deleteInstanceGroupsSunnyDayTest() throws Exception {
+        GenericVnf genericVnf = setGenericVnf();
+
+        ModelInfoInstanceGroup modelVnfc = new ModelInfoInstanceGroup();
+        modelVnfc.setType("VNFC");
+
+        InstanceGroup instanceGroup1 = new InstanceGroup();
+        instanceGroup1.setId("test-001");
+        instanceGroup1.setModelInfoInstanceGroup(modelVnfc);
+        genericVnf.getInstanceGroups().add(instanceGroup1);
+
+        InstanceGroup instanceGroup2 = new InstanceGroup();
+        instanceGroup2.setId("test-002");
+        instanceGroup2.setModelInfoInstanceGroup(modelVnfc);
+        genericVnf.getInstanceGroups().add(instanceGroup2);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        unassignVnf.deleteInstanceGroups(execution);
+        verify(aaiInstanceGroupResources, times(1)).deleteInstanceGroup(eq(instanceGroup1));
+        verify(aaiInstanceGroupResources, times(1)).deleteInstanceGroup(eq(instanceGroup2));
+    }
+
+    @Test
+    public void deletecreateVnfcInstanceGroupExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+
+        unassignVnf.deleteInstanceGroups(execution);
+    }
 }

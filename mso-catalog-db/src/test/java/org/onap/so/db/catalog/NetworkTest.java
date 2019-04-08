@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.db.catalog.beans.NetworkResource;
@@ -35,12 +34,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class NetworkTest {
-	@Autowired
-	private NetworkResourceRepository networkRepo;
-	
-	@Test
-	public void BuildingBlockDetailSingleLookupValidationTest() {
-		NetworkResource latestNetwork = networkRepo.findFirstByModelNameOrderByModelVersionDesc("CONTRAIL30_GNDIRECT");
-		assertEquals("10b36f65-f4e6-4be6-ae49-9596dc1c47fz",latestNetwork.getModelUUID());
-	}
+    @Autowired
+    private NetworkResourceRepository networkRepo;
+
+    @Test
+    public void BuildingBlockDetailSingleLookupValidationTest() {
+        NetworkResource latestNetwork = networkRepo.findFirstByModelNameOrderByModelVersionDesc("CONTRAIL30_GNDIRECT");
+        assertEquals("10b36f65-f4e6-4be6-ae49-9596dc1c47fz", latestNetwork.getModelUUID());
+    }
 }

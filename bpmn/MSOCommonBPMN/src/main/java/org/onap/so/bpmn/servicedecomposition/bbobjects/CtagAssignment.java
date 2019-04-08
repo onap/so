@@ -21,45 +21,43 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-
 import javax.persistence.Id;
 
 @JsonRootName("ctag-assignment")
 public class CtagAssignment implements Serializable, ShallowCopy<CtagAssignment> {
-	
-	private static final long serialVersionUID = 2314290576523243571L;
 
-	@Id
-	@JsonProperty("vlan-id-inner")
-	private Long vlanIdInner;
-	
-	public Long getVlanIdInner() {
-		return vlanIdInner;
-	}
+    private static final long serialVersionUID = 2314290576523243571L;
 
-	public void setVlanIdInner(Long vlanIdInner) {
-		this.vlanIdInner = vlanIdInner;
-	}
+    @Id
+    @JsonProperty("vlan-id-inner")
+    private Long vlanIdInner;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof CtagAssignment)) {
-			return false;
-		}
-		CtagAssignment castOther = (CtagAssignment) other;
-		return new EqualsBuilder().append(vlanIdInner, castOther.vlanIdInner).isEquals();
-	}
+    public Long getVlanIdInner() {
+        return vlanIdInner;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(vlanIdInner).toHashCode();
-	}
+    public void setVlanIdInner(Long vlanIdInner) {
+        this.vlanIdInner = vlanIdInner;
+    }
 
-	
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof CtagAssignment)) {
+            return false;
+        }
+        CtagAssignment castOther = (CtagAssignment) other;
+        return new EqualsBuilder().append(vlanIdInner, castOther.vlanIdInner).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(vlanIdInner).toHashCode();
+    }
+
+
 }

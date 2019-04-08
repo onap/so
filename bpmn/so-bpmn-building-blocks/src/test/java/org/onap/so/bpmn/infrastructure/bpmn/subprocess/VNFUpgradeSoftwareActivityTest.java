@@ -19,10 +19,10 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -30,28 +30,25 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.appc.client.lcm.model.Action;
 
-public class VNFUpgradeSoftwareActivityTest extends BaseBPMNTest{
-	@Test
-	public void sunnyDayVNFUpgradeSoftwareActivity_Test() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFUpgradeSoftwareActivity_Start",
-				"TaskPreProcessActivity",
-				"TaskUpgradeSoftware",								   
-				"VNFUpgradeSoftwareActivity_End");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test
-	public void rainyDayVNFUpgradeSoftwareActivity_Test() throws Exception {
-		variables.put("actionUpgradeSoftware", Action.UpgradeSoftware);
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
-				.runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("VNFUpgradeSoftwareActivity_Start",
-				"TaskPreProcessActivity",
-				"TaskUpgradeSoftware").hasNotPassed(								   
-				"VNFUpgradeSoftwareActivity_End");		
-	}
-	
+public class VNFUpgradeSoftwareActivityTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayVNFUpgradeSoftwareActivity_Test() throws InterruptedException {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("VNFUpgradeSoftwareActivity_Start", "TaskPreProcessActivity",
+                "TaskUpgradeSoftware", "VNFUpgradeSoftwareActivity_End");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void rainyDayVNFUpgradeSoftwareActivity_Test() throws Exception {
+        variables.put("actionUpgradeSoftware", Action.UpgradeSoftware);
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(appcRunTasks)
+                .runAppcCommand(any(BuildingBlockExecution.class), any(Action.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUpgradeSoftwareActivity", variables);
+        assertThat(pi).isNotNull().isStarted()
+                .hasPassedInOrder("VNFUpgradeSoftwareActivity_Start", "TaskPreProcessActivity", "TaskUpgradeSoftware")
+                .hasNotPassed("VNFUpgradeSoftwareActivity_End");
+    }
+
 }

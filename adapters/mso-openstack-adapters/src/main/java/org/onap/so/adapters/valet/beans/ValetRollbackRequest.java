@@ -22,60 +22,64 @@ package org.onap.so.adapters.valet.beans;
 
 import java.io.Serializable;
 import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /*
  * This class represents the body of a Rollback request on a Valet Placement API call
  */
 public class ValetRollbackRequest implements Serializable {
-	private static final long serialVersionUID = 768026109321305392L;
+    private static final long serialVersionUID = 768026109321305392L;
 
-	@JsonProperty("stack_id")
-	private String stackId;
-	@JsonProperty("suppress_rollback")
-	private Boolean suppressRollback = false;
-	@JsonProperty("error_message")
-	private String errorMessage;
-	
-	public ValetRollbackRequest() {
-		super();
-	}
-	
-	public String getStackId() {
-		return this.stackId;
-	}
-	public void setStackId(String stackId) {
-		this.stackId = stackId;
-	}
-	public Boolean getSuppressRollback() {
-		return this.suppressRollback;
-	}
-	public void setSuppressRollback(Boolean suppressRollback) {
-		this.suppressRollback = suppressRollback;
-	}
-	public String getErrorMessage() {
-		return this.errorMessage;
-	}
-	public void setErrorMessage(String errorMessage) {
-		this.errorMessage = errorMessage;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(stackId, suppressRollback, errorMessage);
-	}
-	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		if (!(o instanceof ValetRollbackRequest)) {
-			return false;
-		}
-		ValetRollbackRequest vrr = (ValetRollbackRequest) o;
-		return Objects.equals(stackId, vrr.stackId)
-				&& Objects.equals(suppressRollback, vrr.suppressRollback)
-				&& Objects.equals(errorMessage, vrr.errorMessage);
-	}
+    @JsonProperty("stack_id")
+    private String stackId;
+    @JsonProperty("suppress_rollback")
+    private Boolean suppressRollback = false;
+    @JsonProperty("error_message")
+    private String errorMessage;
+
+    public ValetRollbackRequest() {
+        super();
+    }
+
+    public String getStackId() {
+        return this.stackId;
+    }
+
+    public void setStackId(String stackId) {
+        this.stackId = stackId;
+    }
+
+    public Boolean getSuppressRollback() {
+        return this.suppressRollback;
+    }
+
+    public void setSuppressRollback(Boolean suppressRollback) {
+        this.suppressRollback = suppressRollback;
+    }
+
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stackId, suppressRollback, errorMessage);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof ValetRollbackRequest)) {
+            return false;
+        }
+        ValetRollbackRequest vrr = (ValetRollbackRequest) o;
+        return Objects.equals(stackId, vrr.stackId) && Objects.equals(suppressRollback, vrr.suppressRollback)
+                && Objects.equals(errorMessage, vrr.errorMessage);
+    }
 
 }

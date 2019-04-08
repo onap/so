@@ -32,76 +32,74 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.yaml.snakeyaml.Yaml;
-
 import org.onap.so.db.catalog.beans.HeatTemplateParam;
 
 public class YamlEditor {
 
     protected static final String REFER_PATTERN = "file:///";
-    protected Map <String, Object> yml;
-    protected Yaml yaml = new Yaml ();
+    protected Map<String, Object> yml;
+    protected Yaml yaml = new Yaml();
 
-    public YamlEditor () {
+    public YamlEditor() {
 
     }
 
-    public YamlEditor (byte[] body) {
-        init (body);
+    public YamlEditor(byte[] body) {
+        init(body);
     }
-    
-    public YamlEditor (Yaml yaml) {
-    	this.yaml = yaml;
+
+    public YamlEditor(Yaml yaml) {
+        this.yaml = yaml;
     }
 
     @SuppressWarnings("unchecked")
-    protected synchronized void init (byte[] body) {
-        InputStream input = new ByteArrayInputStream (body);
-        yml = (Map <String, Object>) yaml.load (input);
+    protected synchronized void init(byte[] body) {
+        InputStream input = new ByteArrayInputStream(body);
+        yml = (Map<String, Object>) yaml.load(input);
     }
 
-    public synchronized List <String> getYamlNestedFileResourceTypeList () {
-        List <String> typeList = new ArrayList<>();
+    public synchronized List<String> getYamlNestedFileResourceTypeList() {
+        List<String> typeList = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
-        Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("resources");
-        Iterator <Entry <String, Object>> it = resourceMap.entrySet ().iterator ();
-        while (it.hasNext ()) {
-            Map.Entry <String, Object> pair = it.next ();
+        Map<String, Object> resourceMap = (Map<String, Object>) yml.get("resources");
+        Iterator<Entry<String, Object>> it = resourceMap.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String, Object> pair = it.next();
             @SuppressWarnings("unchecked")
-            Map <String, String> resourceEntry = (Map <String, String>) pair.getValue ();
-            String type = resourceEntry.get ("type");
+            Map<String, String> resourceEntry = (Map<String, String>) pair.getValue();
+            String type = resourceEntry.get("type");
 
-            if (type.contains (REFER_PATTERN)) {
-                typeList.add (type);
+            if (type.contains(REFER_PATTERN)) {
+                typeList.add(type);
             }
-            it.remove (); // avoids a ConcurrentModificationException
+            it.remove(); // avoids a ConcurrentModificationException
         }
         return typeList;
     }
-    
-    public synchronized List <String> getYamlResourceTypeList () {
-        List <String> typeList = new ArrayList<>();
+
+    public synchronized List<String> getYamlResourceTypeList() {
+        List<String> typeList = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
-        Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("resources");
+        Map<String, Object> resourceMap = (Map<String, Object>) yml.get("resources");
         for (Entry<String, Object> pair : resourceMap.entrySet()) {
             @SuppressWarnings("unchecked")
             Map<String, String> resourceEntry = (Map<String, String>) pair.getValue();
             typeList.add(resourceEntry.get("type"));
         }
         return typeList;
-    }    
+    }
 
     // Generate the parameter list based on the Heat Template
     // Based on the email from Ella Kvetny:
     // Within Heat Template, under parameters catalog, it might indicate the default value of the parameter
     // If default value exist, the parameter is not mandatory, otherwise its value should be set
-    public synchronized Set <HeatTemplateParam> getParameterList (String artifactUUID) {
-        Set <HeatTemplateParam> paramSet = new HashSet<>();
+    public synchronized Set<HeatTemplateParam> getParameterList(String artifactUUID) {
+        Set<HeatTemplateParam> paramSet = new HashSet<>();
         @SuppressWarnings("unchecked")
-        Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
+        Map<String, Object> resourceMap = (Map<String, Object>) yml.get("parameters");
 
         for (Entry<String, Object> stringObjectEntry : resourceMap.entrySet()) {
             HeatTemplateParam param = new HeatTemplateParam();
@@ -129,42 +127,42 @@ public class YamlEditor {
 
     }
 
-    public synchronized void addParameterList (Set <HeatTemplateParam> heatSet) {
+    public synchronized void addParameterList(Set<HeatTemplateParam> heatSet) {
 
         @SuppressWarnings("unchecked")
-        Map <String, Object> resourceMap = (Map <String, Object>) yml.get ("parameters");
+        Map<String, Object> resourceMap = (Map<String, Object>) yml.get("parameters");
         if (resourceMap == null) {
             resourceMap = new LinkedHashMap<>();
-            this.yml.put ("parameters", resourceMap);
+            this.yml.put("parameters", resourceMap);
         }
         for (HeatTemplateParam heatParam : heatSet) {
-            Map <String, Object> paramInfo = new HashMap<>();
-            paramInfo.put ("type", heatParam.getParamType ());
+            Map<String, Object> paramInfo = new HashMap<>();
+            paramInfo.put("type", heatParam.getParamType());
 
-            resourceMap.put (heatParam.getParamName (), paramInfo);
+            resourceMap.put(heatParam.getParamName(), paramInfo);
         }
 
         // this.yml.put("parameters", resourceMap);
 
     }
 
-    public boolean isParentTemplate (String templateBody) {
-        return templateBody.contains (REFER_PATTERN);
+    public boolean isParentTemplate(String templateBody) {
+        return templateBody.contains(REFER_PATTERN);
     }
 
-    public boolean verifyTemplate () {
+    public boolean verifyTemplate() {
         // Verify whether the heat template is for Vnf Resource
         // We don't support other template installation yet
 
         return true;
     }
 
-    public String encode (Map <String, Object> content) {
-        return yaml.dump (content);
+    public String encode(Map<String, Object> content) {
+        return yaml.dump(content);
     }
 
-    public synchronized String encode () {
-        return this.yaml.dump (this.yml);
+    public synchronized String encode() {
+        return this.yaml.dump(this.yml);
     }
 
     /**
@@ -172,9 +170,9 @@ public class YamlEditor {
      * 
      */
     @Override
-    public String toString () {
+    public String toString() {
 
-        return encode ();
+        return encode();
     }
 
 }

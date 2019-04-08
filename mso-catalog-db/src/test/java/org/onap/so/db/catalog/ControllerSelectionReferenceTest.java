@@ -22,7 +22,6 @@ package org.onap.so.db.catalog;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.db.catalog.beans.ControllerSelectionReference;
@@ -37,32 +36,32 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("test")
 public class ControllerSelectionReferenceTest {
 
-	@Autowired
-	private ControllerSelectionReferenceRepository controllerSelectionReferenceRepository;
-	
-	@Test
-	public void Find_ControllerNameByVnfTypeAndAction_Test() {
-		String vnfType = "vLoadBalancerMS/vLoadBalancerMS 0";
-		String controllerName = "APPC";
-		String actionCategory = "ConfigScaleOut";
-		ControllerSelectionReference controller = 
-				controllerSelectionReferenceRepository.findControllerSelectionReferenceByVnfTypeAndActionCategory(vnfType, actionCategory);
-		assertEquals(vnfType, controller.getVnfType());
-		assertEquals(controllerName, controller.getControllerName());
-		assertEquals(actionCategory, controller.getActionCategory());
-	}
-	
-	@Test
-	public final void controllerDataTest() {
-		ControllerSelectionReference controller = new ControllerSelectionReference();
+    @Autowired
+    private ControllerSelectionReferenceRepository controllerSelectionReferenceRepository;
 
-		controller.setVnfType("vnfType");
-		assertTrue(controller.getVnfType().equalsIgnoreCase("vnfType"));
+    @Test
+    public void Find_ControllerNameByVnfTypeAndAction_Test() {
+        String vnfType = "vLoadBalancerMS/vLoadBalancerMS 0";
+        String controllerName = "APPC";
+        String actionCategory = "ConfigScaleOut";
+        ControllerSelectionReference controller = controllerSelectionReferenceRepository
+                .findControllerSelectionReferenceByVnfTypeAndActionCategory(vnfType, actionCategory);
+        assertEquals(vnfType, controller.getVnfType());
+        assertEquals(controllerName, controller.getControllerName());
+        assertEquals(actionCategory, controller.getActionCategory());
+    }
 
-		controller.setControllerName("controllerName");
-		assertTrue(controller.getControllerName().equalsIgnoreCase("controllerName"));
+    @Test
+    public final void controllerDataTest() {
+        ControllerSelectionReference controller = new ControllerSelectionReference();
 
-		controller.setActionCategory("actionCategory");
-		assertTrue(controller.getActionCategory().equalsIgnoreCase("actionCategory"));
-	}
+        controller.setVnfType("vnfType");
+        assertTrue(controller.getVnfType().equalsIgnoreCase("vnfType"));
+
+        controller.setControllerName("controllerName");
+        assertTrue(controller.getControllerName().equalsIgnoreCase("controllerName"));
+
+        controller.setActionCategory("actionCategory");
+        assertTrue(controller.getActionCategory().equalsIgnoreCase("actionCategory"));
+    }
 }

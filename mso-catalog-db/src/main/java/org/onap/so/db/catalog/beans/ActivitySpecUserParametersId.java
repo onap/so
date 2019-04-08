@@ -21,62 +21,64 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 public class ActivitySpecUserParametersId implements Serializable {
-	
-	private static final long serialVersionUID = 1563771827209840959L;
 
-	private Integer ID;
-	@BusinessKey
-	private Integer activitySpecId;
-	@BusinessKey
-	private Integer userParametersId;
-	
-	public Integer getID() {
-		return ID;
-	}
-	public void setID(Integer iD) {
-		ID = iD;
-	}
-	public Integer getUserParametersId() {
-		return userParametersId;
-	}
-	public void setUserParametersId(Integer userParametersId) {
-		this.userParametersId = userParametersId;
-	}
-	public Integer getActivitySpecId() {
-		return activitySpecId;
-	}
-	public void setActivitySpecId(Integer activitySpecId) {
-		this.activitySpecId = activitySpecId;
-	}
+    private static final long serialVersionUID = 1563771827209840959L;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("activitySpecId", activitySpecId)
-				.append("userParametersId", userParametersId)
-				.toString();
-	}
+    private Integer ID;
+    @BusinessKey
+    private Integer activitySpecId;
+    @BusinessKey
+    private Integer userParametersId;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ActivitySpecUserParametersId)) {
-			return false;
-		}
-		ActivitySpecUserParametersId castOther = (ActivitySpecUserParametersId) other;
-		return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
-				.append(userParametersId, castOther.userParametersId).isEquals();
-	}
+    public Integer getID() {
+        return ID;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(activitySpecId).append(userParametersId).toHashCode();
-	}
+    public void setID(Integer iD) {
+        ID = iD;
+    }
+
+    public Integer getUserParametersId() {
+        return userParametersId;
+    }
+
+    public void setUserParametersId(Integer userParametersId) {
+        this.userParametersId = userParametersId;
+    }
+
+    public Integer getActivitySpecId() {
+        return activitySpecId;
+    }
+
+    public void setActivitySpecId(Integer activitySpecId) {
+        this.activitySpecId = activitySpecId;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("activitySpecId", activitySpecId)
+                .append("userParametersId", userParametersId).toString();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ActivitySpecUserParametersId)) {
+            return false;
+        }
+        ActivitySpecUserParametersId castOther = (ActivitySpecUserParametersId) other;
+        return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
+                .append(userParametersId, castOther.userParametersId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(activitySpecId).append(userParametersId).toHashCode();
+    }
 
 }

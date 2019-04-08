@@ -22,171 +22,168 @@ package org.onap.so.asdc.client.test.emulators;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class ArtifactInfoImpl implements IArtifactInfo {
 
-	private String artifactName;
-	private String artifactType;
-	private String artifactURL;
-	private String artifactChecksum;
-	private String artifactDescription;
-	private Integer artifactTimeout;
-	private String artifactVersion;
-	private String artifactUUID;
-	private String generatedFromUUID;
-	private ArtifactInfoImpl generatedArtifact;
-	private List<IArtifactInfo> relatedArtifactsInfo;
-	private List<ArtifactInfoImpl> relatedArtifactsImpl;
-	public ArtifactInfoImpl(){}
-	
-	private ArtifactInfoImpl(IArtifactInfo iArtifactInfo){
-		artifactName = iArtifactInfo.getArtifactName();
-		artifactType = iArtifactInfo.getArtifactType(); 
-		artifactURL = iArtifactInfo.getArtifactURL();
-		artifactChecksum = iArtifactInfo.getArtifactChecksum();
-		artifactDescription = iArtifactInfo.getArtifactDescription();
-		artifactTimeout = iArtifactInfo.getArtifactTimeout();
-		artifactVersion = iArtifactInfo.getArtifactVersion();
-		artifactUUID = iArtifactInfo.getArtifactUUID();
-		generatedArtifact = (ArtifactInfoImpl) iArtifactInfo.getGeneratedArtifact();
-		relatedArtifactsInfo = iArtifactInfo.getRelatedArtifacts();
-	}
-	
-	public static List<ArtifactInfoImpl> convertToArtifactInfoImpl(List<IArtifactInfo> list){
-		List<ArtifactInfoImpl> ret = new ArrayList<ArtifactInfoImpl>();
-		if( list != null ){
-			for(IArtifactInfo artifactInfo : list  ){
-				ret.add(new ArtifactInfoImpl(artifactInfo));
-			}
-		}
-		return ret;
-	}
-	
-	public String getArtifactName() {
-		return artifactName;
-	}
+    private String artifactName;
+    private String artifactType;
+    private String artifactURL;
+    private String artifactChecksum;
+    private String artifactDescription;
+    private Integer artifactTimeout;
+    private String artifactVersion;
+    private String artifactUUID;
+    private String generatedFromUUID;
+    private ArtifactInfoImpl generatedArtifact;
+    private List<IArtifactInfo> relatedArtifactsInfo;
+    private List<ArtifactInfoImpl> relatedArtifactsImpl;
 
-	public void setArtifactName(String artifactName) {
-		this.artifactName = artifactName;
-	}
+    public ArtifactInfoImpl() {}
 
-	public String getArtifactType() {
-		return artifactType;
-	}
+    private ArtifactInfoImpl(IArtifactInfo iArtifactInfo) {
+        artifactName = iArtifactInfo.getArtifactName();
+        artifactType = iArtifactInfo.getArtifactType();
+        artifactURL = iArtifactInfo.getArtifactURL();
+        artifactChecksum = iArtifactInfo.getArtifactChecksum();
+        artifactDescription = iArtifactInfo.getArtifactDescription();
+        artifactTimeout = iArtifactInfo.getArtifactTimeout();
+        artifactVersion = iArtifactInfo.getArtifactVersion();
+        artifactUUID = iArtifactInfo.getArtifactUUID();
+        generatedArtifact = (ArtifactInfoImpl) iArtifactInfo.getGeneratedArtifact();
+        relatedArtifactsInfo = iArtifactInfo.getRelatedArtifacts();
+    }
 
-	public void setArtifactType(String artifactType) {
-		this.artifactType = artifactType;
-	}
+    public static List<ArtifactInfoImpl> convertToArtifactInfoImpl(List<IArtifactInfo> list) {
+        List<ArtifactInfoImpl> ret = new ArrayList<ArtifactInfoImpl>();
+        if (list != null) {
+            for (IArtifactInfo artifactInfo : list) {
+                ret.add(new ArtifactInfoImpl(artifactInfo));
+            }
+        }
+        return ret;
+    }
 
-	public String getArtifactURL() {
-		return artifactURL;
-	}
+    public String getArtifactName() {
+        return artifactName;
+    }
 
-	public void setArtifactURL(String artifactURL) {
-		this.artifactURL = artifactURL;
-	}
+    public void setArtifactName(String artifactName) {
+        this.artifactName = artifactName;
+    }
 
-	public String getArtifactChecksum() {
-		return artifactChecksum;
-	}
+    public String getArtifactType() {
+        return artifactType;
+    }
 
-	public void setArtifactChecksum(String artifactChecksum) {
-		this.artifactChecksum = artifactChecksum;
-	}
+    public void setArtifactType(String artifactType) {
+        this.artifactType = artifactType;
+    }
 
-	public String getArtifactDescription() {
-		return artifactDescription;
-	}
+    public String getArtifactURL() {
+        return artifactURL;
+    }
 
-	public void setArtifactDescription(String artifactDescription) {
-		this.artifactDescription = artifactDescription;
-	}
+    public void setArtifactURL(String artifactURL) {
+        this.artifactURL = artifactURL;
+    }
 
-	public Integer getArtifactTimeout() {
-		return artifactTimeout;
-	}
+    public String getArtifactChecksum() {
+        return artifactChecksum;
+    }
 
-	public void setArtifactTimeout(Integer artifactTimeout) {
-		this.artifactTimeout = artifactTimeout;
-	}
+    public void setArtifactChecksum(String artifactChecksum) {
+        this.artifactChecksum = artifactChecksum;
+    }
 
-	@Override
-	public String toString() {
-		return "BaseArtifactInfoImpl [artifactName=" + artifactName
-				+ ", artifactType=" + artifactType + ", artifactURL="
-				+ artifactURL + ", artifactChecksum=" + artifactChecksum
-				+ ", artifactDescription=" + artifactDescription
-				+ ", artifactVersion=" + artifactVersion
-				+ ", artifactUUID=" + artifactUUID
-				+ ", artifactTimeout=" + artifactTimeout + "]";
-	}
+    public String getArtifactDescription() {
+        return artifactDescription;
+    }
 
-	public String getArtifactVersion() {
-		return artifactVersion;
-	}
+    public void setArtifactDescription(String artifactDescription) {
+        this.artifactDescription = artifactDescription;
+    }
 
-	public void setArtifactVersion(String artifactVersion) {
-		this.artifactVersion = artifactVersion;
-	}
+    public Integer getArtifactTimeout() {
+        return artifactTimeout;
+    }
 
-	public String getArtifactUUID() {
-		return artifactUUID;
-	}
+    public void setArtifactTimeout(Integer artifactTimeout) {
+        this.artifactTimeout = artifactTimeout;
+    }
 
-	public void setArtifactUUID(String artifactUUID) {
-		this.artifactUUID = artifactUUID;
-	}
+    @Override
+    public String toString() {
+        return "BaseArtifactInfoImpl [artifactName=" + artifactName + ", artifactType=" + artifactType
+                + ", artifactURL=" + artifactURL + ", artifactChecksum=" + artifactChecksum + ", artifactDescription="
+                + artifactDescription + ", artifactVersion=" + artifactVersion + ", artifactUUID=" + artifactUUID
+                + ", artifactTimeout=" + artifactTimeout + "]";
+    }
 
-	public String getGeneratedFromUUID() {
-		return generatedFromUUID;
-	}
+    public String getArtifactVersion() {
+        return artifactVersion;
+    }
 
-	public void setGeneratedFromUUID(String generatedFromUUID) {
-		this.generatedFromUUID = generatedFromUUID;
-	}
-	
-	@Override
-	public ArtifactInfoImpl getGeneratedArtifact() {
-		return generatedArtifact;
-	}
+    public void setArtifactVersion(String artifactVersion) {
+        this.artifactVersion = artifactVersion;
+    }
 
-	public void setGeneratedArtifact(ArtifactInfoImpl generatedArtifact) {
-		this.generatedArtifact = generatedArtifact;
-	}
-	
-	@Override
-	public List<IArtifactInfo> getRelatedArtifacts(){
-		List<IArtifactInfo> temp = new ArrayList<IArtifactInfo>();
-		if( relatedArtifactsInfo != null ){
-			temp.addAll(relatedArtifactsImpl);
-		}
-		return temp;
-	}
-	
-	public void setRelatedArtifacts(List<ArtifactInfoImpl> relatedArtifacts) {
-		this.relatedArtifactsImpl = relatedArtifacts;
-	}
+    public String getArtifactUUID() {
+        return artifactUUID;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ArtifactInfoImpl)) {
-			return false;
-		}
-		ArtifactInfoImpl castOther = (ArtifactInfoImpl) other;
-		return new EqualsBuilder().append(artifactUUID, castOther.artifactUUID)
-				.append(artifactVersion, castOther.artifactVersion).isEquals();
-	}
+    public void setArtifactUUID(String artifactUUID) {
+        this.artifactUUID = artifactUUID;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(artifactName).append(artifactType).append(artifactURL)
-				.append(artifactChecksum).append(artifactDescription).append(artifactTimeout).append(artifactVersion)
-				.append(artifactUUID).append(generatedFromUUID).append(generatedArtifact).append(relatedArtifactsInfo)
-				.append(relatedArtifactsImpl).toHashCode();
-	}
+    public String getGeneratedFromUUID() {
+        return generatedFromUUID;
+    }
+
+    public void setGeneratedFromUUID(String generatedFromUUID) {
+        this.generatedFromUUID = generatedFromUUID;
+    }
+
+    @Override
+    public ArtifactInfoImpl getGeneratedArtifact() {
+        return generatedArtifact;
+    }
+
+    public void setGeneratedArtifact(ArtifactInfoImpl generatedArtifact) {
+        this.generatedArtifact = generatedArtifact;
+    }
+
+    @Override
+    public List<IArtifactInfo> getRelatedArtifacts() {
+        List<IArtifactInfo> temp = new ArrayList<IArtifactInfo>();
+        if (relatedArtifactsInfo != null) {
+            temp.addAll(relatedArtifactsImpl);
+        }
+        return temp;
+    }
+
+    public void setRelatedArtifacts(List<ArtifactInfoImpl> relatedArtifacts) {
+        this.relatedArtifactsImpl = relatedArtifacts;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ArtifactInfoImpl)) {
+            return false;
+        }
+        ArtifactInfoImpl castOther = (ArtifactInfoImpl) other;
+        return new EqualsBuilder().append(artifactUUID, castOther.artifactUUID)
+                .append(artifactVersion, castOther.artifactVersion).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(artifactName).append(artifactType).append(artifactURL)
+                .append(artifactChecksum).append(artifactDescription).append(artifactTimeout).append(artifactVersion)
+                .append(artifactUUID).append(generatedFromUUID).append(generatedArtifact).append(relatedArtifactsInfo)
+                .append(relatedArtifactsImpl).toHashCode();
+    }
 
 }

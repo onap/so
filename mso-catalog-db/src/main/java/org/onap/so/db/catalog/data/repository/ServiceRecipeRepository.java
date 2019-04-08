@@ -26,9 +26,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "serviceRecipe", path = "serviceRecipe")
 public interface ServiceRecipeRepository extends JpaRepository<ServiceRecipe, Long> {
-	ServiceRecipe findByActionAndServiceModelUUID(String action, String serviceModelUUID);
+    ServiceRecipe findByActionAndServiceModelUUID(String action, String serviceModelUUID);
 
-	ServiceRecipe findByAction(String action);
+    ServiceRecipe findByAction(String action);
 
-	ServiceRecipe findFirstByServiceModelUUIDAndAction(String serviceModelUUID, String action);
+    ServiceRecipe findFirstByServiceModelUUIDAndAction(String serviceModelUUID, String action);
 }

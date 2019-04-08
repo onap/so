@@ -19,50 +19,47 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
-public class UnassignVfModuleBBTest extends BaseBPMNTest{
-	@Test
-	public void sunnyDayUnassignVfModule_Test() throws InterruptedException {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("UnassignVfModuleBB_Start", 
-				"UnassignVfModule",
-				"CallActivity_sdncHandler",
-				"DeleteVfModule",				
-				"UnassignVfModuleBB_End");
-		assertThat(pi).isEnded();
-	}
+public class UnassignVfModuleBBTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayUnassignVfModule_Test() throws InterruptedException {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule",
+                "CallActivity_sdncHandler", "DeleteVfModule", "UnassignVfModuleBB_End");
+        assertThat(pi).isEnded();
+    }
 
-	@Test
-	public void rainyDayUnassignVfModuleAAIDeleteFailed_Test() throws Exception {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiDeleteTasks).deleteVfModule(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule", "DeleteVfModule")
-				.hasNotPassed("UnassignVfModuleBB_End");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test
-	public void rainyDayUnassignVfModuleSDNCUnassignFailed_Test() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncUnassignTasks).unassignVfModule(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule")
-				.hasNotPassed("DeleteVfModule", "UnassignVfModuleBB_End");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void rainyDayUnassignVfModuleAAIDeleteFailed_Test() throws Exception {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiDeleteTasks)
+                .deleteVfModule(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule", "DeleteVfModule")
+                .hasNotPassed("UnassignVfModuleBB_End");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void rainyDayUnassignVfModuleSDNCUnassignFailed_Test() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncUnassignTasks)
+                .unassignVfModule(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignVfModuleBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("UnassignVfModuleBB_Start", "UnassignVfModule")
+                .hasNotPassed("DeleteVfModule", "UnassignVfModuleBB_End");
+        assertThat(pi).isEnded();
+    }
 }

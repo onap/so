@@ -22,53 +22,58 @@ package org.onap.so.db.request.beans;
 
 import java.io.Serializable;
 import java.util.Objects;
-
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class WatchdogServiceModVerIdLookupId implements Serializable{
+public class WatchdogServiceModVerIdLookupId implements Serializable {
 
-	private static final long serialVersionUID = 9112709226209619993L;
-	
-	@BusinessKey
-	private String distributionId;
-	@BusinessKey
-	private String serviceModelVersionId;
-	public String getDistributionId() {
-		return distributionId;
-	}
-	public void setDistributionId(String distributionId) {
-		this.distributionId = distributionId;
-	}
-	public String getServiceModelVersionId() {
-		return serviceModelVersionId;
-	}
-	public void setServiceModelVersionId(String serviceModelVersionId) {
-		this.serviceModelVersionId = serviceModelVersionId;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (this == other) {
-			return true;
-		}
-		if (!(other instanceof WatchdogServiceModVerIdLookupId)) {
-			return false;
-		}
-		WatchdogServiceModVerIdLookupId castOther = (WatchdogServiceModVerIdLookupId) other;
-		return Objects.equals(this.getDistributionId(), castOther.getDistributionId())
-				&& Objects.equals(getServiceModelVersionId(), castOther.getServiceModelVersionId());
-	}
-	@Override
-	public int hashCode() {
-		return Objects.hash(this.getDistributionId(), this.getServiceModelVersionId());
-	}
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("distributionId", getDistributionId())
-				.append("serviceModelVersionId", getServiceModelVersionId()).toString();
-	}
+    private static final long serialVersionUID = 9112709226209619993L;
+
+    @BusinessKey
+    private String distributionId;
+    @BusinessKey
+    private String serviceModelVersionId;
+
+    public String getDistributionId() {
+        return distributionId;
+    }
+
+    public void setDistributionId(String distributionId) {
+        this.distributionId = distributionId;
+    }
+
+    public String getServiceModelVersionId() {
+        return serviceModelVersionId;
+    }
+
+    public void setServiceModelVersionId(String serviceModelVersionId) {
+        this.serviceModelVersionId = serviceModelVersionId;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (!(other instanceof WatchdogServiceModVerIdLookupId)) {
+            return false;
+        }
+        WatchdogServiceModVerIdLookupId castOther = (WatchdogServiceModVerIdLookupId) other;
+        return Objects.equals(this.getDistributionId(), castOther.getDistributionId())
+                && Objects.equals(getServiceModelVersionId(), castOther.getServiceModelVersionId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.getDistributionId(), this.getServiceModelVersionId());
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("distributionId", getDistributionId())
+                .append("serviceModelVersionId", getServiceModelVersionId()).toString();
+    }
 
 
-	
 
 }

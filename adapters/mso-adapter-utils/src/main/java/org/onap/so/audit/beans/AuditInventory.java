@@ -22,53 +22,53 @@ package org.onap.so.audit.beans;
 
 import java.io.Serializable;
 
-public class AuditInventory implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4937350343452380760L;
+public class AuditInventory implements Serializable {
 
-	private String cloudRegion;
-	
-	private String cloudOwner;
-	
-	private String tenantId;
-	
-	private String heatStackName;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4937350343452380760L;
 
-	public String getCloudRegion() {
-		return cloudRegion;
-	}
+    private String cloudRegion;
 
-	public void setCloudRegion(String cloudRegion) {
-		this.cloudRegion = cloudRegion;
-	}
+    private String cloudOwner;
 
-	public String getCloudOwner() {
-		return cloudOwner;
-	}
+    private String tenantId;
 
-	public void setCloudOwner(String cloudOwner) {
-		this.cloudOwner = cloudOwner;
-	}
+    private String heatStackName;
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getCloudRegion() {
+        return cloudRegion;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setCloudRegion(String cloudRegion) {
+        this.cloudRegion = cloudRegion;
+    }
 
-	public String getHeatStackName() {
-		return heatStackName;
-	}
+    public String getCloudOwner() {
+        return cloudOwner;
+    }
 
-	public void setHeatStackName(String heatStackName) {
-		this.heatStackName = heatStackName;
-	}
-	
-	
+    public void setCloudOwner(String cloudOwner) {
+        this.cloudOwner = cloudOwner;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    public String getHeatStackName() {
+        return heatStackName;
+    }
+
+    public void setHeatStackName(String heatStackName) {
+        this.heatStackName = heatStackName;
+    }
+
+
 
 }

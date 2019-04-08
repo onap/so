@@ -27,7 +27,10 @@ import org.onap.so.db.catalog.beans.ResourceType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "orchestrationStatusStateTransitionDirective", path = "orchestrationStatusStateTransitionDirective")
-public interface OrchestrationStatusStateTransitionDirectiveRepository extends JpaRepository<OrchestrationStatusStateTransitionDirective, String> {
-	OrchestrationStatusStateTransitionDirective findOneByResourceTypeAndOrchestrationStatusAndTargetAction(ResourceType resourceType, OrchestrationStatus orchestrationStatus, OrchestrationAction targetAction);
+@RepositoryRestResource(collectionResourceRel = "orchestrationStatusStateTransitionDirective",
+        path = "orchestrationStatusStateTransitionDirective")
+public interface OrchestrationStatusStateTransitionDirectiveRepository
+        extends JpaRepository<OrchestrationStatusStateTransitionDirective, String> {
+    OrchestrationStatusStateTransitionDirective findOneByResourceTypeAndOrchestrationStatusAndTargetAction(
+            ResourceType resourceType, OrchestrationStatus orchestrationStatus, OrchestrationAction targetAction);
 }

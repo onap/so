@@ -25,6 +25,6 @@ package org.onap.so.openstack.beans;
  * Enum status values to mirror the Openstack Heat stack status values
  */
 public enum VnfStatus {
-	ACTIVE, FAILED, NOTFOUND, UNKNOWN
+    ACTIVE, FAILED, NOTFOUND, UNKNOWN
 }
 

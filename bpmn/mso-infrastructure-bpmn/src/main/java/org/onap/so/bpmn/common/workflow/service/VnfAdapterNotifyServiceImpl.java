@@ -30,7 +30,6 @@ import javax.ws.rs.core.Context;
 import javax.xml.ws.Action;
 import javax.xml.ws.RequestWrapper;
 import javax.xml.ws.WebServiceContext;
-
 import org.onap.so.bpmn.common.adapter.vnf.CreateVnfNotification;
 import org.onap.so.bpmn.common.adapter.vnf.DeleteVnfNotification;
 import org.onap.so.bpmn.common.adapter.vnf.MsoExceptionCategory;
@@ -48,195 +47,167 @@ import org.springframework.stereotype.Service;
  */
 @WebService(serviceName = "vnfAdapterNotify", targetNamespace = "http://org.onap.so/vnfNotify")
 @Service
-public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService implements VnfAdapterNotify{
+public class VnfAdapterNotifyServiceImpl extends ProcessEngineAwareService implements VnfAdapterNotify {
 
-	private final String logMarker = "[VNF-NOTIFY]";
-	
-	@Autowired
-	CallbackHandlerService callback;
+    private final String logMarker = "[VNF-NOTIFY]";
 
-	@Context WebServiceContext wsContext;
+    @Autowired
+    CallbackHandlerService callback;
+
+    @Context
+    WebServiceContext wsContext;
 
     @WebMethod(operationName = "rollbackVnfNotification")
     @Oneway
-    @RequestWrapper(localName = "rollbackVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify", className = "org.onap.so.adapters.vnf.async.client.RollbackVnfNotification")
+    @RequestWrapper(localName = "rollbackVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify",
+            className = "org.onap.so.adapters.vnf.async.client.RollbackVnfNotification")
     @Action(input = "http://org.onap.so/notify/adapterNotify/rollbackVnfNotificationRequest")
-    public void rollbackVnfNotification(
-        @WebParam(name = "messageId", targetNamespace = "")
-        String messageId,
-        @WebParam(name = "completed", targetNamespace = "")
-        boolean completed,
-        @WebParam(name = "exception", targetNamespace = "")
-        MsoExceptionCategory exception,
-        @WebParam(name = "errorMessage", targetNamespace = "")
-        String errorMessage) {
+    public void rollbackVnfNotification(@WebParam(name = "messageId", targetNamespace = "") String messageId,
+            @WebParam(name = "completed", targetNamespace = "") boolean completed,
+            @WebParam(name = "exception", targetNamespace = "") MsoExceptionCategory exception,
+            @WebParam(name = "errorMessage", targetNamespace = "") String errorMessage) {
 
-		RollbackVnfNotification rollbackVnfNotification = new RollbackVnfNotification();
+        RollbackVnfNotification rollbackVnfNotification = new RollbackVnfNotification();
 
-		rollbackVnfNotification.setMessageId(messageId);
-		rollbackVnfNotification.setCompleted(completed);
-		rollbackVnfNotification.setException(exception);
-		rollbackVnfNotification.setErrorMessage(errorMessage);
+        rollbackVnfNotification.setMessageId(messageId);
+        rollbackVnfNotification.setCompleted(completed);
+        rollbackVnfNotification.setException(exception);
+        rollbackVnfNotification.setErrorMessage(errorMessage);
 
-		String method = "rollbackVnfNotification";
-		Object message = rollbackVnfNotification;
-		String messageEventName = "rollbackVnfNotificationCallback";
-		String messageVariable = "rollbackVnfNotificationCallback";
-		String correlationVariable = "VNFRB_messageId";
-		String correlationValue = messageId;
+        String method = "rollbackVnfNotification";
+        Object message = rollbackVnfNotification;
+        String messageEventName = "rollbackVnfNotificationCallback";
+        String messageVariable = "rollbackVnfNotificationCallback";
+        String correlationVariable = "VNFRB_messageId";
+        String correlationValue = messageId;
 
-		callback.handleCallback(method, message, messageEventName, messageVariable,
-			correlationVariable, correlationValue, logMarker);
+        callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
+                correlationValue, logMarker);
     }
 
     @WebMethod(operationName = "queryVnfNotification")
     @Oneway
-    @RequestWrapper(localName = "queryVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify", className = "org.onap.so.adapters.vnf.async.client.QueryVnfNotification")
+    @RequestWrapper(localName = "queryVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify",
+            className = "org.onap.so.adapters.vnf.async.client.QueryVnfNotification")
     @Action(input = "http://org.onap.so/notify/adapterNotify/queryVnfNotificationRequest")
-    public void queryVnfNotification(
-        @WebParam(name = "messageId", targetNamespace = "")
-        String messageId,
-        @WebParam(name = "completed", targetNamespace = "")
-        boolean completed,
-        @WebParam(name = "exception", targetNamespace = "")
-        MsoExceptionCategory exception,
-        @WebParam(name = "errorMessage", targetNamespace = "")
-        String errorMessage,
-        @WebParam(name = "vnfExists", targetNamespace = "")
-        Boolean vnfExists,
-        @WebParam(name = "vnfId", targetNamespace = "")
-        String vnfId,
-        @WebParam(name = "status", targetNamespace = "")
-        VnfStatus status,
-        @WebParam(name = "outputs", targetNamespace = "")
-        QueryVnfNotification.Outputs outputs){
+    public void queryVnfNotification(@WebParam(name = "messageId", targetNamespace = "") String messageId,
+            @WebParam(name = "completed", targetNamespace = "") boolean completed,
+            @WebParam(name = "exception", targetNamespace = "") MsoExceptionCategory exception,
+            @WebParam(name = "errorMessage", targetNamespace = "") String errorMessage,
+            @WebParam(name = "vnfExists", targetNamespace = "") Boolean vnfExists,
+            @WebParam(name = "vnfId", targetNamespace = "") String vnfId,
+            @WebParam(name = "status", targetNamespace = "") VnfStatus status,
+            @WebParam(name = "outputs", targetNamespace = "") QueryVnfNotification.Outputs outputs) {
 
-		String method = "queryVnfNotification";
-		String messageEventName = "queryVnfNotificationCallback";
-		String messageVariable = "queryVnfNotificationCallback";
-		String correlationVariable = "VNFQ_messageId";
-		String correlationValue = messageId;
+        String method = "queryVnfNotification";
+        String messageEventName = "queryVnfNotificationCallback";
+        String messageVariable = "queryVnfNotificationCallback";
+        String correlationVariable = "VNFQ_messageId";
+        String correlationValue = messageId;
 
-    	QueryVnfNotification message = new QueryVnfNotification();
+        QueryVnfNotification message = new QueryVnfNotification();
 
-    	message.setMessageId(messageId);
-    	message.setCompleted(completed);
-    	message.setException(exception);
-    	message.setErrorMessage(errorMessage);
-    	message.setVnfExists(vnfExists);
-    	message.setVnfId(vnfId);
-    	message.setStatus(status);
-    	message.setOutputs(outputs);
+        message.setMessageId(messageId);
+        message.setCompleted(completed);
+        message.setException(exception);
+        message.setErrorMessage(errorMessage);
+        message.setVnfExists(vnfExists);
+        message.setVnfId(vnfId);
+        message.setStatus(status);
+        message.setOutputs(outputs);
 
-    	callback.handleCallback(method, message, messageEventName, messageVariable,
-			correlationVariable, correlationValue, logMarker);
+        callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
+                correlationValue, logMarker);
     }
 
-	@WebMethod(operationName = "createVnfNotification")
+    @WebMethod(operationName = "createVnfNotification")
     @Oneway
-    @RequestWrapper(localName = "createVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify", className = "org.onap.so.adapters.vnf.async.client.CreateVnfNotification")
+    @RequestWrapper(localName = "createVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify",
+            className = "org.onap.so.adapters.vnf.async.client.CreateVnfNotification")
     @Action(input = "http://org.onap.so/notify/adapterNotify/createVnfNotificationRequest")
-	public void createVnfNotification(
-			@WebParam(name = "messageId", targetNamespace = "")
-	        String messageId,
-	        @WebParam(name = "completed", targetNamespace = "")
-	        boolean completed,
-	        @WebParam(name = "exception", targetNamespace = "")
-	        MsoExceptionCategory exception,
-	        @WebParam(name = "errorMessage", targetNamespace = "")
-	        String errorMessage,
-	        @WebParam(name = "vnfId", targetNamespace = "")
-	        String vnfId,
-	        @WebParam(name = "outputs", targetNamespace = "")
-	        CreateVnfNotification.Outputs outputs,
-	        @WebParam(name = "rollback", targetNamespace = "")
-	        VnfRollback rollback){
+    public void createVnfNotification(@WebParam(name = "messageId", targetNamespace = "") String messageId,
+            @WebParam(name = "completed", targetNamespace = "") boolean completed,
+            @WebParam(name = "exception", targetNamespace = "") MsoExceptionCategory exception,
+            @WebParam(name = "errorMessage", targetNamespace = "") String errorMessage,
+            @WebParam(name = "vnfId", targetNamespace = "") String vnfId,
+            @WebParam(name = "outputs", targetNamespace = "") CreateVnfNotification.Outputs outputs,
+            @WebParam(name = "rollback", targetNamespace = "") VnfRollback rollback) {
 
-		String method = "createVnfNotification";
-		String messageEventName = "createVnfNotificationCallback";
-		String messageVariable = "createVnfNotificationCallback";
-		String correlationVariable = "VNFC_messageId";
-		String correlationValue = messageId;
+        String method = "createVnfNotification";
+        String messageEventName = "createVnfNotificationCallback";
+        String messageVariable = "createVnfNotificationCallback";
+        String correlationVariable = "VNFC_messageId";
+        String correlationValue = messageId;
 
-		CreateVnfNotification message = new CreateVnfNotification();
+        CreateVnfNotification message = new CreateVnfNotification();
 
-		message.setMessageId(messageId);
-		message.setCompleted(completed);
-		message.setException(exception);
-		message.setErrorMessage(errorMessage);
-		message.setVnfId(vnfId);
-		message.setOutputs(outputs);
-		message.setRollback(rollback);
+        message.setMessageId(messageId);
+        message.setCompleted(completed);
+        message.setException(exception);
+        message.setErrorMessage(errorMessage);
+        message.setVnfId(vnfId);
+        message.setOutputs(outputs);
+        message.setRollback(rollback);
 
-		callback.handleCallback(method, message, messageEventName, messageVariable,
-			correlationVariable, correlationValue, logMarker);
-	 }
+        callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
+                correlationValue, logMarker);
+    }
 
-	@WebMethod(operationName = "updateVnfNotification")
+    @WebMethod(operationName = "updateVnfNotification")
     @Oneway
-    @RequestWrapper(localName = "updateVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify", className = "org.onap.so.adapters.vnf.async.client.UpdateVnfNotification")
+    @RequestWrapper(localName = "updateVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify",
+            className = "org.onap.so.adapters.vnf.async.client.UpdateVnfNotification")
     @Action(input = "http://org.onap.so/notify/adapterNotify/updateVnfNotificationRequest")
-    public void updateVnfNotification(
-        @WebParam(name = "messageId", targetNamespace = "")
-        String messageId,
-        @WebParam(name = "completed", targetNamespace = "")
-        boolean completed,
-        @WebParam(name = "exception", targetNamespace = "")
-        MsoExceptionCategory exception,
-        @WebParam(name = "errorMessage", targetNamespace = "")
-        String errorMessage,
-        @WebParam(name = "outputs", targetNamespace = "")
-        UpdateVnfNotification.Outputs outputs,
-        @WebParam(name = "rollback", targetNamespace = "")
-        VnfRollback rollback){
+    public void updateVnfNotification(@WebParam(name = "messageId", targetNamespace = "") String messageId,
+            @WebParam(name = "completed", targetNamespace = "") boolean completed,
+            @WebParam(name = "exception", targetNamespace = "") MsoExceptionCategory exception,
+            @WebParam(name = "errorMessage", targetNamespace = "") String errorMessage,
+            @WebParam(name = "outputs", targetNamespace = "") UpdateVnfNotification.Outputs outputs,
+            @WebParam(name = "rollback", targetNamespace = "") VnfRollback rollback) {
 
-		String method = "updateVnfNotification";
-		String messageEventName = "updateVnfNotificationCallback";
-		String messageVariable = "updateVnfNotificationCallback";
-		String correlationVariable = "VNFU_messageId";
-		String correlationValue = messageId;
+        String method = "updateVnfNotification";
+        String messageEventName = "updateVnfNotificationCallback";
+        String messageVariable = "updateVnfNotificationCallback";
+        String correlationVariable = "VNFU_messageId";
+        String correlationValue = messageId;
 
-    	UpdateVnfNotification message = new UpdateVnfNotification();
+        UpdateVnfNotification message = new UpdateVnfNotification();
 
-    	message.setMessageId(messageId);
-    	message.setCompleted(completed);
-    	message.setException(exception);
-    	message.setErrorMessage(errorMessage);
-    	message.setOutputs(outputs);
-    	message.setRollback(rollback);
+        message.setMessageId(messageId);
+        message.setCompleted(completed);
+        message.setException(exception);
+        message.setErrorMessage(errorMessage);
+        message.setOutputs(outputs);
+        message.setRollback(rollback);
 
-    	callback.handleCallback(method, message, messageEventName, messageVariable,
-			correlationVariable, correlationValue, logMarker);
-	 }
+        callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
+                correlationValue, logMarker);
+    }
 
     @WebMethod(operationName = "deleteVnfNotification")
     @Oneway
-    @RequestWrapper(localName = "deleteVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify", className = "org.onap.so.adapters.vnf.async.client.DeleteVnfNotification")
+    @RequestWrapper(localName = "deleteVnfNotification", targetNamespace = "http://org.onap.so/vnfNotify",
+            className = "org.onap.so.adapters.vnf.async.client.DeleteVnfNotification")
     @Action(input = "http://org.onap.so/notify/adapterNotify/deleteVnfNotificationRequest")
-    public void deleteVnfNotification(
-        @WebParam(name = "messageId", targetNamespace = "")
-        String messageId,
-        @WebParam(name = "completed", targetNamespace = "")
-        boolean completed,
-        @WebParam(name = "exception", targetNamespace = "")
-        MsoExceptionCategory exception,
-        @WebParam(name = "errorMessage", targetNamespace = "")
-        String errorMessage) {
+    public void deleteVnfNotification(@WebParam(name = "messageId", targetNamespace = "") String messageId,
+            @WebParam(name = "completed", targetNamespace = "") boolean completed,
+            @WebParam(name = "exception", targetNamespace = "") MsoExceptionCategory exception,
+            @WebParam(name = "errorMessage", targetNamespace = "") String errorMessage) {
 
-		String method = "deleteVnfNotification";
-		String messageEventName = "deleteVnfACallback";
-		String messageVariable = "deleteVnfACallback";
-		String correlationVariable = "VNFDEL_uuid";
-		String correlationValue = messageId;
+        String method = "deleteVnfNotification";
+        String messageEventName = "deleteVnfACallback";
+        String messageVariable = "deleteVnfACallback";
+        String correlationVariable = "VNFDEL_uuid";
+        String correlationValue = messageId;
 
-    	DeleteVnfNotification message = new DeleteVnfNotification();
+        DeleteVnfNotification message = new DeleteVnfNotification();
 
-    	message.setMessageId(messageId);
-    	message.setCompleted(completed);
-    	message.setException(exception);
-    	message.setErrorMessage(errorMessage);
+        message.setMessageId(messageId);
+        message.setCompleted(completed);
+        message.setException(exception);
+        message.setErrorMessage(errorMessage);
 
-    	callback.handleCallback(method, message, messageEventName, messageVariable,
-			correlationVariable, correlationValue, logMarker);
-	}
+        callback.handleCallback(method, message, messageEventName, messageVariable, correlationVariable,
+                correlationValue, logMarker);
+    }
 }

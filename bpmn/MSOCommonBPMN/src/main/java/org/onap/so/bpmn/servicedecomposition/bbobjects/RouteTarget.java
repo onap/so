@@ -21,9 +21,7 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import javax.persistence.Id;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -32,12 +30,12 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 
 @JsonRootName("route-target")
 public class RouteTarget implements Serializable, ShallowCopy<RouteTarget> {
-	private static final long serialVersionUID = -4635525992843470461L;
-	
-	@Id
-	@JsonProperty("global-route-target")
+    private static final long serialVersionUID = -4635525992843470461L;
+
+    @Id
+    @JsonProperty("global-route-target")
     protected String globalRouteTarget;
-	@Id
+    @Id
     @JsonProperty("route-target-role")
     protected String routeTargetRole;
     @JsonProperty("resource-version")
@@ -67,18 +65,18 @@ public class RouteTarget implements Serializable, ShallowCopy<RouteTarget> {
         this.resourceVersion = value;
     }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof RouteTarget)) {
-			return false;
-		}
-		RouteTarget castOther = (RouteTarget) other;
-		return new EqualsBuilder().append(globalRouteTarget, castOther.globalRouteTarget)
-				.append(routeTargetRole, castOther.routeTargetRole).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof RouteTarget)) {
+            return false;
+        }
+        RouteTarget castOther = (RouteTarget) other;
+        return new EqualsBuilder().append(globalRouteTarget, castOther.globalRouteTarget)
+                .append(routeTargetRole, castOther.routeTargetRole).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(globalRouteTarget).append(routeTargetRole).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(globalRouteTarget).append(routeTargetRole).toHashCode();
+    }
 }

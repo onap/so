@@ -25,25 +25,25 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.RequestInfo;
 
-public class RequestScopeValidation implements ValidationRule{
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-		ModelInfo modelInfo = info.getSir().getRequestDetails().getModelInfo();
-		RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
-		String requestScope;
-		
+public class RequestScopeValidation implements ValidationRule {
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        ModelInfo modelInfo = info.getSir().getRequestDetails().getModelInfo();
+        RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
+        String requestScope;
+
         if (modelInfo == null) {
-            throw new ValidationException ("model-info");
+            throw new ValidationException("model-info");
         }
-     	if (requestInfo == null) {
-     		throw new ValidationException ("requestInfo");
-	    }
-     	info.setRequestInfo(requestInfo);
-        if (modelInfo.getModelType () == null) {
-        	throw new ValidationException ("modelType");
+        if (requestInfo == null) {
+            throw new ValidationException("requestInfo");
+        }
+        info.setRequestInfo(requestInfo);
+        if (modelInfo.getModelType() == null) {
+            throw new ValidationException("modelType");
         }
         requestScope = info.getSir().getRequestDetails().getModelInfo().getModelType().name();
         info.setRequestScope(requestScope);
         return info;
-	}
+    }
 }

@@ -22,159 +22,159 @@ package org.onap.so.asdc.client.test.emulators;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IResourceInstance;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class ResourceInfoImpl implements IResourceInstance{
-	public ResourceInfoImpl (){}
-	private String resourceInstanceName;
-	private String resourceCustomizationUUID;
-	private String resourceName;
-	private String resourceVersion;
-	private String resourceType;
-	private String resourceUUID;
-	private String resourceInvariantUUID;
-	private String category;
-	private String subcategory;
-	private List<ArtifactInfoImpl> artifacts;
-	
-	private ResourceInfoImpl(IResourceInstance resourceInstance){
-		resourceInstanceName = resourceInstance.getResourceInstanceName();
-		resourceCustomizationUUID = resourceInstance.getResourceCustomizationUUID();
-		resourceName = resourceInstance.getResourceName();
-		resourceVersion = resourceInstance.getResourceVersion();
-		resourceType = resourceInstance.getResourceType();
-		resourceUUID = resourceInstance.getResourceUUID();
-		resourceInvariantUUID = resourceInstance.getResourceInvariantUUID();
-		category = resourceInstance.getCategory();
-		subcategory = resourceInstance.getSubcategory();
-		artifacts = ArtifactInfoImpl.convertToArtifactInfoImpl(resourceInstance.getArtifacts());
-	}
-	
-	public static List<ResourceInfoImpl> convertToJsonContainer(List<IResourceInstance> resources){
-		 List<ResourceInfoImpl> buildResources = new ArrayList<ResourceInfoImpl>();
-		 if( resources != null ){
-			 for( IResourceInstance resourceInstance : resources ){
-				 buildResources.add(new ResourceInfoImpl(resourceInstance));
-			 }
-		 }
-		 return buildResources;
-	}
-	
-	@Override
-	public String getResourceInstanceName() {
-		return resourceInstanceName;
-	}
+public class ResourceInfoImpl implements IResourceInstance {
+    public ResourceInfoImpl() {}
 
-	public void setResourceInstanceName(String resourceInstanceName) {
-		this.resourceInstanceName = resourceInstanceName;
-	}
-	
-	@Override
-	public String getResourceName() {
-		return resourceName;
-	}
+    private String resourceInstanceName;
+    private String resourceCustomizationUUID;
+    private String resourceName;
+    private String resourceVersion;
+    private String resourceType;
+    private String resourceUUID;
+    private String resourceInvariantUUID;
+    private String category;
+    private String subcategory;
+    private List<ArtifactInfoImpl> artifacts;
 
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
-	}
+    private ResourceInfoImpl(IResourceInstance resourceInstance) {
+        resourceInstanceName = resourceInstance.getResourceInstanceName();
+        resourceCustomizationUUID = resourceInstance.getResourceCustomizationUUID();
+        resourceName = resourceInstance.getResourceName();
+        resourceVersion = resourceInstance.getResourceVersion();
+        resourceType = resourceInstance.getResourceType();
+        resourceUUID = resourceInstance.getResourceUUID();
+        resourceInvariantUUID = resourceInstance.getResourceInvariantUUID();
+        category = resourceInstance.getCategory();
+        subcategory = resourceInstance.getSubcategory();
+        artifacts = ArtifactInfoImpl.convertToArtifactInfoImpl(resourceInstance.getArtifacts());
+    }
 
-	@Override
-	public String getResourceVersion() {
-		return resourceVersion;
-	}
+    public static List<ResourceInfoImpl> convertToJsonContainer(List<IResourceInstance> resources) {
+        List<ResourceInfoImpl> buildResources = new ArrayList<ResourceInfoImpl>();
+        if (resources != null) {
+            for (IResourceInstance resourceInstance : resources) {
+                buildResources.add(new ResourceInfoImpl(resourceInstance));
+            }
+        }
+        return buildResources;
+    }
 
-	public void setResourceVersion(String resourceVersion) {
-		this.resourceVersion = resourceVersion;
-	}
+    @Override
+    public String getResourceInstanceName() {
+        return resourceInstanceName;
+    }
 
-	@Override
-	public String getResourceType() {
-		return resourceType;
-	}
+    public void setResourceInstanceName(String resourceInstanceName) {
+        this.resourceInstanceName = resourceInstanceName;
+    }
 
-	public void setResoucreType(String resourceType) {
-		this.resourceType = resourceType;
-	}
+    @Override
+    public String getResourceName() {
+        return resourceName;
+    }
 
-	@Override
-	public String getResourceUUID() {
-		return resourceUUID;
-	}
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
 
-	public void setResourceUUID(String resourceUUID) {
-		this.resourceUUID = resourceUUID;
-	}
+    @Override
+    public String getResourceVersion() {
+        return resourceVersion;
+    }
 
-	@Override
-	public List<IArtifactInfo> getArtifacts() {
-		List<IArtifactInfo> temp = new ArrayList<IArtifactInfo>();
-		if( artifacts != null ){
-			temp.addAll(artifacts);
-		}
-		return temp;
-	}
+    public void setResourceVersion(String resourceVersion) {
+        this.resourceVersion = resourceVersion;
+    }
 
-	public void setArtifacts(List<ArtifactInfoImpl> artifacts) {
-		this.artifacts = artifacts;
-	}
-	
-	@JsonIgnore
-	public List<ArtifactInfoImpl> getArtifactsImpl() {
-		return artifacts;
-	}
-	
-	@Override
-	public String getResourceInvariantUUID() {
-		return resourceInvariantUUID;
-	}
-	
-	public void setResourceInvariantUUID(String resourceInvariantUUID) {
-		this.resourceInvariantUUID = resourceInvariantUUID;
-	}
-	public String getResourceCustomizationUUID() {
-		return resourceCustomizationUUID;
-	}
+    @Override
+    public String getResourceType() {
+        return resourceType;
+    }
 
-	public void setResourceCustomizationUUID(String resourceCustomizationUUID) {
-		this.resourceCustomizationUUID = resourceCustomizationUUID;
-	}
+    public void setResoucreType(String resourceType) {
+        this.resourceType = resourceType;
+    }
 
-	public String getCategory() {
-		return category;
-	}
+    @Override
+    public String getResourceUUID() {
+        return resourceUUID;
+    }
 
-	public void setCategory(String category) {
-		this.category = category;
-	}
+    public void setResourceUUID(String resourceUUID) {
+        this.resourceUUID = resourceUUID;
+    }
 
-	public String getSubcategory() {
-		return subcategory;
-	}
+    @Override
+    public List<IArtifactInfo> getArtifacts() {
+        List<IArtifactInfo> temp = new ArrayList<IArtifactInfo>();
+        if (artifacts != null) {
+            temp.addAll(artifacts);
+        }
+        return temp;
+    }
 
-	public void setSubcategory(String subcategory) {
-		this.subcategory = subcategory;
-	}
+    public void setArtifacts(List<ArtifactInfoImpl> artifacts) {
+        this.artifacts = artifacts;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ResourceInfoImpl)) {
-			return false;
-		}
-		ResourceInfoImpl castOther = (ResourceInfoImpl) other;
-		return new EqualsBuilder().append(resourceUUID, castOther.resourceUUID)
-				.append(resourceVersion, castOther.resourceVersion).isEquals();
-	}
+    @JsonIgnore
+    public List<ArtifactInfoImpl> getArtifactsImpl() {
+        return artifacts;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(resourceInstanceName).append(resourceCustomizationUUID).append(resourceName)
-				.append(resourceVersion).append(resourceType).append(resourceUUID).append(resourceInvariantUUID)
-				.append(category).append(subcategory).append(artifacts).toHashCode();
-	}
+    @Override
+    public String getResourceInvariantUUID() {
+        return resourceInvariantUUID;
+    }
+
+    public void setResourceInvariantUUID(String resourceInvariantUUID) {
+        this.resourceInvariantUUID = resourceInvariantUUID;
+    }
+
+    public String getResourceCustomizationUUID() {
+        return resourceCustomizationUUID;
+    }
+
+    public void setResourceCustomizationUUID(String resourceCustomizationUUID) {
+        this.resourceCustomizationUUID = resourceCustomizationUUID;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getSubcategory() {
+        return subcategory;
+    }
+
+    public void setSubcategory(String subcategory) {
+        this.subcategory = subcategory;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ResourceInfoImpl)) {
+            return false;
+        }
+        ResourceInfoImpl castOther = (ResourceInfoImpl) other;
+        return new EqualsBuilder().append(resourceUUID, castOther.resourceUUID)
+                .append(resourceVersion, castOther.resourceVersion).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(resourceInstanceName).append(resourceCustomizationUUID).append(resourceName)
+                .append(resourceVersion).append(resourceType).append(resourceUUID).append(resourceInvariantUUID)
+                .append(category).append(subcategory).append(artifacts).toHashCode();
+    }
 }

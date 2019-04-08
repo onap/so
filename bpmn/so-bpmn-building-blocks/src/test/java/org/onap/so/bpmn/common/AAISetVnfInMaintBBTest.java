@@ -23,9 +23,7 @@ package org.onap.so.bpmn.common;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import java.io.IOException;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Ignore;
@@ -33,25 +31,26 @@ import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 
 public class AAISetVnfInMaintBBTest extends BaseBPMNTest {
-	
 
-	@Test
-	public void sunnyDayAAISetVnfInMaintBBTest() throws InterruptedException, IOException {		
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("AAISetVnfInMaintBB", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_AAISetVnfInMaintBB", "Task_SetInMaint", "End_AAISetVnfInMaintBB");
-	}
-	
-	@Test
-	public void rainyDayAAISetVnfInMaintBBTest() {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks).modifyVnfInMaintFlag(any(BuildingBlockExecution.class), any(boolean.class));
-		
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("AAISetVnfInMaintBB", variables);
-		assertThat(processInstance).isNotNull();
-		assertThat(processInstance).isStarted()
-			.hasPassedInOrder("Start_AAISetVnfInMaintBB", "Task_SetInMaint")
-			.hasNotPassed("End_AAISetVnfInMaintBB");
-		assertThat(processInstance).isEnded();
-	}
 
-	
+    @Test
+    public void sunnyDayAAISetVnfInMaintBBTest() throws InterruptedException, IOException {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AAISetVnfInMaintBB", variables);
+        assertThat(pi).isNotNull().isStarted().hasPassedInOrder("Start_AAISetVnfInMaintBB", "Task_SetInMaint",
+                "End_AAISetVnfInMaintBB");
+    }
+
+    @Test
+    public void rainyDayAAISetVnfInMaintBBTest() {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
+                .modifyVnfInMaintFlag(any(BuildingBlockExecution.class), any(boolean.class));
+
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("AAISetVnfInMaintBB", variables);
+        assertThat(processInstance).isNotNull();
+        assertThat(processInstance).isStarted().hasPassedInOrder("Start_AAISetVnfInMaintBB", "Task_SetInMaint")
+                .hasNotPassed("End_AAISetVnfInMaintBB");
+        assertThat(processInstance).isEnded();
+    }
+
+
 }

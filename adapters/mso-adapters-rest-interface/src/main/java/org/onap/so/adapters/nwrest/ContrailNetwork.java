@@ -23,76 +23,75 @@ package org.onap.so.adapters.nwrest;
 
 import java.io.Serializable;
 import java.util.List;
-
 import org.onap.so.openstack.beans.RouteTarget;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("contrailNetwork")
-public class ContrailNetwork implements Serializable{
-	
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6879356795950005963L;
-	private String shared   = "false";
-	private String external = "false";
-	private List<RouteTarget> routeTargets;
-	private List<String> policyFqdns;
-	private List<String> routeTableFqdns;
-	
-	public ContrailNetwork() {
-		super();
-	}
+public class ContrailNetwork implements Serializable {
 
-	public ContrailNetwork(String shared, String external, List<RouteTarget> routeTargets, List<String> policyFqdns, List<String> routeTableFqdns) {
-		super();
-		this.shared = shared;
-		this.external = external;
-		this.routeTargets = routeTargets;
-		this.policyFqdns = policyFqdns;
-		this.routeTableFqdns = routeTableFqdns;
-	}
 
-	public String getShared() {
-		return shared;
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6879356795950005963L;
+    private String shared = "false";
+    private String external = "false";
+    private List<RouteTarget> routeTargets;
+    private List<String> policyFqdns;
+    private List<String> routeTableFqdns;
 
-	public void setShared(String shared) {
-		this.shared = shared;
-	}
+    public ContrailNetwork() {
+        super();
+    }
 
-	public String getExternal() {
-		return external;
-	}
+    public ContrailNetwork(String shared, String external, List<RouteTarget> routeTargets, List<String> policyFqdns,
+            List<String> routeTableFqdns) {
+        super();
+        this.shared = shared;
+        this.external = external;
+        this.routeTargets = routeTargets;
+        this.policyFqdns = policyFqdns;
+        this.routeTableFqdns = routeTableFqdns;
+    }
 
-	public void setExternal(String external) {
-		this.external = external;
-	}
+    public String getShared() {
+        return shared;
+    }
 
-	public List<RouteTarget> getRouteTargets() {
-		return routeTargets;
-	}
+    public void setShared(String shared) {
+        this.shared = shared;
+    }
 
-	public void setRouteTargets(List<RouteTarget> routeTargets) {
-		this.routeTargets = routeTargets;
-	}
+    public String getExternal() {
+        return external;
+    }
 
-	public List<String> getPolicyFqdns() {
-		return policyFqdns;
-	}
+    public void setExternal(String external) {
+        this.external = external;
+    }
 
-	public void setPolicyFqdns(List<String> policyFqdns) {
-		this.policyFqdns = policyFqdns;
-	}
-	
-	public List<String> getRouteTableFqdns() {
-		return routeTableFqdns;
-	}
+    public List<RouteTarget> getRouteTargets() {
+        return routeTargets;
+    }
 
-	public void setRouteTableFqdns(List<String> routeTableFqdns) {
-		this.routeTableFqdns = routeTableFqdns;
-	}
-	
+    public void setRouteTargets(List<RouteTarget> routeTargets) {
+        this.routeTargets = routeTargets;
+    }
+
+    public List<String> getPolicyFqdns() {
+        return policyFqdns;
+    }
+
+    public void setPolicyFqdns(List<String> policyFqdns) {
+        this.policyFqdns = policyFqdns;
+    }
+
+    public List<String> getRouteTableFqdns() {
+        return routeTableFqdns;
+    }
+
+    public void setRouteTableFqdns(List<String> routeTableFqdns) {
+        this.routeTableFqdns = routeTableFqdns;
+    }
+
 }

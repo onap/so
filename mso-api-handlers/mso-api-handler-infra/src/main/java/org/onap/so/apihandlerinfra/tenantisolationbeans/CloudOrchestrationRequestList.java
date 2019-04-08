@@ -24,14 +24,14 @@ import java.util.List;
 
 public class CloudOrchestrationRequestList {
 
-	private List<CloudOrchestrationResponse> requestList;
+    private List<CloudOrchestrationResponse> requestList;
 
-	public List<CloudOrchestrationResponse> getRequestList() {
-		return requestList;
-	}
+    public List<CloudOrchestrationResponse> getRequestList() {
+        return requestList;
+    }
 
-	public void setRequestList(List<CloudOrchestrationResponse> requestList) {
-		this.requestList = requestList;
-	}
+    public void setRequestList(List<CloudOrchestrationResponse> requestList) {
+        this.requestList = requestList;
+    }
 
 }

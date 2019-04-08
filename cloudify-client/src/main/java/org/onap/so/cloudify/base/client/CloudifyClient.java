@@ -21,114 +21,116 @@
 package org.onap.so.cloudify.base.client;
 
 import java.util.Properties;
-
 import org.onap.so.cloudify.connector.http.HttpClientConnector;
 
 public class CloudifyClient {
-	
-	protected String managerEndpoint;
-	protected String tenant = "default_tenant";	// Note - only default_tenant supported in community edition
-	
-	protected CloudifyTokenProvider tokenProvider;
 
-	protected static int AUTHENTICATION_RETRIES = 1;
+    protected String managerEndpoint;
+    protected String tenant = "default_tenant"; // Note - only default_tenant supported in community edition
 
-	protected CloudifyClientConnector connector;
-	
-	protected Properties properties = new Properties();
+    protected CloudifyTokenProvider tokenProvider;
 
-	public CloudifyClient(String managerEndpoint) {
-		this.managerEndpoint = managerEndpoint;
-		this.connector = new HttpClientConnector();
-	}
+    protected static int AUTHENTICATION_RETRIES = 1;
 
-	public CloudifyClient(String managerEndpoint, String tenant) {
-		this.managerEndpoint = managerEndpoint;
-		this.tenant = tenant;
-		this.connector = new HttpClientConnector();
-	}
+    protected CloudifyClientConnector connector;
 
-	public CloudifyClient(String managerEndpoint, CloudifyClientConnector connector) {
-		this.managerEndpoint = managerEndpoint;
-		this.connector = connector;
-	}
+    protected Properties properties = new Properties();
 
-	/**
-	 * Execute a Cloudify request by making the REST API call.  Return the
-	 * complete CloudifyResponse structure, which includes the complete
-	 * HTTP response.
-	 * @param request a CloudifyRequest object
-	 * @return a CloudifyResponse object
-	 */
-	public <T> CloudifyResponse request(CloudifyRequest<T> request) {
-		CloudifyResponseException authException = null;
+    public CloudifyClient(String managerEndpoint) {
+        this.managerEndpoint = managerEndpoint;
+        this.connector = new HttpClientConnector();
+    }
 
-		for (int i = 0; i <= AUTHENTICATION_RETRIES; i++) {
-			request.endpoint(managerEndpoint);
-			request.header("Tenant", tenant);
-			if (tokenProvider != null)
-				request.header("Authentication-Token", tokenProvider.getToken());
+    public CloudifyClient(String managerEndpoint, String tenant) {
+        this.managerEndpoint = managerEndpoint;
+        this.tenant = tenant;
+        this.connector = new HttpClientConnector();
+    }
 
-			try {
-				return connector.request(request);
-			} catch (CloudifyResponseException e) {
-				if (e.getStatus() != CloudifyResponseStatus.NOT_AUTHORIZED
-						|| tokenProvider == null) {
-					throw e;
-				}
-				authException = e;
-				tokenProvider.expireToken();
-			}
-		}
+    public CloudifyClient(String managerEndpoint, CloudifyClientConnector connector) {
+        this.managerEndpoint = managerEndpoint;
+        this.connector = connector;
+    }
 
-		if (authException != null) {
-			throw authException;
-		}
-		
-		return null;
-	}
+    /**
+     * Execute a Cloudify request by making the REST API call. Return the complete CloudifyResponse structure, which
+     * includes the complete HTTP response.
+     * 
+     * @param request a CloudifyRequest object
+     * @return a CloudifyResponse object
+     */
+    public <T> CloudifyResponse request(CloudifyRequest<T> request) {
+        CloudifyResponseException authException = null;
 
-	/**
-	 * Execute a CloudifyRequest by sending the REST API call to the Cloudify
-	 * Manager endpoint.  The return type is a JSON POJO object containing the
-	 * response body entity.
-	 * @param request
-	 * @return a JSON POJO object specific to the request type
-	 */
-	public <T> T execute(CloudifyRequest<T> request) {
-		CloudifyResponse response =  request(request);
-		return (request.returnType() != null && request.returnType() != Void.class) ? response.getEntity(request.returnType()) : null;
-	}
+        for (int i = 0; i <= AUTHENTICATION_RETRIES; i++) {
+            request.endpoint(managerEndpoint);
+            request.header("Tenant", tenant);
+            if (tokenProvider != null)
+                request.header("Authentication-Token", tokenProvider.getToken());
 
-	public void property(String property, String value) {
-		properties.put(property, value);
-	}
+            try {
+                return connector.request(request);
+            } catch (CloudifyResponseException e) {
+                if (e.getStatus() != CloudifyResponseStatus.NOT_AUTHORIZED || tokenProvider == null) {
+                    throw e;
+                }
+                authException = e;
+                tokenProvider.expireToken();
+            }
+        }
 
-	/**
-	 * Set a Token Provider.  This class should be able to produce an
-	 * authentication token on-demand.
-	 * @param tokenProvider
-	 */
-	public void setTokenProvider(CloudifyTokenProvider tokenProvider) {
-		this.tokenProvider = tokenProvider;
-	}
-	
-	/**
-	 * Manually set the authentication token to use for this client.
-	 * @param token
-	 */
-	public void setToken(String token) {
-		setTokenProvider(new CloudifySimpleTokenProvider(token));
-	}
-	
-	/**
-	 * Perform a simple GET request with no request message body
-	 * @param path
-	 * @param returnType
-	 * @return An object of Class <R>
-	 */
-	public <R> CloudifyRequest<R> get(String path, Class<R> returnType) {
-		return new CloudifyRequest<R>(this, HttpMethod.GET, path, null, returnType);
-	}
-	
+        if (authException != null) {
+            throw authException;
+        }
+
+        return null;
+    }
+
+    /**
+     * Execute a CloudifyRequest by sending the REST API call to the Cloudify Manager endpoint. The return type is a
+     * JSON POJO object containing the response body entity.
+     * 
+     * @param request
+     * @return a JSON POJO object specific to the request type
+     */
+    public <T> T execute(CloudifyRequest<T> request) {
+        CloudifyResponse response = request(request);
+        return (request.returnType() != null && request.returnType() != Void.class)
+                ? response.getEntity(request.returnType())
+                : null;
+    }
+
+    public void property(String property, String value) {
+        properties.put(property, value);
+    }
+
+    /**
+     * Set a Token Provider. This class should be able to produce an authentication token on-demand.
+     * 
+     * @param tokenProvider
+     */
+    public void setTokenProvider(CloudifyTokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
+    }
+
+    /**
+     * Manually set the authentication token to use for this client.
+     * 
+     * @param token
+     */
+    public void setToken(String token) {
+        setTokenProvider(new CloudifySimpleTokenProvider(token));
+    }
+
+    /**
+     * Perform a simple GET request with no request message body
+     * 
+     * @param path
+     * @param returnType
+     * @return An object of Class <R>
+     */
+    public <R> CloudifyRequest<R> get(String path, Class<R> returnType) {
+        return new CloudifyRequest<R>(this, HttpMethod.GET, path, null, returnType);
+    }
+
 }

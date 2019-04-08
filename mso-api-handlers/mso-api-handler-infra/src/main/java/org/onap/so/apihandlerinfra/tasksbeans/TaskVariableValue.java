@@ -22,19 +22,17 @@ package org.onap.so.apihandlerinfra.tasksbeans;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class TaskVariableValue {
 
-	protected String name;
-	protected String value;
-	protected String operator;
-	
-	 /**
+    protected String name;
+    protected String value;
+    protected String operator;
+
+    /**
      * Gets the value of the name property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getName() {
@@ -44,22 +42,18 @@ public class TaskVariableValue {
     /**
      * Sets the value of the name property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setName(String value) {
         this.name = value;
     }
-	
-	
+
+
     /**
      * Gets the value of the value property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getValue() {
@@ -69,21 +63,17 @@ public class TaskVariableValue {
     /**
      * Sets the value of the value property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setValue(String value) {
         this.value = value;
     }
-    
+
     /**
      * Gets the value of the operator property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getOperator() {
@@ -93,15 +83,13 @@ public class TaskVariableValue {
     /**
      * Sets the value of the operator property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setOperator(String value) {
         this.operator = value;
     }
-	
-	
+
+
 
 }

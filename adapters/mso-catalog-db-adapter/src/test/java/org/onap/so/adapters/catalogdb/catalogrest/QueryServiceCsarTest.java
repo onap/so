@@ -21,7 +21,6 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.db.catalog.beans.ToscaCsar;

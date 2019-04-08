@@ -30,10 +30,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.startsWith;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -46,129 +44,140 @@ import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestrationRequest;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DeactivateVnfOperationalEnvironmentTest extends BaseTest{
+public class DeactivateVnfOperationalEnvironmentTest extends BaseTest {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-	@Autowired
-	private DeactivateVnfOperationalEnvironment deactivate;
+    @Autowired
+    private DeactivateVnfOperationalEnvironment deactivate;
 
-	private CloudOrchestrationRequest request = new CloudOrchestrationRequest();
-	private String operationalEnvironmentId = "ff3514e3-5a33-55df-13ab-12abad84e7ff";
-	private String requestId = "ff3514e3-5a33-55df-13ab-12abad84e7fe";
-	
-	private ObjectMapper mapper = new ObjectMapper();
-	
-	@Before
-	public void init(){
-		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
-				.withRequestBody(containing("{\"requestId\":\""+ requestId+"\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withStatus(HttpStatus.SC_OK)));
-	}
-	@Test
-	public void testDeactivateOperationalEnvironment() throws Exception {
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		request.setRequestDetails(null);
+    private CloudOrchestrationRequest request = new CloudOrchestrationRequest();
+    private String operationalEnvironmentId = "ff3514e3-5a33-55df-13ab-12abad84e7ff";
+    private String requestId = "ff3514e3-5a33-55df-13ab-12abad84e7fe";
 
-		String json = "{\"operational-environment-status\" : \"ACTIVE\"}";
-		
-		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		wireMockServer.stubFor(put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		wireMockServer.stubFor(post(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withStatus(HttpStatus.SC_ACCEPTED)));
-		
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId(requestId);
-		iar.setOperationalEnvName("myOpEnv");
-		iar.setRequestScope("create");
-		iar.setRequestStatus("PENDING");
-		iar.setRequestAction("UNKNOWN");
-		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(iar))
-						.withStatus(HttpStatus.SC_OK)));
-		deactivate.execute(requestId, request);
-	}
-	
-	@Test
-	public void testDeactivateInvalidStatus() throws Exception {
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		request.setRequestDetails(null);
+    private ObjectMapper mapper = new ObjectMapper();
 
-		String json = "{\"operational-environment-status\" : \"SUCCESS\"}";
-		
-		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
+    @Before
+    public void init() {
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+                .withRequestBody(containing("{\"requestId\":\"" + requestId
+                        + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"COMPLETE\",\"statusMessage\":\"SUCCESSFUL"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
+    }
+
+    @Test
+    public void testDeactivateOperationalEnvironment() throws Exception {
+        request.setOperationalEnvironmentId(operationalEnvironmentId);
+        request.setRequestDetails(null);
+
+        String json = "{\"operational-environment-status\" : \"ACTIVE\"}";
+
+        wireMockServer.stubFor(
+                get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)
+                                .withStatus(HttpStatus.SC_ACCEPTED)));
+        wireMockServer.stubFor(
+                put(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withStatus(HttpStatus.SC_ACCEPTED)));
+        wireMockServer.stubFor(
+                post(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withStatus(HttpStatus.SC_ACCEPTED)));
+
+        InfraActiveRequests iar = new InfraActiveRequests();
+        iar.setRequestId(requestId);
+        iar.setOperationalEnvName("myOpEnv");
+        iar.setRequestScope("create");
+        iar.setRequestStatus("PENDING");
+        iar.setRequestAction("UNKNOWN");
+        wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+        deactivate.execute(requestId, request);
+    }
+
+    @Test
+    public void testDeactivateInvalidStatus() throws Exception {
+        request.setOperationalEnvironmentId(operationalEnvironmentId);
+        request.setRequestDetails(null);
+
+        String json = "{\"operational-environment-status\" : \"SUCCESS\"}";
+
+        wireMockServer.stubFor(
+                get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)
+                                .withStatus(HttpStatus.SC_ACCEPTED)));
 
         thrown.expect(ValidateException.class);
         thrown.expectMessage(startsWith("Invalid OperationalEnvironmentStatus on OperationalEnvironmentId: "));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)));
-        
+
         InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId(requestId);
-		iar.setOperationalEnvName("myOpEnv");
-		iar.setRequestScope("create");
-		iar.setRequestStatus("PENDING");
-		iar.setRequestAction("UNKNOWN");
-		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(iar))
-						.withStatus(HttpStatus.SC_OK)));
-		wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
-				.withRequestBody(containing("{\"requestId\":\""+ requestId+"\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE"))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withStatus(HttpStatus.SC_OK)));
+        iar.setRequestId(requestId);
+        iar.setOperationalEnvName("myOpEnv");
+        iar.setRequestScope("create");
+        iar.setRequestStatus("PENDING");
+        iar.setRequestAction("UNKNOWN");
+        wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(post(urlPathEqualTo("/infraActiveRequests/"))
+                .withRequestBody(containing("{\"requestId\":\"" + requestId
+                        + "\",\"clientRequestId\":null,\"action\":null,\"requestStatus\":\"FAILED\",\"statusMessage\":\"FAILURE"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withStatus(HttpStatus.SC_OK)));
 
         deactivate.execute(requestId, request);
-	}
-	
-	@Test
-	public void testDeactivateInactiveStatus() throws Exception {
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		request.setRequestDetails(null);
+    }
 
-		String json = "{\"operational-environment-status\" : \"INACTIVE\"}";
-		
-		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
-		
-		InfraActiveRequests iar = new InfraActiveRequests();
-		iar.setRequestId(requestId);
-		iar.setOperationalEnvName("myOpEnv");
-		iar.setRequestScope("create");
-		iar.setRequestStatus("PENDING");
-		iar.setRequestAction("UNKNOWN");
-		wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/"+requestId))
-				.willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
-						.withBody(mapper.writeValueAsString(iar))
-						.withStatus(HttpStatus.SC_OK)));
-		
-		deactivate.execute(requestId, request);
-	}
-	
-	@Test
-	public void testDeactivateNullStatus() throws Exception {
-		request.setOperationalEnvironmentId(operationalEnvironmentId);
-		request.setRequestDetails(null);
+    @Test
+    public void testDeactivateInactiveStatus() throws Exception {
+        request.setOperationalEnvironmentId(operationalEnvironmentId);
+        request.setRequestDetails(null);
 
-		String json = "{\"operational-environment-status\" : \"\"}";
-		
-		wireMockServer.stubFor(get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json).withStatus(HttpStatus.SC_ACCEPTED)));
+        String json = "{\"operational-environment-status\" : \"INACTIVE\"}";
+
+        wireMockServer.stubFor(
+                get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)
+                                .withStatus(HttpStatus.SC_ACCEPTED)));
+
+        InfraActiveRequests iar = new InfraActiveRequests();
+        iar.setRequestId(requestId);
+        iar.setOperationalEnvName("myOpEnv");
+        iar.setRequestScope("create");
+        iar.setRequestStatus("PENDING");
+        iar.setRequestAction("UNKNOWN");
+        wireMockServer.stubFor(get(urlPathEqualTo("/infraActiveRequests/" + requestId))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(mapper.writeValueAsString(iar)).withStatus(HttpStatus.SC_OK)));
+
+        deactivate.execute(requestId, request);
+    }
+
+    @Test
+    public void testDeactivateNullStatus() throws Exception {
+        request.setOperationalEnvironmentId(operationalEnvironmentId);
+        request.setRequestDetails(null);
+
+        String json = "{\"operational-environment-status\" : \"\"}";
+
+        wireMockServer.stubFor(
+                get(urlPathMatching("/aai/" + AAIVersion.LATEST + "/cloud-infrastructure/operational-environments/.*"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(json)
+                                .withStatus(HttpStatus.SC_ACCEPTED)));
 
         thrown.expect(ValidateException.class);
         thrown.expectMessage(startsWith("OperationalEnvironmentStatus is null on OperationalEnvironmentId: "));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_DETAILED_SERVICE_ERROR)));
         deactivate.execute(requestId, request);
-	}
+    }
 }
 

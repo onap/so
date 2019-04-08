@@ -28,10 +28,10 @@ public class ValidateException extends ApiException {
     }
 
 
-    public static class Builder extends ApiException.Builder<Builder>{
+    public static class Builder extends ApiException.Builder<Builder> {
 
         public Builder(String message, int httpResponseCode, String messageID) {
-            super(message,httpResponseCode,messageID);
+            super(message, httpResponseCode, messageID);
         }
 
         public ValidateException build() {

@@ -24,7 +24,6 @@ package org.onap.so.adapters.sdnc;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -48,7 +47,7 @@ public class FileUtil {
             stream = getResourceAsStream(fileName);
             byte[] bytes;
             bytes = new byte[stream.available()];
-            if(stream.read(bytes) > 0) {
+            if (stream.read(bytes) > 0) {
                 stream.close();
                 return new String(bytes);
             } else {
@@ -69,8 +68,7 @@ public class FileUtil {
      * @throws IOException If we can't get the InputStream for whatever reason.
      */
     private static InputStream getResourceAsStream(String resourceName) throws IOException {
-        InputStream stream =
-                FileUtil.class.getClassLoader().getResourceAsStream(resourceName);
+        InputStream stream = FileUtil.class.getClassLoader().getResourceAsStream(resourceName);
         if (stream == null) {
             throw new IOException("Can't access resource '" + resourceName + "'");
         }

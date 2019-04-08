@@ -21,7 +21,6 @@
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,31 +29,31 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName(value = "owningEntity")
 @JsonInclude(Include.NON_DEFAULT)
 public class OwningEntity implements Serializable {
-	
-	private static final long serialVersionUID = -3907033130633428448L;
-	@JsonProperty("owningEntityId")
-	private String owningEntityId;
-	@JsonProperty("owningEntityName")
-	private String owningEntityName;
-	
-	public String getOwningEntityId(){
-		return owningEntityId;
-	}
 
-	public void setOwningEntityId(String value) {
-		this.owningEntityId = value;
-	}
-	
-	public String getOwningEntityName(){
-		return owningEntityName;
-	}
-	
-	public void setOwningEntityName(String value){
-		this.owningEntityName = value;
-	}
-	@Override
-	public String toString() {
-		return "OwningEntity [owningEntityId=" + owningEntityId
-				+ ", owningEntityName=" + owningEntityName + "]";
-	}
+    private static final long serialVersionUID = -3907033130633428448L;
+    @JsonProperty("owningEntityId")
+    private String owningEntityId;
+    @JsonProperty("owningEntityName")
+    private String owningEntityName;
+
+    public String getOwningEntityId() {
+        return owningEntityId;
+    }
+
+    public void setOwningEntityId(String value) {
+        this.owningEntityId = value;
+    }
+
+    public String getOwningEntityName() {
+        return owningEntityName;
+    }
+
+    public void setOwningEntityName(String value) {
+        this.owningEntityName = value;
+    }
+
+    @Override
+    public String toString() {
+        return "OwningEntity [owningEntityId=" + owningEntityId + ", owningEntityName=" + owningEntityName + "]";
+    }
 }

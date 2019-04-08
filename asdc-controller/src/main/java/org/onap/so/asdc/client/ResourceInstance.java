@@ -21,59 +21,58 @@
 package org.onap.so.asdc.client;
 
 import java.util.ArrayList;
-
 import org.onap.sdc.api.notification.IResourceInstance;
 
 public class ResourceInstance implements IResourceInstance {
-    
+
     @Override
-    public String getResourceInstanceName(){
-    	return new String();
+    public String getResourceInstanceName() {
+        return new String();
     }
-    
+
     @Override
-    public String getResourceName(){
-    	return new String();
+    public String getResourceName() {
+        return new String();
     }
-    
+
     @Override
-    public String getResourceVersion(){
-    	return new String();
+    public String getResourceVersion() {
+        return new String();
     }
-    
+
     @Override
-    public String getResourceType(){
-    	return new String();
+    public String getResourceType() {
+        return new String();
     }
-    
+
     @Override
-    public String getResourceUUID(){
-    	return new String();
+    public String getResourceUUID() {
+        return new String();
     }
-    
+
     @Override
-    public java.util.List getArtifacts(){
-    	return new ArrayList();
+    public java.util.List getArtifacts() {
+        return new ArrayList();
     }
-    
+
     @Override
-    public String getResourceInvariantUUID(){
-    	return new String();
+    public String getResourceInvariantUUID() {
+        return new String();
     }
-    
+
     @Override
-    public String getResourceCustomizationUUID(){
-    	return new String();
+    public String getResourceCustomizationUUID() {
+        return new String();
     }
-    
+
     @Override
-    public String getCategory(){
-    	return new String();
+    public String getCategory() {
+        return new String();
     }
-    
+
     @Override
-    public String getSubcategory(){
-    	return new String();
+    public String getSubcategory() {
+        return new String();
     }
-	
+
 }

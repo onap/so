@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client.dmaap.rest;
 
 import java.net.MalformedURLException;
@@ -25,37 +25,34 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.client.RestClient;
 import org.onap.so.client.dmaap.Consumer;
 
 public class RestConsumer implements Consumer {
 
-	private final RestClient client;
-	public RestConsumer(Properties properties) {
-		PropertiesBean bean = new PropertiesBean(properties);
-		client = new DMaaPRestClient(this.createURL(bean), bean.getContentType(), bean.getAuth(), bean.getKey());
-	}
-	
-	private URL createURL(PropertiesBean properties) {
-		try {
-			return UriBuilder.fromUri(properties.getHost())
-					.path("events").path(properties.getTopic())
-					.path(properties.getPartition())
-					.path("consumer1")
-					.queryParam("timeout",  properties.getTimeout()).build().toURL();
-		} catch (MalformedURLException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	
-	@Override
-	public Iterable<String> fetch() {
-		
-		return client.get(new GenericType<List<String>>() {}).orElse(new ArrayList<>());
-	}
+    private final RestClient client;
+
+    public RestConsumer(Properties properties) {
+        PropertiesBean bean = new PropertiesBean(properties);
+        client = new DMaaPRestClient(this.createURL(bean), bean.getContentType(), bean.getAuth(), bean.getKey());
+    }
+
+    private URL createURL(PropertiesBean properties) {
+        try {
+            return UriBuilder.fromUri(properties.getHost()).path("events").path(properties.getTopic())
+                    .path(properties.getPartition()).path("consumer1").queryParam("timeout", properties.getTimeout())
+                    .build().toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Iterable<String> fetch() {
+
+        return client.get(new GenericType<List<String>>() {}).orElse(new ArrayList<>());
+    }
 
 }

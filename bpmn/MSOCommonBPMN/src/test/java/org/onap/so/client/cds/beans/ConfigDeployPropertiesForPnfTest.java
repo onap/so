@@ -2,7 +2,6 @@ package org.onap.so.client.cds.beans;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,7 +17,7 @@ public class ConfigDeployPropertiesForPnfTest {
     private static final String TEST_SERVICE_INSTANCE_ID = "service-instance-id";
 
     @Before
-    public void setUp(){
+    public void setUp() {
         configDeployPropertiesForPnf.setServiceInstanceId(TEST_SERVICE_INSTANCE_ID);
         configDeployPropertiesForPnf.setServiceModelUuid(TEST_SERVICE_MODEL_UUID);
         configDeployPropertiesForPnf.setPnfCustomizationUuid(TEST_PNF_CUSTOMIZATION_UUID);

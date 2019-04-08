@@ -34,15 +34,15 @@ public interface GenericResourceApi {
 
     @POST("/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation")
     Call<ResponseBody> postNetworkTopologyOperation(@Header("Authorization") String authorization,
-                                                    @Body RequestBody input);
+            @Body RequestBody input);
 
     @POST("/restconf/operations/GENERIC-RESOURCE-API:network-topology-operation")
-    Call<RpcNetworkTopologyOperationOutputEntity> postNetworkTopologyOperation(@Header("Authorization") String authorization,
-                                                                               @Body RpcNetworkTopologyOperationInputEntity input);
+    Call<RpcNetworkTopologyOperationOutputEntity> postNetworkTopologyOperation(
+            @Header("Authorization") String authorization, @Body RpcNetworkTopologyOperationInputEntity input);
 
     @POST("/restconf/operations/GENERIC-RESOURCE-API:service-topology-operation")
-    Call<RpcServiceTopologyOperationOutputEntity> postServiceTopologyOperation(@Header("Authorization") String authorization,
-                                                                               @Body RpcServiceTopologyOperationInputEntity input);
+    Call<RpcServiceTopologyOperationOutputEntity> postServiceTopologyOperation(
+            @Header("Authorization") String authorization, @Body RpcServiceTopologyOperationInputEntity input);
 
 }
 

@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -39,13 +38,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -54,127 +50,127 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 @Table(name = "collection_resource_customization")
 public class CollectionResourceCustomization implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8328823396870652841L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8328823396870652841L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_CUSTOMIZATION_UUID")
-	private String modelCustomizationUUID;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_CUSTOMIZATION_UUID")
+    private String modelCustomizationUUID;
 
-	@Column(name = "MODEL_INSTANCE_NAME")
-	private String modelInstanceName;
+    @Column(name = "MODEL_INSTANCE_NAME")
+    private String modelInstanceName;
 
-	@Column(name = "COLLECTION_RESOURCE_TYPE")
-	private String type;
+    @Column(name = "COLLECTION_RESOURCE_TYPE")
+    private String type;
 
-	@Column(name = "ROLE")
-	private String role;
+    @Column(name = "ROLE")
+    private String role;
 
-	@Column(name = "FUNCTION")
-	private String function;
+    @Column(name = "FUNCTION")
+    private String function;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "CR_MODEL_UUID")
-	private CollectionResource collectionResource;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CR_MODEL_UUID")
+    private CollectionResource collectionResource;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "collectionResourceCust")
-	private List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupCustomizations;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "collectionResourceCust")
+    private List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupCustomizations;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelInstanceName", modelInstanceName).append("type", type).append("role", role)
-				.append("function", function).append("created", created)
-				.append("collectionResource", collectionResource)
-				.append("collectionInstanceGroupCustomizations", collectionInstanceGroupCustomizations).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName).append("type", type).append("role", role)
+                .append("function", function).append("created", created)
+                .append("collectionResource", collectionResource)
+                .append("collectionInstanceGroupCustomizations", collectionInstanceGroupCustomizations).toString();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof CollectionResourceCustomization)) {
-			return false;
-		}
-		CollectionResourceCustomization castOther = (CollectionResourceCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof CollectionResourceCustomization)) {
+            return false;
+        }
+        CollectionResourceCustomization castOther = (CollectionResourceCustomization) other;
+        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+    }
 
-	public Date getCreated() {
-		return this.created;
-	}
+    public Date getCreated() {
+        return this.created;
+    }
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
+    public String getModelCustomizationUUID() {
+        return modelCustomizationUUID;
+    }
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public String getModelInstanceName() {
-		return modelInstanceName;
-	}
+    public String getModelInstanceName() {
+        return modelInstanceName;
+    }
 
-	public void setModelInstanceName(String modelInstanceName) {
-		this.modelInstanceName = modelInstanceName;
-	}
+    public void setModelInstanceName(String modelInstanceName) {
+        this.modelInstanceName = modelInstanceName;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getRole() {
-		return role;
-	}
+    public String getRole() {
+        return role;
+    }
 
-	public void setRole(String role) {
-		this.role = role;
-	}
+    public void setRole(String role) {
+        this.role = role;
+    }
 
-	public String getFunction() {
-		return function;
-	}
+    public String getFunction() {
+        return function;
+    }
 
-	public void setFunction(String function) {
-		this.function = function;
-	}
+    public void setFunction(String function) {
+        this.function = function;
+    }
 
-	@LinkedResource
-	public CollectionResource getCollectionResource() {
-		return collectionResource;
-	}
+    @LinkedResource
+    public CollectionResource getCollectionResource() {
+        return collectionResource;
+    }
 
-	public void setCollectionResource(CollectionResource collectionResource) {
-		this.collectionResource = collectionResource;
-	}
+    public void setCollectionResource(CollectionResource collectionResource) {
+        this.collectionResource = collectionResource;
+    }
 
-	@LinkedResource
-	public List<CollectionResourceInstanceGroupCustomization> getCollectionInstanceGroupCustomizations() {
-		return collectionInstanceGroupCustomizations;
-	}
+    @LinkedResource
+    public List<CollectionResourceInstanceGroupCustomization> getCollectionInstanceGroupCustomizations() {
+        return collectionInstanceGroupCustomizations;
+    }
 
-	public void setCollectionInstanceGroupCustomizations(
-			List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupCustomizations) {
-		this.collectionInstanceGroupCustomizations = collectionInstanceGroupCustomizations;
-	}
+    public void setCollectionInstanceGroupCustomizations(
+            List<CollectionResourceInstanceGroupCustomization> collectionInstanceGroupCustomizations) {
+        this.collectionInstanceGroupCustomizations = collectionInstanceGroupCustomizations;
+    }
 }

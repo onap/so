@@ -22,99 +22,98 @@ package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({ "additionalProperties" })
+@JsonIgnoreProperties({"additionalProperties"})
 public class E2EService {
 
-	@JsonProperty("name")
-	private String name;
+    @JsonProperty("name")
+    private String name;
 
-	@JsonProperty("description")
-	private String description;
+    @JsonProperty("description")
+    private String description;
 
-	@JsonProperty("serviceInvariantUuid")
-	private String serviceInvariantUuid;
+    @JsonProperty("serviceInvariantUuid")
+    private String serviceInvariantUuid;
 
-	@JsonProperty("serviceUuid")
-	private String serviceUuid;
+    @JsonProperty("serviceUuid")
+    private String serviceUuid;
 
-	@JsonProperty("globalSubscriberId")
-	private String globalSubscriberId;
+    @JsonProperty("globalSubscriberId")
+    private String globalSubscriberId;
 
-	@JsonProperty("serviceType")
-	private String serviceType;
+    @JsonProperty("serviceType")
+    private String serviceType;
 
-	@JsonProperty("parameters")
-	private E2EParameters parameters;
+    @JsonProperty("parameters")
+    private E2EParameters parameters;
 
-	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<>();
+    @JsonIgnore
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public E2EParameters getParameters() {
-		return parameters;
-	}
+    public E2EParameters getParameters() {
+        return parameters;
+    }
 
-	public void setParameters(E2EParameters parameters) {
-		this.parameters = parameters;
-	}
+    public void setParameters(E2EParameters parameters) {
+        this.parameters = parameters;
+    }
 
-	public Map<String, Object> getAdditionalProperties() {
-		return additionalProperties;
-	}
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
 
-	public void setAdditionalProperties(Map<String, Object> additionalProperties) {
-		this.additionalProperties = additionalProperties;
-	}
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
 
-	public String getServiceInvariantUuid() {
-		return serviceInvariantUuid;
-	}
+    public String getServiceInvariantUuid() {
+        return serviceInvariantUuid;
+    }
 
-	public void setServiceInvariantUuid(String serviceInvariantUuid) {
-		this.serviceInvariantUuid = serviceInvariantUuid;
-	}
+    public void setServiceInvariantUuid(String serviceInvariantUuid) {
+        this.serviceInvariantUuid = serviceInvariantUuid;
+    }
 
-	public String getGlobalSubscriberId() {
-		return globalSubscriberId;
-	}
+    public String getGlobalSubscriberId() {
+        return globalSubscriberId;
+    }
 
-	public void setGlobalSubscriberId(String globalSubscriberId) {
-		this.globalSubscriberId = globalSubscriberId;
-	}
+    public void setGlobalSubscriberId(String globalSubscriberId) {
+        this.globalSubscriberId = globalSubscriberId;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public String getServiceUuid() {
-		return serviceUuid;
-	}
+    public String getServiceUuid() {
+        return serviceUuid;
+    }
 
-	public void setServiceUuid(String serviceUuid) {
-		this.serviceUuid = serviceUuid;
-	}
+    public void setServiceUuid(String serviceUuid) {
+        this.serviceUuid = serviceUuid;
+    }
 }

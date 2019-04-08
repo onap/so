@@ -25,13 +25,8 @@ package org.onap.so.vdu.utils;
  * Enum status values to capture the state of a generic (cloud-agnostic) VDU.
  */
 public enum VduStatus {
-	NOTFOUND,
-	INSTANTIATING,
-	INSTANTIATED,
-	DELETING,
-	DELETED,		// Note - only returned in success response to deleteVdu call.
-	UPDATING,
-	FAILED,
-	UNKNOWN
+    NOTFOUND, INSTANTIATING, INSTANTIATED, DELETING, DELETED, // Note - only returned in success response to deleteVdu
+                                                              // call.
+    UPDATING, FAILED, UNKNOWN
 }
 

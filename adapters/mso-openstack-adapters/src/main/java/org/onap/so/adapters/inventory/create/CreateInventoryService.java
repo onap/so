@@ -21,9 +21,7 @@
 package org.onap.so.adapters.inventory.create;
 
 import java.security.GeneralSecurityException;
-
 import javax.annotation.PostConstruct;
-
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.bpm.client.backoff.ExponentialBackoffStrategy;
 import org.camunda.bpm.client.interceptor.ClientRequestInterceptor;
@@ -40,29 +38,28 @@ import org.springframework.stereotype.Component;
 @Profile("!test")
 public class CreateInventoryService {
 
-	private static final Logger logger = LoggerFactory.getLogger(CreateInventoryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CreateInventoryService.class);
 
-	@Autowired
-	public Environment env;
+    @Autowired
+    public Environment env;
 
-	@Autowired
-	private CreateInventoryTask createInventory;
+    @Autowired
+    private CreateInventoryTask createInventory;
 
-	@PostConstruct
-	public void auditAAIInventory() {
-		String auth = "";
-		try {
-			auth = CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
-		} catch (IllegalStateException | GeneralSecurityException e) {
-			logger.error("Error Decrypting Password", e);
-		}
-		ClientRequestInterceptor interceptor = new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"),
-				auth);
-		ExternalTaskClient client = ExternalTaskClient.create()
-				.baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
-				.asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
-		client.subscribe("InventoryCreate").lockDuration(60000)
-				.handler(createInventory::executeExternalTask).open();
-	}
+    @PostConstruct
+    public void auditAAIInventory() {
+        String auth = "";
+        try {
+            auth = CryptoUtils.decrypt(env.getRequiredProperty("mso.auth"), env.getRequiredProperty("mso.msoKey"));
+        } catch (IllegalStateException | GeneralSecurityException e) {
+            logger.error("Error Decrypting Password", e);
+        }
+        ClientRequestInterceptor interceptor =
+                new BasicAuthProvider(env.getRequiredProperty("mso.config.cadi.aafId"), auth);
+        ExternalTaskClient client = ExternalTaskClient.create()
+                .baseUrl(env.getRequiredProperty("mso.workflow.endpoint")).maxTasks(1).addInterceptor(interceptor)
+                .asyncResponseTimeout(120000).backoffStrategy(new ExponentialBackoffStrategy(0, 0, 0)).build();
+        client.subscribe("InventoryCreate").lockDuration(60000).handler(createInventory::executeExternalTask).open();
+    }
 
 }

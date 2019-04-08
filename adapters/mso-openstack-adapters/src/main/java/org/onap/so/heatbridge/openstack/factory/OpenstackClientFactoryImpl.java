@@ -40,15 +40,14 @@ public class OpenstackClientFactoryImpl implements OpenstackClientFactory {
 
         OSClientV3 client;
         try {
-            client = OSFactory.builderV3()
-                .endpoint(osAccess.getUrl())
-                .credentials(osAccess.getUser(), osAccess.getPassword(), osAccess.getDomainNameIdentifier())
-                .scopeToProject(Identifier.byId(osAccess.getTenantId()))
-                .authenticate()
-                .useRegion(osAccess.getRegion());
+            client = OSFactory.builderV3().endpoint(osAccess.getUrl())
+                    .credentials(osAccess.getUser(), osAccess.getPassword(), osAccess.getDomainNameIdentifier())
+                    .scopeToProject(Identifier.byId(osAccess.getTenantId())).authenticate()
+                    .useRegion(osAccess.getRegion());
             return new OpenstackV3ClientImpl(client);
         } catch (AuthenticationException exception) {
-            throw new OpenstackClientException("Failed to authenticate with Keystone-v3: " + osAccess.getUrl(), exception);
+            throw new OpenstackClientException("Failed to authenticate with Keystone-v3: " + osAccess.getUrl(),
+                    exception);
         }
     }
 
@@ -62,16 +61,13 @@ public class OpenstackClientFactoryImpl implements OpenstackClientFactory {
 
         OSClientV2 client;
         try {
-            client = OSFactory.builderV2()
-                .endpoint(osAccess.getUrl())
-                .credentials(osAccess.getUser(), osAccess.getPassword())
-                .tenantId(osAccess.getTenantId())
-                .authenticate()
-                .useRegion(osAccess.getRegion());
+            client = OSFactory.builderV2().endpoint(osAccess.getUrl())
+                    .credentials(osAccess.getUser(), osAccess.getPassword()).tenantId(osAccess.getTenantId())
+                    .authenticate().useRegion(osAccess.getRegion());
             return new OpenstackV2ClientImpl(client);
         } catch (AuthenticationException exception) {
             throw new OpenstackClientException("Failed to authenticate with Keystone-v2.0: " + osAccess.getUrl(),
-                exception);
+                    exception);
         }
     }
 }

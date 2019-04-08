@@ -24,42 +24,40 @@ package org.onap.so.adapters.network.beans;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContrailPolicyRefSeq {
-	
-	@JsonProperty("network_policy_refs_data_sequence_major")
-	private String major;
-	
-	@JsonProperty("network_policy_refs_data_sequence_minor")
-	private String minor;
 
-	public ContrailPolicyRefSeq() {
-	}
-	
-	public ContrailPolicyRefSeq(String major, String minor) {
-		super();
-		this.major = major;
-		this.minor = minor;
-	}
+    @JsonProperty("network_policy_refs_data_sequence_major")
+    private String major;
 
-	public String getMajor() {
-		return major;
-	}
+    @JsonProperty("network_policy_refs_data_sequence_minor")
+    private String minor;
 
-	public void setMajor(String major) {
-		this.major = major;
-	}
+    public ContrailPolicyRefSeq() {}
 
-	public String getMinor() {
-		return minor;
-	}
+    public ContrailPolicyRefSeq(String major, String minor) {
+        super();
+        this.major = major;
+        this.minor = minor;
+    }
 
-	public void setMinor(String minor) {
-		this.minor = minor;
-	}
+    public String getMajor() {
+        return major;
+    }
 
-	@Override
-	public String toString() {
-		return "ContrailPolicyRefSeq [major=" + major + ", minor=" + minor
-				+ "]";
-	} 
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
+    public String getMinor() {
+        return minor;
+    }
+
+    public void setMinor(String minor) {
+        this.minor = minor;
+    }
+
+    @Override
+    public String toString() {
+        return "ContrailPolicyRefSeq [major=" + major + ", minor=" + minor + "]";
+    }
 
 }

@@ -22,13 +22,11 @@ package org.onap.so.openstack.beans;
 
 import java.io.Serializable;
 import java.util.Calendar;
-
 import com.woorea.openstack.heat.Heat;
 
 /*
- * An entry in the Heat Client Cache. It saves the Heat client object
- * along with the token expiration. After this interval, this cache
- * item will no longer be used.
+ * An entry in the Heat Client Cache. It saves the Heat client object along with the token expiration. After this
+ * interval, this cache item will no longer be used.
  */
 public class HeatCacheEntry implements Serializable {
 
@@ -38,19 +36,19 @@ public class HeatCacheEntry implements Serializable {
     private String token;
     private Calendar expires;
 
-    public HeatCacheEntry (String heatUrl, String token, Calendar expires) {
+    public HeatCacheEntry(String heatUrl, String token, Calendar expires) {
         this.heatUrl = heatUrl;
         this.token = token;
         this.expires = expires;
     }
 
-    public Heat getHeatClient () {
-        Heat heatClient = new Heat (heatUrl);
-        heatClient.token (token);
+    public Heat getHeatClient() {
+        Heat heatClient = new Heat(heatUrl);
+        heatClient.token(token);
         return heatClient;
     }
 
-    public boolean isExpired () {
+    public boolean isExpired() {
         if (expires == null) {
             return true;
         }

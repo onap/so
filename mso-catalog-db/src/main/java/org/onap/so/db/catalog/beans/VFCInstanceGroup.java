@@ -27,8 +27,8 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value = "VNFC")
 public class VFCInstanceGroup extends InstanceGroup {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6254325954630189563L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6254325954630189563L;
 }

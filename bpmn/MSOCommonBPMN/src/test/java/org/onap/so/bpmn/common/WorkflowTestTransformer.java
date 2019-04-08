@@ -26,13 +26,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Allows a subclass of WorkflowTest to specify one or more WireMock
- * response transformers.  A transformer must be declared as a public
- * static field in the subclass.  For example:
+ * Allows a subclass of WorkflowTest to specify one or more WireMock response transformers. A transformer must be
+ * declared as a public static field in the subclass. For example:
+ * 
  * <pre>
- *     @WorkflowTestTransformer
- *     public static final ResponseTransformer sdncAdapterMockTransformer =
- *         new SDNCAdapterMockTransformer();
+ * &#64;WorkflowTestTransformer
+ * public static final ResponseTransformer sdncAdapterMockTransformer = new SDNCAdapterMockTransformer();
  * </pre>
  */
 @Retention(RetentionPolicy.RUNTIME)

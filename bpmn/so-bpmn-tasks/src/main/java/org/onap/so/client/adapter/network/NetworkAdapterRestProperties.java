@@ -22,32 +22,32 @@ package org.onap.so.client.adapter.network;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.adapter.rest.AdapterRestProperties;
 
 
 public class NetworkAdapterRestProperties implements AdapterRestProperties {
 
-	public NetworkAdapterRestProperties() {
-	}
-	
-	@Override
-	public String getAuth() {
-		return  UrnPropertiesReader.getVariable("mso.adapters.po.auth");
-	}
-	@Override
-	public String getKey() {
-		return UrnPropertiesReader.getVariable("mso.msoKey");
-	}
-	@Override
-	public URL getEndpoint() throws MalformedURLException {
-		return new URL(UrnPropertiesReader.getVariable("mso.adapters.network.rest.endpoint"));
-	}
+    public NetworkAdapterRestProperties() {}
 
-	@Override
-	public String getSystemName() {
-		return "MSO";
-	}
+    @Override
+    public String getAuth() {
+        return UrnPropertiesReader.getVariable("mso.adapters.po.auth");
+    }
+
+    @Override
+    public String getKey() {
+        return UrnPropertiesReader.getVariable("mso.msoKey");
+    }
+
+    @Override
+    public URL getEndpoint() throws MalformedURLException {
+        return new URL(UrnPropertiesReader.getVariable("mso.adapters.network.rest.endpoint"));
+    }
+
+    @Override
+    public String getSystemName() {
+        return "MSO";
+    }
 
 }

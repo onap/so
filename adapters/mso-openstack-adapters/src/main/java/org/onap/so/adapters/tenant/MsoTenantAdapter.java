@@ -24,55 +24,48 @@ package org.onap.so.adapters.tenant;
 
 
 import java.util.Map;
-
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebParam.Mode;
 import javax.jws.WebService;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.ws.Holder;
-
 import org.onap.so.adapters.tenant.exceptions.TenantException;
 import org.onap.so.adapters.tenantrest.TenantRollback;
 import org.onap.so.entity.MsoRequest;
 
-@WebService (name="TenantAdapter", targetNamespace="http://org.onap.so/tenant")
-public interface MsoTenantAdapter
-{
-	/**
-	 * This is the "Create Tenant" Web Service Endpoint definition.
-	 */
-	@WebMethod
-	public void createTenant (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
-							@WebParam(name="tenantName") @XmlElement(required=true) String tenantName,
-							@WebParam(name="metadata") Map<String,String> metadata,
-							@WebParam(name="failIfExists") Boolean failIfExists,
-							@WebParam(name="backout") Boolean backout,
-							@WebParam(name="request") MsoRequest msoRequest,
-							@WebParam(name="tenantId", mode=Mode.OUT) Holder<String> tenantId,
-							@WebParam(name="rollback", mode=Mode.OUT) Holder<TenantRollback> rollback )
-		throws TenantException;
-	
-	@WebMethod
-	public void queryTenant (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
-							@WebParam(name="tenantNameOrId") @XmlElement(required=true) String tenantNameOrId,
-							@WebParam(name="request") MsoRequest msoRequest,
-							@WebParam(name="tenantId", mode=Mode.OUT) Holder<String> tenantId,
-							@WebParam(name="tenantName", mode=Mode.OUT) Holder<String> tenantName,
-							@WebParam(name="metadata", mode=Mode.OUT) Holder<Map<String,String>> metadata )
-		throws TenantException;
-	
-	@WebMethod
-	public void deleteTenant (@WebParam(name="cloudSiteId") @XmlElement(required=true) String cloudSiteId,
-							@WebParam(name="tenantId") @XmlElement(required=true) String tenantId,
-							@WebParam(name="request") MsoRequest msoRequest,
-							@WebParam(name="tenantDeleted", mode=Mode.OUT) Holder<Boolean> tenantDeleted)
-		throws TenantException;
-	
-	@WebMethod
-	public void rollbackTenant (@WebParam(name="rollback") @XmlElement(required=true) TenantRollback rollback)
-		throws TenantException;
-	
-	@WebMethod
-	public void healthCheck ();
+@WebService(name = "TenantAdapter", targetNamespace = "http://org.onap.so/tenant")
+public interface MsoTenantAdapter {
+    /**
+     * This is the "Create Tenant" Web Service Endpoint definition.
+     */
+    @WebMethod
+    public void createTenant(@WebParam(name = "cloudSiteId") @XmlElement(required = true) String cloudSiteId,
+            @WebParam(name = "tenantName") @XmlElement(required = true) String tenantName,
+            @WebParam(name = "metadata") Map<String, String> metadata,
+            @WebParam(name = "failIfExists") Boolean failIfExists, @WebParam(name = "backout") Boolean backout,
+            @WebParam(name = "request") MsoRequest msoRequest,
+            @WebParam(name = "tenantId", mode = Mode.OUT) Holder<String> tenantId,
+            @WebParam(name = "rollback", mode = Mode.OUT) Holder<TenantRollback> rollback) throws TenantException;
+
+    @WebMethod
+    public void queryTenant(@WebParam(name = "cloudSiteId") @XmlElement(required = true) String cloudSiteId,
+            @WebParam(name = "tenantNameOrId") @XmlElement(required = true) String tenantNameOrId,
+            @WebParam(name = "request") MsoRequest msoRequest,
+            @WebParam(name = "tenantId", mode = Mode.OUT) Holder<String> tenantId,
+            @WebParam(name = "tenantName", mode = Mode.OUT) Holder<String> tenantName,
+            @WebParam(name = "metadata", mode = Mode.OUT) Holder<Map<String, String>> metadata) throws TenantException;
+
+    @WebMethod
+    public void deleteTenant(@WebParam(name = "cloudSiteId") @XmlElement(required = true) String cloudSiteId,
+            @WebParam(name = "tenantId") @XmlElement(required = true) String tenantId,
+            @WebParam(name = "request") MsoRequest msoRequest,
+            @WebParam(name = "tenantDeleted", mode = Mode.OUT) Holder<Boolean> tenantDeleted) throws TenantException;
+
+    @WebMethod
+    public void rollbackTenant(@WebParam(name = "rollback") @XmlElement(required = true) TenantRollback rollback)
+            throws TenantException;
+
+    @WebMethod
+    public void healthCheck();
 }

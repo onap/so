@@ -50,124 +50,125 @@ import com.google.common.base.Optional;
  */
 public class MonitorVnfmDeleteJobTaskTest extends BaseTaskTest {
 
-  private static final String JOB_ID = UUID.randomUUID().toString();
+    private static final String JOB_ID = UUID.randomUUID().toString();
 
-  private MonitorVnfmDeleteJobTask objUnderTest;
+    private MonitorVnfmDeleteJobTask objUnderTest;
 
-  @Mock
-  private VnfmAdapterServiceProvider mockedVnfmAdapterServiceProvider;
+    @Mock
+    private VnfmAdapterServiceProvider mockedVnfmAdapterServiceProvider;
 
-  private final BuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
+    private final BuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
 
-  @Before
-  public void setUp() {
-    objUnderTest = getEtsiVnfMonitorJobTask();
-    stubbedxecution.setVariable(Constants.DELETE_VNF_RESPONSE_PARAM_NAME, getDeleteVnfResponse());
-  }
+    @Before
+    public void setUp() {
+        objUnderTest = getEtsiVnfMonitorJobTask();
+        stubbedxecution.setVariable(Constants.DELETE_VNF_RESPONSE_PARAM_NAME, getDeleteVnfResponse());
+    }
 
-  @Test
-  public void testGetCurrentOperationStatus() throws Exception {
-    Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
-    queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
-    queryJobResponse.get().setOperationState(OperationStateEnum.COMPLETED);
-    when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
-    objUnderTest.getCurrentOperationStatus(stubbedxecution);
-    final Optional<OperationStateEnum> operationState =
-        stubbedxecution.getVariable(Constants.OPERATION_STATUS_PARAM_NAME);
-    assertNotNull(operationState);
-    assertEquals(OperationStateEnum.COMPLETED, operationState.get());
-  }
+    @Test
+    public void testGetCurrentOperationStatus() throws Exception {
+        Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
+        queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
+        queryJobResponse.get().setOperationState(OperationStateEnum.COMPLETED);
+        when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
+        objUnderTest.getCurrentOperationStatus(stubbedxecution);
+        final Optional<OperationStateEnum> operationState =
+                stubbedxecution.getVariable(Constants.OPERATION_STATUS_PARAM_NAME);
+        assertNotNull(operationState);
+        assertEquals(OperationStateEnum.COMPLETED, operationState.get());
+    }
 
-  @Test
-  public void testGetCurrentOperationStatusFailed() throws Exception {
-    Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
-    queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.CANNOT_RETRIEVE_STATUS);
-    queryJobResponse.get().setOperationState(OperationStateEnum.FAILED);
-    when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
-    objUnderTest.getCurrentOperationStatus(stubbedxecution);
-    final Optional<OperationStateEnum> operationState =
-        stubbedxecution.getVariable(Constants.OPERATION_STATUS_PARAM_NAME);
-    assertNotNull(operationState);
-    assertEquals(OperationStateEnum.FAILED, operationState.get());
-  }
+    @Test
+    public void testGetCurrentOperationStatusFailed() throws Exception {
+        Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
+        queryJobResponse.get()
+                .setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.CANNOT_RETRIEVE_STATUS);
+        queryJobResponse.get().setOperationState(OperationStateEnum.FAILED);
+        when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
+        objUnderTest.getCurrentOperationStatus(stubbedxecution);
+        final Optional<OperationStateEnum> operationState =
+                stubbedxecution.getVariable(Constants.OPERATION_STATUS_PARAM_NAME);
+        assertNotNull(operationState);
+        assertEquals(OperationStateEnum.FAILED, operationState.get());
+    }
 
-  @Test
-  public void testGetCurrentOperationStatusEmpty() throws Exception {
-    Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
-    queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
-    when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
-    objUnderTest.getCurrentOperationStatus(stubbedxecution);
-    final Optional<OperationStateEnum> operationState =
-        stubbedxecution.getVariable(Constants.OPERATION_STATUS_PARAM_NAME);
-    assertFalse(operationState.isPresent());
-  }
+    @Test
+    public void testGetCurrentOperationStatusEmpty() throws Exception {
+        Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
+        queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
+        when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
+        objUnderTest.getCurrentOperationStatus(stubbedxecution);
+        final Optional<OperationStateEnum> operationState =
+                stubbedxecution.getVariable(Constants.OPERATION_STATUS_PARAM_NAME);
+        assertFalse(operationState.isPresent());
+    }
 
-  @Test
-  public void testGetCurrentOperationStatusException() throws Exception {
-    Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
-    queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
-    when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
-    objUnderTest.getCurrentOperationStatus(stubbedxecution);
-    final Optional<OperationStateEnum> operationState =
-        stubbedxecution.getVariable(Constants.OPERATION_STATUS_PARAM_NAME);
-    assertFalse(operationState.isPresent());
-  }
+    @Test
+    public void testGetCurrentOperationStatusException() throws Exception {
+        Optional<QueryJobResponse> queryJobResponse = getQueryJobResponse();
+        queryJobResponse.get().setOperationStatusRetrievalStatus(OperationStatusRetrievalStatusEnum.STATUS_FOUND);
+        when(mockedVnfmAdapterServiceProvider.getInstantiateOperationJobStatus(JOB_ID)).thenReturn(queryJobResponse);
+        objUnderTest.getCurrentOperationStatus(stubbedxecution);
+        final Optional<OperationStateEnum> operationState =
+                stubbedxecution.getVariable(Constants.OPERATION_STATUS_PARAM_NAME);
+        assertFalse(operationState.isPresent());
+    }
 
-  @Test
-  public void testHasOperationFinished() throws Exception {
-    stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.COMPLETED));
-    assertTrue(objUnderTest.hasOperationFinished(stubbedxecution));
-  }
+    @Test
+    public void testHasOperationFinished() throws Exception {
+        stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.COMPLETED));
+        assertTrue(objUnderTest.hasOperationFinished(stubbedxecution));
+    }
 
-  @Test
-  public void testHasOperationPending() throws Exception {
-    stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.absent());
-    assertFalse(objUnderTest.hasOperationFinished(stubbedxecution));
-  }
+    @Test
+    public void testHasOperationPending() throws Exception {
+        stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.absent());
+        assertFalse(objUnderTest.hasOperationFinished(stubbedxecution));
+    }
 
-  @Test
-  public void testTimeOutLogFailue() throws Exception {
-    objUnderTest.timeOutLogFailue(stubbedxecution);
-    verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1213),
-        eq("Delete operation time out"));
-  }
+    @Test
+    public void testTimeOutLogFailue() throws Exception {
+        objUnderTest.timeOutLogFailue(stubbedxecution);
+        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1213),
+                eq("Delete operation time out"));
+    }
 
-  @Test
-  public void testCheckIfOperationWasSuccessful() throws Exception {
-    stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.COMPLETED));
-    MonitorVnfmDeleteJobTask spyObject = Mockito.spy(objUnderTest);
-    spyObject.checkIfOperationWasSuccessful(stubbedxecution);
-    verify(spyObject, times(1)).checkIfOperationWasSuccessful(stubbedxecution);
-  }
+    @Test
+    public void testCheckIfOperationWasSuccessful() throws Exception {
+        stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.COMPLETED));
+        MonitorVnfmDeleteJobTask spyObject = Mockito.spy(objUnderTest);
+        spyObject.checkIfOperationWasSuccessful(stubbedxecution);
+        verify(spyObject, times(1)).checkIfOperationWasSuccessful(stubbedxecution);
+    }
 
-  @Test
-  public void testCheckIfOperationWasSuccessfulWithPending() throws Exception {
-    stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.PROCESSING));
-    objUnderTest.checkIfOperationWasSuccessful(stubbedxecution);
-    verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1215), anyString());
-  }
+    @Test
+    public void testCheckIfOperationWasSuccessfulWithPending() throws Exception {
+        stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.of(OperationStateEnum.PROCESSING));
+        objUnderTest.checkIfOperationWasSuccessful(stubbedxecution);
+        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1215), anyString());
+    }
 
-  @Test
-  public void testCheckIfOperationWasSuccessfulEmpty() throws Exception {
-    stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.absent());
-    objUnderTest.checkIfOperationWasSuccessful(stubbedxecution);
-    verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1214), anyString());
-  }
+    @Test
+    public void testCheckIfOperationWasSuccessfulEmpty() throws Exception {
+        stubbedxecution.setVariable(Constants.OPERATION_STATUS_PARAM_NAME, Optional.absent());
+        objUnderTest.checkIfOperationWasSuccessful(stubbedxecution);
+        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1214), anyString());
+    }
 
-  private DeleteVnfResponse getDeleteVnfResponse() {
-    final DeleteVnfResponse response = new DeleteVnfResponse();
-    response.setJobId(JOB_ID);
-    return response;
-  }
+    private DeleteVnfResponse getDeleteVnfResponse() {
+        final DeleteVnfResponse response = new DeleteVnfResponse();
+        response.setJobId(JOB_ID);
+        return response;
+    }
 
-  private Optional<QueryJobResponse> getQueryJobResponse() {
-    final QueryJobResponse queryJobResponse = new QueryJobResponse();
-    queryJobResponse.setId(JOB_ID);
-    return Optional.of(queryJobResponse);
-  }
+    private Optional<QueryJobResponse> getQueryJobResponse() {
+        final QueryJobResponse queryJobResponse = new QueryJobResponse();
+        queryJobResponse.setId(JOB_ID);
+        return Optional.of(queryJobResponse);
+    }
 
-  private MonitorVnfmDeleteJobTask getEtsiVnfMonitorJobTask() {
-    return new MonitorVnfmDeleteJobTask(mockedVnfmAdapterServiceProvider, exceptionUtil);
-  }
+    private MonitorVnfmDeleteJobTask getEtsiVnfMonitorJobTask() {
+        return new MonitorVnfmDeleteJobTask(mockedVnfmAdapterServiceProvider, exceptionUtil);
+    }
 
 }

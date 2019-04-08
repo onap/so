@@ -28,33 +28,35 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.OwningEntity;
 import org.onap.so.serviceinstancebeans.Project;
 
-public class ProjectOwningEntityValidation implements ValidationRule{
+public class ProjectOwningEntityValidation implements ValidationRule {
     private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-		int reqVersion = info.getReqVersion();
-		Project project;
-		OwningEntity owningEntity;
-		String requestScope = info.getRequestScope();
-		Actions action = info.getAction();
-		
-		project = info.getSir().getRequestDetails().getProject();
-		owningEntity = info.getSir().getRequestDetails().getOwningEntity();
-		if(reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.createInstance || action == Action.assignInstance){
-			if(reqVersion > 5 && owningEntity == null) {
-	    		throw new ValidationException("owningEntity");
-	    	}
-	    	if(owningEntity != null && empty(owningEntity.getOwningEntityId())){
-				throw new ValidationException("owningEntityId");
-			}
-	    	if(project != null && empty(project.getProjectName())){
-				throw new ValidationException("projectName");
-			}
-		}
-		info.setProject(project);
-		info.setOE(owningEntity);
+
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        int reqVersion = info.getReqVersion();
+        Project project;
+        OwningEntity owningEntity;
+        String requestScope = info.getRequestScope();
+        Actions action = info.getAction();
+
+        project = info.getSir().getRequestDetails().getProject();
+        owningEntity = info.getSir().getRequestDetails().getOwningEntity();
+        if (reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.service.name())
+                && action == Action.createInstance || action == Action.assignInstance) {
+            if (reqVersion > 5 && owningEntity == null) {
+                throw new ValidationException("owningEntity");
+            }
+            if (owningEntity != null && empty(owningEntity.getOwningEntityId())) {
+                throw new ValidationException("owningEntityId");
+            }
+            if (project != null && empty(project.getProjectName())) {
+                throw new ValidationException("projectName");
+            }
+        }
+        info.setProject(project);
+        info.setOE(owningEntity);
         return info;
-	}
+    }
 }

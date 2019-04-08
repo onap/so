@@ -28,25 +28,37 @@ import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
 
 public interface AAIResourceUri extends AAIUri, GraphInventoryResourceUri {
 
-	public AAIResourceUri relationshipAPI();
-	public AAIResourceUri relatedTo(AAIObjectPlurals plural);
-	public AAIResourceUri relatedTo(AAIObjectType type, String... values);
-	public AAIResourceUri resourceVersion(String version);
-	public AAIResourceUri format(Format format);
-	@Override
-	public AAIResourceUri depth(Depth depth);
-	@Override
-	public AAIResourceUri nodesOnly(boolean nodesOnly);
-	@Override	
-	public AAIResourceUri queryParam(String name, String... values);
-	@Override
-	public AAIResourceUri replaceQueryParam(String name, String... values);
-	@Override
-	public AAIResourceUri resultIndex(int index);
-	@Override
-	public AAIResourceUri resultSize(int size);
-	@Override
-	public AAIResourceUri limit(int size);
-	@Override
-	public AAIResourceUri clone();
+    public AAIResourceUri relationshipAPI();
+
+    public AAIResourceUri relatedTo(AAIObjectPlurals plural);
+
+    public AAIResourceUri relatedTo(AAIObjectType type, String... values);
+
+    public AAIResourceUri resourceVersion(String version);
+
+    public AAIResourceUri format(Format format);
+
+    @Override
+    public AAIResourceUri depth(Depth depth);
+
+    @Override
+    public AAIResourceUri nodesOnly(boolean nodesOnly);
+
+    @Override
+    public AAIResourceUri queryParam(String name, String... values);
+
+    @Override
+    public AAIResourceUri replaceQueryParam(String name, String... values);
+
+    @Override
+    public AAIResourceUri resultIndex(int index);
+
+    @Override
+    public AAIResourceUri resultSize(int size);
+
+    @Override
+    public AAIResourceUri limit(int size);
+
+    @Override
+    public AAIResourceUri clone();
 }

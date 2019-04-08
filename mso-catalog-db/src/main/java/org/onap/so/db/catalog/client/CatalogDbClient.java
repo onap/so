@@ -25,11 +25,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityNotFoundException;
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
@@ -75,14 +73,13 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
 import uk.co.blackpepper.bowman.Client;
 import uk.co.blackpepper.bowman.ClientFactory;
 import uk.co.blackpepper.bowman.Configuration;
 
 @Component("CatalogDbClient")
 public class CatalogDbClient {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(CatalogDbClient.class);
 
     private static final String CLOUD_SITE = "/cloudSite";
@@ -91,10 +88,12 @@ public class CatalogDbClient {
     private static final String RAINY_DAY_HANDLER_MACRO = "/rainy_day_handler_macro";
     private static final String NORTHBOUND_REQUEST_REF_LOOKUP = "/northbound_request_ref_lookup";
     private static final String NETWORK_RESOURCE_CUSTOMIZATION = "/networkResourceCustomization";
-    private static final String COLLECTION_RESOURCE_INSTANCE_GROUP_CUSTOMIZATION = "/collectionResourceInstanceGroupCustomization";
+    private static final String COLLECTION_RESOURCE_INSTANCE_GROUP_CUSTOMIZATION =
+            "/collectionResourceInstanceGroupCustomization";
     private static final String VNFC_INSTANCE_GROUP_CUSTOMIZATION = "/vnfcInstanceGroupCustomization";
     private static final String ORCHESTRATION_FLOW = "/orchestrationFlow";
-    private static final String ORCHESTRATION_STATUS_STATE_TRANSITION_DIRECTIVE = "/orchestrationStatusStateTransitionDirective";
+    private static final String ORCHESTRATION_STATUS_STATE_TRANSITION_DIRECTIVE =
+            "/orchestrationStatusStateTransitionDirective";
     private static final String INSTANCE_GROUP = "/instanceGroup";
     private static final String COLLECTION_NETWORK_RESOURCE_CUSTOMIZATION = "/collectionNetworkResourceCustomization";
     private static final String BUILDING_BLOCK_DETAIL = "/buildingBlockDetail";
@@ -146,7 +145,7 @@ public class CatalogDbClient {
     private static final String CLOUD_VERSION = "cloudVersion";
     private static final String HOMING_INSTANCE = "/homingInstance";
     private static final String ARTIFACT_UUID = "artifactUUID";
-    
+
     private static final String TARGET_ENTITY = "SO:CatalogDB";
     private static final String ASTERISK = "*";
 
@@ -159,23 +158,34 @@ public class CatalogDbClient {
     private String findFirstByModelVersionAndModelInvariantUUIDURI = "/findFirstByModelVersionAndModelInvariantUUID";
     private String findByModelInvariantUUIDURI = "/findByModelInvariantUUIDOrderByModelVersionDesc";
     private String findFirstByModelNameAndAction = "/findFirstByModelNameAndAction";
-    private String findFirstResourceByModelInvariantUUIDAndModelVersion = "/findFirstResourceByModelInvariantUUIDAndModelVersion";
+    private String findFirstResourceByModelInvariantUUIDAndModelVersion =
+            "/findFirstResourceByModelInvariantUUIDAndModelVersion";
     private String findByModelInstanceNameAndVnfResources = "/findByModelInstanceNameAndVnfResources";
     private String findFirstVnfRecipeByNfRoleAndAction = "/findFirstVnfRecipeByNfRoleAndAction";
-    private String findByModelCustomizationUUIDAndVfModuleModelUUID = "/findFirstByModelCustomizationUUIDAndVfModuleModelUUIDOrderByCreatedDesc";
-    private String findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction = "/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction";
-    private String findFirstVnfComponentsRecipeByVnfComponentTypeAndAction = "/findFirstVnfComponentsRecipeByVnfComponentTypeAndAction";
-    private String findVfModuleByModelInvariantUUIDOrderByModelVersionDesc = "/findByModelInvariantUUIDOrderByModelVersionDesc";
-    private String findFirstVfModuleByModelInvariantUUIDAndModelVersion = "/findFirstVfModuleByModelInvariantUUIDAndModelVersion";
+    private String findByModelCustomizationUUIDAndVfModuleModelUUID =
+            "/findFirstByModelCustomizationUUIDAndVfModuleModelUUIDOrderByCreatedDesc";
+    private String findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction =
+            "/findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction";
+    private String findFirstVnfComponentsRecipeByVnfComponentTypeAndAction =
+            "/findFirstVnfComponentsRecipeByVnfComponentTypeAndAction";
+    private String findVfModuleByModelInvariantUUIDOrderByModelVersionDesc =
+            "/findByModelInvariantUUIDOrderByModelVersionDesc";
+    private String findFirstVfModuleByModelInvariantUUIDAndModelVersion =
+            "/findFirstVfModuleByModelInvariantUUIDAndModelVersion";
     private String findOneByBuildingBlockName = "/findOneByBuildingBlockName";
-    private String findOneByResourceTypeAndOrchestrationStatusAndTargetAction = "/findOneByResourceTypeAndOrchestrationStatusAndTargetAction";
+    private String findOneByResourceTypeAndOrchestrationStatusAndTargetAction =
+            "/findOneByResourceTypeAndOrchestrationStatusAndTargetAction";
     private String findByAction = "/findByAction";
     private String findVnfcInstanceGroupCustomizationByModelCustomizationUUID = "/findByModelCustomizationUUID";
-    private String findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID = "/findByModelCustomizationUUID";
+    private String findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID =
+            "/findByModelCustomizationUUID";
     private String findOneByActionAndRequestScopeAndIsAlacarte = "/findOneByActionAndRequestScopeAndIsAlacarte";
-    private String findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner = "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner";
-    private String findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType = "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType";
-    private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
+    private String findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner =
+            "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner";
+    private String findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType =
+            "/findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType";
+    private String findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep =
+            "/findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep";
     private String findByClliAndCloudVersion = "/findByClliAndCloudVersion";
     private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
@@ -245,7 +255,7 @@ public class CatalogDbClient {
     private final Client<HomingInstance> homingInstanceClient;
 
     private final Client<CloudifyManager> cloudifyManagerClient;
-    
+
     private final Client<CvnfcCustomization> cvnfcCustomizationClient;
 
     private final Client<ControllerSelectionReference> controllerSelectionReferenceClient;
@@ -253,7 +263,7 @@ public class CatalogDbClient {
     private final Client<PnfResource> pnfResourceClient;
 
     private final Client<PnfResourceCustomization> pnfResourceCustomizationClient;
-    
+
     private final Client<Workflow> workflowClient;
 
     @Value("${mso.catalog.db.spring.endpoint:#{null}}")
@@ -266,49 +276,72 @@ public class CatalogDbClient {
     RestTemplate restTemplate;
 
     @PostConstruct
-    public void init(){
-        findExternalToInternalServiceByServiceName = endpoint + EXTERNAL_SERVICE_TO_INTERNAL_MODEL_MAPPING + SEARCH + findExternalToInternalServiceByServiceName;
-        findServiceByModelName =  endpoint + SERVICE + SEARCH + findServiceByModelName;
-        findServiceRecipeByActionAndServiceModelUUID = endpoint + SERVICE_RECIPE + SEARCH + findServiceRecipeByActionAndServiceModelUUID;
-        findServiceByModelUUID =  endpoint + SERVICE + SEARCH + findServiceByModelUUID;
+    public void init() {
+        findExternalToInternalServiceByServiceName = endpoint + EXTERNAL_SERVICE_TO_INTERNAL_MODEL_MAPPING + SEARCH
+                + findExternalToInternalServiceByServiceName;
+        findServiceByModelName = endpoint + SERVICE + SEARCH + findServiceByModelName;
+        findServiceRecipeByActionAndServiceModelUUID =
+                endpoint + SERVICE_RECIPE + SEARCH + findServiceRecipeByActionAndServiceModelUUID;
+        findServiceByModelUUID = endpoint + SERVICE + SEARCH + findServiceByModelUUID;
         findFirstByModelNameURI = endpoint + SERVICE + SEARCH + findFirstByModelNameURI;
-        findFirstByModelVersionAndModelInvariantUUIDURI = endpoint + SERVICE + SEARCH + findFirstByModelVersionAndModelInvariantUUIDURI;
+        findFirstByModelVersionAndModelInvariantUUIDURI =
+                endpoint + SERVICE + SEARCH + findFirstByModelVersionAndModelInvariantUUIDURI;
         findByModelInvariantUUIDURI = endpoint + SERVICE + SEARCH + findByModelInvariantUUIDURI;
-        findFirstByServiceModelUUIDAndActionURI = endpoint + SERVICE_RECIPE + SEARCH + findFirstByServiceModelUUIDAndActionURI;
+        findFirstByServiceModelUUIDAndActionURI =
+                endpoint + SERVICE_RECIPE + SEARCH + findFirstByServiceModelUUIDAndActionURI;
         findFirstByModelNameAndAction = endpoint + NETWORK_RECIPE + SEARCH + findFirstByModelNameAndAction;
-        findFirstResourceByModelInvariantUUIDAndModelVersion =  endpoint + VNF_RESOURCE + SEARCH + findFirstResourceByModelInvariantUUIDAndModelVersion;
-        findByModelInstanceNameAndVnfResources =  endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findByModelInstanceNameAndVnfResources;
+        findFirstResourceByModelInvariantUUIDAndModelVersion =
+                endpoint + VNF_RESOURCE + SEARCH + findFirstResourceByModelInvariantUUIDAndModelVersion;
+        findByModelInstanceNameAndVnfResources =
+                endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findByModelInstanceNameAndVnfResources;
         findFirstVnfRecipeByNfRoleAndAction = endpoint + VNF_RECIPE + SEARCH + findFirstVnfRecipeByNfRoleAndAction;
-        findByModelCustomizationUUIDAndVfModuleModelUUID = endpoint + VFMODULE_CUSTOMIZATION + SEARCH + findByModelCustomizationUUIDAndVfModuleModelUUID;
-        findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction = endpoint + VNF_COMPONENTS_RECIPE + SEARCH + findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction;
-        findFirstVnfComponentsRecipeByVnfComponentTypeAndAction = endpoint + VNF_COMPONENTS_RECIPE + SEARCH + findFirstVnfComponentsRecipeByVnfComponentTypeAndAction;
-        findVfModuleByModelInvariantUUIDOrderByModelVersionDesc = endpoint + VFMODULE + SEARCH +findVfModuleByModelInvariantUUIDOrderByModelVersionDesc;
-        findFirstVfModuleByModelInvariantUUIDAndModelVersion = endpoint + VFMODULE + SEARCH + findFirstVfModuleByModelInvariantUUIDAndModelVersion;
+        findByModelCustomizationUUIDAndVfModuleModelUUID =
+                endpoint + VFMODULE_CUSTOMIZATION + SEARCH + findByModelCustomizationUUIDAndVfModuleModelUUID;
+        findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction = endpoint + VNF_COMPONENTS_RECIPE
+                + SEARCH + findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction;
+        findFirstVnfComponentsRecipeByVnfComponentTypeAndAction =
+                endpoint + VNF_COMPONENTS_RECIPE + SEARCH + findFirstVnfComponentsRecipeByVnfComponentTypeAndAction;
+        findVfModuleByModelInvariantUUIDOrderByModelVersionDesc =
+                endpoint + VFMODULE + SEARCH + findVfModuleByModelInvariantUUIDOrderByModelVersionDesc;
+        findFirstVfModuleByModelInvariantUUIDAndModelVersion =
+                endpoint + VFMODULE + SEARCH + findFirstVfModuleByModelInvariantUUIDAndModelVersion;
         findOneByBuildingBlockName = endpoint + BUILDING_BLOCK_DETAIL + SEARCH + findOneByBuildingBlockName;
-        findOneByResourceTypeAndOrchestrationStatusAndTargetAction = endpoint + ORCHESTRATION_STATUS_STATE_TRANSITION_DIRECTIVE + SEARCH + findOneByResourceTypeAndOrchestrationStatusAndTargetAction;
+        findOneByResourceTypeAndOrchestrationStatusAndTargetAction =
+                endpoint + ORCHESTRATION_STATUS_STATE_TRANSITION_DIRECTIVE + SEARCH
+                        + findOneByResourceTypeAndOrchestrationStatusAndTargetAction;
         findByAction = endpoint + ORCHESTRATION_FLOW + SEARCH + findByAction;
-        findVnfcInstanceGroupCustomizationByModelCustomizationUUID = endpoint + VNFC_INSTANCE_GROUP_CUSTOMIZATION + SEARCH + findVnfcInstanceGroupCustomizationByModelCustomizationUUID;
-        findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID = endpoint + COLLECTION_RESOURCE_INSTANCE_GROUP_CUSTOMIZATION + SEARCH + findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID;
-        findOneByActionAndRequestScopeAndIsAlacarte = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarte;
-        findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner;
-        findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType;
-        findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH + findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep;
+        findVnfcInstanceGroupCustomizationByModelCustomizationUUID = endpoint + VNFC_INSTANCE_GROUP_CUSTOMIZATION
+                + SEARCH + findVnfcInstanceGroupCustomizationByModelCustomizationUUID;
+        findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID =
+                endpoint + COLLECTION_RESOURCE_INSTANCE_GROUP_CUSTOMIZATION + SEARCH
+                        + findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID;
+        findOneByActionAndRequestScopeAndIsAlacarte =
+                endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH + findOneByActionAndRequestScopeAndIsAlacarte;
+        findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner = endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH
+                + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner;
+        findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType =
+                endpoint + NORTHBOUND_REQUEST_REF_LOOKUP + SEARCH
+                        + findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType;
+        findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep = endpoint + RAINY_DAY_HANDLER_MACRO + SEARCH
+                + findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep;
         findByClliAndCloudVersion = endpoint + CLOUD_SITE + SEARCH + findByClliAndCloudVersion;
 
         findPnfResourceCustomizationByModelUuid =
-            endpoint + PNF_RESOURCE_CUSTOMIZATION + SEARCH + findPnfResourceCustomizationByModelUuid;
-        
+                endpoint + PNF_RESOURCE_CUSTOMIZATION + SEARCH + findPnfResourceCustomizationByModelUuid;
+
         findWorkflowByArtifactUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByArtifactUUID;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
         vnfResourceURI = endpoint + VNF_RESOURCE + URI_SEPARATOR;
         vfModuleCustomizationURI = endpoint + VFMODULE_CUSTOMIZATION + URI_SEPARATOR;
-        networkCollectionResourceCustomizationURI = endpoint + NETWORK_COLLECTION_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
+        networkCollectionResourceCustomizationURI =
+                endpoint + NETWORK_COLLECTION_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         networkResourceCustomizationURI = endpoint + NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         cvnfcResourceCustomizationURI = endpoint + CVNFC_CUSTOMZIATION + URI_SEPARATOR;
         vnfResourceCustomizationURI = endpoint + VNF_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
-        collectionNetworkResourceCustomizationURI = endpoint + COLLECTION_NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
+        collectionNetworkResourceCustomizationURI =
+                endpoint + COLLECTION_NETWORK_RESOURCE_CUSTOMIZATION + URI_SEPARATOR;
         instanceGroupURI = endpoint + INSTANCE_GROUP + URI_SEPARATOR;
         cloudifyManagerURI = endpoint + CLOUDIFY_MANAGER + URI_SEPARATOR;
         cloudSiteURI = endpoint + CLOUD_SITE + URI_SEPARATOR;
@@ -320,18 +353,20 @@ public class CatalogDbClient {
     }
 
     public CatalogDbClient() {
-        ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        ClientHttpRequestFactory factory =
+                new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-        ClientFactory clientFactory = Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
-            restTemplate.getInterceptors().add((new SpringClientFilter()));
+        ClientFactory clientFactory =
+                Configuration.builder().setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
+                    restTemplate.getInterceptors().add((new SpringClientFilter()));
 
-            restTemplate.getInterceptors().add((request, body, execution) -> {
+                    restTemplate.getInterceptors().add((request, body, execution) -> {
 
-                request.getHeaders().add(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
-                request.getHeaders().add(LogConstants.TARGET_ENTITY_HEADER,TARGET_ENTITY);
-                return execution.execute(request, body);
-            });
-        }).build().buildClientFactory();
+                        request.getHeaders().add(HttpHeaders.AUTHORIZATION, msoAdaptersAuth);
+                        request.getHeaders().add(LogConstants.TARGET_ENTITY_HEADER, TARGET_ENTITY);
+                        return execution.execute(request, body);
+                    });
+                }).build().buildClientFactory();
         serviceClient = clientFactory.create(Service.class);
         networkRecipeClient = clientFactory.create(NetworkRecipe.class);
         networkResourceCustomizationClient = clientFactory.create(NetworkResourceCustomization.class);
@@ -345,14 +380,16 @@ public class CatalogDbClient {
         northBoundRequestClient = clientFactory.create(NorthBoundRequest.class);
         rainyDayHandlerStatusClient = clientFactory.create(RainyDayHandlerStatus.class);
         buildingBlockDetailClient = clientFactory.create(BuildingBlockDetail.class);
-        orchestrationStatusStateTransitionDirectiveClient = clientFactory
-                .create(OrchestrationStatusStateTransitionDirective.class);
+        orchestrationStatusStateTransitionDirectiveClient =
+                clientFactory.create(OrchestrationStatusStateTransitionDirective.class);
         vnfcInstanceGroupCustomizationClient = clientFactory.create(VnfcInstanceGroupCustomization.class);
-        collectionResourceInstanceGroupCustomizationClient = clientFactory
-                .create(CollectionResourceInstanceGroupCustomization.class);
+        collectionResourceInstanceGroupCustomizationClient =
+                clientFactory.create(CollectionResourceInstanceGroupCustomization.class);
         instanceGroupClient = clientFactory.create(InstanceGroup.class);
-        networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
-        collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
+        networkCollectionResourceCustomizationClient =
+                clientFactory.create(NetworkCollectionResourceCustomization.class);
+        collectionNetworkResourceCustomizationClient =
+                clientFactory.create(CollectionNetworkResourceCustomization.class);
         cloudSiteClient = clientFactory.create(CloudSite.class);
         homingInstanceClient = clientFactory.create(HomingInstance.class);
         cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
@@ -366,18 +403,20 @@ public class CatalogDbClient {
     }
 
     public CatalogDbClient(String baseUri, String auth) {
-        ClientHttpRequestFactory factory = new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        ClientHttpRequestFactory factory =
+                new BufferingClientHttpRequestFactory(new HttpComponentsClientHttpRequestFactory());
 
-        ClientFactory clientFactory = Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory).setRestTemplateConfigurer(restTemplate -> {
-            restTemplate.getInterceptors().add((new SpringClientFilter()));
+        ClientFactory clientFactory = Configuration.builder().setBaseUri(baseUri).setClientHttpRequestFactory(factory)
+                .setRestTemplateConfigurer(restTemplate -> {
+                    restTemplate.getInterceptors().add((new SpringClientFilter()));
 
-            restTemplate.getInterceptors().add((request, body, execution) -> {
+                    restTemplate.getInterceptors().add((request, body, execution) -> {
 
-                request.getHeaders().add(HttpHeaders.AUTHORIZATION, auth);
-                request.getHeaders().add(LogConstants.TARGET_ENTITY_HEADER,TARGET_ENTITY);
-                return execution.execute(request, body);
-            });
-        }).build().buildClientFactory();
+                        request.getHeaders().add(HttpHeaders.AUTHORIZATION, auth);
+                        request.getHeaders().add(LogConstants.TARGET_ENTITY_HEADER, TARGET_ENTITY);
+                        return execution.execute(request, body);
+                    });
+                }).build().buildClientFactory();
         serviceClient = clientFactory.create(Service.class);
         networkRecipeClient = clientFactory.create(NetworkRecipe.class);
         networkResourceCustomizationClient = clientFactory.create(NetworkResourceCustomization.class);
@@ -391,14 +430,16 @@ public class CatalogDbClient {
         northBoundRequestClient = clientFactory.create(NorthBoundRequest.class);
         rainyDayHandlerStatusClient = clientFactory.create(RainyDayHandlerStatus.class);
         buildingBlockDetailClient = clientFactory.create(BuildingBlockDetail.class);
-        orchestrationStatusStateTransitionDirectiveClient = clientFactory
-                .create(OrchestrationStatusStateTransitionDirective.class);
+        orchestrationStatusStateTransitionDirectiveClient =
+                clientFactory.create(OrchestrationStatusStateTransitionDirective.class);
         vnfcInstanceGroupCustomizationClient = clientFactory.create(VnfcInstanceGroupCustomization.class);
-        collectionResourceInstanceGroupCustomizationClient = clientFactory
-                .create(CollectionResourceInstanceGroupCustomization.class);
+        collectionResourceInstanceGroupCustomizationClient =
+                clientFactory.create(CollectionResourceInstanceGroupCustomization.class);
         instanceGroupClient = clientFactory.create(InstanceGroup.class);
-        networkCollectionResourceCustomizationClient = clientFactory.create(NetworkCollectionResourceCustomization.class);
-        collectionNetworkResourceCustomizationClient = clientFactory.create(CollectionNetworkResourceCustomization.class);
+        networkCollectionResourceCustomizationClient =
+                clientFactory.create(NetworkCollectionResourceCustomization.class);
+        collectionNetworkResourceCustomizationClient =
+                clientFactory.create(CollectionNetworkResourceCustomization.class);
         cloudSiteClient = clientFactory.create(CloudSite.class);
         homingInstanceClient = clientFactory.create(HomingInstance.class);
         cloudifyManagerClient = clientFactory.create(CloudifyManager.class);
@@ -411,9 +452,11 @@ public class CatalogDbClient {
         workflowClient = clientFactory.create(Workflow.class);
     }
 
-    public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(String modelCustomizationUUID) {
+    public NetworkCollectionResourceCustomization getNetworkCollectionResourceCustomizationByID(
+            String modelCustomizationUUID) {
         NetworkCollectionResourceCustomization networkCollectionResourceCustomization =
-                this.getSingleResource(networkCollectionResourceCustomizationClient, getUri(networkCollectionResourceCustomizationURI + modelCustomizationUUID));
+                this.getSingleResource(networkCollectionResourceCustomizationClient,
+                        getUri(networkCollectionResourceCustomizationURI + modelCustomizationUUID));
         if (networkCollectionResourceCustomization != null) {
             networkCollectionResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         }
@@ -421,7 +464,7 @@ public class CatalogDbClient {
     }
 
     public Service getServiceByID(String modelUUID) {
-        Service service = getSingleResource(serviceClient,getUri(serviceURI + modelUUID));
+        Service service = getSingleResource(serviceClient, getUri(serviceURI + modelUUID));
         if (service != null) {
             service.setModelUUID(modelUUID);
         }
@@ -429,14 +472,14 @@ public class CatalogDbClient {
     }
 
     public VfModule getVfModuleByModelUUID(String modelUUID) {
-        VfModule vfModule = getSingleResource(vfModuleClient,getUri(vfModuleURI + modelUUID));
+        VfModule vfModule = getSingleResource(vfModuleClient, getUri(vfModuleURI + modelUUID));
         if (vfModule != null) {
             vfModule.setModelUUID(modelUUID);
         }
         return vfModule;
     }
 
-    public VnfResource getVnfResourceByModelUUID(String modelUUID){
+    public VnfResource getVnfResourceByModelUUID(String modelUUID) {
 
         VnfResource vnfResource = this.getSingleResource(vnfResourceClient, getUri(vnfResourceURI + modelUUID));
         if (vnfResource != null) {
@@ -445,17 +488,19 @@ public class CatalogDbClient {
         return vnfResource;
     }
 
-    //A VNFResource customization UUID is the same object across services, so we can return anyone from the list
+    // A VNFResource customization UUID is the same object across services, so we can return anyone from the list
     // In the future the client should query starting at a service model uuid
-    public VnfResourceCustomization getVnfResourceCustomizationByModelCustomizationUUID(String modelCustomizationUUID){
-        List<VnfResourceCustomization> vnfResourceCustomization = this.getMultipleResources(vnfResourceCustomizationClient,getUri(endpoint + VNF_RESOURCE_CUSTOMIZATION  + SEARCH + "/findByModelCustomizationUUID" + "?MODEL_CUSTOMIZATION_UUID="+ modelCustomizationUUID));
-        if(vnfResourceCustomization != null && !vnfResourceCustomization.isEmpty()){
+    public VnfResourceCustomization getVnfResourceCustomizationByModelCustomizationUUID(String modelCustomizationUUID) {
+        List<VnfResourceCustomization> vnfResourceCustomization = this.getMultipleResources(
+                vnfResourceCustomizationClient, getUri(endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH
+                        + "/findByModelCustomizationUUID" + "?MODEL_CUSTOMIZATION_UUID=" + modelCustomizationUUID));
+        if (vnfResourceCustomization != null && !vnfResourceCustomization.isEmpty()) {
             return vnfResourceCustomization.get(0);
-        }
-        else{
+        } else {
             return null;
         }
     }
+
     public PnfResource getPnfResourceByModelUUID(String modelUUID) {
         PnfResource PnfResource = this.getSingleResource(pnfResourceClient, getUri(pnfResourceURI + modelUUID));
         if (PnfResource != null) {
@@ -466,7 +511,7 @@ public class CatalogDbClient {
 
     public PnfResourceCustomization getPnfResourceCustomizationByModelCustomizationUUID(String modelCustomizationUUID) {
         PnfResourceCustomization pnfResourceCustomization = getSingleResource(pnfResourceCustomizationClient,
-            getUri(pnfResourceCustomizationURI + modelCustomizationUUID));
+                getUri(pnfResourceCustomizationURI + modelCustomizationUUID));
         if (pnfResourceCustomization != null) {
             pnfResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         }
@@ -474,15 +519,17 @@ public class CatalogDbClient {
     }
 
     public List<PnfResourceCustomization> getPnfResourceCustomizationByModelUuid(String modelUuid) {
-        return this.getMultipleResources(pnfResourceCustomizationClient, getUri(
-            UriBuilder.fromUri(findPnfResourceCustomizationByModelUuid).queryParam("SERVICE_MODEL_UUID", modelUuid)
-                .build().toString()));
+        return this.getMultipleResources(pnfResourceCustomizationClient,
+                getUri(UriBuilder.fromUri(findPnfResourceCustomizationByModelUuid)
+                        .queryParam("SERVICE_MODEL_UUID", modelUuid).build().toString()));
     }
 
-    public CollectionNetworkResourceCustomization getCollectionNetworkResourceCustomizationByID(String modelCustomizationUUID) {
+    public CollectionNetworkResourceCustomization getCollectionNetworkResourceCustomizationByID(
+            String modelCustomizationUUID) {
         CollectionNetworkResourceCustomization collectionNetworkResourceCustomization =
-                this.getSingleResource(collectionNetworkResourceCustomizationClient,getUri(UriBuilder
-                        .fromUri(collectionNetworkResourceCustomizationURI + modelCustomizationUUID).build().toString()));
+                this.getSingleResource(collectionNetworkResourceCustomizationClient,
+                        getUri(UriBuilder.fromUri(collectionNetworkResourceCustomizationURI + modelCustomizationUUID)
+                                .build().toString()));
         if (collectionNetworkResourceCustomization != null) {
             collectionNetworkResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         }
@@ -498,12 +545,16 @@ public class CatalogDbClient {
     }
 
     public VfModuleCustomization getVfModuleCustomizationByModelCuztomizationUUID(String modelCustomizationUUID) {
-        return this.getSingleResource(vfModuleCustomizationClient, getUri(endpoint + VFMODULE_CUSTOMIZATION + SEARCH + "/findFirstByModelCustomizationUUIDOrderByCreatedDesc" + "?MODEL_CUSTOMIZATION_UUID="+ modelCustomizationUUID));
+        return this.getSingleResource(vfModuleCustomizationClient,
+                getUri(endpoint + VFMODULE_CUSTOMIZATION + SEARCH
+                        + "/findFirstByModelCustomizationUUIDOrderByCreatedDesc" + "?MODEL_CUSTOMIZATION_UUID="
+                        + modelCustomizationUUID));
     }
 
-    public NetworkResourceCustomization getNetworkResourceCustomizationByModelCustomizationUUID(String modelCustomizationUUID){
-        NetworkResourceCustomization networkResourceCustomization =
-                this.getSingleResource(networkResourceCustomizationClient, getUri(networkResourceCustomizationURI + modelCustomizationUUID));
+    public NetworkResourceCustomization getNetworkResourceCustomizationByModelCustomizationUUID(
+            String modelCustomizationUUID) {
+        NetworkResourceCustomization networkResourceCustomization = this.getSingleResource(
+                networkResourceCustomizationClient, getUri(networkResourceCustomizationURI + modelCustomizationUUID));
         if (networkResourceCustomization != null) {
             networkResourceCustomization.setModelCustomizationUUID(modelCustomizationUUID);
         }
@@ -512,8 +563,9 @@ public class CatalogDbClient {
 
 
     public BuildingBlockDetail getBuildingBlockDetail(String buildingBlockName) {
-        BuildingBlockDetail buildingBlockDetail = getSingleResource(buildingBlockDetailClient, getUri(UriBuilder
-                .fromUri(findOneByBuildingBlockName).queryParam(BUILDING_BLOCK_NAME, buildingBlockName).build().toString()));
+        BuildingBlockDetail buildingBlockDetail =
+                getSingleResource(buildingBlockDetailClient, getUri(UriBuilder.fromUri(findOneByBuildingBlockName)
+                        .queryParam(BUILDING_BLOCK_NAME, buildingBlockName).build().toString()));
         if (buildingBlockDetail != null) {
             buildingBlockDetail.setBuildingBlockName(buildingBlockName);
         }
@@ -523,228 +575,217 @@ public class CatalogDbClient {
 
     public OrchestrationStatusStateTransitionDirective getOrchestrationStatusStateTransitionDirective(
             ResourceType resourceType, OrchestrationStatus orchestrationStatus, OrchestrationAction targetAction) {
-        return getSingleResource(orchestrationStatusStateTransitionDirectiveClient, UriBuilder
-                .fromUri(findOneByResourceTypeAndOrchestrationStatusAndTargetAction)
-                .queryParam(RESOURCE_TYPE, resourceType.name())
-                .queryParam(ORCHESTRATION_STATUS, orchestrationStatus.name())
-                .queryParam(TARGET_ACTION, targetAction.name()).build());
+        return getSingleResource(orchestrationStatusStateTransitionDirectiveClient,
+                UriBuilder.fromUri(findOneByResourceTypeAndOrchestrationStatusAndTargetAction)
+                        .queryParam(RESOURCE_TYPE, resourceType.name())
+                        .queryParam(ORCHESTRATION_STATUS, orchestrationStatus.name())
+                        .queryParam(TARGET_ACTION, targetAction.name()).build());
     }
 
     public List<OrchestrationFlow> getOrchestrationFlowByAction(String action) {
-        return this.getMultipleResources(orchestrationClient, UriBuilder
-                .fromUri(findByAction).queryParam(ACTION, action).build());
+        return this.getMultipleResources(orchestrationClient,
+                UriBuilder.fromUri(findByAction).queryParam(ACTION, action).build());
     }
 
     public List<VnfcInstanceGroupCustomization> getVnfcInstanceGroupsByVnfResourceCust(String modelCustomizationUUID) {
-        return this.getMultipleResources(vnfcInstanceGroupCustomizationClient, UriBuilder
-                .fromUri(findVnfcInstanceGroupCustomizationByModelCustomizationUUID)
-                .queryParam(MODEL_CUSTOMIZATION_UUID, modelCustomizationUUID).build());
+        return this.getMultipleResources(vnfcInstanceGroupCustomizationClient,
+                UriBuilder.fromUri(findVnfcInstanceGroupCustomizationByModelCustomizationUUID)
+                        .queryParam(MODEL_CUSTOMIZATION_UUID, modelCustomizationUUID).build());
     }
 
     public List<CollectionResourceInstanceGroupCustomization> getCollectionResourceInstanceGroupCustomizationByModelCustUUID(
             String modelCustomizationUUID) {
-        return this.getMultipleResources(collectionResourceInstanceGroupCustomizationClient, UriBuilder
-                .fromUri(findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID)
-                .queryParam(MODEL_CUSTOMIZATION_UUID, modelCustomizationUUID).build());
+        return this.getMultipleResources(collectionResourceInstanceGroupCustomizationClient,
+                UriBuilder.fromUri(findCollectionResourceInstanceGroupCustomizationByModelCustomizationUUID)
+                        .queryParam(MODEL_CUSTOMIZATION_UUID, modelCustomizationUUID).build());
     }
 
-    public VfModuleCustomization getVfModuleCustomizationByModelCustomizationUUIDAndVfModuleModelUUID(String modelCustomizationUUID, String vfModuleModelUUID) {
-        return this.getSingleResource(vfModuleCustomizationClient, getUri(UriBuilder
-                .fromUri(findByModelCustomizationUUIDAndVfModuleModelUUID)
-                .queryParam("MODEL_CUSTOMIZATION_UUID",modelCustomizationUUID)
-                .queryParam("MODEL_UUID",vfModuleModelUUID).build().toString()));
+    public VfModuleCustomization getVfModuleCustomizationByModelCustomizationUUIDAndVfModuleModelUUID(
+            String modelCustomizationUUID, String vfModuleModelUUID) {
+        return this.getSingleResource(vfModuleCustomizationClient,
+                getUri(UriBuilder.fromUri(findByModelCustomizationUUIDAndVfModuleModelUUID)
+                        .queryParam("MODEL_CUSTOMIZATION_UUID", modelCustomizationUUID)
+                        .queryParam("MODEL_UUID", vfModuleModelUUID).build().toString()));
     }
 
     public NorthBoundRequest getNorthBoundRequestByActionAndIsALaCarteAndRequestScope(String requestAction,
             String resourceName, boolean aLaCarte) {
-        return this.getSingleResource(northBoundRequestClient, UriBuilder
-                .fromUri(findOneByActionAndRequestScopeAndIsAlacarte)
-                .queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
-                .queryParam(IS_ALACARTE, aLaCarte).build());
+        return this.getSingleResource(northBoundRequestClient,
+                UriBuilder.fromUri(findOneByActionAndRequestScopeAndIsAlacarte).queryParam(ACTION, requestAction)
+                        .queryParam(REQUEST_SCOPE, resourceName).queryParam(IS_ALACARTE, aLaCarte).build());
     }
-    
+
     public NorthBoundRequest getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwner(String requestAction,
             String resourceName, boolean aLaCarte, String cloudOwner) {
-        return this.getSingleResource(northBoundRequestClient, getUri(UriBuilder
-                .fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType)
-                .queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
-                .queryParam(IS_ALACARTE, aLaCarte)
-                .queryParam(CLOUD_OWNER, cloudOwner)
-                .queryParam(SERVICE_TYPE, ASTERISK).build().toString()));
+        return this.getSingleResource(northBoundRequestClient,
+                getUri(UriBuilder.fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType)
+                        .queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
+                        .queryParam(IS_ALACARTE, aLaCarte).queryParam(CLOUD_OWNER, cloudOwner)
+                        .queryParam(SERVICE_TYPE, ASTERISK).build().toString()));
     }
-    
-    public NorthBoundRequest getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwnerAndServiceType(String requestAction,
-            String resourceName, boolean aLaCarte, String cloudOwner, String serviceType) {
-        return this.getSingleResource(northBoundRequestClient, getUri(UriBuilder
-                .fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType)
-                .queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
-                .queryParam(IS_ALACARTE, aLaCarte)
-                .queryParam(CLOUD_OWNER, cloudOwner)
-                .queryParam(SERVICE_TYPE, serviceType).build().toString()));
+
+    public NorthBoundRequest getNorthBoundRequestByActionAndIsALaCarteAndRequestScopeAndCloudOwnerAndServiceType(
+            String requestAction, String resourceName, boolean aLaCarte, String cloudOwner, String serviceType) {
+        return this.getSingleResource(northBoundRequestClient,
+                getUri(UriBuilder.fromUri(findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType)
+                        .queryParam(ACTION, requestAction).queryParam(REQUEST_SCOPE, resourceName)
+                        .queryParam(IS_ALACARTE, aLaCarte).queryParam(CLOUD_OWNER, cloudOwner)
+                        .queryParam(SERVICE_TYPE, serviceType).build().toString()));
     }
 
     public RainyDayHandlerStatus getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(
             String flowName, String serviceType, String vnfType, String errorCode, String workStep) {
-        return this.getSingleResource(rainyDayHandlerStatusClient, getUri(UriBuilder
-                .fromUri(findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep)
-                .queryParam(FLOW_NAME, flowName).queryParam(SERVICE_TYPE, serviceType)
-                .queryParam(VNF_TYPE, vnfType).queryParam(ERROR_CODE, errorCode).queryParam(WORK_STEP, workStep)
-                .build().toString()));
+        return this.getSingleResource(rainyDayHandlerStatusClient,
+                getUri(UriBuilder.fromUri(findOneByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep)
+                        .queryParam(FLOW_NAME, flowName).queryParam(SERVICE_TYPE, serviceType)
+                        .queryParam(VNF_TYPE, vnfType).queryParam(ERROR_CODE, errorCode).queryParam(WORK_STEP, workStep)
+                        .build().toString()));
     }
 
-    public  ServiceRecipe getFirstByServiceModelUUIDAndAction(String modelUUID, String action){
-        return this.getSingleResource(serviceRecipeClient, getUri(UriBuilder
-                .fromUri(findFirstByServiceModelUUIDAndActionURI)
-                .queryParam(SERVICE_MODEL_UUID,modelUUID)
-                .queryParam(ACTION,action).build().toString()));
+    public ServiceRecipe getFirstByServiceModelUUIDAndAction(String modelUUID, String action) {
+        return this.getSingleResource(serviceRecipeClient,
+                getUri(UriBuilder.fromUri(findFirstByServiceModelUUIDAndActionURI)
+                        .queryParam(SERVICE_MODEL_UUID, modelUUID).queryParam(ACTION, action).build().toString()));
     }
 
-    public  NetworkRecipe getFirstNetworkRecipeByModelNameAndAction(String modelName, String action){
-        return this.getSingleResource(networkRecipeClient, UriBuilder
-                .fromUri(findFirstByModelNameAndAction)
-                .queryParam(MODEL_NAME,modelName)
-                .queryParam(ACTION,action).build());
-    }
-    
-    public ControllerSelectionReference getControllerSelectionReferenceByVnfTypeAndActionCategory(String vnfType, String actionCategory) {
-        return this.getSingleResource(controllerSelectionReferenceClient, UriBuilder
-                .fromUri(endpoint + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfTypeAndActionCategory")
-                        .queryParam("VNF_TYPE", vnfType).queryParam("ACTION_CATEGORY", actionCategory).build());
+    public NetworkRecipe getFirstNetworkRecipeByModelNameAndAction(String modelName, String action) {
+        return this.getSingleResource(networkRecipeClient, UriBuilder.fromUri(findFirstByModelNameAndAction)
+                .queryParam(MODEL_NAME, modelName).queryParam(ACTION, action).build());
     }
 
-    public Service getFirstByModelNameOrderByModelVersionDesc(String modelName){
-        return this.getSingleResource(serviceClient,UriBuilder
-                .fromUri(findFirstByModelNameURI)
-                .queryParam(MODEL_NAME,modelName).build());
+    public ControllerSelectionReference getControllerSelectionReferenceByVnfTypeAndActionCategory(String vnfType,
+            String actionCategory) {
+        return this.getSingleResource(controllerSelectionReferenceClient, UriBuilder.fromUri(endpoint
+                + "/controllerSelectionReference/search/findControllerSelectionReferenceByVnfTypeAndActionCategory")
+                .queryParam("VNF_TYPE", vnfType).queryParam("ACTION_CATEGORY", actionCategory).build());
     }
 
-    public ExternalServiceToInternalService findExternalToInternalServiceByServiceName(String serviceName){
-        return this.getSingleResource(externalServiceToInternalServiceClient, getUri(UriBuilder
-                .fromUri(findExternalToInternalServiceByServiceName)
-                .queryParam(SERVICE_NAME,serviceName).build().toString()));
+    public Service getFirstByModelNameOrderByModelVersionDesc(String modelName) {
+        return this.getSingleResource(serviceClient,
+                UriBuilder.fromUri(findFirstByModelNameURI).queryParam(MODEL_NAME, modelName).build());
     }
 
-    public  ServiceRecipe findServiceRecipeByActionAndServiceModelUUID(String action,String modelUUID){
-        return this.getSingleResource(serviceRecipeClient, getUri(UriBuilder
-                .fromUri(findServiceRecipeByActionAndServiceModelUUID)
-                .queryParam(ACTION,action)
-                .queryParam(SERVICE_MODEL_UUID,modelUUID).build().toString()));
+    public ExternalServiceToInternalService findExternalToInternalServiceByServiceName(String serviceName) {
+        return this.getSingleResource(externalServiceToInternalServiceClient,
+                getUri(UriBuilder.fromUri(findExternalToInternalServiceByServiceName)
+                        .queryParam(SERVICE_NAME, serviceName).build().toString()));
     }
 
-    public Service getServiceByModelName(String modelName){
-        return this.getSingleResource(serviceClient,getUri(UriBuilder
-                .fromUri(findServiceByModelName)
-                .queryParam(MODEL_NAME,modelName).build().toString()));
+    public ServiceRecipe findServiceRecipeByActionAndServiceModelUUID(String action, String modelUUID) {
+        return this.getSingleResource(serviceRecipeClient,
+                getUri(UriBuilder.fromUri(findServiceRecipeByActionAndServiceModelUUID).queryParam(ACTION, action)
+                        .queryParam(SERVICE_MODEL_UUID, modelUUID).build().toString()));
     }
 
-    public Service getServiceByModelUUID(String modelModelUUID){
-        return this.getSingleResource(serviceClient,getUri(UriBuilder
-                .fromUri(findServiceByModelUUID)
-                .queryParam(MODEL_UUID,modelModelUUID).build().toString()));
+    public Service getServiceByModelName(String modelName) {
+        return this.getSingleResource(serviceClient, getUri(
+                UriBuilder.fromUri(findServiceByModelName).queryParam(MODEL_NAME, modelName).build().toString()));
     }
 
-    public VnfResource getFirstVnfResourceByModelInvariantUUIDAndModelVersion(String modelInvariantUUID, String modelVersion){
-        return this.getSingleResource(vnfResourceClient, getUri(UriBuilder
-                .fromUri(findFirstResourceByModelInvariantUUIDAndModelVersion)
-                .queryParam(MODEL_INVARIANT_UUID,modelInvariantUUID)
-                .queryParam(MODEL_VERSION,modelVersion).build().toString()));
+    public Service getServiceByModelUUID(String modelModelUUID) {
+        return this.getSingleResource(serviceClient, getUri(
+                UriBuilder.fromUri(findServiceByModelUUID).queryParam(MODEL_UUID, modelModelUUID).build().toString()));
+    }
+
+    public VnfResource getFirstVnfResourceByModelInvariantUUIDAndModelVersion(String modelInvariantUUID,
+            String modelVersion) {
+        return this.getSingleResource(vnfResourceClient,
+                getUri(UriBuilder.fromUri(findFirstResourceByModelInvariantUUIDAndModelVersion)
+                        .queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID).queryParam(MODEL_VERSION, modelVersion)
+                        .build().toString()));
     }
 
 
-    public VnfResourceCustomization getFirstVnfResourceCustomizationByModelInstanceNameAndVnfResources(String modelInstanceName, VnfResource vnfResource){
-        return this.getSingleResource(vnfResourceCustomizationClient, getUri(UriBuilder
-                .fromUri(findByModelInstanceNameAndVnfResources)
-                .queryParam("MODEL_INSTANCE_NAME",modelInstanceName)
-                .queryParam("VNF_RESOURCE_MODEL_UUID",vnfResource.getModelUUID()).build().toString()));
+    public VnfResourceCustomization getFirstVnfResourceCustomizationByModelInstanceNameAndVnfResources(
+            String modelInstanceName, VnfResource vnfResource) {
+        return this.getSingleResource(vnfResourceCustomizationClient,
+                getUri(UriBuilder.fromUri(findByModelInstanceNameAndVnfResources)
+                        .queryParam("MODEL_INSTANCE_NAME", modelInstanceName)
+                        .queryParam("VNF_RESOURCE_MODEL_UUID", vnfResource.getModelUUID()).build().toString()));
     }
 
-    public VnfRecipe getFirstVnfRecipeByNfRoleAndAction(String nfRole, String action){
-        return this.getSingleResource(vnfRecipeClient,getUri(UriBuilder
-                .fromUri(findFirstVnfRecipeByNfRoleAndAction)
-                .queryParam(NF_ROLE,nfRole)
-                .queryParam(ACTION,action).build().toString()));
+    public VnfRecipe getFirstVnfRecipeByNfRoleAndAction(String nfRole, String action) {
+        return this.getSingleResource(vnfRecipeClient, getUri(UriBuilder.fromUri(findFirstVnfRecipeByNfRoleAndAction)
+                .queryParam(NF_ROLE, nfRole).queryParam(ACTION, action).build().toString()));
     }
 
-    public VnfComponentsRecipe getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(String vfModuleModelUUID, String vnfComponentType, String action){
-        return this.getSingleResource(vnfComponentsRecipeClient,getUri(UriBuilder
-                .fromUri(findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction)
-                .queryParam(VF_MODULE_MODEL_UUID,vfModuleModelUUID)
-                .queryParam(VNF_COMPONENT_TYPE,vnfComponentType)
-                .queryParam(ACTION,action).build().toString()));
+    public VnfComponentsRecipe getFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(
+            String vfModuleModelUUID, String vnfComponentType, String action) {
+        return this.getSingleResource(vnfComponentsRecipeClient,
+                getUri(UriBuilder.fromUri(findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction)
+                        .queryParam(VF_MODULE_MODEL_UUID, vfModuleModelUUID)
+                        .queryParam(VNF_COMPONENT_TYPE, vnfComponentType).queryParam(ACTION, action).build()
+                        .toString()));
     }
 
-    public VnfComponentsRecipe getFirstVnfComponentsRecipeByVnfComponentTypeAndAction(String vnfComponentType, String action) {
-        return this.getSingleResource(vnfComponentsRecipeClient,getUri(UriBuilder
-                .fromUri(findFirstVnfComponentsRecipeByVnfComponentTypeAndAction)
-                .queryParam(VNF_COMPONENT_TYPE,vnfComponentType)
-                .queryParam(ACTION,action).build().toString()));
+    public VnfComponentsRecipe getFirstVnfComponentsRecipeByVnfComponentTypeAndAction(String vnfComponentType,
+            String action) {
+        return this.getSingleResource(vnfComponentsRecipeClient,
+                getUri(UriBuilder.fromUri(findFirstVnfComponentsRecipeByVnfComponentTypeAndAction)
+                        .queryParam(VNF_COMPONENT_TYPE, vnfComponentType).queryParam(ACTION, action).build()
+                        .toString()));
     }
-    protected URI getUri(String template){
+
+    protected URI getUri(String template) {
         return URI.create(template);
     }
 
     public CloudifyManager getCloudifyManager(String id) {
-        return this.getSingleResource(cloudifyManagerClient,getUri(cloudifyManagerURI + id));
+        return this.getSingleResource(cloudifyManagerClient, getUri(cloudifyManagerURI + id));
     }
 
-    public CloudSite getCloudSite(String id){
-        return this.getSingleResource(cloudSiteClient,
-                getUri(cloudSiteURI + id));
+    public CloudSite getCloudSite(String id) {
+        return this.getSingleResource(cloudSiteClient, getUri(cloudSiteURI + id));
     }
 
-    public CloudSite getCloudSite(String id, String uri){
-        return this.getSingleResource(cloudSiteClient,
-                getUri(uri + id));
+    public CloudSite getCloudSite(String id, String uri) {
+        return this.getSingleResource(cloudSiteClient, getUri(uri + id));
     }
 
-    public void postCloudSite(CloudSite cloudSite){
+    public void postCloudSite(CloudSite cloudSite) {
         this.postSingleResource(cloudSiteClient, cloudSite);
     }
 
-    public CloudSite getCloudSiteByClliAndAicVersion (String clli, String cloudVersion){
-        return this.getSingleResource(cloudSiteClient, getUri(UriBuilder
-                .fromUri(findByClliAndCloudVersion)
-                .queryParam(CLLI,clli).queryParam(CLOUD_VERSION,cloudVersion).build().toString()));
+    public CloudSite getCloudSiteByClliAndAicVersion(String clli, String cloudVersion) {
+        return this.getSingleResource(cloudSiteClient, getUri(UriBuilder.fromUri(findByClliAndCloudVersion)
+                .queryParam(CLLI, clli).queryParam(CLOUD_VERSION, cloudVersion).build().toString()));
     }
 
-    public HomingInstance getHomingInstance (String serviceInstanceId){
-        return this.getSingleResource(homingInstanceClient,
-                getUri(homingInstanceURI + serviceInstanceId));
+    public HomingInstance getHomingInstance(String serviceInstanceId) {
+        return this.getSingleResource(homingInstanceClient, getUri(homingInstanceURI + serviceInstanceId));
     }
 
-    public HomingInstance getHomingInstance (String serviceInstanceId, String uri){
-        return this.getSingleResource(homingInstanceClient,
-                getUri(uri + serviceInstanceId));
+    public HomingInstance getHomingInstance(String serviceInstanceId, String uri) {
+        return this.getSingleResource(homingInstanceClient, getUri(uri + serviceInstanceId));
     }
 
-    public void postHomingInstance(HomingInstance homingInstance){
+    public void postHomingInstance(HomingInstance homingInstance) {
         this.postSingleResource(homingInstanceClient, homingInstance);
     }
 
     public Service getServiceByModelVersionAndModelInvariantUUID(String modelVersion, String modelInvariantUUID) {
-        return this.getSingleResource(serviceClient, getUri(UriBuilder
-                .fromUri(findFirstByModelVersionAndModelInvariantUUIDURI)
-                .queryParam(MODEL_VERSION, modelVersion)
-                .queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID).build().toString()));
+        return this.getSingleResource(serviceClient,
+                getUri(UriBuilder.fromUri(findFirstByModelVersionAndModelInvariantUUIDURI)
+                        .queryParam(MODEL_VERSION, modelVersion).queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID)
+                        .build().toString()));
     }
 
-    public VfModule getVfModuleByModelInvariantUUIDAndModelVersion(String modelInvariantUUID, String modelVersion){
-        return this.getSingleResource(vfModuleClient,getUri(UriBuilder
-                .fromUri(findFirstVfModuleByModelInvariantUUIDAndModelVersion)
-                .queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID)
-                .queryParam(MODEL_VERSION, modelVersion).build().toString()));
+    public VfModule getVfModuleByModelInvariantUUIDAndModelVersion(String modelInvariantUUID, String modelVersion) {
+        return this.getSingleResource(vfModuleClient,
+                getUri(UriBuilder.fromUri(findFirstVfModuleByModelInvariantUUIDAndModelVersion)
+                        .queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID).queryParam(MODEL_VERSION, modelVersion)
+                        .build().toString()));
     }
 
     public List<Service> getServiceByModelInvariantUUIDOrderByModelVersionDesc(String modelInvariantUUID) {
-        return this.getMultipleResources(serviceClient, getUri(UriBuilder
-                .fromUri(findByModelInvariantUUIDURI)
+        return this.getMultipleResources(serviceClient, getUri(UriBuilder.fromUri(findByModelInvariantUUIDURI)
                 .queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID).build().toString()));
     }
 
     public List<VfModule> getVfModuleByModelInvariantUUIDOrderByModelVersionDesc(String modelInvariantUUID) {
-        return this.getMultipleResources(vfModuleClient, getUri(UriBuilder
-                .fromUri(findVfModuleByModelInvariantUUIDOrderByModelVersionDesc)
-                .queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID).build().toString()));
+        return this.getMultipleResources(vfModuleClient,
+                getUri(UriBuilder.fromUri(findVfModuleByModelInvariantUUIDOrderByModelVersionDesc)
+                        .queryParam(MODEL_INVARIANT_UUID, modelInvariantUUID).build().toString()));
     }
 
     private <T> T getSingleResource(Client<T> client, URI uri) {
@@ -759,64 +800,76 @@ public class CatalogDbClient {
         return list;
     }
 
-    private <T> URI postSingleResource(Client<T> client, T type){
+    private <T> URI postSingleResource(Client<T> client, T type) {
         return client.post(type);
     }
-    
+
     public List<CvnfcCustomization> getCvnfcCustomization(String serviceModelUUID, String vnfCustomizationUUID,
-            String vfModuleCustomizationUUID) {    
+            String vfModuleCustomizationUUID) {
         Service service = this.getServiceByID(serviceModelUUID);
-        VnfResourceCustomization vnfResourceCust = findVnfResourceCustomizationInList(vnfCustomizationUUID, service.getVnfCustomizations());
-        VfModuleCustomization vfModuleCust = findVfModuleCustomizationInList(vfModuleCustomizationUUID , vnfResourceCust.getVfModuleCustomizations());
+        VnfResourceCustomization vnfResourceCust =
+                findVnfResourceCustomizationInList(vnfCustomizationUUID, service.getVnfCustomizations());
+        VfModuleCustomization vfModuleCust =
+                findVfModuleCustomizationInList(vfModuleCustomizationUUID, vnfResourceCust.getVfModuleCustomizations());
         return vfModuleCust.getCvnfcCustomization().stream().collect(Collectors.toList());
     }
-    
-    private VnfResourceCustomization findVnfResourceCustomizationInList(String vnfCustomizationUUID , List<VnfResourceCustomization> vnfResourceCusts){
+
+    private VnfResourceCustomization findVnfResourceCustomizationInList(String vnfCustomizationUUID,
+            List<VnfResourceCustomization> vnfResourceCusts) {
         List<VnfResourceCustomization> filtered = vnfResourceCusts.stream()
                 .filter(vnfCustRes -> vnfCustomizationUUID.equals(vnfCustRes.getModelCustomizationUUID()))
                 .collect(Collectors.toList());
-        if(filtered != null && !filtered.isEmpty() && filtered.size() == 1){
+        if (filtered != null && !filtered.isEmpty() && filtered.size() == 1) {
             return filtered.get(0);
-        }else
-            throw new EntityNotFoundException("Unable to find VnfResourceCustomization ModelCustomizationUUID:" + vnfCustomizationUUID);
+        } else
+            throw new EntityNotFoundException(
+                    "Unable to find VnfResourceCustomization ModelCustomizationUUID:" + vnfCustomizationUUID);
     }
-    
-    private VfModuleCustomization findVfModuleCustomizationInList(String vfModuleCustomizationUUID , List<VfModuleCustomization> vfModuleList){
+
+    private VfModuleCustomization findVfModuleCustomizationInList(String vfModuleCustomizationUUID,
+            List<VfModuleCustomization> vfModuleList) {
         List<VfModuleCustomization> filtered = vfModuleList.stream()
                 .filter(vfModuleCust -> vfModuleCustomizationUUID.equals(vfModuleCust.getModelCustomizationUUID()))
                 .collect(Collectors.toList());
-        if(filtered != null && !filtered.isEmpty() && filtered.size() == 1){
+        if (filtered != null && !filtered.isEmpty() && filtered.size() == 1) {
             return filtered.get(0);
-        }else
-            throw new EntityNotFoundException("Unable to find VfModuleCustomization ModelCustomizationUUID:" + vfModuleCustomizationUUID);
+        } else
+            throw new EntityNotFoundException(
+                    "Unable to find VfModuleCustomization ModelCustomizationUUID:" + vfModuleCustomizationUUID);
     }
-    
-    private CvnfcCustomization findCvnfcCustomizationInAList(String cvnfcCustomizationUuid , List<CvnfcCustomization> cvnfcCustomList){
+
+    private CvnfcCustomization findCvnfcCustomizationInAList(String cvnfcCustomizationUuid,
+            List<CvnfcCustomization> cvnfcCustomList) {
         List<CvnfcCustomization> filtered = cvnfcCustomList.stream()
                 .filter(cvnfc -> cvnfcCustomizationUuid.equals(cvnfc.getModelCustomizationUUID()))
                 .collect(Collectors.toList());
-        if(filtered != null && !filtered.isEmpty() && filtered.size() == 1){
+        if (filtered != null && !filtered.isEmpty() && filtered.size() == 1) {
             logger.debug("Found CvnfcCustomization: {}", filtered.get(0));
             return filtered.get(0);
-        }else
-            throw new EntityNotFoundException("Unable to find CvnfcCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
+        } else
+            throw new EntityNotFoundException(
+                    "Unable to find CvnfcCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
     }
-    
+
     public CvnfcConfigurationCustomization getCvnfcCustomization(String serviceModelUUID, String vnfCustomizationUuid,
             String vfModuleCustomizationUuid, String cvnfcCustomizationUuid) {
-        List<CvnfcCustomization> cvnfcCustomization =  getCvnfcCustomization(serviceModelUUID,vnfCustomizationUuid,vfModuleCustomizationUuid);
-        CvnfcCustomization cvnfc = findCvnfcCustomizationInAList(cvnfcCustomizationUuid,cvnfcCustomization );
-        List<CvnfcConfigurationCustomization> fabricConfigs  = cvnfc.getCvnfcConfigurationCustomization().stream().filter(cvnfcCustom -> cvnfcCustom.getConfigurationResource().getToscaNodeType().contains("FabricConfiguration")).collect(Collectors.toList());
-        if(fabricConfigs != null && !fabricConfigs.isEmpty() && fabricConfigs.size() == 1){
+        List<CvnfcCustomization> cvnfcCustomization =
+                getCvnfcCustomization(serviceModelUUID, vnfCustomizationUuid, vfModuleCustomizationUuid);
+        CvnfcCustomization cvnfc = findCvnfcCustomizationInAList(cvnfcCustomizationUuid, cvnfcCustomization);
+        List<CvnfcConfigurationCustomization> fabricConfigs = cvnfc
+                .getCvnfcConfigurationCustomization().stream().filter(cvnfcCustom -> cvnfcCustom
+                        .getConfigurationResource().getToscaNodeType().contains("FabricConfiguration"))
+                .collect(Collectors.toList());
+        if (fabricConfigs != null && !fabricConfigs.isEmpty() && fabricConfigs.size() == 1) {
             logger.debug("Found Fabric Configuration: {}", fabricConfigs.get(0));
             return fabricConfigs.get(0);
-        }else
-            throw new EntityNotFoundException("Unable to find CvnfcConfigurationCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
+        } else
+            throw new EntityNotFoundException(
+                    "Unable to find CvnfcConfigurationCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
     }
-    
-    public Workflow findWorkflowByArtifactUUID (String artifactUUID) {
-    	return this.getSingleResource(workflowClient,getUri(UriBuilder
-                .fromUri(findWorkflowByArtifactUUID)
-                .queryParam(ARTIFACT_UUID, artifactUUID).build().toString()));                
+
+    public Workflow findWorkflowByArtifactUUID(String artifactUUID) {
+        return this.getSingleResource(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByArtifactUUID)
+                .queryParam(ARTIFACT_UUID, artifactUUID).build().toString()));
     }
 }

@@ -22,42 +22,40 @@ package org.onap.so.client.aai;
 
 import java.io.IOException;
 import java.util.Optional;
-
 import javax.annotation.Priority;
 import javax.ws.rs.ext.Provider;
-
 import javax.annotation.Priority;
 import javax.ws.rs.ext.Provider;
-
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.aai.entities.AAIError;
 import org.slf4j.MDC;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Provider
 @Priority(Integer.MIN_VALUE)
 public class AAIClientResponseExceptionMapper extends ResponseExceptionMapper {
 
-	private final String requestId;
-	public AAIClientResponseExceptionMapper() {
-		this.requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
-	}
-	@Override
-	public Optional<String> extractMessage(String entity) {
-		
-		String errorString = "Error calling A&AI. Request-Id=" + this.getRequestId() + " ";
-		try {
-			AAIError error = new ObjectMapper().readValue(entity, AAIError.class);
-			AAIErrorFormatter formatter = new AAIErrorFormatter(error);
-			return Optional.of(errorString + formatter.getMessage());
-		} catch (IOException e) {
-			return Optional.of(errorString + entity);
-		}
-	}
-	
-	protected String getRequestId() {
-		return this.requestId;
-	}
+    private final String requestId;
+
+    public AAIClientResponseExceptionMapper() {
+        this.requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
+    }
+
+    @Override
+    public Optional<String> extractMessage(String entity) {
+
+        String errorString = "Error calling A&AI. Request-Id=" + this.getRequestId() + " ";
+        try {
+            AAIError error = new ObjectMapper().readValue(entity, AAIError.class);
+            AAIErrorFormatter formatter = new AAIErrorFormatter(error);
+            return Optional.of(errorString + formatter.getMessage());
+        } catch (IOException e) {
+            return Optional.of(errorString + entity);
+        }
+    }
+
+    protected String getRequestId() {
+        return this.requestId;
+    }
 }

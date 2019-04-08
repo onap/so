@@ -147,8 +147,8 @@ public class AaiHelper {
     }
 
     /**
-     * Select a VNFM to use for the given generic VNF. Should only be used when no VNFM has already been
-     * assigned to the VNF.
+     * Select a VNFM to use for the given generic VNF. Should only be used when no VNFM has already been assigned to the
+     * VNF.
      *
      * @param vnf the generic VNF
      * @return the VNFM to use

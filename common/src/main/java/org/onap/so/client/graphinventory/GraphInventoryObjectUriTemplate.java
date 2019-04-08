@@ -22,5 +22,5 @@ package org.onap.so.client.graphinventory;
 
 public interface GraphInventoryObjectUriTemplate {
 
-	public String uriTemplate();
+    public String uriTemplate();
 }

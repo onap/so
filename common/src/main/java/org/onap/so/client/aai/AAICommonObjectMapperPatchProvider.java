@@ -24,8 +24,8 @@ import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperPatchPr
 
 public class AAICommonObjectMapperPatchProvider extends GraphInventoryCommonObjectMapperPatchProvider {
 
-	
-	public AAICommonObjectMapperPatchProvider() {
-		super();
-	}
+
+    public AAICommonObjectMapperPatchProvider() {
+        super();
+    }
 }

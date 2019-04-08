@@ -21,7 +21,6 @@ package org.onap.so.monitoring.db.service;
 
 import java.util.List;
 import java.util.Map;
-
 import org.onap.so.monitoring.model.SoInfraRequest;
 
 

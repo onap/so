@@ -38,14 +38,12 @@ import org.onap.so.bpmn.core.domain.VnfResource;
 import org.onap.so.bpmn.mock.FileUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.onap.so.bpmn.mock.StubResponseDatabase.MockGetServiceResourcesCatalogDataByModelUuid;
@@ -59,7 +57,7 @@ import static org.onap.so.bpmn.mock.StubResponseOof.mockOof_500;
 @Ignore
 public class OofHomingTestIT extends BaseIntegrationTest {
 
-	Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
+    Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
 
     ServiceDecomposition serviceDecomposition = new ServiceDecomposition();
     String subscriber = "";
@@ -72,12 +70,11 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         String oofCallback2 = FileUtil.readResourceFile("__files/BuildingBlocks/oofCallback2AR1Vnf");
         String oofCallback3 = FileUtil.readResourceFile("__files/BuildingBlocks/oofCallback2AR1Vnf2Net");
 
-        String oofCallbackNoSolution = FileUtil.
-                readResourceFile("__files/BuildingBlocks/oofCallbackNoSolutionFound");
-        String oofCallbackPolicyException = FileUtil.
-                readResourceFile("__files/BuildingBlocks/oofCallbackPolicyException");
-        String oofCallbackServiceException = FileUtil.
-                readResourceFile("__files/BuildingBlocks/oofCallbackServiceException");
+        String oofCallbackNoSolution = FileUtil.readResourceFile("__files/BuildingBlocks/oofCallbackNoSolutionFound");
+        String oofCallbackPolicyException =
+                FileUtil.readResourceFile("__files/BuildingBlocks/oofCallbackPolicyException");
+        String oofCallbackServiceException =
+                FileUtil.readResourceFile("__files/BuildingBlocks/oofCallbackServiceException");
 
         callbacks.put("oof", JSON, "oofResponse", oofCallback);
         callbacks.put("oof2", JSON, "oofResponse", oofCallback2);
@@ -128,133 +125,73 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         VnfResource vnf = new VnfResource();
         vnf.setResourceId("testResourceIdVNF");
         vnf.setResourceInstanceName("testVnfInstanceName");
-        vnf.getHomingSolution().setOofDirectives(
-                "{ \n" +
-                        "      \"directives\":[ \n" +
-                        "         { \n" +
-                        "            \"vnfc_directives\":[ \n" +
-                        "               { \n" +
-                        "                  \"vnfc_id\":\"<ID of VNFC>\",\n" +
-                        "                  \"directives\":[ \n" +
-                        "                     { \n" +
-                        "                        \"directive_name\":\"<Name of directive,example flavor_directive>\",\n" +
-                        "                        \"attributes\":[ \n" +
-                        "                           { \n" +
-                        "                              \"attribute_name\":\"<name of attribute, such as flavor label>\",\n" +
-                        "                              \"attribute_value\":\"<value such as cloud specific flavor>\"\n" +
-                        "                           }\n" +
-                        "                        ]\n" +
-                        "                     },\n" +
-                        "                     { \n" +
-                        "                        \"directive_name\":\"<Name of directive,example vnic-info>\",\n" +
-                        "                        \"attributes\":[ \n" +
-                        "                           { \n" +
-                        "                              \"attribute_name\":\"<name of attribute, such as vnic-type>\",\n" +
-                        "                              \"attribute_value\":\"<value such as direct/normal>\"\n" +
-                        "                           },\n" +
-                        "                           { \n" +
-                        "                              \"attribute_name\":\"<name of attribute, such as provider netweork>\",\n" +
-                        "                              \"attribute_value\":\"<value such as physnet>\"\n" +
-                        "                           }\n" +
-                        "                        ]\n" +
-                        "                     }\n" +
-                        "                  ]\n" +
-                        "               }\n" +
-                        "            ]\n" +
-                        "         },\n" +
-                        "         { \n" +
-                        "            \"vnf_directives\":{ \n" +
-                        "               \"directives\":[ \n" +
-                        "                  { \n" +
-                        "                     \"directive_name\":\"<Name of directive>\",\n" +
-                        "                     \"attributes\":[ \n" +
-                        "                        { \n" +
-                        "                           \"attribute_name\":\"<name of attribute>\",\n" +
-                        "                           \"attribute_value\":\"<value>\"\n" +
-                        "                        }\n" +
-                        "                     ]\n" +
-                        "                  },\n" +
-                        "                  { \n" +
-                        "                     \"directive_name\":\"<Name of directive>\",\n" +
-                        "                     \"attributes\":[ \n" +
-                        "                        { \n" +
-                        "                           \"attribute_name\":\"<name of attribute>\",\n" +
-                        "                           \"attribute_value\":\"<value >\"\n" +
-                        "                        },\n" +
-                        "                        { \n" +
-                        "                           \"attribute_name\":\"<name of attribute>\",\n" +
-                        "                           \"attribute_value\":\"<value >\"\n" +
-                        "                        }\n" +
-                        "                     ]\n" +
-                        "                  }\n" +
-                        "               ]\n" +
-                        "            }\n" +
-                        "         }\n" +
-                        "      ]\n" +
-                        "   },\n" +
-                        "   \"sdnc_directives\":{ \n" +
-                        "      \"directives\":[ \n" +
-                        "         { \n" +
-                        "            \"vnfc_directives\":[ \n" +
-                        "               { \n" +
-                        "                  \"vnfc_id\":\"<ID of VNFC>\",\n" +
-                        "                  \"directives\":[ \n" +
-                        "                     { \n" +
-                        "                        \"directive_name\":\"<Name of directive,example flavor_directive>\",\n" +
-                        "                        \"attributes\":[ \n" +
-                        "                           { \n" +
-                        "                              \"attribute_name\":\"<name of attribute, such as flavor label>\",\n" +
-                        "                              \"attribute_value\":\"<value such as cloud specific flavor>\"\n" +
-                        "                           }\n" +
-                        "                        ]\n" +
-                        "                     },\n" +
-                        "                     { \n" +
-                        "                        \"directive_name\":\"<Name of directive,example vnic-info>\",\n" +
-                        "                        \"attributes\":[ \n" +
-                        "                           { \n" +
-                        "                              \"attribute_name\":\"<name of attribute, such as vnic-type>\",\n" +
-                        "                              \"attribute_value\":\"<value such as direct/normal>\"\n" +
-                        "                           },\n" +
-                        "                           { \n" +
-                        "                              \"attribute_name\":\"<name of attribute, such as provider netweork>\",\n" +
-                        "                              \"attribute_value\":\"<value such as physnet>\"\n" +
-                        "                           }\n" +
-                        "                        ]\n" +
-                        "                     }\n" +
-                        "                  ]\n" +
-                        "               }\n" +
-                        "            ]\n" +
-                        "         },\n" +
-                        "         { \n" +
-                        "            \"vnf_directives\":{ \n" +
-                        "               \"directives\":[ \n" +
-                        "                  { \n" +
-                        "                     \"directive_name\":\"<Name of directive>\",\n" +
-                        "                     \"attributes\":[ \n" +
-                        "                        { \n" +
-                        "                           \"attribute_name\":\"<name of attribute>\",\n" +
-                        "                           \"attribute_value\":\"<value>\"\n" +
-                        "                        }\n" +
-                        "                     ]\n" +
-                        "                  },\n" +
-                        "                  { \n" +
-                        "                     \"directive_name\":\"<Name of directive>\",\n" +
-                        "                     \"attributes\":[ \n" +
-                        "                        { \n" +
-                        "                           \"attribute_name\":\"<name of attribute>\",\n" +
-                        "                           \"attribute_value\":\"<value >\"\n" +
-                        "                        },\n" +
-                        "                        { \n" +
-                        "                           \"attribute_name\":\"<name of attribute>\",\n" +
-                        "                           \"attribute_value\":\"<value >\"\n" +
-                        "                        }\n" +
-                        "                     ]\n" +
-                        "                  }\n" +
-                        "               ]\n" +
-                        "            }\n" +
-                        "         }\n" +
-                        "      ]\n" +
-                        "   }");
+        vnf.getHomingSolution().setOofDirectives("{ \n" + "      \"directives\":[ \n" + "         { \n"
+                + "            \"vnfc_directives\":[ \n" + "               { \n"
+                + "                  \"vnfc_id\":\"<ID of VNFC>\",\n" + "                  \"directives\":[ \n"
+                + "                     { \n"
+                + "                        \"directive_name\":\"<Name of directive,example flavor_directive>\",\n"
+                + "                        \"attributes\":[ \n" + "                           { \n"
+                + "                              \"attribute_name\":\"<name of attribute, such as flavor label>\",\n"
+                + "                              \"attribute_value\":\"<value such as cloud specific flavor>\"\n"
+                + "                           }\n" + "                        ]\n" + "                     },\n"
+                + "                     { \n"
+                + "                        \"directive_name\":\"<Name of directive,example vnic-info>\",\n"
+                + "                        \"attributes\":[ \n" + "                           { \n"
+                + "                              \"attribute_name\":\"<name of attribute, such as vnic-type>\",\n"
+                + "                              \"attribute_value\":\"<value such as direct/normal>\"\n"
+                + "                           },\n" + "                           { \n"
+                + "                              \"attribute_name\":\"<name of attribute, such as provider netweork>\",\n"
+                + "                              \"attribute_value\":\"<value such as physnet>\"\n"
+                + "                           }\n" + "                        ]\n" + "                     }\n"
+                + "                  ]\n" + "               }\n" + "            ]\n" + "         },\n" + "         { \n"
+                + "            \"vnf_directives\":{ \n" + "               \"directives\":[ \n"
+                + "                  { \n" + "                     \"directive_name\":\"<Name of directive>\",\n"
+                + "                     \"attributes\":[ \n" + "                        { \n"
+                + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                + "                           \"attribute_value\":\"<value>\"\n" + "                        }\n"
+                + "                     ]\n" + "                  },\n" + "                  { \n"
+                + "                     \"directive_name\":\"<Name of directive>\",\n"
+                + "                     \"attributes\":[ \n" + "                        { \n"
+                + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                + "                           \"attribute_value\":\"<value >\"\n" + "                        },\n"
+                + "                        { \n"
+                + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                + "                           \"attribute_value\":\"<value >\"\n" + "                        }\n"
+                + "                     ]\n" + "                  }\n" + "               ]\n" + "            }\n"
+                + "         }\n" + "      ]\n" + "   },\n" + "   \"sdnc_directives\":{ \n" + "      \"directives\":[ \n"
+                + "         { \n" + "            \"vnfc_directives\":[ \n" + "               { \n"
+                + "                  \"vnfc_id\":\"<ID of VNFC>\",\n" + "                  \"directives\":[ \n"
+                + "                     { \n"
+                + "                        \"directive_name\":\"<Name of directive,example flavor_directive>\",\n"
+                + "                        \"attributes\":[ \n" + "                           { \n"
+                + "                              \"attribute_name\":\"<name of attribute, such as flavor label>\",\n"
+                + "                              \"attribute_value\":\"<value such as cloud specific flavor>\"\n"
+                + "                           }\n" + "                        ]\n" + "                     },\n"
+                + "                     { \n"
+                + "                        \"directive_name\":\"<Name of directive,example vnic-info>\",\n"
+                + "                        \"attributes\":[ \n" + "                           { \n"
+                + "                              \"attribute_name\":\"<name of attribute, such as vnic-type>\",\n"
+                + "                              \"attribute_value\":\"<value such as direct/normal>\"\n"
+                + "                           },\n" + "                           { \n"
+                + "                              \"attribute_name\":\"<name of attribute, such as provider netweork>\",\n"
+                + "                              \"attribute_value\":\"<value such as physnet>\"\n"
+                + "                           }\n" + "                        ]\n" + "                     }\n"
+                + "                  ]\n" + "               }\n" + "            ]\n" + "         },\n" + "         { \n"
+                + "            \"vnf_directives\":{ \n" + "               \"directives\":[ \n"
+                + "                  { \n" + "                     \"directive_name\":\"<Name of directive>\",\n"
+                + "                     \"attributes\":[ \n" + "                        { \n"
+                + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                + "                           \"attribute_value\":\"<value>\"\n" + "                        }\n"
+                + "                     ]\n" + "                  },\n" + "                  { \n"
+                + "                     \"directive_name\":\"<Name of directive>\",\n"
+                + "                     \"attributes\":[ \n" + "                        { \n"
+                + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                + "                           \"attribute_value\":\"<value >\"\n" + "                        },\n"
+                + "                        { \n"
+                + "                           \"attribute_name\":\"<name of attribute>\",\n"
+                + "                           \"attribute_value\":\"<value >\"\n" + "                        }\n"
+                + "                     ]\n" + "                  }\n" + "               ]\n" + "            }\n"
+                + "         }\n" + "      ]\n" + "   }");
         ModelInfo vnfModel = new ModelInfo();
         vnfModel.setModelCustomizationUuid("testModelCustomizationUuidVNF");
         vnfModel.setModelInvariantUuid("testModelInvariantIdVNF");
@@ -271,7 +208,8 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         serviceDecomposition.setServiceInstance(si);
 
         // Subscriber
-        subscriber = "{\"globalSubscriberId\": \"SUB12_0322_DS_1201\",\"subscriberCommonSiteId\": \"DALTX0101\",\"subscriberName\": \"SUB_12_0322_DS_1201\"}";
+        subscriber =
+                "{\"globalSubscriberId\": \"SUB12_0322_DS_1201\",\"subscriberCommonSiteId\": \"DALTX0101\",\"subscriberName\": \"SUB_12_0322_DS_1201\"}";
         subscriber2 = "{\"globalSubscriberId\": \"SUB12_0322_DS_1201\",\"subscriberName\": \"SUB_12_0322_DS_1201\"}";
     }
 
@@ -285,17 +223,17 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         Map<String, Object> variables = new HashMap<>();
         setVariables(variables);
 
-       invokeSubProcess("Homing", businessKey, variables);
+        invokeSubProcess("Homing", businessKey, variables);
 
         injectWorkflowMessages(callbacks, "oof2");
 
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
-                "WorkflowException");
-        ServiceDecomposition serviceDecompositionExp = (ServiceDecomposition) getVariableFromHistory(businessKey,
-                "serviceDecomposition");
+        // Get Variables
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
+        ServiceDecomposition serviceDecompositionExp =
+                (ServiceDecomposition) getVariableFromHistory(businessKey, "serviceDecomposition");
         String expectedOofRequest = (String) getVariableFromHistory(businessKey, "oofRequest");
 
         Resource resourceAR = serviceDecompositionExp.getServiceResource("testResourceIdAR");
@@ -313,17 +251,18 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         expectedOofRequest = expectedOofRequest.replaceAll("\\s+", "");
 
         assertNull(workflowException);
-        assertEquals(homingSolutionService("service", "testSIID1", "MDTNJ01",
-                resourceARHoming.getVnf().getResourceId(),"aic", "dfwtx",
-                "\"f1d563e8-e714-4393-8f99-cc480144a05e\", \"j1d563e8-e714-4393-8f99-cc480144a05e\"",
+        assertEquals(homingSolutionService("service", "testSIID1", "MDTNJ01", resourceARHoming.getVnf().getResourceId(),
+                "aic", "dfwtx", "\"f1d563e8-e714-4393-8f99-cc480144a05e\", \"j1d563e8-e714-4393-8f99-cc480144a05e\"",
                 "\"s1d563e8-e714-4393-8f99-cc480144a05e\", \"b1d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceARHomingString);
-        assertEquals(homingSolutionService("service", "testSIID2", "testVnfHostname2",
-                resourceARHoming2.getVnf().getResourceId(),"aic", "testCloudRegionId2",
-                null, null), resourceARHoming2String);
-        assertEquals(homingSolutionCloud("cloud","aic", "testCloudRegionId3",
-                true, "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
-                "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
+        assertEquals(
+                homingSolutionService("service", "testSIID2", "testVnfHostname2",
+                        resourceARHoming2.getVnf().getResourceId(), "aic", "testCloudRegionId2", null, null),
+                resourceARHoming2String);
+        assertEquals(
+                homingSolutionCloud("cloud", "aic", "testCloudRegionId3", true,
+                        "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
+                        "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceVNFHomingString);
         assertEquals(verifyOofRequest(), expectedOofRequest);
     }
@@ -338,17 +277,17 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         Map<String, Object> variables = new HashMap<>();
         setVariables2(variables);
 
-       invokeSubProcess("Homing", businessKey, variables);
+        invokeSubProcess("Homing", businessKey, variables);
 
         injectWorkflowMessages(callbacks, "oof3");
 
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
-                "WorkflowException");
-        ServiceDecomposition serviceDecompositionExp = (ServiceDecomposition) getVariableFromHistory(businessKey,
-                "serviceDecomposition");
+        // Get Variables
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
+        ServiceDecomposition serviceDecompositionExp =
+                (ServiceDecomposition) getVariableFromHistory(businessKey, "serviceDecomposition");
         String expectedOofRequest = (String) getVariableFromHistory(businessKey, "oofRequest");
 
         Resource resourceAR = serviceDecompositionExp.getServiceResource("testResourceIdAR");
@@ -376,28 +315,27 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
 
         assertNull(workflowException);
-        assertEquals(homingSolutionService("service", "testSIID1", "MDTNJ01",
-                resourceARHoming.getVnf().getResourceId(),"aic", "dfwtx",
-                "\"f1d563e8-e714-4393-8f99-cc480144a05e\", \"j1d563e8-e714-4393-8f99-cc480144a05e\"",
+        assertEquals(homingSolutionService("service", "testSIID1", "MDTNJ01", resourceARHoming.getVnf().getResourceId(),
+                "aic", "dfwtx", "\"f1d563e8-e714-4393-8f99-cc480144a05e\", \"j1d563e8-e714-4393-8f99-cc480144a05e\"",
                 "\"s1d563e8-e714-4393-8f99-cc480144a05e\", \"b1d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceARHomingString);
-        assertEquals(homingSolutionService("service", "testSIID2", "testVnfHostname2",
-                resourceARHoming2.getVnf().getResourceId(),
-                "aic", "testCloudRegionId2",
-                null, null), resourceARHoming2String);
-        assertEquals(homingSolutionCloud("cloud","aic",
-                "testCloudRegionId3",
-                true, "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
-                "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
+        assertEquals(
+                homingSolutionService("service", "testSIID2", "testVnfHostname2",
+                        resourceARHoming2.getVnf().getResourceId(), "aic", "testCloudRegionId2", null, null),
+                resourceARHoming2String);
+        assertEquals(
+                homingSolutionCloud("cloud", "aic", "testCloudRegionId3", true,
+                        "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
+                        "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceVNFHomingString);
-        assertEquals(homingSolutionService("service", "testServiceInstanceIdNet",
-                "testVnfHostNameNet", resourceNetHoming.getVnf().getResourceId(),"aic",
-                "testCloudRegionIdNet",
-                null, null), resourceNetHomingString);
-        assertEquals(homingSolutionCloud("cloud", "aic",
-                "testCloudRegionIdNet2",
-                false, "\"f1d563e8-e714-4393-8f99-cc480144a05n\", \"j1d563e8-e714-4393-8f99-cc480144a05n\"",
-                "\"s1d563e8-e714-4393-8f99-cc480144a05n\", \"b1d563e8-e714-4393-8f99-cc480144a05n\""),
+        assertEquals(
+                homingSolutionService("service", "testServiceInstanceIdNet", "testVnfHostNameNet",
+                        resourceNetHoming.getVnf().getResourceId(), "aic", "testCloudRegionIdNet", null, null),
+                resourceNetHomingString);
+        assertEquals(
+                homingSolutionCloud("cloud", "aic", "testCloudRegionIdNet2", false,
+                        "\"f1d563e8-e714-4393-8f99-cc480144a05n\", \"j1d563e8-e714-4393-8f99-cc480144a05n\"",
+                        "\"s1d563e8-e714-4393-8f99-cc480144a05n\", \"b1d563e8-e714-4393-8f99-cc480144a05n\""),
                 resourceNetHoming2String);
         assertEquals(verifyOofRequest(), expectedOofRequest);
 
@@ -413,12 +351,10 @@ public class OofHomingTestIT extends BaseIntegrationTest {
                 "/BuildingBlocks/oofCatalogResp.json");
         String busKey = UUID.randomUUID().toString();
         Map<String, Object> vars = new HashMap<>();
-        setVariablesForServiceDecomposition(vars, "testRequestId123",
-                "ff5256d2-5a33-55df-13ab-12abad84e7ff");
+        setVariablesForServiceDecomposition(vars, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
         invokeSubProcess("DecomposeService", busKey, vars);
 
-        ServiceDecomposition sd = (ServiceDecomposition) getVariableFromHistory(busKey,
-                "serviceDecomposition");
+        ServiceDecomposition sd = (ServiceDecomposition) getVariableFromHistory(busKey, "serviceDecomposition");
         logger.debug("In testHoming_success_vnfResourceList, ServiceDecomposition = {}", sd);
         List<VnfResource> vnfResourceList = sd.getVnfResources();
         vnfResourceList.get(0).setResourceId("test-resource-id-000");
@@ -450,12 +386,12 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         injectWorkflowMessages(callbacks, "oof3");
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
+        // Get Variables
 
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
-                "WorkflowException");
-        ServiceDecomposition serviceDecompositionExp = (ServiceDecomposition) getVariableFromHistory(businessKey,
-                "serviceDecomposition");
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
+        ServiceDecomposition serviceDecompositionExp =
+                (ServiceDecomposition) getVariableFromHistory(businessKey, "serviceDecomposition");
         logger.debug("serviceDecompositionExp is: {}", serviceDecompositionExp);
 
         Resource resourceVnf = serviceDecompositionExp.getServiceResource("test-resource-id-000");
@@ -469,21 +405,20 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
         assertNull(workflowException);
 
-        //Verify request
+        // Verify request
         String oofRequest = (String) getVariableFromHistory(businessKey, "oofRequest");
         logger.debug("oofRequest is: {}", oofRequest);
-        assertEquals(FileUtil.readResourceFile("__files/BuildingBlocks/oofRequest_infravnf").
-                replaceAll("\n", "").replaceAll("\r", "").
-                replaceAll("\t", ""), oofRequest.replaceAll("\n", "").
-                replaceAll("\r", "").replaceAll("\t", ""));
+        assertEquals(
+                FileUtil.readResourceFile("__files/BuildingBlocks/oofRequest_infravnf").replaceAll("\n", "")
+                        .replaceAll("\r", "").replaceAll("\t", ""),
+                oofRequest.replaceAll("\n", "").replaceAll("\r", "").replaceAll("\t", ""));
 
-        assertEquals(homingSolutionService("service", "service-instance-01234",
-                "MDTNJ01", "test-resource-id-000","CloudOwner",
-                "mtmnj1a",
-                "\"f1d563e8-e714-4393-8f99-cc480144a05e\"," +
-                        " \"j1d563e8-e714-4393-8f99-cc480144a05e\"",
-                "\"s1d563e8-e714-4393-8f99-cc480144a05e\"," +
-                        " \"b1d563e8-e714-4393-8f99-cc480144a05e\""), resourceVnfHomingString);
+        assertEquals(
+                homingSolutionService("service", "service-instance-01234", "MDTNJ01", "test-resource-id-000",
+                        "CloudOwner", "mtmnj1a",
+                        "\"f1d563e8-e714-4393-8f99-cc480144a05e\"," + " \"j1d563e8-e714-4393-8f99-cc480144a05e\"",
+                        "\"s1d563e8-e714-4393-8f99-cc480144a05e\"," + " \"b1d563e8-e714-4393-8f99-cc480144a05e\""),
+                resourceVnfHomingString);
     }
 
     @Test
@@ -501,9 +436,11 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
-        ServiceDecomposition serviceDecompositionExp = (ServiceDecomposition) getVariableFromHistory(businessKey, "serviceDecomposition");
+        // Get Variables
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
+        ServiceDecomposition serviceDecompositionExp =
+                (ServiceDecomposition) getVariableFromHistory(businessKey, "serviceDecomposition");
         String oofRequest = (String) getVariableFromHistory(businessKey, "sniroRequest");
 
         Resource resourceAR = serviceDecompositionExp.getServiceResource("testResourceIdAR");
@@ -521,18 +458,19 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         oofRequest = oofRequest.replaceAll("\\s+", "");
 
         assertNull(workflowException);
-        assertEquals(homingSolutionService("service", "testSIID1", "MDTNJ01",
-                "aic", "dfwtx", "KDTNJ01",
-                "\"f1d563e8-e714-4393-8f99-cc480144a05e\", \"j1d563e8-e714-4393-8f99-cc480144a05e\"",
-                "\"s1d563e8-e714-4393-8f99-cc480144a05e\", \"b1d563e8-e714-4393-8f99-cc480144a05e\""),
+        assertEquals(
+                homingSolutionService("service", "testSIID1", "MDTNJ01", "aic", "dfwtx", "KDTNJ01",
+                        "\"f1d563e8-e714-4393-8f99-cc480144a05e\", \"j1d563e8-e714-4393-8f99-cc480144a05e\"",
+                        "\"s1d563e8-e714-4393-8f99-cc480144a05e\", \"b1d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceARHomingString);
-        assertEquals(homingSolutionService("service", "testSIID2", "testVnfHostname2",
-                resourceARHoming2.getVnf().getResourceId(),"aic", "testCloudRegionId2",
-                null, null), resourceARHoming2String);
-        assertEquals(homingSolutionCloud("cloud", "aic",
-                "testCloudRegionId3",
-                false, "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
-                "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
+        assertEquals(
+                homingSolutionService("service", "testSIID2", "testVnfHostname2",
+                        resourceARHoming2.getVnf().getResourceId(), "aic", "testCloudRegionId2", null, null),
+                resourceARHoming2String);
+        assertEquals(
+                homingSolutionCloud("cloud", "aic", "testCloudRegionId3", false,
+                        "\"91d563e8-e714-4393-8f99-cc480144a05e\", \"21d563e8-e714-4393-8f99-cc480144a05e\"",
+                        "\"31d563e8-e714-4393-8f99-cc480144a05e\", \"71d563e8-e714-4393-8f99-cc480144a05e\""),
                 resourceVNFHomingString);
         assertEquals(verifyOofRequestExistingLicense(), oofRequest);
 
@@ -549,12 +487,12 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
-                "WorkflowException");
+        // Get Variables
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 
-        assertEquals("WorkflowException[processKey=Homing,errorCode=4000,errorMessage=A required " +
-                "input variable is missing or null]", workflowException.toString());
+        assertEquals("WorkflowException[processKey=Homing,errorCode=4000,errorMessage=A required "
+                + "input variable is missing or null]", workflowException.toString());
     }
 
     @Test
@@ -570,12 +508,12 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
-                "WorkflowException");
+        // Get Variables
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 
-        assertEquals("WorkflowException[processKey=Homing,errorCode=500,errorMessage=Received a " +
-                "Bad Sync Response from Sniro/OOF.]", workflowException.toString());
+        assertEquals("WorkflowException[processKey=Homing,errorCode=500,errorMessage=Received a "
+                + "Bad Sync Response from Sniro/OOF.]", workflowException.toString());
     }
 
     @Test
@@ -593,12 +531,12 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
-                "WorkflowException");
+        // Get Variables
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 
-        assertEquals("WorkflowException[processKey=Homing,errorCode=400,errorMessage=No solution found " +
-                "for plan 08e1b8cf-144a-4bac-b293-d5e2eedc97e8]", workflowException.toString());
+        assertEquals("WorkflowException[processKey=Homing,errorCode=400,errorMessage=No solution found "
+                + "for plan 08e1b8cf-144a-4bac-b293-d5e2eedc97e8]", workflowException.toString());
     }
 
     @Test
@@ -616,13 +554,13 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
-                "WorkflowException");
+        // Get Variables
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 
-        assertEquals("WorkflowException[processKey=Homing,errorCode=400,errorMessage=OOF Async Callback " +
-                "Response contains a Request Error Policy Exception: Message content size exceeds the allowable " +
-                "limit]", workflowException.toString());
+        assertEquals("WorkflowException[processKey=Homing,errorCode=400,errorMessage=OOF Async Callback "
+                + "Response contains a Request Error Policy Exception: Message content size exceeds the allowable "
+                + "limit]", workflowException.toString());
     }
 
     @Test
@@ -640,14 +578,15 @@ public class OofHomingTestIT extends BaseIntegrationTest {
 
         waitForProcessEnd(businessKey, 10000);
 
-        //Get Variables
-        WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey,
-                "WorkflowException");
+        // Get Variables
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
 
-        assertEquals("WorkflowException[processKey=Homing,errorCode=400,errorMessage=OOF Async Callback " +
-                        "Response contains a Request Error Service Exception: OOF PlacementError: " +
-                        "requests.exceptions.HTTPError: 404 Client Error: Not Found for " +
-                        "url: http://192.168.171.200:8091/v1/plans/97b4e303-5f75-492c-8fb2-21098281c8b8]",
+        assertEquals(
+                "WorkflowException[processKey=Homing,errorCode=400,errorMessage=OOF Async Callback "
+                        + "Response contains a Request Error Service Exception: OOF PlacementError: "
+                        + "requests.exceptions.HTTPError: 404 Client Error: Not Found for "
+                        + "url: http://192.168.171.200:8091/v1/plans/97b4e303-5f75-492c-8fb2-21098281c8b8]",
                 workflowException.toString());
     }
 
@@ -665,7 +604,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         variables.put("cloudOwner", "amazon");
         variables.put("cloudRegionId", "TNZED");
         variables.put("isDebugLogEnabled", "true");
-        //	variables.put("mso-request-id", "testRequestId");
+        // variables.put("mso-request-id", "testRequestId");
         variables.put("msoRequestId", "testRequestId");
         variables.put("serviceInstanceId", "testServiceInstanceId");
         variables.put("serviceDecomposition", serviceDecomposition);
@@ -726,7 +665,7 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         variables.put("cloudOwner", "amazon");
         variables.put("cloudRegionId", "TNZED");
         variables.put("isDebugLogEnabled", "true");
-        //	variables.put("mso-request-id", "testRequestId");
+        // variables.put("mso-request-id", "testRequestId");
         variables.put("msoRequestId", "testRequestId");
         variables.put("serviceInstanceId", "testServiceInstanceId");
         variables.put("serviceDecomposition", null);
@@ -736,11 +675,15 @@ public class OofHomingTestIT extends BaseIntegrationTest {
     private void setVariablesExistingLicense(Map<String, Object> variables) {
         HomingSolution currentHomingSolution = new HomingSolution();
         serviceDecomposition.getVnfResources().get(0).setCurrentHomingSolution(currentHomingSolution);
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense().addEntitlementPool("testEntitlementPoolId1");
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense().addEntitlementPool("testEntitlementPoolId2");
+        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+                .addEntitlementPool("testEntitlementPoolId1");
+        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+                .addEntitlementPool("testEntitlementPoolId2");
 
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense().addLicenseKeyGroup("testLicenseKeyGroupId1");
-        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense().addLicenseKeyGroup("testLicenseKeyGroupId2");
+        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+                .addLicenseKeyGroup("testLicenseKeyGroupId1");
+        serviceDecomposition.getVnfResources().get(0).getCurrentHomingSolution().getLicense()
+                .addLicenseKeyGroup("testLicenseKeyGroupId2");
 
         variables.put("isDebugLogEnabled", "true");
         variables.put("msoRequestId", "testRequestId");
@@ -751,56 +694,52 @@ public class OofHomingTestIT extends BaseIntegrationTest {
     }
 
     private String homingSolutionService(String type, String serviceInstanceId, String vnfHostname,
-                                         String vnfResourceId, String cloudOwner,
-                                         String cloudRegionId, String enList,
-                                         String licenseList){
+            String vnfResourceId, String cloudOwner, String cloudRegionId, String enList, String licenseList) {
 
         String solution = "";
-        if(enList == null){
-            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"serviceInstanceId\" : \"" +
-                    serviceInstanceId + "\", \"cloudOwner\" : \"" + cloudOwner + "\", \"cloudRegionId\" : \"" +
-                    cloudRegionId + "\", " + "\"vnf\" : { \"resourceId\" : \"" + vnfResourceId +
-                    "\", \"resourceType\" : \"VNF\", \"resourceInstance\" : { }, \"homingSolution\" : { \"license\" :" +
-                    " { }, \"rehome\" : false }, \"vnfHostname\" : \"" + vnfHostname + "\" }, \"license\" : { }," +
-                    " \"rehome\" : false } }";
-        }else{
-            //language=JSON
-            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"serviceInstanceId\" : \"" +
-                    serviceInstanceId + "\", \"cloudOwner\" : \"" + cloudOwner + "\", \"cloudRegionId\" : \"" +
-                    cloudRegionId + "\", \"vnf\" : { \"resourceId\" : \"" + vnfResourceId + "\", \"resourceType\" :" +
-                    " \"VNF\", \"resourceInstance\" : { }, \"homingSolution\" : { \"license\" : { }, \"rehome\" :" +
-                    " false }, \"vnfHostname\" : \"" + vnfHostname + "\" }, \"license\" : { \"entitlementPoolList\" :" +
-                    " [ " + enList + " ], \"licenseKeyGroupList\" : [ " + licenseList + " ] }, \"rehome\" : false } }";
+        if (enList == null) {
+            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"serviceInstanceId\" : \""
+                    + serviceInstanceId + "\", \"cloudOwner\" : \"" + cloudOwner + "\", \"cloudRegionId\" : \""
+                    + cloudRegionId + "\", " + "\"vnf\" : { \"resourceId\" : \"" + vnfResourceId
+                    + "\", \"resourceType\" : \"VNF\", \"resourceInstance\" : { }, \"homingSolution\" : { \"license\" :"
+                    + " { }, \"rehome\" : false }, \"vnfHostname\" : \"" + vnfHostname + "\" }, \"license\" : { },"
+                    + " \"rehome\" : false } }";
+        } else {
+            // language=JSON
+            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"serviceInstanceId\" : \""
+                    + serviceInstanceId + "\", \"cloudOwner\" : \"" + cloudOwner + "\", \"cloudRegionId\" : \""
+                    + cloudRegionId + "\", \"vnf\" : { \"resourceId\" : \"" + vnfResourceId + "\", \"resourceType\" :"
+                    + " \"VNF\", \"resourceInstance\" : { }, \"homingSolution\" : { \"license\" : { }, \"rehome\" :"
+                    + " false }, \"vnfHostname\" : \"" + vnfHostname + "\" }, \"license\" : { \"entitlementPoolList\" :"
+                    + " [ " + enList + " ], \"licenseKeyGroupList\" : [ " + licenseList
+                    + " ] }, \"rehome\" : false } }";
         }
         return solution;
     }
 
-    private String homingSolutionCloud(String type, String cloudOwner,
-                                       String cloudRegionId, Boolean flavors, String enList,
-                                       String licenseList){
+    private String homingSolutionCloud(String type, String cloudOwner, String cloudRegionId, Boolean flavors,
+            String enList, String licenseList) {
         String solution = "";
-        if(enList == null){
-            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" +
-                    cloudOwner + "\", \"cloudRegionId\" : \"" + cloudRegionId +
-                    "\", \"license\" : { }, \"rehome\" : false } }";
-        } else if (flavors && enList == null){
-            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" +
-                    cloudOwner + "\", \"cloudRegionId\" : \"" + cloudRegionId +
-                    "\", \"flavors\" :  [ { \"flavorLabel\" : \"flavorLabel2xxx\", \"flavor\" : \"vimFlavorxxx\" }, " +
-                    "{ \"flavorLabel\" : \"flavorLabel1xxx\", \"flavor\" : \"vimFlavorxxx\" } ], " +
-                    "\"license\" : { }, \"rehome\" : false } }";
+        if (enList == null) {
+            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" + cloudOwner
+                    + "\", \"cloudRegionId\" : \"" + cloudRegionId + "\", \"license\" : { }, \"rehome\" : false } }";
+        } else if (flavors && enList == null) {
+            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" + cloudOwner
+                    + "\", \"cloudRegionId\" : \"" + cloudRegionId
+                    + "\", \"flavors\" :  [ { \"flavorLabel\" : \"flavorLabel2xxx\", \"flavor\" : \"vimFlavorxxx\" }, "
+                    + "{ \"flavorLabel\" : \"flavorLabel1xxx\", \"flavor\" : \"vimFlavorxxx\" } ], "
+                    + "\"license\" : { }, \"rehome\" : false } }";
         } else if (flavors) {
-            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" +
-                    cloudOwner + "\", \"cloudRegionId\" : \"" + cloudRegionId +
-                    "\", \"flavors\" : [ { \"flavorLabel\" : \"flavorLabel2xxx\", \"flavor\" : \"vimFlavorxxx\" }, " +
-                    "{ \"flavorLabel\" : \"flavorLabel1xxx\", \"flavor\" : \"vimFlavorxxx\" } ], " +
-                    "\"license\" : { \"entitlementPoolList\" : [ " + enList +  " ], \"licenseKeyGroupList\" : [ " +
-                    licenseList +  " ] }, \"rehome\" : false } }";
+            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" + cloudOwner
+                    + "\", \"cloudRegionId\" : \"" + cloudRegionId
+                    + "\", \"flavors\" : [ { \"flavorLabel\" : \"flavorLabel2xxx\", \"flavor\" : \"vimFlavorxxx\" }, "
+                    + "{ \"flavorLabel\" : \"flavorLabel1xxx\", \"flavor\" : \"vimFlavorxxx\" } ], "
+                    + "\"license\" : { \"entitlementPoolList\" : [ " + enList + " ], \"licenseKeyGroupList\" : [ "
+                    + licenseList + " ] }, \"rehome\" : false } }";
         } else {
-            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" +
-                    cloudOwner + "\", \"cloudRegionId\" : \"" + cloudRegionId +
-                    "\", \"license\" : { \"entitlementPoolList\" : [ " + enList +  " ], \"licenseKeyGroupList\" : [ " +
-                    licenseList +  " ] }, \"rehome\" : false } }";
+            solution = "{ \"homingSolution\" : { \"inventoryType\" : \"" + type + "\", \"cloudOwner\" : \"" + cloudOwner
+                    + "\", \"cloudRegionId\" : \"" + cloudRegionId + "\", \"license\" : { \"entitlementPoolList\" : [ "
+                    + enList + " ], \"licenseKeyGroupList\" : [ " + licenseList + " ] }, \"rehome\" : false } }";
         }
         return solution;
     }
@@ -823,68 +762,68 @@ public class OofHomingTestIT extends BaseIntegrationTest {
         variables.put("cloudRegionId", "TNZED");
 
 
-        String serviceModelInfo = "{\"modelInvariantId\":\"1cc4e2e4-eb6e-404d-a66f-c8733cedcce8\",\"modelUuid\":" +
-                "\"2f7f309d-c842-4644-a2e4-34167be5eeb4\",\"modelName\":\"vCPE Service\",\"modelVersion\":\"2.0\",}";
+        String serviceModelInfo = "{\"modelInvariantId\":\"1cc4e2e4-eb6e-404d-a66f-c8733cedcce8\",\"modelUuid\":"
+                + "\"2f7f309d-c842-4644-a2e4-34167be5eeb4\",\"modelName\":\"vCPE Service\",\"modelVersion\":\"2.0\",}";
         variables.put("serviceModelInfo", serviceModelInfo);
     }
 
     private String verifyOofRequest() {
-        String request = "{\"requestInfo\":{\"transactionId\":\"testRequestId\",\"requestId\":\"testRequestId\"," +
-                "\"callbackUrl\":\"http://localhost:28090/workflows/messages/message/oofResponse/testRequestId\"," +
-                "\"sourceId\":\"so\",\"requestType\":\"create\",\"numSolutions\":1,\"optimizers\":[\"placement\"]," +
-                "\"timeout\":600},\"placementInfo\":{\"requestParameters\":{\"customerLatitude\":" +
-                "\"32.89748\",\"customerLongitude\":\"-97.040443\",\"customerName\":\"xyz\"},\"subscriberInfo\":" +
-                "{\"globalSubscriberId\":\"SUB12_0322_DS_1201\",\"subscriberName\":\"SUB_12_0322_DS_1201\"," +
-                "\"subscriberCommonSiteId\":\"\"},\"placementDemands\":[{\"resourceModuleName\":\"ALLOTTED_RESOURCE\"" +
-                ",\"serviceResourceId\":\"testResourceIdAR\",\"tenantId\":" +
-                "\"null\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR\"," +
-                "\"modelVersionId\":\"testARModelUuid\",\"modelName\":\"testModelNameAR\",\"modelType\":" +
-                "\"testModelTypeAR\",\"modelVersion\":\"testModelVersionAR\",\"modelCustomizationName\":\"\"}}," +
-                "{\"resourceModuleName\":\"ALLOTTED_RESOURCE\",\"serviceResourceId\":\"testResourceIdAR2\"," +
-                "\"tenantId\":\"null\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR2\"," +
-                "\"modelVersionId\":\"testAr2ModelUuid\",\"modelName\":\"testModelNameAR2\"," +
-                "\"modelType\":\"testModelTypeAR2\",\"modelVersion\":\"testModelVersionAR2\"," +
-                "\"modelCustomizationName\":\"\"}}]},\"serviceInfo\":" +
-                "{\"serviceInstanceId\":\"testServiceInstanceId123\"," +
-                "\"serviceName\":\"null\",\"modelInfo\":{\"modelType\":\"\",\"modelInvariantId\":" +
-                "\"testModelInvariantId\",\"modelVersionId\":\"testModelUuid\",\"modelName\":\"testModelName\"," +
-                "\"modelVersion\":\"testModelVersion\",\"modelCustomizationName\":\"" +
-                "\"}},\"licenseInfo\":{\"licenseDemands\":[{\"resourceModuleName\":\"VNF\",\"serviceResourceId\":" +
-                "\"testResourceIdVNF\",\"resourceInstanceType\":\"VNF\",\"resourceModelInfo\":{\"modelInvariantId\":" +
-                "\"testModelInvariantIdVNF\",\"modelVersionId\":\"testVnfModelUuid\",\"modelName\":" +
-                "\"testModelNameVNF\",\"modelType\":\"testModelTypeVNF\",\"modelVersion\":\"testModelVersionVNF\"," +
-                "\"modelCustomizationName\":\"\"}}]}}";
+        String request = "{\"requestInfo\":{\"transactionId\":\"testRequestId\",\"requestId\":\"testRequestId\","
+                + "\"callbackUrl\":\"http://localhost:28090/workflows/messages/message/oofResponse/testRequestId\","
+                + "\"sourceId\":\"so\",\"requestType\":\"create\",\"numSolutions\":1,\"optimizers\":[\"placement\"],"
+                + "\"timeout\":600},\"placementInfo\":{\"requestParameters\":{\"customerLatitude\":"
+                + "\"32.89748\",\"customerLongitude\":\"-97.040443\",\"customerName\":\"xyz\"},\"subscriberInfo\":"
+                + "{\"globalSubscriberId\":\"SUB12_0322_DS_1201\",\"subscriberName\":\"SUB_12_0322_DS_1201\","
+                + "\"subscriberCommonSiteId\":\"\"},\"placementDemands\":[{\"resourceModuleName\":\"ALLOTTED_RESOURCE\""
+                + ",\"serviceResourceId\":\"testResourceIdAR\",\"tenantId\":"
+                + "\"null\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR\","
+                + "\"modelVersionId\":\"testARModelUuid\",\"modelName\":\"testModelNameAR\",\"modelType\":"
+                + "\"testModelTypeAR\",\"modelVersion\":\"testModelVersionAR\",\"modelCustomizationName\":\"\"}},"
+                + "{\"resourceModuleName\":\"ALLOTTED_RESOURCE\",\"serviceResourceId\":\"testResourceIdAR2\","
+                + "\"tenantId\":\"null\",\"resourceModelInfo\":{\"modelInvariantId\":\"testModelInvariantIdAR2\","
+                + "\"modelVersionId\":\"testAr2ModelUuid\",\"modelName\":\"testModelNameAR2\","
+                + "\"modelType\":\"testModelTypeAR2\",\"modelVersion\":\"testModelVersionAR2\","
+                + "\"modelCustomizationName\":\"\"}}]},\"serviceInfo\":"
+                + "{\"serviceInstanceId\":\"testServiceInstanceId123\","
+                + "\"serviceName\":\"null\",\"modelInfo\":{\"modelType\":\"\",\"modelInvariantId\":"
+                + "\"testModelInvariantId\",\"modelVersionId\":\"testModelUuid\",\"modelName\":\"testModelName\","
+                + "\"modelVersion\":\"testModelVersion\",\"modelCustomizationName\":\""
+                + "\"}},\"licenseInfo\":{\"licenseDemands\":[{\"resourceModuleName\":\"VNF\",\"serviceResourceId\":"
+                + "\"testResourceIdVNF\",\"resourceInstanceType\":\"VNF\",\"resourceModelInfo\":{\"modelInvariantId\":"
+                + "\"testModelInvariantIdVNF\",\"modelVersionId\":\"testVnfModelUuid\",\"modelName\":"
+                + "\"testModelNameVNF\",\"modelType\":\"testModelTypeVNF\",\"modelVersion\":\"testModelVersionVNF\","
+                + "\"modelCustomizationName\":\"\"}}]}}";
         return request;
     }
 
-    private String verifyOofRequestExistingLicense(){
-        String request = "{\"requestInfo\":{\"transactionId\":\"testRequestId\",\"requestId\":\"testRequestId\"," +
-                "\"callbackUrl\":\"http://localhost:28090/workflows/messages/message/SNIROResponse/testRequestId\"," +
-                "\"sourceId\":\"mso\",\"requestType\":\"speedchanged\",\"optimizer\":[\"placement\",\"license\"]," +
-                "\"numSolutions\":1,\"timeout\":1800},\"placementInfo\":{\"serviceModelInfo\":{\"modelType\":\"\"," +
-                "\"modelInvariantId\":\"testModelInvariantId\",\"modelVersionId\":\"testModelUuid\",\"modelName\":" +
-                "\"testModelName\",\"modelVersion\":\"testModelVersion\"},\"subscriberInfo\":" +
-                "{\"globalSubscriberId\":\"SUB12_0322_DS_1201\",\"subscriberName\":\"SUB_12_0322_DS_1201\"," +
-                "\"subscriberCommonSiteId\":\"\"},\"demandInfo\":{\"placementDemand\":[{\"resourceInstanceType\":" +
-                "\"ALLOTTED_RESOURCE\",\"serviceResourceId\":\"testResourceIdAR\",\"resourceModuleName\":\"\"," +
-                "\"resourceModelInfo\":{\"modelCustomizationId\":\"testModelCustomizationUuidAR\"," +
-                "\"modelInvariantId\":\"testModelInvariantIdAR\",\"modelName\":\"testModelNameAR\"," +
-                "\"modelVersion\":\"testModelVersionAR\",\"modelVersionId\":\"testARModelUuid\",\"modelType\":" +
-                "\"testModelTypeAR\"},\"tenantId\":\"\",\"tenantName\":\"\"},{\"resourceInstanceType\":" +
-                "\"ALLOTTED_RESOURCE\",\"serviceResourceId\":\"testResourceIdAR2\",\"resourceModuleName\":" +
-                "\"\",\"resourceModelInfo\":{\"modelCustomizationId\":\"testModelCustomizationUuidAR2\"," +
-                "\"modelInvariantId\":\"testModelInvariantIdAR2\",\"modelName\":\"testModelNameAR2\"," +
-                "\"modelVersion\":\"testModelVersionAR2\",\"modelVersionId\":\"testAr2ModelUuid\"," +
-                "\"modelType\":\"testModelTypeAR2\"},\"tenantId\":\"\",\"tenantName\":\"\"}],\"licenseDemand\":" +
-                "[{\"resourceInstanceType\":\"VNF\",\"serviceResourceId\":\"testResourceIdVNF\"," +
-                "\"resourceModuleName\":\"\",\"resourceModelInfo\":{\"modelCustomizationId\":" +
-                "\"testModelCustomizationUuidVNF\",\"modelInvariantId\":\"testModelInvariantIdVNF\"," +
-                "\"modelName\":\"testModelNameVNF\",\"modelVersion\":\"testModelVersionVNF\"," +
-                "\"modelVersionId\":\"testVnfModelUuid\",\"modelType\":\"testModelTypeVNF\"}," +
-                "\"existingLicense\":[{\"entitlementPoolUUID\":[\"testEntitlementPoolId1\"," +
-                "\"testEntitlementPoolId2\"],\"licenseKeyGroupUUID\":[\"testLicenseKeyGroupId1\"," +
-                "\"testLicenseKeyGroupId2\"]}]}]},\"policyId\":[],\"serviceInstanceId\":" +
-                "\"testServiceInstanceId123\",\"orderInfo\":\"{\\\"requestParameters\\\":null}\"}}";
+    private String verifyOofRequestExistingLicense() {
+        String request = "{\"requestInfo\":{\"transactionId\":\"testRequestId\",\"requestId\":\"testRequestId\","
+                + "\"callbackUrl\":\"http://localhost:28090/workflows/messages/message/SNIROResponse/testRequestId\","
+                + "\"sourceId\":\"mso\",\"requestType\":\"speedchanged\",\"optimizer\":[\"placement\",\"license\"],"
+                + "\"numSolutions\":1,\"timeout\":1800},\"placementInfo\":{\"serviceModelInfo\":{\"modelType\":\"\","
+                + "\"modelInvariantId\":\"testModelInvariantId\",\"modelVersionId\":\"testModelUuid\",\"modelName\":"
+                + "\"testModelName\",\"modelVersion\":\"testModelVersion\"},\"subscriberInfo\":"
+                + "{\"globalSubscriberId\":\"SUB12_0322_DS_1201\",\"subscriberName\":\"SUB_12_0322_DS_1201\","
+                + "\"subscriberCommonSiteId\":\"\"},\"demandInfo\":{\"placementDemand\":[{\"resourceInstanceType\":"
+                + "\"ALLOTTED_RESOURCE\",\"serviceResourceId\":\"testResourceIdAR\",\"resourceModuleName\":\"\","
+                + "\"resourceModelInfo\":{\"modelCustomizationId\":\"testModelCustomizationUuidAR\","
+                + "\"modelInvariantId\":\"testModelInvariantIdAR\",\"modelName\":\"testModelNameAR\","
+                + "\"modelVersion\":\"testModelVersionAR\",\"modelVersionId\":\"testARModelUuid\",\"modelType\":"
+                + "\"testModelTypeAR\"},\"tenantId\":\"\",\"tenantName\":\"\"},{\"resourceInstanceType\":"
+                + "\"ALLOTTED_RESOURCE\",\"serviceResourceId\":\"testResourceIdAR2\",\"resourceModuleName\":"
+                + "\"\",\"resourceModelInfo\":{\"modelCustomizationId\":\"testModelCustomizationUuidAR2\","
+                + "\"modelInvariantId\":\"testModelInvariantIdAR2\",\"modelName\":\"testModelNameAR2\","
+                + "\"modelVersion\":\"testModelVersionAR2\",\"modelVersionId\":\"testAr2ModelUuid\","
+                + "\"modelType\":\"testModelTypeAR2\"},\"tenantId\":\"\",\"tenantName\":\"\"}],\"licenseDemand\":"
+                + "[{\"resourceInstanceType\":\"VNF\",\"serviceResourceId\":\"testResourceIdVNF\","
+                + "\"resourceModuleName\":\"\",\"resourceModelInfo\":{\"modelCustomizationId\":"
+                + "\"testModelCustomizationUuidVNF\",\"modelInvariantId\":\"testModelInvariantIdVNF\","
+                + "\"modelName\":\"testModelNameVNF\",\"modelVersion\":\"testModelVersionVNF\","
+                + "\"modelVersionId\":\"testVnfModelUuid\",\"modelType\":\"testModelTypeVNF\"},"
+                + "\"existingLicense\":[{\"entitlementPoolUUID\":[\"testEntitlementPoolId1\","
+                + "\"testEntitlementPoolId2\"],\"licenseKeyGroupUUID\":[\"testLicenseKeyGroupId1\","
+                + "\"testLicenseKeyGroupId2\"]}]}]},\"policyId\":[],\"serviceInstanceId\":"
+                + "\"testServiceInstanceId123\",\"orderInfo\":\"{\\\"requestParameters\\\":null}\"}}";
         return request;
     }
 }

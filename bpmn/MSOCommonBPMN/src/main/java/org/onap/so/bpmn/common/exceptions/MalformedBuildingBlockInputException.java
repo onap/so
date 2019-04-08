@@ -21,27 +21,26 @@
 package org.onap.so.bpmn.common.exceptions;
 
 public class MalformedBuildingBlockInputException extends RuntimeException {
-	private static final long serialVersionUID = -9168146273898271648L;
+    private static final long serialVersionUID = -9168146273898271648L;
 
-	public MalformedBuildingBlockInputException() {
-		super();
-	}
+    public MalformedBuildingBlockInputException() {
+        super();
+    }
 
-	public MalformedBuildingBlockInputException(String message) {
-		super(message);
-	}
+    public MalformedBuildingBlockInputException(String message) {
+        super(message);
+    }
 
-	public MalformedBuildingBlockInputException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public MalformedBuildingBlockInputException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public MalformedBuildingBlockInputException(Throwable cause) {
-		super(cause);
-	}
+    public MalformedBuildingBlockInputException(Throwable cause) {
+        super(cause);
+    }
 
-	protected MalformedBuildingBlockInputException(String message, Throwable cause,
-			boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    protected MalformedBuildingBlockInputException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

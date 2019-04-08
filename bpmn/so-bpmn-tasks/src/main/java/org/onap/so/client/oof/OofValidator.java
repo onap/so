@@ -26,9 +26,7 @@ import org.onap.so.client.exception.BadResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import java.util.LinkedHashMap;
-
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 
@@ -44,55 +42,54 @@ public class OofValidator {
      */
     public void validateDemandsResponse(LinkedHashMap<?, ?> response) throws BadResponseException {
         logger.debug("Validating oofs synchronous response");
-        if(!response.isEmpty()){
+        if (!response.isEmpty()) {
             JSONObject jsonResponse = new JSONObject(response);
-            if(jsonResponse.has("requestStatus")){
+            if (jsonResponse.has("requestStatus")) {
                 String status = jsonResponse.getString("requestStatus");
-                if(status.equals("accepted")){
+                if (status.equals("accepted")) {
                     logger.debug("oofs synchronous response indicates accepted");
-                }else{
+                } else {
                     String message = jsonResponse.getString("statusMessage");
-                    if(isNotBlank(message)){
+                    if (isNotBlank(message)) {
                         logger.debug("oofs response indicates failed: " + message);
-                    }else{
+                    } else {
                         logger.debug("oofs response indicates failed: no status message provided");
                         message = "error message not provided";
                     }
                     throw new BadResponseException("oofs synchronous response indicates failed: " + message);
                 }
-            }else{
+            } else {
                 logger.debug("oofs synchronous response does not contain: request status");
                 throw new BadResponseException("oofs synchronous response does not contain: request status");
             }
-        }else{
+        } else {
             logger.debug("oofs synchronous response is empty");
             throw new BadResponseException("oofs synchronous response i is empty");
         }
     }
 
     /**
-     * Validates the asynchronous/callback response from oof which
-     * contains the homing and licensing solutions
+     * Validates the asynchronous/callback response from oof which contains the homing and licensing solutions
      *
      * @throws BadResponseException
      */
-    public void validateSolution(String response) throws BadResponseException{
+    public void validateSolution(String response) throws BadResponseException {
         logger.debug("Validating oofs asynchronous callback response");
-        if(isNotBlank(response)) {
+        if (isNotBlank(response)) {
             JSONObject jsonResponse = new JSONObject(response);
-            if(!jsonResponse.has("serviceException")){
+            if (!jsonResponse.has("serviceException")) {
                 logger.debug("oofs asynchronous response is valid");
-            }else{
+            } else {
                 String message = jsonResponse.getJSONObject("serviceException").getString("text");
-                if(isNotBlank(message)){
+                if (isNotBlank(message)) {
                     logger.debug("oofs response contains a service exception: " + message);
-                }else{
+                } else {
                     logger.debug("oofs response contains a service exception: no service exception text provided");
                     message = "error message not provided";
                 }
                 throw new BadResponseException("oofs asynchronous response contains a service exception: " + message);
             }
-        }else{
+        } else {
             logger.debug("oofs asynchronous response is empty");
             throw new BadResponseException("oofs asynchronous response is empty");
         }

@@ -23,74 +23,70 @@ package org.onap.so.apihandler.camundabeans;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * JavaBean JSON class for a "variables" which contains the xml payload that
- * will be passed to the Camunda process
+ * JavaBean JSON class for a "variables" which contains the xml payload that will be passed to the Camunda process
  * 
  */
 
 public class CamundaResponse {
-	
-	@JsonProperty("response")
-	private String response;
-	@JsonProperty("messageCode")
-	private int messageCode;
-	@JsonProperty("message")
-	private String message;
-	@JsonProperty("processInstanceID")
-	private String processInstanceID;
-	@JsonProperty("variables")
-	private String variables;
 
-	public String getProcessInstanceID() {
-		return processInstanceID;
-	}
+    @JsonProperty("response")
+    private String response;
+    @JsonProperty("messageCode")
+    private int messageCode;
+    @JsonProperty("message")
+    private String message;
+    @JsonProperty("processInstanceID")
+    private String processInstanceID;
+    @JsonProperty("variables")
+    private String variables;
 
-	public void setProcessInstanceID(String processInstanceID) {
-		this.processInstanceID = processInstanceID;
-	}
+    public String getProcessInstanceID() {
+        return processInstanceID;
+    }
 
-	public String getVariables() {
-		return variables;
-	}
+    public void setProcessInstanceID(String processInstanceID) {
+        this.processInstanceID = processInstanceID;
+    }
 
-	public void setVariables(String variables) {
-		this.variables = variables;
-	}
+    public String getVariables() {
+        return variables;
+    }
 
-	public CamundaResponse() {
-	}
+    public void setVariables(String variables) {
+        this.variables = variables;
+    }
 
-	public String getResponse() {
-		return response;
-	}
+    public CamundaResponse() {}
 
-	public void setResponse(String response) {
-		this.response = response;
-	}
+    public String getResponse() {
+        return response;
+    }
 
-	public int getMessageCode() {
-		return messageCode;
-	}
+    public void setResponse(String response) {
+        this.response = response;
+    }
 
-	public void setMessageCode(int messageCode) {
-		this.messageCode = messageCode;
-	}
+    public int getMessageCode() {
+        return messageCode;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public void setMessageCode(int messageCode) {
+        this.messageCode = messageCode;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	@Override
-	public String toString() {
-		return "CamundaResponse [response=" + response + ", messageCode="
-				+ messageCode + ", message=" + message + "]";
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	
-	
-	
+    @Override
+    public String toString() {
+        return "CamundaResponse [response=" + response + ", messageCode=" + messageCode + ", message=" + message + "]";
+    }
+
+
+
 }

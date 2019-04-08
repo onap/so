@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,29 +30,32 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class ServiceModelList implements Serializable {
 
-	private static final long serialVersionUID = 1758713583807257102L;
-	
-	@JsonProperty("serviceModelVersionId")
-	protected String serviceModelVersionId;
-	@JsonProperty("recoveryAction")
-	protected RecoveryAction recoveryAction;
+    private static final long serialVersionUID = 1758713583807257102L;
 
-	public String getServiceModelVersionId() {
-		return serviceModelVersionId;
-	}
-	public void setServiceModelVersionId(String serviceModelVersionId) {
-		this.serviceModelVersionId = serviceModelVersionId;
-	}
-	public RecoveryAction getRecoveryAction() {
-		return recoveryAction;
-	}
-	public void setRecoveryAction(RecoveryAction recoveryAction) {
-		this.recoveryAction = recoveryAction;
-	}
+    @JsonProperty("serviceModelVersionId")
+    protected String serviceModelVersionId;
+    @JsonProperty("recoveryAction")
+    protected RecoveryAction recoveryAction;
 
-	@Override
-	public String toString() {
-		return "ServiceModelList [serviceModelVersionId=" + serviceModelVersionId + ","
-				+ "recoveryAction=" + recoveryAction +"]";
-	}
+    public String getServiceModelVersionId() {
+        return serviceModelVersionId;
+    }
+
+    public void setServiceModelVersionId(String serviceModelVersionId) {
+        this.serviceModelVersionId = serviceModelVersionId;
+    }
+
+    public RecoveryAction getRecoveryAction() {
+        return recoveryAction;
+    }
+
+    public void setRecoveryAction(RecoveryAction recoveryAction) {
+        this.recoveryAction = recoveryAction;
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceModelList [serviceModelVersionId=" + serviceModelVersionId + "," + "recoveryAction="
+                + recoveryAction + "]";
+    }
 }

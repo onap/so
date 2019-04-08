@@ -43,50 +43,50 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCVfModuleResources {
-	private static final Logger logger = LoggerFactory.getLogger(SDNCVfModuleResources.class);
+    private static final Logger logger = LoggerFactory.getLogger(SDNCVfModuleResources.class);
 
-	@Autowired
-	private VfModuleTopologyOperationRequestMapper sdncRM;
+    @Autowired
+    private VfModuleTopologyOperationRequestMapper sdncRM;
 
-	@Autowired
-	private SDNCClient sdncClient;
+    @Autowired
+    private SDNCClient sdncClient;
 
-	public GenericResourceApiVfModuleOperationInformation assignVfModule(VfModule vfModule, VolumeGroup volumeGroup,
-			GenericVnf vnf, ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion,
-			RequestContext requestContext) throws MapperException {
-		return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule,
-				volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext, null);
-	}
+    public GenericResourceApiVfModuleOperationInformation assignVfModule(VfModule vfModule, VolumeGroup volumeGroup,
+            GenericVnf vnf, ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion,
+            RequestContext requestContext) throws MapperException {
+        return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN, vfModule,
+                volumeGroup, vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+    }
 
-	public GenericResourceApiVfModuleOperationInformation unassignVfModule(VfModule vfModule, GenericVnf vnf,
-			ServiceInstance serviceInstance) throws MapperException {
-		return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null,
-				vnf, serviceInstance, null, null, null, null);
-	}
+    public GenericResourceApiVfModuleOperationInformation unassignVfModule(VfModule vfModule, GenericVnf vnf,
+            ServiceInstance serviceInstance) throws MapperException {
+        return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN, vfModule, null,
+                vnf, serviceInstance, null, null, null, null);
+    }
 
-	public GenericResourceApiVfModuleOperationInformation deactivateVfModule(VfModule vfModule, GenericVnf vnf,
-			ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
-			throws MapperException {
-		return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE, vfModule, null,
-				vnf, serviceInstance, customer, cloudRegion, requestContext, null);
-	}
+    public GenericResourceApiVfModuleOperationInformation deactivateVfModule(VfModule vfModule, GenericVnf vnf,
+            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
+            throws MapperException {
+        return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE, vfModule, null,
+                vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+    }
 
-	public String queryVfModule(VfModule vfModule) throws MapperException, BadResponseException {
-		String objectPath = vfModule.getSelflink();
-		return sdncClient.get(objectPath);
-	}
+    public String queryVfModule(VfModule vfModule) throws MapperException, BadResponseException {
+        String objectPath = vfModule.getSelflink();
+        return sdncClient.get(objectPath);
+    }
 
-	public GenericResourceApiVfModuleOperationInformation activateVfModule(VfModule vfModule, GenericVnf vnf,
-			ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
-			throws MapperException {
-		return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE, vfModule, null,
-				vnf, serviceInstance, customer, cloudRegion, requestContext, null);
-	}
+    public GenericResourceApiVfModuleOperationInformation activateVfModule(VfModule vfModule, GenericVnf vnf,
+            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
+            throws MapperException {
+        return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE, vfModule, null,
+                vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+    }
 
-	public GenericResourceApiVfModuleOperationInformation changeAssignVfModule(VfModule vfModule, GenericVnf vnf,
-			ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
-			throws MapperException {
-		return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN, vfModule,
-				null, vnf, serviceInstance, customer, cloudRegion, requestContext, null);
-	}
+    public GenericResourceApiVfModuleOperationInformation changeAssignVfModule(VfModule vfModule, GenericVnf vnf,
+            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext)
+            throws MapperException {
+        return sdncRM.reqMapper(SDNCSvcOperation.VF_MODULE_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN, vfModule,
+                null, vnf, serviceInstance, customer, cloudRegion, requestContext, null);
+    }
 }

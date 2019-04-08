@@ -24,19 +24,20 @@ public class VfModuleNotFoundException extends ApiException {
 
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    * 
+    */
+    private static final long serialVersionUID = 1L;
 
-	private VfModuleNotFoundException(Builder builder) {
+    private VfModuleNotFoundException(Builder builder) {
         super(builder);
     }
 
-    public static class Builder extends ApiException.Builder<Builder>{
+    public static class Builder extends ApiException.Builder<Builder> {
 
         public Builder(String message, int httpResponseCode, String messageID) {
-            super(message,httpResponseCode,messageID);
+            super(message, httpResponseCode, messageID);
         }
+
         public VfModuleNotFoundException build() {
 
             return new VfModuleNotFoundException(this);

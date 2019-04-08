@@ -25,7 +25,6 @@ package org.onap.so.bpmn.infrastructure.aai.tasks;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.onap.aai.domain.yang.NetworkPolicies;
 import org.onap.aai.domain.yang.NetworkPolicy;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -57,151 +56,151 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIDeleteTasks {
-	private static final Logger logger = LoggerFactory.getLogger(AAIDeleteTasks.class);
-	
-	private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
-	private static String NETWORK_POLICY_FQDN_PARAM = "network-policy-fqdn";
-	
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private AAIServiceInstanceResources aaiSIResources;
-	@Autowired
-	private AAIVnfResources aaiVnfResources;
-	@Autowired
-	private AAIVfModuleResources aaiVfModuleResources;
-	@Autowired
-	private AAINetworkResources aaiNetworkResources;
-	@Autowired
-	private AAIVolumeGroupResources aaiVolumeGroupResources;
-	@Autowired
-	private AAIConfigurationResources aaiConfigurationResources;
-	@Autowired
-	private AAIInstanceGroupResources aaiInstanceGroupResources;
-	
-	public void deleteVfModule(BuildingBlockExecution execution) throws Exception {		
-		GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-		VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-		
-		execution.setVariable("aaiVfModuleRollback", false);
-		try {
-			aaiVfModuleResources.deleteVfModule(vfModule, genericVnf);
-			execution.setVariable("aaiVfModuleRollback", true);
-		} catch (Exception ex) {			
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}	
-	}
+    private static final Logger logger = LoggerFactory.getLogger(AAIDeleteTasks.class);
 
-	public void deleteVnf(BuildingBlockExecution execution) throws Exception {		
-		GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-		
-		execution.setVariable("aaiVnfRollback", false);
-		try {
-			aaiVnfResources.deleteVnf(genericVnf);
-			execution.setVariable("aaiVnfRollback", true);
-		} catch (Exception ex) {			
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}	
-	}
-	
-	public void deleteServiceInstance(BuildingBlockExecution execution) throws Exception {
-		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID); 
-			aaiSIResources.deleteServiceInstance(serviceInstance);
-		}
-		catch(Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-		
-	}
-	
-	public void deleteNetwork(BuildingBlockExecution execution) throws Exception {
-		try {
-			L3Network l3network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID); 
-			aaiNetworkResources.deleteNetwork(l3network);
-			execution.setVariable("isRollbackNeeded", true);
-		}
-		catch(Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void deleteCollection(BuildingBlockExecution execution) throws Exception {
-		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID); 
-			aaiNetworkResources.deleteCollection(serviceInstance.getCollection());
-		}
-		catch(Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void deleteInstanceGroup(BuildingBlockExecution execution) throws Exception {
-		try {
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID); 
-			aaiNetworkResources.deleteNetworkInstanceGroup(serviceInstance.getCollection().getInstanceGroup());
-		}
-		catch(Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void deleteVolumeGroup(BuildingBlockExecution execution) {
-		try {
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
-			CloudRegion cloudRegion = execution.getGeneralBuildingBlock().getCloudRegion();
-			aaiVolumeGroupResources.deleteVolumeGroup(volumeGroup, cloudRegion);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	public void deleteConfiguration(BuildingBlockExecution execution) {
-		try {
-			Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
-			aaiConfigurationResources.deleteConfiguration(configuration);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void deleteInstanceGroupVnf(BuildingBlockExecution execution) {
-		try {
-			InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
-			aaiInstanceGroupResources.deleteInstanceGroup(instanceGroup);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void deleteNetworkPolicies(BuildingBlockExecution execution) {
-		try{			
-			String fqdns = execution.getVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST);
-			if (fqdns != null && !fqdns.isEmpty()) {
-				String fqdnList[] = fqdns.split(",");
-				int fqdnCount = fqdnList.length;
-				if (fqdnCount > 0) {
-					for (int i=0; i < fqdnCount; i++) {
-						String fqdn = fqdnList[i];
-						AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
-						uri.queryParam(NETWORK_POLICY_FQDN_PARAM, fqdn);
-						Optional<NetworkPolicies> oNetPolicies = aaiNetworkResources.getNetworkPolicies(uri);
-						if(oNetPolicies.isPresent()) {
-							NetworkPolicies networkPolicies = oNetPolicies.get();
-							List<NetworkPolicy> networkPolicyList = networkPolicies.getNetworkPolicy();
-							if (networkPolicyList != null && !networkPolicyList.isEmpty()) {
-								NetworkPolicy networkPolicy = networkPolicyList.get(0);
-								String networkPolicyId = networkPolicy.getNetworkPolicyId();
-								logger.debug("Deleting network-policy with network-policy-id {}", networkPolicyId);
-								aaiNetworkResources.deleteNetworkPolicy(networkPolicyId);								
-							}							
-						}
-					}
-				}
-			}			
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}	
-	}
+    private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
+    private static String NETWORK_POLICY_FQDN_PARAM = "network-policy-fqdn";
+
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private AAIServiceInstanceResources aaiSIResources;
+    @Autowired
+    private AAIVnfResources aaiVnfResources;
+    @Autowired
+    private AAIVfModuleResources aaiVfModuleResources;
+    @Autowired
+    private AAINetworkResources aaiNetworkResources;
+    @Autowired
+    private AAIVolumeGroupResources aaiVolumeGroupResources;
+    @Autowired
+    private AAIConfigurationResources aaiConfigurationResources;
+    @Autowired
+    private AAIInstanceGroupResources aaiInstanceGroupResources;
+
+    public void deleteVfModule(BuildingBlockExecution execution) throws Exception {
+        GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+        VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+
+        execution.setVariable("aaiVfModuleRollback", false);
+        try {
+            aaiVfModuleResources.deleteVfModule(vfModule, genericVnf);
+            execution.setVariable("aaiVfModuleRollback", true);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteVnf(BuildingBlockExecution execution) throws Exception {
+        GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+
+        execution.setVariable("aaiVnfRollback", false);
+        try {
+            aaiVnfResources.deleteVnf(genericVnf);
+            execution.setVariable("aaiVnfRollback", true);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteServiceInstance(BuildingBlockExecution execution) throws Exception {
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            aaiSIResources.deleteServiceInstance(serviceInstance);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+
+    }
+
+    public void deleteNetwork(BuildingBlockExecution execution) throws Exception {
+        try {
+            L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+            aaiNetworkResources.deleteNetwork(l3network);
+            execution.setVariable("isRollbackNeeded", true);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteCollection(BuildingBlockExecution execution) throws Exception {
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            aaiNetworkResources.deleteCollection(serviceInstance.getCollection());
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteInstanceGroup(BuildingBlockExecution execution) throws Exception {
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            aaiNetworkResources.deleteNetworkInstanceGroup(serviceInstance.getCollection().getInstanceGroup());
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteVolumeGroup(BuildingBlockExecution execution) {
+        try {
+            VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
+            CloudRegion cloudRegion = execution.getGeneralBuildingBlock().getCloudRegion();
+            aaiVolumeGroupResources.deleteVolumeGroup(volumeGroup, cloudRegion);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteConfiguration(BuildingBlockExecution execution) {
+        try {
+            Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
+            aaiConfigurationResources.deleteConfiguration(configuration);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteInstanceGroupVnf(BuildingBlockExecution execution) {
+        try {
+            InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
+            aaiInstanceGroupResources.deleteInstanceGroup(instanceGroup);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteNetworkPolicies(BuildingBlockExecution execution) {
+        try {
+            String fqdns = execution.getVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST);
+            if (fqdns != null && !fqdns.isEmpty()) {
+                String fqdnList[] = fqdns.split(",");
+                int fqdnCount = fqdnList.length;
+                if (fqdnCount > 0) {
+                    for (int i = 0; i < fqdnCount; i++) {
+                        String fqdn = fqdnList[i];
+                        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
+                        uri.queryParam(NETWORK_POLICY_FQDN_PARAM, fqdn);
+                        Optional<NetworkPolicies> oNetPolicies = aaiNetworkResources.getNetworkPolicies(uri);
+                        if (oNetPolicies.isPresent()) {
+                            NetworkPolicies networkPolicies = oNetPolicies.get();
+                            List<NetworkPolicy> networkPolicyList = networkPolicies.getNetworkPolicy();
+                            if (networkPolicyList != null && !networkPolicyList.isEmpty()) {
+                                NetworkPolicy networkPolicy = networkPolicyList.get(0);
+                                String networkPolicyId = networkPolicy.getNetworkPolicyId();
+                                logger.debug("Deleting network-policy with network-policy-id {}", networkPolicyId);
+                                aaiNetworkResources.deleteNetworkPolicy(networkPolicyId);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 }

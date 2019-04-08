@@ -22,14 +22,11 @@ package org.onap.so.bpmn.infrastructure.activity;
 
 
 import static org.junit.Assert.assertEquals;
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Before;
-
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.onap.so.bpmn.BaseTaskTest;
@@ -38,40 +35,41 @@ import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ExecuteActivityTest extends BaseTaskTest {
-	@InjectMocks
-	protected ExecuteActivity executeActivity = new ExecuteActivity();
-	
-	private DelegateExecution execution;
-	
-	@Before
-	public void before() throws Exception {
-		execution = new DelegateExecutionFake();		
-		execution.setVariable("vnfType", "testVnfType");
-		execution.setVariable("requestAction", "testRequestAction");
-		execution.setVariable("mso-request-id", "testMsoRequestId");
-		execution.setVariable("vnfId", "testVnfId");
-		execution.setVariable("serviceInstanceId", "testServiceInstanceId");
-		String bpmnRequest = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
-		execution.setVariable("bpmnRequest", bpmnRequest);
-	}
-	
-	@Test
-	public void buildBuildingBlock_Test(){
-		BuildingBlock bb = executeActivity.buildBuildingBlock("testActivityName");
-		assertEquals(bb.getBpmnFlowName(), "testActivityName");
-		assertEquals(bb.getKey(), "");		
-	}
-	
-	@Test
-	public void executeBuildingBlock_Test() throws Exception {
-		BuildingBlock bb = executeActivity.buildBuildingBlock("testActivityName");
-		ExecuteBuildingBlock ebb = executeActivity.buildExecuteBuildingBlock(execution, "testMsoRequestId", bb);
-		assertEquals(ebb.getVnfType(), "testVnfType");
-		assertEquals(ebb.getRequestAction(), "testRequestAction");
-		assertEquals(ebb.getRequestId(), "testMsoRequestId");
-		assertEquals(ebb.getWorkflowResourceIds().getVnfId(), "testVnfId");
-		assertEquals(ebb.getWorkflowResourceIds().getServiceInstanceId(), "testServiceInstanceId");
-		assertEquals(ebb.getBuildingBlock(), bb);	
-	}
-	
+    @InjectMocks
+    protected ExecuteActivity executeActivity = new ExecuteActivity();
+
+    private DelegateExecution execution;
+
+    @Before
+    public void before() throws Exception {
+        execution = new DelegateExecutionFake();
+        execution.setVariable("vnfType", "testVnfType");
+        execution.setVariable("requestAction", "testRequestAction");
+        execution.setVariable("mso-request-id", "testMsoRequestId");
+        execution.setVariable("vnfId", "testVnfId");
+        execution.setVariable("serviceInstanceId", "testServiceInstanceId");
+        String bpmnRequest =
+                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/Macro/ServiceMacroAssign.json")));
+        execution.setVariable("bpmnRequest", bpmnRequest);
+    }
+
+    @Test
+    public void buildBuildingBlock_Test() {
+        BuildingBlock bb = executeActivity.buildBuildingBlock("testActivityName");
+        assertEquals(bb.getBpmnFlowName(), "testActivityName");
+        assertEquals(bb.getKey(), "");
+    }
+
+    @Test
+    public void executeBuildingBlock_Test() throws Exception {
+        BuildingBlock bb = executeActivity.buildBuildingBlock("testActivityName");
+        ExecuteBuildingBlock ebb = executeActivity.buildExecuteBuildingBlock(execution, "testMsoRequestId", bb);
+        assertEquals(ebb.getVnfType(), "testVnfType");
+        assertEquals(ebb.getRequestAction(), "testRequestAction");
+        assertEquals(ebb.getRequestId(), "testMsoRequestId");
+        assertEquals(ebb.getWorkflowResourceIds().getVnfId(), "testVnfId");
+        assertEquals(ebb.getWorkflowResourceIds().getServiceInstanceId(), "testServiceInstanceId");
+        assertEquals(ebb.getBuildingBlock(), bb);
+    }
+
 }

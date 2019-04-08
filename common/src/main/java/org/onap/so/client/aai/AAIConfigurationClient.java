@@ -27,57 +27,58 @@ import org.onap.so.serviceinstancebeans.RequestDetails;
 
 public class AAIConfigurationClient {
 
-	private AAIResourcesClient aaiClient;
+    private AAIResourcesClient aaiClient;
 
-	private static final String ORCHESTRATION_STATUS = "PreCreated";
+    private static final String ORCHESTRATION_STATUS = "PreCreated";
 
-	public AAIConfigurationClient() {
-		aaiClient = new AAIResourcesClient();
-	}
+    public AAIConfigurationClient() {
+        aaiClient = new AAIResourcesClient();
+    }
 
-	public void createConfiguration(RequestDetails requestDetails, String configurationId, String configurationType,
-			String configurationSubType) {
+    public void createConfiguration(RequestDetails requestDetails, String configurationId, String configurationType,
+            String configurationSubType) {
 
-		AAIResourceUri uri = getConfigurationURI(configurationId);
-		Configuration payload = configurePayload(requestDetails, configurationId, configurationType, configurationSubType);
-		
-		aaiClient.create(uri, payload);
-	}
-	
-	public Configuration configurePayload(RequestDetails requestDetails, String configurationId, String configurationType,
-			String configurationSubType) {
-		
-		Configuration payload = new Configuration();
-		payload.setConfigurationId(configurationId);
-		payload.setConfigurationType(configurationType);
-		payload.setConfigurationSubType(configurationSubType);
-		payload.setModelInvariantId(requestDetails.getModelInfo().getModelInvariantId());
-		payload.setModelVersionId(requestDetails.getModelInfo().getModelVersionId());
-		payload.setOrchestrationStatus(ORCHESTRATION_STATUS);
-		payload.setOperationalStatus("");
-		payload.setConfigurationSelflink(getConfigurationURI(configurationId).build().getPath());
-		payload.setModelCustomizationId(requestDetails.getModelInfo().getModelCustomizationId());
-		
-		return payload;
-	}
+        AAIResourceUri uri = getConfigurationURI(configurationId);
+        Configuration payload =
+                configurePayload(requestDetails, configurationId, configurationType, configurationSubType);
 
-	public void deleteConfiguration(String uuid) {
-		aaiClient.delete(getConfigurationURI(uuid));
-	}
+        aaiClient.create(uri, payload);
+    }
 
-	public void updateOrchestrationStatus(String uuid, String payload) {
-		aaiClient.update(getConfigurationURI(uuid), payload);
-	}
+    public Configuration configurePayload(RequestDetails requestDetails, String configurationId,
+            String configurationType, String configurationSubType) {
 
-	public Configuration getConfiguration(String uuid) {
-		return aaiClient.get(Configuration.class, getConfigurationURI(uuid)).orElse(null);
-	}
+        Configuration payload = new Configuration();
+        payload.setConfigurationId(configurationId);
+        payload.setConfigurationType(configurationType);
+        payload.setConfigurationSubType(configurationSubType);
+        payload.setModelInvariantId(requestDetails.getModelInfo().getModelInvariantId());
+        payload.setModelVersionId(requestDetails.getModelInfo().getModelVersionId());
+        payload.setOrchestrationStatus(ORCHESTRATION_STATUS);
+        payload.setOperationalStatus("");
+        payload.setConfigurationSelflink(getConfigurationURI(configurationId).build().getPath());
+        payload.setModelCustomizationId(requestDetails.getModelInfo().getModelCustomizationId());
 
-	public boolean configurationExists(String uuid) {
-		return aaiClient.exists(getConfigurationURI(uuid));
-	}
+        return payload;
+    }
 
-	public AAIResourceUri getConfigurationURI(String uuid) {
-		return AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, uuid);
-	}
+    public void deleteConfiguration(String uuid) {
+        aaiClient.delete(getConfigurationURI(uuid));
+    }
+
+    public void updateOrchestrationStatus(String uuid, String payload) {
+        aaiClient.update(getConfigurationURI(uuid), payload);
+    }
+
+    public Configuration getConfiguration(String uuid) {
+        return aaiClient.get(Configuration.class, getConfigurationURI(uuid)).orElse(null);
+    }
+
+    public boolean configurationExists(String uuid) {
+        return aaiClient.exists(getConfigurationURI(uuid));
+    }
+
+    public AAIResourceUri getConfigurationURI(String uuid) {
+        return AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, uuid);
+    }
 }

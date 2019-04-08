@@ -21,9 +21,7 @@
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
-
 import org.onap.so.constants.Defaults;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,22 +32,20 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @JsonInclude(Include.NON_EMPTY)
 public class CloudConfiguration implements Serializable {
 
-	private static final long serialVersionUID = 6260165690180745471L;
-	@JsonProperty("aicNodeClli")
+    private static final long serialVersionUID = 6260165690180745471L;
+    @JsonProperty("aicNodeClli")
     protected String aicNodeClli;
-	@JsonProperty("tenantId")
+    @JsonProperty("tenantId")
     protected String tenantId;
-	@JsonProperty("cloudOwner")
-	protected String cloudOwner = Defaults.CLOUD_OWNER.toString();
-	@JsonProperty("lcpCloudRegionId")
+    @JsonProperty("cloudOwner")
+    protected String cloudOwner = Defaults.CLOUD_OWNER.toString();
+    @JsonProperty("lcpCloudRegionId")
     protected String lcpCloudRegionId;
 
     /**
      * Gets the value of the aicNodeClli property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getAicNodeClli() {
@@ -59,9 +55,7 @@ public class CloudConfiguration implements Serializable {
     /**
      * Sets the value of the aicNodeClli property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setAicNodeClli(String value) {
@@ -71,9 +65,7 @@ public class CloudConfiguration implements Serializable {
     /**
      * Gets the value of the tenantId property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getTenantId() {
@@ -83,9 +75,7 @@ public class CloudConfiguration implements Serializable {
     /**
      * Sets the value of the tenantId property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setTenantId(String value) {
@@ -93,27 +83,27 @@ public class CloudConfiguration implements Serializable {
     }
 
 
-	public String getLcpCloudRegionId() {
-		return lcpCloudRegionId;
-	}
+    public String getLcpCloudRegionId() {
+        return lcpCloudRegionId;
+    }
 
-	public void setLcpCloudRegionId(String lcpCloudRegionId) {
-		this.lcpCloudRegionId = lcpCloudRegionId;
-	}
+    public void setLcpCloudRegionId(String lcpCloudRegionId) {
+        this.lcpCloudRegionId = lcpCloudRegionId;
+    }
 
-	public String getCloudOwner() {
-		return cloudOwner;
-	}
+    public String getCloudOwner() {
+        return cloudOwner;
+    }
 
-	public void setCloudOwner(String cloudOwner) {
-		this.cloudOwner = cloudOwner;
-	}
+    public void setCloudOwner(String cloudOwner) {
+        this.cloudOwner = cloudOwner;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
-				.append("cloudOwner", getCloudOwner()).append("lcpCloudRegionId", getLcpCloudRegionId()).toString();
-	}
-	
-	
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
+                .append("cloudOwner", getCloudOwner()).append("lcpCloudRegionId", getLcpCloudRegionId()).toString();
+    }
+
+
 }

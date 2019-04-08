@@ -21,16 +21,15 @@
 package org.onap.so.adapters.vfc.constant;
 
 /**
- * CommonConstant
- * <br>
+ * CommonConstant <br>
  * <p>
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-08-28
+ * @version ONAP Amsterdam Release 2017-08-28
  */
 public class CommonConstant {
-    
+
     public static final String STR_EMPTY = "";
 
     public static final String NFVO_CREATE_URL = "/api/nslcm/v1/ns";
@@ -52,7 +51,7 @@ public class CommonConstant {
      * </p>
      * 
      * @author
-     * @version     ONAP Amsterdam Release  2017-08-28
+     * @version ONAP Amsterdam Release 2017-08-28
      */
     public static class MethodType {
 
@@ -76,7 +75,7 @@ public class CommonConstant {
      * </p>
      * 
      * @author
-     * @version     ONAP Amsterdam Release  2017-08-28
+     * @version ONAP Amsterdam Release 2017-08-28
      */
     public static class Step {
 
@@ -133,7 +132,7 @@ public class CommonConstant {
 
         }
     }
-    
+
     private CommonConstant() {
 
     }

@@ -51,8 +51,8 @@ public class CreateRelation implements JavaDelegate {
             new ExceptionUtil().buildAndThrowWorkflowException(delegateExecution, 9999,
                     "An exception occurred when making service and pnf relation. Exception: " + e.getMessage());
         }
-        logger.debug("The relation has been made between service with id: {} and pnf with name: {}",
-                serviceInstanceId, pnfName);
+        logger.debug("The relation has been made between service with id: {} and pnf with name: {}", serviceInstanceId,
+                pnfName);
     }
 
 }

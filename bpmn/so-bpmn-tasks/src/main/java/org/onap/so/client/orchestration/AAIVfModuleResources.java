@@ -23,7 +23,6 @@
 package org.onap.so.client.orchestration;
 
 import java.util.Optional;
-
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
@@ -41,62 +40,73 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIVfModuleResources {
-	private static final Logger logger = LoggerFactory.getLogger(AAIVfModuleResources.class);
-	
-	@Autowired
-	private InjectionHelper injectionHelper;
-	
-	@Autowired
-	private AAIObjectMapper aaiObjectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(AAIVfModuleResources.class);
 
-	public void createVfModule(VfModule vfModule, GenericVnf vnf) {
-		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-		vfModule.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-		injectionHelper.getAaiClient().createIfNotExists(vfModuleURI, Optional.of(aaiObjectMapper.mapVfModule(vfModule)));
-	}
-	
-	public void deleteVfModule(VfModule vfModule, GenericVnf vnf) {
-		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-		injectionHelper.getAaiClient().delete(vfModuleURI);
-	}
+    @Autowired
+    private InjectionHelper injectionHelper;
 
-	public void updateOrchestrationStatusVfModule(VfModule vfModule, GenericVnf vnf, OrchestrationStatus orchestrationStatus) {
-		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-		VfModule copiedVfModule = vfModule.shallowCopyId();
+    @Autowired
+    private AAIObjectMapper aaiObjectMapper;
 
-		vfModule.setOrchestrationStatus(orchestrationStatus);
-		copiedVfModule.setOrchestrationStatus(orchestrationStatus);
-		org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(copiedVfModule);
-		injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
-	}
-	
-	public void updateHeatStackIdVfModule(VfModule vfModule, GenericVnf vnf) {
-		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-		VfModule copiedVfModule = vfModule.shallowCopyId();
+    public void createVfModule(VfModule vfModule, GenericVnf vnf) {
+        AAIResourceUri vfModuleURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        vfModule.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
+        injectionHelper.getAaiClient().createIfNotExists(vfModuleURI,
+                Optional.of(aaiObjectMapper.mapVfModule(vfModule)));
+    }
 
-		copiedVfModule.setHeatStackId(vfModule.getHeatStackId());
-		org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(copiedVfModule);
-		injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
-	}
-	
-	public void updateContrailServiceInstanceFqdnVfModule(VfModule vfModule, GenericVnf vnf) {
-		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-		VfModule copiedVfModule = vfModule.shallowCopyId();
-		
-		copiedVfModule.setContrailServiceInstanceFqdn(vfModule.getContrailServiceInstanceFqdn());
-		org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(copiedVfModule);
-		injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
-	}
-	
-	public void changeAssignVfModule(VfModule vfModule, GenericVnf vnf) {
-		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-		org.onap.aai.domain.yang.VfModule AAIVfModule = aaiObjectMapper.mapVfModule(vfModule);
-		injectionHelper.getAaiClient().update(vfModuleURI, AAIVfModule);
-	}
-	
-	public void connectVfModuleToVolumeGroup(GenericVnf vnf, VfModule vfModule, VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-		AAIResourceUri vfModuleURI = AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-		AAIResourceUri volumeGroupURI = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
-		injectionHelper.getAaiClient().connect(vfModuleURI, volumeGroupURI);
-	}
+    public void deleteVfModule(VfModule vfModule, GenericVnf vnf) {
+        AAIResourceUri vfModuleURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        injectionHelper.getAaiClient().delete(vfModuleURI);
+    }
+
+    public void updateOrchestrationStatusVfModule(VfModule vfModule, GenericVnf vnf,
+            OrchestrationStatus orchestrationStatus) {
+        AAIResourceUri vfModuleURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        VfModule copiedVfModule = vfModule.shallowCopyId();
+
+        vfModule.setOrchestrationStatus(orchestrationStatus);
+        copiedVfModule.setOrchestrationStatus(orchestrationStatus);
+        org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(copiedVfModule);
+        injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
+    }
+
+    public void updateHeatStackIdVfModule(VfModule vfModule, GenericVnf vnf) {
+        AAIResourceUri vfModuleURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        VfModule copiedVfModule = vfModule.shallowCopyId();
+
+        copiedVfModule.setHeatStackId(vfModule.getHeatStackId());
+        org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(copiedVfModule);
+        injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
+    }
+
+    public void updateContrailServiceInstanceFqdnVfModule(VfModule vfModule, GenericVnf vnf) {
+        AAIResourceUri vfModuleURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        VfModule copiedVfModule = vfModule.shallowCopyId();
+
+        copiedVfModule.setContrailServiceInstanceFqdn(vfModule.getContrailServiceInstanceFqdn());
+        org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(copiedVfModule);
+        injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
+    }
+
+    public void changeAssignVfModule(VfModule vfModule, GenericVnf vnf) {
+        AAIResourceUri vfModuleURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        org.onap.aai.domain.yang.VfModule AAIVfModule = aaiObjectMapper.mapVfModule(vfModule);
+        injectionHelper.getAaiClient().update(vfModuleURI, AAIVfModule);
+    }
+
+    public void connectVfModuleToVolumeGroup(GenericVnf vnf, VfModule vfModule, VolumeGroup volumeGroup,
+            CloudRegion cloudRegion) {
+        AAIResourceUri vfModuleURI =
+                AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
+        AAIResourceUri volumeGroupURI = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
+                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        injectionHelper.getAaiClient().connect(vfModuleURI, volumeGroupURI);
+    }
 }

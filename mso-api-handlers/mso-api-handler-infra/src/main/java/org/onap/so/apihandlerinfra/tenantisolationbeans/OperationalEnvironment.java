@@ -22,6 +22,5 @@ package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 public enum OperationalEnvironment {
 
-	ECOMP,
-	VNF
+    ECOMP, VNF
 }

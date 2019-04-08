@@ -21,7 +21,6 @@ package org.onap.so.monitoring.rest.api;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.ApplicationPath;
-
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 

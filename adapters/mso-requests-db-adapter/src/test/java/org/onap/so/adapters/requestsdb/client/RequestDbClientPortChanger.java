@@ -24,6 +24,7 @@ package org.onap.so.adapters.requestsdb.client;
 import org.onap.so.db.request.client.RequestsDbClient;
 import org.springframework.stereotype.Component;
 import java.net.URI;
+
 @Component
 public class RequestDbClientPortChanger extends RequestsDbClient {
     private int port;

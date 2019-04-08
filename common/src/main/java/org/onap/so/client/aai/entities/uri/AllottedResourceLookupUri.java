@@ -22,32 +22,33 @@ package org.onap.so.client.aai.entities.uri;
 
 import java.net.URI;
 import java.util.Optional;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 
 public class AllottedResourceLookupUri extends HttpLookupUri {
 
-	private static final long serialVersionUID = -9212594383876793188L;
-	protected AllottedResourceLookupUri(Object... values) {
-		super(AAIObjectType.ALLOTTED_RESOURCE, values);
-	}
-	protected AllottedResourceLookupUri(UriBuilder builder, Optional<String> cachedValue, Object... values) {
-		super(AAIObjectType.ALLOTTED_RESOURCE, builder, cachedValue, values);
-	}
-	
-	@Override
-	public AllottedResourceLookupUri clone() {
-		return new AllottedResourceLookupUri(this.internalURI.clone(), this.getCachedValue(), values);
-	}
-	
-	public AAIResourcesClient getResourcesClient() {
-		return new AAIResourcesClient();
-	}
-	@Override
-	public URI buildNoNetwork() {
-		return super.build(new String[]{"NONE", "NONE", "NONE", (String)this.values[0]});
-	}
+    private static final long serialVersionUID = -9212594383876793188L;
+
+    protected AllottedResourceLookupUri(Object... values) {
+        super(AAIObjectType.ALLOTTED_RESOURCE, values);
+    }
+
+    protected AllottedResourceLookupUri(UriBuilder builder, Optional<String> cachedValue, Object... values) {
+        super(AAIObjectType.ALLOTTED_RESOURCE, builder, cachedValue, values);
+    }
+
+    @Override
+    public AllottedResourceLookupUri clone() {
+        return new AllottedResourceLookupUri(this.internalURI.clone(), this.getCachedValue(), values);
+    }
+
+    public AAIResourcesClient getResourcesClient() {
+        return new AAIResourcesClient();
+    }
+
+    @Override
+    public URI buildNoNetwork() {
+        return super.build(new String[] {"NONE", "NONE", "NONE", (String) this.values[0]});
+    }
 }

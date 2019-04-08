@@ -21,123 +21,120 @@
 package org.onap.so.adapters.sdncrest;
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlElement;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Request Information specified by the SDNC "agnostic" API.
  */
 public class RequestInformation implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Identifies the transaction MSO has with the calling system.
-	private String requestId;
+    // Identifies the transaction MSO has with the calling system.
+    private String requestId;
 
-	// Identifies the calling system, e.g. CCD.
-	private String source;
+    // Identifies the calling system, e.g. CCD.
+    private String source;
 
-	// The calling system's endpoint for receiving notifications from MSO.
-	private String notificationUrl;
+    // The calling system's endpoint for receiving notifications from MSO.
+    private String notificationUrl;
 
-	// NOTE: these are defined in the SDNC AID, but not used by MSO:
-	//     request-action
-	//     request-sub-action
+    // NOTE: these are defined in the SDNC AID, but not used by MSO:
+    // request-action
+    // request-sub-action
 
-	// Identifies the request action
-	private String requestAction;
+    // Identifies the request action
+    private String requestAction;
 
-	// Identifies the request sub action
-	private String requestSubAction;
+    // Identifies the request sub action
+    private String requestSubAction;
 
-	@JsonProperty("orderNumber")
-	@XmlElement(name = "orderNumber")
-	private String orderNumber;
-	
-	@JsonProperty("orderVersion")
-	@XmlElement(name = "orderVersion")
-	private String orderVersion;
+    @JsonProperty("orderNumber")
+    @XmlElement(name = "orderNumber")
+    private String orderNumber;
 
-	public RequestInformation(String requestId, String source, String notificationUrl) {
-		this.requestId = requestId;
-		this.source = source;
-		this.notificationUrl = notificationUrl;
-	}
+    @JsonProperty("orderVersion")
+    @XmlElement(name = "orderVersion")
+    private String orderVersion;
 
-	public RequestInformation() {
-	}
+    public RequestInformation(String requestId, String source, String notificationUrl) {
+        this.requestId = requestId;
+        this.source = source;
+        this.notificationUrl = notificationUrl;
+    }
 
-	@JsonProperty("requestId")
-	@XmlElement(name = "requestId")
-	public String getRequestId() {
-		return requestId;
-	}
+    public RequestInformation() {}
 
-	@JsonProperty("requestId")
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
+    @JsonProperty("requestId")
+    @XmlElement(name = "requestId")
+    public String getRequestId() {
+        return requestId;
+    }
 
-	@JsonProperty("source")
-	@XmlElement(name = "source")
-	public String getSource() {
-		return source;
-	}
+    @JsonProperty("requestId")
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
-	@JsonProperty("source")
-	public void setSource(String source) {
-		this.source = source;
-	}
+    @JsonProperty("source")
+    @XmlElement(name = "source")
+    public String getSource() {
+        return source;
+    }
 
-	@JsonProperty("notificationUrl")
-	@XmlElement(name = "notificationUrl")
-	public String getNotificationUrl() {
-		return notificationUrl;
-	}
+    @JsonProperty("source")
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-	@JsonProperty("notificationUrl")
-	public void setNotificationUrl(String notificationUrl) {
-		this.notificationUrl = notificationUrl;
-	}
+    @JsonProperty("notificationUrl")
+    @XmlElement(name = "notificationUrl")
+    public String getNotificationUrl() {
+        return notificationUrl;
+    }
 
-	@JsonProperty("requestAction")
-	@XmlElement(name = "requestAction")
-	public String getRequestAction() {
-		return requestAction;
-	}
+    @JsonProperty("notificationUrl")
+    public void setNotificationUrl(String notificationUrl) {
+        this.notificationUrl = notificationUrl;
+    }
 
-	@JsonProperty("requestAction")
-	public void setRequestAction(String requestAction) {
-		this.requestAction = requestAction;
-	}
+    @JsonProperty("requestAction")
+    @XmlElement(name = "requestAction")
+    public String getRequestAction() {
+        return requestAction;
+    }
 
-	@JsonProperty("requestSubAction")
-	@XmlElement(name = "requestSubAction")
-	public String getRequestSubAction() {
-		return requestSubAction;
-	}
+    @JsonProperty("requestAction")
+    public void setRequestAction(String requestAction) {
+        this.requestAction = requestAction;
+    }
 
-	@JsonProperty("requestSubAction")
-	public void setRequestSubAction(String requestSubAction) {
-		this.requestSubAction = requestSubAction;
-	}
+    @JsonProperty("requestSubAction")
+    @XmlElement(name = "requestSubAction")
+    public String getRequestSubAction() {
+        return requestSubAction;
+    }
 
-	public String getOrderNumber() {
-		return orderNumber;
-	}
+    @JsonProperty("requestSubAction")
+    public void setRequestSubAction(String requestSubAction) {
+        this.requestSubAction = requestSubAction;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public String getOrderNumber() {
+        return orderNumber;
+    }
 
-	public String getOrderVersion() {
-		return orderVersion;
-	}
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-	public void setOrderVersion(String orderVersion) {
-		this.orderVersion = orderVersion;
-	}
-	
-	
+    public String getOrderVersion() {
+        return orderVersion;
+    }
+
+    public void setOrderVersion(String orderVersion) {
+        this.orderVersion = orderVersion;
+    }
+
+
 }

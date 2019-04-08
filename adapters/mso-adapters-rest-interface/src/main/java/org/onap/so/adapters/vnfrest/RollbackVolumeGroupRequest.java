@@ -22,23 +22,22 @@ package org.onap.so.adapters.vnfrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("rollbackVolumeGroupRequest")
 @XmlRootElement(name = "rollbackVolumeGroupRequest")
 public class RollbackVolumeGroupRequest extends VfRequestCommon {
-	private VolumeGroupRollback volumeGroupRollback;
+    private VolumeGroupRollback volumeGroupRollback;
 
-	public RollbackVolumeGroupRequest() {
-		super();
-	}
+    public RollbackVolumeGroupRequest() {
+        super();
+    }
 
-	public VolumeGroupRollback getVolumeGroupRollback() {
-		return volumeGroupRollback;
-	}
+    public VolumeGroupRollback getVolumeGroupRollback() {
+        return volumeGroupRollback;
+    }
 
-	public void setVolumeGroupRollback(VolumeGroupRollback volumeGroupRollback) {
-		this.volumeGroupRollback = volumeGroupRollback;
-	}
+    public void setVolumeGroupRollback(VolumeGroupRollback volumeGroupRollback) {
+        this.volumeGroupRollback = volumeGroupRollback;
+    }
 }

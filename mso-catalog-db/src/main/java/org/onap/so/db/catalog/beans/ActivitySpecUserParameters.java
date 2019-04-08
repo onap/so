@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,13 +36,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -51,88 +47,86 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 @Table(name = "activity_spec_to_user_parameters")
 public class ActivitySpecUserParameters implements Serializable {
 
-	private static final long serialVersionUID = 5599242118780268449L;
+    private static final long serialVersionUID = 5599242118780268449L;
 
-	@Id
-	@Column(name = "ID", nullable = false, updatable = false)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer ID;
+    @Id
+    @Column(name = "ID", nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer ID;
 
-	@BusinessKey
-	@Id
-	@Column(name = "ACTIVITY_SPEC_ID")
-	private Integer activitySpecId;
+    @BusinessKey
+    @Id
+    @Column(name = "ACTIVITY_SPEC_ID")
+    private Integer activitySpecId;
 
-	@BusinessKey
-	@Id
-	@Column(name = "USER_PARAMETERS_ID")
-	private Integer userParametersId;
+    @BusinessKey
+    @Id
+    @Column(name = "USER_PARAMETERS_ID")
+    private Integer userParametersId;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "ACTIVITY_SPEC_ID", updatable = false, insertable = false)
-	private ActivitySpec activitySpec;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACTIVITY_SPEC_ID", updatable = false, insertable = false)
+    private ActivitySpec activitySpec;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_PARAMETERS_ID", updatable = false, insertable = false)
-	private UserParameters userParameters;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_PARAMETERS_ID", updatable = false, insertable = false)
+    private UserParameters userParameters;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this)
-				.append("activitySpecId", activitySpecId)
-				.append("userParametersId", userParametersId)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("activitySpecId", activitySpecId)
+                .append("userParametersId", userParametersId).toString();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ActivitySpecUserParameters)) {
-			return false;
-		}
-		ActivitySpecUserParameters castOther = (ActivitySpecUserParameters) other;
-		return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
-				.append(userParametersId, castOther.userParametersId).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ActivitySpecUserParameters)) {
+            return false;
+        }
+        ActivitySpecUserParameters castOther = (ActivitySpecUserParameters) other;
+        return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
+                .append(userParametersId, castOther.userParametersId).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(activitySpecId).append(userParametersId).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(activitySpecId).append(userParametersId).toHashCode();
+    }
 
-	public Integer getID() {
-		return ID;
-	}
-	
-	public Integer getActivitySpecId() {
-		return activitySpecId;
-	}
+    public Integer getID() {
+        return ID;
+    }
 
-	public void setActivitySpecId(Integer activitySpecId) {
-		this.activitySpecId = activitySpecId;
-	}
-	
-	public Integer getUserParametersId() {
-		return userParametersId;
-	}
+    public Integer getActivitySpecId() {
+        return activitySpecId;
+    }
 
-	public void setUserParametersId(Integer userParametersId) {
-		this.userParametersId = userParametersId;
-	}
-	
-	public ActivitySpec getActivitySpec() {
-		return activitySpec;
-	}
+    public void setActivitySpecId(Integer activitySpecId) {
+        this.activitySpecId = activitySpecId;
+    }
 
-	public void setActivitySpec(ActivitySpec activitySpec) {
-		this.activitySpec = activitySpec;
-	}
-	
-	public UserParameters getUserParameters() {
-		return userParameters;
-	}
+    public Integer getUserParametersId() {
+        return userParametersId;
+    }
 
-	public void setUserParameters(UserParameters userParameters) {
-		this.userParameters = userParameters;
-	}
+    public void setUserParametersId(Integer userParametersId) {
+        this.userParametersId = userParametersId;
+    }
+
+    public ActivitySpec getActivitySpec() {
+        return activitySpec;
+    }
+
+    public void setActivitySpec(ActivitySpec activitySpec) {
+        this.activitySpec = activitySpec;
+    }
+
+    public UserParameters getUserParameters() {
+        return userParameters;
+    }
+
+    public void setUserParameters(UserParameters userParameters) {
+        this.userParameters = userParameters;
+    }
 
 }

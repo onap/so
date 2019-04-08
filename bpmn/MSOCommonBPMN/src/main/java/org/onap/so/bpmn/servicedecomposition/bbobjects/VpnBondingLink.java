@@ -22,15 +22,11 @@ package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-
 import javax.persistence.Id;
-
 import static org.apache.commons.lang3.StringUtils.*;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
@@ -58,109 +54,110 @@ public class VpnBondingLink implements Serializable, ShallowCopy<VpnBondingLink>
         this.vpnBondingLinkId = vpnBondingLinkId;
     }
 
-	public List<Configuration> getConfigurations() {
-		return configurations;
-	}
-
-	public List<ServiceProxy> getServiceProxies() {
-		return serviceProxies;
-	}
-
-	public ServiceProxy getServiceProxy(String id) {
-		ServiceProxy serviceProxy = null;
-		for(ServiceProxy s : serviceProxies){
-			if(s.getId().equals(id)){
-				serviceProxy = s;
-			}
-		}
-		return serviceProxy;
-	}
-
-    //TODO temp solution until references are updated to use getConfigurationByType
-    public Configuration getVnrConfiguration() {
-    	Configuration configuration = null;
-    	for(Configuration c:configurations){
-    		if(containsIgnoreCase(c.getConfigurationType(), "vlan") || containsIgnoreCase(c.getConfigurationType(), "vnr")){
-    			configuration = c;
-    		}
-    	}
-        return configuration;
+    public List<Configuration> getConfigurations() {
+        return configurations;
     }
 
-    //TODO temp solution until references are updatedd
-    public void setVnrConfiguration(Configuration vnrConfiguration) {
-    	if(vnrConfiguration.getConfigurationType() == null){
-    		vnrConfiguration.setConfigurationType("vlan");
-    	}
-    	configurations.add(vnrConfiguration);
+    public List<ServiceProxy> getServiceProxies() {
+        return serviceProxies;
     }
 
-    //TODO temp solution until references are updated to use getConfigurationByType
-    public Configuration getVrfConfiguration() {
-    	Configuration configuration = null;
-    	for(Configuration c:configurations){
-    		if(containsIgnoreCase(c.getConfigurationType(), "vrf")){
-    			configuration = c;
-    		}
-    	}
-    		return configuration;
-    	}
-
-    //TODO temp solution until references are updated
-    public void setVrfConfiguration(Configuration vrfConfiguration) {
-    	if(vrfConfiguration.getConfigurationType() == null){
-    		vrfConfiguration.setConfigurationType("vrf");
-    	}
-    	configurations.add(vrfConfiguration);
-    }
-
-    //TODO temp solution until references are updated to use getServiceProxyByType
-    public ServiceProxy getInfrastructureServiceProxy() {
-    	ServiceProxy serviceProxy = null;
-    	for(ServiceProxy sp:serviceProxies){
-    		if(sp.getType().equals("infrastructure")){
-    			serviceProxy = sp;
-    		}
-    	}
+    public ServiceProxy getServiceProxy(String id) {
+        ServiceProxy serviceProxy = null;
+        for (ServiceProxy s : serviceProxies) {
+            if (s.getId().equals(id)) {
+                serviceProxy = s;
+            }
+        }
         return serviceProxy;
     }
 
-    //TODO temp solution until references are updated
+    // TODO temp solution until references are updated to use getConfigurationByType
+    public Configuration getVnrConfiguration() {
+        Configuration configuration = null;
+        for (Configuration c : configurations) {
+            if (containsIgnoreCase(c.getConfigurationType(), "vlan")
+                    || containsIgnoreCase(c.getConfigurationType(), "vnr")) {
+                configuration = c;
+            }
+        }
+        return configuration;
+    }
+
+    // TODO temp solution until references are updatedd
+    public void setVnrConfiguration(Configuration vnrConfiguration) {
+        if (vnrConfiguration.getConfigurationType() == null) {
+            vnrConfiguration.setConfigurationType("vlan");
+        }
+        configurations.add(vnrConfiguration);
+    }
+
+    // TODO temp solution until references are updated to use getConfigurationByType
+    public Configuration getVrfConfiguration() {
+        Configuration configuration = null;
+        for (Configuration c : configurations) {
+            if (containsIgnoreCase(c.getConfigurationType(), "vrf")) {
+                configuration = c;
+            }
+        }
+        return configuration;
+    }
+
+    // TODO temp solution until references are updated
+    public void setVrfConfiguration(Configuration vrfConfiguration) {
+        if (vrfConfiguration.getConfigurationType() == null) {
+            vrfConfiguration.setConfigurationType("vrf");
+        }
+        configurations.add(vrfConfiguration);
+    }
+
+    // TODO temp solution until references are updated to use getServiceProxyByType
+    public ServiceProxy getInfrastructureServiceProxy() {
+        ServiceProxy serviceProxy = null;
+        for (ServiceProxy sp : serviceProxies) {
+            if (sp.getType().equals("infrastructure")) {
+                serviceProxy = sp;
+            }
+        }
+        return serviceProxy;
+    }
+
+    // TODO temp solution until references are updated
     public void setInfrastructureServiceProxy(ServiceProxy infrastructureServiceProxy) {
-    	infrastructureServiceProxy.setType("infrastructure");
-    	serviceProxies.add(infrastructureServiceProxy);
+        infrastructureServiceProxy.setType("infrastructure");
+        serviceProxies.add(infrastructureServiceProxy);
     }
 
-    //TODO temp solution until references are updated to use getServiceProxyByType
+    // TODO temp solution until references are updated to use getServiceProxyByType
     public ServiceProxy getTransportServiceProxy() {
-    	ServiceProxy serviceProxy = null;
-    	for(ServiceProxy sp:serviceProxies){
-    		if(sp != null){
-    			if(sp.getType().equals("transport")){
-    				serviceProxy = sp;
-    			}
-    		}
-    	}
-    	return serviceProxy;
+        ServiceProxy serviceProxy = null;
+        for (ServiceProxy sp : serviceProxies) {
+            if (sp != null) {
+                if (sp.getType().equals("transport")) {
+                    serviceProxy = sp;
+                }
+            }
+        }
+        return serviceProxy;
     }
 
-    //TODO temp solution until references are updated
+    // TODO temp solution until references are updated
     public void setTransportServiceProxy(ServiceProxy transportServiceProxy) {
-    	transportServiceProxy.setType("transport");
-    	serviceProxies.add(transportServiceProxy);
+        transportServiceProxy.setType("transport");
+        serviceProxies.add(transportServiceProxy);
     }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VpnBondingLink)) {
-			return false;
-		}
-		VpnBondingLink castOther = (VpnBondingLink) other;
-		return new EqualsBuilder().append(vpnBondingLinkId, castOther.vpnBondingLinkId).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VpnBondingLink)) {
+            return false;
+        }
+        VpnBondingLink castOther = (VpnBondingLink) other;
+        return new EqualsBuilder().append(vpnBondingLinkId, castOther.vpnBondingLinkId).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(vpnBondingLinkId).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(vpnBondingLinkId).toHashCode();
+    }
 }

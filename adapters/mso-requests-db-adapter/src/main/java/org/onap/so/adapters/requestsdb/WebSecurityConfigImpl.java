@@ -30,22 +30,19 @@ import org.springframework.util.StringUtils;
 
 @EnableWebSecurity
 public class WebSecurityConfigImpl extends WebSecurityConfig {
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-		.authorizeRequests()
-		.antMatchers("/manage/health","/manage/info").permitAll()
-		.antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(),",").toString())
-		.and()
-		.httpBasic();
-	}
-	
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		super.configure(web);
-		StrictHttpFirewall firewall = new MSOSpringFirewall();
-		web.httpFirewall(firewall);
-	}
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable().authorizeRequests().antMatchers("/manage/health", "/manage/info").permitAll()
+                .antMatchers("/**").hasAnyRole(StringUtils.collectionToDelimitedString(getRoles(), ",").toString())
+                .and().httpBasic();
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        super.configure(web);
+        StrictHttpFirewall firewall = new MSOSpringFirewall();
+        web.httpFirewall(firewall);
+    }
 
 }

@@ -22,34 +22,34 @@ package org.onap.so.client.sdno;
 
 import java.io.IOException;
 import java.util.UUID;
-
 import org.onap.aai.domain.yang.GenericVnf;
 
 public interface SDNOValidator {
 
-	/**
-	 * Issues a health diagnostic request for a given vnf to SDN-O
-	 * 
-	 * @param vnfId
-	 * @param uuid
-	 * @param requestingUserId
-	 * @return diagnostic result
-	 * @throws IOException
-	 * @throws Exception
-	 */
-	public boolean healthDiagnostic(String vnfId, UUID uuid, String requestingUserId) throws IOException, Exception;
-	
+    /**
+     * Issues a health diagnostic request for a given vnf to SDN-O
+     * 
+     * @param vnfId
+     * @param uuid
+     * @param requestingUserId
+     * @return diagnostic result
+     * @throws IOException
+     * @throws Exception
+     */
+    public boolean healthDiagnostic(String vnfId, UUID uuid, String requestingUserId) throws IOException, Exception;
 
-	/**
-	 * Issues a health diagnostic request for a given GenericVnf to SDN-O
-	 * 
-	 * @param genericVnf
-	 * @param uuid
-	 * @param requestingUserId
-	 * @return diagnostic result
-	 * @throws IOException
-	 * @throws Exception
-	 */
-	public boolean healthDiagnostic(GenericVnf genericVnf, UUID uuid, String requestingUserId) throws IOException, Exception;	
+
+    /**
+     * Issues a health diagnostic request for a given GenericVnf to SDN-O
+     * 
+     * @param genericVnf
+     * @param uuid
+     * @param requestingUserId
+     * @return diagnostic result
+     * @throws IOException
+     * @throws Exception
+     */
+    public boolean healthDiagnostic(GenericVnf genericVnf, UUID uuid, String requestingUserId)
+            throws IOException, Exception;
 
 }

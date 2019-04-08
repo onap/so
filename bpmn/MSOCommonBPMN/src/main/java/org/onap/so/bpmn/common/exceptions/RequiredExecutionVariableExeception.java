@@ -22,17 +22,17 @@ package org.onap.so.bpmn.common.exceptions;
 
 public class RequiredExecutionVariableExeception extends Exception {
 
-	private static final long serialVersionUID = 5135274986874563746L;
+    private static final long serialVersionUID = 5135274986874563746L;
 
-	public RequiredExecutionVariableExeception(String message) {
-		super(message);
-	}
-	
-	public RequiredExecutionVariableExeception(String message, Throwable t) {
-		super(message, t);
-	}
-	
-	public RequiredExecutionVariableExeception(Throwable t) {
-		super(t);
-	}
+    public RequiredExecutionVariableExeception(String message) {
+        super(message);
+    }
+
+    public RequiredExecutionVariableExeception(String message, Throwable t) {
+        super(message, t);
+    }
+
+    public RequiredExecutionVariableExeception(Throwable t) {
+        super(t);
+    }
 }

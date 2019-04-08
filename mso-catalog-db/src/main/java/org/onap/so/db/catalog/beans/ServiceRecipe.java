@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,168 +33,166 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
 @Table(name = "service_recipe")
 public class ServiceRecipe implements Serializable, Recipe {
-	
-	private static final long serialVersionUID = 768026109321305392L;
 
-	@Id
-	@Column(name = "id")
-	private Integer id;
+    private static final long serialVersionUID = 768026109321305392L;
 
-	@BusinessKey
-	@Column(name = "SERVICE_MODEL_UUID")
-	private String serviceModelUUID;
+    @Id
+    @Column(name = "id")
+    private Integer id;
 
-	@BusinessKey
-	@Column(name = "ACTION")
-	private String action;
+    @BusinessKey
+    @Column(name = "SERVICE_MODEL_UUID")
+    private String serviceModelUUID;
 
-	@Column(name = "description")
-	private String description;
+    @BusinessKey
+    @Column(name = "ACTION")
+    private String action;
 
-	@BusinessKey
-	@Column(name = "ORCHESTRATION_URI")
-	private String orchestrationUri;
+    @Column(name = "description")
+    private String description;
 
-	@Column(name = "SERVICE_PARAM_XSD")
-	private String paramXsd;
+    @BusinessKey
+    @Column(name = "ORCHESTRATION_URI")
+    private String orchestrationUri;
 
-	@Column(name = "RECIPE_TIMEOUT")
-	private Integer recipeTimeout;
+    @Column(name = "SERVICE_PARAM_XSD")
+    private String paramXsd;
 
-	@Column(name = "SERVICE_TIMEOUT_INTERIM")
-	private Integer serviceTimeoutInterim;
+    @Column(name = "RECIPE_TIMEOUT")
+    private Integer recipeTimeout;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-	
-	@BusinessKey
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "SERVICE_MODEL_UUID", referencedColumnName = "MODEL_UUID",insertable = false, updatable = false)
-	private Service service;
+    @Column(name = "SERVICE_TIMEOUT_INTERIM")
+    private Integer serviceTimeoutInterim;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("serviceModelUUID", serviceModelUUID)
-				.append("action", action).append("description", description)
-				.append("orchestrationUri", orchestrationUri).append("serviceParamXSD", paramXsd)
-				.append("recipeTimeout", recipeTimeout).append("serviceTimeoutInterim", serviceTimeoutInterim)
-				.append("created", created).toString();
-	}
+    @BusinessKey
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "SERVICE_MODEL_UUID", referencedColumnName = "MODEL_UUID", insertable = false, updatable = false)
+    private Service service;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ServiceRecipe)) {
-			return false;
-		}
-		ServiceRecipe castOther = (ServiceRecipe) other;
-		return new EqualsBuilder().append(serviceModelUUID, castOther.serviceModelUUID).append(action, castOther.action)
-				.append(orchestrationUri, castOther.orchestrationUri).isEquals();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(serviceModelUUID).append(action).append(orchestrationUri).toHashCode();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("serviceModelUUID", serviceModelUUID)
+                .append("action", action).append("description", description)
+                .append("orchestrationUri", orchestrationUri).append("serviceParamXSD", paramXsd)
+                .append("recipeTimeout", recipeTimeout).append("serviceTimeoutInterim", serviceTimeoutInterim)
+                .append("created", created).toString();
+    }
 
-	// This 'default' CTR is now needed for backward compatibility since a new
-	// CTR was added below
-	public ServiceRecipe() {
-		super();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ServiceRecipe)) {
+            return false;
+        }
+        ServiceRecipe castOther = (ServiceRecipe) other;
+        return new EqualsBuilder().append(serviceModelUUID, castOther.serviceModelUUID).append(action, castOther.action)
+                .append(orchestrationUri, castOther.orchestrationUri).isEquals();
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(serviceModelUUID).append(action).append(orchestrationUri).toHashCode();
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    // This 'default' CTR is now needed for backward compatibility since a new
+    // CTR was added below
+    public ServiceRecipe() {
+        super();
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getServiceModelUUID() {
-		return serviceModelUUID;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setServiceModelUUID(String serviceModelUUID) {
-		this.serviceModelUUID = serviceModelUUID;
-	}
+    public void setCreated(Date created) {
+        this.created = created;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getServiceModelUUID() {
+        return serviceModelUUID;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setServiceModelUUID(String serviceModelUUID) {
+        this.serviceModelUUID = serviceModelUUID;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public String getOrchestrationUri() {
-		return orchestrationUri;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setOrchestrationUri(String orchestrationUri) {
-		this.orchestrationUri = orchestrationUri;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getParamXsd() {
-		return paramXsd;
-	}
+    public String getOrchestrationUri() {
+        return orchestrationUri;
+    }
 
-	public void setParamXsd(String paramXsd) {
-		this.paramXsd = paramXsd;
-	}
+    public void setOrchestrationUri(String orchestrationUri) {
+        this.orchestrationUri = orchestrationUri;
+    }
 
-	public Integer getRecipeTimeout() {
-		return recipeTimeout;
-	}
+    public String getParamXsd() {
+        return paramXsd;
+    }
 
-	public void setRecipeTimeout(Integer recipeTimeout) {
-		this.recipeTimeout = recipeTimeout;
-	}
+    public void setParamXsd(String paramXsd) {
+        this.paramXsd = paramXsd;
+    }
 
-	public Integer getServiceTimeoutInterim() {
-		return serviceTimeoutInterim;
-	}
+    public Integer getRecipeTimeout() {
+        return recipeTimeout;
+    }
 
-	public void setServiceTimeoutInterim(Integer serviceTimeoutInterim) {
-		this.serviceTimeoutInterim = serviceTimeoutInterim;
-	}
-	
-	public Service getService() {
-		return service;
-	}
+    public void setRecipeTimeout(Integer recipeTimeout) {
+        this.recipeTimeout = recipeTimeout;
+    }
 
-	public void setService(Service service) {
-		this.service = service;
-	}
+    public Integer getServiceTimeoutInterim() {
+        return serviceTimeoutInterim;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setServiceTimeoutInterim(Integer serviceTimeoutInterim) {
+        this.serviceTimeoutInterim = serviceTimeoutInterim;
+    }
+
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
 }

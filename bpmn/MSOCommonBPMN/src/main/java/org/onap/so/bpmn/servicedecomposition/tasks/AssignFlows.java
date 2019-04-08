@@ -22,23 +22,19 @@ package org.onap.so.bpmn.servicedecomposition.tasks;
 
 public enum AssignFlows {
 
-	SERVICE_INSTANCE("AssignServiceInstanceBB"),
-	VNF("AssignVnfBB"),
-	VF_MODULE("AssignVfModuleBB"),
-	NETWORK_A_LA_CARTE("AssignNetwork1802BB"),
-	NETWORK_MACRO("AssignNetworkBB"),
-	VOLUME_GROUP("AssignVolumeGroupBB"),
-	NETWORK_COLLECTION("CreateNetworkCollectionBB"),
-	FABRIC_CONFIGURATION("AssignFabricConfigurationBB");
-	
-	private final String flowName;
-	
-	private AssignFlows(String flowName) {
-		this.flowName = flowName;
-	}
-	
-	@Override
-	public String toString() {
-		return this.flowName;
-	}
+    SERVICE_INSTANCE("AssignServiceInstanceBB"), VNF("AssignVnfBB"), VF_MODULE("AssignVfModuleBB"), NETWORK_A_LA_CARTE(
+            "AssignNetwork1802BB"), NETWORK_MACRO("AssignNetworkBB"), VOLUME_GROUP(
+                    "AssignVolumeGroupBB"), NETWORK_COLLECTION(
+                            "CreateNetworkCollectionBB"), FABRIC_CONFIGURATION("AssignFabricConfigurationBB");
+
+    private final String flowName;
+
+    private AssignFlows(String flowName) {
+        this.flowName = flowName;
+    }
+
+    @Override
+    public String toString() {
+        return this.flowName;
+    }
 }

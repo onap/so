@@ -27,13 +27,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import static org.junit.Assert.assertEquals;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackDeleteNeutronNetwork;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackDeleteStack_200;
@@ -57,419 +55,455 @@ import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenstackPost;
 
 public class MSONetworkAdapterImplTest extends BaseRestTestUtils {
 
-	public static final String NETWORK_ID = "43173f6a-d699-414b-888f-ab243dda6dfe";
-	public static final String NETWORK_NAME = "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0";
+    public static final String NETWORK_ID = "43173f6a-d699-414b-888f-ab243dda6dfe";
+    public static final String NETWORK_NAME = "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0";
 
 
 
-	@Test
-	public void createNetworkByModelNameNeutronModeGetNetworkException() throws IOException{
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void createNetworkByModelNameNeutronModeGetNetworkException() throws IOException {
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenstackGet(wireMockServer, "/mockPublicUrl/v2.0/networks",HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenstackGet(wireMockServer, "/mockPublicUrl/v2.0/networks", HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameNeutronModeCreateNetworkException() throws IOException{
+    @Test
+    public void createNetworkByModelNameNeutronModeCreateNetworkException() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetNeutronNetwork_404(wireMockServer, "dvspg-VCE_VPE-mtjnj40avbc");
+        mockOpenStackGetNeutronNetwork_404(wireMockServer, "dvspg-VCE_VPE-mtjnj40avbc");
 
-		mockOpenStackGetAllNeutronNetworks_404(wireMockServer);
+        mockOpenStackGetAllNeutronNetworks_404(wireMockServer);
 
-		mockOpenstackPost(wireMockServer, "/mockPublicUrl/v2.0/networks", HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenstackPost(wireMockServer, "/mockPublicUrl/v2.0/networks", HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameNeutronMode() throws IOException{
+    @Test
+    public void createNetworkByModelNameNeutronMode() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetNeutronNetwork_404(wireMockServer, "dvspg-VCE_VPE-mtjnj40avbc");
+        mockOpenStackGetNeutronNetwork_404(wireMockServer, "dvspg-VCE_VPE-mtjnj40avbc");
 
-		mockOpenStackGetAllNeutronNetworks_404(wireMockServer);
+        mockOpenStackGetAllNeutronNetworks_404(wireMockServer);
 
-		mockOpenStackPostNeutronNetwork_200(wireMockServer, "OpenstackCreateNeutronNetworkResponse.json");
+        mockOpenStackPostNeutronNetwork_200(wireMockServer, "OpenstackCreateNeutronNetworkResponse.json");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameAlreadyExistNeutronMode() throws IOException{
+    @Test
+    public void createNetworkByModelNameAlreadyExistNeutronMode() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetAllNeutronNetworks_200(wireMockServer, "OpenstackGetNeutronNetworks.json");
+        mockOpenStackGetAllNeutronNetworks_200(wireMockServer, "OpenstackGetNeutronNetworks.json");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameAlreadyExistNeutronModeFailIfExistTrue() throws IOException{
+    @Test
+    public void createNetworkByModelNameAlreadyExistNeutronModeFailIfExistTrue() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetAllNeutronNetworks_200(wireMockServer, "OpenstackGetNeutronNetworks.json");
+        mockOpenStackGetAllNeutronNetworks_200(wireMockServer, "OpenstackGetNeutronNetworks.json");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode_Fail_If_Exist_True.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/CreateNetwork_NEUTRON_Mode_Fail_If_Exist_True.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameHeatMode() throws IOException{
+    @Test
+    public void createNetworkByModelNameHeatMode() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStack_404(wireMockServer, "dvspg-VCE_VPE-mtjnj40avbc");
+        mockOpenStackGetStack_404(wireMockServer, "dvspg-VCE_VPE-mtjnj40avbc");
 
-		mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack.json");
+        mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack.json");
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", "dvspg-VCE_VPE-mtjnj40avbc/stackId");
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json",
+                "dvspg-VCE_VPE-mtjnj40avbc/stackId");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameAlreadyExistHeatMode() throws IOException{
+    @Test
+    public void createNetworkByModelNameAlreadyExistHeatMode() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack.json");
+        mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack.json");
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", "dvspg-VCE_VPE-mtjnj40avbc");
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json",
+                "dvspg-VCE_VPE-mtjnj40avbc");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameAlreadyExistHeatModeFailIfExistTrue() throws IOException{
+    @Test
+    public void createNetworkByModelNameAlreadyExistHeatModeFailIfExistTrue() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", "dvspg-VCE_VPE-mtjnj40avbc");
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json",
+                "dvspg-VCE_VPE-mtjnj40avbc");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork_Fail_If_Exist_True.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/CreateNetwork_Fail_If_Exist_True.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
 
-	@Test
-	public void createNetworkByModelNameHeatModeQueryNetworkException() throws IOException{
+    @Test
+    public void createNetworkByModelNameHeatModeQueryNetworkException() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenstackGet(wireMockServer, "/mockPublicUrl/stacks/dvspg-VCE_VPE-mtjnj40avbc",HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenstackGet(wireMockServer, "/mockPublicUrl/stacks/dvspg-VCE_VPE-mtjnj40avbc",
+                HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameHeatModeCreateNetworkException() throws IOException{
+    @Test
+    public void createNetworkByModelNameHeatModeCreateNetworkException() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStack_404(wireMockServer, "dvspg-VCE_VPE-mtjnj40avbc");
+        mockOpenStackGetStack_404(wireMockServer, "dvspg-VCE_VPE-mtjnj40avbc");
 
-		mockOpenstackPost(wireMockServer, "/mockPublicUrl/stacks",HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenstackPost(wireMockServer, "/mockPublicUrl/stacks", HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void createNetworkByModelNameCloudSiteNotPresentError() throws IOException{
+    @Test
+    public void createNetworkByModelNameCloudSiteNotPresentError() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack.json");
+        mockOpenStackPostStack_200(wireMockServer, "OpenstackResponse_Stack.json");
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", "dvspg-VCE_VPE-mtjnj40avbc");
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json",
+                "dvspg-VCE_VPE-mtjnj40avbc");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/CreateNetwork_InvalidCloudSiteId.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/CreateNetwork_InvalidCloudSiteId.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void deleteNetworkHeatModeSuccess() throws IOException{
+    @Test
+    public void deleteNetworkHeatModeSuccess() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackDeleteOrUpdateComplete_200(wireMockServer, "OpenstackResponse_Stack_DeleteComplete.json");
+        mockOpenStackGetStackDeleteOrUpdateComplete_200(wireMockServer, "OpenstackResponse_Stack_DeleteComplete.json");
 
-		mockOpenStackDeleteStack_200(wireMockServer);
+        mockOpenStackDeleteStack_200(wireMockServer);
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json",
+                "43173f6a-d699-414b-888f-ab243dda6dfe");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/DeleteNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/DeleteNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void deleteNetworkDeleteStackException() throws IOException{
+    @Test
+    public void deleteNetworkDeleteStackException() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackDeleteOrUpdateComplete_200(wireMockServer, "OpenstackResponse_Stack_DeleteComplete.json");
+        mockOpenStackGetStackDeleteOrUpdateComplete_200(wireMockServer, "OpenstackResponse_Stack_DeleteComplete.json");
 
-		mockOpenStackDeleteStack_500(wireMockServer);
+        mockOpenStackDeleteStack_500(wireMockServer);
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json",
+                "43173f6a-d699-414b-888f-ab243dda6dfe");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/DeleteNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/DeleteNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-	@Test
-	public void deleteNetworkError() throws IOException{
+    @Test
+    public void deleteNetworkError() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackDeleteOrUpdateComplete_200(wireMockServer, "OpenstackResponse_Stack_DeleteComplete.json");
+        mockOpenStackGetStackDeleteOrUpdateComplete_200(wireMockServer, "OpenstackResponse_Stack_DeleteComplete.json");
 
-		mockOpenStackDeleteStack_200(wireMockServer);
+        mockOpenStackDeleteStack_200(wireMockServer);
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", "43173f6a-d699-414b-888f-ab243dda6dfe");
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json",
+                "43173f6a-d699-414b-888f-ab243dda6dfe");
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/DeleteNetwork.xml").replace("mtn13",""), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/DeleteNetwork.xml").replace("mtn13", ""), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
 
-	@Test
-	public void deleteNetworkNeureonMode() throws IOException{
+    @Test
+    public void deleteNetworkNeureonMode() throws IOException {
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
+        mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", NETWORK_ID, HttpStatus.SC_OK);
 
-		mockOpenStackDeleteNeutronNetwork(wireMockServer, NETWORK_ID,HttpStatus.SC_OK);
-		
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/DeleteNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackDeleteNeutronNetwork(wireMockServer, NETWORK_ID, HttpStatus.SC_OK);
 
-	@Test
-	public void deleteNetworkNeutronModeDeleteStackException() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/DeleteNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"),
+                        uri, HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void deleteNetworkNeutronModeDeleteStackException() throws IOException {
 
-		mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackDeleteNeutronNetwork(wireMockServer, NETWORK_ID,HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", NETWORK_ID, HttpStatus.SC_OK);
 
-		//mockOpenStackGetStackCreated_200("OpenstackResponse_Stack_Created.json", NETWORK_ID);
+        mockOpenStackDeleteNeutronNetwork(wireMockServer, NETWORK_ID, HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/DeleteNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        // mockOpenStackGetStackCreated_200("OpenstackResponse_Stack_Created.json", NETWORK_ID);
 
-	@Test
-	public void updateNetworkNeutronModeSuccess() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/DeleteNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"),
+                        uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void updateNetworkNeutronModeSuccess() throws IOException {
 
-		mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
-		mockOpenStackPutNeutronNetwork_200(wireMockServer, "OpenstackCreateNeutronNetworkResponse.json",NETWORK_ID);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", NETWORK_ID, HttpStatus.SC_OK);
+        mockOpenStackPutNeutronNetwork_200(wireMockServer, "OpenstackCreateNeutronNetworkResponse.json", NETWORK_ID);
 
-	@Test
-	public void updateNetworkNeutronUpdateException() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/UpdateNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"),
+                        uri, HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void updateNetworkNeutronUpdateException() throws IOException {
 
-		mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
-		mockOpenStackPutNeutronNetwork(wireMockServer, NETWORK_ID,HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", NETWORK_ID, HttpStatus.SC_OK);
+        mockOpenStackPutNeutronNetwork(wireMockServer, NETWORK_ID, HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-	@Test
-	public void updateNetworkHeatUpdateException() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/UpdateNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"),
+                        uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void updateNetworkHeatUpdateException() throws IOException {
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", NETWORK_NAME);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPutStack(wireMockServer, NETWORK_ID,HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", NETWORK_NAME);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackPutStack(wireMockServer, NETWORK_ID, HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-	@Test
-	public void updateNetworkHeatQueryException() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void updateNetworkHeatQueryException() throws IOException {
 
-		mockOpenStackGetStack_500(wireMockServer, NETWORK_NAME);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetStack_500(wireMockServer, NETWORK_NAME);
 
-	@Test
-	public void updateNetworkHeatStackNotFound() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void updateNetworkHeatStackNotFound() throws IOException {
 
-		mockOpenStackGetStack_404(wireMockServer, NETWORK_NAME);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetStack_404(wireMockServer, NETWORK_NAME);
 
-	@Test
-	public void updateNetworkNeutronQueryException() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml"), uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void updateNetworkNeutronQueryException() throws IOException {
 
-		mockOpenStackGetNeutronNetwork(wireMockServer, NETWORK_ID,HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetNeutronNetwork(wireMockServer, NETWORK_ID, HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-	@Test
-	public void updateNetworkNeutronStackNotFound() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/UpdateNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"),
+                        uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void updateNetworkNeutronStackNotFound() throws IOException {
 
-		mockOpenStackGetNeutronNetwork(wireMockServer, NETWORK_ID,HttpStatus.SC_NOT_FOUND);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/UpdateNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetNeutronNetwork(wireMockServer, NETWORK_ID, HttpStatus.SC_NOT_FOUND);
 
-	@Test
-	public void queryNetworkHeatModesuccess() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/UpdateNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"),
+                        uri, HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void queryNetworkHeatModesuccess() throws IOException {
 
-		mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", NETWORK_ID);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/QueryNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetStackCreated_200(wireMockServer, "OpenstackResponse_Stack_Created.json", NETWORK_ID);
 
-	@Test
-	public void queryNetworkHeatModeQueryException() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/QueryNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"), uri,
+                        HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void queryNetworkHeatModeQueryException() throws IOException {
 
-		mockOpenStackGetStack_500(wireMockServer, NETWORK_ID);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/QueryNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetStack_500(wireMockServer, NETWORK_ID);
 
-	@Test
-	public void queryNetworkNeutronModeSuccess() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/QueryNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"), uri,
+                        HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void queryNetworkNeutronModeSuccess() throws IOException {
 
-		mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json",NETWORK_ID,HttpStatus.SC_OK);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/QueryNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetNeutronNetwork(wireMockServer, "GetNeutronNetwork.json", NETWORK_ID, HttpStatus.SC_OK);
 
-	@Test
-	public void queryNetworkNeutronModeException() throws IOException{
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/QueryNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"), uri,
+                        HttpMethod.POST);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+    @Test
+    public void queryNetworkNeutronModeException() throws IOException {
 
-		mockOpenStackGetNeutronNetwork(wireMockServer, NETWORK_ID,HttpStatus.SC_INTERNAL_SERVER_ERROR);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		String uri =  "/services/NetworkAdapter";
-		headers.set("X-ECOMP-RequestID", "123456789456127");
-		ResponseEntity<String> response = sendXMLRequest(inputStream("/QueryNetwork.xml").replace("CONTRAIL30_BASIC","CONTRAIL31_GNDIRECT"), uri, HttpMethod.POST);
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
-	}
+        mockOpenStackGetNeutronNetwork(wireMockServer, NETWORK_ID, HttpStatus.SC_INTERNAL_SERVER_ERROR);
 
-	public ResponseEntity<String> sendXMLRequest(String requestJson, String uriPath, HttpMethod reqMethod){
-		headers.set("Accept", MediaType.APPLICATION_XML);
-		headers.set("Content-Type", MediaType.APPLICATION_XML);
+        String uri = "/services/NetworkAdapter";
+        headers.set("X-ECOMP-RequestID", "123456789456127");
+        ResponseEntity<String> response =
+                sendXMLRequest(inputStream("/QueryNetwork.xml").replace("CONTRAIL30_BASIC", "CONTRAIL31_GNDIRECT"), uri,
+                        HttpMethod.POST);
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+    }
 
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(uriPath));
+    public ResponseEntity<String> sendXMLRequest(String requestJson, String uriPath, HttpMethod reqMethod) {
+        headers.set("Accept", MediaType.APPLICATION_XML);
+        headers.set("Content-Type", MediaType.APPLICATION_XML);
 
-		HttpEntity<String> request = new HttpEntity<String>(requestJson, headers);
-		ResponseEntity<String> response = restTemplate.exchange(builder.toUriString(),
-				reqMethod, request, String.class);
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(uriPath));
 
-		return response;
-	}
+        HttpEntity<String> request = new HttpEntity<String>(requestJson, headers);
+        ResponseEntity<String> response =
+                restTemplate.exchange(builder.toUriString(), reqMethod, request, String.class);
 
-	public String inputStream(String JsonInput)throws IOException{
-		JsonInput = "src/test/resources/" + JsonInput;
-		String input = new String(Files.readAllBytes(Paths.get(JsonInput)));
-		return input;
-	}
+        return response;
+    }
+
+    public String inputStream(String JsonInput) throws IOException {
+        JsonInput = "src/test/resources/" + JsonInput;
+        String input = new String(Files.readAllBytes(Paths.get(JsonInput)));
+        return input;
+    }
 }

@@ -25,13 +25,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Rule;
@@ -41,7 +39,6 @@ import org.onap.so.bpmn.common.exceptions.MalformedBuildingBlockInputException;
 import org.onap.so.bpmn.common.exceptions.MissingBuildingBlockInputException;
 import org.onap.so.bpmn.common.exceptions.RequiredExecutionVariableExeception;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

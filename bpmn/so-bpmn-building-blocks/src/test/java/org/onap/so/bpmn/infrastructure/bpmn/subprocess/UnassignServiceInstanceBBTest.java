@@ -19,8 +19,8 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
-import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 
+import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import org.camunda.bpm.engine.impl.pvm.runtime.ExecutionImpl;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -28,15 +28,17 @@ import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 
-public class UnassignServiceInstanceBBTest extends BaseBPMNTest{ 
-	@Test
-	public void sunnyDayUnassignServiceInstanceSDNC() throws InterruptedException {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		BuildingBlockExecution bbe = new DelegateExecutionImpl(new ExecutionImpl());
-		variables.put("gBuildingBlockExecution", bbe);
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignServiceInstanceBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignServiceInstanceBB", "Task_SdncUnassignServiceInstance", "CallActivity_sdncHandlerCall", "Task_AAIDeleteServiceInstance", "End_UnassignServiceInstanceBB");
-		assertThat(pi).isEnded();
-	}
+public class UnassignServiceInstanceBBTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayUnassignServiceInstanceSDNC() throws InterruptedException {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        BuildingBlockExecution bbe = new DelegateExecutionImpl(new ExecutionImpl());
+        variables.put("gBuildingBlockExecution", bbe);
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("UnassignServiceInstanceBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("Start_UnassignServiceInstanceBB",
+                "Task_SdncUnassignServiceInstance", "CallActivity_sdncHandlerCall", "Task_AAIDeleteServiceInstance",
+                "End_UnassignServiceInstanceBB");
+        assertThat(pi).isEnded();
+    }
 }

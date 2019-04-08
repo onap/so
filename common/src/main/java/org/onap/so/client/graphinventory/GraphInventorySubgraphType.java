@@ -22,17 +22,16 @@ package org.onap.so.client.graphinventory;
 
 
 public enum GraphInventorySubgraphType {
-	STAR("star"),
-	PRUNE("prune");
+    STAR("star"), PRUNE("prune");
 
-	private final String name;
+    private final String name;
 
-	private GraphInventorySubgraphType(String name) {
-		this.name = name;
-	}
+    private GraphInventorySubgraphType(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 }

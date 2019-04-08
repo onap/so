@@ -42,46 +42,50 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VnfAdapterDeleteTasks {
-	private static final Logger logger = LoggerFactory.getLogger(VnfAdapterDeleteTasks.class);
-	private static final String VNFREST_REQUEST = "VNFREST_Request";
-	
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private VnfAdapterVolumeGroupResources vnfAdapterVolumeGroupResources;
-	@Autowired
-	private VnfAdapterVfModuleResources vnfAdapterVfModuleResources;
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	
-	public void deleteVolumeGroup(BuildingBlockExecution execution) {
-		try {
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
-			
-			DeleteVolumeGroupRequest deleteVolumeGroupRequest = vnfAdapterVolumeGroupResources.deleteVolumeGroupRequest(gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, volumeGroup);
-			execution.setVariable(VNFREST_REQUEST, deleteVolumeGroupRequest.toXmlString());
-			execution.setVariable("deleteVolumeGroupRequest", "true");
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+    private static final Logger logger = LoggerFactory.getLogger(VnfAdapterDeleteTasks.class);
+    private static final String VNFREST_REQUEST = "VNFREST_Request";
 
-	public void deleteVfModule(BuildingBlockExecution execution) {
-		try {
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-			GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-			
-			DeleteVfModuleRequest deleteVfModuleRequest = vnfAdapterVfModuleResources.deleteVfModuleRequest( gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, genericVnf, vfModule);
-			execution.setVariable(VNFREST_REQUEST, deleteVfModuleRequest.toXmlString());
-			execution.setVariable("deleteVfModuleRequest", "true");
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private VnfAdapterVolumeGroupResources vnfAdapterVolumeGroupResources;
+    @Autowired
+    private VnfAdapterVfModuleResources vnfAdapterVfModuleResources;
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+
+    public void deleteVolumeGroup(BuildingBlockExecution execution) {
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
+
+            DeleteVolumeGroupRequest deleteVolumeGroupRequest = vnfAdapterVolumeGroupResources.deleteVolumeGroupRequest(
+                    gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, volumeGroup);
+            execution.setVariable(VNFREST_REQUEST, deleteVolumeGroupRequest.toXmlString());
+            execution.setVariable("deleteVolumeGroupRequest", "true");
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void deleteVfModule(BuildingBlockExecution execution) {
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+            GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+
+            DeleteVfModuleRequest deleteVfModuleRequest = vnfAdapterVfModuleResources.deleteVfModuleRequest(
+                    gBBInput.getRequestContext(), gBBInput.getCloudRegion(), serviceInstance, genericVnf, vfModule);
+            execution.setVariable(VNFREST_REQUEST, deleteVfModuleRequest.toXmlString());
+            execution.setVariable("deleteVfModuleRequest", "true");
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 }

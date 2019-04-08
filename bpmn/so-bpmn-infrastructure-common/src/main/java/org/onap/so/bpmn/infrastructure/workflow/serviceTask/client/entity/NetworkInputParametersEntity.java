@@ -21,13 +21,12 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 
 public class NetworkInputParametersEntity {
-	@JsonProperty("GENERIC-RESOURCE-API:param")
+    @JsonProperty("GENERIC-RESOURCE-API:param")
     private List<ParamEntity> paramList;
-	
+
     public List<ParamEntity> getParamList() {
         return paramList;
     }

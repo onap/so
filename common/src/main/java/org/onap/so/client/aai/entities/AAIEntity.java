@@ -20,6 +20,6 @@
 
 package org.onap.so.client.aai.entities;
 
-public class AAIEntity{
-	
+public class AAIEntity {
+
 }

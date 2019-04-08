@@ -38,63 +38,63 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
  */
 public class StubbedBuildingBlockExecution implements BuildingBlockExecution {
 
-  private static final String CLOUD_OWNER = "CLOUD_OWNER";
-  private static final String LCP_CLOUD_REGIONID = "RegionOnce";
-  private static final String TENANT_ID = UUID.randomUUID().toString();
-  private final Map<String, Serializable> execution = new HashMap<>();
-  private final GeneralBuildingBlock generalBuildingBlock;
+    private static final String CLOUD_OWNER = "CLOUD_OWNER";
+    private static final String LCP_CLOUD_REGIONID = "RegionOnce";
+    private static final String TENANT_ID = UUID.randomUUID().toString();
+    private final Map<String, Serializable> execution = new HashMap<>();
+    private final GeneralBuildingBlock generalBuildingBlock;
 
-  StubbedBuildingBlockExecution() {
-    generalBuildingBlock = getGeneralBuildingBlockValue();
-  }
+    StubbedBuildingBlockExecution() {
+        generalBuildingBlock = getGeneralBuildingBlockValue();
+    }
 
-  @Override
-  public GeneralBuildingBlock getGeneralBuildingBlock() {
-    return generalBuildingBlock;
-  }
+    @Override
+    public GeneralBuildingBlock getGeneralBuildingBlock() {
+        return generalBuildingBlock;
+    }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public <T> T getVariable(final String key) {
-    return (T) execution.get(key);
-  }
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getVariable(final String key) {
+        return (T) execution.get(key);
+    }
 
-  @Override
-  public <T> T getRequiredVariable(final String key) throws RequiredExecutionVariableExeception {
-    return null;
-  }
+    @Override
+    public <T> T getRequiredVariable(final String key) throws RequiredExecutionVariableExeception {
+        return null;
+    }
 
-  @Override
-  public void setVariable(final String key, final Serializable value) {
-    execution.put(key, value);
-  }
+    @Override
+    public void setVariable(final String key, final Serializable value) {
+        execution.put(key, value);
+    }
 
-  @Override
-  public Map<ResourceKey, String> getLookupMap() {
-    return Collections.emptyMap();
-  }
+    @Override
+    public Map<ResourceKey, String> getLookupMap() {
+        return Collections.emptyMap();
+    }
 
-  @Override
-  public String getFlowToBeCalled() {
-    return null;
-  }
+    @Override
+    public String getFlowToBeCalled() {
+        return null;
+    }
 
-  public static String getTenantId() {
-    return TENANT_ID;
-  }
+    public static String getTenantId() {
+        return TENANT_ID;
+    }
 
-  private GeneralBuildingBlock getGeneralBuildingBlockValue() {
-    final GeneralBuildingBlock buildingBlock = new GeneralBuildingBlock();
-    buildingBlock.setCloudRegion(getCloudRegion());
-    return buildingBlock;
-  }
+    private GeneralBuildingBlock getGeneralBuildingBlockValue() {
+        final GeneralBuildingBlock buildingBlock = new GeneralBuildingBlock();
+        buildingBlock.setCloudRegion(getCloudRegion());
+        return buildingBlock;
+    }
 
-  private CloudRegion getCloudRegion() {
-    final CloudRegion cloudRegion = new CloudRegion();
-    cloudRegion.setCloudOwner(CLOUD_OWNER);
-    cloudRegion.setLcpCloudRegionId(LCP_CLOUD_REGIONID);
-    cloudRegion.setTenantId(TENANT_ID);
-    return cloudRegion;
-  }
+    private CloudRegion getCloudRegion() {
+        final CloudRegion cloudRegion = new CloudRegion();
+        cloudRegion.setCloudOwner(CLOUD_OWNER);
+        cloudRegion.setLcpCloudRegionId(LCP_CLOUD_REGIONID);
+        cloudRegion.setTenantId(TENANT_ID);
+        return cloudRegion;
+    }
 
 }

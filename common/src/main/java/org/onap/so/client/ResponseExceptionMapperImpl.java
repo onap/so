@@ -17,11 +17,10 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client;
 
 import java.util.Optional;
-
 import javax.annotation.Priority;
 import javax.ws.rs.ext.Provider;
 
@@ -29,10 +28,10 @@ import javax.ws.rs.ext.Provider;
 @Priority(Integer.MIN_VALUE)
 public class ResponseExceptionMapperImpl extends ResponseExceptionMapper {
 
-	@Override
-	public Optional<String> extractMessage(String entity) {
-		return Optional.of(entity);
-	}
-	
+    @Override
+    public Optional<String> extractMessage(String entity) {
+        return Optional.of(entity);
+    }
+
 
 }

@@ -21,7 +21,6 @@
 package org.onap.so.adapters.openstack;
 
 import java.util.concurrent.Executor;
-
 import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,46 +33,45 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-@SpringBootApplication(scanBasePackages = { "org.onap.so" })
+@SpringBootApplication(scanBasePackages = {"org.onap.so"})
 @EnableAsync
 @EnableScheduling
-@EnableJpaRepositories({ "org.onap.so.db.catalog.data.repository",
-		"org.onap.so.db.request.data.repository"})
-@EntityScan({ "org.onap.so.db.catalog.beans", "org.onap.so.db.request.beans"})
+@EnableJpaRepositories({"org.onap.so.db.catalog.data.repository", "org.onap.so.db.request.data.repository"})
+@EntityScan({"org.onap.so.db.catalog.beans", "org.onap.so.db.request.beans"})
 public class MsoOpenstackAdaptersApplication {
 
 
-	@Value("${mso.async.core-pool-size}")
-	private int corePoolSize;
+    @Value("${mso.async.core-pool-size}")
+    private int corePoolSize;
 
-	@Value("${mso.async.max-pool-size}")
-	private int maxPoolSize;
+    @Value("${mso.async.max-pool-size}")
+    private int maxPoolSize;
 
-	@Value("${mso.async.queue-capacity}")
-	private int queueCapacity;
+    @Value("${mso.async.queue-capacity}")
+    private int queueCapacity;
 
-	private static final String LOGS_DIR = "logs_dir";
+    private static final String LOGS_DIR = "logs_dir";
 
-	private static void setLogsDir() {
-		if (System.getProperty(LOGS_DIR) == null) {
-			System.getProperties().setProperty(LOGS_DIR, "./logs/openstack/");
-		}
-	}
+    private static void setLogsDir() {
+        if (System.getProperty(LOGS_DIR) == null) {
+            System.getProperties().setProperty(LOGS_DIR, "./logs/openstack/");
+        }
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(MsoOpenstackAdaptersApplication.class, args);
-		setLogsDir();
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(MsoOpenstackAdaptersApplication.class, args);
+        setLogsDir();
+    }
 
-	@Bean
-	public Executor asyncExecutor() {
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setTaskDecorator(new MDCTaskDecorator());
-		executor.setCorePoolSize(corePoolSize);
-		executor.setMaxPoolSize(maxPoolSize);
-		executor.setQueueCapacity(queueCapacity);
-		executor.setThreadNamePrefix("OpenstackAdapters-");
-		executor.initialize();
-		return executor;
-	}
+    @Bean
+    public Executor asyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setTaskDecorator(new MDCTaskDecorator());
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
+        executor.setThreadNamePrefix("OpenstackAdapters-");
+        executor.initialize();
+        return executor;
+    }
 }

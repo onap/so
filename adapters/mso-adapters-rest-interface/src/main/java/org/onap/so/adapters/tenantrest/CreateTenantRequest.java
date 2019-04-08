@@ -26,77 +26,73 @@ package org.onap.so.adapters.tenantrest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.entity.MsoRequest;
 
 @XmlRootElement(name = "createTenantRequest")
 public class CreateTenantRequest extends TenantRequestCommon {
-	private String cloudSiteId;
-	private String tenantName;
-	private Boolean failIfExists;
-	private Boolean backout;
-	private Map<String,String> metadata = new HashMap<>();
-	private MsoRequest msoRequest = new MsoRequest();
-	
-	public CreateTenantRequest() {
-		//empty constructor
-	}
+    private String cloudSiteId;
+    private String tenantName;
+    private Boolean failIfExists;
+    private Boolean backout;
+    private Map<String, String> metadata = new HashMap<>();
+    private MsoRequest msoRequest = new MsoRequest();
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public CreateTenantRequest() {
+        // empty constructor
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public String getTenantName() {
-		return tenantName;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
-	public void setTenantName(String tenantName) {
-		this.tenantName = tenantName;
-	}
+    public String getTenantName() {
+        return tenantName;
+    }
 
-	public Boolean getFailIfExists() {
-		return failIfExists;
-	}
+    public void setTenantName(String tenantName) {
+        this.tenantName = tenantName;
+    }
 
-	public void setFailIfExists(Boolean failIfExists) {
-		this.failIfExists = failIfExists;
-	}
+    public Boolean getFailIfExists() {
+        return failIfExists;
+    }
 
-	public Boolean getBackout() {
-		return backout;
-	}
+    public void setFailIfExists(Boolean failIfExists) {
+        this.failIfExists = failIfExists;
+    }
 
-	public void setBackout(Boolean backout) {
-		this.backout = backout;
-	}
+    public Boolean getBackout() {
+        return backout;
+    }
 
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
+    public void setBackout(Boolean backout) {
+        this.backout = backout;
+    }
 
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
 
-	@Override
-	public String toString() {
-		return "CreateTenantRequest [cloudSiteId=" + cloudSiteId
-				+ ", tenantName=" + tenantName + ", failIfExists="
-				+ failIfExists + ", backout=" + backout + ", metadata="
-				+ metadata + "]";
-	}
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
+
+    @Override
+    public String toString() {
+        return "CreateTenantRequest [cloudSiteId=" + cloudSiteId + ", tenantName=" + tenantName + ", failIfExists="
+                + failIfExists + ", backout=" + backout + ", metadata=" + metadata + "]";
+    }
 }

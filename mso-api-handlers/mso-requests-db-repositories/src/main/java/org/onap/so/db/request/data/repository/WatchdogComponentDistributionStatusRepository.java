@@ -21,15 +21,16 @@
 package org.onap.so.db.request.data.repository;
 
 import java.util.List;
-
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatus;
 import org.onap.so.db.request.beans.WatchdogComponentDistributionStatusId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
-@RepositoryRestResource(collectionResourceRel = "watchdogComponentDistributionStatus", path = "watchdogComponentDistributionStatus")
-public interface WatchdogComponentDistributionStatusRepository extends JpaRepository<WatchdogComponentDistributionStatus, WatchdogComponentDistributionStatusId> {
+@RepositoryRestResource(collectionResourceRel = "watchdogComponentDistributionStatus",
+        path = "watchdogComponentDistributionStatus")
+public interface WatchdogComponentDistributionStatusRepository
+        extends JpaRepository<WatchdogComponentDistributionStatus, WatchdogComponentDistributionStatusId> {
 
-	public List<WatchdogComponentDistributionStatus> findByDistributionId(String distributionId);
+    public List<WatchdogComponentDistributionStatus> findByDistributionId(String distributionId);
 }

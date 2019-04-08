@@ -25,7 +25,6 @@ package org.onap.so.client.cds;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
@@ -40,12 +39,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Struct;
 import com.google.protobuf.Struct.Builder;
 import com.google.protobuf.util.JsonFormat;
-
 import io.grpc.Status;
 
 /**
@@ -67,28 +64,26 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
     private ExceptionBuilder exceptionUtil;
 
     /**
-     * Extracting data from execution object and building the ExecutionServiceInput
-     * Object
+     * Extracting data from execution object and building the ExecutionServiceInput Object
      * 
-     * @param execution
-     *            DelegateExecution object
+     * @param execution DelegateExecution object
      */
     public void constructExecutionServiceInputObject(DelegateExecution execution) {
         logger.trace("Start AbstractCDSProcessingBBUtils.preProcessRequest ");
 
         try {
-            AbstractCDSPropertiesBean executionObject = (AbstractCDSPropertiesBean) execution
-                    .getVariable("executionObject");
+            AbstractCDSPropertiesBean executionObject =
+                    (AbstractCDSPropertiesBean) execution.getVariable("executionObject");
 
             String payload = executionObject.getRequestObject();
 
             CommonHeader commonHeader = CommonHeader.newBuilder().setOriginatorId(executionObject.getOriginatorId())
                     .setRequestId(executionObject.getRequestId()).setSubRequestId(executionObject.getSubRequestId())
                     .build();
-            ActionIdentifiers actionIdentifiers = ActionIdentifiers.newBuilder()
-                    .setBlueprintName(executionObject.getBlueprintName())
-                    .setBlueprintVersion(executionObject.getBlueprintVersion())
-                    .setActionName(executionObject.getActionName()).setMode(executionObject.getMode()).build();
+            ActionIdentifiers actionIdentifiers =
+                    ActionIdentifiers.newBuilder().setBlueprintName(executionObject.getBlueprintName())
+                            .setBlueprintVersion(executionObject.getBlueprintVersion())
+                            .setActionName(executionObject.getActionName()).setMode(executionObject.getMode()).build();
 
             Builder struct = Struct.newBuilder();
             try {
@@ -99,9 +94,9 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
                         executionObject.getActionName(), e);
             }
 
-            ExecutionServiceInput executionServiceInput = ExecutionServiceInput.newBuilder()
-                    .setCommonHeader(commonHeader).setActionIdentifiers(actionIdentifiers).setPayload(struct.build())
-                    .build();
+            ExecutionServiceInput executionServiceInput =
+                    ExecutionServiceInput.newBuilder().setCommonHeader(commonHeader)
+                            .setActionIdentifiers(actionIdentifiers).setPayload(struct.build()).build();
 
             execution.setVariable("executionServiceInput", executionServiceInput);
 
@@ -111,11 +106,9 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
     }
 
     /**
-     * get the executionServiceInput object from execution and send a request to CDS
-     * Client and wait for TIMEOUT period
+     * get the executionServiceInput object from execution and send a request to CDS Client and wait for TIMEOUT period
      * 
-     * @param execution
-     *            DelegateExecution object
+     * @param execution DelegateExecution object
      */
     public void sendRequestToCDSClient(DelegateExecution execution) {
 
@@ -127,13 +120,13 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
                         "No RestProperty.CDSProperties implementation found on classpath, can't create client.");
             }
 
-            ExecutionServiceInput executionServiceInput = (ExecutionServiceInput) execution
-                    .getVariable("executionServiceInput");
+            ExecutionServiceInput executionServiceInput =
+                    (ExecutionServiceInput) execution.getVariable("executionServiceInput");
 
-            try(CDSProcessingClient cdsClient = new CDSProcessingClient(this)) {
+            try (CDSProcessingClient cdsClient = new CDSProcessingClient(this)) {
                 CountDownLatch countDownLatch = cdsClient.sendRequest(executionServiceInput);
                 countDownLatch.await(props.getTimeout(), TimeUnit.SECONDS);
-            } catch (InterruptedException ex){
+            } catch (InterruptedException ex) {
                 logger.error("Caught exception in sendRequestToCDSClient in AbstractCDSProcessingBBUtils : ", ex);
                 Thread.currentThread().interrupt();
             }
@@ -158,21 +151,21 @@ public class AbstractCDSProcessingBBUtils implements CDSProcessingListener {
 
         switch (eventType) {
 
-        case EVENT_COMPONENT_FAILURE:
-            // failed processing with failure
-            cdsResponse.set(FAILED);
-            break;
-        case EVENT_COMPONENT_PROCESSING:
-            // still processing
-            cdsResponse.set(PROCESSING);
-            break;
-        case EVENT_COMPONENT_EXECUTED:
-            // done with async processing
-            cdsResponse.set(SUCCESS);
-            break;
-        default:
-            cdsResponse.set(FAILED);
-            break;
+            case EVENT_COMPONENT_FAILURE:
+                // failed processing with failure
+                cdsResponse.set(FAILED);
+                break;
+            case EVENT_COMPONENT_PROCESSING:
+                // still processing
+                cdsResponse.set(PROCESSING);
+                break;
+            case EVENT_COMPONENT_EXECUTED:
+                // done with async processing
+                cdsResponse.set(SUCCESS);
+                break;
+            default:
+                cdsResponse.set(FAILED);
+                break;
         }
 
     }

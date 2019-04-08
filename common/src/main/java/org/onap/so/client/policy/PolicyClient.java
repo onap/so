@@ -26,10 +26,10 @@ import org.onap.so.client.policy.entities.PolicyDecision;
 
 public interface PolicyClient {
 
-	public PolicyDecision getDecision(String serviceType, String vnfType, String bbID, String workStep,
-			String errorCode);
-	
-	public DictionaryData getAllowedTreatments(String bbID, String workStep);
-	
-	public Config getConfigWithPolicyName(String policyName);
+    public PolicyDecision getDecision(String serviceType, String vnfType, String bbID, String workStep,
+            String errorCode);
+
+    public DictionaryData getAllowedTreatments(String bbID, String workStep);
+
+    public Config getConfigWithPolicyName(String policyName);
 }

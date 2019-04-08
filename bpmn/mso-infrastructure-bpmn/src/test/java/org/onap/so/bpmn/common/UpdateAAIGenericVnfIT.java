@@ -18,7 +18,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.onap.so.bpmn.common;
 
@@ -28,12 +28,10 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfById_404;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPatchGenericVnf;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutGenericVnf;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutGenericVnf_Bad;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -49,129 +47,134 @@ import org.slf4j.LoggerFactory;
  */
 
 public class UpdateAAIGenericVnfIT extends BaseIntegrationTest {
-	
-	Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
-	
-		
-	/**
-	 * Test the happy path through the flow.
-	 */
-	@Test	
-	
-	public void happyPath() throws IOException {
-		logStart();
-		
-		String updateAAIGenericVnfRequest =	FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
-		MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
-		MockPutGenericVnf(wireMockServer, "/skask", 200);
-		MockPatchGenericVnf(wireMockServer, "skask");
-		
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", UUID.randomUUID().toString());
-		variables.put("isDebugLogEnabled","true");
-		variables.put("UpdateAAIGenericVnfRequest", updateAAIGenericVnfRequest);
-		invokeSubProcess("UpdateAAIGenericVnf", businessKey, variables);
-		
-		Assert.assertTrue(isProcessEnded(businessKey));
-		String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponse");
-		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponseCode");
-		logger.debug("Subflow response code: {}", responseCode);
-		logger.debug("Subflow response: {}", response);
-		Assert.assertEquals(200, responseCode.intValue());
-		
-		logEnd();
-	}
 
-	/**
-	 * Test the happy path through the flow.
-	 */
-	@Test	
-	
-	public void personaMismatch() throws IOException {
-		
-		logStart();
-		
-		String updateAAIGenericVnfRequest =	FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
-		updateAAIGenericVnfRequest = updateAAIGenericVnfRequest.replaceFirst("introvert", "extrovert");
-		
-		MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
-		
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", UUID.randomUUID().toString());
-		variables.put("isDebugLogEnabled","true");
-		variables.put("UpdateAAIGenericVnfRequest", updateAAIGenericVnfRequest);
-		invokeSubProcess("UpdateAAIGenericVnf", businessKey, variables);
-		
-		Assert.assertTrue(isProcessEnded(businessKey));
-		WorkflowException workflowException = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
-		logger.debug("Workflow Exception: {}", workflowException);
-		Assert.assertNotNull(workflowException);
-		
-		logEnd();
-	}
+    Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleIT.class);
 
-	/**
-	 * Test the case where the GET to AAI returns a 404.
-	 */
-	@Test	
-	
-	public void badGet() throws IOException {
-		
-		logStart();
-		
-		String updateAAIGenericVnfRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
-		
-		MockGetGenericVnfById_404(wireMockServer, "skask[?]depth=1");
-		
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", UUID.randomUUID().toString());
-		variables.put("isDebugLogEnabled","true");
-		variables.put("UpdateAAIGenericVnfRequest", updateAAIGenericVnfRequest);
-		invokeSubProcess("UpdateAAIGenericVnf", businessKey, variables);
-		
-		Assert.assertTrue(isProcessEnded(businessKey));
-		String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_getGenericVnfResponse");
-		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_getGenericVnfResponseCode");
-		logger.debug("Subflow response code: {}", responseCode);
-		logger.debug("Subflow response: {}", response);
-		Assert.assertEquals(404, responseCode.intValue());
-		
-		logEnd();
-	}
 
-	/**
-	 * Test the case where the GET to AAI is successful, but he subsequent PUT returns 404.
-	 */
-	@Test	
-	
-	public void badPatch() throws IOException {
-		
-		logStart();
-		
-		String updateAAIGenericVnfRequest = FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml"); 
-		
-		MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
-		MockPutGenericVnf_Bad(wireMockServer, "skask", 404);
-		MockAAIVfModuleBadPatch(wireMockServer, "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask", 404);
-		
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", UUID.randomUUID().toString());
-		variables.put("isDebugLogEnabled","true");
-		variables.put("UpdateAAIGenericVnfRequest", updateAAIGenericVnfRequest);
-		invokeSubProcess("UpdateAAIGenericVnf", businessKey, variables);
-		
-		Assert.assertTrue(isProcessEnded(businessKey));
-		String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponse");
-		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponseCode");
-		logger.debug("Subflow response code: {}", responseCode);
-		logger.debug("Subflow response: {}", response);
-		Assert.assertEquals(404, responseCode.intValue());
-		
-		logEnd();
-	}
+    /**
+     * Test the happy path through the flow.
+     */
+    @Test
+
+    public void happyPath() throws IOException {
+        logStart();
+
+        String updateAAIGenericVnfRequest =
+                FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml");
+        MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
+        MockPutGenericVnf(wireMockServer, "/skask", 200);
+        MockPatchGenericVnf(wireMockServer, "skask");
+
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", UUID.randomUUID().toString());
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("UpdateAAIGenericVnfRequest", updateAAIGenericVnfRequest);
+        invokeSubProcess("UpdateAAIGenericVnf", businessKey, variables);
+
+        Assert.assertTrue(isProcessEnded(businessKey));
+        String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponse");
+        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponseCode");
+        logger.debug("Subflow response code: {}", responseCode);
+        logger.debug("Subflow response: {}", response);
+        Assert.assertEquals(200, responseCode.intValue());
+
+        logEnd();
+    }
+
+    /**
+     * Test the happy path through the flow.
+     */
+    @Test
+
+    public void personaMismatch() throws IOException {
+
+        logStart();
+
+        String updateAAIGenericVnfRequest =
+                FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml");
+        updateAAIGenericVnfRequest = updateAAIGenericVnfRequest.replaceFirst("introvert", "extrovert");
+
+        MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
+
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", UUID.randomUUID().toString());
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("UpdateAAIGenericVnfRequest", updateAAIGenericVnfRequest);
+        invokeSubProcess("UpdateAAIGenericVnf", businessKey, variables);
+
+        Assert.assertTrue(isProcessEnded(businessKey));
+        WorkflowException workflowException =
+                (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
+        logger.debug("Workflow Exception: {}", workflowException);
+        Assert.assertNotNull(workflowException);
+
+        logEnd();
+    }
+
+    /**
+     * Test the case where the GET to AAI returns a 404.
+     */
+    @Test
+
+    public void badGet() throws IOException {
+
+        logStart();
+
+        String updateAAIGenericVnfRequest =
+                FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml");
+
+        MockGetGenericVnfById_404(wireMockServer, "skask[?]depth=1");
+
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", UUID.randomUUID().toString());
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("UpdateAAIGenericVnfRequest", updateAAIGenericVnfRequest);
+        invokeSubProcess("UpdateAAIGenericVnf", businessKey, variables);
+
+        Assert.assertTrue(isProcessEnded(businessKey));
+        String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_getGenericVnfResponse");
+        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_getGenericVnfResponseCode");
+        logger.debug("Subflow response code: {}", responseCode);
+        logger.debug("Subflow response: {}", response);
+        Assert.assertEquals(404, responseCode.intValue());
+
+        logEnd();
+    }
+
+    /**
+     * Test the case where the GET to AAI is successful, but he subsequent PUT returns 404.
+     */
+    @Test
+
+    public void badPatch() throws IOException {
+
+        logStart();
+
+        String updateAAIGenericVnfRequest =
+                FileUtil.readResourceFile("__files/VfModularity/UpdateAAIGenericVnfRequest.xml");
+
+        MockGetGenericVnfByIdWithDepth(wireMockServer, "skask", 1, "VfModularity/GenericVnf.xml");
+        MockPutGenericVnf_Bad(wireMockServer, "skask", 404);
+        MockAAIVfModuleBadPatch(wireMockServer, "/aai/v[0-9]+/network/generic-vnfs/generic-vnf/skask", 404);
+
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", UUID.randomUUID().toString());
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("UpdateAAIGenericVnfRequest", updateAAIGenericVnfRequest);
+        invokeSubProcess("UpdateAAIGenericVnf", businessKey, variables);
+
+        Assert.assertTrue(isProcessEnded(businessKey));
+        String response = (String) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponse");
+        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "UAAIGenVnf_updateGenericVnfResponseCode");
+        logger.debug("Subflow response code: {}", responseCode);
+        logger.debug("Subflow response: {}", response);
+        Assert.assertEquals(404, responseCode.intValue());
+
+        logEnd();
+    }
 }
 

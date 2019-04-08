@@ -26,9 +26,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "fabric-config-models"
-})
+@JsonPropertyOrder({"fabric-config-models"})
 public class Content {
 
     @JsonProperty("fabric-config-models")

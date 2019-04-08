@@ -27,43 +27,44 @@ import org.onap.so.serviceinstancebeans.RelatedInstance;
 import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestInfo;
 
-public class MembersValidation implements ValidationRule{
+public class MembersValidation implements ValidationRule {
     private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-    	RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
-    	RelatedInstanceList[] relatedInstanceList = info.getSir().getRequestDetails().getRelatedInstanceList();
-    	boolean vnfRelatedInstance = false;
-    	
-    	if(requestInfo == null){
-    		throw new ValidationException("requestInfo", true);
-    	}else if(empty(requestInfo.getRequestorId())) {
-        	throw new ValidationException ("requestorId", true);
-        }else if (empty (requestInfo.getSource ())) {
-        	throw new ValidationException ("source", true);
+
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
+        RelatedInstanceList[] relatedInstanceList = info.getSir().getRequestDetails().getRelatedInstanceList();
+        boolean vnfRelatedInstance = false;
+
+        if (requestInfo == null) {
+            throw new ValidationException("requestInfo", true);
+        } else if (empty(requestInfo.getRequestorId())) {
+            throw new ValidationException("requestorId", true);
+        } else if (empty(requestInfo.getSource())) {
+            throw new ValidationException("source", true);
         }
-    	if(relatedInstanceList == null){
-    		throw new ValidationException("related instances", true);
-    	}else{
-    		for(RelatedInstanceList instanceList : relatedInstanceList){
-    			RelatedInstance relatedInstance = instanceList.getRelatedInstance();
-    			ModelType modelType = relatedInstance.getModelInfo().getModelType();
-    			if(empty(relatedInstance.getInstanceId())){
-    				throw new ValidationException("instanceId in relatedInstances", true);
-    			}
-    			if (modelType == null) {
-	          		throw new ValidationException("modelType in relatedInstance", true);
-	          	}
-    			if(modelType == ModelType.vnf){
-    				vnfRelatedInstance = true;
-    			}
-    		}
-    		if(!vnfRelatedInstance){
-    			throw new ValidationException("vnf relatedInstance", true);
-    		}
-    	}
+        if (relatedInstanceList == null) {
+            throw new ValidationException("related instances", true);
+        } else {
+            for (RelatedInstanceList instanceList : relatedInstanceList) {
+                RelatedInstance relatedInstance = instanceList.getRelatedInstance();
+                ModelType modelType = relatedInstance.getModelInfo().getModelType();
+                if (empty(relatedInstance.getInstanceId())) {
+                    throw new ValidationException("instanceId in relatedInstances", true);
+                }
+                if (modelType == null) {
+                    throw new ValidationException("modelType in relatedInstance", true);
+                }
+                if (modelType == ModelType.vnf) {
+                    vnfRelatedInstance = true;
+                }
+            }
+            if (!vnfRelatedInstance) {
+                throw new ValidationException("vnf relatedInstance", true);
+            }
+        }
         return info;
-	}
+    }
 }

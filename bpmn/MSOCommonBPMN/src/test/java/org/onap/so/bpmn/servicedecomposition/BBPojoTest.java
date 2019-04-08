@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.servicedecomposition;
 
 import org.junit.Test;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterNonConcrete;
@@ -36,31 +35,27 @@ import com.openpojo.validation.test.impl.SetterTester;
 
 
 public class BBPojoTest {
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void pojoStructure() {
-		test("org.onap.so.bpmn.servicedecomposition.bbobjects");
-		test("org.onap.so.bpmn.servicedecomposition.modelinfo");
-		test("org.onap.so.bpmn.servicedecomposition.entities");
-		test("org.onap.so.bpmn.servicedecomposition.homingobjects");
-		test("org.onap.so.bpmn.servicedecomposition.generalobjects");
-	}
+    @Test
+    public void pojoStructure() {
+        test("org.onap.so.bpmn.servicedecomposition.bbobjects");
+        test("org.onap.so.bpmn.servicedecomposition.modelinfo");
+        test("org.onap.so.bpmn.servicedecomposition.entities");
+        test("org.onap.so.bpmn.servicedecomposition.homingobjects");
+        test("org.onap.so.bpmn.servicedecomposition.generalobjects");
+    }
 
-	private void test(String pojoPackage) {
-		Validator validator = ValidatorBuilder.create()
-				.with(new GetterMustExistRule())
-				.with(new SetterTester())
-				.with(new GetterTester())
-				.with(new NoPrimitivesRule())
-				.with(new SerializableMustHaveSerialVersionUIDRule())
-				.build();
-		validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete());
-	}
+    private void test(String pojoPackage) {
+        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new SetterTester())
+                .with(new GetterTester()).with(new NoPrimitivesRule())
+                .with(new SerializableMustHaveSerialVersionUIDRule()).build();
+        validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete());
+    }
 
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
 }

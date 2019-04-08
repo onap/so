@@ -19,37 +19,35 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.BaseBPMNTest;
 
-public class VNFUnsetInMaintFlagActivityTest extends BaseBPMNTest{
-	@Test
-	public void sunnyDayVNFUnsetInMaintFlagActivity_Test() throws InterruptedException {
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUnsetInMaintFlagActivity", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetInMaintFlagActivity_Start",				
-				"TaskUnsetInMaint",								   
-				"VNFUnsetInMaintFlagActivity_End");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test
-	public void rainyDayVNFUnsetInMaintFlag_Test() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
-				.modifyVnfInMaintFlag(any(BuildingBlockExecution.class), any(boolean.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUnsetInMaintFlagActivity", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetInMaintFlagActivity_Start",				
-				"TaskUnsetInMaint").hasNotPassed(								   
-				"VNFUnsetInMaintFlagActivity_End");		
-		assertThat(pi).isEnded();
-	}
-	
+public class VNFUnsetInMaintFlagActivityTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayVNFUnsetInMaintFlagActivity_Test() throws InterruptedException {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUnsetInMaintFlagActivity", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetInMaintFlagActivity_Start", "TaskUnsetInMaint",
+                "VNFUnsetInMaintFlagActivity_End");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void rainyDayVNFUnsetInMaintFlag_Test() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
+                .modifyVnfInMaintFlag(any(BuildingBlockExecution.class), any(boolean.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("VNFUnsetInMaintFlagActivity", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("VNFUnsetInMaintFlagActivity_Start", "TaskUnsetInMaint")
+                .hasNotPassed("VNFUnsetInMaintFlagActivity_End");
+        assertThat(pi).isEnded();
+    }
+
 }

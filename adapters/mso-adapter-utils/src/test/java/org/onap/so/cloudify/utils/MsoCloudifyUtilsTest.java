@@ -33,7 +33,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -42,7 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -67,7 +65,6 @@ import org.onap.so.db.catalog.beans.HeatTemplateParam;
 import org.onap.so.openstack.exceptions.MsoAdapterException;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.skyscreamer.jsonassert.JSONAssert;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -76,273 +73,264 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MsoCloudifyUtilsTest {
 
-	private static final String CLOUD_SITE_ID = "cloudSiteIdTest";
-	private static final String BLUEPRINT_ID = "bluePrintIdTest";
-	private static final String FILE_NAME = "fileName";
+    private static final String CLOUD_SITE_ID = "cloudSiteIdTest";
+    private static final String BLUEPRINT_ID = "bluePrintIdTest";
+    private static final String FILE_NAME = "fileName";
 
-	@Test
-	public void instantiateVduTest() throws MsoException {
-		VduInstance expected = new VduInstance();
-		expected.setVduInstanceId("id");
-		expected.setVduInstanceName("id");
-		VduStatus status = new VduStatus();
-		status.setState(VduStateType.INSTANTIATED);
-		status.setLastAction(new PluginAction(null, null, null));
-		expected.setStatus(status);
+    @Test
+    public void instantiateVduTest() throws MsoException {
+        VduInstance expected = new VduInstance();
+        expected.setVduInstanceId("id");
+        expected.setVduInstanceName("id");
+        VduStatus status = new VduStatus();
+        status.setState(VduStateType.INSTANTIATED);
+        status.setLastAction(new PluginAction(null, null, null));
+        expected.setStatus(status);
 
-		MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
-		CloudSite site = new CloudSite();
-		Optional<CloudSite> opSite = Optional.ofNullable(site);
-		CloudConfig config = Mockito.mock(CloudConfig.class);
-		cloudify.cloudConfig = config;
-		Cloudify cloudifyClient = new Cloudify("cloudSite");
-		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("cloudSiteId");
-		cloudInfo.setTenantId("tenantId");
-		VduModelInfo vduModel = new VduModelInfo();
-		vduModel.setModelCustomizationUUID("blueprintId");
-		vduModel.setTimeoutMinutes(1);
-		VduArtifact artifact = new VduArtifact();
-		artifact.setName("name");
-		artifact.setType(ArtifactType.MAIN_TEMPLATE);
-		byte[] content = new byte[1];
-		artifact.setContent(content);
-		List<VduArtifact> artifacts = new ArrayList<>();
-		artifacts.add(artifact);
-		vduModel.setArtifacts(artifacts);
-		DeploymentInfo deployment = new DeploymentInfoBuilder()
-			.withId("id")
-			.withStatus(DeploymentStatus.INSTALLED)
-			.build();
-		Map<String, byte[]> blueprintFiles = new HashMap<>();
-		blueprintFiles.put(artifact.getName(), artifact.getContent());
-		String instanceName = "instanceName";
-		Map<String, Object> inputs = new HashMap<>();
-		boolean rollbackOnFailure = true;
+        MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
+        CloudSite site = new CloudSite();
+        Optional<CloudSite> opSite = Optional.ofNullable(site);
+        CloudConfig config = Mockito.mock(CloudConfig.class);
+        cloudify.cloudConfig = config;
+        Cloudify cloudifyClient = new Cloudify("cloudSite");
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setCloudSiteId("cloudSiteId");
+        cloudInfo.setTenantId("tenantId");
+        VduModelInfo vduModel = new VduModelInfo();
+        vduModel.setModelCustomizationUUID("blueprintId");
+        vduModel.setTimeoutMinutes(1);
+        VduArtifact artifact = new VduArtifact();
+        artifact.setName("name");
+        artifact.setType(ArtifactType.MAIN_TEMPLATE);
+        byte[] content = new byte[1];
+        artifact.setContent(content);
+        List<VduArtifact> artifacts = new ArrayList<>();
+        artifacts.add(artifact);
+        vduModel.setArtifacts(artifacts);
+        DeploymentInfo deployment =
+                new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.INSTALLED).build();
+        Map<String, byte[]> blueprintFiles = new HashMap<>();
+        blueprintFiles.put(artifact.getName(), artifact.getContent());
+        String instanceName = "instanceName";
+        Map<String, Object> inputs = new HashMap<>();
+        boolean rollbackOnFailure = true;
 
-		when(config.getCloudSite(cloudInfo.getCloudSiteId())).thenReturn(opSite);
-		doReturn(false).when(cloudify).isBlueprintLoaded(cloudInfo.getCloudSiteId(),
-				vduModel.getModelCustomizationUUID());
-		doReturn(cloudifyClient).when(cloudify).getCloudifyClient(site);
-		doReturn(true).when(cloudify).uploadBlueprint(cloudifyClient, vduModel.getModelCustomizationUUID(),
-				artifact.getName(), blueprintFiles);
-		doReturn(deployment).when(cloudify).createAndInstallDeployment(cloudInfo.getCloudSiteId(),
-				cloudInfo.getTenantId(), instanceName, vduModel.getModelCustomizationUUID(), inputs, true,
-				vduModel.getTimeoutMinutes(), rollbackOnFailure);
+        when(config.getCloudSite(cloudInfo.getCloudSiteId())).thenReturn(opSite);
+        doReturn(false).when(cloudify).isBlueprintLoaded(cloudInfo.getCloudSiteId(),
+                vduModel.getModelCustomizationUUID());
+        doReturn(cloudifyClient).when(cloudify).getCloudifyClient(site);
+        doReturn(true).when(cloudify).uploadBlueprint(cloudifyClient, vduModel.getModelCustomizationUUID(),
+                artifact.getName(), blueprintFiles);
+        doReturn(deployment).when(cloudify).createAndInstallDeployment(cloudInfo.getCloudSiteId(),
+                cloudInfo.getTenantId(), instanceName, vduModel.getModelCustomizationUUID(), inputs, true,
+                vduModel.getTimeoutMinutes(), rollbackOnFailure);
 
-		VduInstance actual = cloudify.instantiateVdu(cloudInfo, instanceName, inputs, vduModel, rollbackOnFailure);
-		assertThat(actual, sameBeanAs(expected));
-	}
+        VduInstance actual = cloudify.instantiateVdu(cloudInfo, instanceName, inputs, vduModel, rollbackOnFailure);
+        assertThat(actual, sameBeanAs(expected));
+    }
 
-	@Test
-	public void queryVduTest() throws MsoException {
-		VduInstance expected = new VduInstance();
-		expected.setVduInstanceId("id");
-		expected.setVduInstanceName("id");
-		VduStatus status = new VduStatus();
-		status.setState(VduStateType.INSTANTIATED);
-		status.setLastAction(new PluginAction(null, null, null));
-		expected.setStatus(status);
+    @Test
+    public void queryVduTest() throws MsoException {
+        VduInstance expected = new VduInstance();
+        expected.setVduInstanceId("id");
+        expected.setVduInstanceName("id");
+        VduStatus status = new VduStatus();
+        status.setState(VduStateType.INSTANTIATED);
+        status.setLastAction(new PluginAction(null, null, null));
+        expected.setStatus(status);
 
-		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("cloudSiteId");
-		cloudInfo.setTenantId("tenantId");
-		DeploymentInfo deployment = new DeploymentInfoBuilder()
-			.withId("id")
-			.withStatus(DeploymentStatus.INSTALLED)
-			.build();
-		String instanceId = "instanceId";
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setCloudSiteId("cloudSiteId");
+        cloudInfo.setTenantId("tenantId");
+        DeploymentInfo deployment =
+                new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.INSTALLED).build();
+        String instanceId = "instanceId";
 
-		MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
+        MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
 
-		doReturn(deployment).when(cloudify).queryDeployment(cloudInfo.getCloudSiteId(), cloudInfo.getTenantId(),
-				instanceId);
+        doReturn(deployment).when(cloudify).queryDeployment(cloudInfo.getCloudSiteId(), cloudInfo.getTenantId(),
+                instanceId);
 
-		VduInstance actual = cloudify.queryVdu(cloudInfo, instanceId);
+        VduInstance actual = cloudify.queryVdu(cloudInfo, instanceId);
 
-		assertThat(actual, sameBeanAs(expected));
-	}
+        assertThat(actual, sameBeanAs(expected));
+    }
 
-	@Test
-	public void deleteVduTest() throws MsoException {
-		VduInstance expected = new VduInstance();
-		expected.setVduInstanceId("id");
-		expected.setVduInstanceName("id");
-		VduStatus status = new VduStatus();
-		status.setState(VduStateType.DELETING);
-		status.setLastAction(new PluginAction("deleting", null, null));
-		expected.setStatus(status);
+    @Test
+    public void deleteVduTest() throws MsoException {
+        VduInstance expected = new VduInstance();
+        expected.setVduInstanceId("id");
+        expected.setVduInstanceName("id");
+        VduStatus status = new VduStatus();
+        status.setState(VduStateType.DELETING);
+        status.setLastAction(new PluginAction("deleting", null, null));
+        expected.setStatus(status);
 
-		CloudInfo cloudInfo = new CloudInfo();
-		cloudInfo.setCloudSiteId("cloudSiteId");
-		cloudInfo.setTenantId("tenantId");
-		String instanceId = "instanceId";
-		int timeoutMinutes = 1;
-		DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
-			.withId("id")
-			.withStatus(DeploymentStatus.CREATED)
-			.withLastAction("deleting").build();
-		MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
-		doReturn(deploymentInfo).when(cloudify).uninstallAndDeleteDeployment(cloudInfo.getCloudSiteId(),
-				cloudInfo.getTenantId(), instanceId, timeoutMinutes);
+        CloudInfo cloudInfo = new CloudInfo();
+        cloudInfo.setCloudSiteId("cloudSiteId");
+        cloudInfo.setTenantId("tenantId");
+        String instanceId = "instanceId";
+        int timeoutMinutes = 1;
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.CREATED)
+                .withLastAction("deleting").build();
+        MsoCloudifyUtils cloudify = Mockito.spy(MsoCloudifyUtils.class);
+        doReturn(deploymentInfo).when(cloudify).uninstallAndDeleteDeployment(cloudInfo.getCloudSiteId(),
+                cloudInfo.getTenantId(), instanceId, timeoutMinutes);
 
-		VduInstance actual = cloudify.deleteVdu(cloudInfo, instanceId, timeoutMinutes);
+        VduInstance actual = cloudify.deleteVdu(cloudInfo, instanceId, timeoutMinutes);
 
-		assertThat(actual, sameBeanAs(expected));
-	}
+        assertThat(actual, sameBeanAs(expected));
+    }
 
-	@Test
-	public void deploymentInfoToVduInstanceTest() {
-		VduInstance expected = new VduInstance();
-		expected.setVduInstanceId("id");
-		expected.setVduInstanceName("id");
-		VduStatus status = new VduStatus();
-		status.setState(VduStateType.DELETING);
-		status.setLastAction(new PluginAction("deleting", null, null));
-		expected.setStatus(status);
+    @Test
+    public void deploymentInfoToVduInstanceTest() {
+        VduInstance expected = new VduInstance();
+        expected.setVduInstanceId("id");
+        expected.setVduInstanceName("id");
+        VduStatus status = new VduStatus();
+        status.setState(VduStateType.DELETING);
+        status.setLastAction(new PluginAction("deleting", null, null));
+        expected.setStatus(status);
 
-		DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
-			.withId("id")
-			.withStatus(DeploymentStatus.CREATED)
-			.withLastAction("deleting").build();
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.CREATED)
+                .withLastAction("deleting").build();
 
-		MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
+        MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
 
-		VduInstance actual = cloudify.deploymentInfoToVduInstance(deploymentInfo);
+        VduInstance actual = cloudify.deploymentInfoToVduInstance(deploymentInfo);
 
-		assertThat(actual, sameBeanAs(expected));
-	}
+        assertThat(actual, sameBeanAs(expected));
+    }
 
-	@Test
-	public void deploymentStatusToVduStatusTest() {
-		VduStatus expected = new VduStatus();
-		expected.setState(VduStateType.DELETING);
-		expected.setLastAction(new PluginAction("deleting", null, null));
+    @Test
+    public void deploymentStatusToVduStatusTest() {
+        VduStatus expected = new VduStatus();
+        expected.setState(VduStateType.DELETING);
+        expected.setLastAction(new PluginAction("deleting", null, null));
 
-		DeploymentInfo deploymentInfo = new DeploymentInfoBuilder()
-			.withId("id")
-			.withStatus(DeploymentStatus.CREATED)
-			.withLastAction("deleting").build();
+        DeploymentInfo deploymentInfo = new DeploymentInfoBuilder().withId("id").withStatus(DeploymentStatus.CREATED)
+                .withLastAction("deleting").build();
 
-		MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
+        MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
 
-		VduStatus actual = cloudify.deploymentStatusToVduStatus(deploymentInfo);
+        VduStatus actual = cloudify.deploymentStatusToVduStatus(deploymentInfo);
 
-		assertThat(actual, sameBeanAs(expected));
-	}
+        assertThat(actual, sameBeanAs(expected));
+    }
 
-	@Test
-	public void getAzureConfigTest() {
-		AzureConfig expected = new AzureConfig();
-		expected.setSubscriptionId("subscriptionId");
-		expected.setTenantId("tenantId");
-		expected.setClientId("msoId");
-		expected.setClientSecret("msoPass");
+    @Test
+    public void getAzureConfigTest() {
+        AzureConfig expected = new AzureConfig();
+        expected.setSubscriptionId("subscriptionId");
+        expected.setTenantId("tenantId");
+        expected.setClientId("msoId");
+        expected.setClientSecret("msoPass");
 
-		MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
-		CloudSite cloudSite = Mockito.mock(CloudSite.class);
-		CloudIdentity cloudIdentity = Mockito.mock(CloudIdentity.class);
-		when(cloudSite.getIdentityService()).thenReturn(cloudIdentity);
-		when(cloudIdentity.getAdminTenant()).thenReturn("subscriptionId");
-		when(cloudIdentity.getMsoId()).thenReturn("msoId");
-		when(cloudIdentity.getMsoPass()).thenReturn("msoPass");
-		String tenantId = "tenantId";
-		AzureConfig actual = cloudify.getAzureConfig(cloudSite, tenantId);
+        MsoCloudifyUtils cloudify = new MsoCloudifyUtils();
+        CloudSite cloudSite = Mockito.mock(CloudSite.class);
+        CloudIdentity cloudIdentity = Mockito.mock(CloudIdentity.class);
+        when(cloudSite.getIdentityService()).thenReturn(cloudIdentity);
+        when(cloudIdentity.getAdminTenant()).thenReturn("subscriptionId");
+        when(cloudIdentity.getMsoId()).thenReturn("msoId");
+        when(cloudIdentity.getMsoPass()).thenReturn("msoPass");
+        String tenantId = "tenantId";
+        AzureConfig actual = cloudify.getAzureConfig(cloudSite, tenantId);
 
-		assertThat(actual, sameBeanAs(expected));
-	}
+        assertThat(actual, sameBeanAs(expected));
+    }
 
-	@Test
-	public void uploadBlueprintSuccessful() throws MsoException {
-		// given
-		MsoCloudifyUtils testedObjectSpy = spy(MsoCloudifyUtils.class);
-		testedObjectSpy.cloudConfig = mock(CloudConfig.class);
-		Map<String, byte[]> blueprints = new HashMap<>();
+    @Test
+    public void uploadBlueprintSuccessful() throws MsoException {
+        // given
+        MsoCloudifyUtils testedObjectSpy = spy(MsoCloudifyUtils.class);
+        testedObjectSpy.cloudConfig = mock(CloudConfig.class);
+        Map<String, byte[]> blueprints = new HashMap<>();
 
-		mockCloudConfig(testedObjectSpy);
-		doReturn(true).when(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID),
-				eq(FILE_NAME), eq(blueprints));
-		// when
-		testedObjectSpy.uploadBlueprint(CLOUD_SITE_ID, BLUEPRINT_ID, FILE_NAME, blueprints, true);
-		// then
-		verify(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME),
-				eq(blueprints));
-	}
+        mockCloudConfig(testedObjectSpy);
+        doReturn(true).when(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME),
+                eq(blueprints));
+        // when
+        testedObjectSpy.uploadBlueprint(CLOUD_SITE_ID, BLUEPRINT_ID, FILE_NAME, blueprints, true);
+        // then
+        verify(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME), eq(blueprints));
+    }
 
-	@Test
-	public void uploadBlueprint_exceptionThrown_blueprintExists() throws MsoException {
-		// given
-		MsoCloudifyUtils testedObjectSpy = spy(MsoCloudifyUtils.class);
-		testedObjectSpy.cloudConfig = mock(CloudConfig.class);
-		Map<String, byte[]> blueprints = new HashMap<>();
+    @Test
+    public void uploadBlueprint_exceptionThrown_blueprintExists() throws MsoException {
+        // given
+        MsoCloudifyUtils testedObjectSpy = spy(MsoCloudifyUtils.class);
+        testedObjectSpy.cloudConfig = mock(CloudConfig.class);
+        Map<String, byte[]> blueprints = new HashMap<>();
 
-		mockCloudConfig(testedObjectSpy);
-		doReturn(false).when(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID),
-				eq(FILE_NAME), eq(blueprints));
-		// when
-		try {
-			testedObjectSpy.uploadBlueprint(CLOUD_SITE_ID, BLUEPRINT_ID, FILE_NAME, blueprints, true);
-			// then
-			fail("MsoAdapterException should be thrown");
-		} catch (MsoAdapterException e) {
-			Assert.assertEquals(e.getMessage(), "Blueprint already exists");
-		}
-		verify(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME),
-				eq(blueprints));
-	}
+        mockCloudConfig(testedObjectSpy);
+        doReturn(false).when(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME),
+                eq(blueprints));
+        // when
+        try {
+            testedObjectSpy.uploadBlueprint(CLOUD_SITE_ID, BLUEPRINT_ID, FILE_NAME, blueprints, true);
+            // then
+            fail("MsoAdapterException should be thrown");
+        } catch (MsoAdapterException e) {
+            Assert.assertEquals(e.getMessage(), "Blueprint already exists");
+        }
+        verify(testedObjectSpy).uploadBlueprint(any(Cloudify.class), eq(BLUEPRINT_ID), eq(FILE_NAME), eq(blueprints));
+    }
 
-	@Test
-	public void convertInputValueTest() throws JsonParseException, JsonMappingException, IOException {
-		MsoCloudifyUtils utils = new MsoCloudifyUtils();
-		ObjectMapper mapper = new ObjectMapper();
-		HeatTemplateParam paramNum = new HeatTemplateParam();
-		paramNum.setParamType("number");
-		paramNum.setParamName("my-number");
-		
-		HeatTemplateParam paramString = new HeatTemplateParam();
-		paramString.setParamType("string");
-		paramString.setParamName("my-string");
-		
-		HeatTemplateParam paramJson = new HeatTemplateParam();
-		paramJson.setParamType("json");
-		paramJson.setParamName("my-json");
-		
-		HeatTemplateParam paramJsonEscaped = new HeatTemplateParam();
-		paramJsonEscaped.setParamType("json");
-		paramJsonEscaped.setParamName("my-json-escaped");
-		
-		Map<String, Object> jsonMap = mapper.readValue(getJson("free-form.json"), new TypeReference<Map<String, Object>>(){});
+    @Test
+    public void convertInputValueTest() throws JsonParseException, JsonMappingException, IOException {
+        MsoCloudifyUtils utils = new MsoCloudifyUtils();
+        ObjectMapper mapper = new ObjectMapper();
+        HeatTemplateParam paramNum = new HeatTemplateParam();
+        paramNum.setParamType("number");
+        paramNum.setParamName("my-number");
 
-		assertEquals(3, utils.convertInputValue("3", paramNum));
-		assertEquals("hello", utils.convertInputValue("hello", paramString));
-		assertTrue("expect no change in type", utils.convertInputValue(jsonMap, paramJson) instanceof Map);
-		assertTrue("expect string to become jsonNode", utils.convertInputValue(getJson("free-form.json"), paramJsonEscaped) instanceof JsonNode);
+        HeatTemplateParam paramString = new HeatTemplateParam();
+        paramString.setParamType("string");
+        paramString.setParamName("my-string");
 
-		JSONAssert.assertEquals(getJson("free-form.json"), mapper.writeValueAsString(utils.convertInputValue(getJson("free-form.json"), paramJsonEscaped)), false);
-		
-	}
+        HeatTemplateParam paramJson = new HeatTemplateParam();
+        paramJson.setParamType("json");
+        paramJson.setParamName("my-json");
 
-	private String getJson(String filename) throws IOException {
-		 return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/MsoHeatUtils/" + filename)));
-	}
+        HeatTemplateParam paramJsonEscaped = new HeatTemplateParam();
+        paramJsonEscaped.setParamType("json");
+        paramJsonEscaped.setParamName("my-json-escaped");
 
-	private void mockCloudConfig(MsoCloudifyUtils testedObjectSpy) {
-		CloudifyManager cloudifyManager = createCloudifyManager();
-		when(testedObjectSpy.cloudConfig.getCloudSite(CLOUD_SITE_ID)).thenReturn(Optional.of(createCloudSite()));
-		when(testedObjectSpy.cloudConfig.getCloudifyManager(CLOUD_SITE_ID)).thenReturn(cloudifyManager);
-	}
+        Map<String, Object> jsonMap =
+                mapper.readValue(getJson("free-form.json"), new TypeReference<Map<String, Object>>() {});
 
-	private CloudifyManager createCloudifyManager() {
-		CloudifyManager cloudifyManager = new CloudifyManager();
-		cloudifyManager.setCloudifyUrl("cloudUrlTest");
-		cloudifyManager.setPassword("546573746F736973546573746F736973");
-		return cloudifyManager;
-	}
+        assertEquals(3, utils.convertInputValue("3", paramNum));
+        assertEquals("hello", utils.convertInputValue("hello", paramString));
+        assertTrue("expect no change in type", utils.convertInputValue(jsonMap, paramJson) instanceof Map);
+        assertTrue("expect string to become jsonNode",
+                utils.convertInputValue(getJson("free-form.json"), paramJsonEscaped) instanceof JsonNode);
 
-	private CloudSite createCloudSite() {
-		CloudSite cloudSite = new CloudSite();
-		cloudSite.setCloudifyId(CLOUD_SITE_ID);
-		return cloudSite;
-	}
+        JSONAssert.assertEquals(getJson("free-form.json"),
+                mapper.writeValueAsString(utils.convertInputValue(getJson("free-form.json"), paramJsonEscaped)), false);
+
+    }
+
+    private String getJson(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get("src/test/resources/__files/MsoHeatUtils/" + filename)));
+    }
+
+    private void mockCloudConfig(MsoCloudifyUtils testedObjectSpy) {
+        CloudifyManager cloudifyManager = createCloudifyManager();
+        when(testedObjectSpy.cloudConfig.getCloudSite(CLOUD_SITE_ID)).thenReturn(Optional.of(createCloudSite()));
+        when(testedObjectSpy.cloudConfig.getCloudifyManager(CLOUD_SITE_ID)).thenReturn(cloudifyManager);
+    }
+
+    private CloudifyManager createCloudifyManager() {
+        CloudifyManager cloudifyManager = new CloudifyManager();
+        cloudifyManager.setCloudifyUrl("cloudUrlTest");
+        cloudifyManager.setPassword("546573746F736973546573746F736973");
+        return cloudifyManager;
+    }
+
+    private CloudSite createCloudSite() {
+        CloudSite cloudSite = new CloudSite();
+        cloudSite.setCloudifyId(CLOUD_SITE_ID);
+        return cloudSite;
+    }
 
 }

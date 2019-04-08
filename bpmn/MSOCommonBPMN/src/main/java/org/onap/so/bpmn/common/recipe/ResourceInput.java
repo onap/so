@@ -22,7 +22,6 @@
 package org.onap.so.bpmn.common.recipe;
 
 import org.onap.so.bpmn.core.domain.ModelInfo;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -33,57 +32,58 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * the inputs for the resource recipe
- * <br>
+ * the inputs for the resource recipe <br>
  * <p>
  * </p>
  * 
  * @author
- * @version     ONAP Beijing Release  2018-03-08
+ * @version ONAP Beijing Release 2018-03-08
  */
-@JsonPropertyOrder({"resourceInstanceName", "resourceInstanceDes", "globalSubscriberId", "serviceType", "serviceId", "operationId", "serviceModelInfo","resourceModelInfo", "resourceInstancenUuid","resourceParameters","operationType"})
+@JsonPropertyOrder({"resourceInstanceName", "resourceInstanceDes", "globalSubscriberId", "serviceType", "serviceId",
+        "operationId", "serviceModelInfo", "resourceModelInfo", "resourceInstancenUuid", "resourceParameters",
+        "operationType"})
 @JsonRootName("variables")
 public class ResourceInput {
 
-	private static Logger logger = LoggerFactory.getLogger(ResourceInput.class);
-	
+    private static Logger logger = LoggerFactory.getLogger(ResourceInput.class);
+
     @JsonProperty("resourceInstanceName")
     private String resourceInstanceName;
-    
+
     @JsonProperty("resourceInstanceDes")
     private String resourceInstanceDes;
-    
+
     @JsonProperty("globalSubscriberId")
     private String globalSubscriberId;
-    
+
     @JsonProperty("serviceType")
     private String serviceType;
-    
+
     @JsonProperty("serviceInstanceId")
     private String serviceInstanceId;
-    
+
     @JsonProperty("operationId")
     private String operationId;
-    
+
     @JsonProperty("serviceModelInfo")
     private ModelInfo serviceModelInfo;
-    
+
     @JsonProperty("resourceModelInfo")
     private ModelInfo resourceModelInfo;
-    
-    //for delete resource
+
+    // for delete resource
     @JsonProperty("resourceInstancenUuid")
     private String resourceInstancenUuid;
-    
+
     @JsonProperty("resourceParameters")
     private String resourceParameters;
-    
+
     @JsonProperty("requestsInputs")
     private String requestsInputs;
-    
+
     @JsonProperty("operationType")
     private String operationType;
-    
+
     /**
      * @return Returns the requestsInputs.
      */
@@ -92,7 +92,7 @@ public class ResourceInput {
         return requestsInputs;
     }
 
-    
+
     /**
      * @param requestsInputs The requestsInputs to set.
      */
@@ -101,7 +101,7 @@ public class ResourceInput {
         this.requestsInputs = requestsInputs;
     }
 
-    
+
     /**
      * @return Returns the resourceInstanceName.
      */
@@ -110,7 +110,7 @@ public class ResourceInput {
         return resourceInstanceName;
     }
 
-    
+
     /**
      * @param resourceInstanceName The resourceInstanceName to set.
      */
@@ -119,7 +119,7 @@ public class ResourceInput {
         this.resourceInstanceName = resourceInstanceName;
     }
 
-    
+
     /**
      * @return Returns the resourceInstanceDes.
      */
@@ -128,7 +128,7 @@ public class ResourceInput {
         return resourceInstanceDes;
     }
 
-    
+
     /**
      * @param resourceInstanceDes The resourceInstanceDes to set.
      */
@@ -137,7 +137,7 @@ public class ResourceInput {
         this.resourceInstanceDes = resourceInstanceDes;
     }
 
-    
+
     /**
      * @return Returns the globalSubscriberId.
      */
@@ -146,7 +146,7 @@ public class ResourceInput {
         return globalSubscriberId;
     }
 
-    
+
     /**
      * @param globalSubscriberId The globalSubscriberId to set.
      */
@@ -155,7 +155,7 @@ public class ResourceInput {
         this.globalSubscriberId = globalSubscriberId;
     }
 
-    
+
     /**
      * @return Returns the serviceType.
      */
@@ -164,7 +164,7 @@ public class ResourceInput {
         return serviceType;
     }
 
-    
+
     /**
      * @param serviceType The serviceType to set.
      */
@@ -173,7 +173,7 @@ public class ResourceInput {
         this.serviceType = serviceType;
     }
 
-    
+
     /**
      * @return Returns the serviceId.
      */
@@ -182,7 +182,7 @@ public class ResourceInput {
         return serviceInstanceId;
     }
 
-    
+
     /**
      * @param serviceId The serviceId to set.
      */
@@ -191,7 +191,7 @@ public class ResourceInput {
         this.serviceInstanceId = serviceId;
     }
 
-    
+
     /**
      * @return Returns the operationId.
      */
@@ -200,7 +200,7 @@ public class ResourceInput {
         return operationId;
     }
 
-    
+
     /**
      * @param operationId The operationId to set.
      */
@@ -208,7 +208,7 @@ public class ResourceInput {
     public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
-    
+
     /**
      * @return Returns the serviceModelInfo.
      */
@@ -218,7 +218,7 @@ public class ResourceInput {
     }
 
 
-    
+
     /**
      * @param serviceModelInfo The serviceModelInfo to set.
      */
@@ -228,7 +228,7 @@ public class ResourceInput {
     }
 
 
-    
+
     /**
      * @return Returns the resourceModelInfo.
      */
@@ -238,7 +238,7 @@ public class ResourceInput {
     }
 
 
-    
+
     /**
      * @param resourceModelInfo The resourceModelInfo to set.
      */
@@ -256,7 +256,7 @@ public class ResourceInput {
         return resourceParameters;
     }
 
-    
+
     /**
      * @param resourceParameters The resourceParameters to set.
      */
@@ -265,7 +265,7 @@ public class ResourceInput {
         this.resourceParameters = resourceParameters;
     }
 
-    
+
     /**
      * @return Returns the operationType.
      */
@@ -274,7 +274,7 @@ public class ResourceInput {
         return operationType;
     }
 
-    
+
     /**
      * @param operationType The operationType to set.
      */
@@ -284,7 +284,7 @@ public class ResourceInput {
     }
 
 
-    
+
     /**
      * @return Returns the resourceInstancenUuid.
      */
@@ -294,7 +294,7 @@ public class ResourceInput {
     }
 
 
-    
+
     /**
      * @param resourceInstancenUuid The resourceInstancenUuid to set.
      */
@@ -302,7 +302,7 @@ public class ResourceInput {
     public void setResourceInstancenUuid(String resourceInstancenUuid) {
         this.resourceInstancenUuid = resourceInstancenUuid;
     }
-    
+
     @Override
     public String toString() {
         ObjectMapper mapper = new ObjectMapper();

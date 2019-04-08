@@ -21,17 +21,16 @@
 package org.onap.so.client.grm;
 
 public enum GRMAction {
-	
-	FIND_RUNNING("findRunning"),
-	ADD("add");
 
-	private final String action;
+    FIND_RUNNING("findRunning"), ADD("add");
 
-	GRMAction(String action) {
-		this.action = action;
-	}
+    private final String action;
 
-	public String getAction() {
-		return action;
-	}
+    GRMAction(String action) {
+        this.action = action;
+    }
+
+    public String getAction() {
+        return action;
+    }
 }

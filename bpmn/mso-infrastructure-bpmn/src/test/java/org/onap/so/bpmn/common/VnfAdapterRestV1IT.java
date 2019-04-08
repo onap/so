@@ -18,7 +18,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.onap.so.bpmn.common;
 
@@ -29,12 +29,10 @@ import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.mockVNFDelete;
 import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.mockVNFPost;
 import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.mockVNFPut;
 import static org.onap.so.bpmn.mock.StubResponseVNFAdapter.mockVNFRollbackDelete;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -48,347 +46,261 @@ import org.slf4j.LoggerFactory;
  */
 
 public class VnfAdapterRestV1IT extends BaseIntegrationTest {
-	
-	Logger logger = LoggerFactory.getLogger(VnfAdapterRestV1IT.class);
-	
 
-	private static final String EOL = "\n";
+    Logger logger = LoggerFactory.getLogger(VnfAdapterRestV1IT.class);
 
-	private final CallbackSet callbacks = new CallbackSet();
 
-	private final String CREATE_VF_MODULE_REQUEST =
-		"<createVfModuleRequest>" + EOL +
-		"  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
-		"  <cloudOwner>cloudOwner</cloudOwner>" + EOL +
-		"  <tenantId>tenantId</tenantId>" + EOL +
-		"  <vnfId>vnfId</vnfId>" + EOL +
-		"  <vfModuleName>vfModuleName</vfModuleName>" + EOL +
-		"  <vfModuleId>vfModuleId</vfModuleId>" + EOL +
-		"  <vnfType>vnfType</vnfType>" + EOL +
-		"  <vnfVersion>vnfVersion</vnfVersion>" + EOL +
-		"  <vfModuleType>vfModuleType</vfModuleType>" + EOL +
-		"  <volumeGroupId>volumeGroupId</volumeGroupId>" + EOL +
-		"  <volumeGroupStackId>volumeGroupStackId</volumeGroupStackId>" + EOL +
-		"  <baseVfModuleId>baseVfModuleId</baseVfModuleId>" + EOL +
-		"  <baseVfModuleStackId>baseVfModuleStackId</baseVfModuleStackId>" + EOL +
-		"  <skipAAI>true</skipAAI>" + EOL +
-		"  <backout>false</backout>" + EOL +
-		"  <failIfExists>true</failIfExists>" + EOL +
-		"  <vfModuleParams>" + EOL +
-		"    <entry>" + EOL +
-		"      <key>key1</key>" + EOL +
-		"      <value>value1</value>" + EOL +
-		"    </entry>" + EOL +
-		"    <entry>" + EOL +
-		"      <key>key2</key>" + EOL +
-		"      <value>value2</value>" + EOL +
-		"    </entry>" + EOL +
-		"  </vfModuleParams>" + EOL +
-		"  <msoRequest>" + EOL +
-		"    <requestId>requestId</requestId>" + EOL +
-		"    <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL +
-		"  </msoRequest>" + EOL +
-		"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-		"  <notificationUrl>http://localhost:28080/mso/WorkflowMessage</notificationUrl>" + EOL +
-		"</createVfModuleRequest>" + EOL;
+    private static final String EOL = "\n";
 
-	private final String UPDATE_VF_MODULE_REQUEST =
-		"<updateVfModuleRequest>" + EOL +
-		"  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
-		"  <cloudOwner>cloudOwner</cloudOwner>" + EOL +
-		"  <tenantId>tenantId</tenantId>" + EOL +
-		"  <vnfId>vnfId</vnfId>" + EOL +
-		"  <vfModuleName>vfModuleName</vfModuleName>" + EOL +
-		"  <vfModuleId>vfModuleId</vfModuleId>" + EOL +
-		"  <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL +
-		"  <vnfType>vnfType</vnfType>" + EOL +
-		"  <vnfVersion>vnfVersion</vnfVersion>" + EOL +
-		"  <vfModuleType>vfModuleType</vfModuleType>" + EOL +
-		"  <volumeGroupId>volumeGroupId</volumeGroupId>" + EOL +
-		"  <volumeGroupStackId>volumeGroupStackId</volumeGroupStackId>" + EOL +
-		"  <baseVfModuleId>baseVfModuleId</baseVfModuleId>" + EOL +
-		"  <baseVfModuleStackId>baseVfModuleStackId</baseVfModuleStackId>" + EOL +
-		"  <skipAAI>true</skipAAI>" + EOL +
-		"  <backout>false</backout>" + EOL +
-		"  <failIfExists>true</failIfExists>" + EOL +
-		"  <vfModuleParams>" + EOL +
-		"    <entry>" + EOL +
-		"      <key>key1</key>" + EOL +
-		"      <value>value1</value>" + EOL +
-		"    </entry>" + EOL +
-		"    <entry>" + EOL +
-		"      <key>key2</key>" + EOL +
-		"      <value>value2</value>" + EOL +
-		"    </entry>" + EOL +
-		"  </vfModuleParams>" + EOL +
-		"  <msoRequest>" + EOL +
-		"    <requestId>requestId</requestId>" + EOL +
-		"    <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL +
-		"  </msoRequest>" + EOL +
-		"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-		"  <notificationUrl>http://localhost:28080/mso/WorkflowMessage</notificationUrl>" + EOL +
-		"</updateVfModuleRequest>" + EOL;
+    private final CallbackSet callbacks = new CallbackSet();
 
-	private final String DELETE_VF_MODULE_REQUEST =
-		"<deleteVfModuleRequest>" + EOL +
-		"  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
-		"  <cloudOwner>cloudOwner</cloudOwner>" + EOL +
-		"  <tenantId>tenantId</tenantId>" + EOL +
-		"  <vnfId>vnfId</vnfId>" + EOL +
-		"  <vfModuleId>vfModuleId</vfModuleId>" + EOL +
-		"  <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL +
-		"  <skipAAI>true</skipAAI>" + EOL +
-		"  <msoRequest>" + EOL +
-		"    <requestId>requestId</requestId>" + EOL +
-		"    <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL +
-		"  </msoRequest>" + EOL +
-		"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-		"  <notificationUrl>http://localhost:28080/mso/WorkflowMessage</notificationUrl>" + EOL +
-		"</deleteVfModuleRequest>" + EOL;
+    private final String CREATE_VF_MODULE_REQUEST = "<createVfModuleRequest>" + EOL
+            + "  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL + "  <cloudOwner>cloudOwner</cloudOwner>" + EOL
+            + "  <tenantId>tenantId</tenantId>" + EOL + "  <vnfId>vnfId</vnfId>" + EOL
+            + "  <vfModuleName>vfModuleName</vfModuleName>" + EOL + "  <vfModuleId>vfModuleId</vfModuleId>" + EOL
+            + "  <vnfType>vnfType</vnfType>" + EOL + "  <vnfVersion>vnfVersion</vnfVersion>" + EOL
+            + "  <vfModuleType>vfModuleType</vfModuleType>" + EOL + "  <volumeGroupId>volumeGroupId</volumeGroupId>"
+            + EOL + "  <volumeGroupStackId>volumeGroupStackId</volumeGroupStackId>" + EOL
+            + "  <baseVfModuleId>baseVfModuleId</baseVfModuleId>" + EOL
+            + "  <baseVfModuleStackId>baseVfModuleStackId</baseVfModuleStackId>" + EOL + "  <skipAAI>true</skipAAI>"
+            + EOL + "  <backout>false</backout>" + EOL + "  <failIfExists>true</failIfExists>" + EOL
+            + "  <vfModuleParams>" + EOL + "    <entry>" + EOL + "      <key>key1</key>" + EOL
+            + "      <value>value1</value>" + EOL + "    </entry>" + EOL + "    <entry>" + EOL + "      <key>key2</key>"
+            + EOL + "      <value>value2</value>" + EOL + "    </entry>" + EOL + "  </vfModuleParams>" + EOL
+            + "  <msoRequest>" + EOL + "    <requestId>requestId</requestId>" + EOL
+            + "    <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL + "  </msoRequest>" + EOL
+            + "  <messageId>{{MESSAGE-ID}}</messageId>" + EOL
+            + "  <notificationUrl>http://localhost:28080/mso/WorkflowMessage</notificationUrl>" + EOL
+            + "</createVfModuleRequest>" + EOL;
 
-	private final String ROLLBACK_VF_MODULE_REQUEST =
-			"<rollbackVfModuleRequest>" + EOL +
-			"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-			"  <notificationUrl>http://localhost:28080/mso/WorkflowMessage</notificationUrl>" + EOL +
-			"  <skipAAI>true</skipAAI>" + EOL +
-			"  <vfModuleRollback>" + EOL +
-			"    <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
-		    "    <cloudOwner>cloudOwner</cloudOwner>" + EOL +
-			"    <tenantId>tenantId</tenantId>" + EOL +
-			"    <vnfId>vnfId</vnfId>" + EOL +
-			"    <vfModuleId>vfModuleId</vfModuleId>" + EOL +
-			"    <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL +
-			"    <msoRequest>" + EOL +
-			"      <requestId>requestId</requestId>" + EOL +
-			"      <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL +
-			"    </msoRequest>" + EOL +
-			"    <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-			"    <vfModuleCreated>true</vfModuleCreated>" + EOL +
-			"  </vfModuleRollback>" + EOL +
-			"</rollbackVfModuleRequest>" + EOL;
+    private final String UPDATE_VF_MODULE_REQUEST = "<updateVfModuleRequest>" + EOL
+            + "  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL + "  <cloudOwner>cloudOwner</cloudOwner>" + EOL
+            + "  <tenantId>tenantId</tenantId>" + EOL + "  <vnfId>vnfId</vnfId>" + EOL
+            + "  <vfModuleName>vfModuleName</vfModuleName>" + EOL + "  <vfModuleId>vfModuleId</vfModuleId>" + EOL
+            + "  <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL + "  <vnfType>vnfType</vnfType>" + EOL
+            + "  <vnfVersion>vnfVersion</vnfVersion>" + EOL + "  <vfModuleType>vfModuleType</vfModuleType>" + EOL
+            + "  <volumeGroupId>volumeGroupId</volumeGroupId>" + EOL
+            + "  <volumeGroupStackId>volumeGroupStackId</volumeGroupStackId>" + EOL
+            + "  <baseVfModuleId>baseVfModuleId</baseVfModuleId>" + EOL
+            + "  <baseVfModuleStackId>baseVfModuleStackId</baseVfModuleStackId>" + EOL + "  <skipAAI>true</skipAAI>"
+            + EOL + "  <backout>false</backout>" + EOL + "  <failIfExists>true</failIfExists>" + EOL
+            + "  <vfModuleParams>" + EOL + "    <entry>" + EOL + "      <key>key1</key>" + EOL
+            + "      <value>value1</value>" + EOL + "    </entry>" + EOL + "    <entry>" + EOL + "      <key>key2</key>"
+            + EOL + "      <value>value2</value>" + EOL + "    </entry>" + EOL + "  </vfModuleParams>" + EOL
+            + "  <msoRequest>" + EOL + "    <requestId>requestId</requestId>" + EOL
+            + "    <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL + "  </msoRequest>" + EOL
+            + "  <messageId>{{MESSAGE-ID}}</messageId>" + EOL
+            + "  <notificationUrl>http://localhost:28080/mso/WorkflowMessage</notificationUrl>" + EOL
+            + "</updateVfModuleRequest>" + EOL;
 
-	public VnfAdapterRestV1IT() throws IOException {
-		callbacks.put("createVfModule",
-			"<createVfModuleResponse>" + EOL +
-			"  <vnfId>vnfId</vnfId>" + EOL +
-			"  <vfModuleId>vfModuleId</vfModuleId>" + EOL +
-			"  <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL +
-			"  <vfModuleCreated>true</vfModuleCreated>" + EOL +
-			"  <vfModuleOutputs>" + EOL +
-			"    <entry>" + EOL +
-			"      <key>key1</key>" + EOL +
-			"      <value>value1</value>" + EOL +
-			"    </entry>" + EOL +
-			"    <entry>" + EOL +
-			"      <key>key2</key>" + EOL +
-			"      <value>value2</value>" + EOL +
-			"    </entry>" + EOL +
-			"  </vfModuleOutputs>" + EOL +
-			"  <rollback>" + EOL +
-			"    <vnfId>vnfId</vnfId>" + EOL +
-			"    <vfModuleId>vfModuleId</vfModuleId>" + EOL +
-			"    <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL +
-			"    <vfModuleCreated>true</vfModuleCreated>" + EOL +
-			"    <tenantId>tenantId</tenantId>" + EOL +
-		    "    <cloudOwner>cloudOwner</cloudOwner>" + EOL +
-			"    <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL +
-			"    <msoRequest>" + EOL +
-			"      <requestId>requestId</requestId>" + EOL +
-			"      <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL +
-			"    </msoRequest>" + EOL +
-			"    <messageId>messageId</messageId>" + EOL +
-			"  </rollback>" + EOL +
-			"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-			"</createVfModuleResponse>" + EOL);
+    private final String DELETE_VF_MODULE_REQUEST = "<deleteVfModuleRequest>" + EOL
+            + "  <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL + "  <cloudOwner>cloudOwner</cloudOwner>" + EOL
+            + "  <tenantId>tenantId</tenantId>" + EOL + "  <vnfId>vnfId</vnfId>" + EOL
+            + "  <vfModuleId>vfModuleId</vfModuleId>" + EOL + "  <vfModuleStackId>vfModuleStackId</vfModuleStackId>"
+            + EOL + "  <skipAAI>true</skipAAI>" + EOL + "  <msoRequest>" + EOL + "    <requestId>requestId</requestId>"
+            + EOL + "    <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL + "  </msoRequest>" + EOL
+            + "  <messageId>{{MESSAGE-ID}}</messageId>" + EOL
+            + "  <notificationUrl>http://localhost:28080/mso/WorkflowMessage</notificationUrl>" + EOL
+            + "</deleteVfModuleRequest>" + EOL;
 
-		callbacks.put("updateVfModule",
-			"<updateVfModuleResponse>" + EOL +
-			"  <vnfId>vnfId</vnfId>" + EOL +
-			"  <vfModuleId>vfModuleId</vfModuleId>" + EOL +
-			"  <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL +
-			"  <vfModuleOutputs>" + EOL +
-			"    <entry>" + EOL +
-			"      <key>key1</key>" + EOL +
-			"      <value>value1</value>" + EOL +
-			"    </entry>" + EOL +
-			"    <entry>" + EOL +
-			"      <key>key2</key>" + EOL +
-			"      <value>value2</value>" + EOL +
-			"    </entry>" + EOL +
-			"  </vfModuleOutputs>" + EOL +
-			"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-			"</updateVfModuleResponse>" + EOL);
+    private final String ROLLBACK_VF_MODULE_REQUEST = "<rollbackVfModuleRequest>" + EOL
+            + "  <messageId>{{MESSAGE-ID}}</messageId>" + EOL
+            + "  <notificationUrl>http://localhost:28080/mso/WorkflowMessage</notificationUrl>" + EOL
+            + "  <skipAAI>true</skipAAI>" + EOL + "  <vfModuleRollback>" + EOL
+            + "    <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL + "    <cloudOwner>cloudOwner</cloudOwner>" + EOL
+            + "    <tenantId>tenantId</tenantId>" + EOL + "    <vnfId>vnfId</vnfId>" + EOL
+            + "    <vfModuleId>vfModuleId</vfModuleId>" + EOL + "    <vfModuleStackId>vfModuleStackId</vfModuleStackId>"
+            + EOL + "    <msoRequest>" + EOL + "      <requestId>requestId</requestId>" + EOL
+            + "      <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL + "    </msoRequest>" + EOL
+            + "    <messageId>{{MESSAGE-ID}}</messageId>" + EOL + "    <vfModuleCreated>true</vfModuleCreated>" + EOL
+            + "  </vfModuleRollback>" + EOL + "</rollbackVfModuleRequest>" + EOL;
 
-		callbacks.put("deleteVfModule",
-			"<deleteVfModuleResponse>" + EOL +
-			"  <vnfId>vnfId</vnfId>" + EOL +
-			"  <vfModuleId>vfModuleId</vfModuleId>" + EOL +
-			"  <vfModuleDeleted>true</vfModuleDeleted>" + EOL +
-			"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-			"</deleteVfModuleResponse>" + EOL);
+    public VnfAdapterRestV1IT() throws IOException {
+        callbacks.put("createVfModule", "<createVfModuleResponse>" + EOL + "  <vnfId>vnfId</vnfId>" + EOL
+                + "  <vfModuleId>vfModuleId</vfModuleId>" + EOL + "  <vfModuleStackId>vfModuleStackId</vfModuleStackId>"
+                + EOL + "  <vfModuleCreated>true</vfModuleCreated>" + EOL + "  <vfModuleOutputs>" + EOL + "    <entry>"
+                + EOL + "      <key>key1</key>" + EOL + "      <value>value1</value>" + EOL + "    </entry>" + EOL
+                + "    <entry>" + EOL + "      <key>key2</key>" + EOL + "      <value>value2</value>" + EOL
+                + "    </entry>" + EOL + "  </vfModuleOutputs>" + EOL + "  <rollback>" + EOL
+                + "    <vnfId>vnfId</vnfId>" + EOL + "    <vfModuleId>vfModuleId</vfModuleId>" + EOL
+                + "    <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL
+                + "    <vfModuleCreated>true</vfModuleCreated>" + EOL + "    <tenantId>tenantId</tenantId>" + EOL
+                + "    <cloudOwner>cloudOwner</cloudOwner>" + EOL + "    <cloudSiteId>cloudSiteId</cloudSiteId>" + EOL
+                + "    <msoRequest>" + EOL + "      <requestId>requestId</requestId>" + EOL
+                + "      <serviceInstanceId>serviceInstanceId</serviceInstanceId>" + EOL + "    </msoRequest>" + EOL
+                + "    <messageId>messageId</messageId>" + EOL + "  </rollback>" + EOL
+                + "  <messageId>{{MESSAGE-ID}}</messageId>" + EOL + "</createVfModuleResponse>" + EOL);
 
-		callbacks.put("rollbackVfModule",
-			"<rollbackVfModuleResponse>" + EOL +
-			"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-			"  <vfModuleRolledback>true</vfModuleRolledback>" + EOL +
-			"</rollbackVfModuleResponse>" + EOL);
+        callbacks.put("updateVfModule",
+                "<updateVfModuleResponse>" + EOL + "  <vnfId>vnfId</vnfId>" + EOL
+                        + "  <vfModuleId>vfModuleId</vfModuleId>" + EOL
+                        + "  <vfModuleStackId>vfModuleStackId</vfModuleStackId>" + EOL + "  <vfModuleOutputs>" + EOL
+                        + "    <entry>" + EOL + "      <key>key1</key>" + EOL + "      <value>value1</value>" + EOL
+                        + "    </entry>" + EOL + "    <entry>" + EOL + "      <key>key2</key>" + EOL
+                        + "      <value>value2</value>" + EOL + "    </entry>" + EOL + "  </vfModuleOutputs>" + EOL
+                        + "  <messageId>{{MESSAGE-ID}}</messageId>" + EOL + "</updateVfModuleResponse>" + EOL);
 
-		callbacks.put("vfModuleException",
-			"<vfModuleException>" + EOL +
-			"  <message>message</message>" + EOL +
-			"  <category>category</category>" + EOL +
-			"  <rolledBack>false</rolledBack>" + EOL +
-			"  <messageId>{{MESSAGE-ID}}</messageId>" + EOL +
-			"</vfModuleException>" + EOL);
-	}
+        callbacks.put("deleteVfModule",
+                "<deleteVfModuleResponse>" + EOL + "  <vnfId>vnfId</vnfId>" + EOL
+                        + "  <vfModuleId>vfModuleId</vfModuleId>" + EOL + "  <vfModuleDeleted>true</vfModuleDeleted>"
+                        + EOL + "  <messageId>{{MESSAGE-ID}}</messageId>" + EOL + "</deleteVfModuleResponse>" + EOL);
 
-	@Test
-	
-	public void testCreateVfModuleSuccess() throws Exception {
-		logStart();
+        callbacks.put("rollbackVfModule", "<rollbackVfModuleResponse>" + EOL + "  <messageId>{{MESSAGE-ID}}</messageId>"
+                + EOL + "  <vfModuleRolledback>true</vfModuleRolledback>" + EOL + "</rollbackVfModuleResponse>" + EOL);
 
-		mockVNFPost(wireMockServer, "", 202, "vnfId");
+        callbacks.put("vfModuleException",
+                "<vfModuleException>" + EOL + "  <message>message</message>" + EOL + "  <category>category</category>"
+                        + EOL + "  <rolledBack>false</rolledBack>" + EOL + "  <messageId>{{MESSAGE-ID}}</messageId>"
+                        + EOL + "</vfModuleException>" + EOL);
+    }
 
-		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
-		String messageId = requestId + "-" + System.currentTimeMillis();
-		String request = CREATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
+    @Test
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", requestId);
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("vnfAdapterRestV1Request", request);
+    public void testCreateVfModuleSuccess() throws Exception {
+        logStart();
 
-		invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
-		injectVNFRestCallbacks(callbacks, "createVfModule");
-		waitForProcessEnd(businessKey, 10000);
+        mockVNFPost(wireMockServer, "", 202, "vnfId");
 
-		String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
-		logger.debug("Response:\n{}", response);
-		assertTrue(response!=null && response.contains("<createVfModuleResponse>"));
-		assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
+        String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
+        String messageId = requestId + "-" + System.currentTimeMillis();
+        String request = CREATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
-		logEnd();
-	}
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", requestId);
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("vnfAdapterRestV1Request", request);
 
-	@Test
-	
-	public void testUpdateVfModuleSuccess() throws Exception {
-		logStart();
+        invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
+        injectVNFRestCallbacks(callbacks, "createVfModule");
+        waitForProcessEnd(businessKey, 10000);
 
-		mockVNFPut(wireMockServer, "/vfModuleId", 202);
+        String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
+        logger.debug("Response:\n{}", response);
+        assertTrue(response != null && response.contains("<createVfModuleResponse>"));
+        assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 
-		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
-		String messageId = requestId + "-" + System.currentTimeMillis();
-		String request = UPDATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
+        logEnd();
+    }
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", requestId);
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("vnfAdapterRestV1Request", request);
+    @Test
 
-		invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
-		injectVNFRestCallbacks(callbacks, "updateVfModule");
-		waitForProcessEnd(businessKey, 10000);
+    public void testUpdateVfModuleSuccess() throws Exception {
+        logStart();
 
-		String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
-		logger.debug("Response:\n{}", response);
-		assertTrue(response.contains("<updateVfModuleResponse>"));
-		assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
+        mockVNFPut(wireMockServer, "/vfModuleId", 202);
 
-		logEnd();
-	}
+        String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
+        String messageId = requestId + "-" + System.currentTimeMillis();
+        String request = UPDATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
-	@Test
-	
-	public void testDeleteVfModuleSuccess() throws Exception {
-		logStart();
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", requestId);
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("vnfAdapterRestV1Request", request);
 
-		mockVNFDelete(wireMockServer, "vnfId", "/vfModuleId", 202);
+        invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
+        injectVNFRestCallbacks(callbacks, "updateVfModule");
+        waitForProcessEnd(businessKey, 10000);
 
-		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
-		String messageId = requestId + "-" + System.currentTimeMillis();
-		String request = DELETE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
+        String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
+        logger.debug("Response:\n{}", response);
+        assertTrue(response.contains("<updateVfModuleResponse>"));
+        assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", requestId);
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("vnfAdapterRestV1Request", request);
+        logEnd();
+    }
 
-		invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
-		injectVNFRestCallbacks(callbacks, "deleteVfModule");
-		waitForProcessEnd(businessKey, 10000);
+    @Test
 
-		String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
-		logger.debug("Response:\n{}", response);
-		assertTrue(response.contains("<deleteVfModuleResponse>"));
-		assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
+    public void testDeleteVfModuleSuccess() throws Exception {
+        logStart();
 
-		logEnd();
-	}
+        mockVNFDelete(wireMockServer, "vnfId", "/vfModuleId", 202);
 
-	@Test
-	
-	public void testRollbackVfModuleSuccess() throws Exception {
-		logStart();
+        String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
+        String messageId = requestId + "-" + System.currentTimeMillis();
+        String request = DELETE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
-		mockVNFRollbackDelete(wireMockServer, "/vfModuleId", 202);
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", requestId);
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("vnfAdapterRestV1Request", request);
 
-		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
-		String messageId = requestId + "-" + System.currentTimeMillis();
-		String request = ROLLBACK_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
+        invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
+        injectVNFRestCallbacks(callbacks, "deleteVfModule");
+        waitForProcessEnd(businessKey, 10000);
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", requestId);
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("vnfAdapterRestV1Request", request);
+        String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
+        logger.debug("Response:\n{}", response);
+        assertTrue(response.contains("<deleteVfModuleResponse>"));
+        assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 
-		invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
-		injectVNFRestCallbacks(callbacks, "rollbackVfModule");
-		waitForProcessEnd(businessKey, 10000);
+        logEnd();
+    }
 
-		String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
-		logger.debug("Response:\n{}", response);
-		assertTrue(response.contains("<rollbackVfModuleResponse>"));
-		assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
+    @Test
 
-		logEnd();
-	}
+    public void testRollbackVfModuleSuccess() throws Exception {
+        logStart();
 
-	@Test
-	
-	public void testCreateVfModuleException() throws Exception {
-		logStart();
+        mockVNFRollbackDelete(wireMockServer, "/vfModuleId", 202);
 
-		mockVNFPost(wireMockServer, "", 202, "vnfId");
+        String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
+        String messageId = requestId + "-" + System.currentTimeMillis();
+        String request = ROLLBACK_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
 
-		String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
-		String messageId = requestId + "-" + System.currentTimeMillis();
-		String request = CREATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", requestId);
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("vnfAdapterRestV1Request", request);
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", requestId);
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("vnfAdapterRestV1Request", request);
+        invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
+        injectVNFRestCallbacks(callbacks, "rollbackVfModule");
+        waitForProcessEnd(businessKey, 10000);
 
-		invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
-		injectVNFRestCallbacks(callbacks, "vfModuleException");
-		waitForProcessEnd(businessKey, 10000);
+        String response = (String) getVariableFromHistory(businessKey, "vnfAdapterRestV1Response");
+        logger.debug("Response:\n{}", response);
+        assertTrue(response.contains("<rollbackVfModuleResponse>"));
+        assertTrue((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
 
-		WorkflowException wfe = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
-		assertNotNull(wfe);
-		logger.debug(wfe.toString());
+        logEnd();
+    }
 
-		String response = (String) getVariableFromHistory(businessKey, "WorkflowResponse");
-		logger.debug("Response:\n{}", response);
-		assertTrue(response.contains("<vfModuleException>"));
-		assertFalse((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
+    @Test
 
-		logEnd();
-	}
+    public void testCreateVfModuleException() throws Exception {
+        logStart();
+
+        mockVNFPost(wireMockServer, "", 202, "vnfId");
+
+        String requestId = "dffbae0e-5588-4bd6-9749-b0f0adb52312";
+        String messageId = requestId + "-" + System.currentTimeMillis();
+        String request = CREATE_VF_MODULE_REQUEST.replace("{{MESSAGE-ID}}", messageId);
+
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", requestId);
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("vnfAdapterRestV1Request", request);
+
+        invokeSubProcess("vnfAdapterRestV1", businessKey, variables);
+        injectVNFRestCallbacks(callbacks, "vfModuleException");
+        waitForProcessEnd(businessKey, 10000);
+
+        WorkflowException wfe = (WorkflowException) getVariableFromHistory(businessKey, "WorkflowException");
+        assertNotNull(wfe);
+        logger.debug(wfe.toString());
+
+        String response = (String) getVariableFromHistory(businessKey, "WorkflowResponse");
+        logger.debug("Response:\n{}", response);
+        assertTrue(response.contains("<vfModuleException>"));
+        assertFalse((boolean) getVariableFromHistory(businessKey, "VNFREST_SuccessIndicator"));
+
+        logEnd();
+    }
 }
 

@@ -22,41 +22,48 @@ package org.onap.so.bpmn.servicedecomposition.entities;
 
 import java.io.Serializable;
 
-public class ConfigurationResourceKeys implements Serializable{
+public class ConfigurationResourceKeys implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private String vfModuleCustomizationUUID;
-	private String vnfResourceCustomizationUUID;
-	private String cvnfcCustomizationUUID;
-	private String vnfcName;
-	
-	public String getVfModuleCustomizationUUID() {
-		return vfModuleCustomizationUUID;
-	}
-	public void setVfModuleCustomizationUUID(String vfModuleCustomizationUUID) {
-		this.vfModuleCustomizationUUID = vfModuleCustomizationUUID;
-	}
-	public String getVnfResourceCustomizationUUID() {
-		return vnfResourceCustomizationUUID;
-	}
-	public void setVnfResourceCustomizationUUID(String vnfResourceCustomizationUUID) {
-		this.vnfResourceCustomizationUUID = vnfResourceCustomizationUUID;
-	}
-	public String getCvnfcCustomizationUUID() {
-		return cvnfcCustomizationUUID;
-	}
-	public void setCvnfcCustomizationUUID(String cvnfcCustomizationUUID) {
-		this.cvnfcCustomizationUUID = cvnfcCustomizationUUID;
-	}
-	public String getVnfcName() {
-		return vnfcName;
-	}
-	public void setVnfcName(String vnfcName) {
-		this.vnfcName = vnfcName;
-	}
-	
-	
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private String vfModuleCustomizationUUID;
+    private String vnfResourceCustomizationUUID;
+    private String cvnfcCustomizationUUID;
+    private String vnfcName;
+
+    public String getVfModuleCustomizationUUID() {
+        return vfModuleCustomizationUUID;
+    }
+
+    public void setVfModuleCustomizationUUID(String vfModuleCustomizationUUID) {
+        this.vfModuleCustomizationUUID = vfModuleCustomizationUUID;
+    }
+
+    public String getVnfResourceCustomizationUUID() {
+        return vnfResourceCustomizationUUID;
+    }
+
+    public void setVnfResourceCustomizationUUID(String vnfResourceCustomizationUUID) {
+        this.vnfResourceCustomizationUUID = vnfResourceCustomizationUUID;
+    }
+
+    public String getCvnfcCustomizationUUID() {
+        return cvnfcCustomizationUUID;
+    }
+
+    public void setCvnfcCustomizationUUID(String cvnfcCustomizationUUID) {
+        this.cvnfcCustomizationUUID = cvnfcCustomizationUUID;
+    }
+
+    public String getVnfcName() {
+        return vnfcName;
+    }
+
+    public void setVnfcName(String vnfcName) {
+        this.vnfcName = vnfcName;
+    }
+
+
 }

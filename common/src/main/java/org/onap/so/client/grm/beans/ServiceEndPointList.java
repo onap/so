@@ -21,22 +21,21 @@
 package org.onap.so.client.grm.beans;
 
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-//@JsonIgnoreProperties(ignoreUnknown = true)
+// @JsonIgnoreProperties(ignoreUnknown = true)
 public class ServiceEndPointList {
 
-	@JsonAlias("ServiceEndPointList")
-	private List<ServiceEndPoint> serviceEndPointList = null;
+    @JsonAlias("ServiceEndPointList")
+    private List<ServiceEndPoint> serviceEndPointList = null;
 
-	public List<ServiceEndPoint> getServiceEndPointList() {
-		return serviceEndPointList;
-	}
+    public List<ServiceEndPoint> getServiceEndPointList() {
+        return serviceEndPointList;
+    }
 
-	public void setServiceEndPointList(List<ServiceEndPoint> serviceEndPointList) {
-		this.serviceEndPointList = serviceEndPointList;
-	}
+    public void setServiceEndPointList(List<ServiceEndPoint> serviceEndPointList) {
+        this.serviceEndPointList = serviceEndPointList;
+    }
 }

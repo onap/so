@@ -25,18 +25,19 @@ package org.onap.so.adapters.vnf.exceptions;
 import javax.xml.ws.WebFault;
 
 /**
- * This class reports an exception when trying to create a VNF when another
- * VNF of the same name already exists in the target cloud/tenant.  Note that
- * the createVnf method suppresses this exception by default.
+ * This class reports an exception when trying to create a VNF when another VNF of the same name already exists in the
+ * target cloud/tenant. Note that the createVnf method suppresses this exception by default.
  *
  *
  */
-@WebFault (name="VnfAlreadyExists", faultBean="org.onap.so.adapters.vnf.exceptions.VnfExceptionBean", targetNamespace="http://org.onap.so/vnf")
+@WebFault(name = "VnfAlreadyExists", faultBean = "org.onap.so.adapters.vnf.exceptions.VnfExceptionBean",
+        targetNamespace = "http://org.onap.so/vnf")
 public class VnfAlreadyExists extends VnfException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public VnfAlreadyExists (String name, String cloudId, String cloudOwner, String tenantId, String vnfId) {
-		super("Resource " + name + " already exists in owner/cloud/tenant " + cloudOwner + "/" + cloudId + "/" + tenantId + " with ID " + vnfId);
-	}
+    public VnfAlreadyExists(String name, String cloudId, String cloudOwner, String tenantId, String vnfId) {
+        super("Resource " + name + " already exists in owner/cloud/tenant " + cloudOwner + "/" + cloudId + "/"
+                + tenantId + " with ID " + vnfId);
+    }
 }

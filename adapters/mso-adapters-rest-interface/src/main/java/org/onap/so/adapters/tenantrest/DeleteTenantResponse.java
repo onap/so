@@ -27,15 +27,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "deleteTenantResponse")
 public class DeleteTenantResponse {
 
-	private Boolean tenantDeleted;
+    private Boolean tenantDeleted;
 
-	public DeleteTenantResponse() {}
-	
-	public Boolean getTenantDeleted() {
-		return tenantDeleted;
-	}
+    public DeleteTenantResponse() {}
 
-	public void setTenantDeleted(Boolean tenantDeleted) {
-		this.tenantDeleted = tenantDeleted;
-	}
+    public Boolean getTenantDeleted() {
+        return tenantDeleted;
+    }
+
+    public void setTenantDeleted(Boolean tenantDeleted) {
+        this.tenantDeleted = tenantDeleted;
+    }
 }

@@ -33,12 +33,12 @@ public class ScaleNsByStepsData {
      * scaling Direction
      */
     private String scalingDirection;
-    
+
     /**
      * aspect ID
      */
     private String aspectId;
-    
+
     /**
      * number of Steps
      */
@@ -61,28 +61,28 @@ public class ScaleNsByStepsData {
     /**
      * @return Returns the aspectId.
      */
-	public String getAspectId() {
-		return aspectId;
-	}
+    public String getAspectId() {
+        return aspectId;
+    }
 
     /**
      * @param aspectId The aspectId to set.
      */
-	public void setAspectId(String aspectId) {
-		this.aspectId = aspectId;
-	}
+    public void setAspectId(String aspectId) {
+        this.aspectId = aspectId;
+    }
 
     /**
      * @return Returns the numberOfSteps.
      */
-	public Integer getNumberOfSteps() {
-		return numberOfSteps;
-	}
+    public Integer getNumberOfSteps() {
+        return numberOfSteps;
+    }
 
     /**
      * @param numberOfSteps The numberOfSteps to set.
      */
-	public void setNumberOfSteps(int numberOfSteps) {
-		this.numberOfSteps = numberOfSteps;
-	}
+    public void setNumberOfSteps(int numberOfSteps) {
+        this.numberOfSteps = numberOfSteps;
+    }
 }

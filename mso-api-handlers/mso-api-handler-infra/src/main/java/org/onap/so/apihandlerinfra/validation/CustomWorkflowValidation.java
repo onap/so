@@ -25,28 +25,27 @@ package org.onap.so.apihandlerinfra.validation;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.RequestParameters;
-
 import com.google.common.base.Strings;
 
 public class CustomWorkflowValidation implements ValidationRule {
 
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException {
-		RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
-		CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails().getCloudConfiguration();
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        RequestParameters requestParameters = info.getSir().getRequestDetails().getRequestParameters();
+        CloudConfiguration cloudConfiguration = info.getSir().getRequestDetails().getCloudConfiguration();
 
-		if (cloudConfiguration == null) {
-			throw new ValidationException("cloudConfiguration");
-		} else if (Strings.isNullOrEmpty((cloudConfiguration.getCloudOwner()))) {
-			throw new ValidationException("cloudOwner");
-		} else if (Strings.isNullOrEmpty((cloudConfiguration.getLcpCloudRegionId()))) {
-			throw new ValidationException("lcpCloudRegionId");
-		} else if (Strings.isNullOrEmpty((cloudConfiguration.getTenantId()))) {
-			throw new ValidationException("tenantId");
-		}
-		if (requestParameters == null) {
-			throw new ValidationException("requestParameters");
-		}
-		return info;
-	}
+        if (cloudConfiguration == null) {
+            throw new ValidationException("cloudConfiguration");
+        } else if (Strings.isNullOrEmpty((cloudConfiguration.getCloudOwner()))) {
+            throw new ValidationException("cloudOwner");
+        } else if (Strings.isNullOrEmpty((cloudConfiguration.getLcpCloudRegionId()))) {
+            throw new ValidationException("lcpCloudRegionId");
+        } else if (Strings.isNullOrEmpty((cloudConfiguration.getTenantId()))) {
+            throw new ValidationException("tenantId");
+        }
+        if (requestParameters == null) {
+            throw new ValidationException("requestParameters");
+        }
+        return info;
+    }
 }

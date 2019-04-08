@@ -25,7 +25,6 @@ package org.onap.so.bpmn.core.utils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,43 +32,42 @@ import org.slf4j.LoggerFactory;
  * Sets up the unit test (H2) database for Camunda.
  */
 public class CamundaDBSetup {
-	private static boolean isDBConfigured = false;
-	private static final Logger logger = LoggerFactory.getLogger(CamundaDBSetup.class);
-	
-	private CamundaDBSetup() {
-	}
-	
-	public static synchronized void configure() throws SQLException {
-		if (isDBConfigured) {
-			return;
-		}
+    private static boolean isDBConfigured = false;
+    private static final Logger logger = LoggerFactory.getLogger(CamundaDBSetup.class);
 
-		logger.debug ("Configuring the Camunda H2 database for MSO");
+    private CamundaDBSetup() {}
 
-		Connection connection = null;
-		PreparedStatement stmt = null;
+    public static synchronized void configure() throws SQLException {
+        if (isDBConfigured) {
+            return;
+        }
 
-		try {
+        logger.debug("Configuring the Camunda H2 database for MSO");
+
+        Connection connection = null;
+        PreparedStatement stmt = null;
+
+        try {
 
 
-			isDBConfigured = true;
-		
-		} finally {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (Exception e) {
-					logger.debug("Exception :",e);
-				}
-			}
+            isDBConfigured = true;
 
-			if (connection != null) {
-				try {
-					connection.close();
-				} catch (Exception e) {
-					logger.debug("Exception :",e);
-				}
-			}
-		}
-	}
+        } finally {
+            if (stmt != null) {
+                try {
+                    stmt.close();
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                }
+            }
+
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                }
+            }
+        }
+    }
 }

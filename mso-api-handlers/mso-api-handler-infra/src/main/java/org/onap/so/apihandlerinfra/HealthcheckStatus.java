@@ -20,15 +20,16 @@
 package org.onap.so.apihandlerinfra;
 
 public enum HealthcheckStatus {
-    UP("UP"), DOWN("DOWN"); 
-	
-    private String status; 
-    private HealthcheckStatus(String status) { 
-        this.status = status; 
-    } 
-    
-    @Override 
-    public String toString(){ 
-        return status; 
-    } 
+    UP("UP"), DOWN("DOWN");
+
+    private String status;
+
+    private HealthcheckStatus(String status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return status;
+    }
 }

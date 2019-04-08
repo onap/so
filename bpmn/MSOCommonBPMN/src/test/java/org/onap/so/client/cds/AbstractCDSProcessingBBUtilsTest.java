@@ -26,9 +26,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.UUID;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,8 +47,9 @@ public class AbstractCDSProcessingBBUtilsTest {
     ExceptionBuilder exceptionUtil;
 
     @Before
-    public void init(){
-        String requestObject = "{\"config-assign-request\":{\"resolution-key\":\"resolutionKey\", \"config-assign-properties\":{\"service-instance-id\":\"serviceInstanceId\", \"vnf-id\":\"vnfId\", \"vnf-name\":\"vnfName\", \"service-model-uuid\":\"serviceModelUuid\", \"vnf-customization-uuid\":\"vnfCustomizationUuid\",\"Instance1\":\"Instance1Value\",\"Instance2\":\"Instance2Value\",\"Param3\":\"Param3Value\"}}}";
+    public void init() {
+        String requestObject =
+                "{\"config-assign-request\":{\"resolution-key\":\"resolutionKey\", \"config-assign-properties\":{\"service-instance-id\":\"serviceInstanceId\", \"vnf-id\":\"vnfId\", \"vnf-name\":\"vnfName\", \"service-model-uuid\":\"serviceModelUuid\", \"vnf-customization-uuid\":\"vnfCustomizationUuid\",\"Instance1\":\"Instance1Value\",\"Instance2\":\"Instance2Value\",\"Param3\":\"Param3Value\"}}}";
         String blueprintName = "blueprintName";
         String blueprintVersion = "blueprintVersion";
         String actionName = "actionName";
@@ -76,8 +75,8 @@ public class AbstractCDSProcessingBBUtilsTest {
         when(execution.getVariable("executionObject")).thenReturn(abstractCDSPropertiesBean);
 
         abstractCDSProcessingBBUtils.constructExecutionServiceInputObject(execution);
-        verify(exceptionUtil, times(0))
-            .buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(), any(Exception.class));
+        verify(exceptionUtil, times(0)).buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(),
+                any(Exception.class));
     }
 
     @Test
@@ -86,8 +85,8 @@ public class AbstractCDSProcessingBBUtilsTest {
         DelegateExecution execution = mock(DelegateExecution.class);
         when(execution.getVariable("executionServiceInput")).thenReturn(abstractCDSPropertiesBean);
         abstractCDSProcessingBBUtils.sendRequestToCDSClient(execution);
-        verify(exceptionUtil, times(1))
-            .buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(), any(Exception.class));
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(DelegateExecution.class), anyInt(),
+                any(Exception.class));
 
     }
 

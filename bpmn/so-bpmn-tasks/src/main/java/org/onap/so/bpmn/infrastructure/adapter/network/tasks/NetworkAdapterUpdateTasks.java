@@ -40,37 +40,40 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NetworkAdapterUpdateTasks {
-	private static final Logger logger =  LoggerFactory.getLogger(NetworkAdapterUpdateTasks.class);
-	
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private NetworkAdapterObjectMapper networkAdapterObjectMapper;
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	
-	public void updateNetwork(BuildingBlockExecution execution) {
-		try {
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-			
-			UpdateNetworkRequest updateNetworkRequest = networkAdapterObjectMapper.createNetworkUpdateRequestMapper(gBBInput.getRequestContext(), gBBInput.getCloudRegion(),  gBBInput.getOrchContext(), serviceInstance, l3Network, gBBInput.getUserInput(), gBBInput.getCustomer());
-			execution.setVariable("networkAdapterRequest", updateNetworkRequest);
-			
-		} catch(Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void processResponseFromOpenstack(BuildingBlockExecution execution) {
-		try {			
-			UpdateNetworkResponse updateNetworkResponse = execution.getVariable("updateNetworkResponse");
-			if(updateNetworkResponse == null) {
-				throw new Exception("No response was sent back from NetworkAdapterRestV1 subflow.");
-			}
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+    private static final Logger logger = LoggerFactory.getLogger(NetworkAdapterUpdateTasks.class);
+
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private NetworkAdapterObjectMapper networkAdapterObjectMapper;
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+
+    public void updateNetwork(BuildingBlockExecution execution) {
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+
+            UpdateNetworkRequest updateNetworkRequest = networkAdapterObjectMapper.createNetworkUpdateRequestMapper(
+                    gBBInput.getRequestContext(), gBBInput.getCloudRegion(), gBBInput.getOrchContext(), serviceInstance,
+                    l3Network, gBBInput.getUserInput(), gBBInput.getCustomer());
+            execution.setVariable("networkAdapterRequest", updateNetworkRequest);
+
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void processResponseFromOpenstack(BuildingBlockExecution execution) {
+        try {
+            UpdateNetworkResponse updateNetworkResponse = execution.getVariable("updateNetworkResponse");
+            if (updateNetworkResponse == null) {
+                throw new Exception("No response was sent back from NetworkAdapterRestV1 subflow.");
+            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 }

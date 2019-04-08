@@ -25,55 +25,57 @@ import java.util.ServiceLoader;
 
 public class RestPropertiesLoader {
 
-	/* required to make ServiceLoader thread safe */
-	private static final ThreadLocal<ServiceLoader<RestProperties>> services = new ThreadLocal<ServiceLoader<RestProperties>>() {
-		@Override
-		protected ServiceLoader<RestProperties> initialValue() {
-			return ServiceLoader.load(RestProperties.class);
-		}
-	};
-	private RestPropertiesLoader() {
-	}
-	
-	private static class Helper {
-		private static final RestPropertiesLoader INSTANCE = new RestPropertiesLoader();
-	}
-	
-	public static RestPropertiesLoader getInstance() {
-		return Helper.INSTANCE;
-	}
-	
-	public <T> T getNewImpl(Class<? extends RestProperties> clazz) {
-		return this.getImpl(clazz, true);
-	}
-	public <T> T getImpl(Class<? extends RestProperties> clazz) {
-		return this.getImpl(clazz, false);
-	}
-	
-	private <T> T getImpl(Class<? extends RestProperties> clazz, boolean forceNewInstance) {
-		T result = null;
-		ServiceLoader<RestProperties> loader = this.services.get();
-		Iterator<RestProperties> propertyImpls = loader.iterator();
-		RestProperties item;
-		while (propertyImpls.hasNext()) {
-			item = propertyImpls.next();
-			if (clazz.isAssignableFrom(item.getClass())) {
-				try {
-					if (forceNewInstance) {	
-						result = (T)item.getClass().newInstance();
-					} else {
-						result = (T)item;
-					}
-				} catch (InstantiationException | IllegalAccessException e) {
-					/* all spi implementations must provide a public
-					 * no argument constructor
-					 */
-					
-				}
-				//break;
-			}
-		}
-		
-		return result;
-	}
+    /* required to make ServiceLoader thread safe */
+    private static final ThreadLocal<ServiceLoader<RestProperties>> services =
+            new ThreadLocal<ServiceLoader<RestProperties>>() {
+                @Override
+                protected ServiceLoader<RestProperties> initialValue() {
+                    return ServiceLoader.load(RestProperties.class);
+                }
+            };
+
+    private RestPropertiesLoader() {}
+
+    private static class Helper {
+        private static final RestPropertiesLoader INSTANCE = new RestPropertiesLoader();
+    }
+
+    public static RestPropertiesLoader getInstance() {
+        return Helper.INSTANCE;
+    }
+
+    public <T> T getNewImpl(Class<? extends RestProperties> clazz) {
+        return this.getImpl(clazz, true);
+    }
+
+    public <T> T getImpl(Class<? extends RestProperties> clazz) {
+        return this.getImpl(clazz, false);
+    }
+
+    private <T> T getImpl(Class<? extends RestProperties> clazz, boolean forceNewInstance) {
+        T result = null;
+        ServiceLoader<RestProperties> loader = this.services.get();
+        Iterator<RestProperties> propertyImpls = loader.iterator();
+        RestProperties item;
+        while (propertyImpls.hasNext()) {
+            item = propertyImpls.next();
+            if (clazz.isAssignableFrom(item.getClass())) {
+                try {
+                    if (forceNewInstance) {
+                        result = (T) item.getClass().newInstance();
+                    } else {
+                        result = (T) item;
+                    }
+                } catch (InstantiationException | IllegalAccessException e) {
+                    /*
+                     * all spi implementations must provide a public no argument constructor
+                     */
+
+                }
+                // break;
+            }
+        }
+
+        return result;
+    }
 }

@@ -38,15 +38,13 @@ abstract class OpenstackClientImpl implements OpenstackClient {
     }
 
     @Override
-    public List<Port> getAllPorts() { return (List<Port>)getClient().networking().port().list(); }
+    public List<Port> getAllPorts() {
+        return (List<Port>) getClient().networking().port().list();
+    }
 
     @Override
     public List<Resource> getStackBasedResources(String stackId, int nestingDepth) {
-        return getClient().heat()
-                .resources()
-                .list(stackId, nestingDepth)
-                .stream()
-                .filter(Objects::nonNull)
+        return getClient().heat().resources().list(stackId, nestingDepth).stream().filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
@@ -62,6 +60,7 @@ abstract class OpenstackClientImpl implements OpenstackClient {
 
     /**
      * Retrieves the specific client to utilize.
+     * 
      * @return The specific client to utilize
      */
     protected abstract OSClient getClient();

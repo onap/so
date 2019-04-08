@@ -23,34 +23,33 @@ package org.onap.so.client.ruby.dmaap;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
-
 import org.onap.so.client.dmaap.DmaapPublisher;
 
-public class RubyCreateTicketRequestPublisher extends DmaapPublisher{
-	public RubyCreateTicketRequestPublisher() throws FileNotFoundException, IOException {
-		super();
-	}
-	
-	@Override
-	public String getAuth() {
-		return msoProperties.get("ruby.create-ticket-request.dmaap.auth");
-	}
+public class RubyCreateTicketRequestPublisher extends DmaapPublisher {
+    public RubyCreateTicketRequestPublisher() throws FileNotFoundException, IOException {
+        super();
+    }
 
-	@Override
-	public String getKey() {
-		return msoProperties.get("mso.msoKey");
-	}
+    @Override
+    public String getAuth() {
+        return msoProperties.get("ruby.create-ticket-request.dmaap.auth");
+    }
 
-	@Override
-	public String getTopic() {
-		return msoProperties.get("ruby.create-ticket-request.publisher.topic");
-	}
+    @Override
+    public String getKey() {
+        return msoProperties.get("mso.msoKey");
+    }
 
-	@Override
-	public Optional<String> getHost() {
-		return Optional.ofNullable(msoProperties.get("ruby.create-ticket-request.publisher.host"));
-	}
-	
+    @Override
+    public String getTopic() {
+        return msoProperties.get("ruby.create-ticket-request.publisher.topic");
+    }
+
+    @Override
+    public Optional<String> getHost() {
+        return Optional.ofNullable(msoProperties.get("ruby.create-ticket-request.publisher.host"));
+    }
+
 }
 
 

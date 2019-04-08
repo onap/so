@@ -22,23 +22,20 @@ package org.onap.so.bpmn.servicedecomposition.homingobjects;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum CandidateType{
+public enum CandidateType {
 
 
-	SERVICE_INSTANCE_ID("serviceInstanceId"),
-	CLOUD_REGION_ID("cloudRegionId"),
-	VNF_ID("vnfId"),
-	VNF_NAME("vnfName");
+    SERVICE_INSTANCE_ID("serviceInstanceId"), CLOUD_REGION_ID("cloudRegionId"), VNF_ID("vnfId"), VNF_NAME("vnfName");
 
-	private final String name;
+    private final String name;
 
-	private CandidateType(String name) {
-		this.name = name;
-	}
+    private CandidateType(String name) {
+        this.name = name;
+    }
 
-	@Override
-	@JsonValue
-	public String toString() {
-		return name;
-	}
+    @Override
+    @JsonValue
+    public String toString() {
+        return name;
+    }
 }

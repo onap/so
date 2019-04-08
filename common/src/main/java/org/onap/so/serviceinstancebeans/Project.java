@@ -21,7 +21,6 @@
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,21 +30,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @JsonRootName(value = "project")
 @JsonInclude(Include.NON_DEFAULT)
 public class Project implements Serializable {
-	
-	private static final long serialVersionUID = -3868114191925177035L;
-	@JsonProperty("projectName")
-	private String projectName;
-	
-	public String getProjectName(){
-		return projectName;
-	}
 
-	public void setProjectName(String value) {
-		this.projectName = value;
-	}
+    private static final long serialVersionUID = -3868114191925177035L;
+    @JsonProperty("projectName")
+    private String projectName;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("projectName", projectName).toString();
-	}
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String value) {
+        this.projectName = value;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("projectName", projectName).toString();
+    }
 }

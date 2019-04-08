@@ -24,13 +24,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * An object that stores data for rollbacks. Data is organized by type. A type is simply a string
- * identifier. Multiple types of data may be stored in the same object for separate rollback
- * operations.
+ * An object that stores data for rollbacks. Data is organized by type. A type is simply a string identifier. Multiple
+ * types of data may be stored in the same object for separate rollback operations.
  */
 public class RollbackData implements Serializable {
 

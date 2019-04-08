@@ -35,17 +35,17 @@ public class MsoDatabaseException extends RuntimeException {
      * @param message The message to dump
      * @param cause The Throwable cause object
      */
-    public MsoDatabaseException (final String message) {
-        super (message);
-       
+    public MsoDatabaseException(final String message) {
+        super(message);
+
     }
-	
+
     /**
      * @param message The message to dump
      * @param cause The Throwable cause object
      */
-    public MsoDatabaseException (final String message, final Throwable cause) {
-        super (message, cause);
-       
+    public MsoDatabaseException(final String message, final Throwable cause) {
+        super(message, cause);
+
     }
 }

@@ -34,10 +34,13 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for request-status-type.
- *
- * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
+ * Java class for request-status-type.
+ *
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * 
  * <pre>
  * &lt;simpleType name="request-status-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -53,12 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlEnum
 public enum RequestStatusType {
 
-    COMPLETE,
-    FAILED,
-    IN_PROGRESS,
-    PENDING,
-    TIMEOUT,
-    UNLOCKED;
+    COMPLETE, FAILED, IN_PROGRESS, PENDING, TIMEOUT, UNLOCKED;
 
     public String value() {
         return name();

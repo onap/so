@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.db.catalog.beans.OrchestrationAction;
@@ -39,15 +38,20 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class OrchestrationStatusStateTransitionDirectiveTest {
-	@Autowired
-	private OrchestrationStatusStateTransitionDirectiveRepository orchestrationStatusStateTransitionDirectiveRepository;
+    @Autowired
+    private OrchestrationStatusStateTransitionDirectiveRepository orchestrationStatusStateTransitionDirectiveRepository;
 
-	@Test
-	public void OrchestrationStatusTransitionDBSingleLookupValidationTest() {
-		OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective = orchestrationStatusStateTransitionDirectiveRepository.findOneByResourceTypeAndOrchestrationStatusAndTargetAction(ResourceType.SERVICE, OrchestrationStatus.ASSIGNED, OrchestrationAction.ASSIGN);
-		assertEquals(ResourceType.SERVICE, orchestrationStatusStateTransitionDirective.getResourceType());
-		assertEquals(OrchestrationStatus.ASSIGNED, orchestrationStatusStateTransitionDirective.getOrchestrationStatus());
-		assertEquals(OrchestrationAction.ASSIGN, orchestrationStatusStateTransitionDirective.getTargetAction());
-		assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS, orchestrationStatusStateTransitionDirective.getFlowDirective());
-	}
+    @Test
+    public void OrchestrationStatusTransitionDBSingleLookupValidationTest() {
+        OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective =
+                orchestrationStatusStateTransitionDirectiveRepository
+                        .findOneByResourceTypeAndOrchestrationStatusAndTargetAction(ResourceType.SERVICE,
+                                OrchestrationStatus.ASSIGNED, OrchestrationAction.ASSIGN);
+        assertEquals(ResourceType.SERVICE, orchestrationStatusStateTransitionDirective.getResourceType());
+        assertEquals(OrchestrationStatus.ASSIGNED,
+                orchestrationStatusStateTransitionDirective.getOrchestrationStatus());
+        assertEquals(OrchestrationAction.ASSIGN, orchestrationStatusStateTransitionDirective.getTargetAction());
+        assertEquals(OrchestrationStatusValidationDirective.SILENT_SUCCESS,
+                orchestrationStatusStateTransitionDirective.getFlowDirective());
+    }
 }

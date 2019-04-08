@@ -23,7 +23,6 @@ package org.onap.so.client.adapter.vnf;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.CreateVfModuleResponse;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
@@ -39,96 +38,96 @@ import org.springframework.stereotype.Component;
 @Component
 public class VnfAdapterClientImpl implements VnfAdapterClient {
 
-	private static final String VF_MODULES = "/vf-modules/";
+    private static final String VF_MODULES = "/vf-modules/";
 
-	private VnfAdapterRestProperties props;
+    private VnfAdapterRestProperties props;
 
-	public VnfAdapterClientImpl() {
-		this.props = new VnfAdapterRestProperties();
-	}
-	
-	public VnfAdapterClientImpl(VnfAdapterRestProperties props) {
-		this.props = props;
-	}
+    public VnfAdapterClientImpl() {
+        this.props = new VnfAdapterRestProperties();
+    }
 
-	@Override
-	public CreateVfModuleResponse createVfModule(String aaiVnfId, CreateVfModuleRequest req)
-			throws VnfAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + "/vf-modules").build()).post(req,
-					CreateVfModuleResponse.class);
-		} catch (InternalServerErrorException e) {
-			throw new VnfAdapterClientException(e.getMessage());
-		}
-	}
+    public VnfAdapterClientImpl(VnfAdapterRestProperties props) {
+        this.props = props;
+    }
 
-	@Override
-	public RollbackVfModuleResponse rollbackVfModule(String aaiVnfId, String aaiVfModuleId, RollbackVfModuleRequest req)
-			throws VnfAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props,
-					this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId + "/rollback").build()).delete(req,
-							RollbackVfModuleResponse.class);
-		} catch (InternalServerErrorException e) {
-			throw new VnfAdapterClientException(e.getMessage());
-		}
-	}
+    @Override
+    public CreateVfModuleResponse createVfModule(String aaiVnfId, CreateVfModuleRequest req)
+            throws VnfAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + "/vf-modules").build()).post(req,
+                    CreateVfModuleResponse.class);
+        } catch (InternalServerErrorException e) {
+            throw new VnfAdapterClientException(e.getMessage());
+        }
+    }
 
-	@Override
-	public DeleteVfModuleResponse deleteVfModule(String aaiVnfId, String aaiVfModuleId, DeleteVfModuleRequest req)
-			throws VnfAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId).build())
-					.delete(req, DeleteVfModuleResponse.class);
-		} catch (InternalServerErrorException e) {
-			throw new VnfAdapterClientException(e.getMessage());
-		}
-	}
+    @Override
+    public RollbackVfModuleResponse rollbackVfModule(String aaiVnfId, String aaiVfModuleId, RollbackVfModuleRequest req)
+            throws VnfAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props,
+                    this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId + "/rollback").build()).delete(req,
+                            RollbackVfModuleResponse.class);
+        } catch (InternalServerErrorException e) {
+            throw new VnfAdapterClientException(e.getMessage());
+        }
+    }
 
-	@Override
-	public UpdateVfModuleResponse updateVfModule(String aaiVnfId, String aaiVfModuleId, UpdateVfModuleRequest req)
-			throws VnfAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId).build())
-					.put(req, UpdateVfModuleResponse.class);
-		} catch (InternalServerErrorException e) {
-			throw new VnfAdapterClientException(e.getMessage());
-		}
-	}
+    @Override
+    public DeleteVfModuleResponse deleteVfModule(String aaiVnfId, String aaiVfModuleId, DeleteVfModuleRequest req)
+            throws VnfAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId).build())
+                    .delete(req, DeleteVfModuleResponse.class);
+        } catch (InternalServerErrorException e) {
+            throw new VnfAdapterClientException(e.getMessage());
+        }
+    }
 
-	@Override
-	public QueryVfModuleResponse queryVfModule(String aaiVnfId, String aaiVfModuleId, String cloudSiteId,
-			String tenantId, String vfModuleName, boolean skipAAI, String requestId, String serviceInstanceId)
-			throws VnfAdapterClientException {
-		UriBuilder builder = this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId);
-		if (cloudSiteId != null) {
-			builder.queryParam("cloudSiteId", cloudSiteId);
-		}
-		if (tenantId != null) {
-			builder.queryParam("tenantId", tenantId);
-		}
-		if (vfModuleName != null) {
-			builder.queryParam("vfModuleName", vfModuleName);
-		}
+    @Override
+    public UpdateVfModuleResponse updateVfModule(String aaiVnfId, String aaiVfModuleId, UpdateVfModuleRequest req)
+            throws VnfAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId).build())
+                    .put(req, UpdateVfModuleResponse.class);
+        } catch (InternalServerErrorException e) {
+            throw new VnfAdapterClientException(e.getMessage());
+        }
+    }
 
-		builder.queryParam("skipAAI", skipAAI);
+    @Override
+    public QueryVfModuleResponse queryVfModule(String aaiVnfId, String aaiVfModuleId, String cloudSiteId,
+            String tenantId, String vfModuleName, boolean skipAAI, String requestId, String serviceInstanceId)
+            throws VnfAdapterClientException {
+        UriBuilder builder = this.getUri("/" + aaiVnfId + VF_MODULES + aaiVfModuleId);
+        if (cloudSiteId != null) {
+            builder.queryParam("cloudSiteId", cloudSiteId);
+        }
+        if (tenantId != null) {
+            builder.queryParam("tenantId", tenantId);
+        }
+        if (vfModuleName != null) {
+            builder.queryParam("vfModuleName", vfModuleName);
+        }
 
-		if (requestId != null) {
-			builder.queryParam("msoRequest.requestId", requestId);
-		}
-		if (serviceInstanceId != null) {
-			builder.queryParam("msoRequest.serviceInstanceId", serviceInstanceId);
-		}
-		try {
-			return new AdapterRestClient(this.props, builder.build(), MediaType.APPLICATION_JSON,
-					MediaType.APPLICATION_JSON).get(QueryVfModuleResponse.class).get();
-		} catch (InternalServerErrorException e) {
-			throw new VnfAdapterClientException(e.getMessage());
-		}
-	}
+        builder.queryParam("skipAAI", skipAAI);
 
-	public UriBuilder getUri(String path) {
-		return UriBuilder.fromPath(path);
-	}
+        if (requestId != null) {
+            builder.queryParam("msoRequest.requestId", requestId);
+        }
+        if (serviceInstanceId != null) {
+            builder.queryParam("msoRequest.serviceInstanceId", serviceInstanceId);
+        }
+        try {
+            return new AdapterRestClient(this.props, builder.build(), MediaType.APPLICATION_JSON,
+                    MediaType.APPLICATION_JSON).get(QueryVfModuleResponse.class).get();
+        } catch (InternalServerErrorException e) {
+            throw new VnfAdapterClientException(e.getMessage());
+        }
+    }
+
+    public UriBuilder getUri(String path) {
+        return UriBuilder.fromPath(path);
+    }
 
 }

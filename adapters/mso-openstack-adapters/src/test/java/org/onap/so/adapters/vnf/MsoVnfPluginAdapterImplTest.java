@@ -27,12 +27,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackGetStackVfModule_404;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.ws.Holder;
-
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.Test;
@@ -58,9 +55,9 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         MsoRequest msoRequest = getMsoRequest();
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
-        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
-                "volumeGroupHeatStackId|1", "baseVfHeatStackId", null, map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
+        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "",
+                vnfName, "", "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId", null, map, Boolean.FALSE,
+                Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
                 new Holder<VnfRollback>());
     }
 
@@ -70,10 +67,10 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         MsoRequest msoRequest = getMsoRequest();
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
-        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
-                "volumeGroupHeatStackId|1", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "",
+                vnfName, "", "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId",
+                "88a6ca3ee0394ade9403f075db23167e", map, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest,
+                new Holder<>(), new Holder<Map<String, String>>(), new Holder<VnfRollback>());
     }
 
     @Test
@@ -82,10 +79,10 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         MsoRequest msoRequest = getMsoRequest();
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
-        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
-                "volumeGroupHeatStackId|1", "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "",
+                vnfName, "", "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId",
+                "9b339a61-69ca-465f-86b8-1c72c582b8e8", map, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest,
+                new Holder<>(), new Holder<Map<String, String>>(), new Holder<VnfRollback>());
     }
 
     @Test
@@ -96,10 +93,10 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         MsoRequest msoRequest = getMsoRequest();
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
-        msoVnfPluginAdapter.createVfModule("MTN13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
-                null, "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+        msoVnfPluginAdapter.createVfModule("MTN13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "",
+                vnfName, "", "VFMOD", null, "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
+                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
+                new Holder<Map<String, String>>(), new Holder<VnfRollback>());
     }
 
     @Test
@@ -109,10 +106,10 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         MsoRequest msoRequest = getMsoRequest();
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
-        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
-                "volumeGroupHeatStackId|1", "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "",
+                vnfName, "", "VFMOD", "volumeGroupHeatStackId|1", "baseVfHeatStackId",
+                "9b339a61-69ca-465f-86b8-1c72c582b8e8", map, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest,
+                new Holder<>(), new Holder<Map<String, String>>(), new Holder<VnfRollback>());
     }
 
     @Test
@@ -122,23 +119,22 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         mockOpenStackGetStackVfModule_404(wireMockServer);
         wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/volumeGroupHeatStackId"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json")
-                        .withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
         MsoRequest msoRequest = getMsoRequest();
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
-        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "", "VFMOD",
-                "volumeGroupHeatStackId", "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
-                Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(), new Holder<Map<String, String>>(),
-                new Holder<VnfRollback>());
+        msoVnfPluginAdapter.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "",
+                vnfName, "", "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId",
+                "9b339a61-69ca-465f-86b8-1c72c582b8e8", map, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest,
+                new Holder<>(), new Holder<Map<String, String>>(), new Holder<VnfRollback>());
     }
 
     @Test
     public void deleteVfModule_QueryVduException() throws Exception {
         expectedException.expect(VnfException.class);
         MsoRequest msoRequest = getMsoRequest();
-        msoVnfPluginAdapter.deleteVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
-                new Holder<Map<String, String>>());
+        msoVnfPluginAdapter.deleteVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12",
+                msoRequest, new Holder<Map<String, String>>());
     }
 
     @Test
@@ -148,14 +144,14 @@ public class MsoVnfPluginAdapterImplTest extends BaseRestTestUtils {
         mockOpenStackGetStackVfModule_200(wireMockServer);
         wireMockServer.stubFor(get(urlPathEqualTo("/mockPublicUrl/stacks/vSAMP12"))
                 .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json")
-                        .withStatus(HttpStatus.SC_OK)));
-        wireMockServer.stubFor(delete(urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/json")
-                        .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
+                        .withBodyFile("OpenstackResponse_Stack_Created_VfModule.json").withStatus(HttpStatus.SC_OK)));
+        wireMockServer.stubFor(delete(
+                urlPathEqualTo("/mockPublicUrl/stacks/DEV-VF-1802-it3-pwt3-v6-vSAMP10a-addon2-Replace-1001/stackId"))
+                        .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                                .withStatus(HttpStatus.SC_INTERNAL_SERVER_ERROR)));
         MsoRequest msoRequest = getMsoRequest();
-        msoVnfPluginAdapter.deleteVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12", msoRequest,
-                new Holder<Map<String, String>>());
+        msoVnfPluginAdapter.deleteVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vSAMP12",
+                msoRequest, new Holder<Map<String, String>>());
     }
 
     private MsoRequest getMsoRequest() {

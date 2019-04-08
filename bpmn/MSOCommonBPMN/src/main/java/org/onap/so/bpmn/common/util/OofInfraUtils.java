@@ -28,7 +28,6 @@ import org.onap.so.db.catalog.beans.HomingInstance;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Optional;
 
 public class OofInfraUtils {
@@ -50,13 +49,13 @@ public class OofInfraUtils {
 
             CatalogDbClient client = new CatalogDbClient(endpoint, auth);
 
-            getCloudsite = Optional.ofNullable(client.getCloudSite(cloudSite.getId(), endpoint + "/cloudSite/")).orElse(new CloudSite());
+            getCloudsite = Optional.ofNullable(client.getCloudSite(cloudSite.getId(), endpoint + "/cloudSite/"))
+                    .orElse(new CloudSite());
             if (!cloudSite.getId().equals(getCloudsite.getId())) {
                 client.postCloudSite(cloudSite);
                 logger.debug("Did not findd cloudsite : {}", cloudSite.getId());
                 logger.debug("Will create cloudSite: {}", cloudSite.toString());
-            }
-            else {
+            } else {
                 logger.debug("Found cloudsite : {}", cloudSite.getId());
                 logger.debug("Will not create cloudSite: {}", cloudSite.toString());
             }

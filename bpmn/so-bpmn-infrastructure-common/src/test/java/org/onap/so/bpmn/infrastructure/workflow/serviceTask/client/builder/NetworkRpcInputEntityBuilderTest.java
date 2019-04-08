@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
 import org.camunda.bpm.engine.ProcessEngine;
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -35,14 +34,14 @@ import org.camunda.bpm.model.bpmn.instance.FlowElement;
 import org.junit.Test;
 
 public class NetworkRpcInputEntityBuilderTest {
-	NetworkRpcInputEntityBuilder networRpcInputEntityBuilder = new NetworkRpcInputEntityBuilder();
+    NetworkRpcInputEntityBuilder networRpcInputEntityBuilder = new NetworkRpcInputEntityBuilder();
 
-	DelegateExecution delegateExecution = new DelegateExecution() {
+    DelegateExecution delegateExecution = new DelegateExecution() {
         private String operType;
-		private String resourceType;
-		private String requestId;
+        private String resourceType;
+        private String requestId;
 
-    	@Override
+        @Override
         public String getProcessInstanceId() {
             return null;
         }
@@ -194,14 +193,14 @@ public class NetworkRpcInputEntityBuilderTest {
 
         @Override
         public Object getVariable(String s) {
-        	if (AbstractBuilder.OPERATION_TYPE.equals(s)) {
-        		return operType;
-        	} else if (AbstractBuilder.RESOURCE_TYPE.equals(s)) {
-        		return resourceType;
-        	} else if ("msoRequestId".equals(s)) {
-        		return requestId;
-        	}
-        	return null;
+            if (AbstractBuilder.OPERATION_TYPE.equals(s)) {
+                return operType;
+            } else if (AbstractBuilder.RESOURCE_TYPE.equals(s)) {
+                return resourceType;
+            } else if ("msoRequestId".equals(s)) {
+                return requestId;
+            }
+            return null;
         }
 
         @Override
@@ -241,13 +240,13 @@ public class NetworkRpcInputEntityBuilderTest {
 
         @Override
         public void setVariable(String s, Object o) {
-        	if (AbstractBuilder.OPERATION_TYPE.equals(s)) {
-        		operType = (String) o;
-        	} else if (AbstractBuilder.RESOURCE_TYPE.equals(s)) {
-        		resourceType = (String) o;
-        	} else if ("msoRequestId".equals(s)) {
-        		requestId = (String) o;
-        	}
+            if (AbstractBuilder.OPERATION_TYPE.equals(s)) {
+                operType = (String) o;
+            } else if (AbstractBuilder.RESOURCE_TYPE.equals(s)) {
+                resourceType = (String) o;
+            } else if ("msoRequestId".equals(s)) {
+                requestId = (String) o;
+            }
         }
 
         @Override
@@ -315,22 +314,22 @@ public class NetworkRpcInputEntityBuilderTest {
 
         }
 
-		@Override
-		public ProcessEngine getProcessEngine(){
-			// TODO Auto-generated method stub
-			return null;
-		}
+        @Override
+        public ProcessEngine getProcessEngine() {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
-		@Override
-		public void setProcessBusinessKey(String arg0){
-			// TODO Auto-generated method stub
+        @Override
+        public void setProcessBusinessKey(String arg0) {
+            // TODO Auto-generated method stub
 
-		}
+        }
     };
 
-	@Test
-	public void buildTest() {
-		networRpcInputEntityBuilder.build(delegateExecution, null);
-	}
+    @Test
+    public void buildTest() {
+        networRpcInputEntityBuilder.build(delegateExecution, null);
+    }
 
 }

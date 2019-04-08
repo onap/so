@@ -21,16 +21,14 @@
 package org.onap.so.adapters.sdncrest;
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 // NOTE: the JAXB (XML) annotations are required with JBoss AS7 and RESTEasy,
-//       even though we are using JSON exclusively.  The @NoJackson annotation
-//       is also required in this environment.
+// even though we are using JSON exclusively. The @NoJackson annotation
+// is also required in this environment.
 
 /**
  * SDNC adapter error response for "agnostic" API services.
@@ -39,13 +37,12 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_NULL)
 @XmlRootElement(name = "SDNCServiceError")
 public class SDNCServiceError extends SDNCErrorCommon implements Serializable {
-	private static final long serialVersionUID = 1;
+    private static final long serialVersionUID = 1;
 
-	public SDNCServiceError(String sdncRequestId, String responseCode,
-			String responseMessage, String ackFinalIndicator) {
-		super(sdncRequestId, responseCode, responseMessage, ackFinalIndicator);
-	}
+    public SDNCServiceError(String sdncRequestId, String responseCode, String responseMessage,
+            String ackFinalIndicator) {
+        super(sdncRequestId, responseCode, responseMessage, ackFinalIndicator);
+    }
 
-	public SDNCServiceError() {
-	}
+    public SDNCServiceError() {}
 }

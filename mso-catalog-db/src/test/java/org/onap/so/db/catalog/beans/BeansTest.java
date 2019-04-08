@@ -24,11 +24,9 @@ import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.onap.so.openpojo.rules.HasAnnotationMatcher.hasAnnotation;
 import static org.onap.so.openpojo.rules.HasAnnotationPropertyWithValueMatcher.hasAnnotationPropertyWithValue;
-
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Temporal;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.openpojo.rules.CustomSetterMustExistRule;
@@ -36,7 +34,6 @@ import org.onap.so.openpojo.rules.EqualsAndHashCodeTester;
 import org.onap.so.openpojo.rules.HasEqualsAndHashCodeRule;
 import org.onap.so.openpojo.rules.HasToStringRule;
 import org.onap.so.openpojo.rules.ToStringTester;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -57,45 +54,40 @@ import com.openpojo.validation.test.impl.SetterTester;
 
 public class BeansTest {
 
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
-	
-	private PojoClassFilter  enumFilter = new FilterEnum();
-	
-	
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void pojoStructure() {	
-		test("org.onap.so.db.catalog.beans");		
-		test("org.onap.so.db.catalog.beans.macro");		
-	}
+    private PojoClassFilter enumFilter = new FilterEnum();
 
-	private void test(String pojoPackage) {
-		Validator validator = ValidatorBuilder.create()
-				.with(new GetterMustExistRule())
-				.with(new NoPrimitivesRule())
-			    .with(new NoNestedClassRule())
-			    .with(new NoStaticExceptFinalRule())
-			    .with(new SerializableMustHaveSerialVersionUIDRule())
-				.with(new HasToStringRule())
-				.with(new EqualsAndHashCodeTester())
-			    .with(new NoPublicFieldsExceptStaticFinalRule())
-				.with(new CustomSetterMustExistRule().exclude(
-						allOf(hasAnnotationPropertyWithValue(Column.class, "updatable", equalTo(false)), hasAnnotation(GeneratedValue.class)),
-						hasAnnotation(Temporal.class)))
-				
-				.with(new SetterTester())
-				.with(new GetterTester())
-				.with(new ToStringTester())
-				.with(new HasEqualsAndHashCodeRule())
-			     
-				.build();
-		
-	
-		validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses,enumFilter,new FilterNonConcrete());
-	}
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
+
+
+    @Test
+    public void pojoStructure() {
+        test("org.onap.so.db.catalog.beans");
+        test("org.onap.so.db.catalog.beans.macro");
+    }
+
+    private void test(String pojoPackage) {
+        Validator validator = ValidatorBuilder.create().with(new GetterMustExistRule()).with(new NoPrimitivesRule())
+                .with(new NoNestedClassRule()).with(new NoStaticExceptFinalRule())
+                .with(new SerializableMustHaveSerialVersionUIDRule()).with(new HasToStringRule())
+                .with(new EqualsAndHashCodeTester()).with(new NoPublicFieldsExceptStaticFinalRule())
+                .with(new CustomSetterMustExistRule()
+                        .exclude(allOf(hasAnnotationPropertyWithValue(Column.class, "updatable", equalTo(false)),
+                                hasAnnotation(GeneratedValue.class)), hasAnnotation(Temporal.class)))
+
+                .with(new SetterTester()).with(new GetterTester()).with(new ToStringTester())
+                .with(new HasEqualsAndHashCodeRule())
+
+                .build();
+
+
+        validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, enumFilter,
+                new FilterNonConcrete());
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
 }

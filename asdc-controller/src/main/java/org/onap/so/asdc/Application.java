@@ -24,29 +24,29 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication(scanBasePackages = { "org.onap.so" })
+@SpringBootApplication(scanBasePackages = {"org.onap.so"})
 @EnableScheduling
 public class Application {
 
-	private static final String MSO_CONFIG_PATH = "mso.config.path";
-	private static final String LOGS_DIR = "logs_dir";
+    private static final String MSO_CONFIG_PATH = "mso.config.path";
+    private static final String LOGS_DIR = "logs_dir";
 
-	private static void setLogsDir() {
-		if (System.getProperty(LOGS_DIR) == null) {
-			System.getProperties().setProperty(LOGS_DIR, "./logs/asdc/");
-		}
-	}
-	
-	private static void setConfigPath() {
-		if(System.getProperty(MSO_CONFIG_PATH) == null)
-			System.getProperties().setProperty(MSO_CONFIG_PATH, ".");
-	}
+    private static void setLogsDir() {
+        if (System.getProperty(LOGS_DIR) == null) {
+            System.getProperties().setProperty(LOGS_DIR, "./logs/asdc/");
+        }
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-		System.getProperties().setProperty("mso.db", "MARIADB");
+    private static void setConfigPath() {
+        if (System.getProperty(MSO_CONFIG_PATH) == null)
+            System.getProperties().setProperty(MSO_CONFIG_PATH, ".");
+    }
 
-		System.getProperties().setProperty("server.name", "Springboot");
-		setLogsDir();
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+        System.getProperties().setProperty("mso.db", "MARIADB");
+
+        System.getProperties().setProperty("server.name", "Springboot");
+        setLogsDir();
+    }
 }

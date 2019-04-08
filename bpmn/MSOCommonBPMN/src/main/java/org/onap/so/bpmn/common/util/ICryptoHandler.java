@@ -21,7 +21,9 @@
 package org.onap.so.bpmn.common.util;
 
 public interface ICryptoHandler {
-	public String getMsoAaiPassword();
-	public String encryptMsoPassword(String plainPwd);
-	public String decryptMsoPassword(String encryptedPwd);
+    public String getMsoAaiPassword();
+
+    public String encryptMsoPassword(String plainPwd);
+
+    public String decryptMsoPassword(String encryptedPwd);
 }

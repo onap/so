@@ -23,37 +23,36 @@ package org.onap.so.bpmn.common;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import java.io.IOException;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 
-public class AAICheckVnfInMaintBBTest extends BaseBPMNTest{
-	
+public class AAICheckVnfInMaintBBTest extends BaseBPMNTest {
 
-	@Test
-	public void sunnyDayAAICheckVnfInMaintBBTest() throws InterruptedException, IOException {		
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("AAICheckVnfInMaintBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_AAICheckVnfInMaintBB", "Task_CheckVnfInMaint", "End_AAICheckVnfInMaintBB");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test
-	public void rainyDayAAISetVnfInMaintBBTest() {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks).checkVnfInMaintFlag(any(BuildingBlockExecution.class));
-		
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("AAICheckVnfInMaintBB", variables);
-		assertThat(processInstance).isNotNull();
-		assertThat(processInstance).isStarted()
-			.hasPassedInOrder("Start_AAICheckVnfInMaintBB", "Task_CheckVnfInMaint")
-			.hasNotPassed("End_AAICheckVnfInMaintBB");
-		assertThat(processInstance).isEnded();
-	}
+
+    @Test
+    public void sunnyDayAAICheckVnfInMaintBBTest() throws InterruptedException, IOException {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AAICheckVnfInMaintBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("Start_AAICheckVnfInMaintBB", "Task_CheckVnfInMaint",
+                "End_AAICheckVnfInMaintBB");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void rainyDayAAISetVnfInMaintBBTest() {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiFlagTasks)
+                .checkVnfInMaintFlag(any(BuildingBlockExecution.class));
+
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("AAICheckVnfInMaintBB", variables);
+        assertThat(processInstance).isNotNull();
+        assertThat(processInstance).isStarted().hasPassedInOrder("Start_AAICheckVnfInMaintBB", "Task_CheckVnfInMaint")
+                .hasNotPassed("End_AAICheckVnfInMaintBB");
+        assertThat(processInstance).isEnded();
+    }
 
 
 }

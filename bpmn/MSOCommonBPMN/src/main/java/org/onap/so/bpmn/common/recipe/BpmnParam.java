@@ -19,36 +19,37 @@
  */
 
 package org.onap.so.bpmn.common.recipe;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- *  The bpmn workflow input param object
+ * The bpmn workflow input param object
  */
 public class BpmnParam {
-	
-	@JsonProperty("value")
-	private String value;
-	@JsonProperty("type")
-	private String type = "String";
+
+    @JsonProperty("value")
+    private String value;
+    @JsonProperty("type")
+    private String type = "String";
 
 
-	public BpmnParam() {
-		/* Empty constructor */
-	}
-	
-	@JsonProperty("value")
-	public String getValue() {
-		return value;
-	}
-	
-	@JsonProperty("value")
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public BpmnParam() {
+        /* Empty constructor */
+    }
 
-	@Override
-	public String toString() {
-		return "CamundaInput [value=" + value + ", type=" + type + "]";
-	}	
-	
+    @JsonProperty("value")
+    public String getValue() {
+        return value;
+    }
+
+    @JsonProperty("value")
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "CamundaInput [value=" + value + ", type=" + type + "]";
+    }
+
 }

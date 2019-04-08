@@ -24,7 +24,6 @@ package org.onap.so.adapters.sdnc.client;
 
 
 import java.io.StringWriter;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,16 +31,17 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType>
@@ -58,12 +58,9 @@ import org.slf4j.LoggerFactory;
  *
  *
  */
-//SDNCAdapter to BPEL Async response
+// SDNCAdapter to BPEL Async response
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "callbackHeader",
-    "requestData"
-})
+@XmlType(name = "", propOrder = {"callbackHeader", "requestData"})
 @XmlRootElement(name = "SDNCAdapterCallbackRequest")
 public class SDNCAdapterCallbackRequest {
 
@@ -77,9 +74,7 @@ public class SDNCAdapterCallbackRequest {
     /**
      * Gets the value of the callbackHeader property.
      *
-     * @return
-     *     possible object is
-     *     {@link CallbackHeader }
+     * @return possible object is {@link CallbackHeader }
      *
      */
     public CallbackHeader getCallbackHeader() {
@@ -89,9 +84,7 @@ public class SDNCAdapterCallbackRequest {
     /**
      * Sets the value of the callbackHeader property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link CallbackHeader }
+     * @param value allowed object is {@link CallbackHeader }
      *
      */
     public void setCallbackHeader(CallbackHeader value) {
@@ -101,9 +94,7 @@ public class SDNCAdapterCallbackRequest {
     /**
      * Gets the value of the requestData property.
      *
-     * @return
-     *     possible object is
-     *     {@link Object }
+     * @return possible object is {@link Object }
      *
      */
     public Object getRequestData() {
@@ -113,31 +104,27 @@ public class SDNCAdapterCallbackRequest {
     /**
      * Sets the value of the requestData property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Object }
+     * @param value allowed object is {@link Object }
      *
      */
     public void setRequestData(Object value) {
         this.requestData = value;
     }
 
-	@Override
-	public String toString() {
-		try {
-			JAXBContext ctx = JAXBContext.newInstance("org.onap.so.adapters.sdnc.client");
-			Marshaller m = ctx.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
-			StringWriter w = new StringWriter();
-			m.marshal(this, w);
-			return w.toString();
-		}
-		catch (Exception e)
-		{
-        logger.error("{} {} {}", MessageEnum.RA_MARSHING_ERROR.toString(), ErrorCode.DataError.getValue(),
-            "Exception - MARSHING_ERROR", e);
+    @Override
+    public String toString() {
+        try {
+            JAXBContext ctx = JAXBContext.newInstance("org.onap.so.adapters.sdnc.client");
+            Marshaller m = ctx.createMarshaller();
+            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            m.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            StringWriter w = new StringWriter();
+            m.marshal(this, w);
+            return w.toString();
+        } catch (Exception e) {
+            logger.error("{} {} {}", MessageEnum.RA_MARSHING_ERROR.toString(), ErrorCode.DataError.getValue(),
+                    "Exception - MARSHING_ERROR", e);
+        }
+        return "";
     }
-		return "";
-	}
 }

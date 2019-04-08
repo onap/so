@@ -20,7 +20,6 @@
 package org.onap.so.monitoring.camunda.model;
 
 import static org.onap.so.monitoring.utils.ObjectEqualsUtils.isEqual;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

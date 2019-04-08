@@ -21,9 +21,9 @@
 package org.onap.so.client.aai;
 
 public interface AAIUpdator {
-	
-	void updateVnfToLocked(String vnfName) throws Exception;
-	
-	void updateVnfToUnLocked(String vnfName) throws Exception;
+
+    void updateVnfToLocked(String vnfName) throws Exception;
+
+    void updateVnfToUnLocked(String vnfName) throws Exception;
 
 }

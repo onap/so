@@ -26,9 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for vnfRollback complex type.
+ * <p>
+ * Java class for vnfRollback complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="vnfRollback">
@@ -51,15 +53,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "vnfRollback", propOrder = {
-    "cloudSiteId",
-    "cloudOwner",
-    "msoRequest",
-    "tenantCreated",
-    "tenantId",
-    "vnfCreated",
-    "vnfId"
-})
+@XmlType(name = "vnfRollback",
+        propOrder = {"cloudSiteId", "cloudOwner", "msoRequest", "tenantCreated", "tenantId", "vnfCreated", "vnfId"})
 public class VnfRollback {
 
     protected String cloudSiteId;
@@ -73,10 +68,8 @@ public class VnfRollback {
     /**
      * Gets the value of the cloudSiteId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getCloudSiteId() {
         return cloudSiteId;
@@ -85,10 +78,8 @@ public class VnfRollback {
     /**
      * Sets the value of the cloudSiteId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setCloudSiteId(String value) {
         this.cloudSiteId = value;
@@ -97,10 +88,8 @@ public class VnfRollback {
     /**
      * Gets the value of the cloudOwner property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getCloudOwner() {
         return cloudOwner;
@@ -109,10 +98,8 @@ public class VnfRollback {
     /**
      * Sets the value of the cloudOwner property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setCloudOwner(String value) {
         this.cloudOwner = value;
@@ -121,10 +108,8 @@ public class VnfRollback {
     /**
      * Gets the value of the msoRequest property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoRequest }
-     *     
+     * @return possible object is {@link MsoRequest }
+     * 
      */
     public MsoRequest getMsoRequest() {
         return msoRequest;
@@ -133,10 +118,8 @@ public class VnfRollback {
     /**
      * Sets the value of the msoRequest property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoRequest }
-     *     
+     * @param value allowed object is {@link MsoRequest }
+     * 
      */
     public void setMsoRequest(MsoRequest value) {
         this.msoRequest = value;
@@ -161,10 +144,8 @@ public class VnfRollback {
     /**
      * Gets the value of the tenantId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getTenantId() {
         return tenantId;
@@ -173,10 +154,8 @@ public class VnfRollback {
     /**
      * Sets the value of the tenantId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setTenantId(String value) {
         this.tenantId = value;
@@ -201,10 +180,8 @@ public class VnfRollback {
     /**
      * Gets the value of the vnfId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getVnfId() {
         return vnfId;
@@ -213,26 +190,19 @@ public class VnfRollback {
     /**
      * Sets the value of the vnfId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setVnfId(String value) {
         this.vnfId = value;
     }
-    
-    public String toString() {
-    	String msoRequestElement = msoRequest == null ? ""
-        		: "<msoRequest>"+msoRequest+"</msoRequest>" + '\n';
 
-        	return
-        		"<cloudSiteId>"+cloudSiteId+"</cloudSiteId>" + '\n' +
-        		"<cloudOwner>"+cloudOwner+"</cloudOwner>" + '\n' +
-        		msoRequestElement +
-        		"<tenantCreated>"+tenantCreated+"</tenantCreated>" + '\n' +
-        		"<tenantId>"+tenantId+"</tenantId>" + '\n' +
-        		"<vnfCreated>"+vnfCreated+"</vnfCreated>" + '\n' +
-        		"<vnfId>"+vnfId+"</vnfId>";
+    public String toString() {
+        String msoRequestElement = msoRequest == null ? "" : "<msoRequest>" + msoRequest + "</msoRequest>" + '\n';
+
+        return "<cloudSiteId>" + cloudSiteId + "</cloudSiteId>" + '\n' + "<cloudOwner>" + cloudOwner + "</cloudOwner>"
+                + '\n' + msoRequestElement + "<tenantCreated>" + tenantCreated + "</tenantCreated>" + '\n'
+                + "<tenantId>" + tenantId + "</tenantId>" + '\n' + "<vnfCreated>" + vnfCreated + "</vnfCreated>" + '\n'
+                + "<vnfId>" + vnfId + "</vnfId>";
     }
 }

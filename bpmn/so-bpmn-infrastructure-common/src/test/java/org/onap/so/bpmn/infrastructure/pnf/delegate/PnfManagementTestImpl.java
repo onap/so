@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import org.onap.aai.domain.yang.Pnf;
 import org.onap.so.bpmn.infrastructure.pnf.management.PnfManagement;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,8 +50,7 @@ public class PnfManagementTestImpl implements PnfManagement {
     }
 
     @Override
-    public void createRelation(String serviceInstanceId, String pnfName) {
-    }
+    public void createRelation(String serviceInstanceId, String pnfName) {}
 
     public Map<String, Pnf> getCreated() {
         return created;

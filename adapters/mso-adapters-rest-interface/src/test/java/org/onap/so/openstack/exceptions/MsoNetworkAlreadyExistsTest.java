@@ -27,9 +27,11 @@ public class MsoNetworkAlreadyExistsTest {
 
     @Test
     public void testConstructor() {
-        MsoNetworkAlreadyExists msoNetworkAlreadyExists = new MsoNetworkAlreadyExists("test","test","test");
-        Assert.assertEquals("Stack test already exists in Tenant test in Cloud test",msoNetworkAlreadyExists.getMessage());
-        Assert.assertEquals("409 Conflict: Stack test already exists in Tenant test in Cloud test",msoNetworkAlreadyExists.toString());
+        MsoNetworkAlreadyExists msoNetworkAlreadyExists = new MsoNetworkAlreadyExists("test", "test", "test");
+        Assert.assertEquals("Stack test already exists in Tenant test in Cloud test",
+                msoNetworkAlreadyExists.getMessage());
+        Assert.assertEquals("409 Conflict: Stack test already exists in Tenant test in Cloud test",
+                msoNetworkAlreadyExists.toString());
     }
 
 }

@@ -26,10 +26,8 @@ package org.onap.so.adapters.nwrest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.slf4j.Logger;
@@ -40,49 +38,49 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class NetworkResponseCommon implements Serializable {
 
-	private static final long serialVersionUID = 1233520856935129726L;
-	private String messageId;
-	private static final Logger logger = LoggerFactory.getLogger(NetworkResponseCommon.class);
+    private static final long serialVersionUID = 1233520856935129726L;
+    private String messageId;
+    private static final Logger logger = LoggerFactory.getLogger(NetworkResponseCommon.class);
 
-	public NetworkResponseCommon() {
-		messageId = null;
-	}
+    public NetworkResponseCommon() {
+        messageId = null;
+    }
 
-	public NetworkResponseCommon(String messageId) {
-		this.messageId = messageId;
-	}
+    public NetworkResponseCommon(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public String getMessageId() {
-		return messageId;
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public String toJsonString() {
-		String jsonString = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-			jsonString = mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			logger.debug("Exception:", e);
-		}
-		return jsonString;
-	}
+    public String toJsonString() {
+        String jsonString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+            jsonString = mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            logger.debug("Exception:", e);
+        }
+        return jsonString;
+    }
 
-	public String toXmlString() {
-		try {
-			ByteArrayOutputStream bs = new ByteArrayOutputStream();
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); //pretty print XML
-			marshaller.marshal(this, bs);
-			return bs.toString();
-		} catch (Exception e) {
-			logger.debug("Exception:", e);
-			return "";
-		}
-	}
+    public String toXmlString() {
+        try {
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            JAXBContext context = JAXBContext.newInstance(this.getClass());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty print XML
+            marshaller.marshal(this, bs);
+            return bs.toString();
+        } catch (Exception e) {
+            logger.debug("Exception:", e);
+            return "";
+        }
+    }
 }

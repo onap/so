@@ -35,34 +35,32 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Service
 public class VnfmAdapterUrlProvider {
 
-  private final URI baseUri;
+    private final URI baseUri;
 
-  @Autowired
-  public VnfmAdapterUrlProvider(final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
-    this.baseUri = UriComponentsBuilder.fromHttpUrl(etsiVnfmAdapter.getUrl()).build().toUri();
-  }
+    @Autowired
+    public VnfmAdapterUrlProvider(final VnfmBasicHttpConfigProvider etsiVnfmAdapter) {
+        this.baseUri = UriComponentsBuilder.fromHttpUrl(etsiVnfmAdapter.getUrl()).build().toUri();
+    }
 
-  /**
-   * Get VNFM create and instantiate URL
-   * 
-   * @param vnfId The identifier of the VNF. This must be the vnf-id of an existing generic-vnf in
-   *        AAI.
-   * @return VNFM create and instantiate URL
-   */
-  public String getCreateInstantiateUrl(final String vnfId) {
-    return UriComponentsBuilder.fromUri(baseUri).pathSegment("vnfs").pathSegment(vnfId).build().toString();
-  }
+    /**
+     * Get VNFM create and instantiate URL
+     * 
+     * @param vnfId The identifier of the VNF. This must be the vnf-id of an existing generic-vnf in AAI.
+     * @return VNFM create and instantiate URL
+     */
+    public String getCreateInstantiateUrl(final String vnfId) {
+        return UriComponentsBuilder.fromUri(baseUri).pathSegment("vnfs").pathSegment(vnfId).build().toString();
+    }
 
-  /**
-   * Get VNFM delete URL
-   * 
-   * @param vnfId The identifier of the VNF. This must be the vnf-id of an existing generic-vnf in
-   *        AAI.
-   * @return VNFM delete URL
-   */
-  public String getDeleteUrl(final String vnfId) {
-    return UriComponentsBuilder.fromUri(baseUri).pathSegment("vnfs").pathSegment(vnfId).build().toString();
-  }
+    /**
+     * Get VNFM delete URL
+     * 
+     * @param vnfId The identifier of the VNF. This must be the vnf-id of an existing generic-vnf in AAI.
+     * @return VNFM delete URL
+     */
+    public String getDeleteUrl(final String vnfId) {
+        return UriComponentsBuilder.fromUri(baseUri).pathSegment("vnfs").pathSegment(vnfId).build().toString();
+    }
 
     /**
      * Get job status URL

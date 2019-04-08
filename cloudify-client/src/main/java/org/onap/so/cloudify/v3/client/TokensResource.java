@@ -34,9 +34,8 @@ public class TokensResource {
     }
 
     /*
-     * Get a new token for a user
-     * TODO:  User ID/Password logic need to be in the Client.
-     * Results of a token query should also be able to add to the Client
+     * Get a new token for a user TODO: User ID/Password logic need to be in the Client. Results of a token query should
+     * also be able to add to the Client
      */
     public GetToken token() {
         return new GetToken();

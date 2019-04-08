@@ -23,21 +23,21 @@ package org.onap.so.serviceinstancebeans;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class ServiceInstancesResponse {
-	
-	RequestReferences requestReferences;
 
-	public RequestReferences getRequestReferences() {
-		return requestReferences;
-	}
+    RequestReferences requestReferences;
 
-	public void setRequestReferences(RequestReferences requestReferences) {
-		this.requestReferences = requestReferences;
-	}
+    public RequestReferences getRequestReferences() {
+        return requestReferences;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("requestReferences", requestReferences).toString();
-	}
-	
+    public void setRequestReferences(RequestReferences requestReferences) {
+        this.requestReferences = requestReferences;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("requestReferences", requestReferences).toString();
+    }
+
 
 }

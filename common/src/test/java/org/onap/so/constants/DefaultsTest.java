@@ -21,7 +21,6 @@
 package org.onap.so.constants;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -38,9 +37,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 @Category(SpringAware.class)
 public class DefaultsTest {
 
-	@Test
-	public void checkValue() {
-		
-		assertEquals("my-custom-owner", Defaults.CLOUD_OWNER.toString());
-	}
+    @Test
+    public void checkValue() {
+
+        assertEquals("my-custom-owner", Defaults.CLOUD_OWNER.toString());
+    }
 }

@@ -21,9 +21,7 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import javax.persistence.Id;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -33,36 +31,41 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 @JsonRootName("owning-entity")
 public class OwningEntity implements Serializable, ShallowCopy<OwningEntity> {
 
-	private static final long serialVersionUID = -6565917570694869603L;
-	
-	@Id
-	@JsonProperty("owning-entity-id")
-	private String owningEntityId;
-	@JsonProperty("owning-entity-name")
-	private String owningEntityName;
+    private static final long serialVersionUID = -6565917570694869603L;
 
-	public String getOwningEntityId() {
-		return owningEntityId;
-	}
-	public void setOwningEntityId(String owningEntityId) {
-		this.owningEntityId = owningEntityId;
-	}
-	public String getOwningEntityName() {
-		return owningEntityName;
-	}
-	public void setOwningEntityName(String owningEntityName) {
-		this.owningEntityName = owningEntityName;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof OwningEntity)) {
-			return false;
-		}
-		OwningEntity castOther = (OwningEntity) other;
-		return new EqualsBuilder().append(owningEntityId, castOther.owningEntityId).isEquals();
-	}
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(owningEntityId).toHashCode();
-	}
+    @Id
+    @JsonProperty("owning-entity-id")
+    private String owningEntityId;
+    @JsonProperty("owning-entity-name")
+    private String owningEntityName;
+
+    public String getOwningEntityId() {
+        return owningEntityId;
+    }
+
+    public void setOwningEntityId(String owningEntityId) {
+        this.owningEntityId = owningEntityId;
+    }
+
+    public String getOwningEntityName() {
+        return owningEntityName;
+    }
+
+    public void setOwningEntityName(String owningEntityName) {
+        this.owningEntityName = owningEntityName;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof OwningEntity)) {
+            return false;
+        }
+        OwningEntity castOther = (OwningEntity) other;
+        return new EqualsBuilder().append(owningEntityId, castOther.owningEntityId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(owningEntityId).toHashCode();
+    }
 }

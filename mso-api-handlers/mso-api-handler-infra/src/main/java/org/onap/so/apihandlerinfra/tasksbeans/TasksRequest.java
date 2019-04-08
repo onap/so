@@ -22,13 +22,13 @@ package org.onap.so.apihandlerinfra.tasksbeans;
 
 public class TasksRequest {
 
-	private RequestDetails requestDetails;	
+    private RequestDetails requestDetails;
 
-	public RequestDetails getRequestDetails() {
-		return requestDetails;
-	}
+    public RequestDetails getRequestDetails() {
+        return requestDetails;
+    }
 
-	public void setRequestDetails(RequestDetails requestDetails) {
-		this.requestDetails = requestDetails;
-	}
+    public void setRequestDetails(RequestDetails requestDetails) {
+        this.requestDetails = requestDetails;
+    }
 }

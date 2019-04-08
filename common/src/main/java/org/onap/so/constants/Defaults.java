@@ -21,34 +21,33 @@
 package org.onap.so.constants;
 
 import java.util.Optional;
-
 import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
 
 public enum Defaults {
 
-	CLOUD_OWNER("org.onap.so.cloud-owner", "CloudOwner");
-	
-	private final String propName;
-	private final String defaultValue;
-	
-	private Defaults(String propName, String defaultValue) {
-		this.defaultValue = defaultValue;
-		this.propName = propName;
-	}
+    CLOUD_OWNER("org.onap.so.cloud-owner", "CloudOwner");
 
-	@Override
-	public String toString() {
-		Optional<ApplicationContext> context = getAppContext();
-		if (context.isPresent()) {
-			return context.get().getEnvironment().getProperty(this.propName, this.defaultValue);
-		} else {
-			return this.defaultValue;
-		}
-		
-	}
-	
-	protected Optional<ApplicationContext> getAppContext() {
-		return Optional.ofNullable(SpringContextHelper.getAppContext());
-	}
+    private final String propName;
+    private final String defaultValue;
+
+    private Defaults(String propName, String defaultValue) {
+        this.defaultValue = defaultValue;
+        this.propName = propName;
+    }
+
+    @Override
+    public String toString() {
+        Optional<ApplicationContext> context = getAppContext();
+        if (context.isPresent()) {
+            return context.get().getEnvironment().getProperty(this.propName, this.defaultValue);
+        } else {
+            return this.defaultValue;
+        }
+
+    }
+
+    protected Optional<ApplicationContext> getAppContext() {
+        return Optional.ofNullable(SpringContextHelper.getAppContext());
+    }
 }

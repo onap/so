@@ -22,36 +22,36 @@ package org.onap.so.client.adapter.vnf;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 import org.onap.so.client.adapter.rest.AdapterRestProperties;
 
 
 public class VnfVolumeAdapterRestProperties implements AdapterRestProperties {
 
-	protected static final String authProp = "mso.adapters.po.auth";
-	protected static final String keyProp = "mso.msoKey";
-	protected static final String endpointProp = "mso.adapters.volume-groups.rest.endpoint";
+    protected static final String authProp = "mso.adapters.po.auth";
+    protected static final String keyProp = "mso.msoKey";
+    protected static final String endpointProp = "mso.adapters.volume-groups.rest.endpoint";
 
-	public VnfVolumeAdapterRestProperties() {
-	}
-	
-	@Override
-	public String getAuth() {
-		return UrnPropertiesReader.getVariable(authProp);
-	}
-	@Override
-	public String getKey() {
-		return UrnPropertiesReader.getVariable(keyProp);
-	}
-	@Override
-	public URL getEndpoint() throws MalformedURLException {
-		return new URL(UrnPropertiesReader.getVariable(endpointProp));
-	}
+    public VnfVolumeAdapterRestProperties() {}
 
-	@Override
-	public String getSystemName() {
-		return "MSO";
-	}
+    @Override
+    public String getAuth() {
+        return UrnPropertiesReader.getVariable(authProp);
+    }
+
+    @Override
+    public String getKey() {
+        return UrnPropertiesReader.getVariable(keyProp);
+    }
+
+    @Override
+    public URL getEndpoint() throws MalformedURLException {
+        return new URL(UrnPropertiesReader.getVariable(endpointProp));
+    }
+
+    @Override
+    public String getSystemName() {
+        return "MSO";
+    }
 
 }

@@ -23,7 +23,6 @@ package org.onap.so.client.cds;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-
 import io.grpc.inprocess.InProcessChannelBuilder;
 import io.grpc.inprocess.InProcessServerBuilder;
 import io.grpc.stub.StreamObserver;
@@ -68,42 +67,40 @@ public class CDSProcessingClientTest {
     @Before
     public void setUp() throws Exception {
         String serverName = InProcessServerBuilder.generateName();
-        grpcCleanup.register(InProcessServerBuilder.forName(serverName)
-            .fallbackHandlerRegistry(serviceRegistry).directExecutor().build().start());
+        grpcCleanup.register(InProcessServerBuilder.forName(serverName).fallbackHandlerRegistry(serviceRegistry)
+                .directExecutor().build().start());
 
         handler = new CDSProcessingHandler(listener);
 
-        client =
-            new CDSProcessingClient(InProcessChannelBuilder.forName(serverName).directExecutor().build(), handler);
+        client = new CDSProcessingClient(InProcessChannelBuilder.forName(serverName).directExecutor().build(), handler);
 
-        final BluePrintProcessingServiceImplBase routeChatImpl =
-            new BluePrintProcessingServiceImplBase() {
-                @Override
-                public StreamObserver<ExecutionServiceInput> process(
+        final BluePrintProcessingServiceImplBase routeChatImpl = new BluePrintProcessingServiceImplBase() {
+            @Override
+            public StreamObserver<ExecutionServiceInput> process(
                     StreamObserver<ExecutionServiceOutput> responseObserver) {
 
-                    responseObserverRef.set(responseObserver);
+                responseObserverRef.set(responseObserver);
 
-                    StreamObserver<ExecutionServiceInput> requestObserver = new StreamObserver<ExecutionServiceInput>() {
-                        @Override
-                        public void onNext(ExecutionServiceInput message) {
-                            messagesDelivered.add(message.getActionIdentifiers().getActionName());
-                        }
+                StreamObserver<ExecutionServiceInput> requestObserver = new StreamObserver<ExecutionServiceInput>() {
+                    @Override
+                    public void onNext(ExecutionServiceInput message) {
+                        messagesDelivered.add(message.getActionIdentifiers().getActionName());
+                    }
 
-                        @Override
-                        public void onError(Throwable t) {
+                    @Override
+                    public void onError(Throwable t) {
 
-                        }
+                    }
 
-                        @Override
-                        public void onCompleted() {
-                            allRequestsDelivered.countDown();
-                        }
-                    };
+                    @Override
+                    public void onCompleted() {
+                        allRequestsDelivered.countDown();
+                    }
+                };
 
-                    return requestObserver;
-                }
-            };
+                return requestObserver;
+            }
+        };
 
         serviceRegistry.addService(routeChatImpl);
     }
@@ -122,8 +119,8 @@ public class CDSProcessingClientTest {
     @Test
     public void testSendMessageFail() throws Exception {
 
-        ExecutionServiceInput fakeRequest1 = ExecutionServiceInput.newBuilder().setActionIdentifiers(
-            ActionIdentifiers.newBuilder().setActionName("request1").build()).build();
+        ExecutionServiceInput fakeRequest1 = ExecutionServiceInput.newBuilder()
+                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("request1").build()).build();
 
         CountDownLatch finishLatch = client.sendRequest(fakeRequest1);
 
@@ -136,14 +133,14 @@ public class CDSProcessingClientTest {
     @Test
     public void testSendMessage() throws Exception {
 
-        ExecutionServiceInput fakeRequest1 = ExecutionServiceInput.newBuilder().setActionIdentifiers(
-            ActionIdentifiers.newBuilder().setActionName("request1").build()).build();
+        ExecutionServiceInput fakeRequest1 = ExecutionServiceInput.newBuilder()
+                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("request1").build()).build();
 
-        ExecutionServiceOutput fakeResponse1 = ExecutionServiceOutput.newBuilder().setActionIdentifiers(
-            ActionIdentifiers.newBuilder().setActionName("response1").build()).build();
+        ExecutionServiceOutput fakeResponse1 = ExecutionServiceOutput.newBuilder()
+                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("response1").build()).build();
 
-        ExecutionServiceOutput fakeResponse2 = ExecutionServiceOutput.newBuilder().setActionIdentifiers(
-            ActionIdentifiers.newBuilder().setActionName("response2").build()).build();
+        ExecutionServiceOutput fakeResponse2 = ExecutionServiceOutput.newBuilder()
+                .setActionIdentifiers(ActionIdentifiers.newBuilder().setActionName("response2").build()).build();
 
         CountDownLatch finishLatch = client.sendRequest(fakeRequest1);
 

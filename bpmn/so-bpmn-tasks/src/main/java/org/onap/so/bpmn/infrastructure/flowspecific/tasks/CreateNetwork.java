@@ -22,7 +22,6 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.Map;
-
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network;
@@ -40,32 +39,35 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateNetwork {
 
-	private static final Logger logger = LoggerFactory.getLogger(CreateNetwork.class);
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private NetworkAdapterObjectMapper networkAdapterObjectMapper;
-	
-	/**
-	 * BPMN access method to build CreateNetworkRequest object
-	 * 
-	 */
-	public void buildCreateNetworkRequest(BuildingBlockExecution execution) throws Exception {
-		try{
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			L3Network l3Network =  extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-			Map<String, String> userInput = gBBInput.getUserInput();
-			String cloudRegionPo = execution.getVariable("cloudRegionPo");
-			
-			CreateNetworkRequest createNetworkRequest = networkAdapterObjectMapper.createNetworkRequestMapper(gBBInput.getRequestContext(), gBBInput.getCloudRegion(),  gBBInput.getOrchContext(), serviceInstance, l3Network, userInput, cloudRegionPo, gBBInput.getCustomer());
-			
-			//set CreateNetowrkRequest object on execution to be re-used within current BB
-			execution.setVariable("createNetworkRequest", createNetworkRequest);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+    private static final Logger logger = LoggerFactory.getLogger(CreateNetwork.class);
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private NetworkAdapterObjectMapper networkAdapterObjectMapper;
+
+    /**
+     * BPMN access method to build CreateNetworkRequest object
+     * 
+     */
+    public void buildCreateNetworkRequest(BuildingBlockExecution execution) throws Exception {
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            L3Network l3Network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+            Map<String, String> userInput = gBBInput.getUserInput();
+            String cloudRegionPo = execution.getVariable("cloudRegionPo");
+
+            CreateNetworkRequest createNetworkRequest = networkAdapterObjectMapper.createNetworkRequestMapper(
+                    gBBInput.getRequestContext(), gBBInput.getCloudRegion(), gBBInput.getOrchContext(), serviceInstance,
+                    l3Network, userInput, cloudRegionPo, gBBInput.getCustomer());
+
+            // set CreateNetowrkRequest object on execution to be re-used within current BB
+            execution.setVariable("createNetworkRequest", createNetworkRequest);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 }

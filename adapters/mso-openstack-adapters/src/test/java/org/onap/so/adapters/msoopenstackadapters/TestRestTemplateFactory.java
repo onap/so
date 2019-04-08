@@ -22,7 +22,6 @@ package org.onap.so.adapters.msoopenstackadapters;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.onap.so.client.policy.JettisonStyleMapperProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -34,17 +33,18 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 @Configuration
 public class TestRestTemplateFactory {
 
-  @Autowired
-  private JettisonStyleMapperProvider objectMapper;
+    @Autowired
+    private JettisonStyleMapperProvider objectMapper;
 
-  @Bean("JettisonStyle")
-  public TestRestTemplate createRestTemplate() {
-	TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
-    List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-    MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
-    jsonMessageConverter.setObjectMapper(objectMapper.getMapper());
-    restTemplate.getRestTemplate().getMessageConverters().removeIf(m -> m.getClass().getName().equals(MappingJackson2HttpMessageConverter.class.getName()));
-    restTemplate.getRestTemplate().getMessageConverters().add(jsonMessageConverter);
-    return restTemplate;
-  }
+    @Bean("JettisonStyle")
+    public TestRestTemplate createRestTemplate() {
+        TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
+        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
+        jsonMessageConverter.setObjectMapper(objectMapper.getMapper());
+        restTemplate.getRestTemplate().getMessageConverters()
+                .removeIf(m -> m.getClass().getName().equals(MappingJackson2HttpMessageConverter.class.getName()));
+        restTemplate.getRestTemplate().getMessageConverters().add(jsonMessageConverter);
+        return restTemplate;
+    }
 }

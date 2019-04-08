@@ -25,13 +25,11 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.junit.Test;
 import org.onap.so.monitoring.camunda.model.SoActiveInfraRequests;
 import org.onap.so.monitoring.configuration.database.DatabaseUrlProvider;
@@ -39,7 +37,6 @@ import org.onap.so.monitoring.db.service.DatabaseServiceProvider;
 import org.onap.so.monitoring.db.service.DatabaseServiceProviderImpl;
 import org.onap.so.monitoring.model.SoInfraRequest;
 import org.onap.so.rest.service.HttpRestServiceProvider;
-
 import com.google.common.base.Optional;
 
 

@@ -21,8 +21,8 @@
 package org.onap.so.bpmn.servicedecomposition.entities.exceptions;
 
 public class InvalidBuildingBlockInputException extends Exception {
-	private static final long serialVersionUID = 221404474263656742L;
-	
+    private static final long serialVersionUID = 221404474263656742L;
+
     public InvalidBuildingBlockInputException() {
         super();
     }
@@ -39,9 +39,8 @@ public class InvalidBuildingBlockInputException extends Exception {
         super(cause);
     }
 
-    protected InvalidBuildingBlockInputException(String message, Throwable cause,
-                        boolean enableSuppression,
-                        boolean writableStackTrace) {
+    protected InvalidBuildingBlockInputException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

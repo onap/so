@@ -12,10 +12,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("test")
 public class CatalogDbAdapterBaseTest {
 
-	@LocalServerPort
-	protected int port;
-	
-	
-	@Test
-    public void testNothing(){}
+    @LocalServerPort
+    protected int port;
+
+
+    @Test
+    public void testNothing() {}
 }

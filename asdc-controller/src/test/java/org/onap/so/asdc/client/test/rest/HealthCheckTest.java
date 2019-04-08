@@ -38,28 +38,27 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 public class HealthCheckTest extends BaseTest {
-	
-	@LocalServerPort
-	private int port;
 
-	TestRestTemplate restTemplate = new TestRestTemplate();
+    @LocalServerPort
+    private int port;
 
-	HttpHeaders headers = new HttpHeaders();
-	
-	@Test
-	public void testHealthcheck() throws JSONException {
+    TestRestTemplate restTemplate = new TestRestTemplate();
 
-		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+    HttpHeaders headers = new HttpHeaders();
 
-		ResponseEntity<String> response = restTemplate.exchange(
-				createURLWithPort("/manage/health"),
-				HttpMethod.GET, entity, String.class);
-		
-		assertEquals(Response.Status.OK.getStatusCode(),response.getStatusCode().value());
-	}
-	
-	private String createURLWithPort(String uri) {
-		return "http://localhost:" + port + uri;
-	}
+    @Test
+    public void testHealthcheck() throws JSONException {
+
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(createURLWithPort("/manage/health"), HttpMethod.GET, entity, String.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
+
+    private String createURLWithPort(String uri) {
+        return "http://localhost:" + port + uri;
+    }
 
 }

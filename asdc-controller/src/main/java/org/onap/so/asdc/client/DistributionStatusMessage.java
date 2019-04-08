@@ -26,52 +26,53 @@ import org.onap.sdc.utils.DistributionStatusEnum;
 
 public class DistributionStatusMessage implements IDistributionStatusMessage {
 
-	private String artifactURL;
-	
-	private String consumerID;
-	
-	private String distributionID;
-	
-	private DistributionStatusEnum distributionStatus;
-	
-	private long timestamp;
-	
-	public DistributionStatusMessage (final String artifactUrl, final String consumerId,final String distributionId, final DistributionStatusEnum distributionStatusEnum, final long timestampL) {
-		artifactURL = artifactUrl;
-		consumerID = consumerId;
-		distributionID = distributionId;
-		distributionStatus = distributionStatusEnum;
-		timestamp = timestampL;
-	}
-	
-	@Override
-	public String getArtifactURL() {
-		
-		return artifactURL;
-	}
+    private String artifactURL;
 
-	@Override
-	public String getConsumerID() {
-	
-		return consumerID;
-	}
+    private String consumerID;
 
-	@Override
-	public String getDistributionID() {
-		
-		return distributionID;
-	}
+    private String distributionID;
 
-	@Override
-	public DistributionStatusEnum getStatus() {
-	
-		return distributionStatus;
-	}
+    private DistributionStatusEnum distributionStatus;
 
-	@Override
-	public long getTimestamp() {
-		
-		return timestamp;
-	}
+    private long timestamp;
+
+    public DistributionStatusMessage(final String artifactUrl, final String consumerId, final String distributionId,
+            final DistributionStatusEnum distributionStatusEnum, final long timestampL) {
+        artifactURL = artifactUrl;
+        consumerID = consumerId;
+        distributionID = distributionId;
+        distributionStatus = distributionStatusEnum;
+        timestamp = timestampL;
+    }
+
+    @Override
+    public String getArtifactURL() {
+
+        return artifactURL;
+    }
+
+    @Override
+    public String getConsumerID() {
+
+        return consumerID;
+    }
+
+    @Override
+    public String getDistributionID() {
+
+        return distributionID;
+    }
+
+    @Override
+    public DistributionStatusEnum getStatus() {
+
+        return distributionStatus;
+    }
+
+    @Override
+    public long getTimestamp() {
+
+        return timestamp;
+    }
 
 }

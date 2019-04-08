@@ -22,24 +22,13 @@ package org.onap.so.client.policy.entities;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "policyConfigMessage",
-    "policyConfigStatus",
-    "type",
-    "config",
-    "policyName",
-    "policyType",
-    "policyVersion",
-    "matchingConditions",
-    "responseAttributes",
-    "property"
-})
+@JsonPropertyOrder({"policyConfigMessage", "policyConfigStatus", "type", "config", "policyName", "policyType",
+        "policyVersion", "matchingConditions", "responseAttributes", "property"})
 public class PolicyConfig {
 
     @JsonProperty("policyConfigMessage")

@@ -23,41 +23,39 @@ package org.onap.so.adapters.tenantrest;
 
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "queryTenantError")
 public class QueryTenantError implements Serializable {
-	private static final long serialVersionUID = 7358240830662453507L;
-	private String message;
-	private MsoExceptionCategory category;
+    private static final long serialVersionUID = 7358240830662453507L;
+    private String message;
+    private MsoExceptionCategory category;
 
-	public QueryTenantError () {}
+    public QueryTenantError() {}
 
-	public QueryTenantError (String message) {
-		this.message = message;
-	}
+    public QueryTenantError(String message) {
+        this.message = message;
+    }
 
-	public QueryTenantError (String message, MsoExceptionCategory category) {
-		this.message = message;
-		this.category = category;
-	}
+    public QueryTenantError(String message, MsoExceptionCategory category) {
+        this.message = message;
+        this.category = category;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public MsoExceptionCategory getCategory () {
-		return category;
-	}
+    public MsoExceptionCategory getCategory() {
+        return category;
+    }
 
-	public void setCategory (MsoExceptionCategory category) {
-		this.category = category;
-	}
+    public void setCategory(MsoExceptionCategory category) {
+        this.category = category;
+    }
 }

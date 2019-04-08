@@ -22,7 +22,6 @@ package org.onap.so.client.sdnc.mapper;
 
 import java.util.Map;
 import java.util.UUID;
-
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkOperationInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkinformationNetworkInformation;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiNetworkrequestinputNetworkRequestInput;
@@ -48,59 +47,68 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class NetworkTopologyOperationRequestMapper {
-	
-	@Autowired
-	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
-	public GenericResourceApiNetworkOperationInformation reqMapper(SDNCSvcOperation svcOperation,
-			SDNCSvcAction svcAction, GenericResourceApiRequestActionEnumeration reqAction, L3Network network, ServiceInstance serviceInstance,
-			Customer customer, RequestContext requestContext, CloudRegion cloudRegion) {
-		GenericResourceApiNetworkOperationInformation req = new GenericResourceApiNetworkOperationInformation();
-		String sdncReqId = UUID.randomUUID().toString();
-		String msoRequestId = UUID.randomUUID().toString();
-		if (requestContext != null && requestContext.getMsoRequestId() != null) {
-			msoRequestId = requestContext.getMsoRequestId();
-		} 
-		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId);
-		GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, reqAction);
-		GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, true);
-		GenericResourceApiNetworkinformationNetworkInformation networkInformation = generalTopologyObjectMapper.buildNetworkInformation(network);
-		GenericResourceApiNetworkrequestinputNetworkRequestInput networkRequestInput = buildNetworkRequestInput(network, serviceInstance, cloudRegion);
+    @Autowired
+    private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
-		req.setRequestInformation(requestInformation);
-		req.setSdncRequestHeader(sdncRequestHeader);
-		req.setServiceInformation(serviceInformation);
-		req.setNetworkInformation(networkInformation);
+    public GenericResourceApiNetworkOperationInformation reqMapper(SDNCSvcOperation svcOperation,
+            SDNCSvcAction svcAction, GenericResourceApiRequestActionEnumeration reqAction, L3Network network,
+            ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
+            CloudRegion cloudRegion) {
+        GenericResourceApiNetworkOperationInformation req = new GenericResourceApiNetworkOperationInformation();
+        String sdncReqId = UUID.randomUUID().toString();
+        String msoRequestId = UUID.randomUUID().toString();
+        if (requestContext != null && requestContext.getMsoRequestId() != null) {
+            msoRequestId = requestContext.getMsoRequestId();
+        }
+        GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader =
+                generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId);
+        GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper
+                .buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, reqAction);
+        GenericResourceApiServiceinformationServiceInformation serviceInformation =
+                generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, true);
+        GenericResourceApiNetworkinformationNetworkInformation networkInformation =
+                generalTopologyObjectMapper.buildNetworkInformation(network);
+        GenericResourceApiNetworkrequestinputNetworkRequestInput networkRequestInput =
+                buildNetworkRequestInput(network, serviceInstance, cloudRegion);
 
-		if (requestContext != null && requestContext.getUserParams() != null) {
-			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
-				GenericResourceApiParam networkInputParameters = new GenericResourceApiParam();
-				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
-				paramItem.setName(entry.getKey());
-				paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue())); 
-				networkInputParameters.addParamItem(paramItem);
-				networkRequestInput.setNetworkInputParameters(networkInputParameters);
-			}
-		}
+        req.setRequestInformation(requestInformation);
+        req.setSdncRequestHeader(sdncRequestHeader);
+        req.setServiceInformation(serviceInformation);
+        req.setNetworkInformation(networkInformation);
 
-		req.setNetworkRequestInput(networkRequestInput);
-		return req;
-	}
-	/*
-	 * Private helper to build GenericResourceApiNetworkrequestinputNetworkRequestInput
-	 */
-	private GenericResourceApiNetworkrequestinputNetworkRequestInput buildNetworkRequestInput(L3Network network, ServiceInstance serviceInstance, CloudRegion cloudRegion){
-		GenericResourceApiNetworkrequestinputNetworkRequestInput networkRequestInput = new GenericResourceApiNetworkrequestinputNetworkRequestInput();
-		networkRequestInput.setTenant(cloudRegion.getTenantId());
-		networkRequestInput.setCloudOwner(cloudRegion.getCloudOwner());
-		networkRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
-		if (network.getNetworkName() != null && !network.getNetworkName().equals("")) {
-			networkRequestInput.setNetworkName(network.getNetworkName());
-		}
-		if (serviceInstance.getCollection() != null && serviceInstance.getCollection().getInstanceGroup() != null){
-			//set only for network created as part of the collection/instance since 1806
-			networkRequestInput.setNetworkInstanceGroupId(serviceInstance.getCollection().getInstanceGroup().getId());
-		}
-		return networkRequestInput;
-	}
+        if (requestContext != null && requestContext.getUserParams() != null) {
+            for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
+                GenericResourceApiParam networkInputParameters = new GenericResourceApiParam();
+                GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+                paramItem.setName(entry.getKey());
+                paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue()));
+                networkInputParameters.addParamItem(paramItem);
+                networkRequestInput.setNetworkInputParameters(networkInputParameters);
+            }
+        }
+
+        req.setNetworkRequestInput(networkRequestInput);
+        return req;
+    }
+
+    /*
+     * Private helper to build GenericResourceApiNetworkrequestinputNetworkRequestInput
+     */
+    private GenericResourceApiNetworkrequestinputNetworkRequestInput buildNetworkRequestInput(L3Network network,
+            ServiceInstance serviceInstance, CloudRegion cloudRegion) {
+        GenericResourceApiNetworkrequestinputNetworkRequestInput networkRequestInput =
+                new GenericResourceApiNetworkrequestinputNetworkRequestInput();
+        networkRequestInput.setTenant(cloudRegion.getTenantId());
+        networkRequestInput.setCloudOwner(cloudRegion.getCloudOwner());
+        networkRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
+        if (network.getNetworkName() != null && !network.getNetworkName().equals("")) {
+            networkRequestInput.setNetworkName(network.getNetworkName());
+        }
+        if (serviceInstance.getCollection() != null && serviceInstance.getCollection().getInstanceGroup() != null) {
+            // set only for network created as part of the collection/instance since 1806
+            networkRequestInput.setNetworkInstanceGroupId(serviceInstance.getCollection().getInstanceGroup().getId());
+        }
+        return networkRequestInput;
+    }
 }

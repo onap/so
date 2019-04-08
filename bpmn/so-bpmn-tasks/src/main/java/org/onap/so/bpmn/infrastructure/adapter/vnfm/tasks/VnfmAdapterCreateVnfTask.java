@@ -27,7 +27,6 @@ import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.INPUT
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.SPACE;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.Constants.UNDERSCORE;
 import static org.onap.so.bpmn.servicedecomposition.entities.ResourceKey.GENERIC_VNF_ID;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.InputParameter;
 import org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils.NullInputParameter;
@@ -44,12 +43,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.google.common.base.Optional;
 
 /**
- * This class is executed from EtsiVnfInstantiateBB building block and it sends the create request
- * to the VNFM adapter
+ * This class is executed from EtsiVnfInstantiateBB building block and it sends the create request to the VNFM adapter
  * 
  * @author waqas.ikram@est.tech
  */

@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,85 +33,83 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
 @Table(name = "building_block_detail")
 public class BuildingBlockDetail implements Serializable {
-	private static final long serialVersionUID = -2375223199178059155L;
-	
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	
-	@BusinessKey
-	@Column(name = "BUILDING_BLOCK_NAME")
-	private String buildingBlockName;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "RESOURCE_TYPE")
-	private ResourceType resourceType;
+    private static final long serialVersionUID = -2375223199178059155L;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TARGET_ACTION")
-	private OrchestrationAction targetAction;
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("buildingBlockName", buildingBlockName)
-				.append("resourceType", resourceType).append("targetAction", targetAction).toString();		
-	}
-	
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof BuildingBlockDetail)) {
-			return false;
-		}
-		BuildingBlockDetail castOther = (BuildingBlockDetail) other;
-		return new EqualsBuilder().append(buildingBlockName, castOther.buildingBlockName).isEquals();
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(buildingBlockName).toHashCode();
-	}
-	
-	public Integer getId() {
-		return id;
-	}
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	
-	public String getBuildingBlockName() {
-		return buildingBlockName;
-	}
+    @BusinessKey
+    @Column(name = "BUILDING_BLOCK_NAME")
+    private String buildingBlockName;
 
-	public void setBuildingBlockName(String buildingBlockName) {
-		this.buildingBlockName = buildingBlockName;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "RESOURCE_TYPE")
+    private ResourceType resourceType;
 
-	public ResourceType getResourceType() {
-		return resourceType;
-	}
+    @Enumerated(EnumType.STRING)
+    @Column(name = "TARGET_ACTION")
+    private OrchestrationAction targetAction;
 
-	public void setResourceType(ResourceType resourceType) {
-		this.resourceType = resourceType;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("buildingBlockName", buildingBlockName)
+                .append("resourceType", resourceType).append("targetAction", targetAction).toString();
+    }
 
-	public OrchestrationAction getTargetAction() {
-		return targetAction;
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof BuildingBlockDetail)) {
+            return false;
+        }
+        BuildingBlockDetail castOther = (BuildingBlockDetail) other;
+        return new EqualsBuilder().append(buildingBlockName, castOther.buildingBlockName).isEquals();
+    }
 
-	public void setTargetAction(OrchestrationAction targetAction) {
-		this.targetAction = targetAction;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(buildingBlockName).toHashCode();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getBuildingBlockName() {
+        return buildingBlockName;
+    }
+
+    public void setBuildingBlockName(String buildingBlockName) {
+        this.buildingBlockName = buildingBlockName;
+    }
+
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
+
+    public void setResourceType(ResourceType resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    public OrchestrationAction getTargetAction() {
+        return targetAction;
+    }
+
+    public void setTargetAction(OrchestrationAction targetAction) {
+        this.targetAction = targetAction;
+    }
 }

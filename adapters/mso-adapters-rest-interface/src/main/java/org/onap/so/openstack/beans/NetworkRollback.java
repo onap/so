@@ -23,135 +23,141 @@ package org.onap.so.openstack.beans;
 
 import java.io.Serializable;
 import java.util.List;
-
 import org.onap.so.entity.MsoRequest;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
- * Javabean representing the rollback criteria following a "Create Network"
- * or "Update Network" operation.  This structure can be passed back to the
- * "Rollback Network" operation to undo the effects of the create/update.
+ * Javabean representing the rollback criteria following a "Create Network" or "Update Network" operation. This
+ * structure can be passed back to the "Rollback Network" operation to undo the effects of the create/update.
  *
- * Once a network is created, the only possible update through MSO is to
- * the set of VLANs supported by the network.  The vlans attribute of the
- * rollback object contains the previous VLANs before update.
+ * Once a network is created, the only possible update through MSO is to the set of VLANs supported by the network. The
+ * vlans attribute of the rollback object contains the previous VLANs before update.
  *
  *
  */
 @JsonInclude(Include.NON_EMPTY)
-public class NetworkRollback implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 11949663223019185L;
-	private String networkId;
-	private String neutronNetworkId;
-	private String networkStackId;
-	private String tenantId;
-	private String cloudId;
-	private String networkType;
-	private String modelCustomizationUuid;
-	private boolean networkCreated = false;
-	// Previous values for updates
-	private String networkName = null;
-	private String physicalNetwork = null;
-	private List<Integer> vlans = null;
-	private MsoRequest msoRequest;
+public class NetworkRollback implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 11949663223019185L;
+    private String networkId;
+    private String neutronNetworkId;
+    private String networkStackId;
+    private String tenantId;
+    private String cloudId;
+    private String networkType;
+    private String modelCustomizationUuid;
+    private boolean networkCreated = false;
+    // Previous values for updates
+    private String networkName = null;
+    private String physicalNetwork = null;
+    private List<Integer> vlans = null;
+    private MsoRequest msoRequest;
 
-	public String getNetworkId() {
-		return networkId;
-	}
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
-	}
+    public String getNetworkId() {
+        return networkId;
+    }
 
-	public String getNeutronNetworkId() {
-		return neutronNetworkId;
-	}
-	public void setNeutronNetworkId(String neutronNetworkId) {
-		this.neutronNetworkId = neutronNetworkId;
-	}
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 
-	public String getNetworkStackId() {
-		return networkStackId;
-	}
-	public void setNetworkStackId(String networkStackId) {
-		this.networkStackId = networkStackId;
-	}
-	public String getTenantId() {
-		return tenantId;
-	}
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public String getNeutronNetworkId() {
+        return neutronNetworkId;
+    }
 
-	public String getCloudId() {
-		return cloudId;
-	}
-	public void setCloudId(String cloudId) {
-		this.cloudId = cloudId;
-	}
+    public void setNeutronNetworkId(String neutronNetworkId) {
+        this.neutronNetworkId = neutronNetworkId;
+    }
 
-	public String getNetworkType() {
-		return networkType;
-	}
-	public void setNetworkType(String networkType) {
-		this.networkType = networkType;
-	}
+    public String getNetworkStackId() {
+        return networkStackId;
+    }
 
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
+    public void setNetworkStackId(String networkStackId) {
+        this.networkStackId = networkStackId;
+    }
 
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public boolean getNetworkCreated() {
-		return networkCreated;
-	}
-	public void setNetworkCreated(boolean networkCreated) {
-		this.networkCreated = networkCreated;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getNetworkName() {
-		return networkName;
-	}
-	public void setNetworkName(String networkName) {
-		this.networkName = networkName;
-	}
+    public String getCloudId() {
+        return cloudId;
+    }
 
-	public String getPhysicalNetwork() {
-		return physicalNetwork;
-	}
-	public void setPhysicalNetwork(String physicalNetwork) {
-		this.physicalNetwork = physicalNetwork;
-	}
+    public void setCloudId(String cloudId) {
+        this.cloudId = cloudId;
+    }
 
-	public List<Integer> getVlans () {
-		return vlans;
-	}
-	public void setVlans (List<Integer> vlans) {
-		this.vlans = vlans;
-	}
+    public String getNetworkType() {
+        return networkType;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
-	public void setMsoRequest (MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
+    }
 
-	@Override
-	public String toString() {
-		return "NetworkRollback [networkId=" + networkId
-				+ ", neutronNetworkId=" + neutronNetworkId + ", networkStackId="
-				+ networkStackId + ", tenantId=" + tenantId + ", cloudId="
-				+ cloudId + ", networkType=" + networkType
-				+ ", networkCreated=" + networkCreated + ", networkName=" + networkName
-				+ ", physicalNetwork=" + physicalNetwork + "]";
-	}
+    public String getModelCustomizationUuid() {
+        return this.modelCustomizationUuid;
+    }
+
+    public void setModelCustomizationUuid(String modelCustomizationUuid) {
+        this.modelCustomizationUuid = modelCustomizationUuid;
+    }
+
+    public boolean getNetworkCreated() {
+        return networkCreated;
+    }
+
+    public void setNetworkCreated(boolean networkCreated) {
+        this.networkCreated = networkCreated;
+    }
+
+    public String getNetworkName() {
+        return networkName;
+    }
+
+    public void setNetworkName(String networkName) {
+        this.networkName = networkName;
+    }
+
+    public String getPhysicalNetwork() {
+        return physicalNetwork;
+    }
+
+    public void setPhysicalNetwork(String physicalNetwork) {
+        this.physicalNetwork = physicalNetwork;
+    }
+
+    public List<Integer> getVlans() {
+        return vlans;
+    }
+
+    public void setVlans(List<Integer> vlans) {
+        this.vlans = vlans;
+    }
+
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
+
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
+
+    @Override
+    public String toString() {
+        return "NetworkRollback [networkId=" + networkId + ", neutronNetworkId=" + neutronNetworkId
+                + ", networkStackId=" + networkStackId + ", tenantId=" + tenantId + ", cloudId=" + cloudId
+                + ", networkType=" + networkType + ", networkCreated=" + networkCreated + ", networkName=" + networkName
+                + ", physicalNetwork=" + physicalNetwork + "]";
+    }
 
 }

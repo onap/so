@@ -22,7 +22,6 @@ package org.onap.so.bpmn.servicedecomposition.entities;
 
 import java.io.Serializable;
 import java.util.Map;
-
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -31,74 +30,76 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 
 public class GeneralBuildingBlock implements Serializable {
-	private static final String INVALID_INPUT_MISSING = "Expected building block input of \"%s\" not found in decomposition";
-	private static final String INVALID_INPUT_CLASS_CAST = "Expected building block input of \"%s\" was the wrong object type in the decomposition";
+    private static final String INVALID_INPUT_MISSING =
+            "Expected building block input of \"%s\" not found in decomposition";
+    private static final String INVALID_INPUT_CLASS_CAST =
+            "Expected building block input of \"%s\" was the wrong object type in the decomposition";
 
-	private static final long serialVersionUID = -429247436428110843L;
+    private static final long serialVersionUID = -429247436428110843L;
 
-	private RequestContext requestContext;
-	private OrchestrationContext orchContext;
-	private Map<String, String> userInput;
-	private CloudRegion cloudRegion;
-	private Tenant tenant;
+    private RequestContext requestContext;
+    private OrchestrationContext orchContext;
+    private Map<String, String> userInput;
+    private CloudRegion cloudRegion;
+    private Tenant tenant;
 
-	private Customer customer;
-	private ServiceInstance serviceInstance;
+    private Customer customer;
+    private ServiceInstance serviceInstance;
 
-	
-	public Tenant getTenant() {
-		return tenant;
-	}
 
-	public void setTenant(Tenant tenant) {
-		this.tenant = tenant;
-	}
+    public Tenant getTenant() {
+        return tenant;
+    }
 
-	public CloudRegion getCloudRegion() {
-		return cloudRegion;
-	}
+    public void setTenant(Tenant tenant) {
+        this.tenant = tenant;
+    }
 
-	public void setCloudRegion(CloudRegion cloudRegion) {
-		this.cloudRegion = cloudRegion;
-	}
+    public CloudRegion getCloudRegion() {
+        return cloudRegion;
+    }
 
-	public RequestContext getRequestContext() {
-		return requestContext;
-	}
+    public void setCloudRegion(CloudRegion cloudRegion) {
+        this.cloudRegion = cloudRegion;
+    }
 
-	public void setRequestContext(RequestContext requestContext) {
-		this.requestContext = requestContext;
-	}
+    public RequestContext getRequestContext() {
+        return requestContext;
+    }
 
-	public OrchestrationContext getOrchContext() {
-		return orchContext;
-	}
+    public void setRequestContext(RequestContext requestContext) {
+        this.requestContext = requestContext;
+    }
 
-	public void setOrchContext(OrchestrationContext orchContext) {
-		this.orchContext = orchContext;
-	}
+    public OrchestrationContext getOrchContext() {
+        return orchContext;
+    }
 
-	public Map<String, String> getUserInput() {
-		return userInput;
-	}
+    public void setOrchContext(OrchestrationContext orchContext) {
+        this.orchContext = orchContext;
+    }
 
-	public void setUserInput(Map<String, String> userInput) {
-		this.userInput = userInput;
-	}
+    public Map<String, String> getUserInput() {
+        return userInput;
+    }
 
-	public Customer getCustomer() {
-		return customer;
-	}
+    public void setUserInput(Map<String, String> userInput) {
+        this.userInput = userInput;
+    }
 
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
-	}
+    public Customer getCustomer() {
+        return customer;
+    }
 
-	public ServiceInstance getServiceInstance() {
-		return serviceInstance;
-	}
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
-	public void setServiceInstance(ServiceInstance serviceInstance) {
-		this.serviceInstance = serviceInstance;
-	}
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
+
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 }

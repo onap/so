@@ -21,13 +21,12 @@
 package org.onap.so.requestsdb;
 
 /**
- * The constants of the request db
- * <br>
+ * The constants of the request db <br>
  * <p>
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-08-28
+ * @version ONAP Amsterdam Release 2017-08-28
  */
 public class RequestsDbConstant {
 

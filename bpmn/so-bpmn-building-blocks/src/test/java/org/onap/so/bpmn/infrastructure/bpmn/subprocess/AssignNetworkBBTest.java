@@ -19,10 +19,10 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.engine.test.Deployment;
@@ -30,26 +30,33 @@ import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
-public class AssignNetworkBBTest extends BaseBPMNTest{
+public class AssignNetworkBBTest extends BaseBPMNTest {
     @Test
-	@Deployment(resources = { "subprocess/AssignNetworkRollbackBB.bpmn"})
+    @Deployment(resources = {"subprocess/AssignNetworkRollbackBB.bpmn"})
     public void sunnyDayAssignNetwork_Test() throws InterruptedException {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignNetworkBB",variables);
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("AssignNetworkBB_start","networkFoundByName_ExclusiveGateway","ServiceTask_put_network_in_AAI","ServiceTask_connect_to_Tenant","ServiceTask_connect_to_CloudRegion","ServiceTask_connect_to_NCIG","ServiceTask_connect_to_NCSI","ServiceTask_get_cloud_region","ServiceTask_assign_network_sdnc","CallActivity_sdncHandlerCall","ServiceTask_assign_network_aai","AssignNetworkBB_end");     
+        assertThat(pi).isStarted().hasPassedInOrder("AssignNetworkBB_start", "networkFoundByName_ExclusiveGateway",
+                "ServiceTask_put_network_in_AAI", "ServiceTask_connect_to_Tenant", "ServiceTask_connect_to_CloudRegion",
+                "ServiceTask_connect_to_NCIG", "ServiceTask_connect_to_NCSI", "ServiceTask_get_cloud_region",
+                "ServiceTask_assign_network_sdnc", "CallActivity_sdncHandlerCall", "ServiceTask_assign_network_aai",
+                "AssignNetworkBB_end");
         assertThat(pi).isEnded();
     }
 
-	@Test
-	public void rainyDayAssignNetwork_Test() throws Exception {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks).updateOrchestrationStatusAssignedNetwork(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignNetworkBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassedInOrder("AssignNetworkBB_start", "networkFoundByName_ExclusiveGateway", "ServiceTask_put_network_in_AAI","ServiceTask_connect_to_Tenant","ServiceTask_connect_to_CloudRegion","ServiceTask_connect_to_NCIG","ServiceTask_connect_to_NCSI", "ServiceTask_get_cloud_region", "ServiceTask_assign_network_sdnc", "ServiceTask_assign_network_aai")
-				.hasNotPassed("AssignNetworkBB_end");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void rainyDayAssignNetwork_Test() throws Exception {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks)
+                .updateOrchestrationStatusAssignedNetwork(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignNetworkBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("AssignNetworkBB_start", "networkFoundByName_ExclusiveGateway",
+                "ServiceTask_put_network_in_AAI", "ServiceTask_connect_to_Tenant", "ServiceTask_connect_to_CloudRegion",
+                "ServiceTask_connect_to_NCIG", "ServiceTask_connect_to_NCSI", "ServiceTask_get_cloud_region",
+                "ServiceTask_assign_network_sdnc", "ServiceTask_assign_network_aai")
+                .hasNotPassed("AssignNetworkBB_end");
+        assertThat(pi).isEnded();
+    }
 }

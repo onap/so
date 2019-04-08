@@ -24,7 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 
 /**
@@ -33,89 +32,59 @@ import com.github.tomakehurst.wiremock.WireMockServer;
  */
 public class StubResponsePolicy {
 
-	public static void setupAllMocks() {
+    public static void setupAllMocks() {
 
-	}
+    }
 
-	// start of Policy mocks
-	public static void MockPolicyAbort(WireMockServer wireMockServer) {		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-			.withRequestBody(containing("BB1"))
-			.willReturn(aResponse()
-				.withStatus(200)
-				.withHeader("Content-Type", "application/json")
-				.withBodyFile("policyAbortResponse.json")));
-		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-				.withRequestBody(containing("UPDVnfI"))
-				.willReturn(aResponse()
-					.withStatus(200)
-					.withHeader("Content-Type", "application/json")
-					.withBodyFile("policyAbortResponse.json")));
-		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-				.withRequestBody(containing("RPLVnfI"))
-				.willReturn(aResponse()
-					.withStatus(200)
-					.withHeader("Content-Type", "application/json")
-					.withBodyFile("policyAbortResponse.json")));
-		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-				.withRequestBody(containing("VnfIPU"))
-				.willReturn(aResponse()
-					.withStatus(200)
-					.withHeader("Content-Type", "application/json")
-					.withBodyFile("policyAbortResponse.json")));
-		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-				.withRequestBody(containing("VnfCU"))
-				.willReturn(aResponse()
-					.withStatus(200)
-					.withHeader("Content-Type", "application/json")
-					.withBodyFile("policyAbortResponse.json")));
+    // start of Policy mocks
+    public static void MockPolicyAbort(WireMockServer wireMockServer) {
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("BB1"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("policyAbortResponse.json")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("UPDVnfI"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("policyAbortResponse.json")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("RPLVnfI"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("policyAbortResponse.json")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("VnfIPU"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("policyAbortResponse.json")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("VnfCU"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("policyAbortResponse.json")));
 
 
 
-	}
-	
-	public static void MockPolicySkip(WireMockServer wireMockServer) {		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-			.withRequestBody(containing("BB1"))
-			.willReturn(aResponse()
-				.withStatus(200)
-				.withHeader("Content-Type", "application/json")
-				.withBodyFile("Policy/policySkipResponse.json")));
-		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-				.withRequestBody(containing("UPDVnfI"))
-				.willReturn(aResponse()
-					.withStatus(200)
-					.withHeader("Content-Type", "application/json")
-					.withBodyFile("Policy/policySkipResponse.json")));
-		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-				.withRequestBody(containing("RPLVnfI"))
-				.willReturn(aResponse()
-					.withStatus(200)
-					.withHeader("Content-Type", "application/json")
-					.withBodyFile("Policy/policySkipResponse.json")));
-		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-				.withRequestBody(containing("VnfIPU"))
-				.willReturn(aResponse()
-					.withStatus(200)
-					.withHeader("Content-Type", "application/json")
-					.withBodyFile("Policy/policySkipResponse.json")));
-		
-		wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision"))
-				.withRequestBody(containing("VnfCU"))
-				.willReturn(aResponse()
-					.withStatus(200)
-					.withHeader("Content-Type", "application/json")
-					.withBodyFile("Policy/policySkipResponse.json")));
+    }
+
+    public static void MockPolicySkip(WireMockServer wireMockServer) {
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("BB1"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("Policy/policySkipResponse.json")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("UPDVnfI"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("Policy/policySkipResponse.json")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("RPLVnfI"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("Policy/policySkipResponse.json")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("VnfIPU"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("Policy/policySkipResponse.json")));
+
+        wireMockServer.stubFor(post(urlEqualTo("/pdp/api/getDecision")).withRequestBody(containing("VnfCU"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")
+                        .withBodyFile("Policy/policySkipResponse.json")));
 
 
-	}
-	
-	
+    }
+
+
 }

@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -37,7 +36,8 @@ public class CancelDmaapSubscriptionTest {
         DmaapClientTestImpl dmaapClientTest = new DmaapClientTestImpl();
         delegate.setDmaapClient(dmaapClientTest);
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
-        when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID))).thenReturn("testPnfCorrelationId");
+        when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID)))
+                .thenReturn("testPnfCorrelationId");
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
         dmaapClientTest.registerForUpdate("testPnfCorrelationId", () -> {
         });

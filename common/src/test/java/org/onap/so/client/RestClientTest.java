@@ -28,15 +28,12 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriBuilderException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -48,44 +45,45 @@ import org.mockito.junit.MockitoJUnitRunner;
 public class RestClientTest {
 
 
-	private final HttpClientFactory httpClientFactory = new HttpClientFactory();
-	@Mock
-	private RestProperties props;
+    private final HttpClientFactory httpClientFactory = new HttpClientFactory();
+    @Mock
+    private RestProperties props;
 
 
-	@Test
-	public void retries() throws Exception {
-		RestClient spy = buildSpy();
-		RestRequest mockCallable = mock(RestRequest.class);
-		when(mockCallable.call()).thenThrow(new WebApplicationException(new SocketTimeoutException()));
-		doReturn(mockCallable).when(spy).buildRequest(any(String.class), ArgumentMatchers.isNull());
-		try {
-			spy.get();
-		} catch (Exception e) {
-			//we expect an exception, ignore it
-		}
-		verify(mockCallable, times(3)).call();
-		
-	}
-	
-	@Test
-	public void exceptionDoNotRetry() throws Exception {
-		RestClient spy = buildSpy();
-		RestRequest mockCallable = mock(RestRequest.class);
-		when(mockCallable.call()).thenThrow(new WebApplicationException(new NotFoundException()));
-		doReturn(mockCallable).when(spy).buildRequest(any(String.class), ArgumentMatchers.isNull());
-		try {
-			spy.get();
-		} catch (Exception e) {
-			//we expect an exception, ignore it
-		}
-		verify(mockCallable, times(1)).call();
-		
-	}
-	private RestClient buildSpy() throws MalformedURLException, IllegalArgumentException, UriBuilderException {
-		RestClient client = httpClientFactory
-			.newJsonClient(UriBuilder.fromUri("http://localhost/test").build().toURL(), TargetEntity.BPMN);
-		
-		return spy(client);
-	}
+    @Test
+    public void retries() throws Exception {
+        RestClient spy = buildSpy();
+        RestRequest mockCallable = mock(RestRequest.class);
+        when(mockCallable.call()).thenThrow(new WebApplicationException(new SocketTimeoutException()));
+        doReturn(mockCallable).when(spy).buildRequest(any(String.class), ArgumentMatchers.isNull());
+        try {
+            spy.get();
+        } catch (Exception e) {
+            // we expect an exception, ignore it
+        }
+        verify(mockCallable, times(3)).call();
+
+    }
+
+    @Test
+    public void exceptionDoNotRetry() throws Exception {
+        RestClient spy = buildSpy();
+        RestRequest mockCallable = mock(RestRequest.class);
+        when(mockCallable.call()).thenThrow(new WebApplicationException(new NotFoundException()));
+        doReturn(mockCallable).when(spy).buildRequest(any(String.class), ArgumentMatchers.isNull());
+        try {
+            spy.get();
+        } catch (Exception e) {
+            // we expect an exception, ignore it
+        }
+        verify(mockCallable, times(1)).call();
+
+    }
+
+    private RestClient buildSpy() throws MalformedURLException, IllegalArgumentException, UriBuilderException {
+        RestClient client = httpClientFactory.newJsonClient(UriBuilder.fromUri("http://localhost/test").build().toURL(),
+                TargetEntity.BPMN);
+
+        return spy(client);
+    }
 }

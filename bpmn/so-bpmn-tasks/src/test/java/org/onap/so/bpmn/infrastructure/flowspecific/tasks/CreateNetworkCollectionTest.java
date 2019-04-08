@@ -18,6 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,10 +27,8 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -45,73 +44,84 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.OrchestrationContext
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
-public class CreateNetworkCollectionTest extends BaseTaskTest{
-	@InjectMocks
-	private CreateNetworkCollection createNetworkCollection = new CreateNetworkCollection();
-	
-	private L3Network network;
-	private ServiceInstance serviceInstance;
-	private OrchestrationContext orchestrationContext;
-	private CloudRegion cloudRegion;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		serviceInstance = setServiceInstance();
-		network = setL3Network();
-		cloudRegion = setCloudRegion();
-		
-		List<L3Network> l3NetworkList = new ArrayList<L3Network>();
-		l3NetworkList.add(network);
-		ModelInfoInstanceGroup modelInfoInstanceGroup = new ModelInfoInstanceGroup();
-		modelInfoInstanceGroup.setFunction("function");
-		serviceInstance.getCollection().getInstanceGroup().setModelInfoInstanceGroup(modelInfoInstanceGroup);
-		
-		orchestrationContext = setOrchestrationContext();
-		orchestrationContext.setIsRollbackEnabled(true);
-		
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-	}
-	
-	@Test
-	public void buildCreateNetworkRequestTest() throws Exception {
-		createNetworkCollection.buildNetworkCollectionName(execution);
-		
-		assertEquals(serviceInstance.getServiceInstanceName() + "_" + serviceInstance.getCollection().getInstanceGroup().getModelInfoInstanceGroup().getFunction(), execution.getVariable("networkCollectionName"));
-	}
-	
-	@Test(expected = BpmnError.class)
-	public void buildCreateNetworkRequestInstanceGroupModelInfoFunctionNullExceptionTest() throws Exception {
-		ModelInfoInstanceGroup modelInfoInstanceGroup = new ModelInfoInstanceGroup();
-		serviceInstance.getCollection().getInstanceGroup().setModelInfoInstanceGroup(modelInfoInstanceGroup);
-		createNetworkCollection.buildNetworkCollectionName(execution);
-	}
-	
-	@Test(expected = BpmnError.class)
-	public void buildCreateNetworkRequestInstanceGroupModelInfoNullTest() throws Exception {
-		serviceInstance.getCollection().getInstanceGroup().setModelInfoInstanceGroup(null);
-		createNetworkCollection.buildNetworkCollectionName(execution);
-	}
-	
-	@Test
-	public void connectCollectionToInstanceGroupTest() throws Exception {
-		doNothing().when(aaiNetworkResources).connectNetworkCollectionInstanceGroupToNetworkCollection(serviceInstance.getCollection().getInstanceGroup(), serviceInstance.getCollection());
-		createNetworkCollection.connectCollectionToInstanceGroup(execution);
-		verify(aaiNetworkResources, times(1)).connectNetworkCollectionInstanceGroupToNetworkCollection(serviceInstance.getCollection().getInstanceGroup(), serviceInstance.getCollection());
-	}
-	
-	@Test
-	public void connectCollectionToServiceInstanceTest() throws Exception {
-		doNothing().when(aaiNetworkResources).connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(), serviceInstance);
-		createNetworkCollection.connectCollectionToServiceInstance(execution);
-		verify(aaiNetworkResources, times(1)).connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(), serviceInstance);
-	}
-	
-	@Test
-	public void connectInstanceGroupToCloudRegionTest() throws Exception {
-		doNothing().when(aaiNetworkResources).connectInstanceGroupToCloudRegion(serviceInstance.getCollection().getInstanceGroup(), cloudRegion);
-		createNetworkCollection.connectInstanceGroupToCloudRegion(execution);
-		verify(aaiNetworkResources, times(1)).connectInstanceGroupToCloudRegion(serviceInstance.getCollection().getInstanceGroup(), cloudRegion);
-	}
+public class CreateNetworkCollectionTest extends BaseTaskTest {
+    @InjectMocks
+    private CreateNetworkCollection createNetworkCollection = new CreateNetworkCollection();
+
+    private L3Network network;
+    private ServiceInstance serviceInstance;
+    private OrchestrationContext orchestrationContext;
+    private CloudRegion cloudRegion;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        serviceInstance = setServiceInstance();
+        network = setL3Network();
+        cloudRegion = setCloudRegion();
+
+        List<L3Network> l3NetworkList = new ArrayList<L3Network>();
+        l3NetworkList.add(network);
+        ModelInfoInstanceGroup modelInfoInstanceGroup = new ModelInfoInstanceGroup();
+        modelInfoInstanceGroup.setFunction("function");
+        serviceInstance.getCollection().getInstanceGroup().setModelInfoInstanceGroup(modelInfoInstanceGroup);
+
+        orchestrationContext = setOrchestrationContext();
+        orchestrationContext.setIsRollbackEnabled(true);
+
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+    }
+
+    @Test
+    public void buildCreateNetworkRequestTest() throws Exception {
+        createNetworkCollection.buildNetworkCollectionName(execution);
+
+        assertEquals(
+                serviceInstance.getServiceInstanceName() + "_"
+                        + serviceInstance.getCollection().getInstanceGroup().getModelInfoInstanceGroup().getFunction(),
+                execution.getVariable("networkCollectionName"));
+    }
+
+    @Test(expected = BpmnError.class)
+    public void buildCreateNetworkRequestInstanceGroupModelInfoFunctionNullExceptionTest() throws Exception {
+        ModelInfoInstanceGroup modelInfoInstanceGroup = new ModelInfoInstanceGroup();
+        serviceInstance.getCollection().getInstanceGroup().setModelInfoInstanceGroup(modelInfoInstanceGroup);
+        createNetworkCollection.buildNetworkCollectionName(execution);
+    }
+
+    @Test(expected = BpmnError.class)
+    public void buildCreateNetworkRequestInstanceGroupModelInfoNullTest() throws Exception {
+        serviceInstance.getCollection().getInstanceGroup().setModelInfoInstanceGroup(null);
+        createNetworkCollection.buildNetworkCollectionName(execution);
+    }
+
+    @Test
+    public void connectCollectionToInstanceGroupTest() throws Exception {
+        doNothing().when(aaiNetworkResources).connectNetworkCollectionInstanceGroupToNetworkCollection(
+                serviceInstance.getCollection().getInstanceGroup(), serviceInstance.getCollection());
+        createNetworkCollection.connectCollectionToInstanceGroup(execution);
+        verify(aaiNetworkResources, times(1)).connectNetworkCollectionInstanceGroupToNetworkCollection(
+                serviceInstance.getCollection().getInstanceGroup(), serviceInstance.getCollection());
+    }
+
+    @Test
+    public void connectCollectionToServiceInstanceTest() throws Exception {
+        doNothing().when(aaiNetworkResources).connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(),
+                serviceInstance);
+        createNetworkCollection.connectCollectionToServiceInstance(execution);
+        verify(aaiNetworkResources, times(1)).connectNetworkCollectionToServiceInstance(serviceInstance.getCollection(),
+                serviceInstance);
+    }
+
+    @Test
+    public void connectInstanceGroupToCloudRegionTest() throws Exception {
+        doNothing().when(aaiNetworkResources)
+                .connectInstanceGroupToCloudRegion(serviceInstance.getCollection().getInstanceGroup(), cloudRegion);
+        createNetworkCollection.connectInstanceGroupToCloudRegion(execution);
+        verify(aaiNetworkResources, times(1))
+                .connectInstanceGroupToCloudRegion(serviceInstance.getCollection().getInstanceGroup(), cloudRegion);
+    }
 }

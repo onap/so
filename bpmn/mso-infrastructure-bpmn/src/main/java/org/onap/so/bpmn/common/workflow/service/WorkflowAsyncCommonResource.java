@@ -26,8 +26,8 @@ import org.camunda.bpm.engine.ProcessEngines;
 
 public class WorkflowAsyncCommonResource extends WorkflowAsyncResource {
 
-	@Override
+    @Override
     public String getProcessEngineName() {
-		return "default";
-	}
+        return "default";
+    }
 }

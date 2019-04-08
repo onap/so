@@ -21,61 +21,71 @@
 package org.onap.so.bpmn.servicedecomposition.modelinfo;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ModelInfoServiceInstance extends ModelInfoMetadata implements Serializable {
 
-	private static final long serialVersionUID = -1812787934683419141L;
+    private static final long serialVersionUID = -1812787934683419141L;
 
-	@JsonProperty("description")
-	private String description;
-	@JsonProperty("created")
-	private String created;
-	@JsonProperty("service-type")
-	private String serviceType;
-	@JsonProperty("service-role")
-	private String serviceRole;
-	@JsonProperty("environment-context")
-	private String environmentContext;
-	@JsonProperty("workload-context")
-	private String workloadContext;
+    @JsonProperty("description")
+    private String description;
+    @JsonProperty("created")
+    private String created;
+    @JsonProperty("service-type")
+    private String serviceType;
+    @JsonProperty("service-role")
+    private String serviceRole;
+    @JsonProperty("environment-context")
+    private String environmentContext;
+    @JsonProperty("workload-context")
+    private String workloadContext;
 
 
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	public String getCreated() {
-		return created;
-	}
-	public void setCreated(String created) {
-		this.created = created;
-	}
-	public String getServiceType() {
-		return serviceType;
-	}
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
-	public String getServiceRole() {
-		return serviceRole;
-	}
-	public void setServiceRole(String serviceRole) {
-		this.serviceRole = serviceRole;
-	}
-	public String getEnvironmentContext() {
-		return environmentContext;
-	}
-	public void setEnvironmentContext(String environmentContext) {
-		this.environmentContext = environmentContext;
-	}
-	public String getWorkloadContext() {
-		return workloadContext;
-	}
-	public void setWorkloadContext(String workloadContext) {
-		this.workloadContext = workloadContext;
-	}
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCreated() {
+        return created;
+    }
+
+    public void setCreated(String created) {
+        this.created = created;
+    }
+
+    public String getServiceType() {
+        return serviceType;
+    }
+
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public String getServiceRole() {
+        return serviceRole;
+    }
+
+    public void setServiceRole(String serviceRole) {
+        this.serviceRole = serviceRole;
+    }
+
+    public String getEnvironmentContext() {
+        return environmentContext;
+    }
+
+    public void setEnvironmentContext(String environmentContext) {
+        this.environmentContext = environmentContext;
+    }
+
+    public String getWorkloadContext() {
+        return workloadContext;
+    }
+
+    public void setWorkloadContext(String workloadContext) {
+        this.workloadContext = workloadContext;
+    }
 }

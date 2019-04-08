@@ -26,13 +26,12 @@ import java.io.Serializable;
  * Base class for all SDNC adapter error responses.
  */
 public abstract class SDNCErrorCommon extends SDNCResponseCommon implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public SDNCErrorCommon(String sdncRequestId, String responseCode,
-			String responseMessage, String ackFinalIndicator) {
-		super(sdncRequestId, responseCode, responseMessage, ackFinalIndicator);
-	}
+    public SDNCErrorCommon(String sdncRequestId, String responseCode, String responseMessage,
+            String ackFinalIndicator) {
+        super(sdncRequestId, responseCode, responseMessage, ackFinalIndicator);
+    }
 
-	public SDNCErrorCommon() {
-	}
+    public SDNCErrorCommon() {}
 }

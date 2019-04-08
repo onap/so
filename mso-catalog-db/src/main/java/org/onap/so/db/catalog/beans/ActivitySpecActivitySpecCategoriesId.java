@@ -21,60 +21,62 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 public class ActivitySpecActivitySpecCategoriesId implements Serializable {
-	
-	private static final long serialVersionUID = 1563771827209840959L;
-	private Integer ID;
-	@BusinessKey
-	private Integer activitySpecId;
-	@BusinessKey
-	private Integer activitySpecCategoriesId;
-	
-	public Integer getID() {
-		return ID;
-	}
-	public void setID(Integer iD) {
-		ID = iD;
-	}
-	public Integer getActivitySpecCategoriesId() {
-		return activitySpecCategoriesId;
-	}
-	public void setActivitySpecCategoriesId(Integer activitySpecCategoriesId) {
-		this.activitySpecCategoriesId = activitySpecCategoriesId;
-	}
-	public Integer getActivitySpecId() {
-		return activitySpecId;
-	}
-	public void setActivitySpecId(Integer activitySpecId) {
-		this.activitySpecId = activitySpecId;
-	}
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("activitySpecId", activitySpecId)
-				.append("activitySpecCategoriesId", activitySpecCategoriesId)
-				.toString();
-	}
+    private static final long serialVersionUID = 1563771827209840959L;
+    private Integer ID;
+    @BusinessKey
+    private Integer activitySpecId;
+    @BusinessKey
+    private Integer activitySpecCategoriesId;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ActivitySpecActivitySpecCategoriesId)) {
-			return false;
-		}
-		ActivitySpecActivitySpecCategoriesId castOther = (ActivitySpecActivitySpecCategoriesId) other;
-		return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
-				.append(activitySpecCategoriesId, castOther.activitySpecCategoriesId).isEquals();
-	}
+    public Integer getID() {
+        return ID;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(activitySpecId).append(activitySpecCategoriesId).toHashCode();
-	}
+    public void setID(Integer iD) {
+        ID = iD;
+    }
+
+    public Integer getActivitySpecCategoriesId() {
+        return activitySpecCategoriesId;
+    }
+
+    public void setActivitySpecCategoriesId(Integer activitySpecCategoriesId) {
+        this.activitySpecCategoriesId = activitySpecCategoriesId;
+    }
+
+    public Integer getActivitySpecId() {
+        return activitySpecId;
+    }
+
+    public void setActivitySpecId(Integer activitySpecId) {
+        this.activitySpecId = activitySpecId;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("activitySpecId", activitySpecId)
+                .append("activitySpecCategoriesId", activitySpecCategoriesId).toString();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ActivitySpecActivitySpecCategoriesId)) {
+            return false;
+        }
+        ActivitySpecActivitySpecCategoriesId castOther = (ActivitySpecActivitySpecCategoriesId) other;
+        return new EqualsBuilder().append(activitySpecId, castOther.activitySpecId)
+                .append(activitySpecCategoriesId, castOther.activitySpecCategoriesId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(activitySpecId).append(activitySpecCategoriesId).toHashCode();
+    }
 }

@@ -19,11 +19,11 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.ManagementService;
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.delegate.BpmnError;
@@ -37,67 +37,60 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.onap.so.bpmn.BaseBPMNTest;
 
 
-public class PauseForManualTaskActivityTest extends BaseBPMNTest{
-	private static final String TIMEOUT_10_S = "PT10S";
-	
-	@Autowired
-	protected ManagementService managementService;
-	
-	@Autowired
-	protected TaskService taskService;
-	
-	@Test
-	public void sunnyDayPauseForManualTaskTimeout_Test() throws InterruptedException {
-		variables.put("taskTimeout", TIMEOUT_10_S);
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
-		assertThat(pi).isNotNull();		
-		BpmnAwareAssertions.assertThat(pi).isWaitingAt("ManualUserTask");
-		Task task = taskService.createTaskQuery().active().list().get(0);	
-		assertThat(pi).task().isNotNull();
-		assertNotNull(task);
-		
-		Job job = managementService.createJobQuery().activityId("ManualTaskTimer").singleResult();
-		assertNotNull(job);		
-		managementService.executeJob(job.getId());
-		
-		assertThat(pi).isStarted().hasPassedInOrder("PauseForManualTaskActivity_Start",
-				"UpdateDbStatusToPendingManualTask",
-				"CreateExternalTicket",
-				"ManualTaskTimer",				
-				"UpdateDBStatusToTimeout",
-				"ThrowTimeoutError");
-	}
-	
-	@Test
-	public void sunnyDayPauseForManualTaskCompleted_Test() throws InterruptedException {
-		variables.put("taskTimeout", TIMEOUT_10_S);
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
-		assertThat(pi).isNotNull();
-		BpmnAwareAssertions.assertThat(pi).isWaitingAt("ManualUserTask");
-		assertThat(pi).task().isNotNull();
-		Task task = taskService.createTaskQuery().active().list().get(0);	
-		assertNotNull(task);		
-		taskService.complete(task.getId());
-		
-		assertThat(pi).isStarted().hasPassedInOrder("PauseForManualTaskActivity_Start",
-				"UpdateDbStatusToPendingManualTask",
-				"CreateExternalTicket",
-				"ManualUserTask",
-				"UpdateDbStatusToInProgress",
-				"PauseForManualTaskActivity_End");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test	
-	public void rainyDayPauseForManualTask_Test() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(manualHandlingTasks).createExternalTicket((any(DelegateExecution.class)));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
-		assertThat(pi).isNotNull().isStarted().hasPassedInOrder("PauseForManualTaskActivity_Start",
-				"UpdateDbStatusToPendingManualTask",
-				"CreateExternalTicket").hasNotPassed(								   
-				 "ManualUserTask",
-				 "UpdateDbStatusToInProgress",
-				 "PauseForManualTaskActivity_End");		
-	}
-	
+public class PauseForManualTaskActivityTest extends BaseBPMNTest {
+    private static final String TIMEOUT_10_S = "PT10S";
+
+    @Autowired
+    protected ManagementService managementService;
+
+    @Autowired
+    protected TaskService taskService;
+
+    @Test
+    public void sunnyDayPauseForManualTaskTimeout_Test() throws InterruptedException {
+        variables.put("taskTimeout", TIMEOUT_10_S);
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
+        assertThat(pi).isNotNull();
+        BpmnAwareAssertions.assertThat(pi).isWaitingAt("ManualUserTask");
+        Task task = taskService.createTaskQuery().active().list().get(0);
+        assertThat(pi).task().isNotNull();
+        assertNotNull(task);
+
+        Job job = managementService.createJobQuery().activityId("ManualTaskTimer").singleResult();
+        assertNotNull(job);
+        managementService.executeJob(job.getId());
+
+        assertThat(pi).isStarted().hasPassedInOrder("PauseForManualTaskActivity_Start",
+                "UpdateDbStatusToPendingManualTask", "CreateExternalTicket", "ManualTaskTimer",
+                "UpdateDBStatusToTimeout", "ThrowTimeoutError");
+    }
+
+    @Test
+    public void sunnyDayPauseForManualTaskCompleted_Test() throws InterruptedException {
+        variables.put("taskTimeout", TIMEOUT_10_S);
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
+        assertThat(pi).isNotNull();
+        BpmnAwareAssertions.assertThat(pi).isWaitingAt("ManualUserTask");
+        assertThat(pi).task().isNotNull();
+        Task task = taskService.createTaskQuery().active().list().get(0);
+        assertNotNull(task);
+        taskService.complete(task.getId());
+
+        assertThat(pi).isStarted().hasPassedInOrder("PauseForManualTaskActivity_Start",
+                "UpdateDbStatusToPendingManualTask", "CreateExternalTicket", "ManualUserTask",
+                "UpdateDbStatusToInProgress", "PauseForManualTaskActivity_End");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void rainyDayPauseForManualTask_Test() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(manualHandlingTasks)
+                .createExternalTicket((any(DelegateExecution.class)));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("PauseForManualTaskActivity", variables);
+        assertThat(pi).isNotNull().isStarted()
+                .hasPassedInOrder("PauseForManualTaskActivity_Start", "UpdateDbStatusToPendingManualTask",
+                        "CreateExternalTicket")
+                .hasNotPassed("ManualUserTask", "UpdateDbStatusToInProgress", "PauseForManualTaskActivity_End");
+    }
+
 }

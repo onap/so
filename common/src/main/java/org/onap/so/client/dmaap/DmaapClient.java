@@ -26,7 +26,6 @@ import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
-
 import org.onap.so.client.defaultproperties.DefaultDmaapPropertiesImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,48 +35,48 @@ import org.onap.so.utils.CryptoUtils;
 
 public abstract class DmaapClient {
 
-	protected static Logger logger = LoggerFactory.getLogger(DmaapClient.class);
-	protected final Map<String, String> msoProperties;
-	protected final Properties properties;
+    protected static Logger logger = LoggerFactory.getLogger(DmaapClient.class);
+    protected final Map<String, String> msoProperties;
+    protected final Properties properties;
 
-	public DmaapClient(String filepath) throws IOException {
-		Resource resource = new ClassPathResource(filepath);
-		DmaapProperties dmaapProperties = DmaapPropertiesLoader.getInstance().getNewImpl();
-		if (dmaapProperties == null) {
-			logger.error("No RestProperty implementation found on classpath, loading default");
-			dmaapProperties = new DefaultDmaapPropertiesImpl();
-		}
-		this.msoProperties = dmaapProperties.getProperties();
-		this.properties = new Properties();
-		this.properties.load(resource.getInputStream());
-		try {
-			this.properties.put("auth", CryptoUtils.decrypt(this.getAuth(), this.getKey()).getBytes());
-		} catch (GeneralSecurityException e) {
-			logger.error(e.getMessage(), e);
-		}
-		this.properties.put("key", this.getKey());
-		this.properties.put("topic", this.getTopic());
-		Optional<String> host = this.getHost();
-		if (host.isPresent()) {
-			this.properties.put("host", host.get());
-		}
-	}
+    public DmaapClient(String filepath) throws IOException {
+        Resource resource = new ClassPathResource(filepath);
+        DmaapProperties dmaapProperties = DmaapPropertiesLoader.getInstance().getNewImpl();
+        if (dmaapProperties == null) {
+            logger.error("No RestProperty implementation found on classpath, loading default");
+            dmaapProperties = new DefaultDmaapPropertiesImpl();
+        }
+        this.msoProperties = dmaapProperties.getProperties();
+        this.properties = new Properties();
+        this.properties.load(resource.getInputStream());
+        try {
+            this.properties.put("auth", CryptoUtils.decrypt(this.getAuth(), this.getKey()).getBytes());
+        } catch (GeneralSecurityException e) {
+            logger.error(e.getMessage(), e);
+        }
+        this.properties.put("key", this.getKey());
+        this.properties.put("topic", this.getTopic());
+        Optional<String> host = this.getHost();
+        if (host.isPresent()) {
+            this.properties.put("host", host.get());
+        }
+    }
 
-	protected String deobfuscatePassword(String decrypted_key) {
+    protected String deobfuscatePassword(String decrypted_key) {
 
-		try {
-			return new String(Base64.getDecoder().decode(decrypted_key.getBytes()));
-		} catch (IllegalArgumentException iae) {
-			logger.error("llegal Arguments", iae);
-			return decrypted_key;
-		}
-	}
+        try {
+            return new String(Base64.getDecoder().decode(decrypted_key.getBytes()));
+        } catch (IllegalArgumentException iae) {
+            logger.error("llegal Arguments", iae);
+            return decrypted_key;
+        }
+    }
 
-	public abstract String getKey();
+    public abstract String getKey();
 
-	public abstract String getAuth();
+    public abstract String getAuth();
 
-	public abstract String getTopic();
+    public abstract String getTopic();
 
-	public abstract Optional<String> getHost();
+    public abstract Optional<String> getHost();
 }

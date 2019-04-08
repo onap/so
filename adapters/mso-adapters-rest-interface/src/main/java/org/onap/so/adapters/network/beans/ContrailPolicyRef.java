@@ -24,22 +24,22 @@ package org.onap.so.adapters.network.beans;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContrailPolicyRef {
-	 
-	@JsonProperty("network_policy_refs_data_sequence")
-	private ContrailPolicyRefSeq seq;
 
-	
-	public ContrailPolicyRefSeq getSeq() {
-		return seq;
-	}
+    @JsonProperty("network_policy_refs_data_sequence")
+    private ContrailPolicyRefSeq seq;
 
-	public void setSeq(ContrailPolicyRefSeq seq) {
-		this.seq = seq;
-	}
 
-	public ContrailPolicyRef withRefSeq(ContrailPolicyRefSeq seq) {
-		this.seq = seq;
-		return this;
-	}
-	
+    public ContrailPolicyRefSeq getSeq() {
+        return seq;
+    }
+
+    public void setSeq(ContrailPolicyRefSeq seq) {
+        this.seq = seq;
+    }
+
+    public ContrailPolicyRef withRefSeq(ContrailPolicyRefSeq seq) {
+        this.seq = seq;
+        return this;
+    }
+
 }

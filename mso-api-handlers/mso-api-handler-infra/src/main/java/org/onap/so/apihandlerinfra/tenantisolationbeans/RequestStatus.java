@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,39 +30,46 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestStatus implements Serializable {
 
-	private static final long serialVersionUID = -1835437975187313144L;
-	@JsonProperty("requestState")
-	protected String requestState;
-	@JsonProperty("statusMessage")
+    private static final long serialVersionUID = -1835437975187313144L;
+    @JsonProperty("requestState")
+    protected String requestState;
+    @JsonProperty("statusMessage")
     protected String statusMessage;
-	@JsonProperty("percentProgress")
+    @JsonProperty("percentProgress")
     protected String percentProgress;
-	@JsonProperty("timestamp")
+    @JsonProperty("timestamp")
     protected String timeStamp;
 
 
-	public String getRequestState() {
-		return requestState;
-	}
-	public void setRequestState(String requestState) {
-		this.requestState = requestState;
-	}
-	public String getStatusMessage() {
-		return statusMessage;
-	}
-	public void setStatusMessage(String statusMessage) {
-		this.statusMessage = statusMessage;
-	}
-	public String getPercentProgress() {
-		return percentProgress;
-	}
-	public void setPercentProgress(String percentProgress) {
-		this.percentProgress = percentProgress;
-	}
-	public String getTimeStamp() {
-		return timeStamp;
-	}
-	public void setTimeStamp(String timeStamp) {
-		this.timeStamp = timeStamp;
-	}
+    public String getRequestState() {
+        return requestState;
+    }
+
+    public void setRequestState(String requestState) {
+        this.requestState = requestState;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
+    public String getPercentProgress() {
+        return percentProgress;
+    }
+
+    public void setPercentProgress(String percentProgress) {
+        this.percentProgress = percentProgress;
+    }
+
+    public String getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 }

@@ -22,26 +22,25 @@ package org.onap.so.client.aai.entities.singletransaction;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SingleTransactionResponse {
 
-	@JsonProperty("operation-responses")
-	public List<OperationBodyResponse> operationResponses;
+    @JsonProperty("operation-responses")
+    public List<OperationBodyResponse> operationResponses;
 
-	@JsonProperty("operation-responses")
-	public List<OperationBodyResponse> getOperationResponses() {
-		if (operationResponses == null) {
-			operationResponses = new ArrayList<>();
-		}
-		return operationResponses;
-	}
+    @JsonProperty("operation-responses")
+    public List<OperationBodyResponse> getOperationResponses() {
+        if (operationResponses == null) {
+            operationResponses = new ArrayList<>();
+        }
+        return operationResponses;
+    }
 
-	@JsonProperty("operation-responses")
-	public void setOperationResponses(List<OperationBodyResponse> operationResponses) {
-		this.operationResponses = operationResponses;
-	}
-	
-	
+    @JsonProperty("operation-responses")
+    public void setOperationResponses(List<OperationBodyResponse> operationResponses) {
+        this.operationResponses = operationResponses;
+    }
+
+
 }

@@ -20,18 +20,17 @@
 
 package org.onap.so.bpmn.core.domain;
 
-public enum InventoryType{
+public enum InventoryType {
 
-	cloud("CLOUD"),
-	service("SERVICE");
+    cloud("CLOUD"), service("SERVICE");
 
-	private String type;
+    private String type;
 
-	InventoryType(String type){
-		this.type = type;
-	}
+    InventoryType(String type) {
+        this.type = type;
+    }
 
-	public String type(){
-		return type;
-	}
+    public String type() {
+        return type;
+    }
 }

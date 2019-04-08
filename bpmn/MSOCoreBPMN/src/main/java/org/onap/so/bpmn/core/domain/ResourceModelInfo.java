@@ -22,37 +22,44 @@ package org.onap.so.bpmn.core.domain;
 
 import java.io.Serializable;
 
-public class ResourceModelInfo  extends JsonWrapper implements Serializable{
-	
-	private static final long serialVersionUID = 1L;
-	String resourceName;
-	String resourceInvariantUuid;
-	String resourceUuid;
-	String resourceCustomizationUuid;
-	
-	public String getResourceName() {
-		return resourceName;
-	}
-	public void setResourceName(String resourceName) {
-		this.resourceName = resourceName;
-	}
-	public String getResourceInvariantUuid() {
-		return resourceInvariantUuid;
-	}
-	public void setResourceInvariantUuid(String resourceInvariantUuid) {
-		this.resourceInvariantUuid = resourceInvariantUuid;
-	}
-	public String getResourceUuid() {
-		return resourceUuid;
-	}
-	public void setResourceUuid(String resourceUuid) {
-		this.resourceUuid = resourceUuid;
-	}
-	public String getResourceCustomizationUuid() {
-		return resourceCustomizationUuid;
-	}
-	public void setResourceCustomizationUuid(String resourceCustomizationUuid) {
-		this.resourceCustomizationUuid = resourceCustomizationUuid;
-	}
+public class ResourceModelInfo extends JsonWrapper implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    String resourceName;
+    String resourceInvariantUuid;
+    String resourceUuid;
+    String resourceCustomizationUuid;
+
+    public String getResourceName() {
+        return resourceName;
+    }
+
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
+
+    public String getResourceInvariantUuid() {
+        return resourceInvariantUuid;
+    }
+
+    public void setResourceInvariantUuid(String resourceInvariantUuid) {
+        this.resourceInvariantUuid = resourceInvariantUuid;
+    }
+
+    public String getResourceUuid() {
+        return resourceUuid;
+    }
+
+    public void setResourceUuid(String resourceUuid) {
+        this.resourceUuid = resourceUuid;
+    }
+
+    public String getResourceCustomizationUuid() {
+        return resourceCustomizationUuid;
+    }
+
+    public void setResourceCustomizationUuid(String resourceCustomizationUuid) {
+        this.resourceCustomizationUuid = resourceCustomizationUuid;
+    }
 
 }

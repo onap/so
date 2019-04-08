@@ -23,6 +23,6 @@ package org.onap.so.apihandlerinfra.validation;
 
 import org.onap.so.exceptions.ValidationException;
 
-public interface ValidationRule{
-	ValidationInformation validate(ValidationInformation info)throws ValidationException;
+public interface ValidationRule {
+    ValidationInformation validate(ValidationInformation info) throws ValidationException;
 }

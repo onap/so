@@ -23,14 +23,15 @@ package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class RpcServiceTopologyOperationInputEntity {
-	@JsonProperty("GENERIC-RESOURCE-API:input")
+    @JsonProperty("GENERIC-RESOURCE-API:input")
     private ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity;
-	
+
     public ServiceTopologyOperationInputEntity getServiceTopologyOperationInputEntity() {
         return serviceTopologyOperationInputEntity;
     }
 
-    public void setServiceTopologyOperationInputEntity(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity) {
+    public void setServiceTopologyOperationInputEntity(
+            ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity) {
         this.serviceTopologyOperationInputEntity = serviceTopologyOperationInputEntity;
     }
 }

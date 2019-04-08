@@ -20,23 +20,19 @@
 package org.onap.so.apihandlerinfra;
 
 public enum MsoSubsystems {
-	APIH ("API Handler"), 
-	ASDC ("ASDC Controller"), 
-	BPMN ("BPMN Infra"), 
-	CATALOGDB ("CatalogDb Adapter"), 
-	OPENSTACK ("Openstack Adapter"), 
-	REQUESTDB ("RequestDB Adapter"), 
-	REQUESTDBATT ("RequestDB Adapter ATT Svc"), 
-	SDNC ("SDNC Adapter");
-	private String subsystem;
-	private MsoSubsystems(String subsystem){
-		this.subsystem = subsystem;
-	}
-	
-    @Override 
-    public String toString(){ 
-        return subsystem; 
-    } 	
-	
+    APIH("API Handler"), ASDC("ASDC Controller"), BPMN("BPMN Infra"), CATALOGDB("CatalogDb Adapter"), OPENSTACK(
+            "Openstack Adapter"), REQUESTDB(
+                    "RequestDB Adapter"), REQUESTDBATT("RequestDB Adapter ATT Svc"), SDNC("SDNC Adapter");
+    private String subsystem;
+
+    private MsoSubsystems(String subsystem) {
+        this.subsystem = subsystem;
+    }
+
+    @Override
+    public String toString() {
+        return subsystem;
+    }
+
 }
 

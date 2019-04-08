@@ -25,14 +25,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "label",
-    "inputType",
-    "required",
-    "validation",
-    "soFieldName",
-    "soPayloadLocation"
-})
+@JsonPropertyOrder({"label", "inputType", "required", "validation", "soFieldName", "soPayloadLocation"})
 public class WorkflowInputParameter {
 
     @JsonProperty("label")
@@ -52,8 +45,7 @@ public class WorkflowInputParameter {
      * No args constructor for use in serialization
      * 
      */
-    public WorkflowInputParameter() {
-    }
+    public WorkflowInputParameter() {}
 
     /**
      * 
@@ -64,7 +56,8 @@ public class WorkflowInputParameter {
      * @param required
      * @param soFieldName
      */
-    public WorkflowInputParameter(String label, String inputType, Boolean required, List<Validation> validation, String soFieldName, String soPayloadLocation) {
+    public WorkflowInputParameter(String label, String inputType, Boolean required, List<Validation> validation,
+            String soFieldName, String soPayloadLocation) {
         super();
         this.label = label;
         this.inputType = inputType;

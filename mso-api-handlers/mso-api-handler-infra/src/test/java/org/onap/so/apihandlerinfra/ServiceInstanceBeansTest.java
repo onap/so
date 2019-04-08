@@ -21,10 +21,8 @@
 package org.onap.so.apihandlerinfra;
 
 import java.util.List;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.filters.FilterEnum;
 import com.openpojo.reflection.impl.PojoClassFactory;
@@ -34,17 +32,19 @@ import com.openpojo.validation.rule.impl.*;
 import com.openpojo.validation.test.impl.*;
 
 
-public class ServiceInstanceBeansTest extends BaseTest{
-	List<PojoClass> pojoClasses;  
-	@Before
-	public void setup() {
-		pojoClasses = PojoClassFactory.getPojoClassesRecursively("org.onap.so.serviceinstancebeans", new FilterEnum());
-	}
-	@Test
-	public void validateGettersAndSetters() {
-		Validator validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
-                            .with(new SetterTester(), new GetterTester()).build();
-		validator.validate(pojoClasses);
-	}
+public class ServiceInstanceBeansTest extends BaseTest {
+    List<PojoClass> pojoClasses;
+
+    @Before
+    public void setup() {
+        pojoClasses = PojoClassFactory.getPojoClassesRecursively("org.onap.so.serviceinstancebeans", new FilterEnum());
+    }
+
+    @Test
+    public void validateGettersAndSetters() {
+        Validator validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
+                .with(new SetterTester(), new GetterTester()).build();
+        validator.validate(pojoClasses);
+    }
 }
 

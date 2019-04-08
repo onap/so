@@ -28,7 +28,9 @@ public class MsoStackAlreadyExistsTest {
     @Test
     public void testConstructor() {
         MsoStackAlreadyExists msoStackAlreadyExists = new MsoStackAlreadyExists("test", "test", "test");
-        Assert.assertEquals("Stack test already exists in Tenant test in Cloud test",msoStackAlreadyExists.getMessage());
-        Assert.assertEquals("409 Conflict: Stack test already exists in Tenant test in Cloud test",msoStackAlreadyExists.toString());
+        Assert.assertEquals("Stack test already exists in Tenant test in Cloud test",
+                msoStackAlreadyExists.getMessage());
+        Assert.assertEquals("409 Conflict: Stack test already exists in Tenant test in Cloud test",
+                msoStackAlreadyExists.toString());
     }
 }

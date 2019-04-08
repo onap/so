@@ -32,15 +32,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * java object of the resource recipe , it
- * will be passed to the Camunda process
+ * java object of the resource recipe , it will be passed to the Camunda process
  */
-@JsonPropertyOrder({"resourceInput", "host", "requestId", "requestAction", "serviceInstanceId", "serviceType", "recipeParams"})
+@JsonPropertyOrder({"resourceInput", "host", "requestId", "requestAction", "serviceInstanceId", "serviceType",
+        "recipeParams"})
 @JsonRootName("variables")
 public class ResourceRecipeRequest {
 
-	private static Logger logger = LoggerFactory.getLogger(ResourceRecipeRequest.class);
-	
+    private static Logger logger = LoggerFactory.getLogger(ResourceRecipeRequest.class);
+
     @JsonProperty("resourceInput")
     private BpmnParam resourceInput;
 
@@ -64,7 +64,7 @@ public class ResourceRecipeRequest {
 
     @JsonProperty("mso-service-request-timeout")
     private BpmnIntegerParam recipeTimeout;
-    
+
     @JsonProperty("resourceInput")
     public BpmnParam getResourceInput() {
         return resourceInput;
@@ -137,24 +137,24 @@ public class ResourceRecipeRequest {
 
     @JsonProperty("mso-service-request-timeout")
     public BpmnIntegerParam getRecipeTimeout() {
-		return recipeTimeout;
-	}
-    
-    @JsonProperty("mso-service-request-timeout")
-	public void setRecipeTimeout(BpmnIntegerParam recipeTimeout) {
-		this.recipeTimeout = recipeTimeout;
-	}
+        return recipeTimeout;
+    }
 
-	@Override
+    @JsonProperty("mso-service-request-timeout")
+    public void setRecipeTimeout(BpmnIntegerParam recipeTimeout) {
+        this.recipeTimeout = recipeTimeout;
+    }
+
+    @Override
     public String toString() {
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-      String jsonStr = "ResourceRecipeRequest";
-      try {
-          jsonStr = mapper.writeValueAsString(this);
-      } catch (JsonProcessingException e) {
-          logger.error("JsonProcessingException", e);
-      }
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        String jsonStr = "ResourceRecipeRequest";
+        try {
+            jsonStr = mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            logger.error("JsonProcessingException", e);
+        }
         return jsonStr;
     }
 }

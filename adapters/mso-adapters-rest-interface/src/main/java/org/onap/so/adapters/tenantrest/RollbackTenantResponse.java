@@ -27,15 +27,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "rollbackTenantResponse")
 public class RollbackTenantResponse {
 
-	private Boolean tenantRolledback;
+    private Boolean tenantRolledback;
 
-	public RollbackTenantResponse() {}
-	
-	public Boolean getTenantRolledback() {
-		return tenantRolledback;
-	}
+    public RollbackTenantResponse() {}
 
-	public void setTenantRolledback(Boolean tenantRolledback) {
-		this.tenantRolledback = tenantRolledback;
-	}
+    public Boolean getTenantRolledback() {
+        return tenantRolledback;
+    }
+
+    public void setTenantRolledback(Boolean tenantRolledback) {
+        this.tenantRolledback = tenantRolledback;
+    }
 }

@@ -21,14 +21,12 @@
 package org.onap.so.db.catalog.data.repository;
 
 import java.util.List;
-
 import org.onap.so.db.catalog.beans.VnfResource;
 import org.onap.so.db.catalog.beans.VnfResourceWorkflow;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "vnfResourceWorkflow", path = "vnfResourceWorkflow")
-public interface VnfResourceWorkflowRepository
-		extends JpaRepository<VnfResourceWorkflow, String> {
-	List<VnfResourceWorkflow>  findByVnfResourceModelUUID(String vnfResourceModelUUID);
+public interface VnfResourceWorkflowRepository extends JpaRepository<VnfResourceWorkflow, String> {
+    List<VnfResourceWorkflow> findByVnfResourceModelUUID(String vnfResourceModelUUID);
 }

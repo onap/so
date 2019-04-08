@@ -22,8 +22,8 @@ package org.onap.so.client.aai;
 
 public class AAIResourcesObjectMapperProvider extends AAICommonObjectMapperProvider {
 
-	public AAIResourcesObjectMapperProvider() {
-		super();
-	}
+    public AAIResourcesObjectMapperProvider() {
+        super();
+    }
 
 }

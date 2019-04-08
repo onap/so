@@ -21,5 +21,5 @@
 package org.onap.so.cloudify.base.client;
 
 public enum HttpMethod {
-	HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
+    HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS, TRACE
 }

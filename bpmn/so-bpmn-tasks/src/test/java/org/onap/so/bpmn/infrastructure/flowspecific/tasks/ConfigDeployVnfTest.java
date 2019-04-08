@@ -1,23 +1,18 @@
 
 /*
-* ============LICENSE_START=======================================================
-* ONAP : SO
-* ================================================================================
-* Copyright 2019 TechMahindra
-*=================================================================================
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-* ============LICENSE_END=========================================================
-*/
+ * ============LICENSE_START======================================================= ONAP : SO
+ * ================================================================================ Copyright 2019 TechMahindra
+ * ================================================================================= Licensed under the Apache License,
+ * Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ * ============LICENSE_END=========================================================
+ */
 
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
@@ -26,9 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-
 import java.util.UUID;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,52 +39,55 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 
 public class ConfigDeployVnfTest extends BaseTaskTest {
 
-	@InjectMocks
-	private ConfigDeployVnf configDeployVnf = new ConfigDeployVnf();
-	@Mock 
-	AAIUpdateTasks aAIUpdateTasks = new AAIUpdateTasks();
-	
-	
-	private GenericVnf genericVnf;
-	private ServiceInstance serviceInstance;
-	private RequestContext requestContext;
-	private String msoRequestId;
-
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		genericVnf = setGenericVnf();
-		serviceInstance = setServiceInstance();
-		msoRequestId = UUID.randomUUID().toString();
-		requestContext = setRequestContext();
-		requestContext.setMsoRequestId(msoRequestId);
-		gBBInput.setRequestContext(requestContext);
-
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
-		when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-	}
+    @InjectMocks
+    private ConfigDeployVnf configDeployVnf = new ConfigDeployVnf();
+    @Mock
+    AAIUpdateTasks aAIUpdateTasks = new AAIUpdateTasks();
 
 
+    private GenericVnf genericVnf;
+    private ServiceInstance serviceInstance;
+    private RequestContext requestContext;
+    private String msoRequestId;
 
-	@Test
-	public void preProcessAbstractCDSProcessingTest() throws Exception {
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        genericVnf = setGenericVnf();
+        serviceInstance = setServiceInstance();
+        msoRequestId = UUID.randomUUID().toString();
+        requestContext = setRequestContext();
+        requestContext.setMsoRequestId(msoRequestId);
+        gBBInput.setRequestContext(requestContext);
 
-		configDeployVnf.preProcessAbstractCDSProcessing(execution);
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+    }
 
-		assertTrue(true);
-	}
 
-	@Test
-	public void updateAAIConfigureTaskTest() throws Exception {
-		
-		configDeployVnf.updateAAIConfigure(execution);
-		assertTrue(true);
-	}
-	
-	@Test
-	public void updateAAIConfiguredTaskTest() throws Exception {
-		configDeployVnf.updateAAIConfigured(execution);
-		assertTrue(true);
-	}
+
+    @Test
+    public void preProcessAbstractCDSProcessingTest() throws Exception {
+
+        configDeployVnf.preProcessAbstractCDSProcessing(execution);
+
+        assertTrue(true);
+    }
+
+    @Test
+    public void updateAAIConfigureTaskTest() throws Exception {
+
+        configDeployVnf.updateAAIConfigure(execution);
+        assertTrue(true);
+    }
+
+    @Test
+    public void updateAAIConfiguredTaskTest() throws Exception {
+        configDeployVnf.updateAAIConfigured(execution);
+        assertTrue(true);
+    }
 
 }

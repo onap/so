@@ -25,102 +25,122 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("request-context")
-public class RequestContext implements Serializable{
-	
-	private static final long serialVersionUID = -6482733428879732822L;
+public class RequestContext implements Serializable {
 
-	@JsonProperty("product-family-id")
-	private String productFamilyId;
-	@JsonProperty("source")
-	private String source;
-	@JsonProperty("requestor-id")
-	private String requestorId;
-	@JsonProperty("subscription-service-type")
-	private String subscriptionServiceType;
-	@JsonProperty("user-params")
-	private Map<String, Object> userParams = new HashMap<>();
-	@JsonProperty("action")
-	private String action;
-	@JsonProperty("callback-url")
-	private String callbackURL;
-	@JsonProperty("service-uri")
-	private String serviceURI;
-	@JsonProperty("mso-request-id")
-	private String msoRequestId;
-	@JsonProperty("requestParameters")
-	private RequestParameters requestParameters;
-	@JsonProperty("configurationParameters")
-	private List<Map<String, String>> configurationParameters = new ArrayList<>();
-	
-	public String getServiceURI() {
-		return serviceURI;
-	}
-	public void setServiceURI(String serviceURI) {
-		this.serviceURI = serviceURI;
-	}
-	public String getProductFamilyId() {
-		return productFamilyId;
-	}
-	public void setProductFamilyId(String productFamilyId) {
-		this.productFamilyId = productFamilyId;
-	}
-	public String getSource() {
-		return source;
-	}
-	public void setSource(String source) {
-		this.source = source;
-	}
-	public String getRequestorId() {
-		return requestorId;
-	}
-	public void setRequestorId(String requestorId) {
-		this.requestorId = requestorId;
-	}
-	public String getSubscriptionServiceType() {
-		return subscriptionServiceType;
-	}
-	public void setSubscriptionServiceType(String subscriptionServiceType) {
-		this.subscriptionServiceType = subscriptionServiceType;
-	}
-	public Map<String, Object> getUserParams() {
-		return userParams;
-	}
-	public void setUserParams(Map<String, Object> userParams) {
-		this.userParams = userParams;
-	}
-	public String getAction() {
-		return action;
-	}
-	public void setAction(String action) {
-		this.action = action;
-	}
-	public String getCallbackURL() {
-		return callbackURL;
-	}
-	public void setCallbackURL(String callbackURL) {
-		this.callbackURL = callbackURL;
-	}
-	public String getMsoRequestId() {
-		return msoRequestId;
-	}
-	public void setMsoRequestId(String msoRequestId) {
-		this.msoRequestId = msoRequestId;
-	}
-	public RequestParameters getRequestParameters() {
-		return requestParameters;
-	}
-	public void setRequestParameters(RequestParameters requestParameters) {
-		this.requestParameters = requestParameters;
-	}
-	public List<Map<String, String>> getConfigurationParameters() {
-		return configurationParameters;
-	}
-	public void setConfigurationParameters(List<Map<String, String>> configurationParameters) {
-		this.configurationParameters = configurationParameters;
-	}
+    private static final long serialVersionUID = -6482733428879732822L;
+
+    @JsonProperty("product-family-id")
+    private String productFamilyId;
+    @JsonProperty("source")
+    private String source;
+    @JsonProperty("requestor-id")
+    private String requestorId;
+    @JsonProperty("subscription-service-type")
+    private String subscriptionServiceType;
+    @JsonProperty("user-params")
+    private Map<String, Object> userParams = new HashMap<>();
+    @JsonProperty("action")
+    private String action;
+    @JsonProperty("callback-url")
+    private String callbackURL;
+    @JsonProperty("service-uri")
+    private String serviceURI;
+    @JsonProperty("mso-request-id")
+    private String msoRequestId;
+    @JsonProperty("requestParameters")
+    private RequestParameters requestParameters;
+    @JsonProperty("configurationParameters")
+    private List<Map<String, String>> configurationParameters = new ArrayList<>();
+
+    public String getServiceURI() {
+        return serviceURI;
+    }
+
+    public void setServiceURI(String serviceURI) {
+        this.serviceURI = serviceURI;
+    }
+
+    public String getProductFamilyId() {
+        return productFamilyId;
+    }
+
+    public void setProductFamilyId(String productFamilyId) {
+        this.productFamilyId = productFamilyId;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getRequestorId() {
+        return requestorId;
+    }
+
+    public void setRequestorId(String requestorId) {
+        this.requestorId = requestorId;
+    }
+
+    public String getSubscriptionServiceType() {
+        return subscriptionServiceType;
+    }
+
+    public void setSubscriptionServiceType(String subscriptionServiceType) {
+        this.subscriptionServiceType = subscriptionServiceType;
+    }
+
+    public Map<String, Object> getUserParams() {
+        return userParams;
+    }
+
+    public void setUserParams(Map<String, Object> userParams) {
+        this.userParams = userParams;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getCallbackURL() {
+        return callbackURL;
+    }
+
+    public void setCallbackURL(String callbackURL) {
+        this.callbackURL = callbackURL;
+    }
+
+    public String getMsoRequestId() {
+        return msoRequestId;
+    }
+
+    public void setMsoRequestId(String msoRequestId) {
+        this.msoRequestId = msoRequestId;
+    }
+
+    public RequestParameters getRequestParameters() {
+        return requestParameters;
+    }
+
+    public void setRequestParameters(RequestParameters requestParameters) {
+        this.requestParameters = requestParameters;
+    }
+
+    public List<Map<String, String>> getConfigurationParameters() {
+        return configurationParameters;
+    }
+
+    public void setConfigurationParameters(List<Map<String, String>> configurationParameters) {
+        this.configurationParameters = configurationParameters;
+    }
 }

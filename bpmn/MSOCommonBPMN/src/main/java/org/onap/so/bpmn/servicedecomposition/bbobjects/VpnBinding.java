@@ -23,9 +23,7 @@ package org.onap.so.bpmn.servicedecomposition.bbobjects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Id;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -35,10 +33,10 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 
 @JsonRootName("vpn-binding")
 public class VpnBinding implements Serializable, ShallowCopy<VpnBinding> {
-	private static final long serialVersionUID = 3283413795353486924L;
+    private static final long serialVersionUID = 3283413795353486924L;
 
-	@Id
-	@JsonProperty("vpn-id")
+    @Id
+    @JsonProperty("vpn-id")
     private String vpnId;
     @JsonProperty("vpn-name")
     private String vpnName;
@@ -125,17 +123,17 @@ public class VpnBinding implements Serializable, ShallowCopy<VpnBinding> {
         return routeTargets;
     }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VpnBinding)) {
-			return false;
-		}
-		VpnBinding castOther = (VpnBinding) other;
-		return new EqualsBuilder().append(vpnId, castOther.vpnId).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VpnBinding)) {
+            return false;
+        }
+        VpnBinding castOther = (VpnBinding) other;
+        return new EqualsBuilder().append(vpnId, castOther.vpnId).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(vpnId).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(vpnId).toHashCode();
+    }
 }

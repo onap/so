@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,208 +38,205 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "vf_module_customization")
 public class VfModuleCustomization implements Serializable {
 
-	public static final long serialVersionUID = -1322322139926390329L;
+    public static final long serialVersionUID = -1322322139926390329L;
 
-	@Id
-	@BusinessKey
-	@Column(name = "ID")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	
-	@Column(name = "MODEL_CUSTOMIZATION_UUID")
-	private String modelCustomizationUUID;
+    @Id
+    @BusinessKey
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@Column(name = "LABEL")
-	private String label;
+    @Column(name = "MODEL_CUSTOMIZATION_UUID")
+    private String modelCustomizationUUID;
 
-	@Column(name = "MIN_INSTANCES")
-	private Integer minInstances;
+    @Column(name = "LABEL")
+    private String label;
 
-	@Column(name = "MAX_INSTANCES")
-	private Integer maxInstances;
+    @Column(name = "MIN_INSTANCES")
+    private Integer minInstances;
 
-	@Column(name = "INITIAL_COUNT")
-	private Integer initialCount;
+    @Column(name = "MAX_INSTANCES")
+    private Integer maxInstances;
 
-	@Column(name = "AVAILABILITY_ZONE_COUNT")
-	private Integer availabilityZoneCount;
+    @Column(name = "INITIAL_COUNT")
+    private Integer initialCount;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "AVAILABILITY_ZONE_COUNT")
+    private Integer availabilityZoneCount;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "VOL_ENVIRONMENT_ARTIFACT_UUID")
-	HeatEnvironment volumeHeatEnv;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "HEAT_ENVIRONMENT_ARTIFACT_UUID")
-	HeatEnvironment heatEnvironment;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "VOL_ENVIRONMENT_ARTIFACT_UUID")
+    HeatEnvironment volumeHeatEnv;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "VF_MODULE_MODEL_UUID")
-	private VfModule vfModule;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "VNF_RESOURCE_CUSTOMIZATION_ID")
-	private VnfResourceCustomization vnfCustomization;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "vfModuleCustomization")
-	private Set<CvnfcCustomization> cvnfcCustomization;
-	
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VfModuleCustomization)) {
-			return false;
-		}
-		VfModuleCustomization castOther = (VfModuleCustomization) other;
-		return new EqualsBuilder().append(id, castOther.id).isEquals();
-	}
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "HEAT_ENVIRONMENT_ARTIFACT_UUID")
+    HeatEnvironment heatEnvironment;
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(id).toHashCode();
-	}
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "VF_MODULE_MODEL_UUID")
+    private VfModule vfModule;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "VNF_RESOURCE_CUSTOMIZATION_ID")
+    private VnfResourceCustomization vnfCustomization;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID).append("label", label)
-				.append("minInstances", minInstances).append("maxInstances", maxInstances)
-				.append("initialCount", initialCount).append("availabilityZoneCount", availabilityZoneCount)
-				.append("created", created).append("volumeHeatEnv", volumeHeatEnv)
-				.append("heatEnvironment", heatEnvironment).append("vfModule", vfModule).toString();
-	}
-	
-	
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vfModuleCustomization")
+    private Set<CvnfcCustomization> cvnfcCustomization;
 
-	public Integer getId() {
-		return id;
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VfModuleCustomization)) {
+            return false;
+        }
+        VfModuleCustomization castOther = (VfModuleCustomization) other;
+        return new EqualsBuilder().append(id, castOther.id).isEquals();
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
 
-	public VnfResourceCustomization getVnfCustomization() {
-		return vnfCustomization;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setVnfCustomization(VnfResourceCustomization vnfCustomization) {
-		this.vnfCustomization = vnfCustomization;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID).append("label", label)
+                .append("minInstances", minInstances).append("maxInstances", maxInstances)
+                .append("initialCount", initialCount).append("availabilityZoneCount", availabilityZoneCount)
+                .append("created", created).append("volumeHeatEnv", volumeHeatEnv)
+                .append("heatEnvironment", heatEnvironment).append("vfModule", vfModule).toString();
+    }
 
-	public VfModuleCustomization() {
-		super();
-	}
 
-	public String getModelCustomizationUUID() {
-		return this.modelCustomizationUUID;
-	}
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	@LinkedResource
-	public HeatEnvironment getVolumeHeatEnv() {
-		return volumeHeatEnv;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setVolumeHeatEnv(HeatEnvironment volumeHeatEnv) {
-		this.volumeHeatEnv = volumeHeatEnv;
-	}
+    public VnfResourceCustomization getVnfCustomization() {
+        return vnfCustomization;
+    }
 
-	@LinkedResource
-	public HeatEnvironment getHeatEnvironment() {
-		return heatEnvironment;
-	}
+    public void setVnfCustomization(VnfResourceCustomization vnfCustomization) {
+        this.vnfCustomization = vnfCustomization;
+    }
 
-	public void setHeatEnvironment(HeatEnvironment heatEnvironment) {
-		this.heatEnvironment = heatEnvironment;
-	}
+    public VfModuleCustomization() {
+        super();
+    }
 
-	public Integer getMinInstances() {
-		return this.minInstances;
-	}
+    public String getModelCustomizationUUID() {
+        return this.modelCustomizationUUID;
+    }
 
-	public void setMinInstances(Integer minInstances) {
-		this.minInstances = minInstances;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public Integer getMaxInstances() {
-		return this.maxInstances;
-	}
+    @LinkedResource
+    public HeatEnvironment getVolumeHeatEnv() {
+        return volumeHeatEnv;
+    }
 
-	public void setMaxInstances(Integer maxInstances) {
-		this.maxInstances = maxInstances;
-	}
+    public void setVolumeHeatEnv(HeatEnvironment volumeHeatEnv) {
+        this.volumeHeatEnv = volumeHeatEnv;
+    }
 
-	public Integer getInitialCount() {
-		return this.initialCount;
-	}
+    @LinkedResource
+    public HeatEnvironment getHeatEnvironment() {
+        return heatEnvironment;
+    }
 
-	public void setInitialCount(Integer initialCount) {
-		this.initialCount = initialCount;
-	}
+    public void setHeatEnvironment(HeatEnvironment heatEnvironment) {
+        this.heatEnvironment = heatEnvironment;
+    }
 
-	public Integer getAvailabilityZoneCount() {
-		return this.availabilityZoneCount;
-	}
+    public Integer getMinInstances() {
+        return this.minInstances;
+    }
 
-	public void setAvailabilityZoneCount(Integer availabilityZoneCount) {
-		this.availabilityZoneCount = availabilityZoneCount;
-	}
+    public void setMinInstances(Integer minInstances) {
+        this.minInstances = minInstances;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public Integer getMaxInstances() {
+        return this.maxInstances;
+    }
 
-	public String getLabel() {
-		return this.label;
-	}
+    public void setMaxInstances(Integer maxInstances) {
+        this.maxInstances = maxInstances;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public Integer getInitialCount() {
+        return this.initialCount;
+    }
 
-	@LinkedResource
-	public VfModule getVfModule() {
-		return this.vfModule;
-	}
+    public void setInitialCount(Integer initialCount) {
+        this.initialCount = initialCount;
+    }
 
-	public void setVfModule(VfModule vfModule) {
-		this.vfModule = vfModule;
-	}
-	
-	@LinkedResource
-	public Set<CvnfcCustomization> getCvnfcCustomization() {
-		if (cvnfcCustomization == null)
-			cvnfcCustomization = new HashSet<>();
-		return cvnfcCustomization;
-	}
+    public Integer getAvailabilityZoneCount() {
+        return this.availabilityZoneCount;
+    }
 
-	public void setCvnfcCustomization(Set<CvnfcCustomization> cvnfcCustomization) {
-		this.cvnfcCustomization = cvnfcCustomization;
-	}
+    public void setAvailabilityZoneCount(Integer availabilityZoneCount) {
+        this.availabilityZoneCount = availabilityZoneCount;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public String getLabel() {
+        return this.label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    @LinkedResource
+    public VfModule getVfModule() {
+        return this.vfModule;
+    }
+
+    public void setVfModule(VfModule vfModule) {
+        this.vfModule = vfModule;
+    }
+
+    @LinkedResource
+    public Set<CvnfcCustomization> getCvnfcCustomization() {
+        if (cvnfcCustomization == null)
+            cvnfcCustomization = new HashSet<>();
+        return cvnfcCustomization;
+    }
+
+    public void setCvnfcCustomization(Set<CvnfcCustomization> cvnfcCustomization) {
+        this.cvnfcCustomization = cvnfcCustomization;
+    }
 }

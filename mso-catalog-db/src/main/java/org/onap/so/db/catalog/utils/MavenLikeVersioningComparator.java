@@ -26,24 +26,24 @@ import java.util.Comparator;
 /**
  * This class can be used to sort object from MavenLikeVersioning type.
  * 
- *  
+ * 
  *
  */
 public class MavenLikeVersioningComparator implements Comparator<MavenLikeVersioning> {
-		
-	@Override
-	public int compare(MavenLikeVersioning o1, MavenLikeVersioning o2) {
-		 final int BEFORE = -1;
-		 final int EQUAL = 0;
-		 final int AFTER = 1;
-		 
-		 if (o1.isTheSameVersion(o2.getVersion())) {
-			 return EQUAL;
-		 } else if (o1.isMoreRecentThan(o2.getVersion())) {
-			 return AFTER;
-		 } else {
-			 return BEFORE;
-		 }
-	}
+
+    @Override
+    public int compare(MavenLikeVersioning o1, MavenLikeVersioning o2) {
+        final int BEFORE = -1;
+        final int EQUAL = 0;
+        final int AFTER = 1;
+
+        if (o1.isTheSameVersion(o2.getVersion())) {
+            return EQUAL;
+        } else if (o1.isMoreRecentThan(o2.getVersion())) {
+            return AFTER;
+        } else {
+            return BEFORE;
+        }
+    }
 
 }

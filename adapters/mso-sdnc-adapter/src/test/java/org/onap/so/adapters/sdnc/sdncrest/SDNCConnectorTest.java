@@ -24,7 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertNotNull;
-
 import org.apache.http.HttpStatus;
 import org.junit.Test;
 import org.onap.so.adapters.sdnc.BaseTest;
@@ -40,21 +39,20 @@ public class SDNCConnectorTest extends BaseTest {
     public void sendTest() {
         String content = "<dummy><service-instance-id>1234</service-instance-id></dummy>";
 
-        String response = "<errors xmlns=\"urn:ietf:params:xml:ns:yang:ietf-restconf\">\n" +
-                "\t\t//   <error>\n" +
-                "\t\t//     <error-type>protocol</error-type>\n" +
-                "\t\t//     <error-tag>malformed-message</error-tag>\n" +
-                "\t\t//     <error-message>Error parsing input: The element type \"input\" must be terminated by the matching end-tag \"&lt;/input&gt;\".</error-message>\n" +
-                "\t\t//   </error>\n" +
-                "\t\t// </errors>";
+        String response = "<errors xmlns=\"urn:ietf:params:xml:ns:yang:ietf-restconf\">\n" + "\t\t//   <error>\n"
+                + "\t\t//     <error-type>protocol</error-type>\n"
+                + "\t\t//     <error-tag>malformed-message</error-tag>\n"
+                + "\t\t//     <error-message>Error parsing input: The element type \"input\" must be terminated by the matching end-tag \"&lt;/input&gt;\".</error-message>\n"
+                + "\t\t//   </error>\n" + "\t\t// </errors>";
 
         TypedRequestTunables rt = new TypedRequestTunables("", "");
         rt.setTimeout("1000");
         rt.setReqMethod("POST");
         rt.setSdncUrl("http://localhost:" + wireMockPort + "/sdnc");
 
-        wireMockServer.stubFor(post(urlPathEqualTo("/sdnc"))
-                .willReturn(aResponse().withHeader("Content-Type", "application/xml").withBody(response).withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
+        wireMockServer.stubFor(
+                post(urlPathEqualTo("/sdnc")).willReturn(aResponse().withHeader("Content-Type", "application/xml")
+                        .withBody(response).withStatus(HttpStatus.SC_MULTIPLE_CHOICES)));
 
         SDNCResponseCommon responseCommon = sdncConnector.send(content, rt);
         assertNotNull(responseCommon);

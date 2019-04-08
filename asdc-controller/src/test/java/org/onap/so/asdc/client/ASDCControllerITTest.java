@@ -1,20 +1,15 @@
 /*
- * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation.
- *  ================================================================================
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * ============LICENSE_START======================================================= Copyright (C) 2019 Nordix
+ * Foundation. ================================================================================ Licensed under the
+ * Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions and limitations under the
+ * License.
  *
- *  SPDX-License-Identifier: Apache-2.0
- *  ============LICENSE_END=========================================================
+ * SPDX-License-Identifier: Apache-2.0 ============LICENSE_END=========================================================
  */
 
 package org.onap.so.asdc.client;
@@ -26,15 +21,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import javax.persistence.EntityNotFoundException;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -120,7 +112,7 @@ public class ASDCControllerITTest extends BaseTest {
         distributionId = UUID.randomUUID().toString();
         artifactUuid = UUID.randomUUID().toString();
         logger.info("Using distributionId: {}, artifactUUID: {} for testcase: {}", distributionId, artifactUuid,
-            testName.getMethodName());
+                testName.getMethodName());
 
         distributionClient = new DistributionClientEmulator();
         distributionClient.setResourcePath("src/test/resources");
@@ -148,7 +140,7 @@ public class ASDCControllerITTest extends BaseTest {
      */
     private void initMockAaiServer(final String serviceUuid, final String serviceInvariantUuid) {
         String modelEndpoint = "/aai/v15/service-design-and-creation/models/model/" + serviceInvariantUuid
-            + "/model-vers/model-ver/" + serviceUuid + "?depth=0";
+                + "/model-vers/model-ver/" + serviceUuid + "?depth=0";
 
         wireMockServer.stubFor(post(urlEqualTo(modelEndpoint)).willReturn(ok()));
     }
@@ -191,7 +183,7 @@ public class ASDCControllerITTest extends BaseTest {
              * Check the tosca csar entity, it should be the same as provided from NotficationData.
              */
             ToscaCsar toscaCsar = toscaCsarRepository.findById(artifactUuid)
-                .orElseThrow(() -> new EntityNotFoundException("Tosca csar: " + artifactUuid + " not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Tosca csar: " + artifactUuid + " not found"));
             assertEquals("tosca csar UUID", artifactUuid, toscaCsar.getArtifactUUID());
             assertEquals("tosca csar name", "service-Testservice140-csar.csar", toscaCsar.getName());
             assertEquals("tosca csar version", "1.0", toscaCsar.getVersion());
@@ -200,17 +192,18 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("toscar csar URL", "/download/service-Testservice140-csar.csar", toscaCsar.getUrl());
 
             /**
-             * Check the service entity, it should be the same as global metadata information in service-Testservice140-template.yml inside csar.
+             * Check the service entity, it should be the same as global metadata information in
+             * service-Testservice140-template.yml inside csar.
              */
             Service service = serviceRepository.findById(serviceUuid)
-                .orElseThrow(() -> new EntityNotFoundException("Service: " + serviceUuid + " not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Service: " + serviceUuid + " not found"));
             assertEquals("model UUID", "efaea486-561f-4159-9191-a8d3cb346728", service.getModelUUID());
             assertEquals("model name", "TestService140", service.getModelName());
             assertEquals("model invariantUUID", "f2edfbf4-bb0a-4fe7-a57a-71362d4b0b23",
-                service.getModelInvariantUUID());
+                    service.getModelInvariantUUID());
             assertEquals("model version", "1.0", service.getModelVersion());
             assertEquals("description", "Test Service for extended attributes of PNF resource",
-                service.getDescription().trim());
+                    service.getDescription().trim());
             assertEquals("tosca csar artifact UUID", artifactUuid, service.getCsar().getArtifactUUID());
             assertEquals("service type", "Network", service.getServiceType());
             assertEquals("service role", "nfv", service.getServiceRole());
@@ -220,18 +213,17 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("resource order", "Test140PNF", service.getResourceOrder());
 
             /**
-             * Check PNF resource, it should be the same as metadata in the topology template in service-Testservice140-template.yml
-             * OR
-             * global metadata in the resource-Test140pnf-template.yml
+             * Check PNF resource, it should be the same as metadata in the topology template in
+             * service-Testservice140-template.yml OR global metadata in the resource-Test140pnf-template.yml
              */
             String pnfResourceKey = "9c54e269-122b-4e8a-8b2a-6eac849b441a";
             PnfResource pnfResource = pnfResourceRepository.findById(pnfResourceKey)
-                .orElseThrow(() -> new EntityNotFoundException("PNF resource:" + pnfResourceKey + " not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("PNF resource:" + pnfResourceKey + " not found"));
             assertNull("orchestration mode", pnfResource.getOrchestrationMode());
             assertEquals("Description", "Oracle", pnfResource.getDescription().trim());
             assertEquals("model UUID", pnfResourceKey, pnfResource.getModelUUID());
             assertEquals("model invariant UUID", "d832a027-75f3-455d-9de4-f02fcdee7e7e",
-                pnfResource.getModelInvariantUUID());
+                    pnfResource.getModelInvariantUUID());
             assertEquals("model version", "1.0", pnfResource.getModelVersion());
             assertEquals("model name", "Test140PNF", pnfResource.getModelName());
             assertEquals("tosca node type", "org.openecomp.resource.pnf.Test140pnf", pnfResource.getToscaNodeType());
@@ -239,15 +231,13 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("resource sub category", "Call Control", pnfResource.getSubCategory());
 
             /**
-             * Check PNF resource customization, it should be the same as metadata in the topology template in service-Testservice140-template.yml
-             * OR
-             * global metadata in the resource-Test140pnf-template.yml
+             * Check PNF resource customization, it should be the same as metadata in the topology template in
+             * service-Testservice140-template.yml OR global metadata in the resource-Test140pnf-template.yml
              */
             String pnfCustomizationKey = "428a3d73-f962-4cc2-ba62-2483c45d6b12";
-            PnfResourceCustomization pnfCustomization = pnfCustomizationRepository
-                .findById(pnfCustomizationKey).orElseThrow(
-                    () -> new EntityNotFoundException(
-                        "PNF resource customization: " + pnfCustomizationKey + " not found"));
+            PnfResourceCustomization pnfCustomization = pnfCustomizationRepository.findById(pnfCustomizationKey)
+                    .orElseThrow(() -> new EntityNotFoundException(
+                            "PNF resource customization: " + pnfCustomizationKey + " not found"));
             assertEquals("model customizationUUID", pnfCustomizationKey, pnfCustomization.getModelCustomizationUUID());
             assertEquals("model instance name", "Test140PNF 0", pnfCustomization.getModelInstanceName());
             assertEquals("NF type", "", pnfCustomization.getNfType());
@@ -258,9 +248,9 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("Multi stage design", "", pnfCustomization.getMultiStageDesign());
             assertNull("resource input", pnfCustomization.getResourceInput());
             assertEquals("cds blueprint name(sdnc_model_name property)", pnfCustomization.getBlueprintName(),
-                pnfCustomization.getBlueprintName());
+                    pnfCustomization.getBlueprintName());
             assertEquals("cds blueprint version(sdnc_model_version property)", pnfCustomization.getBlueprintVersion(),
-                pnfCustomization.getBlueprintVersion());
+                    pnfCustomization.getBlueprintVersion());
 
             /**
              * Check the pnf resource customization with service mapping
@@ -272,8 +262,8 @@ public class ASDCControllerITTest extends BaseTest {
             /**
              * Check the watchdog for component distribution status
              */
-            List<WatchdogComponentDistributionStatus> distributionList = watchdogCDStatusRepository
-                .findByDistributionId(this.distributionId);
+            List<WatchdogComponentDistributionStatus> distributionList =
+                    watchdogCDStatusRepository.findByDistributionId(this.distributionId);
             assertNotNull(distributionList);
             assertEquals(1, distributionList.size());
             WatchdogComponentDistributionStatus distributionStatus = distributionList.get(0);
@@ -353,7 +343,7 @@ public class ASDCControllerITTest extends BaseTest {
              * Check the tosca csar entity, it should be the same as provided from NotficationData.
              */
             ToscaCsar toscaCsar = toscaCsarRepository.findById(artifactUuid)
-                .orElseThrow(() -> new EntityNotFoundException("Tosca csar: " + artifactUuid + " not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Tosca csar: " + artifactUuid + " not found"));
             assertEquals("tosca csar UUID", artifactUuid, toscaCsar.getArtifactUUID());
             assertEquals("tosca csar name", "service-Svc140-VF-csar.csar", toscaCsar.getName());
             assertEquals("tosca csar version", "1.0", toscaCsar.getVersion());
@@ -362,17 +352,16 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("toscar csar URL", "/download/service-Svc140-VF-csar.csar", toscaCsar.getUrl());
 
             /**
-             * Check the service entity, it should be the same as global metadata information in service-Testservice140-template.yml inside csar.
+             * Check the service entity, it should be the same as global metadata information in
+             * service-Testservice140-template.yml inside csar.
              */
             Service service = serviceRepository.findById(serviceUuid)
-                .orElseThrow(() -> new EntityNotFoundException("Service: " + serviceUuid + " not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("Service: " + serviceUuid + " not found"));
             assertEquals("model UUID", serviceUuid, service.getModelUUID());
             assertEquals("model name", "SVC140", service.getModelName());
-            assertEquals("model invariantUUID", serviceInvariantUuid,
-                service.getModelInvariantUUID());
+            assertEquals("model invariantUUID", serviceInvariantUuid, service.getModelInvariantUUID());
             assertEquals("model version", "1.0", service.getModelVersion());
-            assertEquals("description", "SVC140",
-                service.getDescription().trim());
+            assertEquals("description", "SVC140", service.getDescription().trim());
             assertEquals("tosca csar artifact UUID", artifactUuid, service.getCsar().getArtifactUUID());
             assertEquals("service type", "ST", service.getServiceType());
             assertEquals("service role", "Sr", service.getServiceRole());
@@ -382,18 +371,17 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("resource order", "TestVF140", service.getResourceOrder());
 
             /**
-             * Check VNF resource, it should be the same as metadata in the topology template in service-Testservice140-template.yml
-             * OR
-             * global metadata in the resource-Testservice140-template.yml
+             * Check VNF resource, it should be the same as metadata in the topology template in
+             * service-Testservice140-template.yml OR global metadata in the resource-Testservice140-template.yml
              */
             String vnfResourceKey = "d20d3ea9-2f54-4071-8b5c-fd746dde245e";
             VnfResource vnfResource = vnfResourceRepository.findById(vnfResourceKey)
-                .orElseThrow(() -> new EntityNotFoundException("VNF resource:" + vnfResourceKey + " not found"));
+                    .orElseThrow(() -> new EntityNotFoundException("VNF resource:" + vnfResourceKey + " not found"));
             assertEquals("orchestration mode", "HEAT", vnfResource.getOrchestrationMode());
             assertEquals("Description", "TestPNF140", vnfResource.getDescription().trim());
             assertEquals("model UUID", vnfResourceKey, vnfResource.getModelUUID());
             assertEquals("model invariant UUID", "7a4bffa2-fac5-4b8b-b348-0bdf313a1aeb",
-                vnfResource.getModelInvariantUUID());
+                    vnfResource.getModelInvariantUUID());
             assertEquals("model version", "1.0", vnfResource.getModelVersion());
             assertEquals("model name", "TestVF140", vnfResource.getModelName());
             assertEquals("tosca node type", "org.openecomp.resource.vf.Testvf140", vnfResource.getToscaNodeType());
@@ -401,15 +389,14 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("resource sub category", "Database", vnfResource.getSubCategory());
 
             /**
-             * Check VNF resource customization, it should be the same as metadata in the topology template in service-Testservice140-template.yml
-             * OR
-             * global metadata in the resource-Testservice140-template.yml
+             * Check VNF resource customization, it should be the same as metadata in the topology template in
+             * service-Testservice140-template.yml OR global metadata in the resource-Testservice140-template.yml
              */
             String vnfCustomizationKey = "ca1c8455-8ce2-4a76-a037-3f4cf01cffa0";
-            VnfResourceCustomization vnfCustomization = Optional.ofNullable(vnfCustomizationRepository
-                .findOneByModelCustomizationUUID(vnfCustomizationKey)).orElseThrow(
-                    () -> new EntityNotFoundException(
-                        "VNF resource customization: " + vnfCustomizationKey + " not found"));
+            VnfResourceCustomization vnfCustomization =
+                    Optional.ofNullable(vnfCustomizationRepository.findOneByModelCustomizationUUID(vnfCustomizationKey))
+                            .orElseThrow(() -> new EntityNotFoundException(
+                                    "VNF resource customization: " + vnfCustomizationKey + " not found"));
             assertEquals("model customizationUUID", vnfCustomizationKey, vnfCustomization.getModelCustomizationUUID());
             assertEquals("model instance name", "TestVF140 0", vnfCustomization.getModelInstanceName());
             assertNull("NF type", vnfCustomization.getNfType());
@@ -420,9 +407,9 @@ public class ASDCControllerITTest extends BaseTest {
             assertEquals("Multi stage design", "false", vnfCustomization.getMultiStageDesign());
             assertNull("resource input", vnfCustomization.getResourceInput());
             assertEquals("cds blueprint name(sdnc_model_name property)", vnfCustomization.getBlueprintName(),
-                vnfCustomization.getBlueprintName());
+                    vnfCustomization.getBlueprintName());
             assertEquals("cds blueprint version(sdnc_model_version property)", vnfCustomization.getBlueprintVersion(),
-                vnfCustomization.getBlueprintVersion());
+                    vnfCustomization.getBlueprintVersion());
             /**
              * Check the vnf resource customization with service mapping
              */
@@ -433,8 +420,8 @@ public class ASDCControllerITTest extends BaseTest {
             /**
              * Check the watchdog for component distribution status
              */
-            List<WatchdogComponentDistributionStatus> distributionList = watchdogCDStatusRepository
-                .findByDistributionId(this.distributionId);
+            List<WatchdogComponentDistributionStatus> distributionList =
+                    watchdogCDStatusRepository.findByDistributionId(this.distributionId);
             assertNotNull(distributionList);
             assertEquals(1, distributionList.size());
             WatchdogComponentDistributionStatus distributionStatus = distributionList.get(0);

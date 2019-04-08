@@ -26,7 +26,12 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "northbound_request_ref_lookup", path = "northbound_request_ref_lookup")
 public interface NorthBoundRequestRepository extends JpaRepository<NorthBoundRequest, Integer> {
-	NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarte(String action, String requestScope, Boolean isALaCarte);
-	NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner(String action, String requestScope, Boolean isALaCarte, String cloudOwner);
-	NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType(String action, String requestScope, Boolean isALaCarte, String cloudOwner, String serviceType);
+    NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarte(String action, String requestScope,
+            Boolean isALaCarte);
+
+    NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwner(String action, String requestScope,
+            Boolean isALaCarte, String cloudOwner);
+
+    NorthBoundRequest findOneByActionAndRequestScopeAndIsAlacarteAndCloudOwnerAndServiceType(String action,
+            String requestScope, Boolean isALaCarte, String cloudOwner, String serviceType);
 }

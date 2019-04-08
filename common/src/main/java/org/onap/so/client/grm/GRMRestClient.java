@@ -25,33 +25,32 @@ import java.net.URI;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
-
 import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
 import org.onap.so.utils.TargetEntity;
 
 public class GRMRestClient extends RestClient {
 
-	private final GRMProperties properties;
-	
-	public GRMRestClient(GRMProperties props, URI path) {
-		super(props, Optional.of(path));		
-		this.properties = props;
-	}
+    private final GRMProperties properties;
+
+    public GRMRestClient(GRMProperties props, URI path) {
+        super(props, Optional.of(path));
+        this.properties = props;
+    }
 
     @Override
-    public TargetEntity getTargetEntity(){
+    public TargetEntity getTargetEntity() {
         return TargetEntity.GRM;
     }
 
-	@Override
-	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		String auth = properties.getAuth();
-		String key = properties.getKey();
+    @Override
+    protected void initializeHeaderMap(Map<String, String> headerMap) {
+        String auth = properties.getAuth();
+        String key = properties.getKey();
 
-		if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
-			addBasicAuthHeader(auth, key);
-		}	
-	}
+        if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
+            addBasicAuthHeader(auth, key);
+        }
+    }
 
 }

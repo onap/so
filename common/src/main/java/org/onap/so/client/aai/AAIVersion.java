@@ -23,19 +23,19 @@ package org.onap.so.client.aai;
 import org.onap.so.client.graphinventory.GraphInventoryVersion;
 
 public enum AAIVersion implements GraphInventoryVersion {
-	V13("v13"),
-	V14("v14"),
-	V15("v15");
-	
-	public final static AAIVersion LATEST = AAIVersion.values()[AAIVersion.values().length - 1];
-	private final String value;
-	private AAIVersion(String value){
-		this.value = value;
-	}
-	@Override
-	public String toString(){
-		return this.value;
-	}
+    V13("v13"), V14("v14"), V15("v15");
+
+    public final static AAIVersion LATEST = AAIVersion.values()[AAIVersion.values().length - 1];
+    private final String value;
+
+    private AAIVersion(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return this.value;
+    }
 }
 
 

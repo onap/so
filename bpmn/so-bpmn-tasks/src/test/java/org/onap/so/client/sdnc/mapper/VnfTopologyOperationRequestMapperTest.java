@@ -23,12 +23,10 @@ package org.onap.so.client.sdnc.mapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -47,101 +45,107 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoInstanceGroup;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 import org.onap.so.client.sdnc.beans.SDNCSvcOperation;
-
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiVnfOperationInformation;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VnfTopologyOperationRequestMapperTest {
 
-	@Spy
-	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
-	
-	@InjectMocks
-	private VnfTopologyOperationRequestMapper mapper = new VnfTopologyOperationRequestMapper();
+    @Spy
+    private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
-	@Test
-	public void reqMapperTest() throws Exception {
-		// prepare and set service instance
-		ServiceInstance serviceInstance = new ServiceInstance();
-		ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
-		modelInfoServiceInstance.setModelInvariantUuid("modelInvariantUuid");
-		modelInfoServiceInstance.setModelName("modelName");
-		modelInfoServiceInstance.setModelUuid("modelUuid");
-		modelInfoServiceInstance.setModelVersion("modelVersion");
-		serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
+    @InjectMocks
+    private VnfTopologyOperationRequestMapper mapper = new VnfTopologyOperationRequestMapper();
 
-		//prepare VNF
-		ModelInfoGenericVnf genericVnf = new ModelInfoGenericVnf();
-		genericVnf.setModelInvariantUuid("vnfModelInvariantUUID");
-		genericVnf.setModelVersion("vnfModelVersion");
-		genericVnf.setModelName("vnfModelName");
-		genericVnf.setModelUuid("vnfModelUUID");
-		genericVnf.setModelCustomizationUuid("vnfModelCustomizationUUID");
+    @Test
+    public void reqMapperTest() throws Exception {
+        // prepare and set service instance
+        ServiceInstance serviceInstance = new ServiceInstance();
+        ModelInfoServiceInstance modelInfoServiceInstance = new ModelInfoServiceInstance();
+        modelInfoServiceInstance.setModelInvariantUuid("modelInvariantUuid");
+        modelInfoServiceInstance.setModelName("modelName");
+        modelInfoServiceInstance.setModelUuid("modelUuid");
+        modelInfoServiceInstance.setModelVersion("modelVersion");
+        serviceInstance.setModelInfoServiceInstance(modelInfoServiceInstance);
 
-		ModelInfoInstanceGroup modelL3Network = new ModelInfoInstanceGroup();
-		modelL3Network.setType("L3-NETWORK");
+        // prepare VNF
+        ModelInfoGenericVnf genericVnf = new ModelInfoGenericVnf();
+        genericVnf.setModelInvariantUuid("vnfModelInvariantUUID");
+        genericVnf.setModelVersion("vnfModelVersion");
+        genericVnf.setModelName("vnfModelName");
+        genericVnf.setModelUuid("vnfModelUUID");
+        genericVnf.setModelCustomizationUuid("vnfModelCustomizationUUID");
 
-		InstanceGroup instanceGroup1 = new InstanceGroup();
-		instanceGroup1.setId("l3-network-ig-111");
-		instanceGroup1.setModelInfoInstanceGroup(modelL3Network);
+        ModelInfoInstanceGroup modelL3Network = new ModelInfoInstanceGroup();
+        modelL3Network.setType("L3-NETWORK");
 
-		InstanceGroup instanceGroup2 = new InstanceGroup();
-		instanceGroup2.setId("l3-network-ig-222");
-		instanceGroup2.setModelInfoInstanceGroup(modelL3Network);
+        InstanceGroup instanceGroup1 = new InstanceGroup();
+        instanceGroup1.setId("l3-network-ig-111");
+        instanceGroup1.setModelInfoInstanceGroup(modelL3Network);
 
-		GenericVnf vnf = new GenericVnf();
-		vnf.setModelInfoGenericVnf(genericVnf);
-		vnf.setVnfId("vnfId");
-		vnf.setVnfType("vnfType");
-		vnf.getInstanceGroups().add(instanceGroup1);
-		vnf.getInstanceGroups().add(instanceGroup2);
-		License license = new License();
-		List<String> entitlementPoolUuids = new ArrayList<>();
-		entitlementPoolUuids.add("entitlementPoolUuid");
-		List<String> licenseKeyGroupUuids = new ArrayList<>();
-		licenseKeyGroupUuids.add("licenseKeyGroupUuid");
-		license.setEntitlementPoolUuids(entitlementPoolUuids);
-		license.setLicenseKeyGroupUuids(licenseKeyGroupUuids);
-		vnf.setLicense(license);
+        InstanceGroup instanceGroup2 = new InstanceGroup();
+        instanceGroup2.setId("l3-network-ig-222");
+        instanceGroup2.setModelInfoInstanceGroup(modelL3Network);
 
-		// prepare Customer object
-		Customer customer = new Customer();
-		customer.setGlobalCustomerId("globalCustomerId");
+        GenericVnf vnf = new GenericVnf();
+        vnf.setModelInfoGenericVnf(genericVnf);
+        vnf.setVnfId("vnfId");
+        vnf.setVnfType("vnfType");
+        vnf.getInstanceGroups().add(instanceGroup1);
+        vnf.getInstanceGroups().add(instanceGroup2);
+        License license = new License();
+        List<String> entitlementPoolUuids = new ArrayList<>();
+        entitlementPoolUuids.add("entitlementPoolUuid");
+        List<String> licenseKeyGroupUuids = new ArrayList<>();
+        licenseKeyGroupUuids.add("licenseKeyGroupUuid");
+        license.setEntitlementPoolUuids(entitlementPoolUuids);
+        license.setLicenseKeyGroupUuids(licenseKeyGroupUuids);
+        vnf.setLicense(license);
 
-		ServiceSubscription serviceSubscription = new ServiceSubscription();
-		serviceSubscription.setServiceType("productFamilyId");
-		customer.setServiceSubscription(serviceSubscription);
+        // prepare Customer object
+        Customer customer = new Customer();
+        customer.setGlobalCustomerId("globalCustomerId");
 
-		// set Customer on service instance
-		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-		
+        ServiceSubscription serviceSubscription = new ServiceSubscription();
+        serviceSubscription.setServiceType("productFamilyId");
+        customer.setServiceSubscription(serviceSubscription);
 
-		//prepare RequestContext
-		RequestContext requestContext = new RequestContext();
-		Map<String, Object> userParams = new HashMap<>();
-		userParams.put("key1", "value1");
-		requestContext.setUserParams(userParams);
-		requestContext.setProductFamilyId("productFamilyId");
-		requestContext.setMsoRequestId("MsoRequestId");
+        // set Customer on service instance
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
 
-		CloudRegion cloudRegion = new CloudRegion();
 
-		GenericResourceApiVnfOperationInformation vnfOpInformation = mapper.reqMapper(
-				SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
-				cloudRegion, requestContext,true);
-		GenericResourceApiVnfOperationInformation vnfOpInformationNullReqContext = mapper.reqMapper(
-				SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
-				cloudRegion, null,true);
+        // prepare RequestContext
+        RequestContext requestContext = new RequestContext();
+        Map<String, Object> userParams = new HashMap<>();
+        userParams.put("key1", "value1");
+        requestContext.setUserParams(userParams);
+        requestContext.setProductFamilyId("productFamilyId");
+        requestContext.setMsoRequestId("MsoRequestId");
 
-		assertNull(vnfOpInformation.getServiceInformation().getOnapModelInformation().getModelCustomizationUuid());
-		assertEquals("vnfModelCustomizationUUID", vnfOpInformation.getVnfInformation().getOnapModelInformation().getModelCustomizationUuid());
-		assertEquals(2, vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().size());
-		assertEquals("l3-network-ig-111", vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().get(0).getVnfNetworkInstanceGroupId());
-		assertEquals("l3-network-ig-222", vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().get(1).getVnfNetworkInstanceGroupId());
-		assertEquals("entitlementPoolUuid", vnfOpInformation.getVnfRequestInput().getVnfInputParameters().getParam().get(1).getValue());
-		assertEquals("licenseKeyGroupUuid", vnfOpInformation.getVnfRequestInput().getVnfInputParameters().getParam().get(2).getValue());
-		assertEquals("MsoRequestId", vnfOpInformation.getRequestInformation().getRequestId());
-		assertNotNull(vnfOpInformationNullReqContext.getRequestInformation().getRequestId());
-	}
+        CloudRegion cloudRegion = new CloudRegion();
+
+        GenericResourceApiVnfOperationInformation vnfOpInformation =
+                mapper.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
+                        GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
+                        cloudRegion, requestContext, true);
+        GenericResourceApiVnfOperationInformation vnfOpInformationNullReqContext =
+                mapper.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
+                        GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
+                        cloudRegion, null, true);
+
+        assertNull(vnfOpInformation.getServiceInformation().getOnapModelInformation().getModelCustomizationUuid());
+        assertEquals("vnfModelCustomizationUUID",
+                vnfOpInformation.getVnfInformation().getOnapModelInformation().getModelCustomizationUuid());
+        assertEquals(2, vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().size());
+        assertEquals("l3-network-ig-111", vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().get(0)
+                .getVnfNetworkInstanceGroupId());
+        assertEquals("l3-network-ig-222", vnfOpInformation.getVnfRequestInput().getVnfNetworkInstanceGroupIds().get(1)
+                .getVnfNetworkInstanceGroupId());
+        assertEquals("entitlementPoolUuid",
+                vnfOpInformation.getVnfRequestInput().getVnfInputParameters().getParam().get(1).getValue());
+        assertEquals("licenseKeyGroupUuid",
+                vnfOpInformation.getVnfRequestInput().getVnfInputParameters().getParam().get(2).getValue());
+        assertEquals("MsoRequestId", vnfOpInformation.getRequestInformation().getRequestId());
+        assertNotNull(vnfOpInformationNullReqContext.getRequestInformation().getRequestId());
+    }
 }

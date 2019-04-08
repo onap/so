@@ -24,36 +24,35 @@ import org.camunda.bpm.engine.impl.persistence.entity.ExecutionEntity;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.core.env.Environment;
-
 import static org.mockito.Mockito.*;
 
 public class UrnPropertiesReaderTest {
 
     @Test
-    public  void testGetVariableFromExecution() {
+    public void testGetVariableFromExecution() {
         ExecutionEntity mockExecution = mock(ExecutionEntity.class);
         when(mockExecution.getVariable("testKey")).thenReturn("testValue");
-        String value = UrnPropertiesReader.getVariable("testKey",mockExecution);
+        String value = UrnPropertiesReader.getVariable("testKey", mockExecution);
         Assert.assertEquals("testValue", value);
         verify(mockExecution).getVariable("testKey");
         verify(mockExecution, never()).setVariable("testKey", value);
     }
 
     @Test
-    public  void testGetVariableFromEnvironment() {
+    public void testGetVariableFromEnvironment() {
         ExecutionEntity mockExecution = mock(ExecutionEntity.class);
         Environment mockEnvironment = mock(Environment.class);
         when(mockEnvironment.getProperty("testKey")).thenReturn("testValue");
         UrnPropertiesReader urnPropertiesReader = new UrnPropertiesReader();
         urnPropertiesReader.setEnvironment(mockEnvironment);
-        String value = UrnPropertiesReader.getVariable("testKey",mockExecution);
-        Assert.assertEquals("testValue",value);
+        String value = UrnPropertiesReader.getVariable("testKey", mockExecution);
+        Assert.assertEquals("testValue", value);
         verify(mockExecution).getVariable("testKey");
         verify(mockExecution).setVariable("testKey", value);
     }
 
     @Test
-    public  void testGetVariableNotExist() {
+    public void testGetVariableNotExist() {
         ExecutionEntity mockExecution = mock(ExecutionEntity.class);
         String value = UrnPropertiesReader.getVariable("notExist", mockExecution);
         Assert.assertEquals(null, value);

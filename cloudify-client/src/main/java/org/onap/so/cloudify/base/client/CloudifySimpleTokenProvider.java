@@ -22,19 +22,18 @@ package org.onap.so.cloudify.base.client;
 
 public class CloudifySimpleTokenProvider implements CloudifyTokenProvider {
 
-	String token;
+    String token;
 
-	public CloudifySimpleTokenProvider(String token) {
-		this.token = token;
-	}
+    public CloudifySimpleTokenProvider(String token) {
+        this.token = token;
+    }
 
-	@Override
-	public String getToken() {
-		return this.token;
-	}
+    @Override
+    public String getToken() {
+        return this.token;
+    }
 
-	@Override
-	public void expireToken() {
-	}
+    @Override
+    public void expireToken() {}
 
 }

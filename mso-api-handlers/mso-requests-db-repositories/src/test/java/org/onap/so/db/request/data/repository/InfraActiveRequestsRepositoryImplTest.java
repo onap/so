@@ -31,18 +31,15 @@ import static org.mockito.Mockito.mock;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.ACTION;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.REQUEST_ID;
 import static org.onap.so.db.request.data.repository.InfraActiveRequestsRepositoryImpl.SERVICE_INSTANCE_ID;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
@@ -94,8 +91,8 @@ public class InfraActiveRequestsRepositoryImplTest {
     public void test_GetInfraActiveRequests_invalidFiltersMap() {
         final Map<String, String[]> filters = new HashMap<>();
         filters.put("OverTheMoon", new String[] {"Humpty Dumpty Sat On The Wall"});
-        final List<Predicate> predicates =
-                objUnderTest.getPredicates(filters, mock(CriteriaBuilder.class), (Root<InfraActiveRequests>)mock(Root.class));
+        final List<Predicate> predicates = objUnderTest.getPredicates(filters, mock(CriteriaBuilder.class),
+                (Root<InfraActiveRequests>) mock(Root.class));
         assertTrue(predicates.isEmpty());
     }
 
@@ -224,8 +221,8 @@ public class InfraActiveRequestsRepositoryImplTest {
         assertFalse(actualRequests.isEmpty());
 
         assertEquals(3, actualRequests.size());
-        assertEquals("ShouldReturnInSearchQuery_1,ShouldReturnInSearchQuery_2,ShouldReturnInSearchQuery_3", 
-        		actualRequests.stream().map(item -> item.getServiceInstanceName()).collect(Collectors.joining(",")));
+        assertEquals("ShouldReturnInSearchQuery_1,ShouldReturnInSearchQuery_2,ShouldReturnInSearchQuery_3",
+                actualRequests.stream().map(item -> item.getServiceInstanceName()).collect(Collectors.joining(",")));
     }
 
 }

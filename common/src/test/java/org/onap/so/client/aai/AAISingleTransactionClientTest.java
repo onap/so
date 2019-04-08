@@ -29,12 +29,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Optional;
-
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -51,7 +49,6 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.defaultproperties.DefaultAAIPropertiesImpl;
 import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.skyscreamer.jsonassert.JSONAssert;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,77 +57,78 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @RunWith(MockitoJUnitRunner.class)
 public class AAISingleTransactionClientTest {
 
-	private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/singletransaction/";
-	AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "pserver-hostname");
-	AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, "my-complex");
-	
-	ObjectMapper mapper;
-	
-	public AAIClient client = new AAIClient();
-	
-	public AAIResourcesClient aaiClient = new AAIResourcesClient();
-	
-	@Before
-	public void before() throws JsonParseException, JsonMappingException, IOException {
-		mapper = new AAICommonObjectMapperProvider().getMapper();
-		mapper.enable(SerializationFeature.INDENT_OUTPUT);
-	}
-	
-	@Test
-	public void testRequest() throws JSONException,IOException {
-		Pserver pserver = new Pserver();
-		pserver.setHostname("pserver-hostname");
-		pserver.setFqdn("pserver-bulk-process-single-transactions-multiple-actions-1-fqdn");
-		Pserver pserver2 = new Pserver();
-		pserver2.setFqdn("patched-fqdn");
-		Complex complex = new Complex();
-		complex.setCity("my-city");
-		AAISingleTransactionClient singleTransaction = 
-		aaiClient.beginSingleTransaction()
-			.create(uriA, pserver)
-			.update(uriA, pserver2)
-			.create(uriB, complex);
-		
-		
-		SingleTransactionRequest actual = singleTransaction.getRequest();
-		
-		SingleTransactionRequest expected = mapper.readValue(this.getJson("sample-request.json"), SingleTransactionRequest.class);
-		
-		JSONAssert.assertEquals(mapper.writeValueAsString(expected),mapper.writeValueAsString(actual), false);
-	}
-	
-	@Test
-	public void testFailure() throws IOException {
-		AAISingleTransactionClient singleTransaction = aaiClient.beginSingleTransaction();
-		SingleTransactionResponse expected = mapper.readValue(this.getJson("sample-response-failure.json"), SingleTransactionResponse.class);
-		Optional<String> errorMessage = singleTransaction.locateErrorMessages(expected);
-		
-		assertThat(expected.getOperationResponses().size(), greaterThan(0));
-		assertThat(errorMessage.isPresent(), equalTo(true));
-		
-	}
-	
-	@Test
-	public void testSuccessResponse() throws IOException {
-		AAISingleTransactionClient singleTransaction = aaiClient.beginSingleTransaction();
-		SingleTransactionResponse expected = mapper.readValue(this.getJson("sample-response.json"), SingleTransactionResponse.class);
-		Optional<String> errorMessage = singleTransaction.locateErrorMessages(expected);
-		
-		assertThat(expected.getOperationResponses().size(), greaterThan(0));
-		assertThat(errorMessage.isPresent(), equalTo(false));
-		
-	}
-	
-	@Test
-	public void confirmPatchFormat() {
-		AAISingleTransactionClient singleTransaction = spy(new AAISingleTransactionClient(aaiClient, client));
-		GraphInventoryPatchConverter mock = mock(GraphInventoryPatchConverter.class);
-		doReturn(mock).when(singleTransaction).getPatchConverter();
-		singleTransaction.update(uriA, "{}");
-		verify(mock, times(1)).convertPatchFormat(any());
-	}
-	private String getJson(String filename) throws IOException {
-		 return new String(Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + filename)));
-	}
-	
+    private final static String AAI_JSON_FILE_LOCATION = "src/test/resources/__files/aai/singletransaction/";
+    AAIResourceUri uriA = AAIUriFactory.createResourceUri(AAIObjectType.PSERVER, "pserver-hostname");
+    AAIResourceUri uriB = AAIUriFactory.createResourceUri(AAIObjectType.COMPLEX, "my-complex");
+
+    ObjectMapper mapper;
+
+    public AAIClient client = new AAIClient();
+
+    public AAIResourcesClient aaiClient = new AAIResourcesClient();
+
+    @Before
+    public void before() throws JsonParseException, JsonMappingException, IOException {
+        mapper = new AAICommonObjectMapperProvider().getMapper();
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
+    }
+
+    @Test
+    public void testRequest() throws JSONException, IOException {
+        Pserver pserver = new Pserver();
+        pserver.setHostname("pserver-hostname");
+        pserver.setFqdn("pserver-bulk-process-single-transactions-multiple-actions-1-fqdn");
+        Pserver pserver2 = new Pserver();
+        pserver2.setFqdn("patched-fqdn");
+        Complex complex = new Complex();
+        complex.setCity("my-city");
+        AAISingleTransactionClient singleTransaction =
+                aaiClient.beginSingleTransaction().create(uriA, pserver).update(uriA, pserver2).create(uriB, complex);
+
+
+        SingleTransactionRequest actual = singleTransaction.getRequest();
+
+        SingleTransactionRequest expected =
+                mapper.readValue(this.getJson("sample-request.json"), SingleTransactionRequest.class);
+
+        JSONAssert.assertEquals(mapper.writeValueAsString(expected), mapper.writeValueAsString(actual), false);
+    }
+
+    @Test
+    public void testFailure() throws IOException {
+        AAISingleTransactionClient singleTransaction = aaiClient.beginSingleTransaction();
+        SingleTransactionResponse expected =
+                mapper.readValue(this.getJson("sample-response-failure.json"), SingleTransactionResponse.class);
+        Optional<String> errorMessage = singleTransaction.locateErrorMessages(expected);
+
+        assertThat(expected.getOperationResponses().size(), greaterThan(0));
+        assertThat(errorMessage.isPresent(), equalTo(true));
+
+    }
+
+    @Test
+    public void testSuccessResponse() throws IOException {
+        AAISingleTransactionClient singleTransaction = aaiClient.beginSingleTransaction();
+        SingleTransactionResponse expected =
+                mapper.readValue(this.getJson("sample-response.json"), SingleTransactionResponse.class);
+        Optional<String> errorMessage = singleTransaction.locateErrorMessages(expected);
+
+        assertThat(expected.getOperationResponses().size(), greaterThan(0));
+        assertThat(errorMessage.isPresent(), equalTo(false));
+
+    }
+
+    @Test
+    public void confirmPatchFormat() {
+        AAISingleTransactionClient singleTransaction = spy(new AAISingleTransactionClient(aaiClient, client));
+        GraphInventoryPatchConverter mock = mock(GraphInventoryPatchConverter.class);
+        doReturn(mock).when(singleTransaction).getPatchConverter();
+        singleTransaction.update(uriA, "{}");
+        verify(mock, times(1)).convertPatchFormat(any());
+    }
+
+    private String getJson(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(AAI_JSON_FILE_LOCATION + filename)));
+    }
+
 }

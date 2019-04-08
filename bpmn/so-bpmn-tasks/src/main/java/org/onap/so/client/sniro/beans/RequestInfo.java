@@ -21,77 +21,75 @@
 package org.onap.so.client.sniro.beans;
 
 import java.io.Serializable;
-
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
 @JsonRootName("requestInfo")
-public class RequestInfo implements Serializable{
+public class RequestInfo implements Serializable {
 
-	private static final long serialVersionUID = -759180997599143791L;
+    private static final long serialVersionUID = -759180997599143791L;
 
-	@JsonProperty("transactionId")
-	String transactionId;
-	@JsonProperty("requestId")
-	String requestId;
-	@JsonProperty("callbackUrl")
-	String callbackUrl;
-	@JsonProperty("sourceId")
-	String sourceId = "mso";
-	@JsonProperty("requestType")
-	String requestType;
-	@JsonProperty("timeout")
-	long timeout;
+    @JsonProperty("transactionId")
+    String transactionId;
+    @JsonProperty("requestId")
+    String requestId;
+    @JsonProperty("callbackUrl")
+    String callbackUrl;
+    @JsonProperty("sourceId")
+    String sourceId = "mso";
+    @JsonProperty("requestType")
+    String requestType;
+    @JsonProperty("timeout")
+    long timeout;
 
-	public String getTransactionId(){
-		return transactionId;
-	}
+    public String getTransactionId() {
+        return transactionId;
+    }
 
-	public void setTransactionId(String transactionId){
-		this.transactionId = transactionId;
-	}
+    public void setTransactionId(String transactionId) {
+        this.transactionId = transactionId;
+    }
 
-	public String getRequestId(){
-		return requestId;
-	}
+    public String getRequestId() {
+        return requestId;
+    }
 
-	public void setRequestId(String requestId){
-		this.requestId = requestId;
-	}
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
 
-	public String getCallbackUrl(){
-		return callbackUrl;
-	}
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
 
-	public void setCallbackUrl(String callbackUrl){
-		this.callbackUrl = callbackUrl;
-	}
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl;
+    }
 
-	public String getSourceId(){
-		return sourceId;
-	}
+    public String getSourceId() {
+        return sourceId;
+    }
 
-	public void setSourceId(String sourceId){
-		this.sourceId = sourceId;
-	}
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
 
-	public String getRequestType(){
-		return requestType;
-	}
+    public String getRequestType() {
+        return requestType;
+    }
 
-	public void setRequestType(String requestType){
-		this.requestType = requestType;
-	}
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
+    }
 
-	public long getTimeout(){
-		return timeout;
-	}
+    public long getTimeout() {
+        return timeout;
+    }
 
-	public void setTimeout(long timeout){
-		this.timeout = timeout;
-	}
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
 
 
 }

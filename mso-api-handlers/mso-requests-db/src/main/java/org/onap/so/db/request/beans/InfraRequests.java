@@ -24,7 +24,6 @@ import java.net.URI;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -33,10 +32,8 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.onap.so.requestsdb.TimestampXMLAdapter;
-
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 @MappedSuperclass
@@ -148,8 +145,8 @@ public abstract class InfraRequests implements java.io.Serializable {
     @Column(name = "INSTANCE_GROUP_NAME", length = 200)
     private String instanceGroupName;
     @Column(name = "REQUEST_URL", length = 500)
-    private String requestUrl;    
-    
+    private String requestUrl;
+
     @ResourceId
     public URI getRequestURI() {
         return URI.create(this.requestId);
@@ -194,7 +191,7 @@ public abstract class InfraRequests implements java.io.Serializable {
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
-    
+
     public String getRollbackStatusMessage() {
         return this.rollbackStatusMessage;
     }
@@ -202,7 +199,7 @@ public abstract class InfraRequests implements java.io.Serializable {
     public void setRollbackStatusMessage(String rollbackStatusMessage) {
         this.rollbackStatusMessage = rollbackStatusMessage;
     }
-    
+
     public String getFlowStatus() {
         return this.flowStatus;
     }
@@ -210,7 +207,7 @@ public abstract class InfraRequests implements java.io.Serializable {
     public void setFlowStatus(String flowStatus) {
         this.flowStatus = flowStatus;
     }
-    
+
     public String getRetryStatusMessage() {
         return this.retryStatusMessage;
     }
@@ -530,29 +527,29 @@ public abstract class InfraRequests implements java.io.Serializable {
     }
 
     public String getInstanceGroupId() {
-		return instanceGroupId;
-	}
+        return instanceGroupId;
+    }
 
-	public void setInstanceGroupId(String instanceGroupId) {
-		this.instanceGroupId = instanceGroupId;
-	}
+    public void setInstanceGroupId(String instanceGroupId) {
+        this.instanceGroupId = instanceGroupId;
+    }
 
-	public String getInstanceGroupName() {
-		return instanceGroupName;
-	}
+    public String getInstanceGroupName() {
+        return instanceGroupName;
+    }
 
-	public void setInstanceGroupName(String instanceGroupName) {
-		this.instanceGroupName = instanceGroupName;
-	}
+    public void setInstanceGroupName(String instanceGroupName) {
+        this.instanceGroupName = instanceGroupName;
+    }
 
-	public String getRequestUrl() {
+    public String getRequestUrl() {
         return this.requestUrl;
     }
-    
+
     public void setRequestUrl(String requestUrl) {
-         this.requestUrl = requestUrl;
-    }    
-    
+        this.requestUrl = requestUrl;
+    }
+
     @PrePersist
     protected void onCreate() {
         if (requestScope == null)
@@ -592,28 +589,28 @@ public abstract class InfraRequests implements java.io.Serializable {
     public String toString() {
         return new ToStringBuilder(this).append("requestId", getRequestId())
                 .append("clientRequestId", getClientRequestId()).append("action", getAction())
-                .append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage()).append("rollbackStatusMessage", getRollbackStatusMessage())
-                .append("flowStatus", getFlowStatus()).append("retryStatusMessage", getRetryStatusMessage())
-                .append("progress", getProgress()).append("startTime", getStartTime()).append("endTime", getEndTime())
-                .append("source", getSource()).append("vnfId", getVnfId()).append("vnfName", getVnfName())
-                .append("vnfType", getVnfType()).append("serviceType", getServiceType())
-                .append("aicNodeClli", getAicNodeClli()).append("tenantId", getTenantId())
-                .append("provStatus", getProvStatus()).append("vnfParams", getVnfParams())
-                .append("vnfOutputs", getVnfOutputs()).append("requestBody", getRequestBody())
-                .append("responseBody", getResponseBody()).append("lastModifiedBy", getLastModifiedBy())
-                .append("modifyTime", getModifyTime()).append("requestType", getRequestType())
-                .append("volumeGroupId", getVolumeGroupId()).append("volumeGroupName", getVolumeGroupName())
-                .append("vfModuleId", getVfModuleId()).append("vfModuleName", getVfModuleName())
-                .append("vfModuleModelName", getVfModuleModelName()).append("aaiServiceId", getAaiServiceId())
-                .append("aicCloudRegion", getAicCloudRegion()).append("callBackUrl", getCallBackUrl())
-                .append("correlator", getCorrelator()).append("serviceInstanceId", getServiceInstanceId())
+                .append("requestStatus", getRequestStatus()).append("statusMessage", getStatusMessage())
+                .append("rollbackStatusMessage", getRollbackStatusMessage()).append("flowStatus", getFlowStatus())
+                .append("retryStatusMessage", getRetryStatusMessage()).append("progress", getProgress())
+                .append("startTime", getStartTime()).append("endTime", getEndTime()).append("source", getSource())
+                .append("vnfId", getVnfId()).append("vnfName", getVnfName()).append("vnfType", getVnfType())
+                .append("serviceType", getServiceType()).append("aicNodeClli", getAicNodeClli())
+                .append("tenantId", getTenantId()).append("provStatus", getProvStatus())
+                .append("vnfParams", getVnfParams()).append("vnfOutputs", getVnfOutputs())
+                .append("requestBody", getRequestBody()).append("responseBody", getResponseBody())
+                .append("lastModifiedBy", getLastModifiedBy()).append("modifyTime", getModifyTime())
+                .append("requestType", getRequestType()).append("volumeGroupId", getVolumeGroupId())
+                .append("volumeGroupName", getVolumeGroupName()).append("vfModuleId", getVfModuleId())
+                .append("vfModuleName", getVfModuleName()).append("vfModuleModelName", getVfModuleModelName())
+                .append("aaiServiceId", getAaiServiceId()).append("aicCloudRegion", getAicCloudRegion())
+                .append("callBackUrl", getCallBackUrl()).append("correlator", getCorrelator())
+                .append("serviceInstanceId", getServiceInstanceId())
                 .append("serviceInstanceName", getServiceInstanceName()).append("requestScope", getRequestScope())
                 .append("requestAction", getRequestAction()).append("networkId", getNetworkId())
                 .append("networkName", getNetworkName()).append("networkType", getNetworkType())
                 .append("requestorId", getRequestorId()).append("configurationId", getConfigurationId())
                 .append("configurationName", getConfigurationName()).append("operationalEnvId", getOperationalEnvId())
-                .append("operationalEnvName", getOperationalEnvName())
-                .append("instanceGroupId", getInstanceGroupId()).append("instanceGroupName", getInstanceGroupName())
-                .append("requestUrl", getRequestUrl()).toString();
+                .append("operationalEnvName", getOperationalEnvName()).append("instanceGroupId", getInstanceGroupId())
+                .append("instanceGroupName", getInstanceGroupName()).append("requestUrl", getRequestUrl()).toString();
     }
 }

@@ -23,7 +23,6 @@ package org.onap.so.bpmn.core.domain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,154 +35,170 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("vnfResource")
 public class VnfResource extends Resource {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/*
-	 * set resourceType for this object
-	 */
-	public VnfResource(){
-		resourceType = ResourceType.VNF;
-		setResourceId(UUID.randomUUID().toString());
-	}
+    /*
+     * set resourceType for this object
+     */
+    public VnfResource() {
+        resourceType = ResourceType.VNF;
+        setResourceId(UUID.randomUUID().toString());
+    }
 
-	/*
-	 * fields specific to VNF resource type
-	 */
-	@JsonProperty("vfModules")
-	private List <ModuleResource>  vfModules;
-	private String vnfHostname;
-	private String vnfType;
-	private String nfFunction;
-	private String nfType;
-	private String nfRole;
-	private String nfNamingCode;
-	private String multiStageDesign;
-	private String orchestrationStatus;
+    /*
+     * fields specific to VNF resource type
+     */
+    @JsonProperty("vfModules")
+    private List<ModuleResource> vfModules;
+    private String vnfHostname;
+    private String vnfType;
+    private String nfFunction;
+    private String nfType;
+    private String nfRole;
+    private String nfNamingCode;
+    private String multiStageDesign;
+    private String orchestrationStatus;
 
-	@JsonIgnore
-	private String resourceInput;
+    @JsonIgnore
+    private String resourceInput;
 
-	/*
-	 * GET and SET
-	 */
-	public List<ModuleResource> getVfModules() {
-		return vfModules;
-	}
-	public void setModules(List<ModuleResource> moduleResources) {
-		this.vfModules = moduleResources;
-	}
-	public String getVnfHostname() {
-		return vnfHostname;
-	}
-	public void setVnfHostname(String vnfHostname) {
-		this.vnfHostname = vnfHostname;
-	}
-	@Deprecated
-	public void setVnfType(String vnfType) {
-		this.vnfType = vnfType;
-	}
-	public String getVnfType() {
-		return vnfType;
-	}
-	public String getNfFunction() {
-		return nfFunction;
-	}
-	public void setNfFunction(String nfFunction) {
-		this.nfFunction = nfFunction;
-	}
-	public String getNfType() {
-		return nfType;
-	}
-	public void setNfType(String nfType) {
-		this.nfType = nfType;
-	}
-	public String getNfRole() {
-		return nfRole;
-	}
-	public void setNfRole(String nfRole) {
-		this.nfRole = nfRole;
-	}
-	public String getNfNamingCode() {
-		return nfNamingCode;
-	}
-	public void setNfNamingCode(String nfNamingCode) {
-		this.nfNamingCode = nfNamingCode;
-	}
-	public String getMultiStageDesign() {
-		return multiStageDesign;
-	}
-	public void setMultiStageDesign(String multiStageDesign) {
-		this.multiStageDesign = multiStageDesign;
-	}
-	/*
-	 * GET accessors per design requirements
-	 */
+    /*
+     * GET and SET
+     */
+    public List<ModuleResource> getVfModules() {
+        return vfModules;
+    }
 
+    public void setModules(List<ModuleResource> moduleResources) {
+        this.vfModules = moduleResources;
+    }
 
-	public String getOrchestrationStatus(){
-		return orchestrationStatus;
-	}
+    public String getVnfHostname() {
+        return vnfHostname;
+    }
 
-	public void setOrchestrationStatus(String orchestrationStatus){
-		this.orchestrationStatus = orchestrationStatus;
-	}
+    public void setVnfHostname(String vnfHostname) {
+        this.vnfHostname = vnfHostname;
+    }
 
-	public String getResourceInput() {
-		return resourceInput;
-	}
+    @Deprecated
+    public void setVnfType(String vnfType) {
+        this.vnfType = vnfType;
+    }
 
-	public void setResourceInput(String resourceInput) {
-		this.resourceInput = resourceInput;
-	}
+    public String getVnfType() {
+        return vnfType;
+    }
 
-	/**
-	 * Returns a list of all VfModule objects.
-	 * Base module is first entry in the list
-	 * @return ordered list of ModuleResources objects
-	 */
-	@JsonIgnore
-	public List<ModuleResource> getAllVfModuleObjects(){
-		if (vfModules == null) {
-			return null;
-		}
+    public String getNfFunction() {
+        return nfFunction;
+    }
 
-		for (int i = 0; i < vfModules.size(); i++) {
-			ModuleResource moduleResource = vfModules.get(i);
-			if (moduleResource.getIsBase()){
-				vfModules.remove(moduleResource);
-				vfModules.add(0,moduleResource);
-			}
-		}
-		return vfModules;
-	}
+    public void setNfFunction(String nfFunction) {
+        this.nfFunction = nfFunction;
+    }
 
-	/**
-	 *
-	 * @return Returns JSON list of all VfModule structures.
-	 */
-	@JsonIgnore
-	public String getAllVfModulesJson(){
+    public String getNfType() {
+        return nfType;
+    }
 
-		return listToJson(vfModules);
-	}
+    public void setNfType(String nfType) {
+        this.nfType = nfType;
+    }
 
-	// methods to add to the list
-	public void addVfModule(ModuleResource moduleResource) {
-		if (vfModules == null){
-			vfModules = new ArrayList<>();
-		}
-		this.vfModules.add(moduleResource);
-	}
+    public String getNfRole() {
+        return nfRole;
+    }
+
+    public void setNfRole(String nfRole) {
+        this.nfRole = nfRole;
+    }
+
+    public String getNfNamingCode() {
+        return nfNamingCode;
+    }
+
+    public void setNfNamingCode(String nfNamingCode) {
+        this.nfNamingCode = nfNamingCode;
+    }
+
+    public String getMultiStageDesign() {
+        return multiStageDesign;
+    }
+
+    public void setMultiStageDesign(String multiStageDesign) {
+        this.multiStageDesign = multiStageDesign;
+    }
+    /*
+     * GET accessors per design requirements
+     */
 
 
-	/**
-	 * Utility method to allow construction of the filed in the form of
-	 * <serviceResources.modelInfo.modelName>/<serviceVnfs.modelInfo.modelInstanceName>
-	 *
-	 * default setter for this field deprecated
-	 * @param modelName << serviceResources.modelInfo.modelName
-	 */
-	public void constructVnfType(String modelName) {
-		this.vnfType = modelName.concat("/").concat(this.modelInfo.getModelInstanceName());
-	}
+    public String getOrchestrationStatus() {
+        return orchestrationStatus;
+    }
+
+    public void setOrchestrationStatus(String orchestrationStatus) {
+        this.orchestrationStatus = orchestrationStatus;
+    }
+
+    public String getResourceInput() {
+        return resourceInput;
+    }
+
+    public void setResourceInput(String resourceInput) {
+        this.resourceInput = resourceInput;
+    }
+
+    /**
+     * Returns a list of all VfModule objects. Base module is first entry in the list
+     * 
+     * @return ordered list of ModuleResources objects
+     */
+    @JsonIgnore
+    public List<ModuleResource> getAllVfModuleObjects() {
+        if (vfModules == null) {
+            return null;
+        }
+
+        for (int i = 0; i < vfModules.size(); i++) {
+            ModuleResource moduleResource = vfModules.get(i);
+            if (moduleResource.getIsBase()) {
+                vfModules.remove(moduleResource);
+                vfModules.add(0, moduleResource);
+            }
+        }
+        return vfModules;
+    }
+
+    /**
+     *
+     * @return Returns JSON list of all VfModule structures.
+     */
+    @JsonIgnore
+    public String getAllVfModulesJson() {
+
+        return listToJson(vfModules);
+    }
+
+    // methods to add to the list
+    public void addVfModule(ModuleResource moduleResource) {
+        if (vfModules == null) {
+            vfModules = new ArrayList<>();
+        }
+        this.vfModules.add(moduleResource);
+    }
+
+
+    /**
+     * Utility method to allow construction of the filed in the form of
+     * <serviceResources.modelInfo.modelName>/<serviceVnfs.modelInfo.modelInstanceName>
+     *
+     * default setter for this field deprecated
+     * 
+     * @param modelName << serviceResources.modelInfo.modelName
+     */
+    public void constructVnfType(String modelName) {
+        this.vnfType = modelName.concat("/").concat(this.modelInfo.getModelInstanceName());
+    }
 }

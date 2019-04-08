@@ -19,9 +19,9 @@
  */
 
 package org.onap.so.cloudify;
+
 import org.junit.Before;
 import org.junit.Test;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoClassFilter;
 import com.openpojo.reflection.filters.FilterEnum;
@@ -35,29 +35,26 @@ import com.openpojo.validation.test.impl.SetterTester;
 
 public class BeanMultiTest {
 
-	Validator validator;
-	 PojoClassFilter enumFilter;
-	 private PojoClassFilter filterTestClasses = new FilterTestClasses();
-	 
-  @Before
-  public void setup(){
-	  enumFilter = new FilterEnum();
-	   validator = ValidatorBuilder.create()
-              .with(new SetterMustExistRule(),
-                    new GetterMustExistRule())
-              .with(new SetterTester(),
-                    new GetterTester())
-              .build();
-  }
-  @Test
-  public void validateBeansMsoApihandlerBeans() {
-	  
-	  validator.validate("org.onap.so.cloudify.v3.model",enumFilter);
-  }
-  
-  private static class FilterTestClasses implements PojoClassFilter {
-	    public boolean include(PojoClass pojoClass) {
-	      return !pojoClass.getSourcePath().contains("/src/test/java");
-	    }
-	  }
+    Validator validator;
+    PojoClassFilter enumFilter;
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
+
+    @Before
+    public void setup() {
+        enumFilter = new FilterEnum();
+        validator = ValidatorBuilder.create().with(new SetterMustExistRule(), new GetterMustExistRule())
+                .with(new SetterTester(), new GetterTester()).build();
+    }
+
+    @Test
+    public void validateBeansMsoApihandlerBeans() {
+
+        validator.validate("org.onap.so.cloudify.v3.model", enumFilter);
+    }
+
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/src/test/java");
+        }
+    }
 }

@@ -23,7 +23,6 @@ package org.onap.so.adapters.sdnc.sdncrest;
 import org.junit.Test;
 import org.onap.so.adapters.sdnc.FileUtil;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
-
 import static org.junit.Assert.assertNotNull;
 
 public class SDNCServiceRequestConnectorTest {

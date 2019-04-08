@@ -23,49 +23,51 @@ package org.onap.so.client.aai.entities.singletransaction;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({
-"action",
-"uri",
-"response-status-code",
-"response-body"
-})
+@JsonPropertyOrder({"action", "uri", "response-status-code", "response-body"})
 public class OperationBodyResponse {
 
-	@JsonProperty("action")
-	public String action;
-	@JsonProperty("uri")
-	public String uri;
-	@JsonProperty("response-status-code")
-	public Integer responseStatusCode;
-	@JsonProperty("response-body")
-	public Object responseBody;
-	
-	public String getAction() {
-		return action;
-	}
-	public void setAction(String action) {
-		this.action = action;
-	}
-	public String getUri() {
-		return uri;
-	}
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
-	@JsonProperty("response-status-code")
-	public Integer getResponseStatusCode() {
-		return responseStatusCode;
-	}
-	@JsonProperty("response-status-code")
-	public void setResponseStatusCode(Integer responseStatusCode) {
-		this.responseStatusCode = responseStatusCode;
-	}
-	@JsonProperty("response-body")
-	public Object getResponseBody() {
-		return responseBody;
-	}
-	@JsonProperty("response-body")
-	public void getResponseBody(Object responseBody) {
-		this.responseBody = responseBody;
-	}
+    @JsonProperty("action")
+    public String action;
+    @JsonProperty("uri")
+    public String uri;
+    @JsonProperty("response-status-code")
+    public Integer responseStatusCode;
+    @JsonProperty("response-body")
+    public Object responseBody;
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    @JsonProperty("response-status-code")
+    public Integer getResponseStatusCode() {
+        return responseStatusCode;
+    }
+
+    @JsonProperty("response-status-code")
+    public void setResponseStatusCode(Integer responseStatusCode) {
+        this.responseStatusCode = responseStatusCode;
+    }
+
+    @JsonProperty("response-body")
+    public Object getResponseBody() {
+        return responseBody;
+    }
+
+    @JsonProperty("response-body")
+    public void getResponseBody(Object responseBody) {
+        this.responseBody = responseBody;
+    }
 }

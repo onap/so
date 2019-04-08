@@ -23,29 +23,27 @@ package org.onap.so.adapters.nwrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.openstack.beans.NetworkRollback;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("rollbackNetworkRequest")
 @XmlRootElement(name = "rollbackNetworkRequest")
 public class RollbackNetworkRequest extends NetworkRequestCommon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8705660877263749940L;
-	private NetworkRollback networkRollback;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8705660877263749940L;
+    private NetworkRollback networkRollback;
 
-	public RollbackNetworkRequest() {
-		super();
-	}
+    public RollbackNetworkRequest() {
+        super();
+    }
 
-	public NetworkRollback getNetworkRollback() {
-		return networkRollback;
-	}
+    public NetworkRollback getNetworkRollback() {
+        return networkRollback;
+    }
 
-	public void setNetworkRollback(NetworkRollback networkRollback) {
-		this.networkRollback = networkRollback;
-	}
+    public void setNetworkRollback(NetworkRollback networkRollback) {
+        this.networkRollback = networkRollback;
+    }
 }

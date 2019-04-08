@@ -21,24 +21,24 @@
 package org.onap.so.apihandlerinfra.logging;
 
 import java.io.Serializable;
-
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.logger.ErrorCode;
 
 
 
-public class ErrorLoggerInfo implements Serializable{
+public class ErrorLoggerInfo implements Serializable {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -2917784544098682110L;
-	private MessageEnum loggerMessageType;
+    * 
+    */
+    private static final long serialVersionUID = -2917784544098682110L;
+    private MessageEnum loggerMessageType;
     private String errorSource;
     private String targetEntity;
     private String targetServiceName;
     private ErrorCode errorCode;
 
-    private ErrorLoggerInfo(MessageEnum loggerMessageType, String errorSource, String targetEntity, String targetServiceName, ErrorCode errorCode){
+    private ErrorLoggerInfo(MessageEnum loggerMessageType, String errorSource, String targetEntity,
+            String targetServiceName, ErrorCode errorCode) {
         this.loggerMessageType = loggerMessageType;
         this.errorSource = errorSource;
         this.targetEntity = targetEntity;
@@ -66,44 +66,44 @@ public class ErrorLoggerInfo implements Serializable{
         return errorCode;
     }
 
-    public static class Builder{
+    public static class Builder {
         private MessageEnum loggerMessageType;
         private String errorSource = "";
         private String targetEntity = "";
         private String targetServiceName = "";
         private ErrorCode errorCode;
 
-        public Builder(MessageEnum loggerMessageType, ErrorCode errorCode){
+        public Builder(MessageEnum loggerMessageType, ErrorCode errorCode) {
             this.loggerMessageType = loggerMessageType;
             this.errorCode = errorCode;
         }
 
-        public Builder loggerMessageType(MessageEnum loggerMessageType){
+        public Builder loggerMessageType(MessageEnum loggerMessageType) {
             this.loggerMessageType = loggerMessageType;
             return this;
         }
 
-        public Builder errorSource(String errorSource){
+        public Builder errorSource(String errorSource) {
             this.errorSource = errorSource;
             return this;
         }
 
-        public Builder targetEntity(String targetEntity){
+        public Builder targetEntity(String targetEntity) {
             this.targetEntity = targetEntity;
             return this;
         }
 
-        public Builder targetServiceName(String targetServiceName){
+        public Builder targetServiceName(String targetServiceName) {
             this.targetServiceName = targetServiceName;
             return this;
         }
 
-        public Builder errorCode(ErrorCode errorCode){
+        public Builder errorCode(ErrorCode errorCode) {
             this.errorCode = errorCode;
             return this;
         }
 
-        public ErrorLoggerInfo build(){
+        public ErrorLoggerInfo build() {
             return new ErrorLoggerInfo(loggerMessageType, errorSource, targetEntity, targetServiceName, errorCode);
         }
 

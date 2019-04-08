@@ -20,13 +20,12 @@
 
 package org.onap.so.client.exception;
 
-public class BadResponseException extends Exception{
+public class BadResponseException extends Exception {
 
-	public BadResponseException() {}
+    public BadResponseException() {}
 
-    public BadResponseException(String message)
-    {
-       super(message);
+    public BadResponseException(String message) {
+        super(message);
     }
 
 }

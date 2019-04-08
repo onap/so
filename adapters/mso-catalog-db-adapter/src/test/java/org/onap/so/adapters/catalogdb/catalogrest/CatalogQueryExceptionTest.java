@@ -26,12 +26,13 @@ import static org.junit.Assert.assertEquals;
 
 public class CatalogQueryExceptionTest {
     @Test
-    public void catalogQueryExceptionConstructor(){
+    public void catalogQueryExceptionConstructor() {
         CatalogQueryException messageCatalogQueryException = new CatalogQueryException("TestMessage");
         assertNotNull(messageCatalogQueryException.getMessage());
-        assertEquals("TestMessage",messageCatalogQueryException.getMessage());
+        assertEquals("TestMessage", messageCatalogQueryException.getMessage());
 
-        CatalogQueryException paramsCatalogQueryException = new CatalogQueryException("TestMessage",CatalogQueryExceptionCategory.INTERNAL,true,"messageID");
+        CatalogQueryException paramsCatalogQueryException =
+                new CatalogQueryException("TestMessage", CatalogQueryExceptionCategory.INTERNAL, true, "messageID");
         assertParams(paramsCatalogQueryException);
 
         CatalogQueryException defaultCatalogQueryException = new CatalogQueryException();
@@ -44,12 +45,12 @@ public class CatalogQueryExceptionTest {
 
     private void assertParams(CatalogQueryException paramsCatalogQueryException) {
         assertNotNull(paramsCatalogQueryException.getMessage());
-        assertEquals("TestMessage",paramsCatalogQueryException.getMessage());
+        assertEquals("TestMessage", paramsCatalogQueryException.getMessage());
         assertNotNull(paramsCatalogQueryException.getCategory());
-        assertEquals(CatalogQueryExceptionCategory.INTERNAL,paramsCatalogQueryException.getCategory());
+        assertEquals(CatalogQueryExceptionCategory.INTERNAL, paramsCatalogQueryException.getCategory());
         assertNotNull(paramsCatalogQueryException.getRolledBack());
-        assertEquals(true,paramsCatalogQueryException.getRolledBack());
+        assertEquals(true, paramsCatalogQueryException.getRolledBack());
         assertNotNull(paramsCatalogQueryException.getMessageId());
-        assertEquals("messageID",paramsCatalogQueryException.getMessageId());
+        assertEquals("messageID", paramsCatalogQueryException.getMessageId());
     }
 }

@@ -32,19 +32,19 @@ public class MsoRequestsDbExceptionBean implements Serializable {
 
     private String message;
 
-	public MsoRequestsDbExceptionBean () {
-		/* Empty constructor */
-	}
+    public MsoRequestsDbExceptionBean() {
+        /* Empty constructor */
+    }
 
-	public MsoRequestsDbExceptionBean (String message) {
-		this.message = message;
-	}
+    public MsoRequestsDbExceptionBean(String message) {
+        this.message = message;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 }

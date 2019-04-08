@@ -24,6 +24,7 @@ import com.google.common.base.CaseFormat;
 
 public interface GraphInventoryObjectName {
 
-	public String typeName();
-	public String typeName(CaseFormat format);
+    public String typeName();
+
+    public String typeName(CaseFormat format);
 }

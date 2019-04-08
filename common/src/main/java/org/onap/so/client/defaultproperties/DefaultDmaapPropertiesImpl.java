@@ -17,7 +17,7 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client.defaultproperties;
 
 import java.io.File;
@@ -27,23 +27,24 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import org.onap.so.client.dmaap.DmaapProperties;
 
 public class DefaultDmaapPropertiesImpl implements DmaapProperties {
 
-	private final Map<String, String> properties;
-	public DefaultDmaapPropertiesImpl() throws IOException {
-		File initialFile = new File("src/test/resources/dmaap.properties");
-	    InputStream targetStream = new FileInputStream(initialFile);
-		Properties properties = new Properties();
-		properties.load(targetStream);
-		this.properties = new HashMap<>();
-		properties.forEach((key, value) -> this.properties.put((String)key, (String)value));
-	}
-	@Override
-	public Map<String, String> getProperties() {
-		return this.properties;
-	} 
+    private final Map<String, String> properties;
+
+    public DefaultDmaapPropertiesImpl() throws IOException {
+        File initialFile = new File("src/test/resources/dmaap.properties");
+        InputStream targetStream = new FileInputStream(initialFile);
+        Properties properties = new Properties();
+        properties.load(targetStream);
+        this.properties = new HashMap<>();
+        properties.forEach((key, value) -> this.properties.put((String) key, (String) value));
+    }
+
+    @Override
+    public Map<String, String> getProperties() {
+        return this.properties;
+    }
 
 }

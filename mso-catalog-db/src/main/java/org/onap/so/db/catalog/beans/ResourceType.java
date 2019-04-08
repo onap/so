@@ -21,24 +21,18 @@
 package org.onap.so.db.catalog.beans;
 
 public enum ResourceType {
-	SERVICE("Service"),
-	VNF("Vnf"),
-	VOLUME_GROUP("VolumeGroup"),
-	VF_MODULE("VfModule"),
-	NETWORK("Network"),
-	NETWORK_COLLECTION("NetworkCollection"),
-	CONFIGURATION("Configuration"),
-	INSTANCE_GROUP("InstanceGroup"),
-	NO_VALIDATE("NoValidate");
-	
-	private final String name;
-	
-	private ResourceType(String name) {
-		this.name = name;
-	}
-	
-	@Override
-	public String toString() {
-		return name;
-	}
+    SERVICE("Service"), VNF("Vnf"), VOLUME_GROUP("VolumeGroup"), VF_MODULE("VfModule"), NETWORK(
+            "Network"), NETWORK_COLLECTION("NetworkCollection"), CONFIGURATION(
+                    "Configuration"), INSTANCE_GROUP("InstanceGroup"), NO_VALIDATE("NoValidate");
+
+    private final String name;
+
+    private ResourceType(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

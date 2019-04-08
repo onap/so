@@ -21,38 +21,37 @@
 package org.onap.so.asdc.tenantIsolation;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onap.so.asdc.BaseTest;
 import org.onap.so.client.aai.AAIVersion;
 
 public class AaiClientPropertiesImplTest extends BaseTest {
-	
-	private static final String SYSTEM_NAME = "MSO";
-	private static final String LOCAL_HOST = "http://localhost:";
-	
-	@BeforeClass
-	public static void setup() throws Exception {
-		System.setProperty("mso.config.path", "src/test/resources");
-	}
-	
-	@Test
-	public void getEndpointTest() throws Exception {
-		AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
-		String aaiEndpoint = aaiClientPropertiesImpl.getEndpoint().toString();
-		assertEquals(LOCAL_HOST + wireMockPort, aaiEndpoint);
-	}
-	
-	@Test
-	public void getSystemNameTest() {
-		AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
-		assertEquals(SYSTEM_NAME, aaiClientPropertiesImpl.getSystemName());
-	}
-	
-	@Test
-	public void getDefaultVersionTest() {
-		AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
-		assertEquals(AAIVersion.LATEST, aaiClientPropertiesImpl.getDefaultVersion());
-	}
+
+    private static final String SYSTEM_NAME = "MSO";
+    private static final String LOCAL_HOST = "http://localhost:";
+
+    @BeforeClass
+    public static void setup() throws Exception {
+        System.setProperty("mso.config.path", "src/test/resources");
+    }
+
+    @Test
+    public void getEndpointTest() throws Exception {
+        AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
+        String aaiEndpoint = aaiClientPropertiesImpl.getEndpoint().toString();
+        assertEquals(LOCAL_HOST + wireMockPort, aaiEndpoint);
+    }
+
+    @Test
+    public void getSystemNameTest() {
+        AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
+        assertEquals(SYSTEM_NAME, aaiClientPropertiesImpl.getSystemName());
+    }
+
+    @Test
+    public void getDefaultVersionTest() {
+        AaiClientPropertiesImpl aaiClientPropertiesImpl = new AaiClientPropertiesImpl();
+        assertEquals(AAIVersion.LATEST, aaiClientPropertiesImpl.getDefaultVersion());
+    }
 }

@@ -26,14 +26,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-
 import org.onap.so.adapters.sdnc.impl.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType>
@@ -50,12 +52,9 @@ import org.w3c.dom.Node;
  *
  *
  */
-//BPEL to SDNCAdapter request
+// BPEL to SDNCAdapter request
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "requestHeader",
-    "requestData"
-})
+@XmlType(name = "", propOrder = {"requestHeader", "requestData"})
 @XmlRootElement(name = "SDNCAdapterRequest")
 public class SDNCAdapterRequest {
 
@@ -67,9 +66,7 @@ public class SDNCAdapterRequest {
     /**
      * Gets the value of the requestHeader property.
      *
-     * @return
-     *     possible object is
-     *     {@link RequestHeader }
+     * @return possible object is {@link RequestHeader }
      *
      */
     public RequestHeader getRequestHeader() {
@@ -79,9 +76,7 @@ public class SDNCAdapterRequest {
     /**
      * Sets the value of the requestHeader property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link RequestHeader }
+     * @param value allowed object is {@link RequestHeader }
      *
      */
     public void setRequestHeader(RequestHeader value) {
@@ -91,9 +86,7 @@ public class SDNCAdapterRequest {
     /**
      * Gets the value of the requestData property.
      *
-     * @return
-     *     possible object is
-     *     {@link Object }
+     * @return possible object is {@link Object }
      *
      */
     public Object getRequestData() {
@@ -103,26 +96,22 @@ public class SDNCAdapterRequest {
     /**
      * Sets the value of the requestData property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Object }
+     * @param value allowed object is {@link Object }
      *
      */
     public void setRequestData(Object value) {
         this.requestData = value;
     }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		String rd = "";
-		if (requestData != null)
-		{
-			Node node = (Node) requestData;
-			Document doc = node.getOwnerDocument();
-			rd = Utils.domToStr(doc);
-		}
-		return "SDNCAdapterRequest [requestHeader=" + requestHeader.toString()
-				+ ", requestData=" + rd + "]";
-	}
+        String rd = "";
+        if (requestData != null) {
+            Node node = (Node) requestData;
+            Document doc = node.getOwnerDocument();
+            rd = Utils.domToStr(doc);
+        }
+        return "SDNCAdapterRequest [requestHeader=" + requestHeader.toString() + ", requestData=" + rd + "]";
+    }
 }

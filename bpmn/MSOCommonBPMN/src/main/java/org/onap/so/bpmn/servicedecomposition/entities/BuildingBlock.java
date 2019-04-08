@@ -21,54 +21,62 @@
 package org.onap.so.bpmn.servicedecomposition.entities;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("buildingBlock")
-public class BuildingBlock implements Serializable{
-	
-	private static final long serialVersionUID = -1144315411128866052L;
-	
-	@JsonProperty("mso-id")
-	private String msoId;
-	@JsonProperty("bpmn-flow-name")
-	private String bpmnFlowName;
-	@JsonProperty("key")
-	private String key;
-	@JsonProperty("is-virtual-link")
-	private Boolean isVirtualLink;
-	@JsonProperty("virtual-link-key")
-	private String virtualLinkKey;
+public class BuildingBlock implements Serializable {
 
-	public String getBpmnFlowName() {
-		return bpmnFlowName;
-	}
-	public void setBpmnFlowName(String bpmnFlowName) {
-		this.bpmnFlowName = bpmnFlowName;
-	}
-	public String getMsoId() {
-		return msoId;
-	}
-	public void setMsoId(String msoId) {
-		this.msoId = msoId;
-	}
-	public String getKey() {
-		return key;
-	}
-	public void setKey(String key) {
-		this.key = key;
-	}
-	public Boolean getIsVirtualLink() {
-		return isVirtualLink;
-	}
-	public void setIsVirtualLink(Boolean isVirtualLink) {
-		this.isVirtualLink = isVirtualLink;
-	}
-	public String getVirtualLinkKey() {
-		return virtualLinkKey;
-	}
-	public void setVirtualLinkKey(String virtualLinkKey) {
-		this.virtualLinkKey = virtualLinkKey;
-	}
+    private static final long serialVersionUID = -1144315411128866052L;
+
+    @JsonProperty("mso-id")
+    private String msoId;
+    @JsonProperty("bpmn-flow-name")
+    private String bpmnFlowName;
+    @JsonProperty("key")
+    private String key;
+    @JsonProperty("is-virtual-link")
+    private Boolean isVirtualLink;
+    @JsonProperty("virtual-link-key")
+    private String virtualLinkKey;
+
+    public String getBpmnFlowName() {
+        return bpmnFlowName;
+    }
+
+    public void setBpmnFlowName(String bpmnFlowName) {
+        this.bpmnFlowName = bpmnFlowName;
+    }
+
+    public String getMsoId() {
+        return msoId;
+    }
+
+    public void setMsoId(String msoId) {
+        this.msoId = msoId;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public Boolean getIsVirtualLink() {
+        return isVirtualLink;
+    }
+
+    public void setIsVirtualLink(Boolean isVirtualLink) {
+        this.isVirtualLink = isVirtualLink;
+    }
+
+    public String getVirtualLinkKey() {
+        return virtualLinkKey;
+    }
+
+    public void setVirtualLinkKey(String virtualLinkKey) {
+        this.virtualLinkKey = virtualLinkKey;
+    }
 }

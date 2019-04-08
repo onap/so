@@ -28,11 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "template_type",
-        "workload_id",
-        "template_response"
-})
+@JsonPropertyOrder({"template_type", "workload_id", "template_response"})
 public class MulticloudCreateResponse implements Serializable {
     private final static long serialVersionUID = -5215028275577848311L;
 
@@ -44,8 +40,7 @@ public class MulticloudCreateResponse implements Serializable {
     private MulticloudCreateStackResponse templateResponse;
 
     @JsonCreator
-    public MulticloudCreateResponse(
-            @JsonProperty("template_type") String templateType,
+    public MulticloudCreateResponse(@JsonProperty("template_type") String templateType,
             @JsonProperty("workload_id") String workloadId,
             @JsonProperty("template_response") MulticloudCreateStackResponse templateResponse) {
         this.templateType = templateType;
@@ -85,6 +80,7 @@ public class MulticloudCreateResponse implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("templateType", templateType).append("workloadId", workloadId).append("templateResponse", templateResponse).toString();
+        return new ToStringBuilder(this).append("templateType", templateType).append("workloadId", workloadId)
+                .append("templateResponse", templateResponse).toString();
     }
 }

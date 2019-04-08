@@ -23,53 +23,53 @@ package org.onap.so.adapters.tenant.exceptions;
 
 
 import javax.xml.ws.WebFault;
-
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 /**
- * This class simply extends Exception (without addition additional functionality)
- * to provide an identifier for Tenant related exceptions on create, delete, query.
+ * This class simply extends Exception (without addition additional functionality) to provide an identifier for Tenant
+ * related exceptions on create, delete, query.
  * 
  *
  */
-@WebFault (name="TenantException", faultBean="org.onap.so.adapters.tenant.exceptions.TenantExceptionBean", targetNamespace="http://org.onap.so/tenant")
+@WebFault(name = "TenantException", faultBean = "org.onap.so.adapters.tenant.exceptions.TenantExceptionBean",
+        targetNamespace = "http://org.onap.so/tenant")
 public class TenantException extends Exception {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private TenantExceptionBean faultInfo;
-	
-	public TenantException (String msg) {
-		super(msg);
-		faultInfo = new TenantExceptionBean (msg);
-	}
-	
-	public TenantException (String msg, Throwable e) {
-		super (msg, e);
-		faultInfo = new TenantExceptionBean (msg);
-	}
+    private TenantExceptionBean faultInfo;
 
-	public TenantException (String msg, MsoExceptionCategory category) {
-		super(msg);
-		faultInfo = new TenantExceptionBean (msg, category);
-	}
-	
-	public TenantException (String msg, MsoExceptionCategory category, Throwable e) {
-		super (msg, e);
-		faultInfo = new TenantExceptionBean (msg, category);
-	}
-	
-	public TenantException (MsoException e) {
-		super (e);
-		faultInfo = new TenantExceptionBean (e.getContextMessage(), e.getCategory());
-	}
+    public TenantException(String msg) {
+        super(msg);
+        faultInfo = new TenantExceptionBean(msg);
+    }
 
-	public TenantExceptionBean getFaultInfo() {
-		return faultInfo;
-	}
+    public TenantException(String msg, Throwable e) {
+        super(msg, e);
+        faultInfo = new TenantExceptionBean(msg);
+    }
 
-	public void setFaultInfo(TenantExceptionBean faultInfo) {
-		this.faultInfo = faultInfo;
-	}
+    public TenantException(String msg, MsoExceptionCategory category) {
+        super(msg);
+        faultInfo = new TenantExceptionBean(msg, category);
+    }
+
+    public TenantException(String msg, MsoExceptionCategory category, Throwable e) {
+        super(msg, e);
+        faultInfo = new TenantExceptionBean(msg, category);
+    }
+
+    public TenantException(MsoException e) {
+        super(e);
+        faultInfo = new TenantExceptionBean(e.getContextMessage(), e.getCategory());
+    }
+
+    public TenantExceptionBean getFaultInfo() {
+        return faultInfo;
+    }
+
+    public void setFaultInfo(TenantExceptionBean faultInfo) {
+        this.faultInfo = faultInfo;
+    }
 }

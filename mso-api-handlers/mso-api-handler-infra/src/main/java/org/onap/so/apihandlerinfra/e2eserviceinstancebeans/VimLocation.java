@@ -26,7 +26,7 @@ public class VimLocation {
     @JsonProperty("vimId")
     private String vimId;
 
-    
+
     /**
      * @return Returns the vimId.
      */
@@ -34,12 +34,12 @@ public class VimLocation {
         return vimId;
     }
 
-    
+
     /**
      * @param vimId The vimId to set.
      */
     public void setVimId(String vimId) {
         this.vimId = vimId;
     }
-    
+
 }

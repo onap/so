@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,22 +30,20 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestInfo implements Serializable {
 
-	private static final long serialVersionUID = 1346372792555344857L;
-	@JsonProperty("resourceType")
+    private static final long serialVersionUID = 1346372792555344857L;
+    @JsonProperty("resourceType")
     protected ResourceType resourceType;
-	@JsonProperty("source")
+    @JsonProperty("source")
     protected String source;
-	@JsonProperty("instanceName")
+    @JsonProperty("instanceName")
     protected String instanceName;
-	@JsonProperty("requestorId")
+    @JsonProperty("requestorId")
     protected String requestorId;
 
-	/**
+    /**
      * Gets the value of the resourceType property.
      *
-     * @return
-     *     possible object is
-     *     {@link ResourceType }
+     * @return possible object is {@link ResourceType }
      *
      */
     public ResourceType getResourceType() {
@@ -56,9 +53,7 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the source property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link ResourceType }
+     * @param value allowed object is {@link ResourceType }
      *
      */
     public void setResourceType(ResourceType value) {
@@ -69,9 +64,7 @@ public class RequestInfo implements Serializable {
     /**
      * Gets the value of the source property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getSource() {
@@ -81,38 +74,34 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the source property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setSource(String value) {
         this.source = value;
     }
 
-	public String getInstanceName() {
-		return instanceName;
-	}
+    public String getInstanceName() {
+        return instanceName;
+    }
 
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
 
-	public String getRequestorId() {
-		return requestorId;
-	}
+    public String getRequestorId() {
+        return requestorId;
+    }
 
-	public void setRequestorId(String requestorId) {
-		this.requestorId = requestorId;
-	}
+    public void setRequestorId(String requestorId) {
+        this.requestorId = requestorId;
+    }
 
-	@Override
-	public String toString() {
-		return "RequestInfo [source=" + source 
-				        + ", instanceName=" + instanceName
-				        + ", requestorId=" 	+ requestorId 
-				        + ", resourceType=" 	+ resourceType + "]";
-	}
+    @Override
+    public String toString() {
+        return "RequestInfo [source=" + source + ", instanceName=" + instanceName + ", requestorId=" + requestorId
+                + ", resourceType=" + resourceType + "]";
+    }
 
 
 }

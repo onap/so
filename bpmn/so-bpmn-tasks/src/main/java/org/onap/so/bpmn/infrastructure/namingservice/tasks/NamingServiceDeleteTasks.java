@@ -32,22 +32,22 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NamingServiceDeleteTasks {
-	
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	
-	@Autowired
-	private NamingServiceResources namingServiceResources;
-	
-	public void deleteInstanceGroupName(BuildingBlockExecution execution) throws Exception {		
-		InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
-		
-		try {
-			namingServiceResources.deleteInstanceGroupName(instanceGroup);			
-		} catch (Exception ex) {			
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}	
-	}	
+
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+
+    @Autowired
+    private NamingServiceResources namingServiceResources;
+
+    public void deleteInstanceGroupName(BuildingBlockExecution execution) throws Exception {
+        InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
+
+        try {
+            namingServiceResources.deleteInstanceGroupName(instanceGroup);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 }

@@ -37,19 +37,18 @@ import org.springframework.stereotype.Component;
 @Component
 public final class ASDCNotificationCallBack implements INotificationCallback {
 
-	@Autowired
+    @Autowired
     private ASDCController asdcController;
-    
+
     protected static final Logger logger = LoggerFactory.getLogger(ASDCNotificationCallBack.class);
 
     /**
-     * This method can be called multiple times at the same moment.
-     * The controller must be thread safe !
+     * This method can be called multiple times at the same moment. The controller must be thread safe !
      */
     @Override
-    public void activateCallback (INotificationData iNotif) {
-        String event = "Receive a callback notification in ASDC, nb of resources: " + iNotif.getResources ().size ();
+    public void activateCallback(INotificationData iNotif) {
+        String event = "Receive a callback notification in ASDC, nb of resources: " + iNotif.getResources().size();
         logger.debug(event);
-        asdcController.treatNotification (iNotif);
+        asdcController.treatNotification(iNotif);
     }
 }

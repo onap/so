@@ -36,55 +36,62 @@ public class Request {
     protected String requestType;
     protected RequestDetails requestDetails;
     protected RequestStatus requestStatus;
-    
-    
-	public String getRequestId() {
-		return requestId;
-	}
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
-	
-	public String getStartTime() {
-		return startTime;
-	}
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
-	
-	public String getRequestScope() {
-		return requestScope;
-	}
-	public void setRequestScope(String requestScope) {
-		this.requestScope = requestScope;
-	}
-	
-	public String getRequestType() {
-		return requestType;
-	}
-	public void setRequestType(String requestType) {
-		this.requestType = requestType;
-	}
-	
-	public RequestStatus getRequestStatus() {
-		return requestStatus;
-	}
-	public void setRequestStatus(RequestStatus requestStatus) {
-		this.requestStatus = requestStatus;
-	}
-	
-	public InstanceReferences getInstanceReferences() {
-		return instanceReferences;
-	}
-	public void setInstanceReferences(InstanceReferences instanceReferences) {
-		this.instanceReferences = instanceReferences;
-	}
-	
-	public RequestDetails getRequestDetails() {
-		return requestDetails;
-	}
-	public void setRequestDetails(RequestDetails requestDetails) {
-		this.requestDetails = requestDetails;
-	}
+
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getRequestScope() {
+        return requestScope;
+    }
+
+    public void setRequestScope(String requestScope) {
+        this.requestScope = requestScope;
+    }
+
+    public String getRequestType() {
+        return requestType;
+    }
+
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
+    }
+
+    public RequestStatus getRequestStatus() {
+        return requestStatus;
+    }
+
+    public void setRequestStatus(RequestStatus requestStatus) {
+        this.requestStatus = requestStatus;
+    }
+
+    public InstanceReferences getInstanceReferences() {
+        return instanceReferences;
+    }
+
+    public void setInstanceReferences(InstanceReferences instanceReferences) {
+        this.instanceReferences = instanceReferences;
+    }
+
+    public RequestDetails getRequestDetails() {
+        return requestDetails;
+    }
+
+    public void setRequestDetails(RequestDetails requestDetails) {
+        this.requestDetails = requestDetails;
+    }
 
 }

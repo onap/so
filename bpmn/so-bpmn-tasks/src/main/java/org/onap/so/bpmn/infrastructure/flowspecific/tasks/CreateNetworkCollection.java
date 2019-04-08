@@ -36,94 +36,107 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateNetworkCollection {
-	private static final Logger logger = LoggerFactory.getLogger(CreateNetworkCollection.class);
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private AAINetworkResources aaiNetworkResources;
+    private static final Logger logger = LoggerFactory.getLogger(CreateNetworkCollection.class);
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private AAINetworkResources aaiNetworkResources;
 
-	private static final String UNDERSCORE = "_";
-	private static final String NETWORK_COLLECTION_NAME = "networkCollectionName";
-	
-	/**
-	 * BPMN access method to build Network Collection Name
-	 * @param execution
-	 * @throws Exception
-	 */
-	public void buildNetworkCollectionName(BuildingBlockExecution execution) throws Exception {
-		try{
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			InstanceGroup instanceGroup =  serviceInstance.getCollection().getInstanceGroup();
-			if(instanceGroup.getModelInfoInstanceGroup() != null) {
-				//Build collection name assembling SI name and IG function
-				if(serviceInstance.getServiceInstanceName() != null 
-						&& instanceGroup.getModelInfoInstanceGroup().getFunction() != null) {
-					String networkCollectionName = serviceInstance.getServiceInstanceName().concat(UNDERSCORE).concat(instanceGroup.getModelInfoInstanceGroup().getFunction());
-					//set networkCollectionName object on execution to be re-used within current BB
-					execution.setVariable(NETWORK_COLLECTION_NAME, networkCollectionName);
-				} else {
-					throw new IllegalArgumentException("Cannot generate collection name because either one or both fields are null: "
-							+ " Service Instance Name: " + serviceInstance.getServiceInstanceName() 
-							+ ", Instance Group Function: " + instanceGroup.getModelInfoInstanceGroup().getFunction());
-				}
-			} else {
-				throw new IllegalArgumentException("Instance group model info is null");
-			}
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	/**
-	 * BPMN access method to connect Network Collection
-	 * @param execution
-	 * @throws Exception
-	 */
-	public void connectCollectionToInstanceGroup(BuildingBlockExecution execution) throws Exception {
-		execution.setVariable("connectCollectionToInstanceGroupRollback", false);
-		try{
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			Collection networkCollection =  serviceInstance.getCollection();
-			aaiNetworkResources.connectNetworkCollectionInstanceGroupToNetworkCollection(networkCollection.getInstanceGroup(), networkCollection);
-			execution.setVariable("connectCollectionToInstanceGroupRollback", true);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	/**
-	 * BPMN access method to connect Instance Group to Cloud Region
-	 * @param execution
-	 * @throws Exception
-	 */
-	public void connectInstanceGroupToCloudRegion(BuildingBlockExecution execution) throws Exception {
-		execution.setVariable("connectInstanceGroupToCloudRegionRollback", false);
-		try{
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			Collection networkCollection =  serviceInstance.getCollection();
-			aaiNetworkResources.connectInstanceGroupToCloudRegion(networkCollection.getInstanceGroup(), execution.getGeneralBuildingBlock().getCloudRegion());
-			execution.setVariable("connectInstanceGroupToCloudRegionRollback", true);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	/**
-	 * BPMN access method to connect Network Collection
-	 * @param execution
-	 * @throws Exception
-	 */
-	public void connectCollectionToServiceInstance(BuildingBlockExecution execution) throws Exception {
-		execution.setVariable("connectCollectionToServiceInstanceRollback", false);
-		try{
-			ServiceInstance serviceInstance =  extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-			Collection networkCollection =  serviceInstance.getCollection();
-			aaiNetworkResources.connectNetworkCollectionToServiceInstance(networkCollection, serviceInstance);
-			execution.setVariable("connectCollectionToServiceInstanceRollback", true);
-		} catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
+    private static final String UNDERSCORE = "_";
+    private static final String NETWORK_COLLECTION_NAME = "networkCollectionName";
+
+    /**
+     * BPMN access method to build Network Collection Name
+     * 
+     * @param execution
+     * @throws Exception
+     */
+    public void buildNetworkCollectionName(BuildingBlockExecution execution) throws Exception {
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            InstanceGroup instanceGroup = serviceInstance.getCollection().getInstanceGroup();
+            if (instanceGroup.getModelInfoInstanceGroup() != null) {
+                // Build collection name assembling SI name and IG function
+                if (serviceInstance.getServiceInstanceName() != null
+                        && instanceGroup.getModelInfoInstanceGroup().getFunction() != null) {
+                    String networkCollectionName = serviceInstance.getServiceInstanceName().concat(UNDERSCORE)
+                            .concat(instanceGroup.getModelInfoInstanceGroup().getFunction());
+                    // set networkCollectionName object on execution to be re-used within current BB
+                    execution.setVariable(NETWORK_COLLECTION_NAME, networkCollectionName);
+                } else {
+                    throw new IllegalArgumentException(
+                            "Cannot generate collection name because either one or both fields are null: "
+                                    + " Service Instance Name: " + serviceInstance.getServiceInstanceName()
+                                    + ", Instance Group Function: "
+                                    + instanceGroup.getModelInfoInstanceGroup().getFunction());
+                }
+            } else {
+                throw new IllegalArgumentException("Instance group model info is null");
+            }
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    /**
+     * BPMN access method to connect Network Collection
+     * 
+     * @param execution
+     * @throws Exception
+     */
+    public void connectCollectionToInstanceGroup(BuildingBlockExecution execution) throws Exception {
+        execution.setVariable("connectCollectionToInstanceGroupRollback", false);
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            Collection networkCollection = serviceInstance.getCollection();
+            aaiNetworkResources.connectNetworkCollectionInstanceGroupToNetworkCollection(
+                    networkCollection.getInstanceGroup(), networkCollection);
+            execution.setVariable("connectCollectionToInstanceGroupRollback", true);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    /**
+     * BPMN access method to connect Instance Group to Cloud Region
+     * 
+     * @param execution
+     * @throws Exception
+     */
+    public void connectInstanceGroupToCloudRegion(BuildingBlockExecution execution) throws Exception {
+        execution.setVariable("connectInstanceGroupToCloudRegionRollback", false);
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            Collection networkCollection = serviceInstance.getCollection();
+            aaiNetworkResources.connectInstanceGroupToCloudRegion(networkCollection.getInstanceGroup(),
+                    execution.getGeneralBuildingBlock().getCloudRegion());
+            execution.setVariable("connectInstanceGroupToCloudRegionRollback", true);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    /**
+     * BPMN access method to connect Network Collection
+     * 
+     * @param execution
+     * @throws Exception
+     */
+    public void connectCollectionToServiceInstance(BuildingBlockExecution execution) throws Exception {
+        execution.setVariable("connectCollectionToServiceInstanceRollback", false);
+        try {
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            Collection networkCollection = serviceInstance.getCollection();
+            aaiNetworkResources.connectNetworkCollectionToServiceInstance(networkCollection, serviceInstance);
+            execution.setVariable("connectCollectionToServiceInstanceRollback", true);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
 }

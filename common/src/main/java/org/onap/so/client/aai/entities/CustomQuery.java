@@ -23,60 +23,58 @@ package org.onap.so.client.aai.entities;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 
-@JsonInclude(JsonInclude.Include.NON_NULL) 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomQuery {
-	
-	private List<String> start;
-	private String query;
-	private String gremlin;
-	
-	public String getGremlin() {
-		return gremlin;
-	}
 
-	public void setGremlin(String gremlin) {
-		this.gremlin = gremlin;
-	}
+    private List<String> start;
+    private String query;
+    private String gremlin;
 
-	
-	public CustomQuery(List<AAIResourceUri> start){
-		this.setStart(start);
-	}
-	
-	public CustomQuery(List<AAIResourceUri> start, String query){
-		this.setStart(start);
-		this.query= "query/" + query;
-	}
-	
-	public CustomQuery(String gremlin) throws UnsupportedEncodingException{
-		this.gremlin=gremlin;
-	}
-	
-	public List<String> getStart() {
-		return start;
-	}
+    public String getGremlin() {
+        return gremlin;
+    }
 
-	public void setStart(List<AAIResourceUri> start) {
-		this.start = this.mapUris(start);
-	}
+    public void setGremlin(String gremlin) {
+        this.gremlin = gremlin;
+    }
 
-	public String getQuery() {
-		return query;
-	}
 
-	public void setQuery(String query) {
-		this.query = query;
-	}
-	
-	private List<String> mapUris(List<AAIResourceUri> uris) {
-		final List<String> result = new ArrayList<>();
-		uris.stream().map(item -> item.build().toString()).forEach(result::add);
-		return result;
-	}
+    public CustomQuery(List<AAIResourceUri> start) {
+        this.setStart(start);
+    }
+
+    public CustomQuery(List<AAIResourceUri> start, String query) {
+        this.setStart(start);
+        this.query = "query/" + query;
+    }
+
+    public CustomQuery(String gremlin) throws UnsupportedEncodingException {
+        this.gremlin = gremlin;
+    }
+
+    public List<String> getStart() {
+        return start;
+    }
+
+    public void setStart(List<AAIResourceUri> start) {
+        this.start = this.mapUris(start);
+    }
+
+    public String getQuery() {
+        return query;
+    }
+
+    public void setQuery(String query) {
+        this.query = query;
+    }
+
+    private List<String> mapUris(List<AAIResourceUri> uris) {
+        final List<String> result = new ArrayList<>();
+        uris.stream().map(item -> item.build().toString()).forEach(result::add);
+        return result;
+    }
 }

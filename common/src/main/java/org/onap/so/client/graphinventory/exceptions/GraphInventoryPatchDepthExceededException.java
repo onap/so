@@ -22,10 +22,10 @@ package org.onap.so.client.graphinventory.exceptions;
 
 public class GraphInventoryPatchDepthExceededException extends RuntimeException {
 
-	private static final long serialVersionUID = -3740429832086738907L;
-	
-	
-	public GraphInventoryPatchDepthExceededException(String payload) {
-		super("Object exceeds allowed depth for update action: " + payload);
-	}
+    private static final long serialVersionUID = -3740429832086738907L;
+
+
+    public GraphInventoryPatchDepthExceededException(String payload) {
+        super("Object exceeds allowed depth for update action: " + payload);
+    }
 }

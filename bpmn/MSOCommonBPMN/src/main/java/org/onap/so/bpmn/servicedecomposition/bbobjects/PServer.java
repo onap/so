@@ -24,60 +24,59 @@ package org.onap.so.bpmn.servicedecomposition.bbobjects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Id;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
 
 public class PServer implements Serializable, ShallowCopy<PServer> {
 
-	private static final long serialVersionUID = 1378547515775540874L;
+    private static final long serialVersionUID = 1378547515775540874L;
 
-	@Id
+    @Id
     @JsonProperty("pserver-id")
-	private String pserverId;
+    private String pserverId;
     @JsonProperty("hostname")
-	private String hostname;
+    private String hostname;
     @JsonProperty("physical-links")
-	private List<PhysicalLink> physicalLinks = new ArrayList<PhysicalLink>(); //TODO techincally there is a pInterface between (pserver <--> physical-link) but dont really need that pojo
+    private List<PhysicalLink> physicalLinks = new ArrayList<PhysicalLink>(); // TODO techincally there is a pInterface
+                                                                              // between (pserver <--> physical-link)
+                                                                              // but dont really need that pojo
 
-	public String getPserverId(){
-		return pserverId;
-	}
+    public String getPserverId() {
+        return pserverId;
+    }
 
-	public void setPserverId(String pserverId){
-		this.pserverId = pserverId;
-	}
+    public void setPserverId(String pserverId) {
+        this.pserverId = pserverId;
+    }
 
-	public String getHostname(){
-		return hostname;
-	}
+    public String getHostname() {
+        return hostname;
+    }
 
-	public void setHostname(String hostname){
-		this.hostname = hostname;
-	}
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
 
-	public List<PhysicalLink> getPhysicalLinks(){
-		return physicalLinks;
-	}
+    public List<PhysicalLink> getPhysicalLinks() {
+        return physicalLinks;
+    }
 
-	@Override
-		public boolean equals(final Object other){
-			if(!(other instanceof PServer)){
-				return false;
-			}
-			PServer castOther = (PServer) other;
-			return new EqualsBuilder().append(pserverId, castOther.pserverId).isEquals();
-		}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof PServer)) {
+            return false;
+        }
+        PServer castOther = (PServer) other;
+        return new EqualsBuilder().append(pserverId, castOther.pserverId).isEquals();
+    }
 
-	@Override
-		public int hashCode(){
-			return new HashCodeBuilder().append(pserverId).toHashCode();
-		}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(pserverId).toHashCode();
+    }
 
 }

@@ -21,5 +21,5 @@
 package org.onap.so.test.categories;
 
 public interface SlowTests {
-/* category marker */ 
+    /* category marker */
 }

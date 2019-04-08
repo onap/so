@@ -28,40 +28,44 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.RequestInfo;
 
-public class RequestInfoValidation implements ValidationRule{
+public class RequestInfoValidation implements ValidationRule {
     private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-		RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
-		int reqVersion = info.getReqVersion();
-		String requestScope = info.getRequestScope();
-		Actions action = info.getAction();
-		Boolean aLaCarteFlag = info.getALaCarteFlag();
-		
-        //required for all operations in V4
-        if(empty(requestInfo.getRequestorId()) && reqVersion >= 4) {
-        	throw new ValidationException ("requestorId");
+
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        RequestInfo requestInfo = info.getSir().getRequestDetails().getRequestInfo();
+        int reqVersion = info.getReqVersion();
+        String requestScope = info.getRequestScope();
+        Actions action = info.getAction();
+        Boolean aLaCarteFlag = info.getALaCarteFlag();
+
+        // required for all operations in V4
+        if (empty(requestInfo.getRequestorId()) && reqVersion >= 4) {
+            throw new ValidationException("requestorId");
         }
 
-        if (empty (requestInfo.getSource ())) {
-        	throw new ValidationException ("source");
+        if (empty(requestInfo.getSource())) {
+            throw new ValidationException("source");
         }
-        if (!empty (requestInfo.getInstanceName ())) {
-        	if (!requestInfo.getInstanceName ().matches (Constants.VALID_INSTANCE_NAME_FORMAT)) {
-        		throw new ValidationException ("instanceName format");
-        	}
+        if (!empty(requestInfo.getInstanceName())) {
+            if (!requestInfo.getInstanceName().matches(Constants.VALID_INSTANCE_NAME_FORMAT)) {
+                throw new ValidationException("instanceName format");
+            }
         }
-        if (empty (requestInfo.getProductFamilyId ()))  {
-        	// Mandatory for vnf Create(aLaCarte=true), Network Create(aLaCarte=true) and network update
-        	//Mandatory for macro request create service instance
-        	if((requestScope.equalsIgnoreCase (ModelType.vnf.name ()) && action == Action.createInstance) || 
-        		(requestScope.equalsIgnoreCase (ModelType.network.name ()) && (action == Action.createInstance || action == Action.updateInstance)) ||
-	        		(reqVersion > 3 && (aLaCarteFlag != null && !aLaCarteFlag) && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.createInstance)) {
-				throw new ValidationException ("productFamilyId");
-			}
+        if (empty(requestInfo.getProductFamilyId())) {
+            // Mandatory for vnf Create(aLaCarte=true), Network Create(aLaCarte=true) and network update
+            // Mandatory for macro request create service instance
+            if ((requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.createInstance)
+                    || (requestScope.equalsIgnoreCase(ModelType.network.name())
+                            && (action == Action.createInstance || action == Action.updateInstance))
+                    || (reqVersion > 3 && (aLaCarteFlag != null && !aLaCarteFlag)
+                            && requestScope.equalsIgnoreCase(ModelType.service.name())
+                            && action == Action.createInstance)) {
+                throw new ValidationException("productFamilyId");
+            }
         }
         return info;
-	}
+    }
 }

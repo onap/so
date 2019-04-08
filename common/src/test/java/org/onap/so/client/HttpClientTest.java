@@ -28,80 +28,73 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.onap.so.utils.TargetEntity;
-
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
-public class HttpClientTest{
+public class HttpClientTest {
 
 
-	private final HttpClientFactory httpClientFactory = new HttpClientFactory();
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicHttpsPort());
-
-	@Test
-	public void testPost_success() throws MalformedURLException{
-
-		wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
-    			.willReturn(aResponse().withStatus(200)
-                .withHeader("Content-Type", "application/json")
-                .withBody("")));
-
-      URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
-      HttpClient client = httpClientFactory.newJsonClient(url, TargetEntity.BPMN);
-
-	  client.addBasicAuthHeader("97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF", "123");
-	  client.addAdditionalHeader("Accept", "application/json");
-
-	  client.post("{}");
-
-	  verify(exactly(1), postRequestedFor(urlEqualTo("/services/sdnc/post")));
-	}
+    private final HttpClientFactory httpClientFactory = new HttpClientFactory();
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicHttpsPort());
 
     @Test
-	public void testPost_nullHeader() throws MalformedURLException{
+    public void testPost_success() throws MalformedURLException {
 
-    	wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
-    			.willReturn(aResponse().withStatus(200)
-                .withHeader("Content-Type", "application/json")
-                .withBody("")));
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("")));
 
-      URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
-      HttpClient client = httpClientFactory.newJsonClient(url, TargetEntity.BPMN);
+        URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newJsonClient(url, TargetEntity.BPMN);
 
-	  client.addAdditionalHeader("Accept", "application/json");
-	  client.addAdditionalHeader("id", null);
+        client.addBasicAuthHeader(
+                "97FF88AB352DA16E00DDD81E3876431DEF8744465DACA489EB3B3BE1F10F63EDA1715E626D0A4827A3E19CD88421BF",
+                "123");
+        client.addAdditionalHeader("Accept", "application/json");
 
-	  client.post("{}");
+        client.post("{}");
 
-	  verify(exactly(1), postRequestedFor(urlEqualTo("/services/sdnc/post"))
-			  .withHeader("Accept", equalTo("application/json")));
-	}
+        verify(exactly(1), postRequestedFor(urlEqualTo("/services/sdnc/post")));
+    }
 
     @Test
-	public void testPost_nullBasicAuth() throws MalformedURLException{
+    public void testPost_nullHeader() throws MalformedURLException {
 
-    	wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
-    			.willReturn(aResponse().withStatus(200)
-                .withHeader("Content-Type", "application/json")
-                .withBody("")));
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("")));
 
-      URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
-      HttpClient client = httpClientFactory.newJsonClient(url, TargetEntity.BPMN);
+        URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newJsonClient(url, TargetEntity.BPMN);
 
-      client.addBasicAuthHeader("", "12345");
-	  client.addAdditionalHeader("Accept", "application/json");
+        client.addAdditionalHeader("Accept", "application/json");
+        client.addAdditionalHeader("id", null);
 
-	  client.post("{}");
+        client.post("{}");
 
-	  verify(exactly(1), postRequestedFor(urlEqualTo("/services/sdnc/post"))
-			  .withHeader("Accept", equalTo("application/json")));
-	}
+        verify(exactly(1),
+                postRequestedFor(urlEqualTo("/services/sdnc/post")).withHeader("Accept", equalTo("application/json")));
+    }
+
+    @Test
+    public void testPost_nullBasicAuth() throws MalformedURLException {
+
+        wireMockRule.stubFor(post(urlEqualTo("/services/sdnc/post"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody("")));
+
+        URL url = new URL("http://localhost:" + wireMockConfig().portNumber() + "/services/sdnc/post");
+        HttpClient client = httpClientFactory.newJsonClient(url, TargetEntity.BPMN);
+
+        client.addBasicAuthHeader("", "12345");
+        client.addAdditionalHeader("Accept", "application/json");
+
+        client.post("{}");
+
+        verify(exactly(1),
+                postRequestedFor(urlEqualTo("/services/sdnc/post")).withHeader("Accept", equalTo("application/json")));
+    }
 
 }

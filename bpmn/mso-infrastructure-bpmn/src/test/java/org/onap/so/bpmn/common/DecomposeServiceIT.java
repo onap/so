@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.onap.so.bpmn.common;
 
@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -40,56 +39,55 @@ import org.onap.so.BaseIntegrationTest;
 public class DecomposeServiceIT extends BaseIntegrationTest {
 
 
-	public DecomposeServiceIT() throws IOException {
+    public DecomposeServiceIT() throws IOException {
 
-	}
+    }
 
-	@Test	
-	public void testDecomposeService_success() throws Exception{
-		MockGetServiceResourcesCatalogData(wireMockServer, "cmw-123-456-789", "1.0", "/getCatalogServiceResourcesDataWithConfig.json");
+    @Test
+    public void testDecomposeService_success() throws Exception {
+        MockGetServiceResourcesCatalogData(wireMockServer, "cmw-123-456-789", "1.0",
+                "/getCatalogServiceResourcesDataWithConfig.json");
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		setVariablesSuccess(variables, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
-		invokeSubProcess("DecomposeService", businessKey, variables);
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        setVariablesSuccess(variables, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
+        invokeSubProcess("DecomposeService", businessKey, variables);
 
-		waitForProcessEnd(businessKey, 10000);
+        waitForProcessEnd(businessKey, 10000);
 
-		Assert.assertTrue(isProcessEnded(businessKey));
+        Assert.assertTrue(isProcessEnded(businessKey));
 
-	}
-	
-	//@Test
-	@Test
-	public void testDecomposeService_success_partial() throws Exception{
-		MockGetServiceResourcesCatalogData(wireMockServer, "cmw-123-456-789", "1.0", "/getCatalogServiceResourcesDataNoNetwork.json");
+    }
+
+    // @Test
+    @Test
+    public void testDecomposeService_success_partial() throws Exception {
+        MockGetServiceResourcesCatalogData(wireMockServer, "cmw-123-456-789", "1.0",
+                "/getCatalogServiceResourcesDataNoNetwork.json");
 
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		setVariablesSuccess(variables, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
-		invokeSubProcess("DecomposeService", businessKey, variables);
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        setVariablesSuccess(variables, "testRequestId123", "ff5256d2-5a33-55df-13ab-12abad84e7ff");
+        invokeSubProcess("DecomposeService", businessKey, variables);
 
-		waitForProcessEnd(businessKey, 10000);
+        waitForProcessEnd(businessKey, 10000);
 
-		Assert.assertTrue(isProcessEnded(businessKey));
+        Assert.assertTrue(isProcessEnded(businessKey));
 
-	}
+    }
 
-	private void setVariablesSuccess(Map<String, Object> variables, String requestId, String siId) {
-		variables.put("isDebugLogEnabled", "true");
-		variables.put("mso-request-id", requestId);
-		variables.put("msoRequestId", requestId);
-		variables.put("serviceInstanceId",siId);
+    private void setVariablesSuccess(Map<String, Object> variables, String requestId, String siId) {
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("mso-request-id", requestId);
+        variables.put("msoRequestId", requestId);
+        variables.put("serviceInstanceId", siId);
 
-		String serviceModelInfo = "{ "+ "\"modelType\": \"service\"," +
-				"\"modelInvariantUuid\": \"cmw-123-456-789\"," +
-				"\"modelVersionId\": \"ab6478e5-ea33-3346-ac12-ab121484a3fe\"," +
-				"\"modelName\": \"ServicevSAMP12\"," +
-				"\"modelVersion\": \"1.0\"," +
-				"}";
-		variables.put("serviceModelInfo", serviceModelInfo);
+        String serviceModelInfo = "{ " + "\"modelType\": \"service\"," + "\"modelInvariantUuid\": \"cmw-123-456-789\","
+                + "\"modelVersionId\": \"ab6478e5-ea33-3346-ac12-ab121484a3fe\"," + "\"modelName\": \"ServicevSAMP12\","
+                + "\"modelVersion\": \"1.0\"," + "}";
+        variables.put("serviceModelInfo", serviceModelInfo);
 
-	}
+    }
 
 }

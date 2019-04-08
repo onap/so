@@ -27,20 +27,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
-
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
- * Health Check
- * <br>
+ * Health Check <br>
  * <p>
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-08-28
+ * @version ONAP Amsterdam Release 2017-08-28
  */
 @Path("/")
 @Component
@@ -48,12 +46,11 @@ public class HealthCheckHandler {
 
     private static Logger logger = LoggerFactory.getLogger(HealthCheckHandler.class);
 
-    
-    private static final String CHECK_HTML = "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
 
-	public static final Response HEALTH_CHECK_RESPONSE = Response.status (HttpStatus.SC_OK)
-            .entity (CHECK_HTML)
-            .build ();
+    private static final String CHECK_HTML =
+            "<!DOCTYPE html><html><head><meta charset=\"ISO-8859-1\"><title>Health Check</title></head><body>Application ready</body></html>";
+
+    public static final Response HEALTH_CHECK_RESPONSE = Response.status(HttpStatus.SC_OK).entity(CHECK_HTML).build();
 
     @HEAD
     @Path("/healthcheck")

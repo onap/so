@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,7 +32,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -44,148 +42,148 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 @Table(name = "vnfc_customization")
 public class VnfcCustomization implements Serializable {
 
-	private static final long serialVersionUID = -3772469944364616486L;
+    private static final long serialVersionUID = -3772469944364616486L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_CUSTOMIZATION_UUID")
-	private String modelCustomizationUUID;
-	
-	@Column(name = "MODEL_INSTANCE_NAME")
-	private String modelInstanceName;	
-	
-	@Column(name = "MODEL_UUID")
-	private String modelUUID;
-	
-	@Column(name = "MODEL_INVARIANT_UUID")
-	private String modelInvariantUUID;	
-	
-	@Column(name = "MODEL_VERSION")
-	private String modelVersion;
-	
-	@Column(name = "MODEL_NAME")
-	private String modelName;
-	
-	@Column(name = "TOSCA_NODE_TYPE")
-	private String toscaNodeType;
-	
-	@Column(name = "DESCRIPTION")
-	private String description;
-	
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "vnfcCustomization")
-	private List<CvnfcCustomization> cvnfcCustomization;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_CUSTOMIZATION_UUID")
+    private String modelCustomizationUUID;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VnfcCustomization)) {
-			return false;
-		}
-		VnfcCustomization castOther = (VnfcCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
-	}
+    @Column(name = "MODEL_INSTANCE_NAME")
+    private String modelInstanceName;
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
-	}
+    @Column(name = "MODEL_UUID")
+    private String modelUUID;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelInstanceName", modelInstanceName).append("modelUUID", modelUUID)
-				.append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
-				.append("modelName", modelName).append("toscaNodeType", toscaNodeType)
-				.append("description", description).append("created", created)
-				.append("cvnfcCustomization", cvnfcCustomization).toString();
-	}
-	
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
-	
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
+    @Column(name = "MODEL_INVARIANT_UUID")
+    private String modelInvariantUUID;
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    @Column(name = "MODEL_VERSION")
+    private String modelVersion;
 
-	public String getModelInstanceName() {
-		return modelInstanceName;
-	}
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	public void setModelInstanceName(String modelInstanceName) {
-		this.modelInstanceName = modelInstanceName;
-	}
+    @Column(name = "TOSCA_NODE_TYPE")
+    private String toscaNodeType;
 
-	public String getModelUUID() {
-		return modelUUID;
-	}
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	public String getModelInvariantUUID() {
-		return modelInvariantUUID;
-	}
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "vnfcCustomization")
+    private List<CvnfcCustomization> cvnfcCustomization;
 
-	public void setModelInvariantUUID(String modelInvariantUUID) {
-		this.modelInvariantUUID = modelInvariantUUID;
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VnfcCustomization)) {
+            return false;
+        }
+        VnfcCustomization castOther = (VnfcCustomization) other;
+        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+    }
 
-	public String getModelVersion() {
-		return modelVersion;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+    }
 
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName).append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
+                .append("modelName", modelName).append("toscaNodeType", toscaNodeType)
+                .append("description", description).append("created", created)
+                .append("cvnfcCustomization", cvnfcCustomization).toString();
+    }
 
-	public String getModelName() {
-		return modelName;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    public String getModelCustomizationUUID() {
+        return modelCustomizationUUID;
+    }
 
-	public String getToscaNodeType() {
-		return toscaNodeType;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public void setToscaNodeType(String toscaNodeType) {
-		this.toscaNodeType = toscaNodeType;
-	}
+    public String getModelInstanceName() {
+        return modelInstanceName;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setModelInstanceName(String modelInstanceName) {
+        this.modelInstanceName = modelInstanceName;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public String getModelInvariantUUID() {
+        return modelInvariantUUID;
+    }
 
-	public List<CvnfcCustomization> getCvnfcCustomization() {
-		return cvnfcCustomization;
-	}
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
 
-	public void setCvnfcCustomization(List<CvnfcCustomization> cvnfcCustomization) {
-		this.cvnfcCustomization = cvnfcCustomization;
-	}
+    public String getModelVersion() {
+        return modelVersion;
+    }
+
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getToscaNodeType() {
+        return toscaNodeType;
+    }
+
+    public void setToscaNodeType(String toscaNodeType) {
+        this.toscaNodeType = toscaNodeType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    public List<CvnfcCustomization> getCvnfcCustomization() {
+        return cvnfcCustomization;
+    }
+
+    public void setCvnfcCustomization(List<CvnfcCustomization> cvnfcCustomization) {
+        this.cvnfcCustomization = cvnfcCustomization;
+    }
 }

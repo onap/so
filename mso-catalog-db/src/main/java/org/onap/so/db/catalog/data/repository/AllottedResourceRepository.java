@@ -26,5 +26,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "allottedResource", path = "allottedResource")
 public interface AllottedResourceRepository extends JpaRepository<AllottedResource, String> {
-	AllottedResource findResourceByModelUUID(String modelUUID);
+    AllottedResource findResourceByModelUUID(String modelUUID);
 }

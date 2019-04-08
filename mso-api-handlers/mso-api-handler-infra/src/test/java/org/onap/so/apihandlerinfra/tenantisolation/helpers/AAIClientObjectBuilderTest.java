@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolation.helpers;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
@@ -30,43 +29,43 @@ import org.onap.so.apihandlerinfra.tenantisolationbeans.OperationalEnvironment;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestDetails;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestInfo;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestParameters;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AAIClientObjectBuilderTest extends BaseTest{
+public class AAIClientObjectBuilderTest extends BaseTest {
 
-	private CloudOrchestrationRequest request;
-	private ObjectMapper mapper = new ObjectMapper();
-	
-	@Before
+    private CloudOrchestrationRequest request;
+    private ObjectMapper mapper = new ObjectMapper();
+
+    @Before
     public void testSetUp() {
-		request = getCloudOrchestrationRequest();
-	}
+        request = getCloudOrchestrationRequest();
+    }
 
-	public CloudOrchestrationRequest getCloudOrchestrationRequest() {
-		CloudOrchestrationRequest cor = new CloudOrchestrationRequest();
-		RequestDetails reqDetails = new RequestDetails();
-		RequestInfo reqInfo = new RequestInfo();
-		RequestParameters reqParams = new RequestParameters();
-		reqParams.setTenantContext("TEST");
-		reqParams.setWorkloadContext("ECOMP_TEST");
-		reqParams.setOperationalEnvironmentType(OperationalEnvironment.ECOMP);
-		reqInfo.setInstanceName("TEST_ECOMP_ENVIRONMENT");
-		reqDetails.setRequestInfo(reqInfo);
-		reqDetails.setRequestParameters(reqParams);
-		cor.setRequestDetails(reqDetails);
-		return cor;
-	}
-	
-	@Test
-	public void testGetAaiClientObjectBuilder() throws Exception {
-		AAIClientObjectBuilder builder = new AAIClientObjectBuilder();
-		org.onap.aai.domain.yang.OperationalEnvironment operEnv = builder.buildAAIOperationalEnvironment("Active", request);
-		assertEquals("TEST", operEnv.getTenantContext());
-		assertEquals("ECOMP_TEST", operEnv.getWorkloadContext());
-		assertEquals("TEST_ECOMP_ENVIRONMENT", operEnv.getOperationalEnvironmentName());
-		assertEquals(OperationalEnvironment.ECOMP.toString(), operEnv.getOperationalEnvironmentType());
-	}
+    public CloudOrchestrationRequest getCloudOrchestrationRequest() {
+        CloudOrchestrationRequest cor = new CloudOrchestrationRequest();
+        RequestDetails reqDetails = new RequestDetails();
+        RequestInfo reqInfo = new RequestInfo();
+        RequestParameters reqParams = new RequestParameters();
+        reqParams.setTenantContext("TEST");
+        reqParams.setWorkloadContext("ECOMP_TEST");
+        reqParams.setOperationalEnvironmentType(OperationalEnvironment.ECOMP);
+        reqInfo.setInstanceName("TEST_ECOMP_ENVIRONMENT");
+        reqDetails.setRequestInfo(reqInfo);
+        reqDetails.setRequestParameters(reqParams);
+        cor.setRequestDetails(reqDetails);
+        return cor;
+    }
+
+    @Test
+    public void testGetAaiClientObjectBuilder() throws Exception {
+        AAIClientObjectBuilder builder = new AAIClientObjectBuilder();
+        org.onap.aai.domain.yang.OperationalEnvironment operEnv =
+                builder.buildAAIOperationalEnvironment("Active", request);
+        assertEquals("TEST", operEnv.getTenantContext());
+        assertEquals("ECOMP_TEST", operEnv.getWorkloadContext());
+        assertEquals("TEST_ECOMP_ENVIRONMENT", operEnv.getOperationalEnvironmentName());
+        assertEquals(OperationalEnvironment.ECOMP.toString(), operEnv.getOperationalEnvironmentType());
+    }
 
 
 }

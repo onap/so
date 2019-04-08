@@ -23,17 +23,17 @@ package org.onap.so.adapters.audit;
 import org.onap.so.client.aai.AAIResourcesClient;
 
 public class AbstractAudit {
-	
-	private AAIResourcesClient aaiClient;
 
-	protected AAIResourcesClient getAaiClient(){
-		if(aaiClient == null)
-			return new AAIResourcesClient();
-		else
-			return aaiClient;
-	}
-	
-	protected void setAaiClient(AAIResourcesClient aaiResource){
-		aaiClient = aaiResource;
-	}
+    private AAIResourcesClient aaiClient;
+
+    protected AAIResourcesClient getAaiClient() {
+        if (aaiClient == null)
+            return new AAIResourcesClient();
+        else
+            return aaiClient;
+    }
+
+    protected void setAaiClient(AAIResourcesClient aaiResource) {
+        aaiClient = aaiResource;
+    }
 }

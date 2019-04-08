@@ -26,5 +26,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "homingInstance", path = "homingInstance")
 public interface HomingInstanceRepository extends JpaRepository<HomingInstance, String> {
-	HomingInstance findServiceByServiceInstanceId(String serviceInstanceId);
+    HomingInstance findServiceByServiceInstanceId(String serviceInstanceId);
 }

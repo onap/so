@@ -22,7 +22,6 @@ package org.onap.so.client.aai;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Pserver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,40 +31,40 @@ import org.springframework.stereotype.Component;
 public class AAIValidatorImpl implements AAIValidator {
 
 
-	@Autowired
-	protected AAIRestClientI client;
-	
-	public AAIRestClientI getClient() {
-		return client;
-	}
+    @Autowired
+    protected AAIRestClientI client;
+
+    public AAIRestClientI getClient() {
+        return client;
+    }
 
 
-	public void setClient(AAIRestClientI client) {
-		this.client = client;
-	}
+    public void setClient(AAIRestClientI client) {
+        this.client = client;
+    }
 
-	@Override
-	public boolean isPhysicalServerLocked(String vnfId) throws IOException {
-		List<Pserver> pservers;
-		boolean isLocked = false;
-		pservers = client.getPhysicalServerByVnfId(vnfId);
-		for (Pserver pserver : pservers) {
-			if (pserver.isInMaint()) {
-				isLocked = true;
-				return isLocked;
-			}
-		}
-		return isLocked;
-	}
+    @Override
+    public boolean isPhysicalServerLocked(String vnfId) throws IOException {
+        List<Pserver> pservers;
+        boolean isLocked = false;
+        pservers = client.getPhysicalServerByVnfId(vnfId);
+        for (Pserver pserver : pservers) {
+            if (pserver.isInMaint()) {
+                isLocked = true;
+                return isLocked;
+            }
+        }
+        return isLocked;
+    }
 
-	@Override
-	public boolean isVNFLocked(String vnfId) {
-		boolean isLocked = false;
-		GenericVnf genericVnf = client.getVnfByName(vnfId);
-			if (genericVnf.isInMaint())
-				isLocked = true;
+    @Override
+    public boolean isVNFLocked(String vnfId) {
+        boolean isLocked = false;
+        GenericVnf genericVnf = client.getVnfByName(vnfId);
+        if (genericVnf.isInMaint())
+            isLocked = true;
 
-		return isLocked;
-	}
+        return isLocked;
+    }
 
 }

@@ -27,11 +27,11 @@ import ch.qos.logback.core.AppenderBase;
 
 
 
-public class TestAppender  extends AppenderBase<ILoggingEvent> {
+public class TestAppender extends AppenderBase<ILoggingEvent> {
     static List<ILoggingEvent> events = new ArrayList<>();
- 
-	@Override
-	protected void append(ILoggingEvent loggingEvent) {
-		events.add(loggingEvent);		
-	}
+
+    @Override
+    protected void append(ILoggingEvent loggingEvent) {
+        events.add(loggingEvent);
+    }
 }

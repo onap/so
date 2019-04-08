@@ -20,10 +20,10 @@
 
 package org.onap.so.client.exception;
 
-public class OrchestrationStatusValidationException extends Exception{
-	public OrchestrationStatusValidationException() {}
+public class OrchestrationStatusValidationException extends Exception {
+    public OrchestrationStatusValidationException() {}
 
     public OrchestrationStatusValidationException(String message) {
-       super(message);
+        super(message);
     }
 }

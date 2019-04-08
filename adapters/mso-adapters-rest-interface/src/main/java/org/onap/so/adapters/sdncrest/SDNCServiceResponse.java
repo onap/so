@@ -23,56 +23,54 @@ package org.onap.so.adapters.sdncrest;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 // NOTE: the JAXB (XML) annotations are required with JBoss AS7 and RESTEasy,
-//       even though we are using JSON exclusively.  The @NoJackson annotation
-//       is also required in this environment.
+// even though we are using JSON exclusively. The @NoJackson annotation
+// is also required in this environment.
 
 /**
- Map<String, String> elements when marshalled to XML produce a list of <entry><key>${MsoUtils.xmlEscape(key)}</key><value>${MsoUtils.xmlEscape(value)}</value></entry> elements.
- When marshalling to JSON they create a list of "${key}" : "${value}" pairs with no extra wrappers.
+ * Map<String, String> elements when marshalled to XML produce a list of
+ * <entry><key>${MsoUtils.xmlEscape(key)}</key><value>${MsoUtils.xmlEscape(value)}</value></entry> elements. When
+ * marshalling to JSON they create a list of "${key}" : "${value}" pairs with no extra wrappers.
  * </pre>
  */
 @JsonRootName("SDNCServiceResponse")
 @JsonInclude(Include.NON_NULL)
 @XmlRootElement(name = "SDNCServiceResponse")
 public class SDNCServiceResponse extends SDNCResponseCommon implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Map of response parameters (possibly none).
-	private Map<String, String> params = null;
+    // Map of response parameters (possibly none).
+    private Map<String, String> params = null;
 
-	public SDNCServiceResponse(String sdncRequestId, String responseCode,
-			String responseMessage, String ackFinalIndicator) {
-		super(sdncRequestId, responseCode, responseMessage, ackFinalIndicator);
-	}
+    public SDNCServiceResponse(String sdncRequestId, String responseCode, String responseMessage,
+            String ackFinalIndicator) {
+        super(sdncRequestId, responseCode, responseMessage, ackFinalIndicator);
+    }
 
-	public SDNCServiceResponse() {
-	}
+    public SDNCServiceResponse() {}
 
-	@JsonProperty("params")
-	@XmlElement(name = "params")
-	public Map<String, String> getParams() {
-		return params;
-	}
+    @JsonProperty("params")
+    @XmlElement(name = "params")
+    public Map<String, String> getParams() {
+        return params;
+    }
 
-	@JsonProperty("params")
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
+    @JsonProperty("params")
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
 
-	public void addParam(String name, String value) {
-		if (params == null) {
-			params = new LinkedHashMap<>();
-		}
-		params.put(name, value);
-	}
+    public void addParam(String name, String value) {
+        if (params == null) {
+            params = new LinkedHashMap<>();
+        }
+        params.put(name, value);
+    }
 }

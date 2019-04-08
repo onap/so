@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,65 +30,72 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class TenantIsolationRequest implements Serializable {
 
-	private static final long serialVersionUID = -210322298981798607L;
-	@JsonProperty("requestId")
+    private static final long serialVersionUID = -210322298981798607L;
+    @JsonProperty("requestId")
     protected String requestId;
-	@JsonProperty("startTime")	
+    @JsonProperty("startTime")
     protected String startTime;
-	@JsonProperty("requestScope")	
+    @JsonProperty("requestScope")
     protected String requestScope;
-	@JsonProperty("requestType")	
+    @JsonProperty("requestType")
     protected String requestType;
-	@JsonProperty("requestDetails")	
+    @JsonProperty("requestDetails")
     protected RequestDetails requestDetails;
-	@JsonProperty("requestStatus")
+    @JsonProperty("requestStatus")
     protected RequestStatus requestStatus;
-    
-	public String getRequestId() {
-		return requestId;
-	}
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
-	public String getStartTime() {
-		return startTime;
-	}
-	public void setStartTime(String startTime) {
-		this.startTime = startTime;
-	}
-	public String getRequestScope() {
-		return requestScope;
-	}
-	public void setRequestScope(String requestScope) {
-		this.requestScope = requestScope;
-	}
-	public String getRequestType() {
-		return requestType;
-	}
-	public void setRequestType(String requestType) {
-		this.requestType = requestType;
-	}
-	public RequestStatus getRequestStatus() {
-		return requestStatus;
-	}
-	public void setRequestStatus(RequestStatus requestStatus) {
-		this.requestStatus = requestStatus;
-	}
 
-	public RequestDetails getRequestDetails() {
-		return requestDetails;
-	}
-	public void setRequestDetails(RequestDetails requestDetails) {
-		this.requestDetails = requestDetails;
-	}
+    public String getRequestId() {
+        return requestId;
+    }
 
-	@Override
-	public String toString() {
-		return "Request [requestId=" + requestId + 
-				      ", startTime=" + startTime + 
-				      ", requestType=" + requestType +
-				      ", requestDetails=" + requestDetails.toString() +				      
-				      ", requestStatus=" + requestStatus.toString() + "]";
-	}	
-	
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getRequestScope() {
+        return requestScope;
+    }
+
+    public void setRequestScope(String requestScope) {
+        this.requestScope = requestScope;
+    }
+
+    public String getRequestType() {
+        return requestType;
+    }
+
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
+    }
+
+    public RequestStatus getRequestStatus() {
+        return requestStatus;
+    }
+
+    public void setRequestStatus(RequestStatus requestStatus) {
+        this.requestStatus = requestStatus;
+    }
+
+    public RequestDetails getRequestDetails() {
+        return requestDetails;
+    }
+
+    public void setRequestDetails(RequestDetails requestDetails) {
+        this.requestDetails = requestDetails;
+    }
+
+    @Override
+    public String toString() {
+        return "Request [requestId=" + requestId + ", startTime=" + startTime + ", requestType=" + requestType
+                + ", requestDetails=" + requestDetails.toString() + ", requestStatus=" + requestStatus.toString() + "]";
+    }
+
 }

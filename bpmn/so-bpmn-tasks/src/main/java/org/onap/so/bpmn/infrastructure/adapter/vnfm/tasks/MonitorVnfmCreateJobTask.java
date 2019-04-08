@@ -39,64 +39,65 @@ import com.google.common.base.Optional;
  *
  */
 @Component
-public class MonitorVnfmCreateJobTask extends MonitorVnfmJobTask{
+public class MonitorVnfmCreateJobTask extends MonitorVnfmJobTask {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MonitorVnfmCreateJobTask.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MonitorVnfmCreateJobTask.class);
 
-  @Autowired
-  public MonitorVnfmCreateJobTask(final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
-      final ExceptionBuilder exceptionUtil) {
-    super(vnfmAdapterServiceProvider, exceptionUtil);
-  }
-
-  /**
-   * Get the current operation status of instantiation job
-   * 
-   * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
-   */
-  public void getCurrentOperationStatus(final BuildingBlockExecution execution) {
-    LOGGER.debug("Executing getCurrentOperationStatus  ...");
-    final CreateVnfResponse vnfInstantiateResponse = execution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME);
-    execution.setVariable(OPERATION_STATUS_PARAM_NAME, getOperationStatus(execution, vnfInstantiateResponse.getJobId()));
-    LOGGER.debug("Finished executing getCurrentOperationStatus ...");
-  }
-
-  /**
-   * Log and throw exception on timeout for job status
-   * 
-   * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
-   */
-  public void timeOutLogFailue(final BuildingBlockExecution execution) {
-    final String message = "Instantiation operation time out";
-    LOGGER.error(message);
-    exceptionUtil.buildAndThrowWorkflowException(execution, 1205, message);
-  }
-
-  /**
-   * Check the final status of instantiation throw exception if not completed successfully
-   * 
-   * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
-   */
-  public void checkIfOperationWasSuccessful(final BuildingBlockExecution execution) {
-    LOGGER.debug("Executing checkIfOperationWasSuccessful  ...");
-    final Optional<OperationStateEnum> operationStatusOption = execution.getVariable(OPERATION_STATUS_PARAM_NAME);
-    final CreateVnfResponse vnfInstantiateResponse = execution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME);
-    if (operationStatusOption == null || !operationStatusOption.isPresent()) {
-      final String message = "Unable to instantiate jobId: "
-          + (vnfInstantiateResponse != null ? vnfInstantiateResponse.getJobId() : "null")
-          + "Unable to retrieve OperationStatus";
-      LOGGER.error(message);
-      exceptionUtil.buildAndThrowWorkflowException(execution, 1206, message);
-    } else if (operationStatusOption != null && operationStatusOption.isPresent()) {
-      final OperationStateEnum operationStatus = operationStatusOption.get();
-      if (operationStatus != OperationStateEnum.COMPLETED) {
-        final String message = "Unable to instantiate jobId: "
-            + (vnfInstantiateResponse != null ? vnfInstantiateResponse.getJobId() : "null") + " OperationStatus: "
-            + operationStatus;
-        LOGGER.error(message);
-        exceptionUtil.buildAndThrowWorkflowException(execution, 1207, message);
-      }
-      LOGGER.debug("Successfully completed instatiation of job {}", vnfInstantiateResponse);
+    @Autowired
+    public MonitorVnfmCreateJobTask(final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
+            final ExceptionBuilder exceptionUtil) {
+        super(vnfmAdapterServiceProvider, exceptionUtil);
     }
-  }
+
+    /**
+     * Get the current operation status of instantiation job
+     * 
+     * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
+     */
+    public void getCurrentOperationStatus(final BuildingBlockExecution execution) {
+        LOGGER.debug("Executing getCurrentOperationStatus  ...");
+        final CreateVnfResponse vnfInstantiateResponse = execution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME);
+        execution.setVariable(OPERATION_STATUS_PARAM_NAME,
+                getOperationStatus(execution, vnfInstantiateResponse.getJobId()));
+        LOGGER.debug("Finished executing getCurrentOperationStatus ...");
+    }
+
+    /**
+     * Log and throw exception on timeout for job status
+     * 
+     * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
+     */
+    public void timeOutLogFailue(final BuildingBlockExecution execution) {
+        final String message = "Instantiation operation time out";
+        LOGGER.error(message);
+        exceptionUtil.buildAndThrowWorkflowException(execution, 1205, message);
+    }
+
+    /**
+     * Check the final status of instantiation throw exception if not completed successfully
+     * 
+     * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
+     */
+    public void checkIfOperationWasSuccessful(final BuildingBlockExecution execution) {
+        LOGGER.debug("Executing checkIfOperationWasSuccessful  ...");
+        final Optional<OperationStateEnum> operationStatusOption = execution.getVariable(OPERATION_STATUS_PARAM_NAME);
+        final CreateVnfResponse vnfInstantiateResponse = execution.getVariable(CREATE_VNF_RESPONSE_PARAM_NAME);
+        if (operationStatusOption == null || !operationStatusOption.isPresent()) {
+            final String message = "Unable to instantiate jobId: "
+                    + (vnfInstantiateResponse != null ? vnfInstantiateResponse.getJobId() : "null")
+                    + "Unable to retrieve OperationStatus";
+            LOGGER.error(message);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 1206, message);
+        } else if (operationStatusOption != null && operationStatusOption.isPresent()) {
+            final OperationStateEnum operationStatus = operationStatusOption.get();
+            if (operationStatus != OperationStateEnum.COMPLETED) {
+                final String message = "Unable to instantiate jobId: "
+                        + (vnfInstantiateResponse != null ? vnfInstantiateResponse.getJobId() : "null")
+                        + " OperationStatus: " + operationStatus;
+                LOGGER.error(message);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 1207, message);
+            }
+            LOGGER.debug("Successfully completed instatiation of job {}", vnfInstantiateResponse);
+        }
+    }
 }

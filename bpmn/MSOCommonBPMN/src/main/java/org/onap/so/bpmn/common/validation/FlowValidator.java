@@ -22,24 +22,24 @@ package org.onap.so.bpmn.common.validation;
 
 import java.util.Optional;
 import java.util.Set;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public interface FlowValidator {
 
-	/**
-	 * Should this validator run for given bb
-	 * @return
-	 */
-	public boolean shouldRunFor(String bbName);
-	
-	/**
-	 * Determines whether or not the workflow should be executed
+    /**
+     * Should this validator run for given bb
+     * 
+     * @return
+     */
+    public boolean shouldRunFor(String bbName);
 
-	 * 
-	 * @param execution
-	 * @return
-	 */
-	public Optional<String> validate(BuildingBlockExecution execution);
-	
+    /**
+     * Determines whether or not the workflow should be executed
+     * 
+     * 
+     * @param execution
+     * @return
+     */
+    public Optional<String> validate(BuildingBlockExecution execution);
+
 }

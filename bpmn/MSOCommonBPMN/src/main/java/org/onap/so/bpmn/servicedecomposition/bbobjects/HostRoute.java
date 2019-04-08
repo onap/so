@@ -21,64 +21,71 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-
 import javax.persistence.Id;
 
 @JsonRootName("host-route")
-public class HostRoute implements Serializable, ShallowCopy<HostRoute>{
+public class HostRoute implements Serializable, ShallowCopy<HostRoute> {
 
-	private static final long serialVersionUID = -2468793257174064133L;
+    private static final long serialVersionUID = -2468793257174064133L;
 
-	@Id
-	@JsonProperty("host-route-id")
+    @Id
+    @JsonProperty("host-route-id")
     private String hostRouteId;
-	@JsonProperty("route-prefix")
+    @JsonProperty("route-prefix")
     private String routePrefix;
-	@JsonProperty("next-hop")
+    @JsonProperty("next-hop")
     private String nextHop;
-	@JsonProperty("next-hop-type")
+    @JsonProperty("next-hop-type")
     private String nextHopType;
 
-	public String getHostRouteId() {
-		return hostRouteId;
-	}
-	public void setHostRouteId(String hostRouteId) {
-		this.hostRouteId = hostRouteId;
-	}
-	public String getRoutePrefix() {
-		return routePrefix;
-	}
-	public void setRoutePrefix(String routePrefix) {
-		this.routePrefix = routePrefix;
-	}
-	public String getNextHop() {
-		return nextHop;
-	}
-	public void setNextHop(String nextHop) {
-		this.nextHop = nextHop;
-	}
-	public String getNextHopType() {
-		return nextHopType;
-	}
-	public void setNextHopType(String nextHopType) {
-		this.nextHopType = nextHopType;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof HostRoute)) {
-			return false;
-		}
-		HostRoute castOther = (HostRoute) other;
-		return new EqualsBuilder().append(hostRouteId, castOther.hostRouteId).isEquals();
-	}
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(hostRouteId).toHashCode();
-	}
+    public String getHostRouteId() {
+        return hostRouteId;
+    }
+
+    public void setHostRouteId(String hostRouteId) {
+        this.hostRouteId = hostRouteId;
+    }
+
+    public String getRoutePrefix() {
+        return routePrefix;
+    }
+
+    public void setRoutePrefix(String routePrefix) {
+        this.routePrefix = routePrefix;
+    }
+
+    public String getNextHop() {
+        return nextHop;
+    }
+
+    public void setNextHop(String nextHop) {
+        this.nextHop = nextHop;
+    }
+
+    public String getNextHopType() {
+        return nextHopType;
+    }
+
+    public void setNextHopType(String nextHopType) {
+        this.nextHopType = nextHopType;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof HostRoute)) {
+            return false;
+        }
+        HostRoute castOther = (HostRoute) other;
+        return new EqualsBuilder().append(hostRouteId, castOther.hostRouteId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(hostRouteId).toHashCode();
+    }
 }

@@ -22,15 +22,15 @@ package org.onap.so.apihandlerinfra.tenantisolation.exceptions;
 
 public class TenantIsolationException extends Exception {
 
-	private static final long serialVersionUID = 6948152225371031774L;
-	
-	public TenantIsolationException() {
-		super();
-		
-	}
-	
-	public TenantIsolationException(String msg) {
-		super ("Tenant Isolation error: " + msg);
-		
-	}
+    private static final long serialVersionUID = 6948152225371031774L;
+
+    public TenantIsolationException() {
+        super();
+
+    }
+
+    public TenantIsolationException(String msg) {
+        super("Tenant Isolation error: " + msg);
+
+    }
 }

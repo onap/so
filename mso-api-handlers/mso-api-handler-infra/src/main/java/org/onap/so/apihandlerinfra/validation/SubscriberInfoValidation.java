@@ -27,25 +27,27 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.SubscriberInfo;
 
-public class SubscriberInfoValidation implements ValidationRule{
+public class SubscriberInfoValidation implements ValidationRule {
     private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-		String requestScope = info.getRequestScope();
-		int reqVersion = info.getReqVersion();
-		Actions action = info.getAction();
-		
-		if (reqVersion > 4 && requestScope.equalsIgnoreCase (ModelType.service.name ()) && action == Action.createInstance || action == Action.assignInstance) {
-        	SubscriberInfo subscriberInfo = info.getSir().getRequestDetails ().getSubscriberInfo();
-        	if (subscriberInfo == null) {
-        		throw new ValidationException ("subscriberInfo");
-        	}
-        	if (empty (subscriberInfo.getGlobalSubscriberId ())) {
-        		throw new ValidationException ("globalSubscriberId");
-        	}
+
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        String requestScope = info.getRequestScope();
+        int reqVersion = info.getReqVersion();
+        Actions action = info.getAction();
+
+        if (reqVersion > 4 && requestScope.equalsIgnoreCase(ModelType.service.name()) && action == Action.createInstance
+                || action == Action.assignInstance) {
+            SubscriberInfo subscriberInfo = info.getSir().getRequestDetails().getSubscriberInfo();
+            if (subscriberInfo == null) {
+                throw new ValidationException("subscriberInfo");
+            }
+            if (empty(subscriberInfo.getGlobalSubscriberId())) {
+                throw new ValidationException("globalSubscriberId");
+            }
         }
         return info;
-	}
+    }
 }

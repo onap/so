@@ -32,24 +32,22 @@ import org.onap.so.openpojo.rules.HasEqualsAndHashCodeRule;
 
 public class BBDecompPojoTest {
 
-	private PojoClassFilter filterTestClasses = new FilterTestClasses();
+    private PojoClassFilter filterTestClasses = new FilterTestClasses();
 
-	@Test
-	public void pojoStructure() {
-		test("org.onap.so.bpmn.servicedecomposition.bbobjects");
-	}
+    @Test
+    public void pojoStructure() {
+        test("org.onap.so.bpmn.servicedecomposition.bbobjects");
+    }
 
-	private void test(String pojoPackage) {
-		Validator validator = ValidatorBuilder.create()
-				.with(new EqualsAndHashCodeTester())
-				.with(new HasEqualsAndHashCodeRule())
-				.build();
-		validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete());
-	}
+    private void test(String pojoPackage) {
+        Validator validator = ValidatorBuilder.create().with(new EqualsAndHashCodeTester())
+                .with(new HasEqualsAndHashCodeRule()).build();
+        validator.validate(pojoPackage, new FilterPackageInfo(), filterTestClasses, new FilterNonConcrete());
+    }
 
-	private static class FilterTestClasses implements PojoClassFilter {
-		public boolean include(PojoClass pojoClass) {
-			return !pojoClass.getSourcePath().contains("/test-classes/");
-		}
-	}
+    private static class FilterTestClasses implements PojoClassFilter {
+        public boolean include(PojoClass pojoClass) {
+            return !pojoClass.getSourcePath().contains("/test-classes/");
+        }
+    }
 }

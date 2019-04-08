@@ -25,13 +25,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.onap.so.db.catalog.beans.CloudIdentity;
 import org.onap.so.db.catalog.beans.CloudSite;
 import org.onap.so.db.catalog.beans.CloudifyManager;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @deprecated
- * This class is introduced as deprecated as its only purpose is for migration of cloud config data. It shouldnt be used elsewhere.
+ * @deprecated This class is introduced as deprecated as its only purpose is for migration of cloud config data. It
+ *             shouldnt be used elsewhere.
  */
 
 @Deprecated
@@ -71,12 +70,12 @@ public class CloudConfig {
         this.cloudifyManagers = cloudifyManagers;
     }
 
-    public void populateId(){
+    public void populateId() {
         for (Map.Entry<String, CloudIdentity> entry : identityServices.entrySet()) {
             entry.getValue().setId(entry.getKey());
         }
 
-        for (Map.Entry <String, CloudSite> entry : cloudSites.entrySet()) {
+        for (Map.Entry<String, CloudSite> entry : cloudSites.entrySet()) {
             entry.getValue().setId(entry.getKey());
         }
 

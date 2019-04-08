@@ -28,9 +28,11 @@ import org.junit.Test;
  */
 public class CamundaMacroRequestSerializerTest {
     @Test
-    public void testWithAllParameters() throws Exception{
+    public void testWithAllParameters() throws Exception {
         String jsonRequest = CamundaMacroRequestSerializer.getJsonRequest("requestId", "action", "serviceInstanceId");
         Assert.assertNotNull(jsonRequest);
-        Assert.assertEquals("{\"variables\":{\"mso-request-id\":{\"value\":\"requestId\",\"type\":\"String\"},\"gAction\":{\"value\":\"action\",\"type\":\"String\"},\"serviceInstanceId\":{\"value\":\"serviceInstanceId\",\"type\":\"String\"}}}", jsonRequest);
+        Assert.assertEquals(
+                "{\"variables\":{\"mso-request-id\":{\"value\":\"requestId\",\"type\":\"String\"},\"gAction\":{\"value\":\"action\",\"type\":\"String\"},\"serviceInstanceId\":{\"value\":\"serviceInstanceId\",\"type\":\"String\"}}}",
+                jsonRequest);
     }
 }

@@ -22,24 +22,23 @@ package org.onap.so.client.aai.entities.singletransaction;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SingleTransactionRequest {
 
-	@JsonProperty("operations")
-	public List<OperationBodyRequest> operations;
-	
-	public List<OperationBodyRequest> getOperations() {
-		
-		if (operations == null) {
-			operations = new ArrayList<>();
-		}
-		
-		return operations;
-	}
-	
-	public void setOperations(List<OperationBodyRequest> operations) {
-		this.operations = operations;
-	}
+    @JsonProperty("operations")
+    public List<OperationBodyRequest> operations;
+
+    public List<OperationBodyRequest> getOperations() {
+
+        if (operations == null) {
+            operations = new ArrayList<>();
+        }
+
+        return operations;
+    }
+
+    public void setOperations(List<OperationBodyRequest> operations) {
+        this.operations = operations;
+    }
 }

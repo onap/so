@@ -32,12 +32,13 @@ public class MsoTenantNotFound extends MsoOpenstackException {
     private static final long serialVersionUID = 5640069939645577063L;
 
     /**
-	 * Constructor to create the exception
-	 * @param tenant the tenant id
-	 * @param cloud the cloud id
-	 */
-	public MsoTenantNotFound (String tenant, String cloud) {
-		// Set the detailed error as the Exception 'message'
-		super(404, "Not Found", "Tenant " + tenant + " does not exist in Cloud " + cloud);
-	}
+     * Constructor to create the exception
+     * 
+     * @param tenant the tenant id
+     * @param cloud the cloud id
+     */
+    public MsoTenantNotFound(String tenant, String cloud) {
+        // Set the detailed error as the Exception 'message'
+        super(404, "Not Found", "Tenant " + tenant + " does not exist in Cloud " + cloud);
+    }
 }

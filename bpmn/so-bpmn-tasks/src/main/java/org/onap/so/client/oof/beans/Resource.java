@@ -21,10 +21,9 @@
 package org.onap.so.client.oof.beans;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 
-public class Resource implements Serializable{
+public class Resource implements Serializable {
 
     private static final long serialVersionUID = 5949861520571440421L;
 
@@ -34,19 +33,19 @@ public class Resource implements Serializable{
     private String status;
 
 
-    public String getServiceResourceId(){
+    public String getServiceResourceId() {
         return serviceResourceId;
     }
 
-    public void setServiceResourceId(String serviceResourceId){
+    public void setServiceResourceId(String serviceResourceId) {
         this.serviceResourceId = serviceResourceId;
     }
 
-    public String getStatus(){
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status){
+    public void setStatus(String status) {
         this.status = status;
     }
 

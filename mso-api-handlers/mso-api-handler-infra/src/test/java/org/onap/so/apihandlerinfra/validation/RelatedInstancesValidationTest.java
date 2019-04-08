@@ -21,35 +21,33 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
-
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class RelatedInstancesValidationTest extends BaseTest{
+public class RelatedInstancesValidationTest extends BaseTest {
 
-	@Test
-	public void testCreateVnfNetworkInstanceGroup() throws IOException, ValidationException {
-		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/RelatedInstances/v7CreateVnfNetworkInstanceGroup.json")));
-		ObjectMapper mapper = new ObjectMapper();
-		ServiceInstancesRequest sir  = mapper.readValue(requestJson, ServiceInstancesRequest.class);
-		ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(), Action.createInstance, 
-																6, false, sir.getRequestDetails().getRequestParameters());
-		info.setRequestScope("vnf");
-		sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");
-		sir.getRequestDetails().getModelInfo().setModelCustomizationName("name");
-		RelatedInstancesValidation validation = new RelatedInstancesValidation();
-		validation.validate(info);
-		
-		assertEquals(info.getVnfType(), "Test/name");
-	}
+    @Test
+    public void testCreateVnfNetworkInstanceGroup() throws IOException, ValidationException {
+        String requestJson = new String(Files.readAllBytes(
+                Paths.get("src/test/resources/MsoRequestTest/RelatedInstances/v7CreateVnfNetworkInstanceGroup.json")));
+        ObjectMapper mapper = new ObjectMapper();
+        ServiceInstancesRequest sir = mapper.readValue(requestJson, ServiceInstancesRequest.class);
+        ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(),
+                Action.createInstance, 6, false, sir.getRequestDetails().getRequestParameters());
+        info.setRequestScope("vnf");
+        sir.setServiceInstanceId("0fd90c0c-0e3a-46e2-abb5-4c4820d5985b");
+        sir.getRequestDetails().getModelInfo().setModelCustomizationName("name");
+        RelatedInstancesValidation validation = new RelatedInstancesValidation();
+        validation.validate(info);
+
+        assertEquals(info.getVnfType(), "Test/name");
+    }
 }

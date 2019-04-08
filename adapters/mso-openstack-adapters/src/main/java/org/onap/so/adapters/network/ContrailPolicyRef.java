@@ -34,48 +34,39 @@ import org.slf4j.LoggerFactory;
 public class ContrailPolicyRef {
 
     private static final Logger logger = LoggerFactory.getLogger(ContrailPolicyRef.class);
-	 
-	@JsonProperty("network_policy_refs_data_sequence")
-	private ContrailPolicyRefSeq seq;
-	
-	public JsonNode toJsonNode()
-	{
-		JsonNode node = null;
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper(); 
-			node = mapper.convertValue(this, JsonNode.class);
-		}
-		catch (Exception e)
-		{
-        logger.error("{} {} Error creating JsonString for Contrail Policy Ref: ", MessageEnum.RA_MARSHING_ERROR,
-            ErrorCode.SchemaError.getValue(), e);
-		}
-		
-		return node;
-	}
-	
-	public String toJsonString()
-	{
-		String jsonString = null;
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper(); 
-			jsonString = mapper.writeValueAsString(this);
-		}
-		catch (Exception e)
-		{
-        logger.error("{} {} Error creating JsonString for Contrail Policy Ref: ", MessageEnum.RA_MARSHING_ERROR,
-            ErrorCode.SchemaError.getValue(), e);
-		}
-		
-		return jsonString;
-	}
-	
-	public void populate(String major, String minor)
-	{
-		seq = new ContrailPolicyRefSeq(major, minor);
-		return;
-	}
-	
+
+    @JsonProperty("network_policy_refs_data_sequence")
+    private ContrailPolicyRefSeq seq;
+
+    public JsonNode toJsonNode() {
+        JsonNode node = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            node = mapper.convertValue(this, JsonNode.class);
+        } catch (Exception e) {
+            logger.error("{} {} Error creating JsonString for Contrail Policy Ref: ", MessageEnum.RA_MARSHING_ERROR,
+                    ErrorCode.SchemaError.getValue(), e);
+        }
+
+        return node;
+    }
+
+    public String toJsonString() {
+        String jsonString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            jsonString = mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            logger.error("{} {} Error creating JsonString for Contrail Policy Ref: ", MessageEnum.RA_MARSHING_ERROR,
+                    ErrorCode.SchemaError.getValue(), e);
+        }
+
+        return jsonString;
+    }
+
+    public void populate(String major, String minor) {
+        seq = new ContrailPolicyRefSeq(major, minor);
+        return;
+    }
+
 }

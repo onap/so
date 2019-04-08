@@ -24,7 +24,6 @@ package org.onap.so.adapters.network.async.client;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -32,9 +31,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for createNetworkNotification complex type.
+ * <p>
+ * Java class for createNetworkNotification complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="createNetworkNotification">
@@ -79,16 +80,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createNetworkNotification", propOrder = {
-    "messageId",
-    "completed",
-    "exception",
-    "errorMessage",
-    "networkId",
-    "neutronNetworkId",
-    "subnetIdMap",
-    "rollback"
-})
+@XmlType(name = "createNetworkNotification", propOrder = {"messageId", "completed", "exception", "errorMessage",
+        "networkId", "neutronNetworkId", "subnetIdMap", "rollback"})
 public class CreateNetworkNotification {
 
     @XmlElement(required = true)
@@ -104,10 +97,8 @@ public class CreateNetworkNotification {
     /**
      * Gets the value of the messageId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getMessageId() {
         return messageId;
@@ -116,10 +107,8 @@ public class CreateNetworkNotification {
     /**
      * Sets the value of the messageId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setMessageId(String value) {
         this.messageId = value;
@@ -144,10 +133,8 @@ public class CreateNetworkNotification {
     /**
      * Gets the value of the exception property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @return possible object is {@link MsoExceptionCategory }
+     * 
      */
     public MsoExceptionCategory getException() {
         return exception;
@@ -156,10 +143,8 @@ public class CreateNetworkNotification {
     /**
      * Sets the value of the exception property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @param value allowed object is {@link MsoExceptionCategory }
+     * 
      */
     public void setException(MsoExceptionCategory value) {
         this.exception = value;
@@ -168,10 +153,8 @@ public class CreateNetworkNotification {
     /**
      * Gets the value of the errorMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getErrorMessage() {
         return errorMessage;
@@ -180,10 +163,8 @@ public class CreateNetworkNotification {
     /**
      * Sets the value of the errorMessage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setErrorMessage(String value) {
         this.errorMessage = value;
@@ -192,10 +173,8 @@ public class CreateNetworkNotification {
     /**
      * Gets the value of the networkId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getNetworkId() {
         return networkId;
@@ -204,10 +183,8 @@ public class CreateNetworkNotification {
     /**
      * Sets the value of the networkId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setNetworkId(String value) {
         this.networkId = value;
@@ -216,10 +193,8 @@ public class CreateNetworkNotification {
     /**
      * Gets the value of the neutronNetworkId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getNeutronNetworkId() {
         return neutronNetworkId;
@@ -228,10 +203,8 @@ public class CreateNetworkNotification {
     /**
      * Sets the value of the neutronNetworkId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setNeutronNetworkId(String value) {
         this.neutronNetworkId = value;
@@ -240,10 +213,8 @@ public class CreateNetworkNotification {
     /**
      * Gets the value of the subnetIdMap property.
      * 
-     * @return
-     *     possible object is
-     *     {@link CreateNetworkNotification.SubnetIdMap }
-     *     
+     * @return possible object is {@link CreateNetworkNotification.SubnetIdMap }
+     * 
      */
     public CreateNetworkNotification.SubnetIdMap getSubnetIdMap() {
         return subnetIdMap;
@@ -252,10 +223,8 @@ public class CreateNetworkNotification {
     /**
      * Sets the value of the subnetIdMap property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link CreateNetworkNotification.SubnetIdMap }
-     *     
+     * @param value allowed object is {@link CreateNetworkNotification.SubnetIdMap }
+     * 
      */
     public void setSubnetIdMap(CreateNetworkNotification.SubnetIdMap value) {
         this.subnetIdMap = value;
@@ -264,10 +233,8 @@ public class CreateNetworkNotification {
     /**
      * Gets the value of the rollback property.
      * 
-     * @return
-     *     possible object is
-     *     {@link NetworkRollback }
-     *     
+     * @return possible object is {@link NetworkRollback }
+     * 
      */
     public NetworkRollback getRollback() {
         return rollback;
@@ -276,10 +243,8 @@ public class CreateNetworkNotification {
     /**
      * Sets the value of the rollback property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link NetworkRollback }
-     *     
+     * @param value allowed object is {@link NetworkRollback }
+     * 
      */
     public void setRollback(NetworkRollback value) {
         this.rollback = value;
@@ -287,9 +252,11 @@ public class CreateNetworkNotification {
 
 
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType>
@@ -317,9 +284,7 @@ public class CreateNetworkNotification {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "entry"
-    })
+    @XmlType(name = "", propOrder = {"entry"})
     public static class SubnetIdMap {
 
         protected List<CreateNetworkNotification.SubnetIdMap.Entry> entry;
@@ -328,21 +293,20 @@ public class CreateNetworkNotification {
          * Gets the value of the entry property.
          * 
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the entry property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the entry property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getEntry().add(newItem);
+         * getEntry().add(newItem);
          * </pre>
          * 
          * 
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link CreateNetworkNotification.SubnetIdMap.Entry }
+         * Objects of the following type(s) are allowed in the list {@link CreateNetworkNotification.SubnetIdMap.Entry }
          * 
          * 
          */
@@ -355,9 +319,11 @@ public class CreateNetworkNotification {
 
 
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -375,10 +341,7 @@ public class CreateNetworkNotification {
          * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "key",
-            "value"
-        })
+        @XmlType(name = "", propOrder = {"key", "value"})
         public static class Entry {
 
             protected String key;
@@ -387,10 +350,8 @@ public class CreateNetworkNotification {
             /**
              * Gets the value of the key property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getKey() {
                 return key;
@@ -399,10 +360,8 @@ public class CreateNetworkNotification {
             /**
              * Sets the value of the key property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setKey(String value) {
                 this.key = value;
@@ -411,10 +370,8 @@ public class CreateNetworkNotification {
             /**
              * Gets the value of the value property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getValue() {
                 return value;
@@ -423,10 +380,8 @@ public class CreateNetworkNotification {
             /**
              * Sets the value of the value property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setValue(String value) {
                 this.value = value;

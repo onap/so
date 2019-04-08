@@ -25,47 +25,43 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-"vnf_name",
-"existing_software_version",
-"new_software_version"
-})
+@JsonPropertyOrder({"vnf_name", "existing_software_version", "new_software_version"})
 public class ConfigurationParametersUpgrade {
-@JsonProperty("vnf_name")
-private String vnfName;
-@JsonProperty("existing_software_version")
-private String existingSoftwareVersion;
-@JsonProperty("new_software_version")
-private String newSoftwareVersion;
+    @JsonProperty("vnf_name")
+    private String vnfName;
+    @JsonProperty("existing_software_version")
+    private String existingSoftwareVersion;
+    @JsonProperty("new_software_version")
+    private String newSoftwareVersion;
 
-@JsonProperty("vnf_name")
-public String getVnfName() {
-return vnfName;
-}
+    @JsonProperty("vnf_name")
+    public String getVnfName() {
+        return vnfName;
+    }
 
-@JsonProperty("vnf_name")
-public void setVnfName(String vnfName) {
-this.vnfName = vnfName;
-}
+    @JsonProperty("vnf_name")
+    public void setVnfName(String vnfName) {
+        this.vnfName = vnfName;
+    }
 
-@JsonProperty("existing_software_version")
-public String getExistingSoftwareVersion() {
-return existingSoftwareVersion;
-}
+    @JsonProperty("existing_software_version")
+    public String getExistingSoftwareVersion() {
+        return existingSoftwareVersion;
+    }
 
-@JsonProperty("existing_software_version")
-public void setExistingSoftwareVersion(String existingSoftwareVersion) {
-this.existingSoftwareVersion = existingSoftwareVersion;
-}
+    @JsonProperty("existing_software_version")
+    public void setExistingSoftwareVersion(String existingSoftwareVersion) {
+        this.existingSoftwareVersion = existingSoftwareVersion;
+    }
 
-@JsonProperty("new_software_version")
-public String getNewSoftwareVersion() {
-return newSoftwareVersion;
-}
+    @JsonProperty("new_software_version")
+    public String getNewSoftwareVersion() {
+        return newSoftwareVersion;
+    }
 
-@JsonProperty("new_software_version")
-public void setNewSoftwareVersion(String newSoftwareVersion) {
-this.newSoftwareVersion = newSoftwareVersion;
-}
+    @JsonProperty("new_software_version")
+    public void setNewSoftwareVersion(String newSoftwareVersion) {
+        this.newSoftwareVersion = newSoftwareVersion;
+    }
 
 }

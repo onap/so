@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class E2ERequestTest {
@@ -32,23 +31,23 @@ public class E2ERequestTest {
     public void verifyE2ERequest() throws Exception {
 
         test.setOperationId("operationId");
-        assertEquals(test.getOperationId(),"operationId");
+        assertEquals(test.getOperationId(), "operationId");
         test.setOperation("operation");
-        assertEquals(test.getOperation(),"operation");
+        assertEquals(test.getOperation(), "operation");
         test.setResult("result");
-        assertEquals(test.getResult(),"result");
+        assertEquals(test.getResult(), "result");
         test.setReason("test");
-        assertEquals(test.getReason(),"test");
+        assertEquals(test.getReason(), "test");
         test.setUserId("userId");
-        assertEquals(test.getUserId(),"userId");
+        assertEquals(test.getUserId(), "userId");
         test.setOperationContent("operation");
-        assertEquals(test.getOperationContent(),"operation");
+        assertEquals(test.getOperationContent(), "operation");
         test.setProgress(123);
-        assertEquals(test.getProgress(),123);
+        assertEquals(test.getProgress(), 123);
         test.setOperateAt("operate");
-        assertEquals(test.getOperateAt(),"operate");
+        assertEquals(test.getOperateAt(), "operate");
         test.setFinishedAt("finished");
-        assertEquals(test.getFinishedAt(),"finished");
+        assertEquals(test.getFinishedAt(), "finished");
     }
 
 }

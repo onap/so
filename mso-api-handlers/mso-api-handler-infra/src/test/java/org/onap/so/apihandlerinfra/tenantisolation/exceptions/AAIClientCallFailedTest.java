@@ -20,7 +20,6 @@
 package org.onap.so.apihandlerinfra.tenantisolation.exceptions;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.BaseTest;
 

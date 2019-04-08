@@ -21,7 +21,6 @@
 package org.onap.so.asdc;
 
 import static org.mockito.Mockito.reset;
-
 import org.junit.After;
 import org.junit.runner.RunWith;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
@@ -39,7 +38,6 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 
 @RunWith(SpringRunner.class)
@@ -48,23 +46,23 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 @ContextConfiguration(classes = SpringContextHelper.class, initializers = ConfigFileApplicationContextInitializer.class)
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseTest {
-	@MockBean
-	protected VfResourceStructure vfResourceStructure;
-	@MockBean
-	protected ToscaResourceStructure toscaResourceStruct;
-	@SpyBean
-	protected WatchdogDistribution watchdogDistributionSpy;
-	@SpyBean
-	protected ToscaResourceInstaller toscaInstaller;
-	@Autowired
-	protected WireMockServer wireMockServer;
-	
-	@Value("${wiremock.server.port}")
+    @MockBean
+    protected VfResourceStructure vfResourceStructure;
+    @MockBean
+    protected ToscaResourceStructure toscaResourceStruct;
+    @SpyBean
+    protected WatchdogDistribution watchdogDistributionSpy;
+    @SpyBean
+    protected ToscaResourceInstaller toscaInstaller;
+    @Autowired
+    protected WireMockServer wireMockServer;
+
+    @Value("${wiremock.server.port}")
     protected String wireMockPort;
 
-	@After
-	public void after() {
-		reset(vfResourceStructure);
-		reset(toscaResourceStruct);
-	}
+    @After
+    public void after() {
+        reset(vfResourceStructure);
+        reset(toscaResourceStruct);
+    }
 }

@@ -21,12 +21,10 @@
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import org.junit.Test;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.Assert.assertEquals;
 
 public class NsParametersTest {
@@ -37,15 +35,15 @@ public class NsParametersTest {
     @Test
     public void verifyNsParameters() throws Exception {
 
-        LocationConstraint obj =new LocationConstraint();
+        LocationConstraint obj = new LocationConstraint();
         List<LocationConstraint> locationConstraints = new ArrayList<LocationConstraint>();
         locationConstraints.add(obj);
         test.setLocationConstraints(locationConstraints);
-        assertEquals(test.getLocationConstraints(),locationConstraints);
-        Map<String, Object> additionalParamForNs = new HashMap<String,Object>();
-        additionalParamForNs.put("1",test);
+        assertEquals(test.getLocationConstraints(), locationConstraints);
+        Map<String, Object> additionalParamForNs = new HashMap<String, Object>();
+        additionalParamForNs.put("1", test);
         test.setAdditionalParamForNs(additionalParamForNs);
-        assertEquals(test.getAdditionalParamForNs(),additionalParamForNs);
+        assertEquals(test.getAdditionalParamForNs(), additionalParamForNs);
     }
 
 

@@ -21,32 +21,36 @@ package org.onap.so.bpmn.common.workflow.context;
 
 
 /**
- * @version 1.0
- * Workflow Response bean to generate workflow response in JSON format
+ * @version 1.0 Workflow Response bean to generate workflow response in JSON format
  */
 public class WorkflowCallbackResponse {
-	
-	private String response;
-	private int statusCode;
-	private String message;
-	
-	public String getResponse() {
-		return response;
-	}
-	public void setResponse(String response) {
-		this.response = response;
-	}
-	public int getStatusCode() {
-		return statusCode;
-	}
-	public void setStatusCode(int statusCode) {
-		this.statusCode = statusCode;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
-	}
+
+    private String response;
+    private int statusCode;
+    private String message;
+
+    public String getResponse() {
+        return response;
+    }
+
+    public void setResponse(String response) {
+        this.response = response;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
 }

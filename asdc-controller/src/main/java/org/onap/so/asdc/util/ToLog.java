@@ -23,7 +23,6 @@ package org.onap.so.asdc.util;
 
 
 
-
 public @interface ToLog {
 
 }

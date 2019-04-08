@@ -24,64 +24,62 @@ package org.onap.so.openstack.beans;
 
 import java.io.Serializable;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlTransient;
 
 public class Subnet implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -530027355187604839L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -530027355187604839L;
 
-	private String subnetName; 
-	
-	private String neutronId;
+    private String subnetName;
 
-	private String subnetId; // value from aai
+    private String neutronId;
 
-    private String cidr; //Only field required
+    private String subnetId; // value from aai
+
+    private String cidr; // Only field required
 
     private String gatewayIp;
 
-    private String ipVersion="4";
+    private String ipVersion = "4";
 
-    private Boolean enableDHCP=false;
-    
-    private Boolean addrFromStart=true;
+    private Boolean enableDHCP = false;
+
+    private Boolean addrFromStart = true;
 
     private List<HostRoute> hostRoutes;
 
     private List<Pool> allocationPools;
 
     private List<String> dnsNameServers;
-    
+
     private Integer subnetSequence;
 
     public Integer getSubnetSequence() {
-		return subnetSequence;
-	}
-
-	public void setSubnetSequence(Integer subnetSequence) {
-		this.subnetSequence = subnetSequence;
-	}
-
-	public Subnet () {
+        return subnetSequence;
     }
 
-	public String getSubnetName() {
-		return subnetName;
-	}
+    public void setSubnetSequence(Integer subnetSequence) {
+        this.subnetSequence = subnetSequence;
+    }
 
-	public void setSubnetName(String subnetName) {
-		this.subnetName = subnetName;
-	}
-	
-	public List<Pool> getAllocationPools() {
-		return allocationPools;
-	}
+    public Subnet() {}
 
-	/**
+    public String getSubnetName() {
+        return subnetName;
+    }
+
+    public void setSubnetName(String subnetName) {
+        this.subnetName = subnetName;
+    }
+
+    public List<Pool> getAllocationPools() {
+        return allocationPools;
+    }
+
+    /**
      * @return the cidr
      */
     public String getCidr() {
@@ -100,15 +98,15 @@ public class Subnet implements Serializable {
         return enableDHCP;
     }
 
-	public Boolean getAddrFromStart() {
-		return addrFromStart;
-	}
+    public Boolean getAddrFromStart() {
+        return addrFromStart;
+    }
 
-	public void setAddrFromStart(Boolean addrFromStart) {
-		this.addrFromStart = addrFromStart;
-	}
+    public void setAddrFromStart(Boolean addrFromStart) {
+        this.addrFromStart = addrFromStart;
+    }
 
-	/**
+    /**
      * @return the gw
      */
     public String getGatewayIp() {
@@ -145,79 +143,71 @@ public class Subnet implements Serializable {
     }
 
     public void setAllocationPools(List<Pool> allocationPools) {
-		this.allocationPools = allocationPools;
-	}
+        this.allocationPools = allocationPools;
+    }
 
     /**
-     * @param cidr
-     *            the cidr to set
+     * @param cidr the cidr to set
      */
     public void setCidr(String cidr) {
         this.cidr = cidr;
     }
 
     /**
-     * @param dnsNames
-     *            the dnsNames to set
+     * @param dnsNames the dnsNames to set
      */
     public void setDnsNameServers(List<String> dnsNameServers) {
         this.dnsNameServers = dnsNameServers;
     }
 
     /**
-     * @param enableDHCP
-     *            the enableDHCP to set
+     * @param enableDHCP the enableDHCP to set
      */
     public void setEnableDHCP(Boolean enableDHCP) {
         this.enableDHCP = enableDHCP;
     }
 
     /**
-     * @param gw
-     *            the gw to set
+     * @param gw the gw to set
      */
     public void setGatewayIp(String gatewayIp) {
         this.gatewayIp = gatewayIp;
     }
 
     /**
-     * @param hostRoutes
-     *            the hostRoutes to set
+     * @param hostRoutes the hostRoutes to set
      */
     public void setHostRoutes(List<HostRoute> hostRoutes) {
         this.hostRoutes = hostRoutes;
     }
 
     /**
-     * @param neutronId
-     *            the id to set
+     * @param neutronId the id to set
      */
     public void setNeutronId(String neutronId) {
         this.neutronId = neutronId;
     }
 
     /**
-     * @param ipversion
-     *            the ipversion to set
+     * @param ipversion the ipversion to set
      */
     public void setIpVersion(String ipVersion) {
         this.ipVersion = ipVersion;
     }
 
     /**
-     * @param name
-     *            the name to set
+     * @param name the name to set
      */
     public void setSubnetId(String subnetId) {
         this.subnetId = subnetId;
     }
 
-	@Override
-	public String toString() {
-		return "Subnet [subnetName=" + subnetName + ", neutronId=" + neutronId + ", subnetId=" + subnetId + ", cidr="
-				+ cidr + ", gatewayIp=" + gatewayIp + ", ipVersion=" + ipVersion + ", enableDHCP=" + enableDHCP
-				+ ", addrFromStart=" + addrFromStart + ", hostRoutes=" + hostRoutes + ", allocationPools="
-				+ allocationPools + ", dnsNameServers=" + dnsNameServers + "]";
-	}
+    @Override
+    public String toString() {
+        return "Subnet [subnetName=" + subnetName + ", neutronId=" + neutronId + ", subnetId=" + subnetId + ", cidr="
+                + cidr + ", gatewayIp=" + gatewayIp + ", ipVersion=" + ipVersion + ", enableDHCP=" + enableDHCP
+                + ", addrFromStart=" + addrFromStart + ", hostRoutes=" + hostRoutes + ", allocationPools="
+                + allocationPools + ", dnsNameServers=" + dnsNameServers + "]";
+    }
 
 }

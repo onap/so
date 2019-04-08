@@ -32,89 +32,83 @@ import java.util.List;
  */
 
 public class NetworkInfo {
-	// Set defaults for everything
-	private String name = "";
-	private String id = "";
-	private NetworkStatus status = NetworkStatus.UNKNOWN;
-	private String provider = "";
-	private List<Integer> vlans = new ArrayList<>();
-	private List<String> subnets = new ArrayList<>();
-	private String shared = "";
+    // Set defaults for everything
+    private String name = "";
+    private String id = "";
+    private NetworkStatus status = NetworkStatus.UNKNOWN;
+    private String provider = "";
+    private List<Integer> vlans = new ArrayList<>();
+    private List<String> subnets = new ArrayList<>();
+    private String shared = "";
 
-	public NetworkInfo () {
-	}
+    public NetworkInfo() {}
 
-	public NetworkInfo (String name, NetworkStatus status) {
-		this.name = name;
-		this.id = name;	// Don't have an ID, so just use name
-		this.status = status;
-	}
+    public NetworkInfo(String name, NetworkStatus status) {
+        this.name = name;
+        this.id = name; // Don't have an ID, so just use name
+        this.status = status;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName (String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId (String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public NetworkStatus getStatus() {
-		return status;
-	}
+    public NetworkStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus (NetworkStatus status) {
-		this.status = status;
-	}
+    public void setStatus(NetworkStatus status) {
+        this.status = status;
+    }
 
-	public String getProvider() {
-		return provider;
-	}
+    public String getProvider() {
+        return provider;
+    }
 
-	public void setProvider (String provider) {
-		this.provider = provider;
-	}
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
 
-	public List<Integer> getVlans () {
-		return vlans;
-	}
+    public List<Integer> getVlans() {
+        return vlans;
+    }
 
-	public void setVlans (List<Integer> vlans) {
-		this.vlans = vlans;
-	}
+    public void setVlans(List<Integer> vlans) {
+        this.vlans = vlans;
+    }
 
-	public List<String> getSubnets () {
-		return subnets;
-	}
+    public List<String> getSubnets() {
+        return subnets;
+    }
 
-	public void setSubnets (List<String> subnets) {
-		this.subnets = subnets;
-	}
+    public void setSubnets(List<String> subnets) {
+        this.subnets = subnets;
+    }
 
-	public String getShared() {
-		return shared;
-	}
+    public String getShared() {
+        return shared;
+    }
 
-	public void setShared(String shared) {
-		this.shared = shared;
-	}
+    public void setShared(String shared) {
+        this.shared = shared;
+    }
 
-	@Override
-	public String toString() {
-		return "NetworkInfo{" + "name='" + name + '\'' +
-			", id='" + id + '\'' +
-			", status=" + status +
-			", provider='" + provider + '\'' +
-			", vlans=" + vlans +
-			", subnets=" + subnets +
-			'}';
-	}
+    @Override
+    public String toString() {
+        return "NetworkInfo{" + "name='" + name + '\'' + ", id='" + id + '\'' + ", status=" + status + ", provider='"
+                + provider + '\'' + ", vlans=" + vlans + ", subnets=" + subnets + '}';
+    }
 }
 

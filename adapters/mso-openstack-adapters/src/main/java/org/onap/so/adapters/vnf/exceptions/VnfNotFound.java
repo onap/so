@@ -24,18 +24,19 @@ package org.onap.so.adapters.vnf.exceptions;
 import javax.xml.ws.WebFault;
 
 /**
- * This class reports an exception when trying to update a Network that does
- * not exist in the target cloud/tenant.  Note that deleteNetwork suppresses
- * this exception (deletion of non-existent network is considered a success).
+ * This class reports an exception when trying to update a Network that does not exist in the target cloud/tenant. Note
+ * that deleteNetwork suppresses this exception (deletion of non-existent network is considered a success).
  *
  *
  */
-@WebFault (name="VnfNotFound", faultBean="org.onap.so.adapters.vnf.exceptions.VnfExceptionBean", targetNamespace="http://org.onap.so/vnf")
+@WebFault(name = "VnfNotFound", faultBean = "org.onap.so.adapters.vnf.exceptions.VnfExceptionBean",
+        targetNamespace = "http://org.onap.so/vnf")
 public class VnfNotFound extends VnfException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public VnfNotFound (String cloudId, String cloudOwner, String tenantId, String vnfName) {
-		super("Resource " + vnfName + " not found in owner/cloud/tenant " + cloudOwner + "/" + cloudId + "/" + tenantId);
-	}
+    public VnfNotFound(String cloudId, String cloudOwner, String tenantId, String vnfName) {
+        super("Resource " + vnfName + " not found in owner/cloud/tenant " + cloudOwner + "/" + cloudId + "/"
+                + tenantId);
+    }
 }

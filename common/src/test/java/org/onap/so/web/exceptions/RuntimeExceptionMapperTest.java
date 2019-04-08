@@ -26,11 +26,9 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -38,29 +36,29 @@ import org.junit.Test;
 public class RuntimeExceptionMapperTest {
 
 
-	
-	@Test
-	public void testResponse() {
-		
-		RuntimeExceptionMapper mapper = new RuntimeExceptionMapper();
-		
-		Response r = mapper.toResponse(new RuntimeException("This is the run time exception message"));
-		
-		assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
-		assertThat(r.getEntity(), instanceOf(ExceptionResponse.class));
-		assertThat(((ExceptionResponse)r.getEntity()).getMessage(), equalTo("Unexpected Internal Exception"));
 
-	}
-	
-	@Test
-	public void preserve404ExceptionForForwarding() {
-		
-		RuntimeExceptionMapper mapper = new RuntimeExceptionMapper();
-		
-		Response r = mapper.toResponse(new NotFoundException("not found"));
-		
-		assertEquals(Status.NOT_FOUND.getStatusCode(), r.getStatus());
-		assertThat(r.getEntity(), is(nullValue()));
-	}
-	
+    @Test
+    public void testResponse() {
+
+        RuntimeExceptionMapper mapper = new RuntimeExceptionMapper();
+
+        Response r = mapper.toResponse(new RuntimeException("This is the run time exception message"));
+
+        assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), r.getStatus());
+        assertThat(r.getEntity(), instanceOf(ExceptionResponse.class));
+        assertThat(((ExceptionResponse) r.getEntity()).getMessage(), equalTo("Unexpected Internal Exception"));
+
+    }
+
+    @Test
+    public void preserve404ExceptionForForwarding() {
+
+        RuntimeExceptionMapper mapper = new RuntimeExceptionMapper();
+
+        Response r = mapper.toResponse(new NotFoundException("not found"));
+
+        assertEquals(Status.NOT_FOUND.getStatusCode(), r.getStatus());
+        assertThat(r.getEntity(), is(nullValue()));
+    }
+
 }

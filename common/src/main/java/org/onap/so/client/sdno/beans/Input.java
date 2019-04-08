@@ -23,7 +23,6 @@ package org.onap.so.client.sdno.beans;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,18 +31,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "request-healthdiagnostic",
-    "request-hd-custom"
-})
-public class Input implements Serializable
-{
+@JsonPropertyOrder({"request-healthdiagnostic", "request-hd-custom"})
+public class Input implements Serializable {
 
     @JsonProperty("request-healthdiagnostic")
     private RequestHealthDiagnostic RequestHealthDiagnostic;
     @JsonProperty("request-hd-custom")
     private RequestHdCustom requestHdCustom;
-    
+
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
     private final static long serialVersionUID = 7155546785389227528L;
@@ -57,15 +52,15 @@ public class Input implements Serializable
     public void setRequestHealthDiagnostic(RequestHealthDiagnostic RequestHealthDiagnostic) {
         this.RequestHealthDiagnostic = RequestHealthDiagnostic;
     }
-    
+
     @JsonProperty("request-hd-custom")
     public RequestHdCustom getRequestHdCustom() {
-    	return requestHdCustom;
-     }
+        return requestHdCustom;
+    }
 
     @JsonProperty("request-hd-custom")
     public void setRequestHdCustom(RequestHdCustom requestHdCustom) {
-    	this.requestHdCustom = requestHdCustom;
+        this.requestHdCustom = requestHdCustom;
     }
 
     public Input withRequestHealthDiagnostic(RequestHealthDiagnostic RequestHealthDiagnostic) {
@@ -82,9 +77,9 @@ public class Input implements Serializable
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
-    
+
     public void setAdditionalProperties(Map<String, Object> map) {
-    	this.additionalProperties = map;
+        this.additionalProperties = map;
     }
 
     public Input withAdditionalProperty(String name, Object value) {

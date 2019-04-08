@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.db.catalog.beans.BuildingBlockDetail;
@@ -37,16 +36,17 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class BuildingBlockDetailTest {
-	@Autowired
-	private BuildingBlockDetailRepository buildingBlockDetailRepository;
-	
-	@Test
-	public void BuildingBlockDetailSingleLookupValidationTest() {
-		String buildingBlockName = "AssignServiceInstanceBB";
-		
-		BuildingBlockDetail buildingBlockDetail = buildingBlockDetailRepository.findOneByBuildingBlockName(buildingBlockName);
-		assertEquals(buildingBlockName, buildingBlockDetail.getBuildingBlockName());
-		assertEquals(ResourceType.SERVICE, buildingBlockDetail.getResourceType());
-		assertEquals(OrchestrationAction.ASSIGN, buildingBlockDetail.getTargetAction());
-	}
+    @Autowired
+    private BuildingBlockDetailRepository buildingBlockDetailRepository;
+
+    @Test
+    public void BuildingBlockDetailSingleLookupValidationTest() {
+        String buildingBlockName = "AssignServiceInstanceBB";
+
+        BuildingBlockDetail buildingBlockDetail =
+                buildingBlockDetailRepository.findOneByBuildingBlockName(buildingBlockName);
+        assertEquals(buildingBlockName, buildingBlockDetail.getBuildingBlockName());
+        assertEquals(ResourceType.SERVICE, buildingBlockDetail.getResourceType());
+        assertEquals(OrchestrationAction.ASSIGN, buildingBlockDetail.getTargetAction());
+    }
 }

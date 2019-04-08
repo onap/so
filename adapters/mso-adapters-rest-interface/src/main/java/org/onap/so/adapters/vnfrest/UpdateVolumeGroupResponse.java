@@ -23,57 +23,51 @@ package org.onap.so.adapters.vnfrest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
 @JsonRootName("updateVolumeGroupResponse")
 @XmlRootElement(name = "updateVolumeGroupResponse")
 public class UpdateVolumeGroupResponse extends VfResponseCommon {
-	private String volumeGroupId;
-	private String volumeGroupStackId;
-	private Map<String,String> volumeGroupOutputs;
+    private String volumeGroupId;
+    private String volumeGroupStackId;
+    private Map<String, String> volumeGroupOutputs;
 
-	public UpdateVolumeGroupResponse() {
-		super();
-		this.volumeGroupOutputs = new HashMap<>();
-	}
+    public UpdateVolumeGroupResponse() {
+        super();
+        this.volumeGroupOutputs = new HashMap<>();
+    }
 
-	public UpdateVolumeGroupResponse(
-			String volumeGroupId,
-			String volumeGroupStackId,
-			Map<String, String> volumeGroupOutputs,
-			String messageId)
-	{
-		super(messageId);
-		this.volumeGroupId = volumeGroupId;
-		this.volumeGroupStackId = volumeGroupStackId;
-		this.volumeGroupOutputs = volumeGroupOutputs;
-	}
+    public UpdateVolumeGroupResponse(String volumeGroupId, String volumeGroupStackId,
+            Map<String, String> volumeGroupOutputs, String messageId) {
+        super(messageId);
+        this.volumeGroupId = volumeGroupId;
+        this.volumeGroupStackId = volumeGroupStackId;
+        this.volumeGroupOutputs = volumeGroupOutputs;
+    }
 
-	public String getVolumeGroupId() {
-		return volumeGroupId;
-	}
+    public String getVolumeGroupId() {
+        return volumeGroupId;
+    }
 
-	public void setVolumeGroupId(String volumeGroupId) {
-		this.volumeGroupId = volumeGroupId;
-	}
+    public void setVolumeGroupId(String volumeGroupId) {
+        this.volumeGroupId = volumeGroupId;
+    }
 
-	public String getVolumeGroupStackId() {
-		return volumeGroupStackId;
-	}
+    public String getVolumeGroupStackId() {
+        return volumeGroupStackId;
+    }
 
-	public void setVolumeGroupStackId(String volumeGroupStackId) {
-		this.volumeGroupStackId = volumeGroupStackId;
-	}
+    public void setVolumeGroupStackId(String volumeGroupStackId) {
+        this.volumeGroupStackId = volumeGroupStackId;
+    }
 
-	public Map<String, String> getVolumeGroupOutputs() {
-		return volumeGroupOutputs;
-	}
+    public Map<String, String> getVolumeGroupOutputs() {
+        return volumeGroupOutputs;
+    }
 
-	public void setVolumeGroupOutputs(Map<String, String> volumeGroupOutputs) {
-		this.volumeGroupOutputs = volumeGroupOutputs;
-	}
+    public void setVolumeGroupOutputs(Map<String, String> volumeGroupOutputs) {
+        this.volumeGroupOutputs = volumeGroupOutputs;
+    }
 }

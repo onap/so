@@ -31,15 +31,15 @@ import org.springframework.context.annotation.Profile;
 
 @SpringBootApplication
 @Profile("test")
-@ComponentScan(basePackages = {"org.onap.so.asdc"}, excludeFilters = {
-		@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class),
-		@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = RequestsDBHelper.class),
-		@Filter(type = FilterType.ASSIGNABLE_TYPE, classes = InfraActiveRequestsRepositoryImpl.class) })
+@ComponentScan(basePackages = {"org.onap.so.asdc"},
+        excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class),
+                @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = RequestsDBHelper.class),
+                @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = InfraActiveRequestsRepositoryImpl.class)})
 public class TestApplication {
-	public static void main(String... args) {
-		SpringApplication.run(TestApplication.class, args);
-		System.getProperties().setProperty("mso.db", "MARIADB");
-		System.getProperties().setProperty("server.name", "Springboot");
-		System.getProperties().setProperty("mso.config.path", "src/test/resources/");
-	}
+    public static void main(String... args) {
+        SpringApplication.run(TestApplication.class, args);
+        System.getProperties().setProperty("mso.db", "MARIADB");
+        System.getProperties().setProperty("server.name", "Springboot");
+        System.getProperties().setProperty("mso.config.path", "src/test/resources/");
+    }
 }

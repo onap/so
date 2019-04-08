@@ -21,8 +21,7 @@ package org.onap.so.bpmn.infrastructure.vfcmodel;
 
 
 /**
- * The operation key object for NS
- * <br>
+ * The operation key object for NS <br>
  * <p>
  * </p>
  *

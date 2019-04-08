@@ -21,12 +21,10 @@
 package org.onap.so.bpmn.core.domain;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
- * This class is used to store instance
- * data of services aka ServiceDecomposition
+ * This class is used to store instance data of services aka ServiceDecomposition
  *
  * @author bb3476
  *
@@ -34,63 +32,78 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 public class Request extends JsonWrapper implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private String sdncRequestId;
-	private String requestId;
-	private ModelInfo modelInfo;
-	private String productFamilyId;
-	private String callbackUrl;
-	private String serviceId;
-	private String tenantId;
-	private String cloudRegion;
-	
-	public String getSdncRequestId() {
-		return sdncRequestId;
-	}
-	public void setSdncRequestId(String sdncRequestId) {
-		this.sdncRequestId = sdncRequestId;
-	}
-	public String getRequestId() {
-		return requestId;
-	}
-	public void setRequestId(String requestId) {
-		this.requestId = requestId;
-	}
-	public ModelInfo getModelInfo() {
-		return modelInfo;
-	}
-	public void setModelInfo(ModelInfo modelInfo) {
-		this.modelInfo = modelInfo;
-	}
-	public String getProductFamilyId() {
-		return productFamilyId;
-	}
-	public void setProductFamilyId(String productFamilyId) {
-		this.productFamilyId = productFamilyId;
-	}
-	public String getCallbackUrl() {
-		return callbackUrl;
-	}
-	public void setCallbackUrl(String callbackUrl) {
-		this.callbackUrl = callbackUrl;
-	}
-	public String getServiceId() {
-		return serviceId;
-	}
-	public void setServiceId(String serviceId) {
-		this.serviceId = serviceId;
-	}
-	public String getCloudRegion() {
-		return cloudRegion;
-	}
-	public void setCloudRegion(String cloudRegion) {
-		this.cloudRegion = cloudRegion;
-	}
-	public String getTenantId() {
-		return tenantId;
-	}
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
-	
+    private static final long serialVersionUID = 1L;
+    private String sdncRequestId;
+    private String requestId;
+    private ModelInfo modelInfo;
+    private String productFamilyId;
+    private String callbackUrl;
+    private String serviceId;
+    private String tenantId;
+    private String cloudRegion;
+
+    public String getSdncRequestId() {
+        return sdncRequestId;
+    }
+
+    public void setSdncRequestId(String sdncRequestId) {
+        this.sdncRequestId = sdncRequestId;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
+    public ModelInfo getModelInfo() {
+        return modelInfo;
+    }
+
+    public void setModelInfo(ModelInfo modelInfo) {
+        this.modelInfo = modelInfo;
+    }
+
+    public String getProductFamilyId() {
+        return productFamilyId;
+    }
+
+    public void setProductFamilyId(String productFamilyId) {
+        this.productFamilyId = productFamilyId;
+    }
+
+    public String getCallbackUrl() {
+        return callbackUrl;
+    }
+
+    public void setCallbackUrl(String callbackUrl) {
+        this.callbackUrl = callbackUrl;
+    }
+
+    public String getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(String serviceId) {
+        this.serviceId = serviceId;
+    }
+
+    public String getCloudRegion() {
+        return cloudRegion;
+    }
+
+    public void setCloudRegion(String cloudRegion) {
+        this.cloudRegion = cloudRegion;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
 }

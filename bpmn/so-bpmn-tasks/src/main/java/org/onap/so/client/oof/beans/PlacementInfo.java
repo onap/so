@@ -28,11 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "requestParameters",
-    "subscriberInfo",
-    "placementDemands"
-})
+@JsonPropertyOrder({"requestParameters", "subscriberInfo", "placementDemands"})
 @JsonRootName("placementInfo")
 public class PlacementInfo implements Serializable {
 

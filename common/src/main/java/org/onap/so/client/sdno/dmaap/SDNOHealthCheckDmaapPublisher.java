@@ -23,33 +23,32 @@ package org.onap.so.client.sdno.dmaap;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Optional;
-
 import org.onap.so.client.dmaap.DmaapPublisher;
 
 public class SDNOHealthCheckDmaapPublisher extends DmaapPublisher {
-	
-	public SDNOHealthCheckDmaapPublisher() throws FileNotFoundException, IOException {
-		super();
-	}
-	
-	@Override
-	public String getAuth() {
-		return msoProperties.get("sdno.health-check.dmaap.auth");
-	}
 
-	@Override
-	public String getKey() {
-		return msoProperties.get("sdno.health-check.dmaap.msoKey");
-	}
+    public SDNOHealthCheckDmaapPublisher() throws FileNotFoundException, IOException {
+        super();
+    }
 
-	@Override
-	public String getTopic() {
-		return msoProperties.get("sdno.health-check.dmaap.publisher.topic");
-	}
-	
-	@Override
-	public Optional<String> getHost() {
-		return Optional.ofNullable(msoProperties.get("sdno.health-check.dmaap.publisher.host"));
-	}
+    @Override
+    public String getAuth() {
+        return msoProperties.get("sdno.health-check.dmaap.auth");
+    }
+
+    @Override
+    public String getKey() {
+        return msoProperties.get("sdno.health-check.dmaap.msoKey");
+    }
+
+    @Override
+    public String getTopic() {
+        return msoProperties.get("sdno.health-check.dmaap.publisher.topic");
+    }
+
+    @Override
+    public Optional<String> getHost() {
+        return Optional.ofNullable(msoProperties.get("sdno.health-check.dmaap.publisher.host"));
+    }
 
 }

@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.sdno.tasks;
 
 import java.util.Map;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
@@ -39,38 +38,37 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNOHealthCheckTasks {
-	private static final Logger logger = LoggerFactory.getLogger(SDNOHealthCheckTasks.class);
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private SDNOHealthCheckResources sdnoHealthCheckResources;
-	
-	public void sdnoHealthCheck(BuildingBlockExecution execution) {
-		boolean response = false;
-		try {			
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			RequestContext requestContext = gBBInput.getRequestContext();
-			
-			GenericVnf vnf = null;
-			Map<ResourceKey, String> lookupMap = execution.getLookupMap();
-			for (Map.Entry<ResourceKey, String> entry : lookupMap.entrySet()) {
-				if (entry.getKey().equals(ResourceKey.GENERIC_VNF_ID)) {
-					vnf = extractPojosForBB.extractByKey(execution, entry.getKey());
-				}
-			}
-			
-			response = sdnoHealthCheckResources.healthCheck(vnf, requestContext);
-		} 
-		catch (Exception ex) {		
-			logger.error("Exception occurred", ex);
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex.getMessage());			
-		}
-		
-		if (!response) {
-			logger.error("SDNO Health Check failed");
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "SDNO Health Check failed");
-		}		
-	}
+    private static final Logger logger = LoggerFactory.getLogger(SDNOHealthCheckTasks.class);
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private SDNOHealthCheckResources sdnoHealthCheckResources;
+
+    public void sdnoHealthCheck(BuildingBlockExecution execution) {
+        boolean response = false;
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+            RequestContext requestContext = gBBInput.getRequestContext();
+
+            GenericVnf vnf = null;
+            Map<ResourceKey, String> lookupMap = execution.getLookupMap();
+            for (Map.Entry<ResourceKey, String> entry : lookupMap.entrySet()) {
+                if (entry.getKey().equals(ResourceKey.GENERIC_VNF_ID)) {
+                    vnf = extractPojosForBB.extractByKey(execution, entry.getKey());
+                }
+            }
+
+            response = sdnoHealthCheckResources.healthCheck(vnf, requestContext);
+        } catch (Exception ex) {
+            logger.error("Exception occurred", ex);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex.getMessage());
+        }
+
+        if (!response) {
+            logger.error("SDNO Health Check failed");
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, "SDNO Health Check failed");
+        }
+    }
 }

@@ -21,83 +21,81 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-
 import javax.persistence.Id;
 
 @JsonRootName("forwarder-evc")
 public class ForwarderEvc implements Serializable, ShallowCopy<ForwarderEvc> {
 
-	private static final long serialVersionUID = 3822241337439817708L;
+    private static final long serialVersionUID = 3822241337439817708L;
 
-	@Id
-	@JsonProperty("forwarder-evc-id")
-	private String forwarderEvcId;
-	@JsonProperty("circuit-id")
-	private String circuitId;
-	@JsonProperty("ivlan")
-	private String ivlan;
-	@JsonProperty("svlan")
-	private String svlan;
-	@JsonProperty("cvlan")
-	private String cvlan;
+    @Id
+    @JsonProperty("forwarder-evc-id")
+    private String forwarderEvcId;
+    @JsonProperty("circuit-id")
+    private String circuitId;
+    @JsonProperty("ivlan")
+    private String ivlan;
+    @JsonProperty("svlan")
+    private String svlan;
+    @JsonProperty("cvlan")
+    private String cvlan;
 
-	public String getForwarderEvcId() {
-		return forwarderEvcId;
-	}
+    public String getForwarderEvcId() {
+        return forwarderEvcId;
+    }
 
-	public void setForwarderEvcId(String forwarderEvcId) {
-		this.forwarderEvcId = forwarderEvcId;
-	}
+    public void setForwarderEvcId(String forwarderEvcId) {
+        this.forwarderEvcId = forwarderEvcId;
+    }
 
-	public String getCircuitId() {
-		return circuitId;
-	}
+    public String getCircuitId() {
+        return circuitId;
+    }
 
-	public void setCircuitId(String circuitId) {
-		this.circuitId = circuitId;
-	}
+    public void setCircuitId(String circuitId) {
+        this.circuitId = circuitId;
+    }
 
-	public String getIvlan() {
-		return ivlan;
-	}
+    public String getIvlan() {
+        return ivlan;
+    }
 
-	public void setIvlan(String ivlan) {
-		this.ivlan = ivlan;
-	}
+    public void setIvlan(String ivlan) {
+        this.ivlan = ivlan;
+    }
 
-	public String getSvlan() {
-		return svlan;
-	}
+    public String getSvlan() {
+        return svlan;
+    }
 
-	public void setSvlan(String svlan) {
-		this.svlan = svlan;
-	}
+    public void setSvlan(String svlan) {
+        this.svlan = svlan;
+    }
 
-	public String getCvlan() {
-		return cvlan;
-	}
+    public String getCvlan() {
+        return cvlan;
+    }
 
-	public void setCvlan(String cvlan) {
-		this.cvlan = cvlan;
-	}
+    public void setCvlan(String cvlan) {
+        this.cvlan = cvlan;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ForwarderEvc)) {
-			return false;
-		}
-		ForwarderEvc castOther = (ForwarderEvc) other;
-		return new EqualsBuilder().append(forwarderEvcId, castOther.forwarderEvcId).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ForwarderEvc)) {
+            return false;
+        }
+        ForwarderEvc castOther = (ForwarderEvc) other;
+        return new EqualsBuilder().append(forwarderEvcId, castOther.forwarderEvcId).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(forwarderEvcId).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(forwarderEvcId).toHashCode();
+    }
 }

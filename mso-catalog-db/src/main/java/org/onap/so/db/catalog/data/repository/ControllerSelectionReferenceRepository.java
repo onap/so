@@ -26,10 +26,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-	@RepositoryRestResource(collectionResourceRel = "controllerSelectionReference", path = "controllerSelectionReference")
-	public interface ControllerSelectionReferenceRepository extends JpaRepository<ControllerSelectionReference, String> {
-		
-		public ControllerSelectionReference findControllerSelectionReferenceByVnfTypeAndActionCategory(@Param("VNF_TYPE") String vnfType, 
-				@Param("ACTION_CATEGORY") String actionCategory);
-		
-	}
+@RepositoryRestResource(collectionResourceRel = "controllerSelectionReference", path = "controllerSelectionReference")
+public interface ControllerSelectionReferenceRepository extends JpaRepository<ControllerSelectionReference, String> {
+
+    public ControllerSelectionReference findControllerSelectionReferenceByVnfTypeAndActionCategory(
+            @Param("VNF_TYPE") String vnfType, @Param("ACTION_CATEGORY") String actionCategory);
+
+}

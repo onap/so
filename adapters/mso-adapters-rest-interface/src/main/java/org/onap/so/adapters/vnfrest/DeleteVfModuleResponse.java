@@ -23,58 +23,59 @@ package org.onap.so.adapters.vnfrest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("deleteVfModuleResponse")
 @XmlRootElement(name = "deleteVfModuleResponse")
 public class DeleteVfModuleResponse extends VfResponseCommon {
-	private String vnfId;
-	private String vfModuleId;
-	private Boolean vfModuleDeleted;
-	private Map<String,String> vfModuleOutputs = new HashMap<>();
-	public DeleteVfModuleResponse() {
-		super();
-	}
+    private String vnfId;
+    private String vfModuleId;
+    private Boolean vfModuleDeleted;
+    private Map<String, String> vfModuleOutputs = new HashMap<>();
 
-	public DeleteVfModuleResponse(String vnfId, String vfModuleId, Boolean vfModuleDeleted, String messageId, Map<String,String> outputs) {
-		super(messageId);
-		this.vnfId = vnfId;
-		this.vfModuleId = vfModuleId;
-		this.vfModuleDeleted = vfModuleDeleted;
-		this.vfModuleOutputs = outputs;
-	}
+    public DeleteVfModuleResponse() {
+        super();
+    }
 
-	public String getVnfId() {
-		return vnfId;
-	}
+    public DeleteVfModuleResponse(String vnfId, String vfModuleId, Boolean vfModuleDeleted, String messageId,
+            Map<String, String> outputs) {
+        super(messageId);
+        this.vnfId = vnfId;
+        this.vfModuleId = vfModuleId;
+        this.vfModuleDeleted = vfModuleDeleted;
+        this.vfModuleOutputs = outputs;
+    }
 
-	public void setVnfId(String vnfId) {
-		this.vnfId = vnfId;
-	}
+    public String getVnfId() {
+        return vnfId;
+    }
 
-	public String getVfModuleId() {
-		return vfModuleId;
-	}
+    public void setVnfId(String vnfId) {
+        this.vnfId = vnfId;
+    }
 
-	public void setVfModuleId(String vfModuleId) {
-		this.vfModuleId = vfModuleId;
-	}
+    public String getVfModuleId() {
+        return vfModuleId;
+    }
 
-	public Boolean getVfModuleDeleted() {
-		return vfModuleDeleted;
-	}
+    public void setVfModuleId(String vfModuleId) {
+        this.vfModuleId = vfModuleId;
+    }
 
-	public void setVfModuleDeleted(Boolean vfModuleDeleted) {
-		this.vfModuleDeleted = vfModuleDeleted;
-	}
-	public Map<String, String> getVfModuleOutputs() {
-		return vfModuleOutputs;
-	}
+    public Boolean getVfModuleDeleted() {
+        return vfModuleDeleted;
+    }
 
-	public void setVfModuleOutputs(Map<String, String> vfModuleOutputs) {
-		this.vfModuleOutputs = vfModuleOutputs;
-	}
+    public void setVfModuleDeleted(Boolean vfModuleDeleted) {
+        this.vfModuleDeleted = vfModuleDeleted;
+    }
+
+    public Map<String, String> getVfModuleOutputs() {
+        return vfModuleOutputs;
+    }
+
+    public void setVfModuleOutputs(Map<String, String> vfModuleOutputs) {
+        this.vfModuleOutputs = vfModuleOutputs;
+    }
 }

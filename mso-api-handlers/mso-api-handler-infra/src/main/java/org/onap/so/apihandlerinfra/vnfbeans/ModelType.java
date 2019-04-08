@@ -22,11 +22,7 @@ package org.onap.so.apihandlerinfra.vnfbeans;
 
 /*
  * Enum for Status values returned by API Handler to Tail-F
-*/
+ */
 public enum ModelType {
-	service,
-	vnf,
-	vfModule,
-	volumeGroup,
-	network
+    service, vnf, vfModule, volumeGroup, network
 }

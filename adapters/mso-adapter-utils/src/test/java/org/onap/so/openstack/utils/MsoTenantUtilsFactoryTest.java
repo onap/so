@@ -27,7 +27,6 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
-
 import java.util.Optional;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,7 +58,7 @@ public class MsoTenantUtilsFactoryTest {
 
         // WHEN
         MsoCloudSiteNotFound msoCloudSiteNotFound = catchThrowableOfType(
-            () -> msoTenantUtilsFactory.getTenantUtils(cloudSiteId), MsoCloudSiteNotFound.class);
+                () -> msoTenantUtilsFactory.getTenantUtils(cloudSiteId), MsoCloudSiteNotFound.class);
 
         // THEN
         assertThat(msoCloudSiteNotFound.getMessage()).contains(cloudSiteId);
@@ -90,7 +89,7 @@ public class MsoTenantUtilsFactoryTest {
     }
 
     private <T extends MsoTenantUtils> void shouldReturnAppropriateUtilsInstanceForGivenServerType(
-        ServerType serverType, T expectedInstance) throws MsoCloudSiteNotFound {
+            ServerType serverType, T expectedInstance) throws MsoCloudSiteNotFound {
         // GIVEN
         String cloudSiteId = "CloudSiteId";
         CloudSite cloudSite = mock(CloudSite.class, RETURNS_DEEP_STUBS);

@@ -26,7 +26,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.model.bpmn.Bpmn;
@@ -62,7 +61,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -74,134 +72,126 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public abstract class BaseTest extends BuildingBlockTestDataSetup {
 
 
-	protected Map<String, Object> variables = new HashMap<>();
+    protected Map<String, Object> variables = new HashMap<>();
 
-	protected TestRestTemplate restTemplate = new TestRestTemplate();
+    protected TestRestTemplate restTemplate = new TestRestTemplate();
 
-	protected HttpHeaders headers = new HttpHeaders();
+    protected HttpHeaders headers = new HttpHeaders();
 
-	@Value("${wiremock.server.port}")
-	protected String wireMockPort;
+    @Value("${wiremock.server.port}")
+    protected String wireMockPort;
 
-	@Autowired
-	protected RuntimeService runtimeService;
+    @Autowired
+    protected RuntimeService runtimeService;
 
-	@Autowired
-	private RepositoryService repositoryService;
-	/*
-	 * Mocked for injection via autowiring
-	 */
+    @Autowired
+    private RepositoryService repositoryService;
+    /*
+     * Mocked for injection via autowiring
+     */
 
-	@Value("${mso.catalog.db.spring.endpoint}")
-	protected String endpoint;
+    @Value("${mso.catalog.db.spring.endpoint}")
+    protected String endpoint;
 
-	@MockBean
-	protected CatalogDbClient MOCK_catalogDbClient;
+    @MockBean
+    protected CatalogDbClient MOCK_catalogDbClient;
 
-	@SpyBean
-	protected InjectionHelper MOCK_injectionHelper;
+    @SpyBean
+    protected InjectionHelper MOCK_injectionHelper;
 
-	@SpyBean
-	protected NetworkAdapterObjectMapper MOCK_networkAdapterObjectMapper;
+    @SpyBean
+    protected NetworkAdapterObjectMapper MOCK_networkAdapterObjectMapper;
 
-	@SpyBean
-	protected AAIObjectMapper MOCK_aaiObjectMapper;
-	@SpyBean
-	protected NetworkAdapterClientImpl MOCK_networkAdapterClient;
-	@SpyBean
-	protected SDNCClient MOCK_sdncClient;
+    @SpyBean
+    protected AAIObjectMapper MOCK_aaiObjectMapper;
+    @SpyBean
+    protected NetworkAdapterClientImpl MOCK_networkAdapterClient;
+    @SpyBean
+    protected SDNCClient MOCK_sdncClient;
 
-	@SpyBean
-	protected AAIFlagTasks aaiFlagTasks;
+    @SpyBean
+    protected AAIFlagTasks aaiFlagTasks;
 
-	@SpyBean
-	protected AAIVnfResources aaiVnfResources;
+    @SpyBean
+    protected AAIVnfResources aaiVnfResources;
 
-	@SpyBean
-	protected ExceptionBuilder exceptionUtil;
+    @SpyBean
+    protected ExceptionBuilder exceptionUtil;
 
-	@SpyBean
-	protected SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
-
-
+    @SpyBean
+    protected SDNOHealthCheckResources MOCK_sdnoHealthCheckResources;
 
 
 
-
-	/*
-	 *  Classes that cannot be simply mocked because they are both
-	 *  needed for testing another class, and must be autowired when
-	 *  being tested themselves....or classes with private methods that
-	 *  must be stubbed during testing
-	 */
+    /*
+     * Classes that cannot be simply mocked because they are both needed for testing another class, and must be
+     * autowired when being tested themselves....or classes with private methods that must be stubbed during testing
+     */
 
 
 
+    @SpyBean
+    protected BBInputSetupMapperLayer SPY_bbInputSetupMapperLayer;
+    @SpyBean
+    protected BBInputSetupUtils SPY_bbInputSetupUtils;
+    @SpyBean
+    protected BBInputSetup SPY_bbInputSetup;
+    @SpyBean
+    protected SniroHomingV2 sniroHoming;
 
-	@SpyBean
-	protected BBInputSetupMapperLayer SPY_bbInputSetupMapperLayer;
-	@SpyBean
-	protected BBInputSetupUtils SPY_bbInputSetupUtils;
-	@SpyBean
-	protected BBInputSetup SPY_bbInputSetup;
-	@SpyBean
-	protected SniroHomingV2 sniroHoming;
+    @SpyBean
+    protected SniroClient sniroClient;
 
-	@SpyBean
-	protected SniroClient sniroClient;
+    @SpyBean
+    protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
 
-	@SpyBean
-	protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
-
-	/*
-	 *  Mocked for injection via the IntectionHelper
-	 */
-
+    /*
+     * Mocked for injection via the IntectionHelper
+     */
 
 
-	@Before
-	public void baseTestBefore() {
-		variables.put("gBuildingBlockExecution", new DelegateExecutionImpl(new HashMap<>()));
+
+    @Before
+    public void baseTestBefore() {
+        variables.put("gBuildingBlockExecution", new DelegateExecutionImpl(new HashMap<>()));
 
 
-	}
+    }
 
-	@LocalServerPort
-	private int port;
+    @LocalServerPort
+    private int port;
 
-	protected String readFile(String path) throws IOException {
-		return readFile(path, Charset.defaultCharset());
-	}
+    protected String readFile(String path) throws IOException {
+        return readFile(path, Charset.defaultCharset());
+    }
 
-	protected String readFile(String path, Charset encoding) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
-		return new String(encoded, encoding);
-	}
+    protected String readFile(String path, Charset encoding) throws IOException {
+        byte[] encoded = Files.readAllBytes(Paths.get(path));
+        return new String(encoded, encoding);
+    }
 
-	protected String readJsonFileAsString(String fileLocation) throws IOException{
-		ObjectMapper mapper = new ObjectMapper();
-		JsonNode jsonNode = mapper.readTree(new File(fileLocation));
-		return jsonNode.asText();
-	}
+    protected String readJsonFileAsString(String fileLocation) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(new File(fileLocation));
+        return jsonNode.asText();
+    }
 
-	protected String createURLWithPort(String uri) {
-		return "http://localhost:" + port + uri;
-	}
-	/**
-	 * Create and deploy a process model with one logger delegate as service task.
-	 *
-	 * @param origProcessKey
-	 *            key to call
-	 * @param mockProcessName
-	 *            process name
-	 * @param fileName
-	 *            file name without extension
-	 */
-	protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName) {
-		BpmnModelInstance modelInstance = Bpmn.createExecutableProcess(origProcessKey).name(mockProcessName)
-				.startEvent().name("Start Point").serviceTask().name("Log Something for Test")
-				.camundaClass(MockLoggerDelegate.class.getName()).endEvent().name("End Point").done();
-		repositoryService.createDeployment().addModelInstance(fileName + ".bpmn", modelInstance).deploy();
-	}
+    protected String createURLWithPort(String uri) {
+        return "http://localhost:" + port + uri;
+    }
+
+    /**
+     * Create and deploy a process model with one logger delegate as service task.
+     *
+     * @param origProcessKey key to call
+     * @param mockProcessName process name
+     * @param fileName file name without extension
+     */
+    protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName) {
+        BpmnModelInstance modelInstance = Bpmn.createExecutableProcess(origProcessKey).name(mockProcessName)
+                .startEvent().name("Start Point").serviceTask().name("Log Something for Test")
+                .camundaClass(MockLoggerDelegate.class.getName()).endEvent().name("End Point").done();
+        repositoryService.createDeployment().addModelInstance(fileName + ".bpmn", modelInstance).deploy();
+    }
 
 }

@@ -94,217 +94,209 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public abstract class BaseBPMNTest {
-	@Autowired
-	protected RuntimeService runtimeService;
+    @Autowired
+    protected RuntimeService runtimeService;
 
-	@Autowired
-	protected ExternalTaskService externalTaskService;
-	
-	@Autowired
-	private RepositoryService repositoryService;
+    @Autowired
+    protected ExternalTaskService externalTaskService;
 
-	protected Map<String, Object> variables = new HashMap<>();
+    @Autowired
+    private RepositoryService repositoryService;
 
-	protected List<String> mockedSubprocessList = new ArrayList<>();
+    protected Map<String, Object> variables = new HashMap<>();
 
-	protected TestRestTemplate restTemplate = new TestRestTemplate();
+    protected List<String> mockedSubprocessList = new ArrayList<>();
 
-	protected HttpHeaders headers = new HttpHeaders();
+    protected TestRestTemplate restTemplate = new TestRestTemplate();
 
-	@MockBean
-	protected AAIUpdateTasks aaiUpdateTasks;
+    protected HttpHeaders headers = new HttpHeaders();
 
-	@MockBean
-	protected AAICreateTasks aaiCreateTasks;
+    @MockBean
+    protected AAIUpdateTasks aaiUpdateTasks;
 
-	@MockBean
-	protected AAIQueryTasks aaiQueryTasks;
+    @MockBean
+    protected AAICreateTasks aaiCreateTasks;
 
-	@MockBean
-	protected AAIDeleteTasks aaiDeleteTasks;
+    @MockBean
+    protected AAIQueryTasks aaiQueryTasks;
 
-	@MockBean
-	protected AAIFlagTasks aaiFlagTasks;
+    @MockBean
+    protected AAIDeleteTasks aaiDeleteTasks;
+
+    @MockBean
+    protected AAIFlagTasks aaiFlagTasks;
 
 
-	@MockBean
-	protected AppcRunTasks appcRunTasks;
+    @MockBean
+    protected AppcRunTasks appcRunTasks;
 
-	@MockBean
-	protected SDNCActivateTasks sdncActivateTasks;
+    @MockBean
+    protected SDNCActivateTasks sdncActivateTasks;
 
-	@MockBean
-	protected SDNCAssignTasks sdncAssignTasks;
+    @MockBean
+    protected SDNCAssignTasks sdncAssignTasks;
 
-	@MockBean
-	protected SDNCUnassignTasks sdncUnassignTasks;
+    @MockBean
+    protected SDNCUnassignTasks sdncUnassignTasks;
 
-	@MockBean
-	protected SDNCDeactivateTasks sdncDeactivateTasks;
+    @MockBean
+    protected SDNCDeactivateTasks sdncDeactivateTasks;
 
-	@MockBean
-	protected SDNCQueryTasks sdncQueryTasks;
+    @MockBean
+    protected SDNCQueryTasks sdncQueryTasks;
 
-	@MockBean
-	protected SDNCChangeAssignTasks sdncChangeAssignTasks;
+    @MockBean
+    protected SDNCChangeAssignTasks sdncChangeAssignTasks;
 
-	@MockBean
-	protected NetworkAdapterDeleteTasks networkAdapterDeleteTasks;
+    @MockBean
+    protected NetworkAdapterDeleteTasks networkAdapterDeleteTasks;
 
-	@MockBean
-	protected NetworkAdapterUpdateTasks networkAdapterUpdateTasks;
+    @MockBean
+    protected NetworkAdapterUpdateTasks networkAdapterUpdateTasks;
 
-	@MockBean
-	protected VnfAdapterCreateTasks vnfAdapterCreateTasks;
+    @MockBean
+    protected VnfAdapterCreateTasks vnfAdapterCreateTasks;
 
-	@MockBean
-	protected NetworkAdapterCreateTasks networkAdapterCreateTasks;
+    @MockBean
+    protected NetworkAdapterCreateTasks networkAdapterCreateTasks;
 
-	@MockBean
-	protected CreateNetwork createNetwork;
+    @MockBean
+    protected CreateNetwork createNetwork;
 
-	@MockBean
-	protected AssignNetworkBBUtils assignNetworkBBUtils;
+    @MockBean
+    protected AssignNetworkBBUtils assignNetworkBBUtils;
 
-	@MockBean
-	protected AssignNetwork assignNetwork;
+    @MockBean
+    protected AssignNetwork assignNetwork;
 
-	@MockBean
-	protected CreateNetworkCollection createNetworkCollection;
+    @MockBean
+    protected CreateNetworkCollection createNetworkCollection;
 
-	@MockBean
-	protected VnfAdapterDeleteTasks vnfAdapterDeleteTasks;
+    @MockBean
+    protected VnfAdapterDeleteTasks vnfAdapterDeleteTasks;
 
-	@MockBean
-	protected AAICommonTasks aaiCommonTasks;
+    @MockBean
+    protected AAICommonTasks aaiCommonTasks;
 
-	@MockBean
-	protected ActivateVfModule activateVfModule;
-	
-	@MockBean
-	protected AssignVnf assignVnf;
+    @MockBean
+    protected ActivateVfModule activateVfModule;
 
-	@MockBean
-	protected UnassignVnf unassignVnf;
+    @MockBean
+    protected AssignVnf assignVnf;
 
-	@MockBean
-	protected VnfAdapterImpl vnfAdapterImpl;
+    @MockBean
+    protected UnassignVnf unassignVnf;
 
-	@MockBean
-	protected UnassignNetworkBB unassignNetworkBB;
+    @MockBean
+    protected VnfAdapterImpl vnfAdapterImpl;
 
-	@MockBean
-	protected OrchestrationStatusValidator orchestrationStatusValidator;
+    @MockBean
+    protected UnassignNetworkBB unassignNetworkBB;
 
-	@MockBean
-	protected BBInputSetup bbInputSetup;
+    @MockBean
+    protected OrchestrationStatusValidator orchestrationStatusValidator;
 
-	@MockBean
-	protected BBInputSetupUtils bbInputSetupUtils;
+    @MockBean
+    protected BBInputSetup bbInputSetup;
 
-	@MockBean
-	protected ExecuteBuildingBlockRainyDay executeBuildingBlockRainyDay;
+    @MockBean
+    protected BBInputSetupUtils bbInputSetupUtils;
 
-	@MockBean
-	protected WorkflowAction workflowAction;
+    @MockBean
+    protected ExecuteBuildingBlockRainyDay executeBuildingBlockRainyDay;
 
-	@MockBean
-	protected WorkflowActionBBTasks workflowActionBBTasks;
+    @MockBean
+    protected WorkflowAction workflowAction;
 
-	@MockBean
-	protected GenericVnfHealthCheck genericVnfHealthCheck;
+    @MockBean
+    protected WorkflowActionBBTasks workflowActionBBTasks;
 
-	@MockBean
-	protected ConfigurationScaleOut configurationScaleOut;
+    @MockBean
+    protected GenericVnfHealthCheck genericVnfHealthCheck;
 
-	@MockBean
-	protected FlowCompletionTasks flowCompletionTasks;
+    @MockBean
+    protected ConfigurationScaleOut configurationScaleOut;
 
-	@MockBean
-	protected BuildingBlockValidatorRunner buildingBlockValidatorRunner;
+    @MockBean
+    protected FlowCompletionTasks flowCompletionTasks;
 
-	@MockBean
-	protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
+    @MockBean
+    protected BuildingBlockValidatorRunner buildingBlockValidatorRunner;
 
-	@MockBean
-	protected SDNCClient sdncClient;
+    @MockBean
+    protected SDNOHealthCheckTasks sdnoHealthCheckTasks;
 
-	@MockBean
-	protected SniroHomingV2 sniroHoming;
-	
-	@MockBean
-	protected NamingServiceDeleteTasks namingServiceDeleteTasks;
-	
-	@MockBean
-	protected NamingServiceCreateTasks namingServiceCreateTasks;
-	
-	@MockBean
-	protected WorkflowActionBBFailure workflowActionBBFailure;
-	
-	@MockBean
-	protected AuditTasks auditTasks;
-	
-	@MockBean
-	protected ManualHandlingTasks manualHandlingTasks;
+    @MockBean
+    protected SDNCClient sdncClient;
 
-	@LocalServerPort
-	protected int port;
+    @MockBean
+    protected SniroHomingV2 sniroHoming;
 
-	protected String createURLWithPort(String uri) {
-		return "http://localhost:" + port + uri;
-	}
+    @MockBean
+    protected NamingServiceDeleteTasks namingServiceDeleteTasks;
 
-	@Before
-	public void baseBefore() {
-		variables.put("gBuildingBlockExecution", new DelegateExecutionImpl(new HashMap<>()));
-	}
+    @MockBean
+    protected NamingServiceCreateTasks namingServiceCreateTasks;
 
-	@After
-	public void baseAfter() {
-		for (String deploymentId : mockedSubprocessList) {
-			repositoryService.deleteDeployment(deploymentId);
-		}
-		mockedSubprocessList.clear();
-	}
+    @MockBean
+    protected WorkflowActionBBFailure workflowActionBBFailure;
 
-	/**
-	 * Create and deploy a process model with one logger delegate as service task.
-	 *
-	 * @param origProcessKey
-	 *            key to call
-	 * @param mockProcessName
-	 *            process name
-	 * @param fileName
-	 *            file name without extension
-	 */
-	protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName) {
-		mockSubprocess(origProcessKey, mockProcessName, fileName, new HashMap<String, String>());
-	}
+    @MockBean
+    protected AuditTasks auditTasks;
 
-	/**
-	 * Create and deploy a process model with one logger delegate as service task.
-	 *
-	 * @param origProcessKey
-	 *            key to call
-	 * @param mockProcessName
-	 *            process name
-	 * @param fileName
-	 *            file name without extension
-	 * @param outParam
-	 *            output parameters
-	 */
-	protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName, Map<String, String> outParam) {
-		ServiceTaskBuilder builder = Bpmn
-				.createExecutableProcess(origProcessKey).name(mockProcessName)
-				.startEvent().name("Start_Event")
-				.serviceTask().name("Mock_Delegate")
-				.camundaClass(FluentJavaDelegateMock.class);
+    @MockBean
+    protected ManualHandlingTasks manualHandlingTasks;
 
-		for (String key : outParam.keySet()) {
-			builder.camundaOutputParameter(key, outParam.get(key));
-		}
+    @LocalServerPort
+    protected int port;
 
-		BpmnModelInstance modelInstance = builder.endEvent().name("End_Event").done();
-		mockedSubprocessList.add(repositoryService.createDeployment().addModelInstance(fileName + ".bpmn", modelInstance).deploy().getId());
-	}
+    protected String createURLWithPort(String uri) {
+        return "http://localhost:" + port + uri;
+    }
+
+    @Before
+    public void baseBefore() {
+        variables.put("gBuildingBlockExecution", new DelegateExecutionImpl(new HashMap<>()));
+    }
+
+    @After
+    public void baseAfter() {
+        for (String deploymentId : mockedSubprocessList) {
+            repositoryService.deleteDeployment(deploymentId);
+        }
+        mockedSubprocessList.clear();
+    }
+
+    /**
+     * Create and deploy a process model with one logger delegate as service task.
+     *
+     * @param origProcessKey key to call
+     * @param mockProcessName process name
+     * @param fileName file name without extension
+     */
+    protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName) {
+        mockSubprocess(origProcessKey, mockProcessName, fileName, new HashMap<String, String>());
+    }
+
+    /**
+     * Create and deploy a process model with one logger delegate as service task.
+     *
+     * @param origProcessKey key to call
+     * @param mockProcessName process name
+     * @param fileName file name without extension
+     * @param outParam output parameters
+     */
+    protected void mockSubprocess(String origProcessKey, String mockProcessName, String fileName,
+            Map<String, String> outParam) {
+        ServiceTaskBuilder builder = Bpmn.createExecutableProcess(origProcessKey).name(mockProcessName).startEvent()
+                .name("Start_Event").serviceTask().name("Mock_Delegate").camundaClass(FluentJavaDelegateMock.class);
+
+        for (String key : outParam.keySet()) {
+            builder.camundaOutputParameter(key, outParam.get(key));
+        }
+
+        BpmnModelInstance modelInstance = builder.endEvent().name("End_Event").done();
+        mockedSubprocessList.add(repositoryService.createDeployment()
+                .addModelInstance(fileName + ".bpmn", modelInstance).deploy().getId());
+    }
 }

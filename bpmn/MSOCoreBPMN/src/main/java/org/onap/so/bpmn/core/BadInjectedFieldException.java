@@ -22,31 +22,28 @@ package org.onap.so.bpmn.core;
 
 public class BadInjectedFieldException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param fieldName the field name
-	 * @param taskName the task name
-	 * @param info additional information, e.g. the field value
-	 */
-	public BadInjectedFieldException(String fieldName, String taskName,
-			Object info) {
-		super(taskName + " injected field '" + fieldName + "' is bad: " + info);
-	}
+    /**
+     * Constructor.
+     *
+     * @param fieldName the field name
+     * @param taskName the task name
+     * @param info additional information, e.g. the field value
+     */
+    public BadInjectedFieldException(String fieldName, String taskName, Object info) {
+        super(taskName + " injected field '" + fieldName + "' is bad: " + info);
+    }
 
-	/**
-	 * Constructor.
-	 *
-	 * @param fieldName the field name
-	 * @param taskName the task name
-	 * @param info additional information, e.g. the field value
-	 * @param cause the cause
-	 */
-	public BadInjectedFieldException(String fieldName,
-			String taskName, Object info, Throwable cause) {
-			super(taskName + " injected field '" + fieldName + "' is bad: "
-					+ info, cause);
-	}
+    /**
+     * Constructor.
+     *
+     * @param fieldName the field name
+     * @param taskName the task name
+     * @param info additional information, e.g. the field value
+     * @param cause the cause
+     */
+    public BadInjectedFieldException(String fieldName, String taskName, Object info, Throwable cause) {
+        super(taskName + " injected field '" + fieldName + "' is bad: " + info, cause);
+    }
 }

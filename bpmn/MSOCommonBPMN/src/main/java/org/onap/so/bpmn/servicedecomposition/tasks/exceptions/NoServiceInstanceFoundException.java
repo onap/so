@@ -22,26 +22,26 @@ package org.onap.so.bpmn.servicedecomposition.tasks.exceptions;
 
 public class NoServiceInstanceFoundException extends Exception {
 
-	private static final long serialVersionUID = 3270499954054029908L;
+    private static final long serialVersionUID = 3270499954054029908L;
 
-	public NoServiceInstanceFoundException() {
-		super();
-	}
+    public NoServiceInstanceFoundException() {
+        super();
+    }
 
-	public NoServiceInstanceFoundException(String message) {
-		super(message);
-	}
-	
-	public NoServiceInstanceFoundException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public NoServiceInstanceFoundException(String message) {
+        super(message);
+    }
 
-	public NoServiceInstanceFoundException(Throwable cause) {
-		super(cause);
-	}
+    public NoServiceInstanceFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public NoServiceInstanceFoundException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    public NoServiceInstanceFoundException(Throwable cause) {
+        super(cause);
+    }
+
+    public NoServiceInstanceFoundException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

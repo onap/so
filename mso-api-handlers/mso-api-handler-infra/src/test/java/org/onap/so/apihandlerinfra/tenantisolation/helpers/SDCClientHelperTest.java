@@ -25,7 +25,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-
 import org.apache.http.HttpStatus;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,160 +33,169 @@ import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.apihandlerinfra.exceptions.ApiException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class SDCClientHelperTest extends BaseTest{
+public class SDCClientHelperTest extends BaseTest {
 
-	String serviceModelVersionId = "TEST_uuid1";
-	String operationalEnvironmentId = "TEST_operationalEnvironmentId";
-	String workloadContext = "TEST_workloadContext";
+    String serviceModelVersionId = "TEST_uuid1";
+    String operationalEnvironmentId = "TEST_operationalEnvironmentId";
+    String workloadContext = "TEST_workloadContext";
 
-	@Autowired
-	private SDCClientHelper sdcClientUtils;
+    @Autowired
+    private SDCClientHelper sdcClientUtils;
 
-	@Test
-	public void postActivateOperationalEnvironment_Test() throws ApiException {
+    @Test
+    public void postActivateOperationalEnvironment_Test() throws ApiException {
 
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("statusCode", "202");
-		jsonObject.put("message", "Success");
-		jsonObject.put("distributionId", "TEST_distributionId");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("statusCode", "202");
+        jsonObject.put("message", "Success");
+        jsonObject.put("distributionId", "TEST_distributionId");
 
-		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString()).withStatus(HttpStatus.SC_ACCEPTED)));
+        wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonObject.toString())
+                        .withStatus(HttpStatus.SC_ACCEPTED)));
 
-	    JSONObject jsonResponse = sdcClientUtils.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext);
+        JSONObject jsonResponse = sdcClientUtils.postActivateOperationalEnvironment(serviceModelVersionId,
+                operationalEnvironmentId, workloadContext);
 
-	    assertEquals("202", jsonResponse.get("statusCode"));
-	    assertEquals("Success", jsonResponse.get("message"));
+        assertEquals("202", jsonResponse.get("statusCode"));
+        assertEquals("Success", jsonResponse.get("message"));
 
-	}
+    }
 
-	@Test
-	public void postActivateOperationalEnvironment_InvalidJson_Test() throws ApiException {
+    @Test
+    public void postActivateOperationalEnvironment_InvalidJson_Test() throws ApiException {
 
-		// ERROR in asdc response, invalid json object
-		JSONObject jsonErrorResponse = new JSONObject();
-		jsonErrorResponse.put("requestError", "");
+        // ERROR in asdc response, invalid json object
+        JSONObject jsonErrorResponse = new JSONObject();
+        jsonErrorResponse.put("requestError", "");
 
-		wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
-				.willReturn(aResponse().withHeader("Content-Type", "application/json").withBody(jsonErrorResponse.toString()).withStatus(HttpStatus.SC_BAD_REQUEST)));
+        wireMockServer.stubFor(post(urlPathMatching("/sdc/v1/catalog/services/TEST_uuid1/distr.*"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody(jsonErrorResponse.toString()).withStatus(HttpStatus.SC_BAD_REQUEST)));
 
-	    JSONObject jsonResponse = sdcClientUtils.postActivateOperationalEnvironment(serviceModelVersionId, operationalEnvironmentId, workloadContext);
+        JSONObject jsonResponse = sdcClientUtils.postActivateOperationalEnvironment(serviceModelVersionId,
+                operationalEnvironmentId, workloadContext);
 
-	    assertEquals("500", jsonResponse.get("statusCode"));
-	    assertEquals("", jsonResponse.get("messageId"));
-	    assertEquals(" Encountered Error while calling SDC POST Activate. JSONObject[\"requestError\"] is not a JSONObject.", jsonResponse.get("message"));
+        assertEquals("500", jsonResponse.get("statusCode"));
+        assertEquals("", jsonResponse.get("messageId"));
+        assertEquals(
+                " Encountered Error while calling SDC POST Activate. JSONObject[\"requestError\"] is not a JSONObject.",
+                jsonResponse.get("message"));
 
-	}
+    }
 
-	@Test
-	public void buildUriBuilderTest() {
+    @Test
+    public void buildUriBuilderTest() {
 
-		try {
-		String url = sdcClientUtils.buildUriBuilder(serviceModelVersionId, operationalEnvironmentId);
-			assertEquals("http://localhost:" + env.getProperty("wiremock.server.port") + "/sdc/v1/catalog/services/TEST_uuid1/distribution/TEST_operationalEnvironmentId/activate", url);
+        try {
+            String url = sdcClientUtils.buildUriBuilder(serviceModelVersionId, operationalEnvironmentId);
+            assertEquals(
+                    "http://localhost:" + env.getProperty("wiremock.server.port")
+                            + "/sdc/v1/catalog/services/TEST_uuid1/distribution/TEST_operationalEnvironmentId/activate",
+                    url);
 
-		} catch (Exception e) {
-			fail("Exception caught: " + e.getMessage());
+        } catch (Exception e) {
+            fail("Exception caught: " + e.getMessage());
 
-		}
-	}
+        }
+    }
 
 
-	@Test
-	public void buildJsonWorkloadContextTest() throws JSONException {
+    @Test
+    public void buildJsonWorkloadContextTest() throws JSONException {
 
-			String jsonPayload = sdcClientUtils.buildJsonWorkloadContext(workloadContext);
-			assertEquals("{\"workloadContext\":\"TEST_workloadContext\"}", jsonPayload);
+        String jsonPayload = sdcClientUtils.buildJsonWorkloadContext(workloadContext);
+        assertEquals("{\"workloadContext\":\"TEST_workloadContext\"}", jsonPayload);
 
-	}
+    }
 
-	@Test
-	public void enhanceJsonResponseTest_Success() throws JSONException {
+    @Test
+    public void enhanceJsonResponseTest_Success() throws JSONException {
 
-			// build success response data
-			JSONObject sdcResponseJsonObj = new JSONObject();
-			sdcResponseJsonObj.put("distributionId", "TEST_distributionId");
+        // build success response data
+        JSONObject sdcResponseJsonObj = new JSONObject();
+        sdcResponseJsonObj.put("distributionId", "TEST_distributionId");
 
-			int statusCode = 202;
-			sdcResponseJsonObj = sdcClientUtils.enhanceJsonResponse(sdcResponseJsonObj, statusCode);
+        int statusCode = 202;
+        sdcResponseJsonObj = sdcClientUtils.enhanceJsonResponse(sdcResponseJsonObj, statusCode);
 
-			assertEquals("202", sdcResponseJsonObj.getString("statusCode"));
-			assertEquals("", sdcResponseJsonObj.getString("messageId"));
-			assertEquals("Success", sdcResponseJsonObj.getString("message"));
-			assertEquals("TEST_distributionId", sdcResponseJsonObj.getString("distributionId"));
+        assertEquals("202", sdcResponseJsonObj.getString("statusCode"));
+        assertEquals("", sdcResponseJsonObj.getString("messageId"));
+        assertEquals("Success", sdcResponseJsonObj.getString("message"));
+        assertEquals("TEST_distributionId", sdcResponseJsonObj.getString("distributionId"));
 
-	}
+    }
 
-	@Test
-	public void enhanceJsonResponseTest_Error() throws JSONException {
+    @Test
+    public void enhanceJsonResponseTest_Error() throws JSONException {
 
-			// build error response data
-			JSONObject jsonMessages = new JSONObject();
-			jsonMessages.put("messageId", "SVC4675");
-			jsonMessages.put("text", "Error: Service state is invalid for this action.");
-			JSONObject jsonServException = new JSONObject();
-			jsonServException.put("serviceException", jsonMessages);
-			JSONObject jsonErrorRequest = new JSONObject();
-			jsonErrorRequest.put("requestError", jsonServException);
+        // build error response data
+        JSONObject jsonMessages = new JSONObject();
+        jsonMessages.put("messageId", "SVC4675");
+        jsonMessages.put("text", "Error: Service state is invalid for this action.");
+        JSONObject jsonServException = new JSONObject();
+        jsonServException.put("serviceException", jsonMessages);
+        JSONObject jsonErrorRequest = new JSONObject();
+        jsonErrorRequest.put("requestError", jsonServException);
 
-			String responseData =  jsonErrorRequest.toString();
+        String responseData = jsonErrorRequest.toString();
 
-			JSONObject sdcResponseJsonObj = new JSONObject(responseData);
-			int statusCode = 409;
-			sdcResponseJsonObj = sdcClientUtils.enhanceJsonResponse(sdcResponseJsonObj, statusCode);
+        JSONObject sdcResponseJsonObj = new JSONObject(responseData);
+        int statusCode = 409;
+        sdcResponseJsonObj = sdcClientUtils.enhanceJsonResponse(sdcResponseJsonObj, statusCode);
 
-			assertEquals("409", sdcResponseJsonObj.getString("statusCode"));
-			assertEquals("SVC4675", sdcResponseJsonObj.getString("messageId"));
-			assertEquals("Error: Service state is invalid for this action.", sdcResponseJsonObj.getString("message"));
+        assertEquals("409", sdcResponseJsonObj.getString("statusCode"));
+        assertEquals("SVC4675", sdcResponseJsonObj.getString("messageId"));
+        assertEquals("Error: Service state is invalid for this action.", sdcResponseJsonObj.getString("message"));
 
-	}
+    }
 
-	@Test
-	public void enhanceJsonResponseTest_Error_policyException() throws JSONException {
+    @Test
+    public void enhanceJsonResponseTest_Error_policyException() throws JSONException {
 
-			// build error response data
-			JSONObject jsonMessages = new JSONObject();
-			jsonMessages.put("messageId", "POL5003");
-			jsonMessages.put("text", "Error: Not authorized to use the API.");
-			JSONObject jsonServException = new JSONObject();
-			jsonServException.put("policyException", jsonMessages);
-			JSONObject jsonErrorRequest = new JSONObject();
-			jsonErrorRequest.put("requestError", jsonServException);
+        // build error response data
+        JSONObject jsonMessages = new JSONObject();
+        jsonMessages.put("messageId", "POL5003");
+        jsonMessages.put("text", "Error: Not authorized to use the API.");
+        JSONObject jsonServException = new JSONObject();
+        jsonServException.put("policyException", jsonMessages);
+        JSONObject jsonErrorRequest = new JSONObject();
+        jsonErrorRequest.put("requestError", jsonServException);
 
-			String responseData =  jsonErrorRequest.toString();
+        String responseData = jsonErrorRequest.toString();
 
-			JSONObject sdcResponseJsonObj = new JSONObject(responseData);
-			int statusCode = 403;
-			sdcResponseJsonObj = sdcClientUtils.enhanceJsonResponse(sdcResponseJsonObj, statusCode);
+        JSONObject sdcResponseJsonObj = new JSONObject(responseData);
+        int statusCode = 403;
+        sdcResponseJsonObj = sdcClientUtils.enhanceJsonResponse(sdcResponseJsonObj, statusCode);
 
-			assertEquals("403", sdcResponseJsonObj.getString("statusCode"));
-			assertEquals("POL5003", sdcResponseJsonObj.getString("messageId"));
-			assertEquals("Error: Not authorized to use the API.", sdcResponseJsonObj.getString("message"));
+        assertEquals("403", sdcResponseJsonObj.getString("statusCode"));
+        assertEquals("POL5003", sdcResponseJsonObj.getString("messageId"));
+        assertEquals("Error: Not authorized to use the API.", sdcResponseJsonObj.getString("message"));
 
-	}
+    }
 
-	@Test
-	public void enhanceJsonResponseTest_Error_UnexpectedFormat() throws JSONException {
+    @Test
+    public void enhanceJsonResponseTest_Error_UnexpectedFormat() throws JSONException {
 
-			// build error response data
-			JSONObject jsonMessages = new JSONObject();
-			jsonMessages.put("messageId", "POL5003");
-			jsonMessages.put("text", "Error: Not authorized to use the API.");
-			JSONObject jsonServException = new JSONObject();
-			jsonServException.put("policyException", jsonMessages);
-			JSONObject jsonErrorRequest = new JSONObject();
-			jsonErrorRequest.put("unexpectedResponseTag", jsonServException);
+        // build error response data
+        JSONObject jsonMessages = new JSONObject();
+        jsonMessages.put("messageId", "POL5003");
+        jsonMessages.put("text", "Error: Not authorized to use the API.");
+        JSONObject jsonServException = new JSONObject();
+        jsonServException.put("policyException", jsonMessages);
+        JSONObject jsonErrorRequest = new JSONObject();
+        jsonErrorRequest.put("unexpectedResponseTag", jsonServException);
 
-			String responseData =  jsonErrorRequest.toString();
+        String responseData = jsonErrorRequest.toString();
 
-			JSONObject sdcResponseJsonObj = new JSONObject(responseData);
-			int statusCode = 403;
-			sdcResponseJsonObj = sdcClientUtils.enhanceJsonResponse(sdcResponseJsonObj, statusCode);
+        JSONObject sdcResponseJsonObj = new JSONObject(responseData);
+        int statusCode = 403;
+        sdcResponseJsonObj = sdcClientUtils.enhanceJsonResponse(sdcResponseJsonObj, statusCode);
 
-			assertEquals("500", sdcResponseJsonObj.getString("statusCode"));
-			assertEquals("Undefined Error Message!", sdcResponseJsonObj.getString("messageId"));
-			assertEquals("Unexpected response format from SDC.", sdcResponseJsonObj.getString("message"));
+        assertEquals("500", sdcResponseJsonObj.getString("statusCode"));
+        assertEquals("Undefined Error Message!", sdcResponseJsonObj.getString("messageId"));
+        assertEquals("Unexpected response format from SDC.", sdcResponseJsonObj.getString("message"));
 
-	}
+    }
 
 }

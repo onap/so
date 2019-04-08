@@ -23,15 +23,12 @@ package org.onap.so.adapters.vnfrest;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.mappers.MapAdapter;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateVfModuleRequest")
@@ -39,42 +36,42 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UpdateVfModuleRequest extends VfRequestCommon {
 
-	private String cloudSiteId;
-	private String cloudOwner;
-	private String tenantId;
+    private String cloudSiteId;
+    private String cloudOwner;
+    private String tenantId;
 
-	private String vnfId;
-	private String vnfType;
-	private String vnfVersion;
+    private String vnfId;
+    private String vnfType;
+    private String vnfVersion;
 
-	private String vfModuleName;
-	private String vfModuleType;
-	private String vfModuleId;
-	private String vfModuleStackId;
+    private String vfModuleName;
+    private String vfModuleType;
+    private String vfModuleId;
+    private String vfModuleStackId;
 
-	private String volumeGroupId;
-	private String volumeGroupStackId;
+    private String volumeGroupId;
+    private String volumeGroupStackId;
 
-	private String baseVfModuleId;
-	private String baseVfModuleStackId;
+    private String baseVfModuleId;
+    private String baseVfModuleStackId;
 
-	private String modelCustomizationUuid;
+    private String modelCustomizationUuid;
 
-	private String requestType;
-	private Boolean failIfExists;
-	private Boolean backout;
+    private String requestType;
+    private Boolean failIfExists;
+    private Boolean backout;
 
-	@XmlJavaTypeAdapter(MapAdapter.class)
-	private Map<String,Object> vfModuleParams = new HashMap<>();
-	private MsoRequest msoRequest = new MsoRequest();
+    @XmlJavaTypeAdapter(MapAdapter.class)
+    private Map<String, Object> vfModuleParams = new HashMap<>();
+    private MsoRequest msoRequest = new MsoRequest();
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
     public String getCloudOwner() {
         return cloudOwner;
@@ -84,147 +81,147 @@ public class UpdateVfModuleRequest extends VfRequestCommon {
         this.cloudOwner = cloudOwner;
     }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getVnfId() {
-		return vnfId;
-	}
+    public String getVnfId() {
+        return vnfId;
+    }
 
-	public void setVnfId(String vnfId) {
-		this.vnfId = vnfId;
-	}
+    public void setVnfId(String vnfId) {
+        this.vnfId = vnfId;
+    }
 
-	public String getVfModuleName() {
-		return vfModuleName;
-	}
+    public String getVfModuleName() {
+        return vfModuleName;
+    }
 
-	public void setVfModuleName(String vfModuleName) {
-		this.vfModuleName = vfModuleName;
-	}
+    public void setVfModuleName(String vfModuleName) {
+        this.vfModuleName = vfModuleName;
+    }
 
-	public String getVnfType() {
-		return vnfType;
-	}
+    public String getVnfType() {
+        return vnfType;
+    }
 
-	public void setVnfType(String vnfType) {
-		this.vnfType = vnfType;
-	}
+    public void setVnfType(String vnfType) {
+        this.vnfType = vnfType;
+    }
 
-	public String getVnfVersion() {
-		return vnfVersion;
-	}
+    public String getVnfVersion() {
+        return vnfVersion;
+    }
 
-	public void setVnfVersion(String vnfVersion) {
-		this.vnfVersion = vnfVersion;
-	}
+    public void setVnfVersion(String vnfVersion) {
+        this.vnfVersion = vnfVersion;
+    }
 
-	public String getVfModuleId() {
-		return vfModuleId;
-	}
+    public String getVfModuleId() {
+        return vfModuleId;
+    }
 
-	public void setVfModuleId(String vfModuleId) {
-		this.vfModuleId = vfModuleId;
-	}
+    public void setVfModuleId(String vfModuleId) {
+        this.vfModuleId = vfModuleId;
+    }
 
-	public String getVfModuleType() {
-		return vfModuleType;
-	}
+    public String getVfModuleType() {
+        return vfModuleType;
+    }
 
-	public void setVfModuleType(String vfModuleType) {
-		this.vfModuleType = vfModuleType;
-	}
+    public void setVfModuleType(String vfModuleType) {
+        this.vfModuleType = vfModuleType;
+    }
 
-	public String getVfModuleStackId() {
-		return vfModuleStackId;
-	}
+    public String getVfModuleStackId() {
+        return vfModuleStackId;
+    }
 
-	public void setVfModuleStackId(String vfModuleStackId) {
-		this.vfModuleStackId = vfModuleStackId;
-	}
+    public void setVfModuleStackId(String vfModuleStackId) {
+        this.vfModuleStackId = vfModuleStackId;
+    }
 
-	public String getVolumeGroupId() {
-		return volumeGroupId;
-	}
+    public String getVolumeGroupId() {
+        return volumeGroupId;
+    }
 
-	public void setVolumeGroupId(String volumeGroupId) {
-		this.volumeGroupId = volumeGroupId;
-	}
+    public void setVolumeGroupId(String volumeGroupId) {
+        this.volumeGroupId = volumeGroupId;
+    }
 
-	public String getVolumeGroupStackId() {
-		return volumeGroupStackId;
-	}
+    public String getVolumeGroupStackId() {
+        return volumeGroupStackId;
+    }
 
-	public void setVolumeGroupStackId(String volumeGroupStackId) {
-		this.volumeGroupStackId = volumeGroupStackId;
-	}
+    public void setVolumeGroupStackId(String volumeGroupStackId) {
+        this.volumeGroupStackId = volumeGroupStackId;
+    }
 
-	public String getBaseVfModuleId() {
-		return baseVfModuleId;
-	}
+    public String getBaseVfModuleId() {
+        return baseVfModuleId;
+    }
 
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
+    public String getModelCustomizationUuid() {
+        return this.modelCustomizationUuid;
+    }
 
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
-	}
+    public void setModelCustomizationUuid(String modelCustomizationUuid) {
+        this.modelCustomizationUuid = modelCustomizationUuid;
+    }
 
-	public void setBaseVfModuleId(String baseVfModuleId) {
-		this.baseVfModuleId = baseVfModuleId;
-	}
+    public void setBaseVfModuleId(String baseVfModuleId) {
+        this.baseVfModuleId = baseVfModuleId;
+    }
 
-	public String getBaseVfModuleStackId() {
-		return baseVfModuleStackId;
-	}
+    public String getBaseVfModuleStackId() {
+        return baseVfModuleStackId;
+    }
 
-	public void setBaseVfModuleStackId(String baseVfModuleStackId) {
-		this.baseVfModuleStackId = baseVfModuleStackId;
-	}
+    public void setBaseVfModuleStackId(String baseVfModuleStackId) {
+        this.baseVfModuleStackId = baseVfModuleStackId;
+    }
 
-	public String getRequestType() {
-		return requestType;
-	}
+    public String getRequestType() {
+        return requestType;
+    }
 
-	public void setRequestType(String requestType) {
-		this.requestType = requestType;
-	}
+    public void setRequestType(String requestType) {
+        this.requestType = requestType;
+    }
 
-	public Boolean getFailIfExists() {
-		return failIfExists;
-	}
+    public Boolean getFailIfExists() {
+        return failIfExists;
+    }
 
-	public void setFailIfExists(Boolean failIfExists) {
-		this.failIfExists = failIfExists;
-	}
+    public void setFailIfExists(Boolean failIfExists) {
+        this.failIfExists = failIfExists;
+    }
 
-	public Boolean getBackout() {
-		return backout;
-	}
+    public Boolean getBackout() {
+        return backout;
+    }
 
-	public void setBackout(Boolean backout) {
-		this.backout = backout;
-	}
+    public void setBackout(Boolean backout) {
+        this.backout = backout;
+    }
 
-	public Map<String, Object> getVfModuleParams() {
-		return vfModuleParams;
-	}
+    public Map<String, Object> getVfModuleParams() {
+        return vfModuleParams;
+    }
 
-	public void setVfModuleParams(Map<String, Object> vfModuleParams) {
-		this.vfModuleParams = vfModuleParams;
-	}
+    public void setVfModuleParams(Map<String, Object> vfModuleParams) {
+        this.vfModuleParams = vfModuleParams;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
 }

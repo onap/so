@@ -21,15 +21,15 @@
 package org.onap.so.db.catalog.beans;
 
 public interface Recipe {
-	public Integer getId();
+    public Integer getId();
 
-	public String getAction();
+    public String getAction();
 
-	public String getDescription();
+    public String getDescription();
 
-	public String getParamXsd();
+    public String getParamXsd();
 
-	public String getOrchestrationUri();
+    public String getOrchestrationUri();
 
-	public Integer getRecipeTimeout();
+    public Integer getRecipeTimeout();
 }

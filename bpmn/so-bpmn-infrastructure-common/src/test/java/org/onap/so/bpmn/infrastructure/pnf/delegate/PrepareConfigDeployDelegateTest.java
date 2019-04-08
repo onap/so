@@ -1,20 +1,15 @@
 /*
- * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation.
- *  ================================================================================
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * ============LICENSE_START======================================================= Copyright (C) 2019 Nordix
+ * Foundation. ================================================================================ Licensed under the
+ * Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions and limitations under the
+ * License.
  *
- *  SPDX-License-Identifier: Apache-2.0
- *  ============LICENSE_END=========================================================
+ * SPDX-License-Identifier: Apache-2.0 ============LICENSE_END=========================================================
  */
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
@@ -34,7 +29,6 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_CUSTOMIZATION_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_INSTANCE_NAME;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -119,7 +113,7 @@ public class PrepareConfigDeployDelegateTest {
     }
 
     @Test
-    public void testExecution_failedAaiConnection_exceptionThrown(){
+    public void testExecution_failedAaiConnection_exceptionThrown() {
         try {
             /**
              * Mock the IOException from AAI.
@@ -128,13 +122,14 @@ public class PrepareConfigDeployDelegateTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assertThatThrownBy(()->prepareConfigDeployDelegate.execute(execution)).isInstanceOf(BpmnError.class);
-        assertThat(execution.getVariable("WorkflowExceptionErrorMessage")).asString().contains("Unable to fetch from AAI");
+        assertThatThrownBy(() -> prepareConfigDeployDelegate.execute(execution)).isInstanceOf(BpmnError.class);
+        assertThat(execution.getVariable("WorkflowExceptionErrorMessage")).asString()
+                .contains("Unable to fetch from AAI");
         assertThat(execution.getVariable("WorkflowException")).isInstanceOf(WorkflowException.class);
     }
 
     @Test
-    public void testExecution_aaiEntryNotExist_exceptionThrown(){
+    public void testExecution_aaiEntryNotExist_exceptionThrown() {
         try {
             /**
              * Mock the AAI without PNF.
@@ -143,8 +138,9 @@ public class PrepareConfigDeployDelegateTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assertThatThrownBy(()->prepareConfigDeployDelegate.execute(execution)).isInstanceOf(BpmnError.class);
-        assertThat(execution.getVariable("WorkflowExceptionErrorMessage")).asString().contains("AAI entry for PNF: " + TEST_PNF_CORRELATION_ID + " does not exist");
+        assertThatThrownBy(() -> prepareConfigDeployDelegate.execute(execution)).isInstanceOf(BpmnError.class);
+        assertThat(execution.getVariable("WorkflowExceptionErrorMessage")).asString()
+                .contains("AAI entry for PNF: " + TEST_PNF_CORRELATION_ID + " does not exist");
         assertThat(execution.getVariable("WorkflowException")).isInstanceOf(WorkflowException.class);
     }
 
@@ -167,12 +163,11 @@ public class PrepareConfigDeployDelegateTest {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode tree = mapper.readTree(requestObject);
-            ConfigDeployRequestPnf configDeployRequestPnf = mapper
-                .treeToValue(tree.at("/config-deploy-request"), ConfigDeployRequestPnf.class);
+            ConfigDeployRequestPnf configDeployRequestPnf =
+                    mapper.treeToValue(tree.at("/config-deploy-request"), ConfigDeployRequestPnf.class);
             assertThat(configDeployRequestPnf.getResolutionKey()).matches(TEST_PNF_CORRELATION_ID);
 
-            ConfigDeployPropertiesForPnf properties = configDeployRequestPnf
-                .getConfigDeployPropertiesForPnf();
+            ConfigDeployPropertiesForPnf properties = configDeployRequestPnf.getConfigDeployPropertiesForPnf();
             assertThat(properties.getServiceInstanceId()).matches(TEST_SERVICE_INSTANCE_ID);
             assertThat(properties.getPnfName()).matches(TEST_PNF_CORRELATION_ID);
             assertThat(properties.getPnfId()).matches(TEST_PNF_UUID);

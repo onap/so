@@ -26,7 +26,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,8 +34,8 @@ import javax.persistence.Transient;
 import java.net.URI;
 
 /**
- * EntityBean class for a HomingInstance.  This bean represents a homing instance
- * of a service, populated on successful homing
+ * EntityBean class for a HomingInstance. This bean represents a homing instance of a service, populated on successful
+ * homing
  *
  */
 @RemoteResource("/homingInstance")
@@ -69,11 +68,11 @@ public class HomingInstance {
     @Transient
     private URI uri;
 
-    public HomingInstance () {
+    public HomingInstance() {
 
     }
 
-    public HomingInstance (HomingInstance homingInstance) {
+    public HomingInstance(HomingInstance homingInstance) {
         this.serviceInstanceId = homingInstance.getServiceInstanceId();
         this.cloudRegionId = homingInstance.getCloudRegionId();
         this.cloudOwner = homingInstance.getCloudOwner();
@@ -105,7 +104,7 @@ public class HomingInstance {
         return this.cloudOwner;
     }
 
-    public void setCloudOwner (String cloudOwner) {
+    public void setCloudOwner(String cloudOwner) {
 
         this.cloudOwner = cloudOwner;
     }
@@ -131,8 +130,7 @@ public class HomingInstance {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("serviceInstanceId", serviceInstanceId)
-                .append("cloudRegionId", cloudRegionId)
-                .append("cloudOwner", cloudOwner)
+                .append("cloudRegionId", cloudRegionId).append("cloudOwner", cloudOwner)
                 .append("oofDirectives", oofDirectives).toString();
     }
 

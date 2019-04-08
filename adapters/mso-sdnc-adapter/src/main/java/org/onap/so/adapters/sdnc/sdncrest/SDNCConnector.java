@@ -27,7 +27,6 @@ package org.onap.so.adapters.sdnc.sdncrest;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
-
 import javax.xml.XMLConstants;
 import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -35,7 +34,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -54,7 +52,6 @@ import org.onap.so.adapters.sdncrest.SDNCErrorCommon;
 import org.onap.so.adapters.sdncrest.SDNCResponseCommon;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,263 +68,260 @@ import org.springframework.core.env.Environment;
  */
 @Component
 public abstract class SDNCConnector {
-	private static final Logger logger = LoggerFactory.getLogger(SDNCConnector.class);
+    private static final Logger logger = LoggerFactory.getLogger(SDNCConnector.class);
 
-	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
-	private static final String XPATH_EXCEPTION="XPath Exception";
-	@Autowired
-	private Environment env;
+    private static final String MSO_INTERNAL_ERROR = "MsoInternalError";
+    private static final String XPATH_EXCEPTION = "XPath Exception";
+    @Autowired
+    private Environment env;
 
-	public SDNCResponseCommon send(String content, TypedRequestTunables rt) {
-		logger.debug("SDNC URL: {}", rt.getSdncUrl());
-		logger.debug("SDNC Request Body:\n {}", content);
+    public SDNCResponseCommon send(String content, TypedRequestTunables rt) {
+        logger.debug("SDNC URL: {}", rt.getSdncUrl());
+        logger.debug("SDNC Request Body:\n {}", content);
 
-		HttpRequestBase method = null;
-		HttpResponse httpResponse = null;
+        HttpRequestBase method = null;
+        HttpResponse httpResponse = null;
 
-		try {
-			int timeout = Integer.parseInt(rt.getTimeout());
+        try {
+            int timeout = Integer.parseInt(rt.getTimeout());
 
-			RequestConfig requestConfig = RequestConfig.custom()
-				.setSocketTimeout(timeout)
-				.setConnectTimeout(timeout)
-				.setConnectionRequestTimeout(timeout)
-				.build();
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).build();
 
-			HttpClient client = HttpClientBuilder.create().build();
+            HttpClient client = HttpClientBuilder.create().build();
 
-			if ("POST".equals(rt.getReqMethod())) {
-				HttpPost httpPost = new HttpPost(rt.getSdncUrl());
-				httpPost.setConfig(requestConfig);
-				httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_XML));
-				method =  httpPost;
-			} else if ("PUT".equals(rt.getReqMethod())) {
-				HttpPut httpPut = new HttpPut(rt.getSdncUrl());
-				httpPut.setConfig(requestConfig);
-				httpPut.setEntity(new StringEntity(content, ContentType.APPLICATION_XML));
-				method =  httpPut;
-			} else if ("GET".equals(rt.getReqMethod())) {
-				HttpGet httpGet = new HttpGet(rt.getSdncUrl());
-				httpGet.setConfig(requestConfig);
-				method =  httpGet;
-			} else if ("DELETE".equals(rt.getReqMethod())) {
-				HttpDelete httpDelete = new HttpDelete(rt.getSdncUrl());
-				httpDelete.setConfig(requestConfig);
-				method =  httpDelete;
-			}
+            if ("POST".equals(rt.getReqMethod())) {
+                HttpPost httpPost = new HttpPost(rt.getSdncUrl());
+                httpPost.setConfig(requestConfig);
+                httpPost.setEntity(new StringEntity(content, ContentType.APPLICATION_XML));
+                method = httpPost;
+            } else if ("PUT".equals(rt.getReqMethod())) {
+                HttpPut httpPut = new HttpPut(rt.getSdncUrl());
+                httpPut.setConfig(requestConfig);
+                httpPut.setEntity(new StringEntity(content, ContentType.APPLICATION_XML));
+                method = httpPut;
+            } else if ("GET".equals(rt.getReqMethod())) {
+                HttpGet httpGet = new HttpGet(rt.getSdncUrl());
+                httpGet.setConfig(requestConfig);
+                method = httpGet;
+            } else if ("DELETE".equals(rt.getReqMethod())) {
+                HttpDelete httpDelete = new HttpDelete(rt.getSdncUrl());
+                httpDelete.setConfig(requestConfig);
+                method = httpDelete;
+            }
 
-		
-			String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.SDNC_AUTH_PROP),
-					 env.getProperty(Constants.ENCRYPTION_KEY_PROP));
-			String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
-			if(null != method) {
-			    method.setHeader("Authorization", authorization);
-			    method.setHeader("Accept", "application/yang.data+xml");
-			}
-			else {
-			    logger.debug("method is NULL:");
-			}
 
-			
-
-			httpResponse = client.execute(method);
-
-			String responseContent = null;
-			if (httpResponse.getEntity() != null) {
-				responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
-			}
-
-			int statusCode = httpResponse.getStatusLine().getStatusCode();
-			String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
-
-			logger.debug("SDNC Response: {} {}", statusCode,
-				statusMessage + (responseContent == null ? "" : System.lineSeparator() + responseContent));
-
-			if (httpResponse.getStatusLine().getStatusCode() >= 300) {
-				String errMsg = "SDNC returned " + statusCode + " " + statusMessage;
-
-				String errors = analyzeErrors(responseContent);
-				if (errors != null) {
-					errMsg += " " + errors;
-				}
-
-				logError(errMsg);
-
-				return createErrorResponse(statusCode, errMsg, rt);
-			}
-
-			httpResponse = null;
-			
-			if(null != method) {
-	            method.reset();
-			}
-            else {
+            String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.SDNC_AUTH_PROP),
+                    env.getProperty(Constants.ENCRYPTION_KEY_PROP));
+            String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+            if (null != method) {
+                method.setHeader("Authorization", authorization);
+                method.setHeader("Accept", "application/yang.data+xml");
+            } else {
                 logger.debug("method is NULL:");
             }
 
-			method = null;
 
-			logger.info("{} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), responseContent, "SDNC");
-			return createResponseFromContent(statusCode, statusMessage, responseContent, rt);
 
-		} catch (SocketTimeoutException | ConnectTimeoutException e) {
-			String errMsg = "Request to SDNC timed out";
-			logError(errMsg, e);
-			return createErrorResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg, rt);
+            httpResponse = client.execute(method);
 
-		} catch (Exception e) {
-			String errMsg = "Error processing request to SDNC";
-			logError(errMsg, e);
-			return createErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg, rt);
+            String responseContent = null;
+            if (httpResponse.getEntity() != null) {
+                responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+            }
 
-		} finally {
-			if (httpResponse != null) {
-				try {
-					EntityUtils.consume(httpResponse.getEntity());
-				} catch (Exception e) {
-					logger.debug("Exception:", e);
-				}
-			}
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            String statusMessage = httpResponse.getStatusLine().getReasonPhrase();
 
-			if (method != null) {
-				try {
-					method.reset();
-				} catch (Exception e) {
-					logger.debug("Exception:", e);
-				}
-			}
-		}
-	}
+            logger.debug("SDNC Response: {} {}", statusCode,
+                    statusMessage + (responseContent == null ? "" : System.lineSeparator() + responseContent));
 
-	protected void logError(String errMsg) {
-		logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
-			ErrorCode.AvailabilityError.getValue(), errMsg);
-	}
+            if (httpResponse.getStatusLine().getStatusCode() >= 300) {
+                String errMsg = "SDNC returned " + statusCode + " " + statusMessage;
 
-	protected void logError(String errMsg, Throwable t) {
-		logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
-			ErrorCode.AvailabilityError.getValue(), errMsg, t);
-	}
+                String errors = analyzeErrors(responseContent);
+                if (errors != null) {
+                    errMsg += " " + errors;
+                }
 
-	/**
-	 * Generates a response object from content received from SDNC.  The response
-	 * object may be a success response object or an error response object. This
-	 * method must be overridden by the subclass to return the correct object type.
-	 * @param statusCode the response status code from SDNC (e.g. 200)
-	 * @param statusMessage the response status message from SDNC (e.g. "OK")
-	 * @param responseContent the body of the response from SDNC (possibly null)
-	 * @param rt request tunables
-	 * @return a response object
-	 */
-	protected abstract SDNCResponseCommon createResponseFromContent(int statusCode,
-			String statusMessage, String responseContent, TypedRequestTunables rt);
+                logError(errMsg);
 
-	/**
-	 * Generates an error response object. This method must be overridden by the
-	 * subclass to return the correct object type.
-	 * @param statusCode the response status code (from SDNC, or internally generated)
-	 * @param errMsg the error message (normally a verbose explanation of the error)
-	 * @param rt request tunables
-	 * @return an error response object
-	 */
-	protected abstract SDNCErrorCommon createErrorResponse(int statusCode,
-			String errMsg, TypedRequestTunables rt);
+                return createErrorResponse(statusCode, errMsg, rt);
+            }
 
-	/**
-	 * Called by the send() method to analyze errors that may be encoded in the
-	 * content of non-2XX responses.  By default, this method tries to parse the
-	 * content as a restconf error.
-	 * <pre>
-	 *     xmlns="urn:ietf:params:xml:ns:yang:ietf-restconf"
-	 * </pre>
-	 * If an error (or errors) can be obtained from the content, then the result
-	 * is a string in this format:
-	 * <pre>
-	 * [error-type:TYPE, error-tag:TAG, error-message:MESSAGE] ...
-	 * </pre>
-	 * If no error could be obtained from the content, then the result is null.
-	 * <p>
-	 * The subclass can override this method to provide another implementation.
-	 */
-	protected String analyzeErrors(String content) {
-		if (content == null || content.isEmpty()) {
-			return null;
-		}
+            httpResponse = null;
 
-		// Confirmed with Andrew Shen on 11/1/16 that SDNC will send content like
-		// this in error responses (non-2XX response codes) to "agnostic" service
-		// requests.
-		//
-		// <errors xmlns="urn:ietf:params:xml:ns:yang:ietf-restconf">
-		//   <error>
-		//     <error-type>protocol</error-type>
-		//     <error-tag>malformed-message</error-tag>
-		//     <error-message>Error parsing input: The element type "input" must be terminated by the matching end-tag "&lt;/input&gt;".</error-message>
-		//   </error>
-		// </errors>
+            if (null != method) {
+                method.reset();
+            } else {
+                logger.debug("method is NULL:");
+            }
 
-		StringBuilder output = null;
+            method = null;
 
-		try {
-			XPathFactory xpathFactory = XPathFactory.newInstance();
-			XPath xpath = xpathFactory.newXPath();
-			DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-			documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-			documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-			documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-			InputSource source = new InputSource(new StringReader(content));
-			Document doc = documentBuilderFactory.newDocumentBuilder().parse(source);
-			NodeList errors = (NodeList) xpath.evaluate("errors/error", doc, XPathConstants.NODESET);
+            logger.info("{} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), responseContent, "SDNC");
+            return createResponseFromContent(statusCode, statusMessage, responseContent, rt);
 
-			for (int i = 0; i < errors.getLength(); i++)
-			{
-				Element error = (Element) errors.item(i);
+        } catch (SocketTimeoutException | ConnectTimeoutException e) {
+            String errMsg = "Request to SDNC timed out";
+            logError(errMsg, e);
+            return createErrorResponse(HttpURLConnection.HTTP_CLIENT_TIMEOUT, errMsg, rt);
 
-				String info = "";
+        } catch (Exception e) {
+            String errMsg = "Error processing request to SDNC";
+            logError(errMsg, e);
+            return createErrorResponse(HttpURLConnection.HTTP_INTERNAL_ERROR, errMsg, rt);
 
-				try {
-					String errorType = xpath.evaluate("error-type", error);
-					info += "error-type:" + errorType;
-				} catch (XPathExpressionException e) {
-					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-type", error.toString(),
-							"SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
-				}
+        } finally {
+            if (httpResponse != null) {
+                try {
+                    EntityUtils.consume(httpResponse.getEntity());
+                } catch (Exception e) {
+                    logger.debug("Exception:", e);
+                }
+            }
 
-				try {
-					String errorTag = xpath.evaluate( "error-tag", error);
-					if (!info.isEmpty()) {
-						info += ", ";
-					}
-					info += "error-tag:" + errorTag;
-				} catch (XPathExpressionException e) {
-					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-tag", error.toString(),
-							"SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
-				}
+            if (method != null) {
+                try {
+                    method.reset();
+                } catch (Exception e) {
+                    logger.debug("Exception:", e);
+                }
+            }
+        }
+    }
 
-				try {
-					String errorMessage = xpath.evaluate("error-message", error);
-					if (!info.isEmpty()) {
-						info += ", ";
-					}
-					info += "error-message:" + errorMessage;
-				} catch (Exception e) {
-					logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-message",
-						error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
-				}
+    protected void logError(String errMsg) {
+        logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
+                ErrorCode.AvailabilityError.getValue(), errMsg);
+    }
 
-				if (!info.isEmpty()) {
-					if (output == null) {
-						output = new StringBuilder("[" + info + "]");
-					} else {
-						output.append(" [").append(info).append("]");
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("{} {} {} {}", MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
-				ErrorCode.DataError.getValue(), "Exception while analyzing errors", e);
-		}
+    protected void logError(String errMsg, Throwable t) {
+        logger.error("{} {} {} {}", MessageEnum.RA_EXCEPTION_COMMUNICATE_SDNC.toString(), "SDNC",
+                ErrorCode.AvailabilityError.getValue(), errMsg, t);
+    }
 
-		return output.toString();
-	}
+    /**
+     * Generates a response object from content received from SDNC. The response object may be a success response object
+     * or an error response object. This method must be overridden by the subclass to return the correct object type.
+     * 
+     * @param statusCode the response status code from SDNC (e.g. 200)
+     * @param statusMessage the response status message from SDNC (e.g. "OK")
+     * @param responseContent the body of the response from SDNC (possibly null)
+     * @param rt request tunables
+     * @return a response object
+     */
+    protected abstract SDNCResponseCommon createResponseFromContent(int statusCode, String statusMessage,
+            String responseContent, TypedRequestTunables rt);
+
+    /**
+     * Generates an error response object. This method must be overridden by the subclass to return the correct object
+     * type.
+     * 
+     * @param statusCode the response status code (from SDNC, or internally generated)
+     * @param errMsg the error message (normally a verbose explanation of the error)
+     * @param rt request tunables
+     * @return an error response object
+     */
+    protected abstract SDNCErrorCommon createErrorResponse(int statusCode, String errMsg, TypedRequestTunables rt);
+
+    /**
+     * Called by the send() method to analyze errors that may be encoded in the content of non-2XX responses. By
+     * default, this method tries to parse the content as a restconf error.
+     * 
+     * <pre>
+     * xmlns = "urn:ietf:params:xml:ns:yang:ietf-restconf"
+     * </pre>
+     * 
+     * If an error (or errors) can be obtained from the content, then the result is a string in this format:
+     * 
+     * <pre>
+     * [error-type:TYPE, error-tag:TAG, error-message:MESSAGE] ...
+     * </pre>
+     * 
+     * If no error could be obtained from the content, then the result is null.
+     * <p>
+     * The subclass can override this method to provide another implementation.
+     */
+    protected String analyzeErrors(String content) {
+        if (content == null || content.isEmpty()) {
+            return null;
+        }
+
+        // Confirmed with Andrew Shen on 11/1/16 that SDNC will send content like
+        // this in error responses (non-2XX response codes) to "agnostic" service
+        // requests.
+        //
+        // <errors xmlns="urn:ietf:params:xml:ns:yang:ietf-restconf">
+        // <error>
+        // <error-type>protocol</error-type>
+        // <error-tag>malformed-message</error-tag>
+        // <error-message>Error parsing input: The element type "input" must be terminated by the matching end-tag
+        // "&lt;/input&gt;".</error-message>
+        // </error>
+        // </errors>
+
+        StringBuilder output = null;
+
+        try {
+            XPathFactory xpathFactory = XPathFactory.newInstance();
+            XPath xpath = xpathFactory.newXPath();
+            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+            documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            InputSource source = new InputSource(new StringReader(content));
+            Document doc = documentBuilderFactory.newDocumentBuilder().parse(source);
+            NodeList errors = (NodeList) xpath.evaluate("errors/error", doc, XPathConstants.NODESET);
+
+            for (int i = 0; i < errors.getLength(); i++) {
+                Element error = (Element) errors.item(i);
+
+                String info = "";
+
+                try {
+                    String errorType = xpath.evaluate("error-type", error);
+                    info += "error-type:" + errorType;
+                } catch (XPathExpressionException e) {
+                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-type",
+                            error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
+                }
+
+                try {
+                    String errorTag = xpath.evaluate("error-tag", error);
+                    if (!info.isEmpty()) {
+                        info += ", ";
+                    }
+                    info += "error-tag:" + errorTag;
+                } catch (XPathExpressionException e) {
+                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-tag",
+                            error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
+                }
+
+                try {
+                    String errorMessage = xpath.evaluate("error-message", error);
+                    if (!info.isEmpty()) {
+                        info += ", ";
+                    }
+                    info += "error-message:" + errorMessage;
+                } catch (Exception e) {
+                    logger.error("{} {} {} {} {} {}", MessageEnum.RA_EVALUATE_XPATH_ERROR.toString(), "error-message",
+                            error.toString(), "SDNC", ErrorCode.DataError.getValue(), XPATH_EXCEPTION, e);
+                }
+
+                if (!info.isEmpty()) {
+                    if (output == null) {
+                        output = new StringBuilder("[" + info + "]");
+                    } else {
+                        output.append(" [").append(info).append("]");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("{} {} {} {}", MessageEnum.RA_ANALYZE_ERROR_EXC.toString(), "SDNC",
+                    ErrorCode.DataError.getValue(), "Exception while analyzing errors", e);
+        }
+
+        return output.toString();
+    }
 }

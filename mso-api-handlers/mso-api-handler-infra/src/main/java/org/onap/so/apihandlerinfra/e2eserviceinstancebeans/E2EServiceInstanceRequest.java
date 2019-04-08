@@ -22,40 +22,39 @@ package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties({ "additionalProperties" })
+@JsonIgnoreProperties({"additionalProperties"})
 public class E2EServiceInstanceRequest {
 
-	@JsonProperty("service")
-	private E2EService service;
+    @JsonProperty("service")
+    private E2EService service;
 
-	@JsonIgnore
-	private Map<String, Object> additionalProperties = new HashMap<>();
+    @JsonIgnore
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
-	public E2EService getService() {
-		return service;
-	}
+    public E2EService getService() {
+        return service;
+    }
 
-	public void setService(E2EService service) {
-		this.service = service;
-	}
+    public void setService(E2EService service) {
+        this.service = service;
+    }
 
-	public Map<String, Object> getAdditionalProperties() {
-		return this.additionalProperties;
-	}
-	
-	
+    public Map<String, Object> getAdditionalProperties() {
+        return this.additionalProperties;
+    }
 
-	public void setAdditionalProperties(Map<String, Object> additionalProperties) {
-		this.additionalProperties = additionalProperties;
-	}
 
-	public void setAdditionalProperty(String name, Object value) {
-		this.additionalProperties.put(name, value);
-	}
+
+    public void setAdditionalProperties(Map<String, Object> additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
+    public void setAdditionalProperty(String name, Object value) {
+        this.additionalProperties.put(name, value);
+    }
 
 }

@@ -34,7 +34,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.LinkedHashMap;
 
@@ -54,15 +53,14 @@ public class OofClient {
 
 
     /**
-     * Makes a rest call to oof to perform homing and licensing for a
-     * list of demands
+     * Makes a rest call to oof to perform homing and licensing for a list of demands
      *
      * @param homingRequest
      * @return
      * @throws JsonProcessingException
      * @throws BpmnError
      */
-    public void postDemands(OofRequest homingRequest) throws BadResponseException, JsonProcessingException{
+    public void postDemands(OofRequest homingRequest) throws BadResponseException, JsonProcessingException {
         logger.trace("Started oof Client Post Demands");
         String url = oofProperties.getHost() + oofProperties.getUri();
         logger.debug("Post demands url: " + url);
@@ -79,7 +77,8 @@ public class OofClient {
         baseClient.setTargetUrl(url);
         baseClient.setHttpHeader(header);
 
-        LinkedHashMap<?, ?> response = baseClient.post(homingRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<? ,?>>() {});
+        LinkedHashMap<?, ?> response =
+                baseClient.post(homingRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<?, ?>>() {});
         validator.validateDemandsResponse(response);
         logger.trace("Completed OOF Client Post Demands");
     }

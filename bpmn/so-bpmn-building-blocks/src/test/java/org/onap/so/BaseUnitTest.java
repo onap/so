@@ -20,6 +20,6 @@
 
 package org.onap.so;
 
-public abstract class BaseUnitTest extends BuildingBlockTestDataSetup{
+public abstract class BaseUnitTest extends BuildingBlockTestDataSetup {
 
 }

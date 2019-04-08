@@ -25,10 +25,8 @@ package org.onap.so.bpmn.core.domain;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -36,100 +34,99 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 /**
- * Wrapper encapsulates needed JSON functionality 
- * to be extended by MSO service decomposition objects
- * providing ways to convert to and from JSON
+ * Wrapper encapsulates needed JSON functionality to be extended by MSO service decomposition objects providing ways to
+ * convert to and from JSON
  *
  */
 @JsonInclude(Include.NON_NULL)
-public abstract class JsonWrapper implements Serializable  {
+public abstract class JsonWrapper implements Serializable {
 
-	private static final Logger logger = LoggerFactory.getLogger(JsonWrapper.class);
-	@JsonInclude(Include.NON_NULL)
-	public String toJsonString(){
+    private static final Logger logger = LoggerFactory.getLogger(JsonWrapper.class);
 
-		String jsonString = "";
-		//convert with Jackson
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+    @JsonInclude(Include.NON_NULL)
+    public String toJsonString() {
 
-		mapper.setSerializationInclusion(Include.NON_NULL);
+        String jsonString = "";
+        // convert with Jackson
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
-		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-		try {
-			jsonString = ow.writeValueAsString(this);
-		} catch (Exception e){
+        mapper.setSerializationInclusion(Include.NON_NULL);
 
-			logger.debug("Exception :",e);
-		}
-		return jsonString;
-	}
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        try {
+            jsonString = ow.writeValueAsString(this);
+        } catch (Exception e) {
 
-	@JsonInclude(Include.NON_NULL)
-	public JSONObject toJsonObject(){
+            logger.debug("Exception :", e);
+        }
+        return jsonString;
+    }
 
-		ObjectMapper mapper = new ObjectMapper();   
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);    
-		JSONObject json = new JSONObject();
-		try {
-			json = new JSONObject(mapper.writeValueAsString(this));
-		} catch (JsonGenerationException e) {
-			logger.debug("Exception :",e);
-		} catch (JsonMappingException e) {
-			logger.debug("Exception :",e);
-		} catch (JSONException e) {
-			logger.debug("Exception :",e);
-		} catch (IOException e) {
-			logger.debug("Exception :",e);
-		}
-		return json; 
-	}
+    @JsonInclude(Include.NON_NULL)
+    public JSONObject toJsonObject() {
 
-	public String listToJson(List list) {
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        JSONObject json = new JSONObject();
+        try {
+            json = new JSONObject(mapper.writeValueAsString(this));
+        } catch (JsonGenerationException e) {
+            logger.debug("Exception :", e);
+        } catch (JsonMappingException e) {
+            logger.debug("Exception :", e);
+        } catch (JSONException e) {
+            logger.debug("Exception :", e);
+        } catch (IOException e) {
+            logger.debug("Exception :", e);
+        }
+        return json;
+    }
 
-		String jsonString = "";
-		try {
-			jsonString = mapper.writeValueAsString(list);
-		} catch (JsonGenerationException e) {
-			logger.debug("Exception :",e);
-		} catch (JsonMappingException e) {
-			logger.debug("Exception :",e);
-		} catch (IOException e) {
-			logger.debug("Exception :",e);
-		}
-		return jsonString;
-	}
+    public String listToJson(List list) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
 
-	@JsonInclude(Include.NON_NULL)
-	public String toJsonStringNoRootName(){
+        String jsonString = "";
+        try {
+            jsonString = mapper.writeValueAsString(list);
+        } catch (JsonGenerationException e) {
+            logger.debug("Exception :", e);
+        } catch (JsonMappingException e) {
+            logger.debug("Exception :", e);
+        } catch (IOException e) {
+            logger.debug("Exception :", e);
+        }
+        return jsonString;
+    }
 
-		String jsonString = "";
-		//convert with Jackson
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
+    @JsonInclude(Include.NON_NULL)
+    public String toJsonStringNoRootName() {
 
-		ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-		try {
-			jsonString = ow.writeValueAsString(this);
-		} catch (Exception e){
+        String jsonString = "";
+        // convert with Jackson
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
 
-			logger.debug("Exception :",e);
-		}
-		return jsonString;
-	}
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        try {
+            jsonString = ow.writeValueAsString(this);
+        } catch (Exception e) {
 
-	/**
-	 * Returns a string representation of this object.
-	 */
-	public String toString() {
-		return this.toJsonString();
-	}
+            logger.debug("Exception :", e);
+        }
+        return jsonString;
+    }
+
+    /**
+     * Returns a string representation of this object.
+     */
+    public String toString() {
+        return this.toJsonString();
+    }
 }

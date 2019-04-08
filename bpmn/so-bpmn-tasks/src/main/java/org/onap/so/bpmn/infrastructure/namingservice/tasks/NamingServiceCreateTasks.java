@@ -32,25 +32,26 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class NamingServiceCreateTasks {
-	
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	
-	@Autowired
-	private NamingServiceResources namingServiceResources;
-	
-	public void createInstanceGroupName(BuildingBlockExecution execution) throws Exception {		
-		InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
-		String policyInstanceName = execution.getVariable("policyInstanceName");
-		String nfNamingCode = execution.getVariable("nfNamingCode");
-		String generatedInstanceGroupName = "";
-		try {
-			generatedInstanceGroupName = namingServiceResources.generateInstanceGroupName(instanceGroup, policyInstanceName, nfNamingCode);			
-		} catch (Exception ex) {			
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-		instanceGroup.setInstanceGroupName(generatedInstanceGroupName);
-	}	
+
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+
+    @Autowired
+    private NamingServiceResources namingServiceResources;
+
+    public void createInstanceGroupName(BuildingBlockExecution execution) throws Exception {
+        InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
+        String policyInstanceName = execution.getVariable("policyInstanceName");
+        String nfNamingCode = execution.getVariable("nfNamingCode");
+        String generatedInstanceGroupName = "";
+        try {
+            generatedInstanceGroupName =
+                    namingServiceResources.generateInstanceGroupName(instanceGroup, policyInstanceName, nfNamingCode);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+        instanceGroup.setInstanceGroupName(generatedInstanceGroupName);
+    }
 }

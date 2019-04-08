@@ -23,23 +23,22 @@ package org.onap.so.adapters.vfc.model;
 import java.util.Map;
 
 /**
- * The Unified Restful Reponse Class
- * <br>
+ * The Unified Restful Reponse Class <br>
  * <p>
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-09-06
+ * @version ONAP Amsterdam Release 2017-09-06
  */
 public class RestfulResponse {
 
     // the response content
     private String responseContent;
 
-    //the response status
+    // the response status
     private int status;
 
-    //the response header
+    // the response header
     private Map<String, String> respHeaderMap;
 
     public RestfulResponse() {
@@ -65,9 +64,9 @@ public class RestfulResponse {
     }
 
     public int getRespHeaderInt(String key) {
-        if(this.respHeaderMap != null) {
+        if (this.respHeaderMap != null) {
             String result = this.respHeaderMap.get(key);
-            if(result != null) {
+            if (result != null) {
                 return Integer.parseInt(result);
             }
         }
@@ -75,9 +74,9 @@ public class RestfulResponse {
     }
 
     public long getRespHeaderLong(String key) {
-        if(this.respHeaderMap != null) {
+        if (this.respHeaderMap != null) {
             String result = this.respHeaderMap.get(key);
-            if(result != null) {
+            if (result != null) {
                 return Long.parseLong(result);
             }
         }
@@ -85,7 +84,7 @@ public class RestfulResponse {
     }
 
     public String getRespHeaderStr(String key) {
-        if(this.respHeaderMap != null) {
+        if (this.respHeaderMap != null) {
             return this.respHeaderMap.get(key);
         }
         return null;

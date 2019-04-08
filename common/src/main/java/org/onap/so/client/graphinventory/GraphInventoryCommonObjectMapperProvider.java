@@ -21,7 +21,6 @@
 package org.onap.so.client.graphinventory;
 
 import org.onap.so.client.policy.CommonObjectMapperProvider;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
@@ -35,18 +34,18 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 
 public class GraphInventoryCommonObjectMapperProvider extends CommonObjectMapperProvider {
 
-	public GraphInventoryCommonObjectMapperProvider() {
-		mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
-		mapper.enable(MapperFeature.USE_ANNOTATIONS);
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-		mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		AnnotationIntrospector aiJaxb = new JaxbAnnotationIntrospector(TypeFactory.defaultInstance());
+    public GraphInventoryCommonObjectMapperProvider() {
+        mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+        mapper.enable(MapperFeature.USE_ANNOTATIONS);
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        AnnotationIntrospector aiJaxb = new JaxbAnnotationIntrospector(TypeFactory.defaultInstance());
         AnnotationIntrospector aiJackson = new JacksonAnnotationIntrospector();
         // first Jaxb, second Jackson annotations
         mapper.setAnnotationIntrospector(AnnotationIntrospector.pair(aiJaxb, aiJackson));
-	}
+    }
 
 }

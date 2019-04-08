@@ -35,7 +35,7 @@ public class CloudifyManagerRepositoryTest extends BaseTest {
     @Test
     public void findOneTest() throws Exception {
         CloudifyManager cloudifyManager = cloudifyManagerRepository.findById("mtn13")
-        		.orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+                .orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
         Assert.assertNotNull(cloudifyManager);
         Assert.assertEquals("mtn13", cloudifyManager.getId());
     }

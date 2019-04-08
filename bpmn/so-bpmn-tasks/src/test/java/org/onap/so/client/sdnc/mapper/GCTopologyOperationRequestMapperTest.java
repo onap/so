@@ -25,7 +25,6 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,11 +46,11 @@ import org.onap.so.client.sdnc.beans.SDNCSvcAction;
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
 
-	
-	@Spy
-	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
-	
-	@InjectMocks
+
+    @Spy
+    private GeneralTopologyObjectMapper generalTopologyObjectMapper;
+
+    @InjectMocks
     private GCTopologyOperationRequestMapper genObjMapper = new GCTopologyOperationRequestMapper();
 
     @Test
@@ -63,8 +62,9 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
         Configuration Configuration = new Configuration();
         Configuration.setConfigurationId("ConfigurationId");
         Configuration.setConfigurationType("VLAN-NETWORK-RECEPTOR");
-        GenericResourceApiGcTopologyOperationInformation genericInfo = genObjMapper.deactivateOrUnassignVnrReqMapper
-                (SDNCSvcAction.UNASSIGN, serviceInstance, requestContext, Configuration,"uuid",new URI("http://localhost"));
+        GenericResourceApiGcTopologyOperationInformation genericInfo =
+                genObjMapper.deactivateOrUnassignVnrReqMapper(SDNCSvcAction.UNASSIGN, serviceInstance, requestContext,
+                        Configuration, "uuid", new URI("http://localhost"));
 
         Assert.assertNotNull(genericInfo);
         Assert.assertNotNull(genericInfo.getRequestInformation());
@@ -73,9 +73,9 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
         Assert.assertNotNull(genericInfo.getServiceInformation());
         Assert.assertEquals("ConfigurationId", genericInfo.getConfigurationInformation().getConfigurationId());
         Assert.assertEquals("VLAN-NETWORK-RECEPTOR", genericInfo.getConfigurationInformation().getConfigurationType());
-        Assert.assertEquals("uuid",genericInfo.getSdncRequestHeader().getSvcRequestId()); 
-        Assert.assertEquals("http://localhost",genericInfo.getSdncRequestHeader().getSvcNotificationUrl());
-        Assert.assertEquals("MsoRequestId",genericInfo.getRequestInformation().getRequestId()); 
+        Assert.assertEquals("uuid", genericInfo.getSdncRequestHeader().getSvcRequestId());
+        Assert.assertEquals("http://localhost", genericInfo.getSdncRequestHeader().getSvcNotificationUrl());
+        Assert.assertEquals("MsoRequestId", genericInfo.getRequestInformation().getRequestId());
     }
 
 
@@ -99,8 +99,8 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
     }
 
     private Map<String, Object> getUserParams() {
-        Map<String,Object> userParams = new HashMap<>();
-        userParams.put("lppCustomerId","lppCustomerId");
+        Map<String, Object> userParams = new HashMap<>();
+        userParams.put("lppCustomerId", "lppCustomerId");
         return userParams;
     }
 
@@ -148,7 +148,7 @@ public class GCTopologyOperationRequestMapperTest extends TestDataSetup {
         return ipv4subnet;
     }
 
-    private ServiceInstance  buildServiceInstance(GenericVnf vnf) {
+    private ServiceInstance buildServiceInstance(GenericVnf vnf) {
         ServiceInstance serviceInstance = new ServiceInstance();
         serviceInstance.setServiceInstanceId("ServiceInstanceId");
         List<GenericVnf> vnfs = serviceInstance.getVnfs();

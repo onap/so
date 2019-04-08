@@ -22,28 +22,27 @@
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import org.onap.so.db.request.beans.OperationStatus;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class GetE2EServiceInstanceResponse {
 
-	protected OperationStatus operation;
+    protected OperationStatus operation;
 
-//	public OperationStatus getOperationStatus() {
-//		return operation;
-//	}
-//
-//	public void setOperationStatus(OperationStatus requestDB) {
-//		this.operation = requestDB;
-//	}
+    // public OperationStatus getOperationStatus() {
+    // return operation;
+    // }
+    //
+    // public void setOperationStatus(OperationStatus requestDB) {
+    // this.operation = requestDB;
+    // }
 
-	public OperationStatus getOperation() {
-		return operation;
-	}
+    public OperationStatus getOperation() {
+        return operation;
+    }
 
-	public void setOperation(OperationStatus operation) {
-		this.operation = operation;
-	}
+    public void setOperation(OperationStatus operation) {
+        this.operation = operation;
+    }
 
 }

@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.builder;
 
 import java.util.Map;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.RequestInformationEntity;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.RpcServiceTopologyOperationInputEntity;
@@ -30,20 +29,26 @@ import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.Servic
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.ServiceRequestInputEntity;
 import org.onap.so.bpmn.infrastructure.workflow.serviceTask.client.entity.ServiceTopologyOperationInputEntity;
 
-public class ServiceRpcInputEntityBuilder extends AbstractBuilder<Map<String, String>, RpcServiceTopologyOperationInputEntity> {
+public class ServiceRpcInputEntityBuilder
+        extends AbstractBuilder<Map<String, String>, RpcServiceTopologyOperationInputEntity> {
     @Override
-    public RpcServiceTopologyOperationInputEntity build(DelegateExecution execution, Map<String, String> inputs) throws Exception {
-        RpcServiceTopologyOperationInputEntity rpcServiceTopologyOperationInputEntity = new RpcServiceTopologyOperationInputEntity();
-        ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity = new ServiceTopologyOperationInputEntity();
+    public RpcServiceTopologyOperationInputEntity build(DelegateExecution execution, Map<String, String> inputs)
+            throws Exception {
+        RpcServiceTopologyOperationInputEntity rpcServiceTopologyOperationInputEntity =
+                new RpcServiceTopologyOperationInputEntity();
+        ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity =
+                new ServiceTopologyOperationInputEntity();
         loadSdncRequestHeaderEntity(serviceTopologyOperationInputEntity, execution);
         loadRequestInformationEntity(serviceTopologyOperationInputEntity, execution);
         loadServiceInformation(serviceTopologyOperationInputEntity, execution);
         loadServiceRequestInputEntity(serviceTopologyOperationInputEntity, execution);
-        rpcServiceTopologyOperationInputEntity.setServiceTopologyOperationInputEntity(serviceTopologyOperationInputEntity);
+        rpcServiceTopologyOperationInputEntity
+                .setServiceTopologyOperationInputEntity(serviceTopologyOperationInputEntity);
         return rpcServiceTopologyOperationInputEntity;
     }
 
-    private void loadServiceRequestInputEntity(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity, DelegateExecution execution) {
+    private void loadServiceRequestInputEntity(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity,
+            DelegateExecution execution) {
         ServiceRequestInputEntity serviceRequestInputEntity = getServiceRequestInputEntity(execution);
         serviceTopologyOperationInputEntity.setServiceRequestInput(serviceRequestInputEntity);
     }
@@ -54,17 +59,20 @@ public class ServiceRpcInputEntityBuilder extends AbstractBuilder<Map<String, St
         return serviceRequestInputEntity;
     }
 
-    private void loadServiceInformation(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity, DelegateExecution execution) {
+    private void loadServiceInformation(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity,
+            DelegateExecution execution) {
         ServiceInformationEntity serviceInformationEntity = getServiceInformationEntity(execution);
         serviceTopologyOperationInputEntity.setServiceInformation(serviceInformationEntity);
     }
 
-    private void loadRequestInformationEntity(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity, DelegateExecution execution) {
+    private void loadRequestInformationEntity(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity,
+            DelegateExecution execution) {
         RequestInformationEntity requestInformationEntity = getRequestInformationEntity(execution);
         serviceTopologyOperationInputEntity.setRequestInformation(requestInformationEntity);
     }
 
-    private void loadSdncRequestHeaderEntity(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity, DelegateExecution execution) {
+    private void loadSdncRequestHeaderEntity(ServiceTopologyOperationInputEntity serviceTopologyOperationInputEntity,
+            DelegateExecution execution) {
         SdncRequestHeaderEntity sdncRequestHeaderEntity = new SdncRequestHeaderEntity();
         sdncRequestHeaderEntity.setSvcRequestId(getRequestId(execution));
         sdncRequestHeaderEntity.setSvcAction(getSvcAction(execution));

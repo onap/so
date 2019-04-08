@@ -24,32 +24,32 @@ package org.onap.so.adapters.network.beans;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContrailSubnetIp {
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_ip_prefix")
-	private String ipPrefix;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len")
-	private String ipPrefixLen;
 
-	public String getIpPrefix() {
-		return ipPrefix;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_ip_prefix")
+    private String ipPrefix;
 
-	public void setIpPrefix(String ipPrefix) {
-		this.ipPrefix = ipPrefix;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_ip_prefix_len")
+    private String ipPrefixLen;
 
-	public String getIpPrefixLen() {
-		return ipPrefixLen;
-	}
+    public String getIpPrefix() {
+        return ipPrefix;
+    }
 
-	public void setIpPrefixLen(String ipPrefixLen) {
-		this.ipPrefixLen = ipPrefixLen;
-	}
+    public void setIpPrefix(String ipPrefix) {
+        this.ipPrefix = ipPrefix;
+    }
 
-	@Override
-	public String toString() {
-		return "ContrailSubnetIp [ip_prefix=" + ipPrefix + ", ip_prefix_len=" + ipPrefixLen + "]";
-	}
+    public String getIpPrefixLen() {
+        return ipPrefixLen;
+    }
+
+    public void setIpPrefixLen(String ipPrefixLen) {
+        this.ipPrefixLen = ipPrefixLen;
+    }
+
+    @Override
+    public String toString() {
+        return "ContrailSubnetIp [ip_prefix=" + ipPrefix + ", ip_prefix_len=" + ipPrefixLen + "]";
+    }
 
 }

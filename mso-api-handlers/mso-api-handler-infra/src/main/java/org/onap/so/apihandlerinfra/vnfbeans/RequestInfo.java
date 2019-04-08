@@ -37,9 +37,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType>
@@ -63,16 +65,8 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "requestId",
-    "action",
-    "requestStatus",
-    "statusMessage",
-    "progress",
-    "startTime",
-    "endTime",
-    "source"
-})
+@XmlType(name = "", propOrder = {"requestId", "action", "requestStatus", "statusMessage", "progress", "startTime",
+        "endTime", "source"})
 @XmlRootElement(name = "request-info")
 public class RequestInfo {
 
@@ -94,9 +88,7 @@ public class RequestInfo {
     /**
      * Gets the value of the requestId property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getRequestId() {
@@ -106,9 +98,7 @@ public class RequestInfo {
     /**
      * Sets the value of the requestId property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setRequestId(String value) {
@@ -118,9 +108,7 @@ public class RequestInfo {
     /**
      * Gets the value of the action property.
      *
-     * @return
-     *     possible object is
-     *     {@link ActionType }
+     * @return possible object is {@link ActionType }
      *
      */
     public ActionType getAction() {
@@ -130,9 +118,7 @@ public class RequestInfo {
     /**
      * Sets the value of the action property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link ActionType }
+     * @param value allowed object is {@link ActionType }
      *
      */
     public void setAction(ActionType value) {
@@ -142,9 +128,7 @@ public class RequestInfo {
     /**
      * Gets the value of the requestStatus property.
      *
-     * @return
-     *     possible object is
-     *     {@link RequestStatusType }
+     * @return possible object is {@link RequestStatusType }
      *
      */
     public RequestStatusType getRequestStatus() {
@@ -154,9 +138,7 @@ public class RequestInfo {
     /**
      * Sets the value of the requestStatus property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link RequestStatusType }
+     * @param value allowed object is {@link RequestStatusType }
      *
      */
     public void setRequestStatus(RequestStatusType value) {
@@ -166,9 +148,7 @@ public class RequestInfo {
     /**
      * Gets the value of the statusMessage property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getStatusMessage() {
@@ -178,9 +158,7 @@ public class RequestInfo {
     /**
      * Sets the value of the statusMessage property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setStatusMessage(String value) {
@@ -190,9 +168,7 @@ public class RequestInfo {
     /**
      * Gets the value of the progress property.
      *
-     * @return
-     *     possible object is
-     *     {@link Integer }
+     * @return possible object is {@link Integer }
      *
      */
     public String getProgress() {
@@ -202,9 +178,7 @@ public class RequestInfo {
     /**
      * Sets the value of the progress property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
+     * @param value allowed object is {@link Integer }
      *
      */
     public void setProgress(String value) {
@@ -214,9 +188,7 @@ public class RequestInfo {
     /**
      * Gets the value of the startTime property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getStartTime() {
@@ -226,9 +198,7 @@ public class RequestInfo {
     /**
      * Sets the value of the startTime property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setStartTime(String value) {
@@ -238,9 +208,7 @@ public class RequestInfo {
     /**
      * Gets the value of the endTime property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getEndTime() {
@@ -250,9 +218,7 @@ public class RequestInfo {
     /**
      * Sets the value of the endTime property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setEndTime(String value) {
@@ -262,9 +228,7 @@ public class RequestInfo {
     /**
      * Gets the value of the source property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getSource() {
@@ -274,9 +238,7 @@ public class RequestInfo {
     /**
      * Sets the value of the source property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setSource(String value) {

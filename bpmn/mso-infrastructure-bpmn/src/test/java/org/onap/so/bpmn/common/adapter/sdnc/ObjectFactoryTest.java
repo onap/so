@@ -20,7 +20,6 @@
 package org.onap.so.bpmn.common.adapter.sdnc;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Before;
 import org.junit.Test;
 

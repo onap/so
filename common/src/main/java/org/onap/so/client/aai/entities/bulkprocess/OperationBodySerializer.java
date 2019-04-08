@@ -21,7 +21,6 @@
 package org.onap.so.client.aai.entities.bulkprocess;
 
 import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -29,26 +28,27 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 public class OperationBodySerializer extends StdSerializer<Object> {
 
-	private static final long serialVersionUID = 5367385969270400106L;
+    private static final long serialVersionUID = 5367385969270400106L;
 
-	public OperationBodySerializer() {
-		this(null);
-	}
-	public OperationBodySerializer(Class<Object> t) {
-		super(t);
-	}
+    public OperationBodySerializer() {
+        this(null);
+    }
 
-	@Override
-	public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers)
-			throws IOException, JsonProcessingException {
-		
-		if (value instanceof String) {
-			gen.writeRawValue((String)value);
-		} else {
-			gen.writeObject(value);
-		}
-		
-	}
+    public OperationBodySerializer(Class<Object> t) {
+        super(t);
+    }
+
+    @Override
+    public void serialize(Object value, JsonGenerator gen, SerializerProvider serializers)
+            throws IOException, JsonProcessingException {
+
+        if (value instanceof String) {
+            gen.writeRawValue((String) value);
+        } else {
+            gen.writeObject(value);
+        }
+
+    }
 
 }
 

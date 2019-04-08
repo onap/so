@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,226 +37,223 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "cvnfc_customization")
 public class CvnfcCustomization implements Serializable {
 
-	private static final long serialVersionUID = -3772469944364616486L;
+    private static final long serialVersionUID = -3772469944364616486L;
 
-	@Id
-	@Column(name = "ID")
-	@BusinessKey
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	
-	@Column(name = "MODEL_CUSTOMIZATION_UUID")
-	private String modelCustomizationUUID;
-	
-	@Column(name = "MODEL_INSTANCE_NAME")
-	private String modelInstanceName;
-	
-	@Column(name = "MODEL_UUID")
-	private String modelUUID;
-	
-	@Column(name = "MODEL_INVARIANT_UUID")
-	private String modelInvariantUUID;	
-	
-	@Column(name = "MODEL_VERSION")
-	private String modelVersion;
-	
-	@Column(name = "MODEL_NAME")
-	private String modelName;
-	
-	@Column(name = "TOSCA_NODE_TYPE")
-	private String toscaNodeType;
-	
-	@Column(name = "DESCRIPTION")
-	private String description;
-	
-	@Column(name = "NFC_FUNCTION")
-	private String nfcFunction;
-	
-	@Column(name = "NFC_NAMING_CODE")
-	private String nfcNamingCode;
-	
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VF_MODULE_CUSTOMIZATION_ID")
-	private VfModuleCustomization vfModuleCustomization;
-	
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "VNFC_CUST_MODEL_CUSTOMIZATION_UUID")
-	private VnfcCustomization vnfcCustomization;
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "cvnfcCustomization")
-	private Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization;
+    @Id
+    @Column(name = "ID")
+    @BusinessKey
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof CvnfcCustomization)) {
-			return false;
-		}
-		CvnfcCustomization castOther = (CvnfcCustomization) other;
-		return new EqualsBuilder().append(id, castOther.id).isEquals();
-	}
+    @Column(name = "MODEL_CUSTOMIZATION_UUID")
+    private String modelCustomizationUUID;
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(id).toHashCode();
-	}
+    @Column(name = "MODEL_INSTANCE_NAME")
+    private String modelInstanceName;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelInstanceName", modelInstanceName).append("modelUUID", modelUUID)
-				.append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
-				.append("modelName", modelName).append("toscaNodeType", toscaNodeType)
-				.append("description", description).append("nfcFunction", nfcFunction)
-				.append("nfcNamingCode", nfcNamingCode).append("created", created)
-				.append("vnfVfmoduleCvnfcConfigurationCustomization", cvnfcConfigurationCustomization)
-				.toString();
-	}
+    @Column(name = "MODEL_UUID")
+    private String modelUUID;
 
-	@LinkedResource
-	public VnfcCustomization getVnfcCustomization() {
-		return vnfcCustomization;
-	}
+    @Column(name = "MODEL_INVARIANT_UUID")
+    private String modelInvariantUUID;
 
-	public void setVnfcCustomization(VnfcCustomization vnfcCustomization) {
-		this.vnfcCustomization = vnfcCustomization;
-	}
+    @Column(name = "MODEL_VERSION")
+    private String modelVersion;
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
-	
-	@LinkedResource
-	public Set<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
-		return cvnfcConfigurationCustomization;
-	}
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	public void setCvnfcConfigurationCustomization(Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization) {
-		this.cvnfcConfigurationCustomization = cvnfcConfigurationCustomization;
-	}
+    @Column(name = "TOSCA_NODE_TYPE")
+    private String toscaNodeType;
 
-	public Integer getId() {
-		return id;
-	}
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Column(name = "NFC_FUNCTION")
+    private String nfcFunction;
 
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
+    @Column(name = "NFC_NAMING_CODE")
+    private String nfcNamingCode;
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	public String getModelInstanceName() {
-		return modelInstanceName;
-	}
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "VF_MODULE_CUSTOMIZATION_ID")
+    private VfModuleCustomization vfModuleCustomization;
 
-	public void setModelInstanceName(String modelInstanceName) {
-		this.modelInstanceName = modelInstanceName;
-	}
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "VNFC_CUST_MODEL_CUSTOMIZATION_UUID")
+    private VnfcCustomization vnfcCustomization;
 
-	public String getModelUUID() {
-		return modelUUID;
-	}
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cvnfcCustomization")
+    private Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization;
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof CvnfcCustomization)) {
+            return false;
+        }
+        CvnfcCustomization castOther = (CvnfcCustomization) other;
+        return new EqualsBuilder().append(id, castOther.id).isEquals();
+    }
 
-	public String getModelInvariantUUID() {
-		return modelInvariantUUID;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
 
-	public void setModelInvariantUUID(String modelInvariantUUID) {
-		this.modelInvariantUUID = modelInvariantUUID;
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName).append("modelUUID", modelUUID)
+                .append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
+                .append("modelName", modelName).append("toscaNodeType", toscaNodeType)
+                .append("description", description).append("nfcFunction", nfcFunction)
+                .append("nfcNamingCode", nfcNamingCode).append("created", created)
+                .append("vnfVfmoduleCvnfcConfigurationCustomization", cvnfcConfigurationCustomization).toString();
+    }
 
-	public String getModelVersion() {
-		return modelVersion;
-	}
+    @LinkedResource
+    public VnfcCustomization getVnfcCustomization() {
+        return vnfcCustomization;
+    }
 
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
+    public void setVnfcCustomization(VnfcCustomization vnfcCustomization) {
+        this.vnfcCustomization = vnfcCustomization;
+    }
 
-	public String getModelName() {
-		return modelName;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    @LinkedResource
+    public Set<CvnfcConfigurationCustomization> getCvnfcConfigurationCustomization() {
+        return cvnfcConfigurationCustomization;
+    }
 
-	public String getToscaNodeType() {
-		return toscaNodeType;
-	}
+    public void setCvnfcConfigurationCustomization(
+            Set<CvnfcConfigurationCustomization> cvnfcConfigurationCustomization) {
+        this.cvnfcConfigurationCustomization = cvnfcConfigurationCustomization;
+    }
 
-	public void setToscaNodeType(String toscaNodeType) {
-		this.toscaNodeType = toscaNodeType;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getModelCustomizationUUID() {
+        return modelCustomizationUUID;
+    }
 
-	public String getNfcFunction() {
-		return nfcFunction;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public void setNfcFunction(String nfcFunction) {
-		this.nfcFunction = nfcFunction;
-	}
+    public String getModelInstanceName() {
+        return modelInstanceName;
+    }
 
-	public String getNfcNamingCode() {
-		return nfcNamingCode;
-	}
+    public void setModelInstanceName(String modelInstanceName) {
+        this.modelInstanceName = modelInstanceName;
+    }
 
-	public void setNfcNamingCode(String nfcNamingCode) {
-		this.nfcNamingCode = nfcNamingCode;
-	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
+    public String getModelInvariantUUID() {
+        return modelInvariantUUID;
+    }
 
-	@LinkedResource
-	public VfModuleCustomization getVfModuleCustomization() {
-		return vfModuleCustomization;
-	}
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
 
-	public void setVfModuleCustomization(VfModuleCustomization vfModuleCustomization) {
-		this.vfModuleCustomization = vfModuleCustomization;
-	}
+    public String getModelVersion() {
+        return modelVersion;
+    }
+
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getToscaNodeType() {
+        return toscaNodeType;
+    }
+
+    public void setToscaNodeType(String toscaNodeType) {
+        this.toscaNodeType = toscaNodeType;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getNfcFunction() {
+        return nfcFunction;
+    }
+
+    public void setNfcFunction(String nfcFunction) {
+        this.nfcFunction = nfcFunction;
+    }
+
+    public String getNfcNamingCode() {
+        return nfcNamingCode;
+    }
+
+    public void setNfcNamingCode(String nfcNamingCode) {
+        this.nfcNamingCode = nfcNamingCode;
+    }
+
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
+    @LinkedResource
+    public VfModuleCustomization getVfModuleCustomization() {
+        return vfModuleCustomization;
+    }
+
+    public void setVfModuleCustomization(VfModuleCustomization vfModuleCustomization) {
+        this.vfModuleCustomization = vfModuleCustomization;
+    }
 
 }

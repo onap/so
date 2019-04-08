@@ -24,64 +24,61 @@ package org.onap.so.adapters.vnfrest;
 
 
 import java.io.ByteArrayOutputStream;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Everything that is common between all VfModule and VolumeGroup Responses,
- * except for QueryVfModuleResponse and QueryVolumeGroupResponse.
+ * Everything that is common between all VfModule and VolumeGroup Responses, except for QueryVfModuleResponse and
+ * QueryVolumeGroupResponse.
  */
 public abstract class VfResponseCommon {
-	private static final Logger logger = LoggerFactory.getLogger(VfResponseCommon.class);
-	private String messageId;
+    private static final Logger logger = LoggerFactory.getLogger(VfResponseCommon.class);
+    private String messageId;
 
-	public VfResponseCommon() {
-		messageId = null;
-	}
+    public VfResponseCommon() {
+        messageId = null;
+    }
 
-	public VfResponseCommon(String messageId) {
-		this.messageId = messageId;
-	}
+    public VfResponseCommon(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public String getMessageId() {
-		return messageId;
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public String toJsonString() {
-		try {
-			String jsonString;
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-			jsonString = mapper.writeValueAsString(this);
-			return jsonString;
-		} catch (Exception e) {
-			logger.debug("Exception :",e);
-			return "";
-		}
-	}
+    public String toJsonString() {
+        try {
+            String jsonString;
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+            jsonString = mapper.writeValueAsString(this);
+            return jsonString;
+        } catch (Exception e) {
+            logger.debug("Exception :", e);
+            return "";
+        }
+    }
 
-	public String toXmlString() {
-		try {
-			ByteArrayOutputStream bs = new ByteArrayOutputStream();
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); //pretty print XML
-			marshaller.marshal(this, bs);
-			return bs.toString();
-		} catch (Exception e) {
-			logger.debug("Exception :",e);
-			return "";
-		}
-	}
+    public String toXmlString() {
+        try {
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            JAXBContext context = JAXBContext.newInstance(this.getClass());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty print XML
+            marshaller.marshal(this, bs);
+            return bs.toString();
+        } catch (Exception e) {
+            logger.debug("Exception :", e);
+            return "";
+        }
+    }
 }

@@ -29,71 +29,72 @@ import org.slf4j.LoggerFactory;
 public class MsoHeatEnvironmentResource {
 
     private static final Logger logger = LoggerFactory.getLogger(MsoHeatEnvironmentResource.class);
-    
-	private String name;
-	private String value;
-	
-	public MsoHeatEnvironmentResource(String name, String value) {
-		super();
-		this.name = name;
-		this.value = value;
-	}
-	public MsoHeatEnvironmentResource(String name) {
-		// Allow to initialize with a null value
-		this(name, null);
-	}
-	public MsoHeatEnvironmentResource() {
-		this(null, null);
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getValue() {
-		return this.value;
-	}
-	public void setValue(String value) {
-		this.value = value;
-	}
 
-	@Override
-	public String toString() {
-		return "\"" +
-			this.name +
-			"\": " +
-			this.value;
-	}
+    private String name;
+    private String value;
 
-	@Override
-	public boolean equals(Object o) {	
-		if (!(o instanceof MsoHeatEnvironmentResource)) {
-			return false;
-		}
-		if (this == o) {
-			return true;
-		}
-		MsoHeatEnvironmentResource her = (MsoHeatEnvironmentResource) o;	
-		// If the name of the parameter is the same, then they're equal
-		if (her.getName().equals(this.getName())) {
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = 0;
-		try {
-			result = this.name.hashCode();
-		} catch (Exception e) {
-        logger.debug("Exception:", e);
+    public MsoHeatEnvironmentResource(String name, String value) {
+        super();
+        this.name = name;
+        this.value = value;
     }
-		return result;
-	}
+
+    public MsoHeatEnvironmentResource(String name) {
+        // Allow to initialize with a null value
+        this(name, null);
+    }
+
+    public MsoHeatEnvironmentResource() {
+        this(null, null);
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "\"" + this.name + "\": " + this.value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof MsoHeatEnvironmentResource)) {
+            return false;
+        }
+        if (this == o) {
+            return true;
+        }
+        MsoHeatEnvironmentResource her = (MsoHeatEnvironmentResource) o;
+        // If the name of the parameter is the same, then they're equal
+        if (her.getName().equals(this.getName())) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 0;
+        try {
+            result = this.name.hashCode();
+        } catch (Exception e) {
+            logger.debug("Exception:", e);
+        }
+        return result;
+    }
 
 
 }

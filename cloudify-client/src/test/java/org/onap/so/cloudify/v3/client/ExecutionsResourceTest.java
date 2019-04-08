@@ -27,7 +27,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.Assert.assertEquals;
-
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,129 +41,134 @@ import org.onap.so.cloudify.v3.model.CancelExecutionParams;
 import org.onap.so.cloudify.v3.model.Execution;
 import org.onap.so.cloudify.v3.model.Executions;
 import org.onap.so.cloudify.v3.model.StartExecutionParams;
-
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class ExecutionsResourceTest {
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
-	
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
-	@Test
-	public void cloudifyClientExecutions() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"items\": [{ \"id\": \"345\" }, { \"id\": \"123\" }], \"metadata\": {\"pagination\": {\"total\": 100, \"offset\": 0, \"size\": 25}}}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		ExecutionsResource xr = c.executions();
-		ListExecutions lx = xr.list();
-		Executions x = lx.execute();
-		assertEquals("123", x.getItems().get(1).getId());
-	}
+    @Test
+    public void cloudifyClientExecutions() {
+        wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse()
+                .withHeader("Content-Type", "application/json")
+                .withBody(
+                        "{\"items\": [{ \"id\": \"345\" }, { \"id\": \"123\" }], \"metadata\": {\"pagination\": {\"total\": 100, \"offset\": 0, \"size\": 25}}}")
+                .withStatus(HttpStatus.SC_OK)));
 
-	@Test
-	public void cloudifyClientExecutionsSorted() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"items\": [{ \"id\": \"123\" }, { \"id\": \"345\" }], \"metadata\": {\"pagination\": {\"total\": 100, \"offset\": 0, \"size\": 25}}}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+        int port = wireMockRule.port();
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		ExecutionsResource xr = c.executions();
-		ListExecutions lx = xr.listSorted("id");
-		Executions x = lx.execute();
-		assertEquals("345", x.getItems().get(1).getId());
-	}
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        ExecutionsResource xr = c.executions();
+        ListExecutions lx = xr.list();
+        Executions x = lx.execute();
+        assertEquals("123", x.getItems().get(1).getId());
+    }
 
-	@Test
-	public void cloudifyClientExecutionsFilter() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"items\": [{ \"id\": \"121\" }, { \"id\": \"123\" }], \"metadata\": {\"pagination\": {\"total\": 100, \"offset\": 0, \"size\": 25}}}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+    @Test
+    public void cloudifyClientExecutionsSorted() {
+        wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse()
+                .withHeader("Content-Type", "application/json")
+                .withBody(
+                        "{\"items\": [{ \"id\": \"123\" }, { \"id\": \"345\" }], \"metadata\": {\"pagination\": {\"total\": 100, \"offset\": 0, \"size\": 25}}}")
+                .withStatus(HttpStatus.SC_OK)));
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		ExecutionsResource xr = c.executions();
-		ListExecutions lx = xr.listFiltered("a=b", "id");
-		Executions x = lx.execute();
-		assertEquals("123", x.getItems().get(1).getId());
-	}
+        int port = wireMockRule.port();
 
-	@Test
-	public void cloudifyClientExecutionById() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{ \"id\": \"123\" }")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        ExecutionsResource xr = c.executions();
+        ListExecutions lx = xr.listSorted("id");
+        Executions x = lx.execute();
+        assertEquals("345", x.getItems().get(1).getId());
+    }
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		ExecutionsResource xr = c.executions();
-		GetExecution gx = xr.byId("123");
-		Execution x = gx.execute();
-		assertEquals("123", x.getId());
-	}
+    @Test
+    public void cloudifyClientExecutionsFilter() {
+        wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse()
+                .withHeader("Content-Type", "application/json")
+                .withBody(
+                        "{\"items\": [{ \"id\": \"121\" }, { \"id\": \"123\" }], \"metadata\": {\"pagination\": {\"total\": 100, \"offset\": 0, \"size\": 25}}}")
+                .withStatus(HttpStatus.SC_OK)));
 
-	@Test
-	public void cloudifyClientStartExecution() {
-		wireMockRule.stubFor(post(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{ \"id\": \"123\" }")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+        int port = wireMockRule.port();
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		ExecutionsResource xr = c.executions();
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        ExecutionsResource xr = c.executions();
+        ListExecutions lx = xr.listFiltered("a=b", "id");
+        Executions x = lx.execute();
+        assertEquals("123", x.getItems().get(1).getId());
+    }
 
-		StartExecutionParams params = new StartExecutionParams();
-		StartExecution sx = xr.start(params);
-		Execution x = sx.execute();
-		assertEquals("123", x.getId());
-	}
+    @Test
+    public void cloudifyClientExecutionById() {
+        wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/executions/123"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                        .withStatus(HttpStatus.SC_OK)));
 
-	@Test
-	public void cloudifyClientUpdateExecution() {
-		thrown.expect(HttpClientException.class);
-		thrown.expectMessage("Unrecognized HTTP Method: PATCH");
-		
-		wireMockRule.stubFor(patch(urlPathEqualTo("/api/v3/executions")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{ \"id\": \"123\" }")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+        int port = wireMockRule.port();
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		ExecutionsResource xr = c.executions();
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        ExecutionsResource xr = c.executions();
+        GetExecution gx = xr.byId("123");
+        Execution x = gx.execute();
+        assertEquals("123", x.getId());
+    }
 
-		UpdateExecution ux = xr.updateStatus("123", "good");
-		Execution x = ux.execute();
-		assertEquals("123", x.getId());
-	}
+    @Test
+    public void cloudifyClientStartExecution() {
+        wireMockRule.stubFor(post(urlPathEqualTo("/api/v3/executions"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                        .withStatus(HttpStatus.SC_OK)));
 
-	@Test
-	public void cloudifyClientCancelExecution() {
-		wireMockRule.stubFor(post(urlPathEqualTo("/api/v3/executions/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{ \"id\": \"123\" }")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+        int port = wireMockRule.port();
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		ExecutionsResource xr = c.executions();
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        ExecutionsResource xr = c.executions();
 
-		CancelExecutionParams params = new CancelExecutionParams();
-		CancelExecution cx = xr.cancel("123", params);
-		Execution x = cx.execute();
-		assertEquals("123", x.getId());
-	}
+        StartExecutionParams params = new StartExecutionParams();
+        StartExecution sx = xr.start(params);
+        Execution x = sx.execute();
+        assertEquals("123", x.getId());
+    }
 
-	
+    @Test
+    public void cloudifyClientUpdateExecution() {
+        thrown.expect(HttpClientException.class);
+        thrown.expectMessage("Unrecognized HTTP Method: PATCH");
+
+        wireMockRule.stubFor(patch(urlPathEqualTo("/api/v3/executions"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                        .withStatus(HttpStatus.SC_OK)));
+
+        int port = wireMockRule.port();
+
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        ExecutionsResource xr = c.executions();
+
+        UpdateExecution ux = xr.updateStatus("123", "good");
+        Execution x = ux.execute();
+        assertEquals("123", x.getId());
+    }
+
+    @Test
+    public void cloudifyClientCancelExecution() {
+        wireMockRule.stubFor(post(urlPathEqualTo("/api/v3/executions/123"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{ \"id\": \"123\" }")
+                        .withStatus(HttpStatus.SC_OK)));
+
+        int port = wireMockRule.port();
+
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        ExecutionsResource xr = c.executions();
+
+        CancelExecutionParams params = new CancelExecutionParams();
+        CancelExecution cx = xr.cancel("123", params);
+        Execution x = cx.execute();
+        assertEquals("123", x.getId());
+    }
+
+
 
 }

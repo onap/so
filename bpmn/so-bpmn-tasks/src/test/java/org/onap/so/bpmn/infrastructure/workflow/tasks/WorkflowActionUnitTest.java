@@ -31,7 +31,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -39,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,57 +63,59 @@ import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 @RunWith(MockitoJUnitRunner.class)
 public class WorkflowActionUnitTest {
 
-	private final static String JSON_FILE_LOCATION = "src/test/resources/__files/Macro/";
-	
-	@Mock
-	private CatalogDbClient catalogDbClient;
-	@Mock
-	private BBInputSetup bbInputSetup;
-	@Mock
-	private BBInputSetupUtils bbInputSetupUtils;
-	@Mock
-	private ExceptionBuilder exceptionBuilder;
-	@Mock
-	private AAIConfigurationResources aaiConfigurationResources;
-	
-	@InjectMocks
-	@Spy
-	private WorkflowAction workflowAction;
-	
-	@Test
-	public void traverseCatalogDbForConfigurationTest() {
-		
-		CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
-		CvnfcConfigurationCustomization vfModuleCustomization = new CvnfcConfigurationCustomization();
-		ConfigurationResource configuration = new ConfigurationResource();
-		configuration.setToscaNodeType("FabricConfiguration");
-		configuration.setModelUUID("my-uuid");
-		vfModuleCustomization.setConfigurationResource(configuration);
-		cvnfcCustomization.setCvnfcConfigurationCustomization(Collections.singleton(vfModuleCustomization));
-		List<CvnfcCustomization> cvnfcCustomizations = Arrays.asList(cvnfcCustomization);
-	//	when(catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(any(String.class), any(String.class)))
-	//		.thenReturn(cvnfcCustomizations);
-		
-	//	List<CvnfcConfigurationCustomization> results = workflowAction.traverseCatalogDbForConfiguration("myVnfCustomizationId", "myVfModuleCustomizationId");
-		
-		//assertThat(results, is(Arrays.asList(vfModuleCustomization)));
-		
-	}
-	
-	private String getJson(String filename) throws IOException {
-		 return new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + filename)));
-	}
-	
-	private List<OrchestrationFlow> createFlowList(String... myList) {
-		
-		List<OrchestrationFlow> result = new ArrayList<>();
-		for (String name : myList) {
-			OrchestrationFlow flow = new OrchestrationFlow();
-			flow.setFlowName(name);
-			result.add(flow);
-		}
-		
-		return result;
-		
-	}
+    private final static String JSON_FILE_LOCATION = "src/test/resources/__files/Macro/";
+
+    @Mock
+    private CatalogDbClient catalogDbClient;
+    @Mock
+    private BBInputSetup bbInputSetup;
+    @Mock
+    private BBInputSetupUtils bbInputSetupUtils;
+    @Mock
+    private ExceptionBuilder exceptionBuilder;
+    @Mock
+    private AAIConfigurationResources aaiConfigurationResources;
+
+    @InjectMocks
+    @Spy
+    private WorkflowAction workflowAction;
+
+    @Test
+    public void traverseCatalogDbForConfigurationTest() {
+
+        CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
+        CvnfcConfigurationCustomization vfModuleCustomization = new CvnfcConfigurationCustomization();
+        ConfigurationResource configuration = new ConfigurationResource();
+        configuration.setToscaNodeType("FabricConfiguration");
+        configuration.setModelUUID("my-uuid");
+        vfModuleCustomization.setConfigurationResource(configuration);
+        cvnfcCustomization.setCvnfcConfigurationCustomization(Collections.singleton(vfModuleCustomization));
+        List<CvnfcCustomization> cvnfcCustomizations = Arrays.asList(cvnfcCustomization);
+        // when(catalogDbClient.getCvnfcCustomizationByVnfCustomizationUUIDAndVfModuleCustomizationUUID(any(String.class),
+        // any(String.class)))
+        // .thenReturn(cvnfcCustomizations);
+
+        // List<CvnfcConfigurationCustomization> results =
+        // workflowAction.traverseCatalogDbForConfiguration("myVnfCustomizationId", "myVfModuleCustomizationId");
+
+        // assertThat(results, is(Arrays.asList(vfModuleCustomization)));
+
+    }
+
+    private String getJson(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(JSON_FILE_LOCATION + filename)));
+    }
+
+    private List<OrchestrationFlow> createFlowList(String... myList) {
+
+        List<OrchestrationFlow> result = new ArrayList<>();
+        for (String name : myList) {
+            OrchestrationFlow flow = new OrchestrationFlow();
+            flow.setFlowName(name);
+            result.add(flow);
+        }
+
+        return result;
+
+    }
 }

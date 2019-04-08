@@ -67,95 +67,46 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
      * Keep these methods around for backward compatibility
      */
 
-    public StackInfo updateStack (String cloudSiteId,
-                                  String cloudOwner,
-                                  String tenantId,
-                                  String stackName,
-                                  String heatTemplate,
-                                  Map <String, Object> stackInputs,
-                                  boolean pollForCompletion,
-                                  int timeoutMinutes) throws MsoException {
+    public StackInfo updateStack(String cloudSiteId, String cloudOwner, String tenantId, String stackName,
+            String heatTemplate, Map<String, Object> stackInputs, boolean pollForCompletion, int timeoutMinutes)
+            throws MsoException {
         // Keeping this method to allow compatibility with no environment or files variable sent. In this case,
         // simply return the new method with the environment variable set to null.
-        return this.updateStack (cloudSiteId,
-                                 cloudOwner,
-                                 tenantId,
-                                 stackName,
-                                 heatTemplate,
-                                 stackInputs,
-                                 pollForCompletion,
-                                 timeoutMinutes,
-                                 null,
-                                 null,
-                                 null);
+        return this.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, heatTemplate, stackInputs,
+                pollForCompletion, timeoutMinutes, null, null, null);
     }
 
-    public StackInfo updateStack (String cloudSiteId,
-                                  String cloudOwner,
-                                  String tenantId,
-                                  String stackName,
-                                  String heatTemplate,
-                                  Map <String, Object> stackInputs,
-                                  boolean pollForCompletion,
-                                  int timeoutMinutes,
-                                  String environment) throws MsoException {
+    public StackInfo updateStack(String cloudSiteId, String cloudOwner, String tenantId, String stackName,
+            String heatTemplate, Map<String, Object> stackInputs, boolean pollForCompletion, int timeoutMinutes,
+            String environment) throws MsoException {
         // Keeping this method to allow compatibility with no environment variable sent. In this case,
         // simply return the new method with the files variable set to null.
-        return this.updateStack (cloudSiteId,
-                                 cloudOwner,
-                                 tenantId,
-                                 stackName,
-                                 heatTemplate,
-                                 stackInputs,
-                                 pollForCompletion,
-                                 timeoutMinutes,
-                                 environment,
-                                 null,
-                                 null);
+        return this.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, heatTemplate, stackInputs,
+                pollForCompletion, timeoutMinutes, environment, null, null);
     }
 
-    public StackInfo updateStack (String cloudSiteId,
-                                  String cloudOwner,
-                                  String tenantId,
-                                  String stackName,
-                                  String heatTemplate,
-                                  Map <String, Object> stackInputs,
-                                  boolean pollForCompletion,
-                                  int timeoutMinutes,
-                                  String environment,
-                                  Map <String, Object> files) throws MsoException {
-        return this.updateStack (cloudSiteId,
-                                 cloudOwner,
-                                 tenantId,
-                                 stackName,
-                                 heatTemplate,
-                                 stackInputs,
-                                 pollForCompletion,
-                                 timeoutMinutes,
-                                 environment,
-                                 files,
-                                 null);
+    public StackInfo updateStack(String cloudSiteId, String cloudOwner, String tenantId, String stackName,
+            String heatTemplate, Map<String, Object> stackInputs, boolean pollForCompletion, int timeoutMinutes,
+            String environment, Map<String, Object> files) throws MsoException {
+        return this.updateStack(cloudSiteId, cloudOwner, tenantId, stackName, heatTemplate, stackInputs,
+                pollForCompletion, timeoutMinutes, environment, files, null);
     }
 
     /**
-     * Update a Stack in the specified cloud location and tenant. The Heat template
-     * and parameter map are passed in as arguments, along with the cloud access credentials.
-     * It is expected that parameters have been validated and contain at minimum the required
-     * parameters for the given template with no extra (undefined) parameters..
+     * Update a Stack in the specified cloud location and tenant. The Heat template and parameter map are passed in as
+     * arguments, along with the cloud access credentials. It is expected that parameters have been validated and
+     * contain at minimum the required parameters for the given template with no extra (undefined) parameters..
      *
-     * The Stack name supplied by the caller must be unique in the scope of this tenant.
-     * However, it should also be globally unique, as it will be the identifier for the
-     * resource going forward in Inventory. This latter is managed by the higher levels
-     * invoking this function.
+     * The Stack name supplied by the caller must be unique in the scope of this tenant. However, it should also be
+     * globally unique, as it will be the identifier for the resource going forward in Inventory. This latter is managed
+     * by the higher levels invoking this function.
      *
-     * The caller may choose to let this function poll Openstack for completion of the
-     * stack creation, or may handle polling itself via separate calls to query the status.
-     * In either case, a StackInfo object will be returned containing the current status.
-     * When polling is enabled, a status of CREATED is expected. When not polling, a
+     * The caller may choose to let this function poll Openstack for completion of the stack creation, or may handle
+     * polling itself via separate calls to query the status. In either case, a StackInfo object will be returned
+     * containing the current status. When polling is enabled, a status of CREATED is expected. When not polling, a
      * status of BUILDING is expected.
      *
-     * An error will be thrown if the requested Stack already exists in the specified
-     * Tenant and Cloud.
+     * An error will be thrown if the requested Stack already exists in the specified Tenant and Cloud.
      *
      * @param tenantId The Openstack ID of the tenant in which to create the Stack
      * @param cloudSiteId The cloud identifier (may be a region) in which to create the tenant.
@@ -170,105 +121,98 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
      * @throws MsoException Thrown if the Openstack API call returns an exception.
      */
 
-    public StackInfo updateStack (String cloudSiteId,
-                                  String cloudOwner,
-                                  String tenantId,
-                                  String stackName,
-                                  String heatTemplate,
-                                  Map <String, Object> stackInputs,
-                                  boolean pollForCompletion,
-                                  int timeoutMinutes,
-                                  String environment,
-                                  Map <String, Object> files,
-                                  Map <String, Object> heatFiles) throws MsoException {
+    public StackInfo updateStack(String cloudSiteId, String cloudOwner, String tenantId, String stackName,
+            String heatTemplate, Map<String, Object> stackInputs, boolean pollForCompletion, int timeoutMinutes,
+            String environment, Map<String, Object> files, Map<String, Object> heatFiles) throws MsoException {
         boolean heatEnvtVariable = true;
-        if (environment == null || "".equalsIgnoreCase (environment.trim ())) {
+        if (environment == null || "".equalsIgnoreCase(environment.trim())) {
             heatEnvtVariable = false;
         }
         boolean haveFiles = true;
-        if (files == null || files.isEmpty ()) {
+        if (files == null || files.isEmpty()) {
             haveFiles = false;
         }
         boolean haveHeatFiles = true;
-        if (heatFiles == null || heatFiles.isEmpty ()) {
+        if (heatFiles == null || heatFiles.isEmpty()) {
             haveHeatFiles = false;
         }
 
         // Obtain the cloud site information where we will create the stack
-        CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
-                () -> new MsoCloudSiteNotFound(cloudSiteId));
+        CloudSite cloudSite =
+                cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
-        Heat heatClient = getHeatClient (cloudSite, tenantId);
+        Heat heatClient = getHeatClient(cloudSite, tenantId);
 
         // Perform a query first to get the current status
-        Stack heatStack = queryHeatStack (heatClient, stackName);
-        if (heatStack == null || "DELETE_COMPLETE".equals (heatStack.getStackStatus ())) {
+        Stack heatStack = queryHeatStack(heatClient, stackName);
+        if (heatStack == null || "DELETE_COMPLETE".equals(heatStack.getStackStatus())) {
             // Not found. Return a StackInfo with status NOTFOUND
-            throw new MsoStackNotFound (stackName, tenantId, cloudSiteId);
+            throw new MsoStackNotFound(stackName, tenantId, cloudSiteId);
         }
 
         // Use canonical name "<stack name>/<stack-id>" to update the stack.
         // Otherwise, update by name returns a 302 redirect.
         // NOTE: This is specific to the v1 Orchestration API.
-        String canonicalName = heatStack.getStackName () + "/" + heatStack.getId ();
+        String canonicalName = heatStack.getStackName() + "/" + heatStack.getId();
 
-        logger.debug ("Ready to Update Stack ({}) with input params: {}", canonicalName, stackInputs);
-        //force entire stackInput object to generic Map<String, Object> for openstack compatibility
-		ObjectMapper mapper = new ObjectMapper();
-		Map<String, Object> normalized = new HashMap<>();
-		try {
-			normalized = mapper.readValue(mapper.writeValueAsString(stackInputs), new TypeReference<HashMap<String,Object>>() {});
-		} catch (IOException e1) {
-        logger.debug("could not map json", e1);
-    }
+        logger.debug("Ready to Update Stack ({}) with input params: {}", canonicalName, stackInputs);
+        // force entire stackInput object to generic Map<String, Object> for openstack compatibility
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> normalized = new HashMap<>();
+        try {
+            normalized = mapper.readValue(mapper.writeValueAsString(stackInputs),
+                    new TypeReference<HashMap<String, Object>>() {});
+        } catch (IOException e1) {
+            logger.debug("could not map json", e1);
+        }
         // Build up the stack update parameters
         // Disable auto-rollback, because error reason is lost. Always rollback in the code.
-        UpdateStackParam stack = new UpdateStackParam ();
-        stack.setTimeoutMinutes (timeoutMinutes);
-        stack.setParameters (normalized);
-        stack.setTemplate (heatTemplate);
-        stack.setDisableRollback (true);
+        UpdateStackParam stack = new UpdateStackParam();
+        stack.setTimeoutMinutes(timeoutMinutes);
+        stack.setParameters(normalized);
+        stack.setTemplate(heatTemplate);
+        stack.setDisableRollback(true);
         // TJM add envt to stack
         if (heatEnvtVariable) {
-            stack.setEnvironment (environment);
+            stack.setEnvironment(environment);
         }
 
         // Handle nested templates & get_files here. if we have both - must combine
         // and then add to stack (both are part of "files:" being added to stack)
         if (haveFiles && haveHeatFiles) {
             // Let's do this here - not in the bean
-            logger.debug ("Found files AND heatFiles - combine and add!");
-            Map <String, Object> combinedFiles = new HashMap<>();
-            for (String keyString : files.keySet ()) {
-                combinedFiles.put (keyString, files.get (keyString));
+            logger.debug("Found files AND heatFiles - combine and add!");
+            Map<String, Object> combinedFiles = new HashMap<>();
+            for (String keyString : files.keySet()) {
+                combinedFiles.put(keyString, files.get(keyString));
             }
-            for (String keyString : heatFiles.keySet ()) {
-                combinedFiles.put (keyString, heatFiles.get (keyString));
+            for (String keyString : heatFiles.keySet()) {
+                combinedFiles.put(keyString, heatFiles.get(keyString));
             }
-            stack.setFiles (combinedFiles);
+            stack.setFiles(combinedFiles);
         } else {
             // Handle case where we have one or neither
             if (haveFiles) {
-                stack.setFiles (files);
+                stack.setFiles(files);
             }
             if (haveHeatFiles) {
                 // setFiles method modified to handle adding a map.
-                stack.setFiles (heatFiles);
+                stack.setFiles(heatFiles);
             }
         }
 
         try {
             // Execute the actual Openstack command to update the Heat stack
-            OpenStackRequest <Void> request = heatClient.getStacks ().update (canonicalName, stack);
-            executeAndRecordOpenstackRequest (request);
+            OpenStackRequest<Void> request = heatClient.getStacks().update(canonicalName, stack);
+            executeAndRecordOpenstackRequest(request);
         } catch (OpenStackBaseException e) {
             // Since this came on the 'Update Stack' command, nothing was changed
             // in the cloud. Rethrow the error as an MSO exception.
-            throw heatExceptionToMsoException (e, UPDATE_STACK);
+            throw heatExceptionToMsoException(e, UPDATE_STACK);
         } catch (RuntimeException e) {
             // Catch-all
-            throw runtimeExceptionToMsoException (e, UPDATE_STACK);
+            throw runtimeExceptionToMsoException(e, UPDATE_STACK);
         }
 
         // If client has requested a final response, poll for stack completion
@@ -277,36 +221,37 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             // Set a time limit on overall polling.
             // Use the resource (template) timeout for Openstack (expressed in minutes)
             // and add one poll interval to give Openstack a chance to fail on its own.
-            int createPollInterval = Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
+            int createPollInterval =
+                    Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
             int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
 
             boolean loopAgain = true;
             while (loopAgain) {
                 try {
-                    updateStack = queryHeatStack (heatClient, canonicalName);
+                    updateStack = queryHeatStack(heatClient, canonicalName);
                     logger.debug("{} ({}) ", updateStack.getStackStatus(), canonicalName);
                     try {
-                        logger
-                            .debug("Current stack {}" + this.getOutputsAsStringBuilderWithUpdate(heatStack).toString());
+                        logger.debug(
+                                "Current stack {}" + this.getOutputsAsStringBuilderWithUpdate(heatStack).toString());
                     } catch (Exception e) {
                         logger.debug("an error occurred trying to print out the current outputs of the stack", e);
                     }
 
 
-                    if ("UPDATE_IN_PROGRESS".equals (updateStack.getStackStatus ())) {
+                    if ("UPDATE_IN_PROGRESS".equals(updateStack.getStackStatus())) {
                         // Stack update is still running.
                         // Sleep and try again unless timeout has been reached
                         if (pollTimeout <= 0) {
                             // Note that this should not occur, since there is a timeout specified
                             // in the Openstack call.
                             logger.error(
-                                "{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Update stack timeout",
-                                MessageEnum.RA_UPDATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
-                                updateStack.getStackStatus(), ErrorCode.AvailabilityError.getValue());
+                                    "{} Cloud site: {} Tenant: {} Stack: {} Stack status: {} {} Update stack timeout",
+                                    MessageEnum.RA_UPDATE_STACK_TIMEOUT, cloudSiteId, tenantId, stackName,
+                                    updateStack.getStackStatus(), ErrorCode.AvailabilityError.getValue());
                             loopAgain = false;
                         } else {
                             try {
-                                Thread.sleep (createPollInterval * 1000L);
+                                Thread.sleep(createPollInterval * 1000L);
                             } catch (InterruptedException e) {
                                 // If we are interrupted, we should stop ASAP.
                                 loopAgain = false;
@@ -323,34 +268,33 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                     // Cannot query the stack. Something is wrong.
 
                     // TODO: No way to roll back the stack at this point. What to do?
-                    e.addContext (UPDATE_STACK);
+                    e.addContext(UPDATE_STACK);
                     throw e;
                 }
             }
 
-            if (!"UPDATE_COMPLETE".equals (updateStack.getStackStatus ())) {
+            if (!"UPDATE_COMPLETE".equals(updateStack.getStackStatus())) {
                 logger.error("{} Stack status: {} Stack status reason: {} {} Update Stack error",
-                    MessageEnum.RA_UPDATE_STACK_ERR, updateStack.getStackStatus(), updateStack.getStackStatusReason(),
-                    ErrorCode.DataError.getValue());
+                        MessageEnum.RA_UPDATE_STACK_ERR, updateStack.getStackStatus(),
+                        updateStack.getStackStatusReason(), ErrorCode.DataError.getValue());
 
                 // TODO: No way to roll back the stack at this point. What to do?
                 // Throw a 'special case' of MsoOpenstackException to report the Heat status
                 MsoOpenstackException me = null;
-                if ("UPDATE_IN_PROGRESS".equals (updateStack.getStackStatus ())) {
-                    me = new MsoOpenstackException (0, "", "Stack Update Timeout");
+                if ("UPDATE_IN_PROGRESS".equals(updateStack.getStackStatus())) {
+                    me = new MsoOpenstackException(0, "", "Stack Update Timeout");
                 } else {
-                    String error = "Stack error (" + updateStack.getStackStatus ()
-                                   + "): "
-                                   + updateStack.getStackStatusReason ();
-                    me = new MsoOpenstackException (0, "", error);
+                    String error =
+                            "Stack error (" + updateStack.getStackStatus() + "): " + updateStack.getStackStatusReason();
+                    me = new MsoOpenstackException(0, "", error);
                 }
-                me.addContext (UPDATE_STACK);
+                me.addContext(UPDATE_STACK);
                 throw me;
             }
 
         } else {
             // Return the current status.
-            updateStack = queryHeatStack (heatClient, canonicalName);
+            updateStack = queryHeatStack(heatClient, canonicalName);
             if (updateStack != null) {
                 logger.debug("UpdateStack, status = {}", updateStack.getStackStatus());
             } else {
@@ -360,93 +304,92 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
         return new StackInfoMapper(updateStack).map();
     }
 
-	private StringBuilder getOutputsAsStringBuilderWithUpdate(Stack heatStack) {
-		// This should only be used as a utility to print out the stack outputs
-		// to the log
-		StringBuilder sb = new StringBuilder("");
-		if (heatStack == null) {
-			sb.append("(heatStack is null)");
-			return sb;
-		}
-		List<Output> outputList = heatStack.getOutputs();
-		if (outputList == null || outputList.isEmpty()) {
-			sb.append("(outputs is empty)");
-			return sb;
-		}
-		Map<String, Object> outputs = new HashMap<>();
-		for (Output outputItem : outputList) {
-			outputs.put(outputItem.getOutputKey(), outputItem.getOutputValue());
-		}
-		int counter = 0;
-		sb.append("OUTPUTS:\n");
-		for (String key : outputs.keySet()) {
-			sb.append("outputs[").append(counter++).append("]: ").append(key).append("=");
-			Object obj = outputs.get(key);
-			if (obj instanceof String) {
-				sb.append((String) obj).append(" (a string)");
-			} else if (obj instanceof JsonNode) {
-				sb.append(this.convertNodeWithUpdate((JsonNode) obj)).append(" (a JsonNode)");
-			} else if (obj instanceof java.util.LinkedHashMap) {
-				try {
-					String str = JSON_MAPPER.writeValueAsString(obj);
-					sb.append(str).append(" (a java.util.LinkedHashMap)");
-				} catch (Exception e) {
-            logger.debug("Exception :", e);
-            sb.append("(a LinkedHashMap value that would not convert nicely)");
-				}
-			} else if (obj instanceof Integer) {
-				String str = "";
-				try {
-					str = obj.toString() + " (an Integer)\n";
-				} catch (Exception e) {
-            logger.debug("Exception :", e);
-            str = "(an Integer unable to call .toString() on)";
-				}
-				sb.append(str);
-			} else if (obj instanceof ArrayList) {
-				String str = "";
-				try {
-					str = obj.toString() + " (an ArrayList)";
-				} catch (Exception e) {
-            logger.debug("Exception :", e);
-            str = "(an ArrayList unable to call .toString() on?)";
-				}
-				sb.append(str);
-			} else if (obj instanceof Boolean) {
-				String str = "";
-				try {
-					str = obj.toString() + " (a Boolean)";
-				} catch (Exception e) {
-            logger.debug("Exception :", e);
-            str = "(an Boolean unable to call .toString() on?)";
-				}
-				sb.append(str);
-			}
-			else {
-				String str = "";
-				try {
-					str = obj.toString() + " (unknown Object type)";
-				} catch (Exception e) {
-            logger.debug("Exception :", e);
-            str = "(a value unable to call .toString() on?)";
-				}
-				sb.append(str);
-			}
-			sb.append("\n");
-		}
-		sb.append("[END]");
-		return sb;
-	}
-
-	private String convertNodeWithUpdate(final JsonNode node) {
-		try {
-			final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
-			final String json = JSON_MAPPER.writeValueAsString(obj);
-			return json;
-		} catch (Exception e) {
-        logger.debug("Error converting json to string {} ", e.getMessage(), e);
+    private StringBuilder getOutputsAsStringBuilderWithUpdate(Stack heatStack) {
+        // This should only be used as a utility to print out the stack outputs
+        // to the log
+        StringBuilder sb = new StringBuilder("");
+        if (heatStack == null) {
+            sb.append("(heatStack is null)");
+            return sb;
+        }
+        List<Output> outputList = heatStack.getOutputs();
+        if (outputList == null || outputList.isEmpty()) {
+            sb.append("(outputs is empty)");
+            return sb;
+        }
+        Map<String, Object> outputs = new HashMap<>();
+        for (Output outputItem : outputList) {
+            outputs.put(outputItem.getOutputKey(), outputItem.getOutputValue());
+        }
+        int counter = 0;
+        sb.append("OUTPUTS:\n");
+        for (String key : outputs.keySet()) {
+            sb.append("outputs[").append(counter++).append("]: ").append(key).append("=");
+            Object obj = outputs.get(key);
+            if (obj instanceof String) {
+                sb.append((String) obj).append(" (a string)");
+            } else if (obj instanceof JsonNode) {
+                sb.append(this.convertNodeWithUpdate((JsonNode) obj)).append(" (a JsonNode)");
+            } else if (obj instanceof java.util.LinkedHashMap) {
+                try {
+                    String str = JSON_MAPPER.writeValueAsString(obj);
+                    sb.append(str).append(" (a java.util.LinkedHashMap)");
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                    sb.append("(a LinkedHashMap value that would not convert nicely)");
+                }
+            } else if (obj instanceof Integer) {
+                String str = "";
+                try {
+                    str = obj.toString() + " (an Integer)\n";
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                    str = "(an Integer unable to call .toString() on)";
+                }
+                sb.append(str);
+            } else if (obj instanceof ArrayList) {
+                String str = "";
+                try {
+                    str = obj.toString() + " (an ArrayList)";
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                    str = "(an ArrayList unable to call .toString() on?)";
+                }
+                sb.append(str);
+            } else if (obj instanceof Boolean) {
+                String str = "";
+                try {
+                    str = obj.toString() + " (a Boolean)";
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                    str = "(an Boolean unable to call .toString() on?)";
+                }
+                sb.append(str);
+            } else {
+                String str = "";
+                try {
+                    str = obj.toString() + " (unknown Object type)";
+                } catch (Exception e) {
+                    logger.debug("Exception :", e);
+                    str = "(a value unable to call .toString() on?)";
+                }
+                sb.append(str);
+            }
+            sb.append("\n");
+        }
+        sb.append("[END]");
+        return sb;
     }
-		return "[Error converting json to string]";
-	}
+
+    private String convertNodeWithUpdate(final JsonNode node) {
+        try {
+            final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
+            final String json = JSON_MAPPER.writeValueAsString(obj);
+            return json;
+        } catch (Exception e) {
+            logger.debug("Error converting json to string {} ", e.getMessage(), e);
+        }
+        return "[Error converting json to string]";
+    }
 
 }

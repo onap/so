@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.core.domain;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -30,36 +29,37 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @author cb645j
  *
  */
-//@JsonIgnoreProperties
-//TODO update any existing references then remove this pointless class
+// @JsonIgnoreProperties
+// TODO update any existing references then remove this pointless class
 @Deprecated
-public class ResourceInstance  extends JsonWrapper implements Serializable {
+public class ResourceInstance extends JsonWrapper implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String instanceId;
-	private String instanceName;
+    private String instanceId;
+    private String instanceName;
 
 
-	public String getInstanceId() {
-		return instanceId;
-	}
+    public String getInstanceId() {
+        return instanceId;
+    }
 
-	/**
-	 * This class and method is deprecated so use
-	 * resourceId field in resource class instead
-	 *
-	 * @author cb645j
-	 *
-	 */
-	public void setInstanceId(String instanceId) {
-		this.instanceId = instanceId;
-	}
-	public String getInstanceName() {
-		return instanceName;
-	}
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
+    /**
+     * This class and method is deprecated so use resourceId field in resource class instead
+     *
+     * @author cb645j
+     *
+     */
+    public void setInstanceId(String instanceId) {
+        this.instanceId = instanceId;
+    }
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
 
 }

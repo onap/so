@@ -84,7 +84,7 @@ public class DeploymentsResource {
     public class ListDeployments extends CloudifyRequest<Deployments> {
         public ListDeployments() {
             super(client, HttpMethod.GET, "/api/v3/deployments", null, Deployments.class);
-       }
+        }
     }
 
 }

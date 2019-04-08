@@ -28,13 +28,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.Mockito.doNothing;
-
 import java.io.IOException;
-
 import javax.inject.Provider;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Rule;
@@ -55,82 +52,82 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class ModelDistributionRequestTest extends BaseTest{
+public class ModelDistributionRequestTest extends BaseTest {
 
-	private static final String requestJSON = "{\"status\": \"DISTRIBUTION_COMPLETE_ERROR\", \"errorReason\": \"Distribution failed in AAI\" }";
+    private static final String requestJSON =
+            "{\"status\": \"DISTRIBUTION_COMPLETE_ERROR\", \"errorReason\": \"Distribution failed in AAI\" }";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
-	@Mock
-	private Provider<TenantIsolationRunnable> thread;
-	@InjectMocks
-	@Spy
-	private ModelDistributionRequest request = new ModelDistributionRequest();
-	@Mock
-	private TenantIsolationRunnable runnable = new TenantIsolationRunnable();
-	
-	@Before
-	public void beforeTest() {
-		Mockito.when(thread.get()).thenReturn(runnable);
-	}
-	
-	@Test
-	public void testObjectMapperError() throws ApiException{
+    @Mock
+    private Provider<TenantIsolationRunnable> thread;
+    @InjectMocks
+    @Spy
+    private ModelDistributionRequest request = new ModelDistributionRequest();
+    @Mock
+    private TenantIsolationRunnable runnable = new TenantIsolationRunnable();
+
+    @Before
+    public void beforeTest() {
+        Mockito.when(thread.get()).thenReturn(runnable);
+    }
+
+    @Test
+    public void testObjectMapperError() throws ApiException {
         thrown.expect(ValidateException.class);
         thrown.expectMessage(startsWith("Mapping of request to JSON object failed"));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
         request.updateModelDistributionStatus("", null, null);
-	}
-	
-	@Test
-	public void testParseError1() throws ApiException{
+    }
+
+    @Test
+    public void testParseError1() throws ApiException {
         thrown.expect(ValidateException.class);
         thrown.expectMessage(startsWith("No valid status is specified"));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
         String requestErrorJSON = "{\"errorReason\": \"Distribution failed in AAI\" }";
         request.updateModelDistributionStatus(requestErrorJSON, null, null);
-	}
-	
-	@Test
-	public void testParseError2() throws ApiException{
+    }
+
+    @Test
+    public void testParseError2() throws ApiException {
         thrown.expect(ValidateException.class);
         thrown.expectMessage(startsWith("No valid errorReason is specified"));
         thrown.expect(hasProperty("httpResponseCode", is(HttpStatus.SC_BAD_REQUEST)));
         thrown.expect(hasProperty("messageID", is(ErrorNumbers.SVC_BAD_PARAMETER)));
         String requestErrorJSON = "{\"status\": \"DISTRIBUTION_COMPLETE_ERROR\"}";
         request.updateModelDistributionStatus(requestErrorJSON, null, null);
-	}
-	
-	@Test
-	public void testSuccess() throws ApiException{
-		doNothing().when(runnable).run(any(Action.class), anyString(), any(CloudOrchestrationRequest.class), anyString());
-		
-		Response response = request.updateModelDistributionStatus(requestJSON, null, null);
-		
-		assertEquals(200, response.getStatus());
-	}
+    }
 
-	@Test
-	public void testSuccess_PATCH() throws ApiException, IOException{
-		String path = "/onap/so/infra/modelDistributions/v1/distributions/ff3514e3-5a33-55df-13ab-12abad84e7fa";
-		ObjectMapper mapper = new ObjectMapper();
-		Distribution distRequest = mapper.readValue(requestJSON, Distribution.class);
-		HttpHeaders headers = new HttpHeaders();
-		headers.set("Accept", MediaType.APPLICATION_JSON);
-		headers.set("Content-Type", MediaType.APPLICATION_JSON);
-		HttpEntity<Distribution>  entity = new HttpEntity<Distribution>(distRequest, headers);
-	
-		UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path));
-		ResponseEntity<String> response = restTemplate.exchange(
-				builder.toUriString(),
-				HttpMethod.PATCH, entity, String.class);		
-		assertEquals(200, response.getStatusCodeValue());
-		
-	}
-	
+    @Test
+    public void testSuccess() throws ApiException {
+        doNothing().when(runnable).run(any(Action.class), anyString(), any(CloudOrchestrationRequest.class),
+                anyString());
+
+        Response response = request.updateModelDistributionStatus(requestJSON, null, null);
+
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void testSuccess_PATCH() throws ApiException, IOException {
+        String path = "/onap/so/infra/modelDistributions/v1/distributions/ff3514e3-5a33-55df-13ab-12abad84e7fa";
+        ObjectMapper mapper = new ObjectMapper();
+        Distribution distRequest = mapper.readValue(requestJSON, Distribution.class);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Accept", MediaType.APPLICATION_JSON);
+        headers.set("Content-Type", MediaType.APPLICATION_JSON);
+        HttpEntity<Distribution> entity = new HttpEntity<Distribution>(distRequest, headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(path));
+        ResponseEntity<String> response =
+                restTemplate.exchange(builder.toUriString(), HttpMethod.PATCH, entity, String.class);
+        assertEquals(200, response.getStatusCodeValue());
+
+    }
+
 }

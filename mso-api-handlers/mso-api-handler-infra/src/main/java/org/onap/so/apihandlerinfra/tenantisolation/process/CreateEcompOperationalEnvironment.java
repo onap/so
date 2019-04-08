@@ -41,48 +41,51 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateEcompOperationalEnvironment {
-	
-	private static Logger logger = LoggerFactory.getLogger(CreateEcompOperationalEnvironment.class);
-    
-	@Autowired 
-	private AAIClientObjectBuilder aaiClientObjectBuilder;
-	@Autowired 
-	private AAIClientHelper aaiHelper;
-	@Autowired 
-	private RequestsDBHelper requestDb;
-	@Autowired 
-	private DmaapOperationalEnvClient dmaapClient;
 
-	public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException{
+    private static Logger logger = LoggerFactory.getLogger(CreateEcompOperationalEnvironment.class);
 
-		//Create ECOMP Managing Environment object in A&AI
-			aaiHelper.createOperationalEnvironment(aaiClientObjectBuilder.buildAAIOperationalEnvironment("ACTIVE", request));
+    @Autowired
+    private AAIClientObjectBuilder aaiClientObjectBuilder;
+    @Autowired
+    private AAIClientHelper aaiHelper;
+    @Autowired
+    private RequestsDBHelper requestDb;
+    @Autowired
+    private DmaapOperationalEnvClient dmaapClient;
 
-			// Call client to publish to DMaap
+    public void execute(String requestId, CloudOrchestrationRequest request) throws ApiException {
+
+        // Create ECOMP Managing Environment object in A&AI
+        aaiHelper
+                .createOperationalEnvironment(aaiClientObjectBuilder.buildAAIOperationalEnvironment("ACTIVE", request));
+
+        // Call client to publish to DMaap
         try {
-					logger.debug("1 {}", request.getOperationalEnvironmentId());
-					logger.debug("2 {}", request.getRequestDetails().getRequestInfo().getInstanceName());
-					logger.debug("3 {}", request.getRequestDetails().getRequestParameters().getOperationalEnvironmentType()
-						.toString());
-					logger.debug("4 {}", request.getRequestDetails().getRequestParameters().getTenantContext());
-					logger.debug("5 {}", request.getRequestDetails().getRequestParameters().getWorkloadContext());
+            logger.debug("1 {}", request.getOperationalEnvironmentId());
+            logger.debug("2 {}", request.getRequestDetails().getRequestInfo().getInstanceName());
+            logger.debug("3 {}",
+                    request.getRequestDetails().getRequestParameters().getOperationalEnvironmentType().toString());
+            logger.debug("4 {}", request.getRequestDetails().getRequestParameters().getTenantContext());
+            logger.debug("5 {}", request.getRequestDetails().getRequestParameters().getWorkloadContext());
 
 
             dmaapClient.dmaapPublishOperationalEnvRequest(request.getOperationalEnvironmentId(),
                     request.getRequestDetails().getRequestInfo().getInstanceName(),
                     request.getRequestDetails().getRequestParameters().getOperationalEnvironmentType().toString(),
                     request.getRequestDetails().getRequestParameters().getTenantContext(),
-                    request.getRequestDetails().getRequestParameters().getWorkloadContext(),
-                    "Create");
-        }catch(Exception e){
-            ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
-            ValidateException validateException = new ValidateException.Builder("Could not publish DMaap", HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                    .errorInfo(errorLoggerInfo).build();
+                    request.getRequestDetails().getRequestParameters().getWorkloadContext(), "Create");
+        } catch (Exception e) {
+            ErrorLoggerInfo errorLoggerInfo =
+                    new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
+            ValidateException validateException =
+                    new ValidateException.Builder("Could not publish DMaap", HttpStatus.SC_BAD_REQUEST,
+                            ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
             requestDb.updateInfraFailureCompletion(e.getMessage(), requestId, request.getOperationalEnvironmentId());
             throw validateException;
         }
-		//Update request database
-		requestDb.updateInfraSuccessCompletion("SUCCESSFULLY Created ECOMP OperationalEnvironment.", requestId, request.getOperationalEnvironmentId());
+        // Update request database
+        requestDb.updateInfraSuccessCompletion("SUCCESSFULLY Created ECOMP OperationalEnvironment.", requestId,
+                request.getOperationalEnvironmentId());
 
-	}
+    }
 }

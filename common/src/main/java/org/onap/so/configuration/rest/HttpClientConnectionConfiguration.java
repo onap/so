@@ -21,13 +21,11 @@
 package org.onap.so.configuration.rest;
 
 import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
- * This class is used configure the parameters needed for
- * {@link org.apache.http.impl.client.CloseableHttpClient}
+ * This class is used configure the parameters needed for {@link org.apache.http.impl.client.CloseableHttpClient}
  * 
  * @author waqas.ikram@est.tech
  */

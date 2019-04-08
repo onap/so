@@ -22,8 +22,5 @@ package org.onap.so.asdc.tenantIsolation;
 
 public enum DistributionStatus {
 
-	SUCCESS,
-	FAILURE,
-	TIMEOUT,
-	INCOMPLETE
+    SUCCESS, FAILURE, TIMEOUT, INCOMPLETE
 }

@@ -24,11 +24,9 @@ package org.onap.so.logger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.LoggerContextListener;
@@ -39,54 +37,49 @@ import ch.qos.logback.core.spi.LifeCycle;
 @Component
 public class LoggerStartupListener extends ContextAwareBase implements LoggerContextListener, LifeCycle {
 
-	private boolean started = false;
-	private static final Logger logger = LoggerFactory.getLogger(LoggerStartupListener.class);
+    private boolean started = false;
+    private static final Logger logger = LoggerFactory.getLogger(LoggerStartupListener.class);
 
     @Override
     public void start() {
-        if (started) 
-        	return;
-        InetAddress addr= null;
-		try {
-			addr = InetAddress.getLocalHost();
-		} catch (UnknownHostException e) {
-			logger.error("UnknownHostException",e);
-			
-		}    
+        if (started)
+            return;
+        InetAddress addr = null;
+        try {
+            addr = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            logger.error("UnknownHostException", e);
+
+        }
         Context context = getContext();
         if (addr != null) {
-        	context.putProperty("server.name", addr.getHostName());
+            context.putProperty("server.name", addr.getHostName());
         }
         started = true;
     }
 
     @Override
-    public void stop() {
+    public void stop() {}
+
+    @Override
+    public boolean isStarted() {
+        return started;
     }
 
-	@Override
-	public boolean isStarted() {
-		return started;
-	}
+    @Override
+    public boolean isResetResistant() {
+        return true;
+    }
 
-	@Override
-	public boolean isResetResistant() {
-		return true;
-	}
+    @Override
+    public void onReset(LoggerContext arg0) {}
 
-	@Override
-	public void onReset(LoggerContext arg0) {
-	}
+    @Override
+    public void onStart(LoggerContext arg0) {}
 
-	@Override
-	public void onStart(LoggerContext arg0) {
-	}
+    @Override
+    public void onStop(LoggerContext arg0) {}
 
-	@Override
-	public void onStop(LoggerContext arg0) {
-	}
-
-	@Override
-	public void onLevelChange(ch.qos.logback.classic.Logger logger, Level level) {
-	}
+    @Override
+    public void onLevelChange(ch.qos.logback.classic.Logger logger, Level level) {}
 }

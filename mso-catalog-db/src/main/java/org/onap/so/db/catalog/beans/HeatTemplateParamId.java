@@ -21,55 +21,53 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 public class HeatTemplateParamId implements Serializable {
-	@BusinessKey
-	private String heatTemplateArtifactUuid;
-	@BusinessKey
-	private String paramName;
+    @BusinessKey
+    private String heatTemplateArtifactUuid;
+    @BusinessKey
+    private String paramName;
 
-	public static final long serialVersionUID = -1322322139926390329L;
+    public static final long serialVersionUID = -1322322139926390329L;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof HeatTemplateParamId)) {
-			return false;
-		}
-		HeatTemplateParamId castOther = (HeatTemplateParamId) other;
-		return new EqualsBuilder().append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid)
-				.append(paramName, castOther.paramName).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof HeatTemplateParamId)) {
+            return false;
+        }
+        HeatTemplateParamId castOther = (HeatTemplateParamId) other;
+        return new EqualsBuilder().append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid)
+                .append(paramName, castOther.paramName).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(heatTemplateArtifactUuid).append(paramName).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(heatTemplateArtifactUuid).append(paramName).toHashCode();
+    }
 
-	public String getHeatTemplateArtifactUuid() {
-		return this.heatTemplateArtifactUuid;
-	}
+    public String getHeatTemplateArtifactUuid() {
+        return this.heatTemplateArtifactUuid;
+    }
 
-	public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
-		this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
-	}
+    public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
+        this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
+    }
 
-	public String getParamName() {
-		return this.paramName;
-	}
+    public String getParamName() {
+        return this.paramName;
+    }
 
-	public void setParamName(String paramName) {
-		this.paramName = paramName;
-	}
+    public void setParamName(String paramName) {
+        this.paramName = paramName;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("heatTemplateArtifactUuid", heatTemplateArtifactUuid)
-				.append("paramName", paramName).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("heatTemplateArtifactUuid", heatTemplateArtifactUuid)
+                .append("paramName", paramName).toString();
+    }
 }

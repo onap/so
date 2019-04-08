@@ -26,104 +26,97 @@ import java.util.HashMap;
 /*
  * This Java bean class relays VDU status information in a cloud-agnostic format.
  * 
- * This bean is returned by all implementors of the MsoVduUtils interface operations
- * (instantiate, query, delete).
+ * This bean is returned by all implementors of the MsoVduUtils interface operations (instantiate, query, delete).
  */
 
 public class VduInfo {
-	// Set defaults for everything
-	private String vduInstanceId = "";
-	private String vduInstanceName = "";
-	private VduStatus status = VduStatus.NOTFOUND;
-	private Map<String,Object> outputs = new HashMap<>();
-	private Map<String,Object> inputs = new HashMap<>();
-	private String lastAction;
-	private String actionStatus;
-	private String errorMessage;
-	
-	public VduInfo () {
-	}
+    // Set defaults for everything
+    private String vduInstanceId = "";
+    private String vduInstanceName = "";
+    private VduStatus status = VduStatus.NOTFOUND;
+    private Map<String, Object> outputs = new HashMap<>();
+    private Map<String, Object> inputs = new HashMap<>();
+    private String lastAction;
+    private String actionStatus;
+    private String errorMessage;
 
-	// Add more constructors as appropriate
-	//
-	
-	public VduInfo (String id, Map<String,Object> outputs) {
-		this.vduInstanceId = id;
-		if (outputs != null)  this.outputs = outputs;
-	}
-	
-	public VduInfo (String id) {
-		this.vduInstanceId = id;
-	}
-	
-	public VduInfo (String id, VduStatus status) {
-		this.vduInstanceId = id;
-		this.status = status;
-	}
-	
-	public String getVnfInstanceId() {
-		return vduInstanceId;
-	}
-	
-	public void setVnfInstanceId (String id) {
-		this.vduInstanceId = id;
-	}
-	
-	public String getVnfInstanceName() {
-		return vduInstanceName;
-	}
-	
-	public void setVnfInstanceName (String name) {
-		this.vduInstanceName = name;
-	}
-	
-	public VduStatus getStatus() {
-		return status;
-	}
-	
-	public void setStatus (VduStatus status) {
-		this.status = status;
-	}
-	
-	public Map<String,Object> getOutputs () {
-		return outputs;
-	}
-	
-	public void setOutputs (Map<String,Object> outputs) {
-		this.outputs = outputs;
-	}
-	
-	public Map<String,Object> getInputs () {
-		return inputs;
-	}
-	
-	public void setInputs (Map<String,Object> inputs) {
-		this.inputs = inputs;
-	}
+    public VduInfo() {}
 
-	public String getLastAction() {
-		return lastAction;
-	}
+    // Add more constructors as appropriate
+    //
 
-	public String getActionStatus() {
-		return actionStatus;
-	}
+    public VduInfo(String id, Map<String, Object> outputs) {
+        this.vduInstanceId = id;
+        if (outputs != null)
+            this.outputs = outputs;
+    }
 
-	public String getErrorMessage() {
-		return errorMessage;
-	}
+    public VduInfo(String id) {
+        this.vduInstanceId = id;
+    }
 
-	@Override
+    public VduInfo(String id, VduStatus status) {
+        this.vduInstanceId = id;
+        this.status = status;
+    }
+
+    public String getVnfInstanceId() {
+        return vduInstanceId;
+    }
+
+    public void setVnfInstanceId(String id) {
+        this.vduInstanceId = id;
+    }
+
+    public String getVnfInstanceName() {
+        return vduInstanceName;
+    }
+
+    public void setVnfInstanceName(String name) {
+        this.vduInstanceName = name;
+    }
+
+    public VduStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VduStatus status) {
+        this.status = status;
+    }
+
+    public Map<String, Object> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(Map<String, Object> outputs) {
+        this.outputs = outputs;
+    }
+
+    public Map<String, Object> getInputs() {
+        return inputs;
+    }
+
+    public void setInputs(Map<String, Object> inputs) {
+        this.inputs = inputs;
+    }
+
+    public String getLastAction() {
+        return lastAction;
+    }
+
+    public String getActionStatus() {
+        return actionStatus;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    @Override
     public String toString() {
-        return "VduInfo {" +
-                "id='" + vduInstanceId + '\'' +
-                "name='" + vduInstanceName + '\'' +
-                ", inputs='" + inputs + '\'' +
-                ", outputs='" + outputs + '\'' +
-                ", lastAction='" + lastAction + '\'' +
-                ", status='" + status + '\'' +
-                ", errorMessage='" + errorMessage + '\'' +
-                '}';
+        return "VduInfo {" + "id='" + vduInstanceId + '\'' + "name='" + vduInstanceName + '\'' + ", inputs='" + inputs
+                + '\'' + ", outputs='" + outputs + '\'' + ", lastAction='" + lastAction + '\'' + ", status='" + status
+                + '\'' + ", errorMessage='" + errorMessage + '\'' + '}';
     }
 
 }

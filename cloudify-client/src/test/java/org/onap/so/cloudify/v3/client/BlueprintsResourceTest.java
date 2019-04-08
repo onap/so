@@ -27,11 +27,9 @@ import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.Assert.assertEquals;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,106 +40,105 @@ import org.onap.so.cloudify.v3.client.BlueprintsResource.ListBlueprints;
 import org.onap.so.cloudify.v3.client.BlueprintsResource.UploadBlueprint;
 import org.onap.so.cloudify.v3.model.Blueprint;
 import org.onap.so.cloudify.v3.model.Blueprints;
-
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class BlueprintsResourceTest {
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
-	
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
-	@Test
-	public void cloudifyClientBlueprintFromStream() {
-		wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"id\": \"123\"}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		BlueprintsResource br = c.blueprints();
-		InputStream is = new ByteArrayInputStream("{}".getBytes(StandardCharsets.UTF_8));
-		UploadBlueprint ub = br.uploadFromStream("123", "blueprint.json", is);
-		Blueprint b = ub.execute();
-		assertEquals("123", b.getId());
-	}
+    @Test
+    public void cloudifyClientBlueprintFromStream() {
+        wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/blueprints/123"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}")
+                        .withStatus(HttpStatus.SC_OK)));
 
-	@Test
-	public void cloudifyClientBlueprintFromUrl() {
-		wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"id\": \"123\"}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+        int port = wireMockRule.port();
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		BlueprintsResource br = c.blueprints();
-		UploadBlueprint ub = br.uploadFromUrl("123", "blueprint.json", "http://localhost:"+port+"/blueprint");
-		Blueprint b = ub.execute();
-		assertEquals("123", b.getId());
-	}
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        BlueprintsResource br = c.blueprints();
+        InputStream is = new ByteArrayInputStream("{}".getBytes(StandardCharsets.UTF_8));
+        UploadBlueprint ub = br.uploadFromStream("123", "blueprint.json", is);
+        Blueprint b = ub.execute();
+        assertEquals("123", b.getId());
+    }
 
-	@Test
-	public void cloudifyClientBlueprintDelete() {
-		wireMockRule.stubFor(delete(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"id\": \"123\"}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+    @Test
+    public void cloudifyClientBlueprintFromUrl() {
+        wireMockRule.stubFor(put(urlPathEqualTo("/api/v3/blueprints/123"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}")
+                        .withStatus(HttpStatus.SC_OK)));
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		BlueprintsResource br = c.blueprints();
-		DeleteBlueprint db = br.deleteById("123");
-		Blueprint b = db.execute();
-		assertEquals("123", b.getId());
-	}
+        int port = wireMockRule.port();
 
-	@Test
-	public void cloudifyClientBlueprintList() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"items\": [{\"id\": \"123\"}]}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        BlueprintsResource br = c.blueprints();
+        UploadBlueprint ub = br.uploadFromUrl("123", "blueprint.json", "http://localhost:" + port + "/blueprint");
+        Blueprint b = ub.execute();
+        assertEquals("123", b.getId());
+    }
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		BlueprintsResource br = c.blueprints();
-		ListBlueprints lb = br.list();
-		Blueprints b = lb.execute();
-		assertEquals("123", b.getItems().get(0).getId());
-	}
+    @Test
+    public void cloudifyClientBlueprintDelete() {
+        wireMockRule.stubFor(delete(urlPathEqualTo("/api/v3/blueprints/123"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}")
+                        .withStatus(HttpStatus.SC_OK)));
 
-	@Test
-	public void cloudifyClientBlueprintGetById() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"id\": \"123\"}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+        int port = wireMockRule.port();
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		BlueprintsResource br = c.blueprints();
-		GetBlueprint gb = br.getById("123");
-		Blueprint b = gb.execute();
-		assertEquals("123", b.getId());
-	}
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        BlueprintsResource br = c.blueprints();
+        DeleteBlueprint db = br.deleteById("123");
+        Blueprint b = db.execute();
+        assertEquals("123", b.getId());
+    }
 
-	@Test
-	public void cloudifyClientBlueprintGetMetadataById() {
-		wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/123")).willReturn(aResponse().withHeader("Content-Type", "application/json")
-				.withBody("{\"id\": \"123\"}")
-				.withStatus(HttpStatus.SC_OK)));
-		
-		int port = wireMockRule.port();
+    @Test
+    public void cloudifyClientBlueprintList() {
+        wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{\"items\": [{\"id\": \"123\"}]}").withStatus(HttpStatus.SC_OK)));
 
-		Cloudify c = new Cloudify("http://localhost:"+port, "tenant");
-		BlueprintsResource br = c.blueprints();
-		GetBlueprint gb = br.getMetadataById("123");
-		Blueprint b = gb.execute();
-		assertEquals("123", b.getId());
-	}
+        int port = wireMockRule.port();
+
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        BlueprintsResource br = c.blueprints();
+        ListBlueprints lb = br.list();
+        Blueprints b = lb.execute();
+        assertEquals("123", b.getItems().get(0).getId());
+    }
+
+    @Test
+    public void cloudifyClientBlueprintGetById() {
+        wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/123"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}")
+                        .withStatus(HttpStatus.SC_OK)));
+
+        int port = wireMockRule.port();
+
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        BlueprintsResource br = c.blueprints();
+        GetBlueprint gb = br.getById("123");
+        Blueprint b = gb.execute();
+        assertEquals("123", b.getId());
+    }
+
+    @Test
+    public void cloudifyClientBlueprintGetMetadataById() {
+        wireMockRule.stubFor(get(urlPathEqualTo("/api/v3/blueprints/123"))
+                .willReturn(aResponse().withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}")
+                        .withStatus(HttpStatus.SC_OK)));
+
+        int port = wireMockRule.port();
+
+        Cloudify c = new Cloudify("http://localhost:" + port, "tenant");
+        BlueprintsResource br = c.blueprints();
+        GetBlueprint gb = br.getMetadataById("123");
+        Blueprint b = gb.execute();
+        assertEquals("123", b.getId());
+    }
 
 
 }

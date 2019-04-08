@@ -37,6 +37,7 @@ public class NsParameters {
     private List<LocationConstraint> locationConstraints;
 
     private Map<String, Object> additionalParamForNs = new HashMap<>();
+
     /**
      * @return Returns the locationConstraints.
      */
@@ -51,7 +52,7 @@ public class NsParameters {
         this.locationConstraints = locationConstraints;
     }
 
-    
+
     /**
      * @return Returns the additionalParamForNs.
      */
@@ -59,7 +60,7 @@ public class NsParameters {
         return additionalParamForNs;
     }
 
-    
+
     /**
      * @param additionalParamForNs The additionalParamForNs to set.
      */

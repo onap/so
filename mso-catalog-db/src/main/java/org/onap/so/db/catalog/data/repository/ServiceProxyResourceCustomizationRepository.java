@@ -23,9 +23,10 @@ import org.onap.so.db.catalog.beans.ServiceProxyResourceCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "serviceProxyResourceCustomization", path = "serviceProxyResourceCustomization")
+@RepositoryRestResource(collectionResourceRel = "serviceProxyResourceCustomization",
+        path = "serviceProxyResourceCustomization")
 public interface ServiceProxyResourceCustomizationRepository
-		extends JpaRepository<ServiceProxyResourceCustomization, String> {
-	
-	ServiceProxyResourceCustomization findResourceByModelCustomizationUUID(String modelCustomizationUUID);
+        extends JpaRepository<ServiceProxyResourceCustomization, String> {
+
+    ServiceProxyResourceCustomization findResourceByModelCustomizationUUID(String modelCustomizationUUID);
 }

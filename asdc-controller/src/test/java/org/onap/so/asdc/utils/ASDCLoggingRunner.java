@@ -22,35 +22,31 @@ package org.onap.so.asdc.utils;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import com.fasterxml.jackson.databind.JsonNode;
 
 
-public class ASDCLoggingRunner 
-{
-	public static void main( String[] args) throws Exception 
-	{
+public class ASDCLoggingRunner {
+    public static void main(String[] args) throws Exception {
         String content = new String(Files.readAllBytes(Paths.get("src/test/resources/Heat_Nested_Notification.txt")));
 
         ASDCLoggingLexer lexer = new ASDCLoggingLexer(CharStreams.fromString(content));
 
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
 
-		ASDCLoggingParser parser = new ASDCLoggingParser(tokens);
-		
-		ParseTree tree = parser.doc(); 
+        ASDCLoggingParser parser = new ASDCLoggingParser(tokens);
 
-		System.out.println(TreeUtils.printTree(tree, parser)); // print LISP-style tree
-		
-		ASDCLoggingVisitorImpl v = new ASDCLoggingVisitorImpl();
-		 
-		JsonNode node = v.visit(tree);
-		
-		System.out.println(node.toString());
+        ParseTree tree = parser.doc();
 
-	}
+        System.out.println(TreeUtils.printTree(tree, parser)); // print LISP-style tree
+
+        ASDCLoggingVisitorImpl v = new ASDCLoggingVisitorImpl();
+
+        JsonNode node = v.visit(tree);
+
+        System.out.println(node.toString());
+
+    }
 }

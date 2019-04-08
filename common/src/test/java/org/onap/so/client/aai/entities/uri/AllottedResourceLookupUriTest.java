@@ -24,29 +24,31 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.junit.Test;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPayloadException;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriNotFoundException;
 
 public class AllottedResourceLookupUriTest {
 
-	@Test
-	public void oneKey() throws IOException, URISyntaxException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
-		 
-		AllottedResourceLookupUri instance = new AllottedResourceLookupUri("key1");
-		AllottedResourceLookupUri spy = spy(instance);
-		doReturn("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4").when(spy).getObjectById(any(Object.class));
-		
-		final URI result = spy.build();
-		final URI expected = UriBuilder.fromPath("/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4").build();
-		assertEquals("result is equal", expected, result);
-		
-	}
+    @Test
+    public void oneKey()
+            throws IOException, URISyntaxException, GraphInventoryUriNotFoundException, GraphInventoryPayloadException {
+
+        AllottedResourceLookupUri instance = new AllottedResourceLookupUri("key1");
+        AllottedResourceLookupUri spy = spy(instance);
+        doReturn(
+                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4")
+                        .when(spy).getObjectById(any(Object.class));
+
+        final URI result = spy.build();
+        final URI expected = UriBuilder.fromPath(
+                "/business/customers/customer/key1/service-subscriptions/service-subscription/key2/service-instances/service-instance/key3/allotted-resources/allotted-resource/key4")
+                .build();
+        assertEquals("result is equal", expected, result);
+
+    }
 }

@@ -41,64 +41,65 @@ import com.google.common.base.Optional;
 @Component
 public class MonitorVnfmJobTask {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MonitorVnfmJobTask.class);
-  protected final ExceptionBuilder exceptionUtil;
-  protected final VnfmAdapterServiceProvider vnfmAdapterServiceProvider;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MonitorVnfmJobTask.class);
+    protected final ExceptionBuilder exceptionUtil;
+    protected final VnfmAdapterServiceProvider vnfmAdapterServiceProvider;
 
-  @Autowired
-  public MonitorVnfmJobTask(final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
-      final ExceptionBuilder exceptionUtil) {
-    this.vnfmAdapterServiceProvider = vnfmAdapterServiceProvider;
-    this.exceptionUtil = exceptionUtil;
-  }
-
-  /**
-   * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
-   * @return boolean to indicate whether job has competed or not
-   */
-  public boolean hasOperationFinished(final BuildingBlockExecution execution) {
-    LOGGER.debug("Executing hasOperationFinished  ...");
-
-    final Optional<OperationStateEnum> operationStatusOption = execution.getVariable(OPERATION_STATUS_PARAM_NAME);
-    if (operationStatusOption != null && operationStatusOption.isPresent()) {
-      return OPERATION_FINISHED_STATES.contains(operationStatusOption.get());
+    @Autowired
+    public MonitorVnfmJobTask(final VnfmAdapterServiceProvider vnfmAdapterServiceProvider,
+            final ExceptionBuilder exceptionUtil) {
+        this.vnfmAdapterServiceProvider = vnfmAdapterServiceProvider;
+        this.exceptionUtil = exceptionUtil;
     }
-    LOGGER.debug("OperationStatus is not present yet... ");
-    LOGGER.debug("Finished executing hasOperationFinished ...");
-    return false;
-  }
 
-  /**
-   * This method calls the Vnfm adapter and gets the Operation status of the job
-   * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
-   * @param jobId unique job id
-   * @return Operation State
-   */
-  protected Optional<OperationStateEnum> getOperationStatus(final BuildingBlockExecution execution,
-      final String jobId) {
+    /**
+     * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
+     * @return boolean to indicate whether job has competed or not
+     */
+    public boolean hasOperationFinished(final BuildingBlockExecution execution) {
+        LOGGER.debug("Executing hasOperationFinished  ...");
 
-    final Optional<QueryJobResponse> instantiateOperationJobStatus =
-        vnfmAdapterServiceProvider.getInstantiateOperationJobStatus(jobId);
-
-    if (instantiateOperationJobStatus.isPresent()) {
-      final QueryJobResponse queryJobResponse = instantiateOperationJobStatus.get();
-
-      if (!OPERATION_RETRIEVAL_STATES.contains(queryJobResponse.getOperationStatusRetrievalStatus())) {
-        final String message =
-            "Recevied invalid operation reterivel state: " + queryJobResponse.getOperationStatusRetrievalStatus();
-        LOGGER.error(message);
-        exceptionUtil.buildAndThrowWorkflowException(execution, 1203, message);
-      }
-      if (queryJobResponse.getOperationState() != null) {
-        final OperationStateEnum operationStatus = queryJobResponse.getOperationState();
-        LOGGER.debug("Operation {} with {} and operation retrieval status : {}", queryJobResponse.getId(),
-            operationStatus, queryJobResponse.getOperationStatusRetrievalStatus());
-        return Optional.of(queryJobResponse.getOperationState());
-      }
-
-      LOGGER.debug("Operation {} without operationStatus and operation retrieval status :{}", queryJobResponse.getId(),
-          queryJobResponse.getOperationStatusRetrievalStatus());
+        final Optional<OperationStateEnum> operationStatusOption = execution.getVariable(OPERATION_STATUS_PARAM_NAME);
+        if (operationStatusOption != null && operationStatusOption.isPresent()) {
+            return OPERATION_FINISHED_STATES.contains(operationStatusOption.get());
+        }
+        LOGGER.debug("OperationStatus is not present yet... ");
+        LOGGER.debug("Finished executing hasOperationFinished ...");
+        return false;
     }
-    return Optional.absent();
-  }
+
+    /**
+     * This method calls the Vnfm adapter and gets the Operation status of the job
+     * 
+     * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
+     * @param jobId unique job id
+     * @return Operation State
+     */
+    protected Optional<OperationStateEnum> getOperationStatus(final BuildingBlockExecution execution,
+            final String jobId) {
+
+        final Optional<QueryJobResponse> instantiateOperationJobStatus =
+                vnfmAdapterServiceProvider.getInstantiateOperationJobStatus(jobId);
+
+        if (instantiateOperationJobStatus.isPresent()) {
+            final QueryJobResponse queryJobResponse = instantiateOperationJobStatus.get();
+
+            if (!OPERATION_RETRIEVAL_STATES.contains(queryJobResponse.getOperationStatusRetrievalStatus())) {
+                final String message = "Recevied invalid operation reterivel state: "
+                        + queryJobResponse.getOperationStatusRetrievalStatus();
+                LOGGER.error(message);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 1203, message);
+            }
+            if (queryJobResponse.getOperationState() != null) {
+                final OperationStateEnum operationStatus = queryJobResponse.getOperationState();
+                LOGGER.debug("Operation {} with {} and operation retrieval status : {}", queryJobResponse.getId(),
+                        operationStatus, queryJobResponse.getOperationStatusRetrievalStatus());
+                return Optional.of(queryJobResponse.getOperationState());
+            }
+
+            LOGGER.debug("Operation {} without operationStatus and operation retrieval status :{}",
+                    queryJobResponse.getId(), queryJobResponse.getOperationStatusRetrievalStatus());
+        }
+        return Optional.absent();
+    }
 }

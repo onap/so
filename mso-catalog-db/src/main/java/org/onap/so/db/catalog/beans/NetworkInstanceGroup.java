@@ -27,8 +27,8 @@ import javax.persistence.Entity;
 @DiscriminatorValue(value = "L3_NETWORK")
 public class NetworkInstanceGroup extends InstanceGroup {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1934855643166769237L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1934855643166769237L;
 }

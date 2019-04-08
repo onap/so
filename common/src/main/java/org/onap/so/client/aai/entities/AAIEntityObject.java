@@ -23,7 +23,7 @@ package org.onap.so.client.aai.entities;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 
 public interface AAIEntityObject {
-	
-	public AAIResourceUri getUri();
+
+    public AAIResourceUri getUri();
 
 }

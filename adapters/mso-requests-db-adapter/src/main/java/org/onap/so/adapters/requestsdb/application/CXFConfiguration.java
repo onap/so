@@ -21,7 +21,6 @@
 package org.onap.so.adapters.requestsdb.application;
 
 import javax.xml.ws.Endpoint;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.swagger.Swagger2Feature;
@@ -39,43 +38,43 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CXFConfiguration {
 
-	@Autowired
-	private Bus bus;
+    @Autowired
+    private Bus bus;
 
-	@Autowired
-	private MsoRequestsDbAdapter requestDbAdapterImpl;
-	
-	@Bean
-	public ServletRegistrationBean cxfServlet() {
-	
-		return new ServletRegistrationBean(new CXFServlet(), "/services/*");
-	}
+    @Autowired
+    private MsoRequestsDbAdapter requestDbAdapterImpl;
 
-	@Bean
-	public Endpoint requestEndpointk() {
-		EndpointImpl endpoint = new EndpointImpl(bus, requestDbAdapterImpl);
-		endpoint.publish("/RequestsDbAdapter");
-		LoggingFeature logFeature = new LoggingFeature();
-		logFeature.setPrettyLogging(true);
-		logFeature.initialize(bus);
-		endpoint.getFeatures().add(logFeature);
-		endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
-		endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
-		endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
-		return endpoint;
-	}
+    @Bean
+    public ServletRegistrationBean cxfServlet() {
 
-	@Bean
-	public Swagger2Feature createSwaggerFeature() {
-		Swagger2Feature swagger2Feature = new Swagger2Feature();
-		swagger2Feature.setPrettyPrint(true);
-		swagger2Feature.setTitle("SO Request Adapter");
-		swagger2Feature.setContact("The ONAP SO team");
-		swagger2Feature.setDescription("This project is the SO Orchestration Engine");
-		swagger2Feature.setVersion("1.0.0");
-		swagger2Feature.setResourcePackage("org.onap.so.adapters.requestdb");
-		swagger2Feature.setScan(true);
-		return swagger2Feature;
-	}
+        return new ServletRegistrationBean(new CXFServlet(), "/services/*");
+    }
+
+    @Bean
+    public Endpoint requestEndpointk() {
+        EndpointImpl endpoint = new EndpointImpl(bus, requestDbAdapterImpl);
+        endpoint.publish("/RequestsDbAdapter");
+        LoggingFeature logFeature = new LoggingFeature();
+        logFeature.setPrettyLogging(true);
+        logFeature.initialize(bus);
+        endpoint.getFeatures().add(logFeature);
+        endpoint.getInInterceptors().add(new SOAPLoggingInInterceptor());
+        endpoint.getOutInterceptors().add(new SOAPLoggingOutInterceptor());
+        endpoint.getOutFaultInterceptors().add(new SOAPLoggingOutInterceptor());
+        return endpoint;
+    }
+
+    @Bean
+    public Swagger2Feature createSwaggerFeature() {
+        Swagger2Feature swagger2Feature = new Swagger2Feature();
+        swagger2Feature.setPrettyPrint(true);
+        swagger2Feature.setTitle("SO Request Adapter");
+        swagger2Feature.setContact("The ONAP SO team");
+        swagger2Feature.setDescription("This project is the SO Orchestration Engine");
+        swagger2Feature.setVersion("1.0.0");
+        swagger2Feature.setResourcePackage("org.onap.so.adapters.requestdb");
+        swagger2Feature.setScan(true);
+        return swagger2Feature;
+    }
 
 }

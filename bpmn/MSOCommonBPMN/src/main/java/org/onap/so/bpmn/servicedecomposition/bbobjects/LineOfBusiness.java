@@ -22,51 +22,48 @@ package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-
 import javax.persistence.Id;
 
 @JsonRootName("line-of-business")
 public class LineOfBusiness implements Serializable, ShallowCopy<LineOfBusiness> {
 
-	private static final long serialVersionUID = -7697815326894443926L;
+    private static final long serialVersionUID = -7697815326894443926L;
 
-	@Id
-	@JsonProperty("line-of-business-name")
-	private String lineOfBusinessName;
+    @Id
+    @JsonProperty("line-of-business-name")
+    private String lineOfBusinessName;
 
-	public LineOfBusiness() {
-	}
+    public LineOfBusiness() {}
 
-	
-	public LineOfBusiness(String lineOfBusinessName) {
-		this.lineOfBusinessName = lineOfBusinessName;
-	}
 
-	public String getLineOfBusinessName() {
-		return lineOfBusinessName;
-	}
+    public LineOfBusiness(String lineOfBusinessName) {
+        this.lineOfBusinessName = lineOfBusinessName;
+    }
 
-	public void setLineOfBusinessName(String lineOfBusinessName) {
-		this.lineOfBusinessName = lineOfBusinessName;
-	}
+    public String getLineOfBusinessName() {
+        return lineOfBusinessName;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof LineOfBusiness)) {
-			return false;
-		}
-		LineOfBusiness castOther = (LineOfBusiness) other;
-		return new EqualsBuilder().append(lineOfBusinessName, castOther.lineOfBusinessName).isEquals();
-	}
+    public void setLineOfBusinessName(String lineOfBusinessName) {
+        this.lineOfBusinessName = lineOfBusinessName;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(lineOfBusinessName).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof LineOfBusiness)) {
+            return false;
+        }
+        LineOfBusiness castOther = (LineOfBusiness) other;
+        return new EqualsBuilder().append(lineOfBusinessName, castOther.lineOfBusinessName).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(lineOfBusinessName).toHashCode();
+    }
 }

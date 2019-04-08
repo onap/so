@@ -30,17 +30,15 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 public class RequestList {
 
 
-	@JsonProperty("request")
+    @JsonProperty("request")
     protected Request request;
-	@JsonProperty("requestStatus")
+    @JsonProperty("requestStatus")
     protected RequestStatus requestStatus;
 
     /**
      * Gets the value of the request property.
      *
-     * @return
-     *     possible object is
-     *     {@link Request }
+     * @return possible object is {@link Request }
      *
      */
     public Request getRequest() {
@@ -50,9 +48,7 @@ public class RequestList {
     /**
      * Sets the value of the requestInfo property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Request }
+     * @param value allowed object is {@link Request }
      *
      */
     public void setRequest(Request value) {
@@ -62,22 +58,18 @@ public class RequestList {
     /**
      * Gets the value of the requestStatus property.
      *
-     * @return
-     *     possible object is
-     *     {@link RequestStatus }
+     * @return possible object is {@link RequestStatus }
      *
      */
     public RequestStatus getRequestStatus() {
         return requestStatus;
     }
-    
+
 
     /**
      * Sets the value of the requestStatus property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link RequestStatus }
+     * @param value allowed object is {@link RequestStatus }
      *
      */
     public void setRequestStatus(RequestStatus value) {
@@ -85,9 +77,8 @@ public class RequestList {
     }
 
 
-	@Override
-	public String toString() {
-		return "RequestList [request=" + request + 
-				            ", requestStatus=" + requestStatus + "]";
-	}
+    @Override
+    public String toString() {
+        return "RequestList [request=" + request + ", requestStatus=" + requestStatus + "]";
+    }
 }

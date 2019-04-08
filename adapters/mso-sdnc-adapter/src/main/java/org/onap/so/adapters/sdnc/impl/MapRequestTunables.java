@@ -33,77 +33,82 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MapRequestTunables {
-	
-	private static Logger logger = LoggerFactory.getLogger(MapRequestTunables.class);
-	public static final String GENERATED_KEY = "Generated key: ";
-	
-	@Autowired
-	private Environment env;
 
-	public RequestTunables setTunables(RequestTunables reqTunableOriginal)
-	{ 
-		RequestTunables reqTunable = new RequestTunables(reqTunableOriginal);
-		String error = null;
-		String key;
-		if ("query".equals(reqTunable.getAction())) { //due to variable format for reqTunable.getOperation() eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
-			key = Constants.REQUEST_TUNABLES + "." + reqTunable.getMsoAction() + ".." + reqTunable.getAction();
-			logger.debug(GENERATED_KEY + key);
-		}
-		else if ("put".equals(reqTunable.getAction())  || "restdelete".equals(reqTunable.getAction())) { //due to variable format for reqTunable.getOperation() eg services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
-			key = Constants.REQUEST_TUNABLES + "..." + reqTunable.getAction();
-			logger.debug(GENERATED_KEY + key);
-		} else {
-			key = Constants.REQUEST_TUNABLES + "." + reqTunable.getMsoAction() + "." + reqTunable.getOperation() +"."  + reqTunable.getAction();
-			logger.debug(GENERATED_KEY + key);
-		}
+    private static Logger logger = LoggerFactory.getLogger(MapRequestTunables.class);
+    public static final String GENERATED_KEY = "Generated key: ";
 
-		String value;	
-		value = env.getProperty(key, "");	
+    @Autowired
+    private Environment env;
 
-		if (value != null && value.length() > 0) {
+    public RequestTunables setTunables(RequestTunables reqTunableOriginal) {
+        RequestTunables reqTunable = new RequestTunables(reqTunableOriginal);
+        String error = null;
+        String key;
+        if ("query".equals(reqTunable.getAction())) { // due to variable format for reqTunable.getOperation() eg
+                                                      // services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
+            key = Constants.REQUEST_TUNABLES + "." + reqTunable.getMsoAction() + ".." + reqTunable.getAction();
+            logger.debug(GENERATED_KEY + key);
+        } else if ("put".equals(reqTunable.getAction()) || "restdelete".equals(reqTunable.getAction())) { // due to
+                                                                                                          // variable
+                                                                                                          // format for
+                                                                                                          // reqTunable.getOperation()
+                                                                                                          // eg
+                                                                                                          // services/layer3-service-list/8fe4ba4f-35cf-4d9b-a04a-fd3f5d4c5cc9
+            key = Constants.REQUEST_TUNABLES + "..." + reqTunable.getAction();
+            logger.debug(GENERATED_KEY + key);
+        } else {
+            key = Constants.REQUEST_TUNABLES + "." + reqTunable.getMsoAction() + "." + reqTunable.getOperation() + "."
+                    + reqTunable.getAction();
+            logger.debug(GENERATED_KEY + key);
+        }
 
-			String[] parts = value.split("\\|"); //escape pipe
-			if (parts.length < 3) {
-				logger.warn("{} {} {} {} {} {}", MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), key, value, "SDNC",
-					ErrorCode.DataError.getValue(), "Invalid config");
-			}
+        String value;
+        value = env.getProperty(key, "");
 
-			for (int i = 0; i < parts.length; i++) {
-				if (i == 0) {
-					reqTunable.setReqMethod(parts[i]) ;
-					logger.debug("Request Method is set to: {}", reqTunable.getReqMethod());
-				} else if (i == 1) {
-					reqTunable.setTimeout( parts[i]);
-					logger.debug("Timeout is set to: {}", reqTunable.getTimeout());
-				} else if (i == 2) {
-					reqTunable.setSdncUrl(env.getProperty(Constants.REQUEST_TUNABLES + "." + parts[i],""));
-					if (reqTunable.getOperation() != null && reqTunable.getSdncUrl() != null) {
-						reqTunable.setSdncUrl(reqTunable.getSdncUrl()  + reqTunable.getOperation());
-					}
-					logger.debug("SDNC Url is set to: {}", reqTunable.getSdncUrl());
-				} else if  (i == 3) {
-					reqTunable.setHeaderName(parts[i]);
-					logger.debug("HeaderName is set to: {}", reqTunable.getHeaderName());
-				} else if  (i == 4) {
-					reqTunable.setNamespace(parts[i]);
-					logger.debug("NameSpace is set to: {}", reqTunable.getNamespace());
-				} else if  (i == 5) {
-					reqTunable.setAsyncInd(parts[i]);
-					logger.debug("AsyncInd is set to: {}", reqTunable.getAsyncInd());
-				}
-			}
+        if (value != null && value.length() > 0) {
 
-			if (reqTunable.getSdncUrl() == null || ("").equals(reqTunable.getSdncUrl())) {
-				error = "Invalid configuration, sdncUrl required for:" + key + " value:" + value;
-			}
-		} else {
-			error = "Missing configuration for:" + key;
-		}
-		if (error != null) {
-			logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), key, "SDNC",
-				ErrorCode.DataError.getValue(), "Missing config param");
-		}
-		logger.debug("RequestTunables Key:{} Value:{} Tunables:{}", key, value, this.toString());
-		return reqTunable;
-	}
+            String[] parts = value.split("\\|"); // escape pipe
+            if (parts.length < 3) {
+                logger.warn("{} {} {} {} {} {}", MessageEnum.RA_SDNC_INVALID_CONFIG.toString(), key, value, "SDNC",
+                        ErrorCode.DataError.getValue(), "Invalid config");
+            }
+
+            for (int i = 0; i < parts.length; i++) {
+                if (i == 0) {
+                    reqTunable.setReqMethod(parts[i]);
+                    logger.debug("Request Method is set to: {}", reqTunable.getReqMethod());
+                } else if (i == 1) {
+                    reqTunable.setTimeout(parts[i]);
+                    logger.debug("Timeout is set to: {}", reqTunable.getTimeout());
+                } else if (i == 2) {
+                    reqTunable.setSdncUrl(env.getProperty(Constants.REQUEST_TUNABLES + "." + parts[i], ""));
+                    if (reqTunable.getOperation() != null && reqTunable.getSdncUrl() != null) {
+                        reqTunable.setSdncUrl(reqTunable.getSdncUrl() + reqTunable.getOperation());
+                    }
+                    logger.debug("SDNC Url is set to: {}", reqTunable.getSdncUrl());
+                } else if (i == 3) {
+                    reqTunable.setHeaderName(parts[i]);
+                    logger.debug("HeaderName is set to: {}", reqTunable.getHeaderName());
+                } else if (i == 4) {
+                    reqTunable.setNamespace(parts[i]);
+                    logger.debug("NameSpace is set to: {}", reqTunable.getNamespace());
+                } else if (i == 5) {
+                    reqTunable.setAsyncInd(parts[i]);
+                    logger.debug("AsyncInd is set to: {}", reqTunable.getAsyncInd());
+                }
+            }
+
+            if (reqTunable.getSdncUrl() == null || ("").equals(reqTunable.getSdncUrl())) {
+                error = "Invalid configuration, sdncUrl required for:" + key + " value:" + value;
+            }
+        } else {
+            error = "Missing configuration for:" + key;
+        }
+        if (error != null) {
+            logger.error("{} {} {} {} {}", MessageEnum.RA_SDNC_MISS_CONFIG_PARAM.toString(), key, "SDNC",
+                    ErrorCode.DataError.getValue(), "Missing config param");
+        }
+        logger.debug("RequestTunables Key:{} Value:{} Tunables:{}", key, value, this.toString());
+        return reqTunable;
+    }
 }

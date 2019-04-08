@@ -21,61 +21,58 @@
 package org.onap.so.apihandlerinfra.tenantisolation;
 
 import java.io.Serializable;
-
 import org.onap.so.apihandlerinfra.tenantisolationbeans.Distribution;
 import org.onap.so.apihandlerinfra.tenantisolationbeans.RequestDetails;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class CloudOrchestrationRequest implements Serializable {
 
-	private static final long serialVersionUID = -4959169541182257787L;
-	@JsonProperty("requestDetails")
-	private RequestDetails requestDetails;
-	@JsonProperty("operationalEnvironmentId")
-	private String operationalEnvironmentId;
-	@JsonProperty("distribution")
-	private Distribution distribution;
-	@JsonProperty("distributionId")
-	private String distributionId;	
-	
-	public String getOperationalEnvironmentId() {
-		return operationalEnvironmentId;
-	}
+    private static final long serialVersionUID = -4959169541182257787L;
+    @JsonProperty("requestDetails")
+    private RequestDetails requestDetails;
+    @JsonProperty("operationalEnvironmentId")
+    private String operationalEnvironmentId;
+    @JsonProperty("distribution")
+    private Distribution distribution;
+    @JsonProperty("distributionId")
+    private String distributionId;
 
-	public void setOperationalEnvironmentId(String operationalEnvironmentId) {
-		this.operationalEnvironmentId = operationalEnvironmentId;
-	}
+    public String getOperationalEnvironmentId() {
+        return operationalEnvironmentId;
+    }
 
-	public RequestDetails getRequestDetails() {
-		return requestDetails;
-	}
-	
-	public void setRequestDetails(RequestDetails requestDetails){
-		this.requestDetails = requestDetails;
-	}
+    public void setOperationalEnvironmentId(String operationalEnvironmentId) {
+        this.operationalEnvironmentId = operationalEnvironmentId;
+    }
 
-	public Distribution getDistribution() {
-		return distribution;
-	}
+    public RequestDetails getRequestDetails() {
+        return requestDetails;
+    }
 
-	public void setDistribution(Distribution distribution) {
-		this.distribution = distribution;
-	}
+    public void setRequestDetails(RequestDetails requestDetails) {
+        this.requestDetails = requestDetails;
+    }
 
-	public String getDistributionId() {
-		return distributionId;
-	}
+    public Distribution getDistribution() {
+        return distribution;
+    }
 
-	public void setDistributionId(String distributionId) {
-		this.distributionId = distributionId;
-	}	
-	
-	@Override
-	public String toString() {
-		return "ServiceInstancesRequest [requestDetails=" + requestDetails
-				+ ", operationalEnvironmentId=" + operationalEnvironmentId
-				+ ", distribution=" + distribution
-				+ ", distributionId=" + distributionId + "]";
-	}
+    public void setDistribution(Distribution distribution) {
+        this.distribution = distribution;
+    }
+
+    public String getDistributionId() {
+        return distributionId;
+    }
+
+    public void setDistributionId(String distributionId) {
+        this.distributionId = distributionId;
+    }
+
+    @Override
+    public String toString() {
+        return "ServiceInstancesRequest [requestDetails=" + requestDetails + ", operationalEnvironmentId="
+                + operationalEnvironmentId + ", distribution=" + distribution + ", distributionId=" + distributionId
+                + "]";
+    }
 }

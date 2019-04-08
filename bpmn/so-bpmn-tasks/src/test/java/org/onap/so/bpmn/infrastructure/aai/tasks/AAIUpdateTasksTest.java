@@ -32,9 +32,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.HashMap;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -59,613 +57,678 @@ import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoGenericVnf;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
-public class AAIUpdateTasksTest extends BaseTaskTest{
-	
-	@InjectMocks
-	private AAIUpdateTasks aaiUpdateTasks = new AAIUpdateTasks();
-	
-	private L3Network network;
-	private ServiceInstance serviceInstance;
-	private VfModule vfModule;
-	private GenericVnf genericVnf;
-	private VolumeGroup volumeGroup;
-	private CloudRegion cloudRegion;
-	private Configuration configuration;
-	private Subnet subnet;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		serviceInstance = setServiceInstance();
-		genericVnf = setGenericVnf();
-		vfModule = setVfModule();
-		volumeGroup = setVolumeGroup();
-		cloudRegion = setCloudRegion();
-		network = setL3Network();
-		configuration = setConfiguration();
-		subnet = buildSubnet();
+public class AAIUpdateTasksTest extends BaseTaskTest {
 
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID))).thenReturn(volumeGroup);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID))).thenReturn(configuration);
-		
+    @InjectMocks
+    private AAIUpdateTasks aaiUpdateTasks = new AAIUpdateTasks();
 
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignedServiceTest() throws Exception {
-		doNothing().when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ASSIGNED);
+    private L3Network network;
+    private ServiceInstance serviceInstance;
+    private VfModule vfModule;
+    private GenericVnf genericVnf;
+    private VolumeGroup volumeGroup;
+    private CloudRegion cloudRegion;
+    private Configuration configuration;
+    private Subnet subnet;
 
-		aaiUpdateTasks.updateOrchestrationStatusAssignedService(execution);
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        serviceInstance = setServiceInstance();
+        genericVnf = setGenericVnf();
+        vfModule = setVfModule();
+        volumeGroup = setVolumeGroup();
+        cloudRegion = setCloudRegion();
+        network = setL3Network();
+        configuration = setConfiguration();
+        subnet = buildSubnet();
 
-		verify(aaiServiceInstanceResources, times(1)).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ASSIGNED);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignedServiceExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
-		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ASSIGNED);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VOLUME_GROUP_ID)))
+                .thenReturn(volumeGroup);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.CONFIGURATION_ID)))
+                .thenReturn(configuration);
 
-		aaiUpdateTasks.updateOrchestrationStatusAssignedService(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusActiveServiceTest() throws Exception {
-		doNothing().when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
 
-		aaiUpdateTasks.updateOrchestrationStatusActiveService(execution);
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+    }
 
-		verify(aaiServiceInstanceResources, times(1)).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusActiveServiceExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
-		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
+    @Test
+    public void updateOrchestrationStatusAssignedServiceTest() throws Exception {
+        doNothing().when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance,
+                OrchestrationStatus.ASSIGNED);
 
-		aaiUpdateTasks.updateOrchestrationStatusActiveService(execution);
-	}
+        aaiUpdateTasks.updateOrchestrationStatusAssignedService(execution);
 
-	@Test
-	public void updateOrchestrationStatusAssignedVnfTest() throws Exception {
-		doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
+        verify(aaiServiceInstanceResources, times(1)).updateOrchestrationStatusServiceInstance(serviceInstance,
+                OrchestrationStatus.ASSIGNED);
+    }
 
-		aaiUpdateTasks.updateOrchestrationStatusAssignedVnf(execution);
+    @Test
+    public void updateOrchestrationStatusAssignedServiceExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
 
-		verify(aaiVnfResources, times(1)).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignedVnfExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
-		doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
+        doThrow(RuntimeException.class).when(aaiServiceInstanceResources)
+                .updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ASSIGNED);
 
-		aaiUpdateTasks.updateOrchestrationStatusAssignedVnf(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusActiveVnfTest() throws Exception {
-		doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedService(execution);
+    }
 
-		aaiUpdateTasks.updateOrchestrationStatusActiveVnf(execution);
+    @Test
+    public void updateOrchestrationStatusActiveServiceTest() throws Exception {
+        doNothing().when(aaiServiceInstanceResources).updateOrchestrationStatusServiceInstance(serviceInstance,
+                OrchestrationStatus.ACTIVE);
 
-		verify(aaiVnfResources, times(1)).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusActiveVnfExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		
-		doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
+        aaiUpdateTasks.updateOrchestrationStatusActiveService(execution);
 
-		aaiUpdateTasks.updateOrchestrationStatusActiveVnf(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignVfModuleTest() throws Exception {		
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		aaiUpdateTasks.updateOrchestrationStatusAssignedVfModule(execution);
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		assertEquals("", vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignVfModuleExceptionTest() throws Exception {
-		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		
-		expectedException.expect(BpmnError.class);
-		
-		aaiUpdateTasks.updateOrchestrationStatusAssignedVfModule(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleNoMultiStageTest() throws Exception {
-		execution.setVariable("aLaCarte", true);
-		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-		modelInfoGenericVnf.setMultiStageDesign("false");
-		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		assertEquals("", vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleMultiStageButNotAlacarteTest() throws Exception {
-		execution.setVariable("aLaCarte", false);
-		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-		modelInfoGenericVnf.setMultiStageDesign("true");
-		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		assertEquals("", vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleWithMultiStageTest() throws Exception {
-		execution.setVariable("aLaCarte", true);
-		ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
-		modelInfoGenericVnf.setMultiStageDesign("true");
-		genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
-		aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
-		assertEquals("", vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleExceptionTest() throws Exception {
-		execution.setVariable("aLaCarte", true);
-		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		
-		expectedException.expect(BpmnError.class);
-		
-		aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusCreatedVfModuleTest() throws Exception {		
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
-		aaiUpdateTasks.updateOrchestrationStatusCreatedVfModule(execution);
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusCreatedVfModuleExceptionTest() throws Exception {
-		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
-		
-		expectedException.expect(BpmnError.class);
-		
-		aaiUpdateTasks.updateOrchestrationStatusCreatedVfModule(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusPendingActivatefModuleTest() throws Exception {
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
+        verify(aaiServiceInstanceResources, times(1)).updateOrchestrationStatusServiceInstance(serviceInstance,
+                OrchestrationStatus.ACTIVE);
+    }
 
-		aaiUpdateTasks.updateOrchestrationStatusPendingActivationVfModule(execution);
+    @Test
+    public void updateOrchestrationStatusActiveServiceExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
 
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusPendingActivatefModuleExceptionTest() throws Exception {
-		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
-		
-		expectedException.expect(BpmnError.class);
-	
-		aaiUpdateTasks.updateOrchestrationStatusPendingActivationVfModule(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusDectivateVfModuleTest() throws Exception {
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
+        doThrow(RuntimeException.class).when(aaiServiceInstanceResources)
+                .updateOrchestrationStatusServiceInstance(serviceInstance, OrchestrationStatus.ACTIVE);
 
-		aaiUpdateTasks.updateOrchestrationStatusDeactivateVfModule(execution);
+        aaiUpdateTasks.updateOrchestrationStatusActiveService(execution);
+    }
 
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusDectivateVfModuleExceptionTest() throws Exception {
-		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CREATED);
-		
-		expectedException.expect(BpmnError.class);
-	
-		aaiUpdateTasks.updateOrchestrationStatusDeactivateVfModule(execution);
-	}
-	
-	@Test
-	public void updateHeatStackIdVfModuleTest() throws Exception {
-		execution.setVariable("heatStackId", "newHeatStackId");
-		doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+    @Test
+    public void updateOrchestrationStatusAssignedVnfTest() throws Exception {
+        doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
 
-		aaiUpdateTasks.updateHeatStackIdVfModule(execution);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedVnf(execution);
 
-		verify(aaiVfModuleResources, times(1)).updateHeatStackIdVfModule(vfModule, genericVnf);
-		assertEquals("newHeatStackId", vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void updateHeatStackIdVfModuleToNullTest() throws Exception {
-		execution.setVariable("heatStackId", null);
-		doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+        verify(aaiVnfResources, times(1)).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ASSIGNED);
+    }
 
-		aaiUpdateTasks.updateHeatStackIdVfModule(execution);
+    @Test
+    public void updateOrchestrationStatusAssignedVnfExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
 
-		verify(aaiVfModuleResources, times(1)).updateHeatStackIdVfModule(vfModule, genericVnf);
-		assertEquals(vfModule.getHeatStackId(), "");
-	}
-	
-	@Test
-	public void updateHeatStackIdVfModuleExceptionTest() throws Exception {
-		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
-		
-		expectedException.expect(BpmnError.class);
-	
-		aaiUpdateTasks.updateHeatStackIdVfModule(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusActiveVolumeGroupTest() throws Exception {
-		doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
+        doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf,
+                OrchestrationStatus.ASSIGNED);
 
-		aaiUpdateTasks.updateOrchestrationStatusActiveVolumeGroup(execution);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedVnf(execution);
+    }
 
-		verify(aaiVolumeGroupResources, times(1)).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusActiveVolumeGroupExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ACTIVE);
-		aaiUpdateTasks.updateOrchestrationStatusActiveVolumeGroup(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusCreatedVolumeGroupTest() throws Exception {
-		doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.CREATED);
+    @Test
+    public void updateOrchestrationStatusActiveVnfTest() throws Exception {
+        doNothing().when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
 
-		aaiUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(execution);
+        aaiUpdateTasks.updateOrchestrationStatusActiveVnf(execution);
 
-		verify(aaiVolumeGroupResources, times(1)).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.CREATED);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusCreatedVolumeGroupExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.CREATED);
-		aaiUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(execution);
-	}	
-	
-	@Test
-	public void test_updateOrchestrationStatusAssignedVolumeGroup() throws Exception {
-		doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
+        verify(aaiVnfResources, times(1)).updateOrchestrationStatusVnf(genericVnf, OrchestrationStatus.ACTIVE);
+    }
 
-		aaiUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(execution);
+    @Test
+    public void updateOrchestrationStatusActiveVnfExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
 
-		verify(aaiVolumeGroupResources, times(1)).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
-		assertEquals("", volumeGroup.getHeatStackId());
-	}
-	
-	@Test
-	public void test_updateOrchestrationStatusAssignedVolumeGroup_exception() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion, OrchestrationStatus.ASSIGNED);
-		aaiUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(execution);
-	}
-	@Test
-	public void updateHeatStackIdVolumeGroupTest() throws Exception {
-		execution.setVariable("heatStackId", "newHeatStackId");
-		doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+        doThrow(RuntimeException.class).when(aaiVnfResources).updateOrchestrationStatusVnf(genericVnf,
+                OrchestrationStatus.ACTIVE);
 
-		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
+        aaiUpdateTasks.updateOrchestrationStatusActiveVnf(execution);
+    }
 
-		verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
-		assertEquals("newHeatStackId", volumeGroup.getHeatStackId());
-	}
-	@Test
-	public void updateHeatStackIdVolumeGroupToNullTest() throws Exception {
-		execution.setVariable("heatStackId", null);
-		doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+    @Test
+    public void updateOrchestrationStatusAssignVfModuleTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ASSIGNED);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedVfModule(execution);
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ASSIGNED);
+        assertEquals("", vfModule.getHeatStackId());
+    }
 
-		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
+    @Test
+    public void updateOrchestrationStatusAssignVfModuleExceptionTest() throws Exception {
+        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
+                genericVnf, OrchestrationStatus.ASSIGNED);
 
-		verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
-		assertEquals(volumeGroup.getHeatStackId(), "");
-	}
-	
-	@Test
-	public void updateHeatStackIdVolumeGroupExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
-		aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
-	}
+        expectedException.expect(BpmnError.class);
 
-	@Test
-	public void updateNetworkExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedVfModule(execution);
+    }
 
-		doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
-		
-		aaiUpdateTasks.updateNetwork(execution, OrchestrationStatus.ACTIVE);
-	}
-	
-	@Test
-	public void updateOstatusActivedNetworkCollectionTest() throws Exception {
-		doNothing().when(aaiCollectionResources).updateCollection(serviceInstance.getCollection());
-		aaiUpdateTasks.updateOrchestrationStatusActiveNetworkCollection(execution);
-		verify(aaiCollectionResources, times(1)).updateCollection(serviceInstance.getCollection());
-	}
+    @Test
+    public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleNoMultiStageTest() throws Exception {
+        execution.setVariable("aLaCarte", true);
+        ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+        modelInfoGenericVnf.setMultiStageDesign("false");
+        genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ASSIGNED);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ASSIGNED);
+        assertEquals("", vfModule.getHeatStackId());
+    }
 
-	@Test
-	public void updateOstatusActiveNetworkColectionExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiCollectionResources).updateCollection(serviceInstance.getCollection());
-		aaiUpdateTasks.updateOrchestrationStatusActiveNetworkCollection(execution);
-	}
+    @Test
+    public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleMultiStageButNotAlacarteTest()
+            throws Exception {
+        execution.setVariable("aLaCarte", false);
+        ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+        modelInfoGenericVnf.setMultiStageDesign("true");
+        genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ASSIGNED);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ASSIGNED);
+        assertEquals("", vfModule.getHeatStackId());
+    }
 
-	@Test
-	public void updateOrchestrationStatusActivateVfModuleTest() throws Exception {
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ACTIVE);
+    @Test
+    public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleWithMultiStageTest() throws Exception {
+        execution.setVariable("aLaCarte", true);
+        ModelInfoGenericVnf modelInfoGenericVnf = new ModelInfoGenericVnf();
+        modelInfoGenericVnf.setMultiStageDesign("true");
+        genericVnf.setModelInfoGenericVnf(modelInfoGenericVnf);
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.PENDING_ACTIVATION);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.PENDING_ACTIVATION);
+        assertEquals("", vfModule.getHeatStackId());
+    }
 
-		aaiUpdateTasks.updateOrchestrationStatusActivateVfModule(execution);
+    @Test
+    public void updateOrchestrationStatusAssignedOrPendingActivationVfModuleExceptionTest() throws Exception {
+        execution.setVariable("aLaCarte", true);
+        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
+                genericVnf, OrchestrationStatus.ASSIGNED);
 
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ACTIVE);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusActivateVfModuleExceptionTest() throws Exception {
-		doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ACTIVE);
-		
-		expectedException.expect(BpmnError.class);
-		
-		aaiUpdateTasks.updateOrchestrationStatusActivateVfModule(execution);
-	}
-	
-	@Test
-	public void updateNetworkCreatedTest() throws Exception {
-		CreateNetworkResponse createNetworkResponse = new CreateNetworkResponse();
-		createNetworkResponse.setNetworkFqdn("testNetworkFqdn");
-		createNetworkResponse.setNetworkStackId("testNetworkStackId");
-		HashMap<String, String> subnetMap = new HashMap<>();
-		subnetMap.put("testSubnetId", "testNeutronSubnetId");
-		createNetworkResponse.setSubnetMap(subnetMap);
-		
-		network.getSubnets().add(subnet);
-		
-		execution.setVariable("createNetworkResponse", createNetworkResponse);
-		
-		doNothing().when(aaiNetworkResources).updateNetwork(network);
-		doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+        expectedException.expect(BpmnError.class);
 
-		aaiUpdateTasks.updateNetworkCreated(execution);
-		verify(aaiNetworkResources, times(1)).updateNetwork(network);
-		verify(aaiNetworkResources, times(1)).updateSubnet(network, subnet);
-		
-		assertEquals(createNetworkResponse.getNetworkFqdn(), network.getContrailNetworkFqdn());
-		assertEquals(OrchestrationStatus.CREATED, network.getOrchestrationStatus());
-		assertEquals(createNetworkResponse.getNetworkStackId(), network.getHeatStackId());
-		assertEquals(createNetworkResponse.getNeutronNetworkId(), network.getNeutronNetworkId());
-		String neutronSubnetId = createNetworkResponse.getSubnetMap().entrySet().iterator().next().getValue();
-		assertEquals(neutronSubnetId, network.getSubnets().get(0).getNeutronSubnetId());
-	}
-	
-	@Test
-	public void updateNetworkUpdatedTest() throws Exception {
-		UpdateNetworkResponse updateNetworkResponse = new UpdateNetworkResponse();
-		updateNetworkResponse.setNeutronNetworkId("testNeutronNetworkId");
-		HashMap<String, String> subnetMap = new HashMap<>();
-		subnetMap.put("testSubnetId", "testNeutronSubnetId");
-		updateNetworkResponse.setSubnetMap(subnetMap);
-		
-		network.getSubnets().add(subnet);
-		
-		execution.setVariable("updateNetworkResponse", updateNetworkResponse);
-		
-		doNothing().when(aaiNetworkResources).updateNetwork(network);
-		doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedOrPendingActivationVfModule(execution);
+    }
 
-		aaiUpdateTasks.updateNetworkUpdated(execution);
-		verify(aaiNetworkResources, times(1)).updateNetwork(network);
-		verify(aaiNetworkResources, times(1)).updateSubnet(network, subnet);
-		
-		String neutronSubnetId = updateNetworkResponse.getSubnetMap().entrySet().iterator().next().getValue();
-		assertEquals(neutronSubnetId, network.getSubnets().get(0).getNeutronSubnetId());
-	}
+    @Test
+    public void updateOrchestrationStatusCreatedVfModuleTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CREATED);
+        aaiUpdateTasks.updateOrchestrationStatusCreatedVfModule(execution);
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CREATED);
+    }
 
-	@Test
-	public void updateOrchestrationStatusNetworkTest() {
-		AAIUpdateTasks spy = Mockito.spy(new AAIUpdateTasks());
-		doNothing().when(spy).updateNetwork(eq(execution), any());
-		spy.updateOrchestrationStatusActiveNetwork(execution);
-		verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.ACTIVE);
-		spy.updateOrchestrationStatusAssignedNetwork(execution);
-		verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.ASSIGNED);
-		spy.updateOrchestrationStatusCreatedNetwork(execution);
-		verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.CREATED);
-	}
-	
-	@Test
-	public void updateNetworkAAITest() {
-		
-		L3Network spy = spy(new L3Network());
-		L3Network shallowCopy = mock(L3Network.class);
-		Subnet mockSubnet = mock(Subnet.class);
-		Subnet shallowCopySubnet = mock(Subnet.class);
-		when(mockSubnet.shallowCopyId()).thenReturn(shallowCopySubnet);
-		doReturn(shallowCopy).when(spy).shallowCopyId();
-				
-		doNothing().when(aaiNetworkResources).updateNetwork(network);
-		doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
-		
-		spy.getSubnets().add(mockSubnet);
-		aaiUpdateTasks.updateNetworkAAI(spy, OrchestrationStatus.CREATED);
-			
-		verify(shallowCopy, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
-		verify(spy, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
-		verify(shallowCopySubnet, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
-	}
-	@Test
-	public void updateNetworkCreatedkExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
-		aaiUpdateTasks.updateNetworkCreated(execution);
-	}
-	
-	@Test
-	public void updateObjectNetworkTest() {
-		doNothing().when(aaiNetworkResources).updateNetwork(network);
-		
-		aaiUpdateTasks.updateObjectNetwork(execution);
-		
-		verify(aaiNetworkResources, times(1)).updateNetwork(network);
-	}
-	
-	@Test
-	public void updateObjectNetworkExceptionText() {
-		expectedException.expect(BpmnError.class);
-		
-		doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
-		
-		aaiUpdateTasks.updateObjectNetwork(execution);
-	}
-	
-	@Test
-	public void test_updateServiceInstance() {
-		doNothing().when(aaiServiceInstanceResources).updateServiceInstance(serviceInstance);
-		aaiUpdateTasks.updateServiceInstance(execution);
-		verify(aaiServiceInstanceResources, times(1)).updateServiceInstance(serviceInstance);
-	}
+    @Test
+    public void updateOrchestrationStatusCreatedVfModuleExceptionTest() throws Exception {
+        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
+                genericVnf, OrchestrationStatus.CREATED);
 
-	@Test
-	public void test_updateServiceInstance_exception() {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiServiceInstanceResources).updateServiceInstance(serviceInstance);
-		aaiUpdateTasks.updateServiceInstance(execution);
-	}
-	
-	@Test
-	public void updateObjectVnfTest() {
-		doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
-		
-		aaiUpdateTasks.updateObjectVnf(execution);
-		
-		verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
-	}
-	
-	@Test
-	public void updateObjectVnfExceptionTest() {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiVnfResources).updateObjectVnf(genericVnf);
-		aaiUpdateTasks.updateObjectVnf(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusDeleteVfModuleTest() throws Exception {
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
+        expectedException.expect(BpmnError.class);
 
-		aaiUpdateTasks.updateOrchestrationStatusDeleteVfModule(execution);
+        aaiUpdateTasks.updateOrchestrationStatusCreatedVfModule(execution);
+    }
 
-		verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.ASSIGNED);
-		assertEquals("", vfModule.getHeatStackId());
-	}
-	
-	@Test
-	public void updateModelVfModuleTest() {
-		doNothing().when(aaiVfModuleResources).changeAssignVfModule(vfModule, genericVnf);
-		aaiUpdateTasks.updateModelVfModule(execution);
-		verify(aaiVfModuleResources, times(1)).changeAssignVfModule(vfModule, genericVnf);
-	}
-	
-	@Test
-	public void updateModelVfModuleExceptionTest() {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(aaiVfModuleResources).changeAssignVfModule(vfModule, genericVnf);
-		aaiUpdateTasks.updateModelVfModule(execution);
-	}
-	
-	@Test
-	public void updateOrchestrationStatusDeactivateFabricConfigurationTest() throws Exception {
-		gBBInput = execution.getGeneralBuildingBlock();
-		doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ASSIGNED);
+    @Test
+    public void updateOrchestrationStatusPendingActivatefModuleTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.PENDING_ACTIVATION);
 
-		aaiUpdateTasks.updateOrchestrationStatusDeactivateFabricConfiguration(execution);
+        aaiUpdateTasks.updateOrchestrationStatusPendingActivationVfModule(execution);
 
-		verify(aaiConfigurationResources, times(1)).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ASSIGNED);
-	}
-	@Test
-	public void updateOrchestrationStatusActivateFabricConfigurationTest() throws Exception {
-		gBBInput = execution.getGeneralBuildingBlock();
-		doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.PENDING_ACTIVATION);
+    }
 
-		aaiUpdateTasks.updateOrchestrationStatusActivateFabricConfiguration(execution);
+    @Test
+    public void updateOrchestrationStatusPendingActivatefModuleExceptionTest() throws Exception {
+        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
+                genericVnf, OrchestrationStatus.PENDING_ACTIVATION);
 
-		verify(aaiConfigurationResources, times(1)).updateOrchestrationStatusConfiguration(configuration, OrchestrationStatus.ACTIVE);
-	}
-	@Test
-	public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
-		execution.setVariable("contrailServiceInstanceFqdn", "newContrailServiceInstanceFqdn");
-		doNothing().when(aaiVfModuleResources).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
+        expectedException.expect(BpmnError.class);
 
-		aaiUpdateTasks.updateContrailServiceInstanceFqdnVfModule(execution);
+        aaiUpdateTasks.updateOrchestrationStatusPendingActivationVfModule(execution);
+    }
 
-		verify(aaiVfModuleResources, times(1)).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
-		assertEquals("newContrailServiceInstanceFqdn", vfModule.getContrailServiceInstanceFqdn());
-	}
-	@Test
-	public void updateContrailServiceInstanceFqdnVfModuleNoUpdateTest() throws Exception {		
-		aaiUpdateTasks.updateContrailServiceInstanceFqdnVfModule(execution);
-		verify(aaiVfModuleResources, times(0)).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);		
-	}
-	@Test
-	public void updateIpv4OamAddressVnfTest() throws Exception {
-		execution.setVariable("oamManagementV4Address", "newIpv4OamAddress");
-		doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
+    @Test
+    public void updateOrchestrationStatusDectivateVfModuleTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CREATED);
 
-		aaiUpdateTasks.updateIpv4OamAddressVnf(execution);
+        aaiUpdateTasks.updateOrchestrationStatusDeactivateVfModule(execution);
 
-		verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
-		assertEquals("newIpv4OamAddress", genericVnf.getIpv4OamAddress());
-	}
-	@Test
-	public void updateIpv4OamAddressVnfNoUpdateTest() throws Exception {		
-		aaiUpdateTasks.updateIpv4OamAddressVnf(execution);
-		verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
-	}
-	@Test
-	public void updateManagementV6AddressVnfTest() throws Exception {
-		execution.setVariable("oamManagementV6Address", "newManagementV6Address");
-		doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CREATED);
+    }
 
-		aaiUpdateTasks.updateManagementV6AddressVnf(execution);
+    @Test
+    public void updateOrchestrationStatusDectivateVfModuleExceptionTest() throws Exception {
+        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
+                genericVnf, OrchestrationStatus.CREATED);
 
-		verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
-		assertEquals("newManagementV6Address", genericVnf.getManagementV6Address());
-	}
-	@Test
-	public void updateManagementV6AddressVnfNoUpdateTest() throws Exception {		
-		aaiUpdateTasks.updateManagementV6AddressVnf(execution);
-		verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
-	}
-		
-	@Test
-	public void updateOrchestrationStatusVnfConfigureTest() throws Exception {
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CONFIGURE);
+        expectedException.expect(BpmnError.class);
 
-		aaiUpdateTasks.updateOrchestrationStausConfigDeployConfigureVnf(execution);
-	}
-	@Test
-	public void updateOrchestrationStatusVnfConfiguredTest() throws Exception {
-		doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf, OrchestrationStatus.CONFIGURED);
+        aaiUpdateTasks.updateOrchestrationStatusDeactivateVfModule(execution);
+    }
 
-		aaiUpdateTasks.updateOrchestrationStausConfigDeployConfiguredVnf(execution);
-	}
+    @Test
+    public void updateHeatStackIdVfModuleTest() throws Exception {
+        execution.setVariable("heatStackId", "newHeatStackId");
+        doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+
+        aaiUpdateTasks.updateHeatStackIdVfModule(execution);
+
+        verify(aaiVfModuleResources, times(1)).updateHeatStackIdVfModule(vfModule, genericVnf);
+        assertEquals("newHeatStackId", vfModule.getHeatStackId());
+    }
+
+    @Test
+    public void updateHeatStackIdVfModuleToNullTest() throws Exception {
+        execution.setVariable("heatStackId", null);
+        doNothing().when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+
+        aaiUpdateTasks.updateHeatStackIdVfModule(execution);
+
+        verify(aaiVfModuleResources, times(1)).updateHeatStackIdVfModule(vfModule, genericVnf);
+        assertEquals(vfModule.getHeatStackId(), "");
+    }
+
+    @Test
+    public void updateHeatStackIdVfModuleExceptionTest() throws Exception {
+        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateHeatStackIdVfModule(vfModule, genericVnf);
+
+        expectedException.expect(BpmnError.class);
+
+        aaiUpdateTasks.updateHeatStackIdVfModule(execution);
+    }
+
+    @Test
+    public void updateOrchestrationStatusActiveVolumeGroupTest() throws Exception {
+        doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
+                OrchestrationStatus.ACTIVE);
+
+        aaiUpdateTasks.updateOrchestrationStatusActiveVolumeGroup(execution);
+
+        verify(aaiVolumeGroupResources, times(1)).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
+                OrchestrationStatus.ACTIVE);
+    }
+
+    @Test
+    public void updateOrchestrationStatusActiveVolumeGroupExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
+                cloudRegion, OrchestrationStatus.ACTIVE);
+        aaiUpdateTasks.updateOrchestrationStatusActiveVolumeGroup(execution);
+    }
+
+    @Test
+    public void updateOrchestrationStatusCreatedVolumeGroupTest() throws Exception {
+        doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
+                OrchestrationStatus.CREATED);
+
+        aaiUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(execution);
+
+        verify(aaiVolumeGroupResources, times(1)).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
+                OrchestrationStatus.CREATED);
+    }
+
+    @Test
+    public void updateOrchestrationStatusCreatedVolumeGroupExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
+                cloudRegion, OrchestrationStatus.CREATED);
+        aaiUpdateTasks.updateOrchestrationStatusCreatedVolumeGroup(execution);
+    }
+
+    @Test
+    public void test_updateOrchestrationStatusAssignedVolumeGroup() throws Exception {
+        doNothing().when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
+                OrchestrationStatus.ASSIGNED);
+
+        aaiUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(execution);
+
+        verify(aaiVolumeGroupResources, times(1)).updateOrchestrationStatusVolumeGroup(volumeGroup, cloudRegion,
+                OrchestrationStatus.ASSIGNED);
+        assertEquals("", volumeGroup.getHeatStackId());
+    }
+
+    @Test
+    public void test_updateOrchestrationStatusAssignedVolumeGroup_exception() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateOrchestrationStatusVolumeGroup(volumeGroup,
+                cloudRegion, OrchestrationStatus.ASSIGNED);
+        aaiUpdateTasks.updateOrchestrationStatusAssignedVolumeGroup(execution);
+    }
+
+    @Test
+    public void updateHeatStackIdVolumeGroupTest() throws Exception {
+        execution.setVariable("heatStackId", "newHeatStackId");
+        doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+
+        aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
+
+        verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+        assertEquals("newHeatStackId", volumeGroup.getHeatStackId());
+    }
+
+    @Test
+    public void updateHeatStackIdVolumeGroupToNullTest() throws Exception {
+        execution.setVariable("heatStackId", null);
+        doNothing().when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+
+        aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
+
+        verify(aaiVolumeGroupResources, times(1)).updateHeatStackIdVolumeGroup(volumeGroup, cloudRegion);
+        assertEquals(volumeGroup.getHeatStackId(), "");
+    }
+
+    @Test
+    public void updateHeatStackIdVolumeGroupExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiVolumeGroupResources).updateHeatStackIdVolumeGroup(volumeGroup,
+                cloudRegion);
+        aaiUpdateTasks.updateHeatStackIdVolumeGroup(execution);
+    }
+
+    @Test
+    public void updateNetworkExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+
+        doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
+
+        aaiUpdateTasks.updateNetwork(execution, OrchestrationStatus.ACTIVE);
+    }
+
+    @Test
+    public void updateOstatusActivedNetworkCollectionTest() throws Exception {
+        doNothing().when(aaiCollectionResources).updateCollection(serviceInstance.getCollection());
+        aaiUpdateTasks.updateOrchestrationStatusActiveNetworkCollection(execution);
+        verify(aaiCollectionResources, times(1)).updateCollection(serviceInstance.getCollection());
+    }
+
+    @Test
+    public void updateOstatusActiveNetworkColectionExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiCollectionResources).updateCollection(serviceInstance.getCollection());
+        aaiUpdateTasks.updateOrchestrationStatusActiveNetworkCollection(execution);
+    }
+
+    @Test
+    public void updateOrchestrationStatusActivateVfModuleTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ACTIVE);
+
+        aaiUpdateTasks.updateOrchestrationStatusActivateVfModule(execution);
+
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ACTIVE);
+    }
+
+    @Test
+    public void updateOrchestrationStatusActivateVfModuleExceptionTest() throws Exception {
+        doThrow(RuntimeException.class).when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule,
+                genericVnf, OrchestrationStatus.ACTIVE);
+
+        expectedException.expect(BpmnError.class);
+
+        aaiUpdateTasks.updateOrchestrationStatusActivateVfModule(execution);
+    }
+
+    @Test
+    public void updateNetworkCreatedTest() throws Exception {
+        CreateNetworkResponse createNetworkResponse = new CreateNetworkResponse();
+        createNetworkResponse.setNetworkFqdn("testNetworkFqdn");
+        createNetworkResponse.setNetworkStackId("testNetworkStackId");
+        HashMap<String, String> subnetMap = new HashMap<>();
+        subnetMap.put("testSubnetId", "testNeutronSubnetId");
+        createNetworkResponse.setSubnetMap(subnetMap);
+
+        network.getSubnets().add(subnet);
+
+        execution.setVariable("createNetworkResponse", createNetworkResponse);
+
+        doNothing().when(aaiNetworkResources).updateNetwork(network);
+        doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+
+        aaiUpdateTasks.updateNetworkCreated(execution);
+        verify(aaiNetworkResources, times(1)).updateNetwork(network);
+        verify(aaiNetworkResources, times(1)).updateSubnet(network, subnet);
+
+        assertEquals(createNetworkResponse.getNetworkFqdn(), network.getContrailNetworkFqdn());
+        assertEquals(OrchestrationStatus.CREATED, network.getOrchestrationStatus());
+        assertEquals(createNetworkResponse.getNetworkStackId(), network.getHeatStackId());
+        assertEquals(createNetworkResponse.getNeutronNetworkId(), network.getNeutronNetworkId());
+        String neutronSubnetId = createNetworkResponse.getSubnetMap().entrySet().iterator().next().getValue();
+        assertEquals(neutronSubnetId, network.getSubnets().get(0).getNeutronSubnetId());
+    }
+
+    @Test
+    public void updateNetworkUpdatedTest() throws Exception {
+        UpdateNetworkResponse updateNetworkResponse = new UpdateNetworkResponse();
+        updateNetworkResponse.setNeutronNetworkId("testNeutronNetworkId");
+        HashMap<String, String> subnetMap = new HashMap<>();
+        subnetMap.put("testSubnetId", "testNeutronSubnetId");
+        updateNetworkResponse.setSubnetMap(subnetMap);
+
+        network.getSubnets().add(subnet);
+
+        execution.setVariable("updateNetworkResponse", updateNetworkResponse);
+
+        doNothing().when(aaiNetworkResources).updateNetwork(network);
+        doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+
+        aaiUpdateTasks.updateNetworkUpdated(execution);
+        verify(aaiNetworkResources, times(1)).updateNetwork(network);
+        verify(aaiNetworkResources, times(1)).updateSubnet(network, subnet);
+
+        String neutronSubnetId = updateNetworkResponse.getSubnetMap().entrySet().iterator().next().getValue();
+        assertEquals(neutronSubnetId, network.getSubnets().get(0).getNeutronSubnetId());
+    }
+
+    @Test
+    public void updateOrchestrationStatusNetworkTest() {
+        AAIUpdateTasks spy = Mockito.spy(new AAIUpdateTasks());
+        doNothing().when(spy).updateNetwork(eq(execution), any());
+        spy.updateOrchestrationStatusActiveNetwork(execution);
+        verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.ACTIVE);
+        spy.updateOrchestrationStatusAssignedNetwork(execution);
+        verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.ASSIGNED);
+        spy.updateOrchestrationStatusCreatedNetwork(execution);
+        verify(spy, times(1)).updateNetwork(execution, OrchestrationStatus.CREATED);
+    }
+
+    @Test
+    public void updateNetworkAAITest() {
+
+        L3Network spy = spy(new L3Network());
+        L3Network shallowCopy = mock(L3Network.class);
+        Subnet mockSubnet = mock(Subnet.class);
+        Subnet shallowCopySubnet = mock(Subnet.class);
+        when(mockSubnet.shallowCopyId()).thenReturn(shallowCopySubnet);
+        doReturn(shallowCopy).when(spy).shallowCopyId();
+
+        doNothing().when(aaiNetworkResources).updateNetwork(network);
+        doNothing().when(aaiNetworkResources).updateSubnet(network, subnet);
+
+        spy.getSubnets().add(mockSubnet);
+        aaiUpdateTasks.updateNetworkAAI(spy, OrchestrationStatus.CREATED);
+
+        verify(shallowCopy, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
+        verify(spy, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
+        verify(shallowCopySubnet, times(1)).setOrchestrationStatus(OrchestrationStatus.CREATED);
+    }
+
+    @Test
+    public void updateNetworkCreatedkExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
+        aaiUpdateTasks.updateNetworkCreated(execution);
+    }
+
+    @Test
+    public void updateObjectNetworkTest() {
+        doNothing().when(aaiNetworkResources).updateNetwork(network);
+
+        aaiUpdateTasks.updateObjectNetwork(execution);
+
+        verify(aaiNetworkResources, times(1)).updateNetwork(network);
+    }
+
+    @Test
+    public void updateObjectNetworkExceptionText() {
+        expectedException.expect(BpmnError.class);
+
+        doThrow(RuntimeException.class).when(aaiNetworkResources).updateNetwork(network);
+
+        aaiUpdateTasks.updateObjectNetwork(execution);
+    }
+
+    @Test
+    public void test_updateServiceInstance() {
+        doNothing().when(aaiServiceInstanceResources).updateServiceInstance(serviceInstance);
+        aaiUpdateTasks.updateServiceInstance(execution);
+        verify(aaiServiceInstanceResources, times(1)).updateServiceInstance(serviceInstance);
+    }
+
+    @Test
+    public void test_updateServiceInstance_exception() {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiServiceInstanceResources).updateServiceInstance(serviceInstance);
+        aaiUpdateTasks.updateServiceInstance(execution);
+    }
+
+    @Test
+    public void updateObjectVnfTest() {
+        doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
+
+        aaiUpdateTasks.updateObjectVnf(execution);
+
+        verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
+    }
+
+    @Test
+    public void updateObjectVnfExceptionTest() {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiVnfResources).updateObjectVnf(genericVnf);
+        aaiUpdateTasks.updateObjectVnf(execution);
+    }
+
+    @Test
+    public void updateOrchestrationStatusDeleteVfModuleTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ASSIGNED);
+
+        aaiUpdateTasks.updateOrchestrationStatusDeleteVfModule(execution);
+
+        verify(aaiVfModuleResources, times(1)).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.ASSIGNED);
+        assertEquals("", vfModule.getHeatStackId());
+    }
+
+    @Test
+    public void updateModelVfModuleTest() {
+        doNothing().when(aaiVfModuleResources).changeAssignVfModule(vfModule, genericVnf);
+        aaiUpdateTasks.updateModelVfModule(execution);
+        verify(aaiVfModuleResources, times(1)).changeAssignVfModule(vfModule, genericVnf);
+    }
+
+    @Test
+    public void updateModelVfModuleExceptionTest() {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(aaiVfModuleResources).changeAssignVfModule(vfModule, genericVnf);
+        aaiUpdateTasks.updateModelVfModule(execution);
+    }
+
+    @Test
+    public void updateOrchestrationStatusDeactivateFabricConfigurationTest() throws Exception {
+        gBBInput = execution.getGeneralBuildingBlock();
+        doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
+                OrchestrationStatus.ASSIGNED);
+
+        aaiUpdateTasks.updateOrchestrationStatusDeactivateFabricConfiguration(execution);
+
+        verify(aaiConfigurationResources, times(1)).updateOrchestrationStatusConfiguration(configuration,
+                OrchestrationStatus.ASSIGNED);
+    }
+
+    @Test
+    public void updateOrchestrationStatusActivateFabricConfigurationTest() throws Exception {
+        gBBInput = execution.getGeneralBuildingBlock();
+        doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
+                OrchestrationStatus.ACTIVE);
+
+        aaiUpdateTasks.updateOrchestrationStatusActivateFabricConfiguration(execution);
+
+        verify(aaiConfigurationResources, times(1)).updateOrchestrationStatusConfiguration(configuration,
+                OrchestrationStatus.ACTIVE);
+    }
+
+    @Test
+    public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
+        execution.setVariable("contrailServiceInstanceFqdn", "newContrailServiceInstanceFqdn");
+        doNothing().when(aaiVfModuleResources).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
+
+        aaiUpdateTasks.updateContrailServiceInstanceFqdnVfModule(execution);
+
+        verify(aaiVfModuleResources, times(1)).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
+        assertEquals("newContrailServiceInstanceFqdn", vfModule.getContrailServiceInstanceFqdn());
+    }
+
+    @Test
+    public void updateContrailServiceInstanceFqdnVfModuleNoUpdateTest() throws Exception {
+        aaiUpdateTasks.updateContrailServiceInstanceFqdnVfModule(execution);
+        verify(aaiVfModuleResources, times(0)).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
+    }
+
+    @Test
+    public void updateIpv4OamAddressVnfTest() throws Exception {
+        execution.setVariable("oamManagementV4Address", "newIpv4OamAddress");
+        doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
+
+        aaiUpdateTasks.updateIpv4OamAddressVnf(execution);
+
+        verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
+        assertEquals("newIpv4OamAddress", genericVnf.getIpv4OamAddress());
+    }
+
+    @Test
+    public void updateIpv4OamAddressVnfNoUpdateTest() throws Exception {
+        aaiUpdateTasks.updateIpv4OamAddressVnf(execution);
+        verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
+    }
+
+    @Test
+    public void updateManagementV6AddressVnfTest() throws Exception {
+        execution.setVariable("oamManagementV6Address", "newManagementV6Address");
+        doNothing().when(aaiVnfResources).updateObjectVnf(genericVnf);
+
+        aaiUpdateTasks.updateManagementV6AddressVnf(execution);
+
+        verify(aaiVnfResources, times(1)).updateObjectVnf(genericVnf);
+        assertEquals("newManagementV6Address", genericVnf.getManagementV6Address());
+    }
+
+    @Test
+    public void updateManagementV6AddressVnfNoUpdateTest() throws Exception {
+        aaiUpdateTasks.updateManagementV6AddressVnf(execution);
+        verify(aaiVnfResources, times(0)).updateObjectVnf(genericVnf);
+    }
+
+    @Test
+    public void updateOrchestrationStatusVnfConfigureTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CONFIGURE);
+
+        aaiUpdateTasks.updateOrchestrationStausConfigDeployConfigureVnf(execution);
+    }
+
+    @Test
+    public void updateOrchestrationStatusVnfConfiguredTest() throws Exception {
+        doNothing().when(aaiVfModuleResources).updateOrchestrationStatusVfModule(vfModule, genericVnf,
+                OrchestrationStatus.CONFIGURED);
+
+        aaiUpdateTasks.updateOrchestrationStausConfigDeployConfiguredVnf(execution);
+    }
 }

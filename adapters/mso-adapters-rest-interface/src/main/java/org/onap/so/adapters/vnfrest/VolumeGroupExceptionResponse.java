@@ -22,24 +22,24 @@ package org.onap.so.adapters.vnfrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "volumeGroupException")
 public class VolumeGroupExceptionResponse extends VfModuleExceptionResponse {
-	// Exactly the same as a VfModuleExceptionResponse
+    // Exactly the same as a VfModuleExceptionResponse
 
-	private static final long serialVersionUID = 1168681288205898800L;
+    private static final long serialVersionUID = 1168681288205898800L;
 
-	public VolumeGroupExceptionResponse() {
-		super();
-	}
+    public VolumeGroupExceptionResponse() {
+        super();
+    }
 
-	public VolumeGroupExceptionResponse(String message) {
-		super(message);
-	}
+    public VolumeGroupExceptionResponse(String message) {
+        super(message);
+    }
 
-	public VolumeGroupExceptionResponse(String message, MsoExceptionCategory category, boolean rolledBack, String messageid) {
-		super(message, category, rolledBack, messageid);
-	}
+    public VolumeGroupExceptionResponse(String message, MsoExceptionCategory category, boolean rolledBack,
+            String messageid) {
+        super(message, category, rolledBack, messageid);
+    }
 }

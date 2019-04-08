@@ -23,61 +23,61 @@ package org.onap.so.client.graphinventory;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import org.onap.so.client.aai.AAICommonObjectMapperPatchProvider;
 import org.onap.so.client.aai.AAICommonObjectMapperProvider;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryPatchDepthExceededException;
 import org.onap.so.jsonpath.JsonPathUtil;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class GraphInventoryPatchConverter {
 
-	private static final AAICommonObjectMapperProvider standardProvider = new AAICommonObjectMapperProvider();
-	private static final AAICommonObjectMapperPatchProvider patchProvider = new AAICommonObjectMapperPatchProvider();
-	private static final Pattern LOCATE_COMPLEX_OBJECT = Pattern.compile("^((?!relationship-list).)+?\\['[^\\[\\]]+?'\\]$");
+    private static final AAICommonObjectMapperProvider standardProvider = new AAICommonObjectMapperProvider();
+    private static final AAICommonObjectMapperPatchProvider patchProvider = new AAICommonObjectMapperPatchProvider();
+    private static final Pattern LOCATE_COMPLEX_OBJECT =
+            Pattern.compile("^((?!relationship-list).)+?\\['[^\\[\\]]+?'\\]$");
 
-	
-	public String convertPatchFormat(Object obj) {
-		return validatePatchObject(marshallObjectToPatchFormat(obj));
-	}
-	
-	public String validatePatchObject(String payload) {
-		if (hasComplexObject(payload)) {
-			throw new GraphInventoryPatchDepthExceededException(payload);
-		}
-		
-		return payload;
-	}
-	
-	/** validates client side that json does not include any complex objects
-	 * relationship-list is omitted from this validation
-	 */
-	protected boolean hasComplexObject(String json) {
-		if (json.isEmpty()) {
-			return false;
-		}
-		String complex = "$.*.*";
-		String array = "$.*.*.*";
-		List<String> result = JsonPathUtil.getInstance().getPathList(json, complex);
-		List<String> result2 = JsonPathUtil.getInstance().getPathList(json, array);
-		
-		result.addAll(result2);
-		return result.stream().anyMatch(item -> LOCATE_COMPLEX_OBJECT.matcher(item).find());
-	}
-	
-	protected String marshallObjectToPatchFormat(Object obj) {
-		Object value = obj;
-		try {
-			if (!(obj instanceof Map || obj instanceof String)) {
-				value = patchProvider.getMapper().writeValueAsString(obj);
-			} else if (obj instanceof Map) {
-				value = standardProvider.getMapper().writeValueAsString(obj);
-			}
-		} catch (JsonProcessingException e) {
-			value = "{}";
-		}
-		
-		return (String)value;
-	}
+
+    public String convertPatchFormat(Object obj) {
+        return validatePatchObject(marshallObjectToPatchFormat(obj));
+    }
+
+    public String validatePatchObject(String payload) {
+        if (hasComplexObject(payload)) {
+            throw new GraphInventoryPatchDepthExceededException(payload);
+        }
+
+        return payload;
+    }
+
+    /**
+     * validates client side that json does not include any complex objects relationship-list is omitted from this
+     * validation
+     */
+    protected boolean hasComplexObject(String json) {
+        if (json.isEmpty()) {
+            return false;
+        }
+        String complex = "$.*.*";
+        String array = "$.*.*.*";
+        List<String> result = JsonPathUtil.getInstance().getPathList(json, complex);
+        List<String> result2 = JsonPathUtil.getInstance().getPathList(json, array);
+
+        result.addAll(result2);
+        return result.stream().anyMatch(item -> LOCATE_COMPLEX_OBJECT.matcher(item).find());
+    }
+
+    protected String marshallObjectToPatchFormat(Object obj) {
+        Object value = obj;
+        try {
+            if (!(obj instanceof Map || obj instanceof String)) {
+                value = patchProvider.getMapper().writeValueAsString(obj);
+            } else if (obj instanceof Map) {
+                value = standardProvider.getMapper().writeValueAsString(obj);
+            }
+        } catch (JsonProcessingException e) {
+            value = "{}";
+        }
+
+        return (String) value;
+    }
 }

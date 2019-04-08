@@ -27,62 +27,59 @@ import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-"action",
-"uri",
-"body"
-})
+@JsonPropertyOrder({"action", "uri", "body"})
 public class OperationBodyRequest {
 
-@JsonProperty("action")
-private String action;
-@JsonProperty("uri")
-private String uri;
-@JsonProperty("body")
-@JsonSerialize(using = OperationBodyRequestSerializer.class)
-private Object body;
+    @JsonProperty("action")
+    private String action;
+    @JsonProperty("uri")
+    private String uri;
+    @JsonProperty("body")
+    @JsonSerialize(using = OperationBodyRequestSerializer.class)
+    private Object body;
 
 
-public String getAction() {
-	return action;
-}
+    public String getAction() {
+        return action;
+    }
 
-public void setAction(String action) {
-	this.action = action;
-}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-public OperationBodyRequest withAction(String action) {
-	this.action = action;
-	return this;
-}
-@JsonProperty("uri")
-public String getUri() {
-return uri;
-}
+    public OperationBodyRequest withAction(String action) {
+        this.action = action;
+        return this;
+    }
 
-@JsonProperty("uri")
-public void setUri(String uri) {
-this.uri = uri;
-}
+    @JsonProperty("uri")
+    public String getUri() {
+        return uri;
+    }
 
-public OperationBodyRequest withUri(String uri) {
-this.uri = uri;
-return this;
-}
+    @JsonProperty("uri")
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
 
-@JsonProperty("body")
-public Object getBody() {
-return body;
-}
+    public OperationBodyRequest withUri(String uri) {
+        this.uri = uri;
+        return this;
+    }
 
-@JsonProperty("body")
-public void setBody(Object body) {
-this.body = body;
-}
+    @JsonProperty("body")
+    public Object getBody() {
+        return body;
+    }
 
-public OperationBodyRequest withBody(Object body) {
-this.body = body;
-return this;
-}
+    @JsonProperty("body")
+    public void setBody(Object body) {
+        this.body = body;
+    }
+
+    public OperationBodyRequest withBody(Object body) {
+        this.body = body;
+        return this;
+    }
 
 }

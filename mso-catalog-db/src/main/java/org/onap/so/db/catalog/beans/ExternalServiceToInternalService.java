@@ -21,112 +21,109 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
 @Table(name = "external_service_to_internal_model_mapping")
 public class ExternalServiceToInternalService implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3825246668050173010L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3825246668050173010L;
 
-	@Id
-	@Column(name = "Id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+    @Id
+    @Column(name = "Id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@BusinessKey
-	@Column(name = "SERVICE_NAME")
-	private String serviceName;
+    @BusinessKey
+    @Column(name = "SERVICE_NAME")
+    private String serviceName;
 
-	@BusinessKey
-	@Column(name = "PRODUCT_FLAVOR")
-	private String productFlavor;
+    @BusinessKey
+    @Column(name = "PRODUCT_FLAVOR")
+    private String productFlavor;
 
-	@BusinessKey
-	@Column(name = "SUBSCRIPTION_SERVICE_TYPE")
-	private String subscriptionServiceType;
+    @BusinessKey
+    @Column(name = "SUBSCRIPTION_SERVICE_TYPE")
+    private String subscriptionServiceType;
 
-	@BusinessKey
-	@Column(name = "SERVICE_MODEL_UUID")
-	private String serviceModelUUID;
+    @BusinessKey
+    @Column(name = "SERVICE_MODEL_UUID")
+    private String serviceModelUUID;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ExternalServiceToInternalService)) {
-			return false;
-		}
-		ExternalServiceToInternalService castOther = (ExternalServiceToInternalService) other;
-		return new EqualsBuilder().append(serviceName, castOther.serviceName)
-				.append(productFlavor, castOther.productFlavor)
-				.append(subscriptionServiceType, castOther.subscriptionServiceType)
-				.append(serviceModelUUID, castOther.serviceModelUUID).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ExternalServiceToInternalService)) {
+            return false;
+        }
+        ExternalServiceToInternalService castOther = (ExternalServiceToInternalService) other;
+        return new EqualsBuilder().append(serviceName, castOther.serviceName)
+                .append(productFlavor, castOther.productFlavor)
+                .append(subscriptionServiceType, castOther.subscriptionServiceType)
+                .append(serviceModelUUID, castOther.serviceModelUUID).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(serviceName).append(productFlavor).append(subscriptionServiceType)
-				.append(serviceModelUUID).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(serviceName).append(productFlavor).append(subscriptionServiceType)
+                .append(serviceModelUUID).toHashCode();
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("serviceName", serviceName)
-				.append("productFlavor", productFlavor).append("subscriptionServiceType", subscriptionServiceType)
-				.append("serviceModelUUID", serviceModelUUID).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("serviceName", serviceName)
+                .append("productFlavor", productFlavor).append("subscriptionServiceType", subscriptionServiceType)
+                .append("serviceModelUUID", serviceModelUUID).toString();
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getServiceName() {
-		return serviceName;
-	}
+    public String getServiceName() {
+        return serviceName;
+    }
 
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
 
-	public String getProductFlavor() {
-		return productFlavor;
-	}
+    public String getProductFlavor() {
+        return productFlavor;
+    }
 
-	public void setProductFlavor(String productFlavor) {
-		this.productFlavor = productFlavor;
-	}
+    public void setProductFlavor(String productFlavor) {
+        this.productFlavor = productFlavor;
+    }
 
-	public String getSubscriptionServiceType() {
-		return subscriptionServiceType;
-	}
+    public String getSubscriptionServiceType() {
+        return subscriptionServiceType;
+    }
 
-	public void setSubscriptionServiceType(String subscriptionServiceType) {
-		this.subscriptionServiceType = subscriptionServiceType;
-	}
+    public void setSubscriptionServiceType(String subscriptionServiceType) {
+        this.subscriptionServiceType = subscriptionServiceType;
+    }
 
-	public String getServiceModelUUID() {
-		return serviceModelUUID;
-	}
+    public String getServiceModelUUID() {
+        return serviceModelUUID;
+    }
 
-	public void setServiceModelUUID(String serviceModelUUID) {
-		this.serviceModelUUID = serviceModelUUID;
-	}
+    public void setServiceModelUUID(String serviceModelUUID) {
+        this.serviceModelUUID = serviceModelUUID;
+    }
 }

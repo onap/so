@@ -39,19 +39,24 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VnfAdapterVolumeGroupResources {
-	private static final Logger logger = LoggerFactory.getLogger(VnfAdapterVolumeGroupResources.class);
+    private static final Logger logger = LoggerFactory.getLogger(VnfAdapterVolumeGroupResources.class);
 
-	@Autowired
-	private VnfAdapterObjectMapper vnfAdapterObjectMapper;
-	
-	@Autowired
-	private VnfVolumeAdapterClientImpl vnfVolumeAdapterClient;
-	
-	public CreateVolumeGroupRequest createVolumeGroupRequest(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf, VolumeGroup volumeGroup, String sdncVfModuleQueryResponse) throws Exception {
-		return vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
-	}
-	
-	public DeleteVolumeGroupRequest deleteVolumeGroupRequest(RequestContext requestContext, CloudRegion cloudRegion, ServiceInstance serviceInstance, VolumeGroup volumeGroup) throws Exception {
-		return vnfAdapterObjectMapper.deleteVolumeGroupRequestMapper(requestContext, cloudRegion, serviceInstance, volumeGroup);		
-	}
+    @Autowired
+    private VnfAdapterObjectMapper vnfAdapterObjectMapper;
+
+    @Autowired
+    private VnfVolumeAdapterClientImpl vnfVolumeAdapterClient;
+
+    public CreateVolumeGroupRequest createVolumeGroupRequest(RequestContext requestContext, CloudRegion cloudRegion,
+            OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf,
+            VolumeGroup volumeGroup, String sdncVfModuleQueryResponse) throws Exception {
+        return vnfAdapterObjectMapper.createVolumeGroupRequestMapper(requestContext, cloudRegion, orchestrationContext,
+                serviceInstance, genericVnf, volumeGroup, sdncVfModuleQueryResponse);
+    }
+
+    public DeleteVolumeGroupRequest deleteVolumeGroupRequest(RequestContext requestContext, CloudRegion cloudRegion,
+            ServiceInstance serviceInstance, VolumeGroup volumeGroup) throws Exception {
+        return vnfAdapterObjectMapper.deleteVolumeGroupRequestMapper(requestContext, cloudRegion, serviceInstance,
+                volumeGroup);
+    }
 }

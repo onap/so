@@ -19,10 +19,10 @@
  */
 
 package org.onap.so.asdc;
+
 import ch.vorburger.exec.ManagedProcessException;
 import ch.vorburger.mariadb4j.DBConfigurationBuilder;
 import ch.vorburger.mariadb4j.springframework.MariaDB4jSpringService;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -37,17 +37,14 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration
 @Profile({"test"})
 @EnableTransactionManagement
-@EnableJpaRepositories(
-		entityManagerFactoryRef = "requestEntityManagerFactory",transactionManagerRef = "requestTransactionManager",
-		basePackages = { "org.onap.so.db.request.data.repository" }
-		)
+@EnableJpaRepositories(entityManagerFactoryRef = "requestEntityManagerFactory",
+        transactionManagerRef = "requestTransactionManager", basePackages = {"org.onap.so.db.request.data.repository"})
 public class EmbeddedRequestDbConfig {
 
     @Bean
@@ -56,47 +53,34 @@ public class EmbeddedRequestDbConfig {
     }
 
 
-   	@Bean(name = "requestDataSource")
-   	@ConfigurationProperties(prefix = "request.datasource")
+    @Bean(name = "requestDataSource")
+    @ConfigurationProperties(prefix = "request.datasource")
     DataSource dataSource(MariaDB4jSpringService mariaDB4jSpringService,
-                          @Value("${mariaDB4j.databaseName2}") String databaseName,
-                          @Value("${spring.datasource.username}") String datasourceUsername,
-                          @Value("${spring.datasource.password}") String datasourcePassword,
-                          @Value("${spring.datasource.driver-class-name}") String datasourceDriver) throws ManagedProcessException {
-        //Create our database with default root user and no password
+            @Value("${mariaDB4j.databaseName2}") String databaseName,
+            @Value("${spring.datasource.username}") String datasourceUsername,
+            @Value("${spring.datasource.password}") String datasourcePassword,
+            @Value("${spring.datasource.driver-class-name}") String datasourceDriver) throws ManagedProcessException {
+        // Create our database with default root user and no password
         mariaDB4jSpringService.getDB().createDB(databaseName);
 
         DBConfigurationBuilder config = mariaDB4jSpringService.getConfiguration();
 
-        return DataSourceBuilder
-                .create()
-                .username(datasourceUsername)
-                .password(datasourcePassword)
-                .url(config.getURL(databaseName))
-                .driverClassName(datasourceDriver)
+        return DataSourceBuilder.create().username(datasourceUsername).password(datasourcePassword)
+                .url(config.getURL(databaseName)).driverClassName(datasourceDriver).build();
+    }
+
+
+    @Bean(name = "requestEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder builder,
+            @Qualifier("requestDataSource") DataSource dataSource) {
+        return builder.dataSource(dataSource).packages("org.onap.so.db.request.beans").persistenceUnit("requestDB")
                 .build();
     }
 
 
-	@Bean(name = "requestEntityManagerFactory")
-	public LocalContainerEntityManagerFactoryBean 
-	entityManagerFactory(
-			EntityManagerFactoryBuilder builder,
-			@Qualifier("requestDataSource") DataSource dataSource
-			) {
-		return builder
-				.dataSource(dataSource)
-				.packages("org.onap.so.db.request.beans")
-				.persistenceUnit("requestDB")
-				.build();
-	}
-
-
-	@Bean(name = "requestTransactionManager")
-	public PlatformTransactionManager transactionManager(
-			@Qualifier("requestEntityManagerFactory") EntityManagerFactory 
-			entityManagerFactory
-			) {
-		return new JpaTransactionManager(entityManagerFactory);
-	}
+    @Bean(name = "requestTransactionManager")
+    public PlatformTransactionManager transactionManager(
+            @Qualifier("requestEntityManagerFactory") EntityManagerFactory entityManagerFactory) {
+        return new JpaTransactionManager(entityManagerFactory);
+    }
 }

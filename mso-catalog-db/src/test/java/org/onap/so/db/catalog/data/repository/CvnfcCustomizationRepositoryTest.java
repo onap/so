@@ -22,12 +22,10 @@ package org.onap.so.db.catalog.data.repository;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
@@ -46,162 +44,159 @@ import org.springframework.util.CollectionUtils;
 public class CvnfcCustomizationRepositoryTest extends BaseTest {
     @Autowired
     private CvnfcCustomizationRepository cvnfcCustomizationRepository;
-    
+
     @Test
     public void findAllTest() throws Exception {
         List<CvnfcCustomization> cvnfcCustomizationList = cvnfcCustomizationRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(cvnfcCustomizationList));
     }
-    
+
     @Test
     @Transactional
     public void createAndGetAllTest() throws Exception {
-    			
-    	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
-    	cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
-    	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
-    	vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
-    	
-    	VfModule vFModule = setUpVfModule();
-    	VnfResource vnfResource = setUpVnfResource();
+        CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
+        cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
-    	vFModule.setVnfResources(vnfResource);
-    	vfModuleCustomization.setVfModule(vFModule);
-    	cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
-    	
-    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
-    	vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459"); 
-    	vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
-    	
-    	List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
-    	vnfResourceCustomizations.add(vnfResourceCustomization);
-    	vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
-    	vnfResourceCustomization.setVnfResources(vnfResource);
-    	
-    	
-    	VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
-    	vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
-    	
-    	cvnfcCustomizationRepository.save(cvnfcCustomization);
-    	
-    	List<CvnfcCustomization> cvnfcCustomizationList = cvnfcCustomizationRepository.findAll();
-    	boolean matchFound = false;
-    	for (CvnfcCustomization foundCvnfcCustomization : cvnfcCustomizationList) {
-    		if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
-    	        
-    	        assertThat(cvnfcCustomization, sameBeanAs(foundCvnfcCustomization)
-    	        		.ignoring("id")
-    	        		.ignoring("created")
-    	        		.ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
-    	        		.ignoring("vnfResourceCusteModelCustomizationUUID"));
-    	        
-    	        matchFound = true;
-    	        break;
-    		}
-    	}
-    	Assert.assertTrue(matchFound);
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+
+        VfModule vFModule = setUpVfModule();
+        VnfResource vnfResource = setUpVnfResource();
+
+        vFModule.setVnfResources(vnfResource);
+        vfModuleCustomization.setVfModule(vFModule);
+        cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
+
+        VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+        vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+        vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
+
+        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
+        vnfResourceCustomizations.add(vnfResourceCustomization);
+        vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
+        vnfResourceCustomization.setVnfResources(vnfResource);
+
+
+        VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
+        vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
+
+        cvnfcCustomizationRepository.save(cvnfcCustomization);
+
+        List<CvnfcCustomization> cvnfcCustomizationList = cvnfcCustomizationRepository.findAll();
+        boolean matchFound = false;
+        for (CvnfcCustomization foundCvnfcCustomization : cvnfcCustomizationList) {
+            if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
+
+                assertThat(cvnfcCustomization,
+                        sameBeanAs(foundCvnfcCustomization).ignoring("id").ignoring("created")
+                                .ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
+                                .ignoring("vnfResourceCusteModelCustomizationUUID"));
+
+                matchFound = true;
+                break;
+            }
+        }
+        Assert.assertTrue(matchFound);
     }
-    
+
     @Test
     @Transactional
     public void createAndGetCvnfcCustomizationListTest() throws Exception {
-    			
-    	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
-    	cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
-    	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
-    	vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
-    	
-    	VfModule vFModule = setUpVfModule();
-    	VnfResource vnfResource = setUpVnfResource();
+        CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
+        cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
-    	vFModule.setVnfResources(vnfResource);
-    	vfModuleCustomization.setVfModule(vFModule);
-    	cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
-    	
-    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
-    	vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459"); 
-    	vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
-    	
-    	List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
-    	vnfResourceCustomizations.add(vnfResourceCustomization);
-    	vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
-    	vnfResourceCustomization.setVnfResources(vnfResource);
-    	
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
-    	
-    	VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
-    	vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
+        VfModule vFModule = setUpVfModule();
+        VnfResource vnfResource = setUpVnfResource();
 
-    	
+        vFModule.setVnfResources(vnfResource);
+        vfModuleCustomization.setVfModule(vFModule);
+        cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
 
-    	
-    	cvnfcCustomizationRepository.save(cvnfcCustomization);
-    	
-    	List<CvnfcCustomization> cvnfcCustomizationList = cvnfcCustomizationRepository.findByModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
-    	boolean matchFound = false;
-    	for (CvnfcCustomization foundCvnfcCustomization : cvnfcCustomizationList) {
-    		if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
-    	        
-    	        assertThat(cvnfcCustomization, sameBeanAs(foundCvnfcCustomization)
-    	        		.ignoring("id")
-    	        		.ignoring("created")
-    	        		.ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
-    	        		.ignoring("vnfResourceCusteModelCustomizationUUID"));
-    	        
-    	        matchFound = true;
-    	        break;
-    		}
-    	}
-    	Assert.assertTrue(matchFound);
+        VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+        vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+        vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
+
+        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList<>();
+        vnfResourceCustomizations.add(vnfResourceCustomization);
+        vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
+        vnfResourceCustomization.setVnfResources(vnfResource);
+
+
+
+        VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
+        vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
+
+
+
+        cvnfcCustomizationRepository.save(cvnfcCustomization);
+
+        List<CvnfcCustomization> cvnfcCustomizationList =
+                cvnfcCustomizationRepository.findByModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+        boolean matchFound = false;
+        for (CvnfcCustomization foundCvnfcCustomization : cvnfcCustomizationList) {
+            if (foundCvnfcCustomization.getDescription().equalsIgnoreCase(cvnfcCustomization.getDescription())) {
+
+                assertThat(cvnfcCustomization,
+                        sameBeanAs(foundCvnfcCustomization).ignoring("id").ignoring("created")
+                                .ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
+                                .ignoring("vnfResourceCusteModelCustomizationUUID"));
+
+                matchFound = true;
+                break;
+            }
+        }
+        Assert.assertTrue(matchFound);
     }
-    
-    
+
+
     @Test
     @Transactional
     public void createAndGetCvnfcCustomizationTest() throws Exception {
-    			
-    	CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
-    	cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
-    	VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
-    	vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
-    	
-    	VfModule vFModule = setUpVfModule();
-    	VnfResource vnfResource = setUpVnfResource();
+        CvnfcCustomization cvnfcCustomization = setUpCvnfcCustomization();
+        cvnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
-    	vFModule.setVnfResources(vnfResource);
-    	vfModuleCustomization.setVfModule(vFModule);
-    	cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
-    	
-    	VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
-    	vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459"); 
-    	vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
-    	
-    	List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
-    	vnfResourceCustomizations.add(vnfResourceCustomization);
-    	vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
-    	vnfResourceCustomization.setVnfResources(vnfResource);
-    	
-    
-    	
-    	VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
-    	vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
-    	
-    	cvnfcCustomizationRepository.save(cvnfcCustomization);
-    	
-    	CvnfcCustomization cvnfcCustomizationList = cvnfcCustomizationRepository.findOneByModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+        VfModuleCustomization vfModuleCustomization = new VfModuleCustomization();
+        vfModuleCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
 
-    	        assertThat(cvnfcCustomization, sameBeanAs(cvnfcCustomizationList)
-    	        		.ignoring("id")
-    	        		.ignoring("created")
-    	        		.ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
-    	        		.ignoring("vnfResourceCusteModelCustomizationUUID"));
+        VfModule vFModule = setUpVfModule();
+        VnfResource vnfResource = setUpVnfResource();
+
+        vFModule.setVnfResources(vnfResource);
+        vfModuleCustomization.setVfModule(vFModule);
+        cvnfcCustomization.setVfModuleCustomization(vfModuleCustomization);
+
+        VnfResourceCustomization vnfResourceCustomization = new VnfResourceCustomization();
+        vnfResourceCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+        vnfResourceCustomization.setModelInstanceName("testModelInstanceName");
+
+        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
+        vnfResourceCustomizations.add(vnfResourceCustomization);
+        vnfResource.setVnfResourceCustomizations(vnfResourceCustomizations);
+        vnfResourceCustomization.setVnfResources(vnfResource);
+
+
+
+        VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
+        vnfcCustomization.setModelCustomizationUUID("d95d704a-9ff2-11e8-98d0-529269fb1459");
+
+        cvnfcCustomizationRepository.save(cvnfcCustomization);
+
+        CvnfcCustomization cvnfcCustomizationList =
+                cvnfcCustomizationRepository.findOneByModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+
+        assertThat(cvnfcCustomization,
+                sameBeanAs(cvnfcCustomizationList).ignoring("id").ignoring("created")
+                        .ignoring("vnfVfmoduleCvnfcConfigurationCustomization")
+                        .ignoring("vnfResourceCusteModelCustomizationUUID"));
 
     }
-    
- 
-    
-  
+
+
+
 }

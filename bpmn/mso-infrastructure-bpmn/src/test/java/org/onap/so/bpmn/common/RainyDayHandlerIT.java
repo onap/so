@@ -16,16 +16,14 @@
  * See the License for the specific language governing permissions and 
  * limitations under the License. 
  * ============LICENSE_END========================================================= 
- */ 
+ */
 
 package org.onap.so.bpmn.common;
 
 import static org.onap.so.bpmn.mock.StubResponsePolicy.MockPolicyAbort;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
@@ -35,35 +33,35 @@ import org.onap.so.BaseIntegrationTest;
  */
 
 public class RainyDayHandlerIT extends BaseIntegrationTest {
-	
-	@Test	
-	
-	public void  TestRainyDayHandlingSuccess() {
 
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("isDebugLogEnabled","true");
-		variables.put("msoRequestId", "testRequestId");
-		variables.put("serviceType", "X");
-		variables.put("vnfType", "Y");
-		variables.put("currentActivity", "BB1");		
-		variables.put("workStep", "1");
-		variables.put("failedActivity", "");
-		variables.put("errorCode", "123");
-		variables.put("errorText", "update failed");
-		variables.put("vnfName", "vSAMP1");
-		
-		MockPolicyAbort(wireMockServer);
-		
-		
-		String businessKey = UUID.randomUUID().toString();
-		invokeSubProcess("RainyDayHandler", businessKey, variables);
+    @Test
 
-		waitForProcessEnd(businessKey, 10000);
+    public void TestRainyDayHandlingSuccess() {
 
-		Assert.assertTrue(isProcessEnded(businessKey));
-		
-	}
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("msoRequestId", "testRequestId");
+        variables.put("serviceType", "X");
+        variables.put("vnfType", "Y");
+        variables.put("currentActivity", "BB1");
+        variables.put("workStep", "1");
+        variables.put("failedActivity", "");
+        variables.put("errorCode", "123");
+        variables.put("errorText", "update failed");
+        variables.put("vnfName", "vSAMP1");
 
-	
-	
+        MockPolicyAbort(wireMockServer);
+
+
+        String businessKey = UUID.randomUUID().toString();
+        invokeSubProcess("RainyDayHandler", businessKey, variables);
+
+        waitForProcessEnd(businessKey, 10000);
+
+        Assert.assertTrue(isProcessEnded(businessKey));
+
+    }
+
+
+
 }

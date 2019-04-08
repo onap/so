@@ -24,7 +24,6 @@ package org.onap.so.bpmn.common;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-
 import org.camunda.bpm.application.PostDeploy;
 import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
@@ -48,54 +47,52 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @SpringBootApplication
 @EnableAsync
-@ComponentScan(basePackages = { "org.onap" }, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class, excludeFilters = {
-				@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
+@ComponentScan(basePackages = {"org.onap"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class,
+        excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
 public class MSOCommonApplication {
 
-	private static final Logger logger = LoggerFactory.getLogger(MSOCommonApplication.class);
+    private static final Logger logger = LoggerFactory.getLogger(MSOCommonApplication.class);
 
-	@Value("${mso.async.core-pool-size}")
-	private int corePoolSize;
+    @Value("${mso.async.core-pool-size}")
+    private int corePoolSize;
 
-	@Value("${mso.async.max-pool-size}")
-	private int maxPoolSize;
+    @Value("${mso.async.max-pool-size}")
+    private int maxPoolSize;
 
-	@Value("${mso.async.queue-capacity}")
-	private int queueCapacity;
+    @Value("${mso.async.queue-capacity}")
+    private int queueCapacity;
 
-	private static final String LOGS_DIR = "logs_dir";
+    private static final String LOGS_DIR = "logs_dir";
 
 
-	private static void setLogsDir() {
-		if (System.getProperty(LOGS_DIR) == null) {
-			System.getProperties().setProperty(LOGS_DIR, "./logs/bpmn/");
-		}
-	}
+    private static void setLogsDir() {
+        if (System.getProperty(LOGS_DIR) == null) {
+            System.getProperties().setProperty(LOGS_DIR, "./logs/bpmn/");
+        }
+    }
 
-	public static void main(String... args) {
-		SpringApplication.run(MSOCommonApplication.class, args);
-		System.getProperties().setProperty("mso.config.path", ".");
-		setLogsDir();
-	}
+    public static void main(String... args) {
+        SpringApplication.run(MSOCommonApplication.class, args);
+        System.getProperties().setProperty("mso.config.path", ".");
+        setLogsDir();
+    }
 
-	@PostDeploy
-	public void postDeploy(ProcessEngine processEngineInstance) {
-	}
+    @PostDeploy
+    public void postDeploy(ProcessEngine processEngineInstance) {}
 
-	@PreUndeploy
-	public void cleanup(ProcessEngine processEngine, ProcessApplicationInfo processApplicationInfo,
-			List<ProcessEngine> processEngines) {
-	}
+    @PreUndeploy
+    public void cleanup(ProcessEngine processEngine, ProcessApplicationInfo processApplicationInfo,
+            List<ProcessEngine> processEngines) {}
 
-	@Bean
-	public Executor asyncExecutor() {
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+    @Bean
+    public Executor asyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 
-		executor.setCorePoolSize(corePoolSize);
-		executor.setMaxPoolSize(maxPoolSize);
-		executor.setQueueCapacity(queueCapacity);
-		executor.setThreadNamePrefix("Camunda-");
-		executor.initialize();
-		return executor;
-	}
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
+        executor.setThreadNamePrefix("Camunda-");
+        executor.initialize();
+        return executor;
+    }
 }

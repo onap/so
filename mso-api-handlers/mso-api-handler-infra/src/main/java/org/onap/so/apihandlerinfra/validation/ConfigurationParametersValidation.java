@@ -23,27 +23,28 @@ package org.onap.so.apihandlerinfra.validation;
 
 import java.util.List;
 import java.util.Map;
-
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.Actions;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
 
-public class ConfigurationParametersValidation implements ValidationRule{
+public class ConfigurationParametersValidation implements ValidationRule {
     private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-    	ServiceInstancesRequest sir = info.getSir();
-		List<Map<String, String>> configParams = sir.getRequestDetails().getConfigurationParameters();
-		String requestScope = info.getRequestScope();
-		Actions action = info.getAction();
-		
-		if(configParams.isEmpty() && requestScope.equalsIgnoreCase(ModelType.vfModule.name()) && action == Action.scaleOut){
-			throw new ValidationException("configuration parameters");
-		}
+
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        ServiceInstancesRequest sir = info.getSir();
+        List<Map<String, String>> configParams = sir.getRequestDetails().getConfigurationParameters();
+        String requestScope = info.getRequestScope();
+        Actions action = info.getAction();
+
+        if (configParams.isEmpty() && requestScope.equalsIgnoreCase(ModelType.vfModule.name())
+                && action == Action.scaleOut) {
+            throw new ValidationException("configuration parameters");
+        }
         return info;
-	}
+    }
 }

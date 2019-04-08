@@ -24,39 +24,39 @@ package org.onap.so.asdc.installer;
 import java.math.BigDecimal;
 
 public class BigDecimalVersion {
-	  
-	/**
+
+    /**
      * This method truncates and convert the version String provided in the notification.
      * 
      * @param version The version to check
      * @return A BigDecimal value checked and truncated
      */
     public static BigDecimal castAndCheckNotificationVersion(String version) {
-    	// Truncate the version if bad type
-    	String[] splitVersion = version.split("\\.");
-    	StringBuilder newVersion = new StringBuilder();
-    	if (splitVersion.length > 1) {
-	    	newVersion.append(splitVersion[0]);
-	    	newVersion.append(".");
-	    	newVersion.append(splitVersion[1]);
-    	} else {
-    		return new BigDecimal(splitVersion[0]);
-    	}
-    	
-    	for (int i=2;i<splitVersion.length;i++) {
-    		newVersion.append(splitVersion[i]);
-    	}
-    	
-    	return new BigDecimal(newVersion.toString());
+        // Truncate the version if bad type
+        String[] splitVersion = version.split("\\.");
+        StringBuilder newVersion = new StringBuilder();
+        if (splitVersion.length > 1) {
+            newVersion.append(splitVersion[0]);
+            newVersion.append(".");
+            newVersion.append(splitVersion[1]);
+        } else {
+            return new BigDecimal(splitVersion[0]);
+        }
+
+        for (int i = 2; i < splitVersion.length; i++) {
+            newVersion.append(splitVersion[i]);
+        }
+
+        return new BigDecimal(newVersion.toString());
     }
-    
+
     /**
      * This method truncates and convert the version String provided in the notification.
      * 
      * @param version The version to check
      * @return A String value checked and truncated to Decimal format
      */
-    public static String castAndCheckNotificationVersionToString (String version) {
-    	return castAndCheckNotificationVersion(version).toString();
+    public static String castAndCheckNotificationVersionToString(String version) {
+        return castAndCheckNotificationVersion(version).toString();
     }
 }

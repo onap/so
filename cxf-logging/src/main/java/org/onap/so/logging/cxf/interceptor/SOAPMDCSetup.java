@@ -35,18 +35,18 @@ import org.slf4j.MDC;
 
 
 public class SOAPMDCSetup {
-    
-    protected static Logger logger = LoggerFactory.getLogger(SOAPMDCSetup.class); 
-    
+
+    protected static Logger logger = LoggerFactory.getLogger(SOAPMDCSetup.class);
+
     private static final String INSTANCE_UUID = UUID.randomUUID().toString();
-    
-    public void setInstanceUUID(){
+
+    public void setInstanceUUID() {
         MDC.put(ONAPLogConstants.MDCs.INSTANCE_UUID, INSTANCE_UUID);
     }
 
-    public void setServerFQDN(){
+    public void setServerFQDN() {
         String serverFQDN = "";
-        InetAddress addr= null;
+        InetAddress addr = null;
         try {
             addr = InetAddress.getLocalHost();
             serverFQDN = addr.toString();
@@ -57,17 +57,18 @@ public class SOAPMDCSetup {
         MDC.put(ONAPLogConstants.MDCs.SERVER_FQDN, serverFQDN);
     }
 
-    public void setClientIPAddress(HttpServletRequest httpServletRequest){
+    public void setClientIPAddress(HttpServletRequest httpServletRequest) {
         String remoteIpAddress = "";
         if (httpServletRequest != null) {
             remoteIpAddress = httpServletRequest.getRemoteAddr();
-        } 
+        }
         MDC.put(ONAPLogConstants.MDCs.CLIENT_IP_ADDRESS, remoteIpAddress);
     }
 
     public void setEntryTimeStamp() {
-        MDC.put(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP,ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
+        MDC.put(ONAPLogConstants.MDCs.ENTRY_TIMESTAMP,
+                ZonedDateTime.now(ZoneOffset.UTC).format(DateTimeFormatter.ISO_INSTANT));
     }
-    
-   
+
+
 }

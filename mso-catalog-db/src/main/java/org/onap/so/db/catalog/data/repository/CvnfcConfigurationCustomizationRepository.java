@@ -24,7 +24,9 @@ import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "cvnfcConfigurationCustomization", path = "cvnfcConfigurationCustomization")
-public interface CvnfcConfigurationCustomizationRepository extends JpaRepository<CvnfcConfigurationCustomization, Integer> {
+@RepositoryRestResource(collectionResourceRel = "cvnfcConfigurationCustomization",
+        path = "cvnfcConfigurationCustomization")
+public interface CvnfcConfigurationCustomizationRepository
+        extends JpaRepository<CvnfcConfigurationCustomization, Integer> {
 
 }

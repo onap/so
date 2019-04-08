@@ -27,19 +27,18 @@ package org.onap.so.openstack.exceptions;
  * 
  *
  */
-public class MsoAdapterException extends MsoException
-{
-	private static final long serialVersionUID = 1L;
-	
-	// Constructor to create a new MsoException instance
-	public MsoAdapterException (String message) {
-		super(message);
-		super.category = MsoExceptionCategory.INTERNAL;
-	}
+public class MsoAdapterException extends MsoException {
+    private static final long serialVersionUID = 1L;
 
-	// Constructor to wrap a nested exception
-	public MsoAdapterException (String message, Throwable t) {
-		super(message, t);
-		super.category = MsoExceptionCategory.INTERNAL;
-	}
+    // Constructor to create a new MsoException instance
+    public MsoAdapterException(String message) {
+        super(message);
+        super.category = MsoExceptionCategory.INTERNAL;
+    }
+
+    // Constructor to wrap a nested exception
+    public MsoAdapterException(String message, Throwable t) {
+        super(message, t);
+        super.category = MsoExceptionCategory.INTERNAL;
+    }
 }

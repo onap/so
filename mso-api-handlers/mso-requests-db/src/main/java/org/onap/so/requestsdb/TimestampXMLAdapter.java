@@ -22,21 +22,20 @@ package org.onap.so.requestsdb;
 
 
 import java.sql.Timestamp;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class TimestampXMLAdapter extends XmlAdapter <Long, Timestamp> {
+public class TimestampXMLAdapter extends XmlAdapter<Long, Timestamp> {
 
     @Override
-    public Long marshal (Timestamp v) throws Exception {
-        return v.getTime ();
+    public Long marshal(Timestamp v) throws Exception {
+        return v.getTime();
     }
 
     @Override
-    public Timestamp unmarshal (Long v) throws Exception {
+    public Timestamp unmarshal(Long v) throws Exception {
         if (v == null) {
             return new Timestamp(0);
         }
-        return new Timestamp (v);
+        return new Timestamp(v);
     }
 }

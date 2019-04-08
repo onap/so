@@ -23,10 +23,10 @@ package org.onap.so.client.aai;
 import java.io.IOException;
 
 public interface AAIValidator {
-	
-	boolean isPhysicalServerLocked(String hostName) throws IOException;
-	
-	boolean isVNFLocked(String vnfId);
-	
+
+    boolean isPhysicalServerLocked(String hostName) throws IOException;
+
+    boolean isVNFLocked(String vnfId);
+
 
 }

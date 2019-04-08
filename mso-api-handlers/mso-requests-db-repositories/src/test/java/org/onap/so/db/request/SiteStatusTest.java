@@ -22,9 +22,7 @@ package org.onap.so.db.request;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import javax.transaction.Transactional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -45,47 +43,45 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = TestApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class SiteStatusTest {
-	
-	@Autowired
-	private SiteStatusRepository repository;
-	
-	@Test	
-	@Transactional
-	public void timeStampCreated() throws InterruptedException, NoEntityFoundException {
-		SiteStatus found = repository.findById("test name4").
-				orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));	
-		
-		assertNotNull(found.getCreated());
-		assertEquals("test name4", found.getSiteName());		
-	}
-	
-	@Test
-	public void sortByCreated() {
-		
-		final PageRequest page1 = new PageRequest(
-				  0, 20, Direction.DESC, "created"
-				);
-		
-		SiteStatus example = new SiteStatus();
-		example.setStatus(true);
-		Page<SiteStatus> found = repository.findAll(Example.of(example), page1);
-		
-		assertEquals("test name4", found.getContent().get(0).getSiteName());
-		
-	}
-	
-	@Test
-	public void updateStatus() throws NoEntityFoundException {
-		
-		SiteStatus status = repository.findById("test name update").
-				orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));	
-		status.setStatus(false);
-		
-		repository.saveAndFlush(status);
-		status = repository.findById("test name update").
-				orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));	
-		assertEquals(false, status.getStatus());
-		
-	}
-	
+
+    @Autowired
+    private SiteStatusRepository repository;
+
+    @Test
+    @Transactional
+    public void timeStampCreated() throws InterruptedException, NoEntityFoundException {
+        SiteStatus found =
+                repository.findById("test name4").orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));
+
+        assertNotNull(found.getCreated());
+        assertEquals("test name4", found.getSiteName());
+    }
+
+    @Test
+    public void sortByCreated() {
+
+        final PageRequest page1 = new PageRequest(0, 20, Direction.DESC, "created");
+
+        SiteStatus example = new SiteStatus();
+        example.setStatus(true);
+        Page<SiteStatus> found = repository.findAll(Example.of(example), page1);
+
+        assertEquals("test name4", found.getContent().get(0).getSiteName());
+
+    }
+
+    @Test
+    public void updateStatus() throws NoEntityFoundException {
+
+        SiteStatus status = repository.findById("test name update")
+                .orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));
+        status.setStatus(false);
+
+        repository.saveAndFlush(status);
+        status = repository.findById("test name update")
+                .orElseThrow(() -> new NoEntityFoundException("Cannot Find Site"));
+        assertEquals(false, status.getStatus());
+
+    }
+
 }

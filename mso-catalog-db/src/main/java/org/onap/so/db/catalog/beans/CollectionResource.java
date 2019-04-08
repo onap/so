@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -34,148 +33,145 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "collection_resource")
 public class CollectionResource implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8612818857960992110L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8612818857960992110L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_UUID")
-	private String modelUUID;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_UUID")
+    private String modelUUID;
 
-	@Column(name = "MODEL_NAME")
-	private String modelName;
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	@Column(name = "MODEL_INVARIANT_UUID")
-	private String modelInvariantUUID;
+    @Column(name = "MODEL_INVARIANT_UUID")
+    private String modelInvariantUUID;
 
-	@Column(name = "MODEL_VERSION")
-	private String modelVersion;
+    @Column(name = "MODEL_VERSION")
+    private String modelVersion;
 
-	@Column(name = "TOSCA_NODE_TYPE")
-	private String toscaNodeType;
+    @Column(name = "TOSCA_NODE_TYPE")
+    private String toscaNodeType;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "collectionResource")
-	private Set<CollectionResourceCustomization> collectionResourceCustomization;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "collectionResource")
+    private Set<CollectionResourceCustomization> collectionResourceCustomization;
 
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "collectionResource")
-	private InstanceGroup instanceGroup;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "collectionResource")
+    private InstanceGroup instanceGroup;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof CollectionResource)) {
-			return false;
-		}
-		CollectionResource castOther = (CollectionResource) other;
-		return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof CollectionResource)) {
+            return false;
+        }
+        CollectionResource castOther = (CollectionResource) other;
+        return new EqualsBuilder().append(modelUUID, castOther.modelUUID).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelUUID).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelUUID).toHashCode();
+    }
 
-	public Set<CollectionResourceCustomization> getCollectionResourceCustomization() {
-		return collectionResourceCustomization;
-	}
+    public Set<CollectionResourceCustomization> getCollectionResourceCustomization() {
+        return collectionResourceCustomization;
+    }
 
-	public void setCollectionResourceCustomization(
-			Set<CollectionResourceCustomization> collectionResourceCustomization) {
-		this.collectionResourceCustomization = collectionResourceCustomization;
-	}
+    public void setCollectionResourceCustomization(
+            Set<CollectionResourceCustomization> collectionResourceCustomization) {
+        this.collectionResourceCustomization = collectionResourceCustomization;
+    }
 
-	public String getModelUUID() {
-		return modelUUID;
-	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
 
-	public Date getCreated() {
-		return this.created;
-	}
+    public Date getCreated() {
+        return this.created;
+    }
 
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	public String getModelName() {
-		return modelName;
-	}
+    public String getModelName() {
+        return modelName;
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
 
-	public String getModelInvariantUUID() {
-		return modelInvariantUUID;
-	}
+    public String getModelInvariantUUID() {
+        return modelInvariantUUID;
+    }
 
-	public void setModelInvariantUUID(String modelInvariantUUID) {
-		this.modelInvariantUUID = modelInvariantUUID;
-	}
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
 
-	public String getModelVersion() {
-		return modelVersion;
-	}
+    public String getModelVersion() {
+        return modelVersion;
+    }
 
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
+    }
 
-	public String getToscaNodeType() {
-		return toscaNodeType;
-	}
+    public String getToscaNodeType() {
+        return toscaNodeType;
+    }
 
-	public void setToscaNodeType(String toscaNodeType) {
-		this.toscaNodeType = toscaNodeType;
-	}
+    public void setToscaNodeType(String toscaNodeType) {
+        this.toscaNodeType = toscaNodeType;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	@LinkedResource
-	public InstanceGroup getInstanceGroup() {
-		return instanceGroup;
-	}
+    @LinkedResource
+    public InstanceGroup getInstanceGroup() {
+        return instanceGroup;
+    }
 
-	public void setInstanceGroup(InstanceGroup instanceGroup) {
-		this.instanceGroup = instanceGroup;
-	}
+    public void setInstanceGroup(InstanceGroup instanceGroup) {
+        this.instanceGroup = instanceGroup;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelName", modelName)
-				.append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
-				.append("toscaNodeType", toscaNodeType).append("description", description).append("created", created)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelUUID", modelUUID).append("modelName", modelName)
+                .append("modelInvariantUUID", modelInvariantUUID).append("modelVersion", modelVersion)
+                .append("toscaNodeType", toscaNodeType).append("description", description).append("created", created)
+                .toString();
+    }
 }

@@ -40,12 +40,8 @@ public final class DeploymentInfo {
     private final String actionStatus;
     private final String errorMessage;
 
-    DeploymentInfo(String id, DeploymentStatus deploymentStatus,
-        Map<String, Object> deploymentOutputs,
-        Map<String, Object> deploymentInputs,
-        String lastAction,
-        String actionStatus,
-        String errorMessage) {
+    DeploymentInfo(String id, DeploymentStatus deploymentStatus, Map<String, Object> deploymentOutputs,
+            Map<String, Object> deploymentInputs, String lastAction, String actionStatus, String errorMessage) {
 
         this.id = id;
         this.status = deploymentStatus;
@@ -86,14 +82,9 @@ public final class DeploymentInfo {
 
     @Override
     public String toString() {
-        return "DeploymentInfo {" +
-            "id='" + id + '\'' +
-            ", inputs='" + inputs + '\'' +
-            ", outputs='" + outputs + '\'' +
-            ", lastAction='" + lastAction + '\'' +
-            ", status='" + status + '\'' +
-            ", errorMessage='" + errorMessage + '\'' +
-            '}';
+        return "DeploymentInfo {" + "id='" + id + '\'' + ", inputs='" + inputs + '\'' + ", outputs='" + outputs + '\''
+                + ", lastAction='" + lastAction + '\'' + ", status='" + status + '\'' + ", errorMessage='"
+                + errorMessage + '\'' + '}';
     }
 
 }

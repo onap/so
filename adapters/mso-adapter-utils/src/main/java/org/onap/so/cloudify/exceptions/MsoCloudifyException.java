@@ -26,61 +26,63 @@ import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 /**
  * OpenStack exception.
  */
-public class MsoCloudifyException extends MsoException
-{
-	
-	/**
+public class MsoCloudifyException extends MsoException {
+
+    /**
      * Serialization id.
      */
     private static final long serialVersionUID = 3313636124141766495L;
-    
-    private int statusCode;
-	private String statusMessage;
-	private String errorDetail;
-	private boolean pendingWorkflow;
 
-	/**
-	 * Constructor to create a new MsoOpenstackException instance
-	 * @param code the error code
-	 * @param message the error message
-	 * @param detail error details
-	 */
-	public MsoCloudifyException (int code, String message, String detail) {
-		// Set the detailed error as the Exception 'message'
-		super(detail);
-		super.category = MsoExceptionCategory.OPENSTACK;
-		
-		this.statusCode = code;
-		this.statusMessage = message;
-		this.errorDetail = detail;
-		this.pendingWorkflow = false;
-	}
-	
-	/**
-	 * Constructor to propagate the caught exception (mostly for stack trace)
+    private int statusCode;
+    private String statusMessage;
+    private String errorDetail;
+    private boolean pendingWorkflow;
+
+    /**
+     * Constructor to create a new MsoOpenstackException instance
+     * 
      * @param code the error code
      * @param message the error message
      * @param detail error details
-	 * @param e the cause
-	 */
-	public MsoCloudifyException (int code, String message, String detail, Exception e) {
-		// Set the detailed error as the Exception 'message'
-		super(detail, e);
-		super.category = MsoExceptionCategory.OPENSTACK;
-		
-		this.statusCode = code;
-		this.statusMessage = message;
-		this.errorDetail = detail;
-		this.pendingWorkflow = false;
-	}
-	
-	public void setPendingWorkflow (boolean pendingWorkflow) {
-		this.pendingWorkflow = pendingWorkflow;
-	}
-	
-	@Override
-	public String toString () {
-		String error = "" + statusCode + " " + statusMessage + ": " + errorDetail + (pendingWorkflow ? " [workflow pending]" : "");
-		return error;
-	}
+     */
+    public MsoCloudifyException(int code, String message, String detail) {
+        // Set the detailed error as the Exception 'message'
+        super(detail);
+        super.category = MsoExceptionCategory.OPENSTACK;
+
+        this.statusCode = code;
+        this.statusMessage = message;
+        this.errorDetail = detail;
+        this.pendingWorkflow = false;
+    }
+
+    /**
+     * Constructor to propagate the caught exception (mostly for stack trace)
+     * 
+     * @param code the error code
+     * @param message the error message
+     * @param detail error details
+     * @param e the cause
+     */
+    public MsoCloudifyException(int code, String message, String detail, Exception e) {
+        // Set the detailed error as the Exception 'message'
+        super(detail, e);
+        super.category = MsoExceptionCategory.OPENSTACK;
+
+        this.statusCode = code;
+        this.statusMessage = message;
+        this.errorDetail = detail;
+        this.pendingWorkflow = false;
+    }
+
+    public void setPendingWorkflow(boolean pendingWorkflow) {
+        this.pendingWorkflow = pendingWorkflow;
+    }
+
+    @Override
+    public String toString() {
+        String error = "" + statusCode + " " + statusMessage + ": " + errorDetail
+                + (pendingWorkflow ? " [workflow pending]" : "");
+        return error;
+    }
 }

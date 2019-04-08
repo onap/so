@@ -19,11 +19,10 @@
  */
 
 package org.onap.so.apihandler.common;
- 
+
 public final class ErrorNumbers {
 
-    private ErrorNumbers() {
-    }
+    private ErrorNumbers() {}
 
     public static final String REQUEST_FAILED_SCHEMA_VALIDATION = "1000";
     public static final String RECIPE_DOES_NOT_EXIST = "1010";
@@ -48,7 +47,7 @@ public final class ErrorNumbers {
 
     public static final String DISCONNECT_ALREADY_COMPLETE = "1100";
     public static final String CANCEL_ALREADY_COMPLETE = "1110";
-    
+
     public static final String LOCKED_CREATE_ON_THE_SAME_VNF_NAME_IN_PROGRESS = "1400";
     public static final String LOCKED_SAME_ACTION_AND_VNF_ID = "1410";
 
@@ -68,7 +67,7 @@ public final class ErrorNumbers {
     public static final String NO_COMMUNICATION_TO_SDNC_ADAPTER = "7000";
     public static final String NO_RESPONSE_FROM_SDNC_ADAPTER = "7010";
     public static final String ERROR_FROM_SDNC_ADAPTER = "7020";
-    
+
     public static final String SVC_GENERAL_SERVICE_ERROR = "SVC0001";
     public static final String SVC_BAD_PARAMETER = "SVC0002";
     public static final String SVC_NO_SERVER_RESOURCES = "SVC1000";

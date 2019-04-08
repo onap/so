@@ -23,7 +23,6 @@
 package org.onap.so.client.sniro;
 
 import java.util.LinkedHashMap;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.onap.so.bpmn.common.baseclient.BaseClient;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
@@ -38,82 +37,83 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 @Component
 public class SniroClient {
 
-	private static final Logger logger = LoggerFactory.getLogger(SniroClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(SniroClient.class);
 
-	@Autowired
-	private ManagerProperties managerProperties;
+    @Autowired
+    private ManagerProperties managerProperties;
 
-	@Autowired
-	private SniroValidator validator;
+    @Autowired
+    private SniroValidator validator;
 
 
-	/**
-	 * Makes a rest call to sniro manager to perform homing and licensing for a
-	 * list of demands
-	 *
-	 * @param homingRequest
-	 * @return
-	 * @throws JsonProcessingException
-	 * @throws BpmnError
-	 */
-	public void postDemands(SniroManagerRequest homingRequest) throws BadResponseException, JsonProcessingException{
-		logger.trace("Started Sniro Client Post Demands");
-		String url = managerProperties.getHost() + managerProperties.getUri().get("v2");
-		logger.debug("Post demands url: {}", url);
-		logger.debug("Post demands payload: {}", homingRequest.toJsonString());
+    /**
+     * Makes a rest call to sniro manager to perform homing and licensing for a list of demands
+     *
+     * @param homingRequest
+     * @return
+     * @throws JsonProcessingException
+     * @throws BpmnError
+     */
+    public void postDemands(SniroManagerRequest homingRequest) throws BadResponseException, JsonProcessingException {
+        logger.trace("Started Sniro Client Post Demands");
+        String url = managerProperties.getHost() + managerProperties.getUri().get("v2");
+        logger.debug("Post demands url: {}", url);
+        logger.debug("Post demands payload: {}", homingRequest.toJsonString());
 
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.APPLICATION_JSON);
-		header.set("Authorization", managerProperties.getHeaders().get("auth"));
-		header.set("X-patchVersion", managerProperties.getHeaders().get("patchVersion"));
-		header.set("X-minorVersion", managerProperties.getHeaders().get("minorVersion"));
-		header.set("X-latestVersion", managerProperties.getHeaders().get("latestVersion"));
-		BaseClient<String, LinkedHashMap<String, Object>> baseClient = new BaseClient<>();
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        header.set("Authorization", managerProperties.getHeaders().get("auth"));
+        header.set("X-patchVersion", managerProperties.getHeaders().get("patchVersion"));
+        header.set("X-minorVersion", managerProperties.getHeaders().get("minorVersion"));
+        header.set("X-latestVersion", managerProperties.getHeaders().get("latestVersion"));
+        BaseClient<String, LinkedHashMap<String, Object>> baseClient = new BaseClient<>();
 
-		baseClient.setTargetUrl(url);
-		baseClient.setHttpHeader(header);
+        baseClient.setTargetUrl(url);
+        baseClient.setHttpHeader(header);
 
-		LinkedHashMap<String, Object> response = baseClient.post(homingRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
-		validator.validateDemandsResponse(response);
-		logger.trace("Completed Sniro Client Post Demands");
-	}
+        LinkedHashMap<String, Object> response = baseClient.post(homingRequest.toJsonString(),
+                new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
+        validator.validateDemandsResponse(response);
+        logger.trace("Completed Sniro Client Post Demands");
+    }
 
-	/**
-	 * Makes a rest call to sniro conductor to notify them of successful or unsuccessful vnf
-	 * creation for previously homed resources
-	 *
-	 * TODO Temporarily being used in groovy therefore can not utilize autowire. Once java "release"
-	 * subflow is developed it will be refactored to use autowire.
-	 *
-	 * @param releaseRequest
-	 * @return
-	 * @throws BadResponseException
-	 */
-	public void postRelease(SniroConductorRequest releaseRequest) throws BadResponseException {
-		logger.trace("Started Sniro Client Post Release");
-		String url = UrnPropertiesReader.getVariable("sniro.conductor.host") + UrnPropertiesReader.getVariable("sniro.conductor.uri");
-		logger.debug("Post release url: {}", url);
-		logger.debug("Post release payload: {}", releaseRequest.toJsonString());
+    /**
+     * Makes a rest call to sniro conductor to notify them of successful or unsuccessful vnf creation for previously
+     * homed resources
+     *
+     * TODO Temporarily being used in groovy therefore can not utilize autowire. Once java "release" subflow is
+     * developed it will be refactored to use autowire.
+     *
+     * @param releaseRequest
+     * @return
+     * @throws BadResponseException
+     */
+    public void postRelease(SniroConductorRequest releaseRequest) throws BadResponseException {
+        logger.trace("Started Sniro Client Post Release");
+        String url = UrnPropertiesReader.getVariable("sniro.conductor.host")
+                + UrnPropertiesReader.getVariable("sniro.conductor.uri");
+        logger.debug("Post release url: {}", url);
+        logger.debug("Post release payload: {}", releaseRequest.toJsonString());
 
-		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.APPLICATION_JSON);
-		header.set("Authorization", UrnPropertiesReader.getVariable("sniro.conductor.headers.auth"));
-		BaseClient<String, LinkedHashMap<String, Object>> baseClient = new BaseClient<>();
+        HttpHeaders header = new HttpHeaders();
+        header.setContentType(MediaType.APPLICATION_JSON);
+        header.set("Authorization", UrnPropertiesReader.getVariable("sniro.conductor.headers.auth"));
+        BaseClient<String, LinkedHashMap<String, Object>> baseClient = new BaseClient<>();
 
-		baseClient.setTargetUrl(url);
-		baseClient.setHttpHeader(header);
+        baseClient.setTargetUrl(url);
+        baseClient.setHttpHeader(header);
 
-		LinkedHashMap<String, Object> response = baseClient.post(releaseRequest.toJsonString(), new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
-		SniroValidator v = new SniroValidator();
-		v.validateReleaseResponse(response);
-		logger.trace("Completed Sniro Client Post Release");
-	}
+        LinkedHashMap<String, Object> response = baseClient.post(releaseRequest.toJsonString(),
+                new ParameterizedTypeReference<LinkedHashMap<String, Object>>() {});
+        SniroValidator v = new SniroValidator();
+        v.validateReleaseResponse(response);
+        logger.trace("Completed Sniro Client Post Release");
+    }
 
 }

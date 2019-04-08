@@ -36,15 +36,12 @@ import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackPublicUrlStackByI
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackPublicUrlStackByName_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackPutPublicUrlStackByNameAndID_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockOpenStackResponseAccess;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
 import org.json.JSONException;
 import org.junit.Test;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
@@ -64,302 +61,306 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 public class NetworkAdapterRestTest extends BaseRestTestUtils {
 
-	@Autowired
-	private JettisonStyleMapperProvider jettisonTypeObjectMapper;
-	private static final String CLOUDSITE_ID = "mtn13";
-	private static final String TENANT_ID = "ba38bc24a2ef4fb2ad2810c894f1938f";
-	private static final String NETWORK_ID = "da886914-efb2-4917-b335-c8381528d90b";
-	private static final String NETWORK_TYPE = "CONTRAIL30_BASIC";
-	private static final String MODEL_CUSTOMIZATION_UUID = "3bdbb104-476c-483e-9f8b-c095b3d308ac";
-	private static final String MSO_SERVICE_INSTANCE_ID = "05869d5f-47df-4b45-bbfc-4f03ce0a50bf";
-	private static final String MSO_REQUEST_ID = "requestId";
-	private static final String NETWORK_NAME = "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0";
+    @Autowired
+    private JettisonStyleMapperProvider jettisonTypeObjectMapper;
+    private static final String CLOUDSITE_ID = "mtn13";
+    private static final String TENANT_ID = "ba38bc24a2ef4fb2ad2810c894f1938f";
+    private static final String NETWORK_ID = "da886914-efb2-4917-b335-c8381528d90b";
+    private static final String NETWORK_TYPE = "CONTRAIL30_BASIC";
+    private static final String MODEL_CUSTOMIZATION_UUID = "3bdbb104-476c-483e-9f8b-c095b3d308ac";
+    private static final String MSO_SERVICE_INSTANCE_ID = "05869d5f-47df-4b45-bbfc-4f03ce0a50bf";
+    private static final String MSO_REQUEST_ID = "requestId";
+    private static final String NETWORK_NAME = "vUSP-23804-T-01-dpa2b_EVUSP-CORE-VIF-TSIG0_net_0";
 
-	@Test
-	public void testCreateNetwork() throws JSONException, JsonParseException, JsonMappingException, IOException {
-		
-		CreateNetworkRequest request = new CreateNetworkRequest();
-		request.setBackout(true);
-		request.setSkipAAI(true);
-		request.setFailIfExists(false);
-		MsoRequest msoReq = new MsoRequest();
-		String networkTechnology = "CONTRAIL";
+    @Test
+    public void testCreateNetwork() throws JSONException, JsonParseException, JsonMappingException, IOException {
 
-		msoReq.setRequestId(MSO_REQUEST_ID);
-		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
-		request.setMsoRequest(msoReq);
-		request.setCloudSiteId(CLOUDSITE_ID);
-		request.setTenantId(TENANT_ID);
-		request.setNetworkId(NETWORK_ID);
-		request.setNetworkName(NETWORK_NAME);
-		request.setNetworkType(NETWORK_TYPE);
-		request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
-		request.setNetworkTechnology(networkTechnology);
+        CreateNetworkRequest request = new CreateNetworkRequest();
+        request.setBackout(true);
+        request.setSkipAAI(true);
+        request.setFailIfExists(false);
+        MsoRequest msoReq = new MsoRequest();
+        String networkTechnology = "CONTRAIL";
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        msoReq.setRequestId(MSO_REQUEST_ID);
+        msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
+        request.setMsoRequest(msoReq);
+        request.setCloudSiteId(CLOUDSITE_ID);
+        request.setTenantId(TENANT_ID);
+        request.setNetworkId(NETWORK_ID);
+        request.setNetworkName(NETWORK_NAME);
+        request.setNetworkType(NETWORK_TYPE);
+        request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
+        request.setNetworkTechnology(networkTechnology);
 
-		mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackCreatedVUSP_200(wireMockServer);
+        mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
 
-		mockOpenStackGetStackVUSP_404(wireMockServer);
+        mockOpenStackGetStackCreatedVUSP_200(wireMockServer);
 
-		headers.add("Accept", MediaType.APPLICATION_JSON);
-		HttpEntity<CreateNetworkRequest> entity = new HttpEntity<CreateNetworkRequest>(request, headers);
-		ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
-				createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
+        mockOpenStackGetStackVUSP_404(wireMockServer);
 
-		CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-				new File("src/test/resources/__files/CreateNetworkResponse.json"), CreateNetworkResponse.class);
+        headers.add("Accept", MediaType.APPLICATION_JSON);
+        HttpEntity<CreateNetworkRequest> entity = new HttpEntity<CreateNetworkRequest>(request, headers);
+        ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
 
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-		assertThat(response.getBody(), sameBeanAs(expectedResponse));
-	}
+        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+                new File("src/test/resources/__files/CreateNetworkResponse.json"), CreateNetworkResponse.class);
 
-	@Test
-	public void testCreateNetwork_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
-		
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertThat(response.getBody(), sameBeanAs(expectedResponse));
+    }
+
+    @Test
+    public void testCreateNetwork_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
 
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackGetStackCreatedAppC_200(wireMockServer);
-		
-		mockOpenStackGetStackAppC_404(wireMockServer);
-		
-		headers.add("Content-Type", MediaType.APPLICATION_JSON);
-		headers.add("Accept", MediaType.APPLICATION_JSON);
-		
-		String request = readJsonFileAsString("src/test/resources/CreateNetwork.json");
-		HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+        mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
 
-		ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
-				createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
-		
-		CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-				new File("src/test/resources/__files/CreateNetworkResponse2.json"), CreateNetworkResponse.class);
+        mockOpenStackGetStackCreatedAppC_200(wireMockServer);
 
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-		assertThat(response.getBody(), sameBeanAs(expectedResponse));
-	}
-	
+        mockOpenStackGetStackAppC_404(wireMockServer);
 
-	
-	@Test
-	public void testDeleteNetwork() throws IOException{
-		
-		DeleteNetworkRequest request = new DeleteNetworkRequest();
-		
-		MsoRequest msoReq = new MsoRequest();
-		
-		msoReq.setRequestId(MSO_REQUEST_ID);
-		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
-		request.setMsoRequest(msoReq);
-		request.setCloudSiteId(CLOUDSITE_ID);
-		request.setTenantId(TENANT_ID);
-		request.setNetworkId(NETWORK_ID);
-		request.setNetworkType(NETWORK_TYPE);
-		request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
-		request.setNetworkStackId(NETWORK_ID);
-		
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-		
-		mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
-		
-		mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockServer, wireMockPort);
-		
-		mockOpenStackDeletePublicUrlStackByNameAndID_204(wireMockServer);
-		
-		headers.add("Accept", MediaType.APPLICATION_JSON);
-		
-		HttpEntity<DeleteNetworkRequest> entity = new HttpEntity<DeleteNetworkRequest>(request, headers);
-		
-		ResponseEntity<DeleteNetworkResponse> response = restTemplate.exchange(
-				createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"), HttpMethod.DELETE, entity, DeleteNetworkResponse.class); 
-		
-		DeleteNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-				new File("src/test/resources/__files/DeleteNetworkResponse.json"), DeleteNetworkResponse.class);
-		
-		assertThat(response.getBody(), sameBeanAs(expectedResponse));
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-		
-	}
+        headers.add("Content-Type", MediaType.APPLICATION_JSON);
+        headers.add("Accept", MediaType.APPLICATION_JSON);
 
-	@Test
-	public void testRollbackNetwork() throws IOException {
+        String request = readJsonFileAsString("src/test/resources/CreateNetwork.json");
+        HttpEntity<String> entity = new HttpEntity<String>(request, headers);
 
-		RollbackNetworkRequest request = new RollbackNetworkRequest();
+        ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
 
-		MsoRequest msoReq = new MsoRequest();
+        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+                new File("src/test/resources/__files/CreateNetworkResponse2.json"), CreateNetworkResponse.class);
 
-		msoReq.setRequestId(MSO_REQUEST_ID);
-		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertThat(response.getBody(), sameBeanAs(expectedResponse));
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
 
-		mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockServer, wireMockPort);
+    @Test
+    public void testDeleteNetwork() throws IOException {
 
-		mockOpenStackDeletePublicUrlStackByNameAndID_204(wireMockServer);
+        DeleteNetworkRequest request = new DeleteNetworkRequest();
 
-		headers.add("Accept", MediaType.APPLICATION_JSON);
+        MsoRequest msoReq = new MsoRequest();
 
-		HttpEntity<RollbackNetworkRequest> entity = new HttpEntity<>(request, headers);
+        msoReq.setRequestId(MSO_REQUEST_ID);
+        msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
+        request.setMsoRequest(msoReq);
+        request.setCloudSiteId(CLOUDSITE_ID);
+        request.setTenantId(TENANT_ID);
+        request.setNetworkId(NETWORK_ID);
+        request.setNetworkType(NETWORK_TYPE);
+        request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
+        request.setNetworkStackId(NETWORK_ID);
 
-		ResponseEntity<RollbackNetworkResponse> response = restTemplate
-			.exchange(createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b/rollback"),
-				HttpMethod.DELETE, entity, RollbackNetworkResponse.class);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		RollbackNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper()
-			.readValue(new File("src/test/resources/__files/RollbackNetworkResponse.json"), RollbackNetworkResponse.class);
+        mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
 
-		assertThat(response.getBody(), sameBeanAs(expectedResponse));
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockServer, wireMockPort);
 
-	}
+        mockOpenStackDeletePublicUrlStackByNameAndID_204(wireMockServer);
 
-	@Test
-	public void testQueryNetwork_Exception() throws IOException{
-		MsoRequest msoReq = new MsoRequest();
-		msoReq.setRequestId(MSO_REQUEST_ID);
-		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
-		headers.add("Accept", MediaType.APPLICATION_JSON);
+        headers.add("Accept", MediaType.APPLICATION_JSON);
 
-		HttpEntity<DeleteNetworkRequest> entity = new HttpEntity<DeleteNetworkRequest>(headers);
+        HttpEntity<DeleteNetworkRequest> entity = new HttpEntity<DeleteNetworkRequest>(request, headers);
 
-		ResponseEntity<QueryNetworkError> response = restTemplate.exchange(
-				createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"), HttpMethod.GET,
-				entity, QueryNetworkError.class);
+        ResponseEntity<DeleteNetworkResponse> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"), HttpMethod.DELETE,
+                entity, DeleteNetworkResponse.class);
 
-		assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+        DeleteNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+                new File("src/test/resources/__files/DeleteNetworkResponse.json"), DeleteNetworkResponse.class);
 
-	}
+        assertThat(response.getBody(), sameBeanAs(expectedResponse));
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-	@Test
-	public void testQueryNetwork() throws IOException{
+    }
 
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
-		mockOpenStackGetStackVfModule_200(wireMockServer);
+    @Test
+    public void testRollbackNetwork() throws IOException {
 
-		headers.add("Accept", MediaType.APPLICATION_JSON);
-		HttpEntity<DeleteNetworkRequest> entity = new HttpEntity<DeleteNetworkRequest>(headers);
+        RollbackNetworkRequest request = new RollbackNetworkRequest();
 
-		ResponseEntity<QueryNetworkResponse> response = restTemplate.exchange(
-				createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"+"?cloudSiteId=" + CLOUDSITE_ID + "&tenantId=" + TENANT_ID
-						+ "&aaiNetworkId=aaiNetworkId"), HttpMethod.GET, 
-				entity, QueryNetworkResponse.class);
+        MsoRequest msoReq = new MsoRequest();
 
-		assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
+        msoReq.setRequestId(MSO_REQUEST_ID);
+        msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
 
-	}
-	
-	@Test
-	public void testUpdateNetwork() throws IOException{
-		
-		UpdateNetworkRequest request = new UpdateNetworkRequest();
-		
-		MsoRequest msoReq = new MsoRequest();
-		
-		msoReq.setRequestId(MSO_REQUEST_ID);
-		msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
-		request.setMsoRequest(msoReq);
-		request.setCloudSiteId(CLOUDSITE_ID);
-		request.setTenantId(TENANT_ID);
-		request.setNetworkId(NETWORK_ID);
-		request.setNetworkName(NETWORK_NAME);
-		request.setNetworkType(NETWORK_TYPE);
-		request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
-		request.setNetworkStackId(NETWORK_ID);
-		
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
 
-		mockOpenStackPublicUrlStackByName_200(wireMockServer, wireMockPort);
-		
-		mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
-		
-		mockOpenStackGetPublicUrlStackByNameAndID_200(wireMockServer, wireMockPort);
+        mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
 
-		mockOpenStackPutPublicUrlStackByNameAndID_200(wireMockServer);
+        mockOpenStackGetPublicUrlStackByNameAndID_204(wireMockServer, wireMockPort);
 
-		headers.add("Accept", MediaType.APPLICATION_JSON);
-		
-		HttpEntity<UpdateNetworkRequest> entity = new HttpEntity<UpdateNetworkRequest>(request, headers);
-		
-		ResponseEntity<UpdateNetworkResponse> response = restTemplate.exchange(
-				createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"), HttpMethod.PUT, entity, UpdateNetworkResponse.class); 
-		
-		UpdateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-				new File("src/test/resources/__files/UpdateNetworkResponse.json"), UpdateNetworkResponse.class);
-		
-		assertThat(response.getBody(), sameBeanAs(expectedResponse));
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-	}	
-	
-	@Test
-	public void testCreateNetworkCNRC_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
-		
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackDeletePublicUrlStackByNameAndID_204(wireMockServer);
 
-		mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
+        headers.add("Accept", MediaType.APPLICATION_JSON);
 
-		mockOpenStackGetStackCreatedAppC_200(wireMockServer);
-		
-		mockOpenStackGetStackAppC_404(wireMockServer);
-		
-		headers.add("Content-Type", MediaType.APPLICATION_JSON);
-		headers.add("Accept", MediaType.APPLICATION_JSON);
-		
-		String request = readJsonFileAsString("src/test/resources/CreateNetwork3.json");
-		HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+        HttpEntity<RollbackNetworkRequest> entity = new HttpEntity<>(request, headers);
 
-		ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
-				createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
+        ResponseEntity<RollbackNetworkResponse> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b/rollback"),
+                HttpMethod.DELETE, entity, RollbackNetworkResponse.class);
 
-		CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-				new File("src/test/resources/__files/CreateNetworkResponse3.json"), CreateNetworkResponse.class);
-		
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-		assertThat(response.getBody(), sameBeanAs(expectedResponse));
-	}
-	
-	@Test
-	public void testCreateNetworkNC_Shared_JSON() throws JSONException, JsonParseException, JsonMappingException, IOException {
-		
-		mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        RollbackNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+                new File("src/test/resources/__files/RollbackNetworkResponse.json"), RollbackNetworkResponse.class);
 
-		mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
+        assertThat(response.getBody(), sameBeanAs(expectedResponse));
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
 
-		mockOpenStackGetStackCreatedAppC_200(wireMockServer);
-		
-		mockOpenStackGetStackAppC_404(wireMockServer);
-		
-		headers.add("Content-Type", MediaType.APPLICATION_JSON);
-		headers.add("Accept", MediaType.APPLICATION_JSON);
-		
-		String request = readJsonFileAsString("src/test/resources/CreateNetwork4.json");
-		HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+    }
 
-		ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
-				createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
+    @Test
+    public void testQueryNetwork_Exception() throws IOException {
+        MsoRequest msoReq = new MsoRequest();
+        msoReq.setRequestId(MSO_REQUEST_ID);
+        msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
+        headers.add("Accept", MediaType.APPLICATION_JSON);
 
-		CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
-				new File("src/test/resources/__files/CreateNetworkResponse4.json"), CreateNetworkResponse.class);
-		
-		assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-		assertThat(response.getBody(), sameBeanAs(expectedResponse));
-	}
-	
-	@Override
-	protected String readJsonFileAsString(String fileLocation) throws JsonParseException, JsonMappingException, IOException{
-		return new String(Files.readAllBytes(Paths.get(fileLocation)));
-	}
+        HttpEntity<DeleteNetworkRequest> entity = new HttpEntity<DeleteNetworkRequest>(headers);
+
+        ResponseEntity<QueryNetworkError> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"), HttpMethod.GET,
+                entity, QueryNetworkError.class);
+
+        assertEquals(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatusCode().value());
+
+    }
+
+    @Test
+    public void testQueryNetwork() throws IOException {
+
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+        mockOpenStackGetStackVfModule_200(wireMockServer);
+
+        headers.add("Accept", MediaType.APPLICATION_JSON);
+        HttpEntity<DeleteNetworkRequest> entity = new HttpEntity<DeleteNetworkRequest>(headers);
+
+        ResponseEntity<QueryNetworkResponse> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b" + "?cloudSiteId="
+                        + CLOUDSITE_ID + "&tenantId=" + TENANT_ID + "&aaiNetworkId=aaiNetworkId"),
+                HttpMethod.GET, entity, QueryNetworkResponse.class);
+
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(), response.getStatusCode().value());
+
+    }
+
+    @Test
+    public void testUpdateNetwork() throws IOException {
+
+        UpdateNetworkRequest request = new UpdateNetworkRequest();
+
+        MsoRequest msoReq = new MsoRequest();
+
+        msoReq.setRequestId(MSO_REQUEST_ID);
+        msoReq.setServiceInstanceId(MSO_SERVICE_INSTANCE_ID);
+        request.setMsoRequest(msoReq);
+        request.setCloudSiteId(CLOUDSITE_ID);
+        request.setTenantId(TENANT_ID);
+        request.setNetworkId(NETWORK_ID);
+        request.setNetworkName(NETWORK_NAME);
+        request.setNetworkType(NETWORK_TYPE);
+        request.setModelCustomizationUuid(MODEL_CUSTOMIZATION_UUID);
+        request.setNetworkStackId(NETWORK_ID);
+
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+
+        mockOpenStackPublicUrlStackByName_200(wireMockServer, wireMockPort);
+
+        mockOpenStackPublicUrlStackByID_200(wireMockServer, wireMockPort);
+
+        mockOpenStackGetPublicUrlStackByNameAndID_200(wireMockServer, wireMockPort);
+
+        mockOpenStackPutPublicUrlStackByNameAndID_200(wireMockServer);
+
+        headers.add("Accept", MediaType.APPLICATION_JSON);
+
+        HttpEntity<UpdateNetworkRequest> entity = new HttpEntity<UpdateNetworkRequest>(request, headers);
+
+        ResponseEntity<UpdateNetworkResponse> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks/da886914-efb2-4917-b335-c8381528d90b"), HttpMethod.PUT,
+                entity, UpdateNetworkResponse.class);
+
+        UpdateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+                new File("src/test/resources/__files/UpdateNetworkResponse.json"), UpdateNetworkResponse.class);
+
+        assertThat(response.getBody(), sameBeanAs(expectedResponse));
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
+
+    @Test
+    public void testCreateNetworkCNRC_JSON()
+            throws JSONException, JsonParseException, JsonMappingException, IOException {
+
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+
+        mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
+
+        mockOpenStackGetStackCreatedAppC_200(wireMockServer);
+
+        mockOpenStackGetStackAppC_404(wireMockServer);
+
+        headers.add("Content-Type", MediaType.APPLICATION_JSON);
+        headers.add("Accept", MediaType.APPLICATION_JSON);
+
+        String request = readJsonFileAsString("src/test/resources/CreateNetwork3.json");
+        HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+
+        ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
+
+        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+                new File("src/test/resources/__files/CreateNetworkResponse3.json"), CreateNetworkResponse.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertThat(response.getBody(), sameBeanAs(expectedResponse));
+    }
+
+    @Test
+    public void testCreateNetworkNC_Shared_JSON()
+            throws JSONException, JsonParseException, JsonMappingException, IOException {
+
+        mockOpenStackResponseAccess(wireMockServer, wireMockPort);
+
+        mockOpenStackPostPublicUrlWithBodyFile_200(wireMockServer);
+
+        mockOpenStackGetStackCreatedAppC_200(wireMockServer);
+
+        mockOpenStackGetStackAppC_404(wireMockServer);
+
+        headers.add("Content-Type", MediaType.APPLICATION_JSON);
+        headers.add("Accept", MediaType.APPLICATION_JSON);
+
+        String request = readJsonFileAsString("src/test/resources/CreateNetwork4.json");
+        HttpEntity<String> entity = new HttpEntity<String>(request, headers);
+
+        ResponseEntity<CreateNetworkResponse> response = restTemplate.exchange(
+                createURLWithPort("/services/rest/v1/networks"), HttpMethod.POST, entity, CreateNetworkResponse.class);
+
+        CreateNetworkResponse expectedResponse = jettisonTypeObjectMapper.getMapper().readValue(
+                new File("src/test/resources/__files/CreateNetworkResponse4.json"), CreateNetworkResponse.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+        assertThat(response.getBody(), sameBeanAs(expectedResponse));
+    }
+
+    @Override
+    protected String readJsonFileAsString(String fileLocation)
+            throws JsonParseException, JsonMappingException, IOException {
+        return new String(Files.readAllBytes(Paths.get(fileLocation)));
+    }
 }

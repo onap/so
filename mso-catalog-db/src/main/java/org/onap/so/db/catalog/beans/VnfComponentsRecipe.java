@@ -21,151 +21,148 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
 @Table(name = "vnf_components_recipe")
 public class VnfComponentsRecipe implements Serializable, Recipe {
 
-	private static final long serialVersionUID = 768026109321305392L;
+    private static final long serialVersionUID = 768026109321305392L;
 
-	@Id
-	@Column(name = "id")
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    private Integer id;
 
-	@BusinessKey
-	@Column(name = "ACTION")
-	private String action;
+    @BusinessKey
+    @Column(name = "ACTION")
+    private String action;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@BusinessKey
-	@Column(name = "ORCHESTRATION_URI")
-	private String orchestrationUri;
+    @BusinessKey
+    @Column(name = "ORCHESTRATION_URI")
+    private String orchestrationUri;
 
-	@Column(name = "RECIPE_TIMEOUT")
-	private Integer recipeTimeout;
+    @Column(name = "RECIPE_TIMEOUT")
+    private Integer recipeTimeout;
 
-	@BusinessKey
-	@Column(name = "VNF_TYPE")
-	private String vnfType;
+    @BusinessKey
+    @Column(name = "VNF_TYPE")
+    private String vnfType;
 
-	@Column(name = "VNF_COMPONENT_PARAM_XSD")
-	private String paramXsd;
+    @Column(name = "VNF_COMPONENT_PARAM_XSD")
+    private String paramXsd;
 
-	@Column(name = "VNF_COMPONENT_TYPE")
-	private String vnfComponentType;
+    @Column(name = "VNF_COMPONENT_TYPE")
+    private String vnfComponentType;
 
-	@BusinessKey
-	@Column(name = "VF_MODULE_MODEL_UUID")
-	private String vfModuleModelUUID;
+    @BusinessKey
+    @Column(name = "VF_MODULE_MODEL_UUID")
+    private String vfModuleModelUUID;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("action", action).append("description", description)
-				.append("orchestrationUri", orchestrationUri).append("recipeTimeout", recipeTimeout)
-				.append("vnfType", vnfType).append("paramXsd", paramXsd).append("vnfComponentType", vnfComponentType)
-				.append("vfModuleModelUUID", vfModuleModelUUID).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("action", action).append("description", description)
+                .append("orchestrationUri", orchestrationUri).append("recipeTimeout", recipeTimeout)
+                .append("vnfType", vnfType).append("paramXsd", paramXsd).append("vnfComponentType", vnfComponentType)
+                .append("vfModuleModelUUID", vfModuleModelUUID).toString();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof VnfComponentsRecipe)) {
-			return false;
-		}
-		VnfComponentsRecipe castOther = (VnfComponentsRecipe) other;
-		return new EqualsBuilder().append(action, castOther.action).append(orchestrationUri, castOther.orchestrationUri)
-				.append(vnfType, castOther.vnfType).append(vfModuleModelUUID, castOther.vfModuleModelUUID).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof VnfComponentsRecipe)) {
+            return false;
+        }
+        VnfComponentsRecipe castOther = (VnfComponentsRecipe) other;
+        return new EqualsBuilder().append(action, castOther.action).append(orchestrationUri, castOther.orchestrationUri)
+                .append(vnfType, castOther.vnfType).append(vfModuleModelUUID, castOther.vfModuleModelUUID).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(action).append(orchestrationUri).append(vnfType).append(vfModuleModelUUID)
-				.toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(action).append(orchestrationUri).append(vnfType).append(vfModuleModelUUID)
+                .toHashCode();
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public String getAction() {
-		return action;
-	}
+    public String getAction() {
+        return action;
+    }
 
-	public void setAction(String action) {
-		this.action = action;
-	}
+    public void setAction(String action) {
+        this.action = action;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setOrchestrationUri(String orchestrationUri) {
-		this.orchestrationUri = orchestrationUri;
-	}
+    public void setOrchestrationUri(String orchestrationUri) {
+        this.orchestrationUri = orchestrationUri;
+    }
 
-	public void setRecipeTimeout(Integer recipeTimeout) {
-		this.recipeTimeout = recipeTimeout;
-	}
+    public void setRecipeTimeout(Integer recipeTimeout) {
+        this.recipeTimeout = recipeTimeout;
+    }
 
-	public String getVnfType() {
-		return vnfType;
-	}
+    public String getVnfType() {
+        return vnfType;
+    }
 
-	public void setVnfType(String vnfType) {
-		this.vnfType = vnfType;
-	}
+    public void setVnfType(String vnfType) {
+        this.vnfType = vnfType;
+    }
 
-	public String getParamXsd() {
-		return paramXsd;
-	}
+    public String getParamXsd() {
+        return paramXsd;
+    }
 
-	public void setParamXsd(String paramXsd) {
-		this.paramXsd = paramXsd;
-	}
+    public void setParamXsd(String paramXsd) {
+        this.paramXsd = paramXsd;
+    }
 
-	public String getVnfComponentType() {
-		return vnfComponentType;
-	}
+    public String getVnfComponentType() {
+        return vnfComponentType;
+    }
 
-	public void setVnfComponentType(String vnfComponentType) {
-		this.vnfComponentType = vnfComponentType;
-	}
+    public void setVnfComponentType(String vnfComponentType) {
+        this.vnfComponentType = vnfComponentType;
+    }
 
-	public String getVfModuleModelUUID() {
-		return vfModuleModelUUID;
-	}
+    public String getVfModuleModelUUID() {
+        return vfModuleModelUUID;
+    }
 
-	public void setVfModuleModelUUID(String vfModuleModelUUID) {
-		this.vfModuleModelUUID = vfModuleModelUUID;
-	}
+    public void setVfModuleModelUUID(String vfModuleModelUUID) {
+        this.vfModuleModelUUID = vfModuleModelUUID;
+    }
 
-	@Override
-	public String getOrchestrationUri() {
-		return orchestrationUri;
-	}
+    @Override
+    public String getOrchestrationUri() {
+        return orchestrationUri;
+    }
 
-	@Override
-	public Integer getRecipeTimeout() {
-		return recipeTimeout;
-	}
+    @Override
+    public Integer getRecipeTimeout() {
+        return recipeTimeout;
+    }
 }

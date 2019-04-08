@@ -25,6 +25,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "networkInstanceGroup", path = "networkInstanceGroup")
-public interface NetworkInstanceGroupRepository  extends JpaRepository<NetworkInstanceGroup, String> {
-	NetworkInstanceGroup findByModelUUID(String modelUUID);
+public interface NetworkInstanceGroupRepository extends JpaRepository<NetworkInstanceGroup, String> {
+    NetworkInstanceGroup findByModelUUID(String modelUUID);
 }

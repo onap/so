@@ -23,7 +23,6 @@ package org.onap.so.client.sdno.beans;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,14 +31,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "operation",
-    "nodeLoc",
-    "nodeType",
-    "body"
-})
-public class SDNO implements Serializable
-{
+@JsonPropertyOrder({"operation", "nodeLoc", "nodeType", "body"})
+public class SDNO implements Serializable {
 
     @JsonProperty("operation")
     private String operation;
@@ -62,23 +55,23 @@ public class SDNO implements Serializable
     public void setOperation(String operation) {
         this.operation = operation;
     }
-    
+
     @JsonProperty("nodeLoc")
     public String getNodeLoc() {
-		return nodeLoc;
-	}
-    
-    @JsonProperty("nodeLoc")
-	public void setNodeLoc(String nodeLoc) {
-		this.nodeLoc = nodeLoc;
-	}
-    
-    public SDNO withNodeLoc(String nodeLoc) {
-    	this.nodeLoc = nodeLoc;
-    	return this;
+        return nodeLoc;
     }
 
-	public SDNO withOperation(String operation) {
+    @JsonProperty("nodeLoc")
+    public void setNodeLoc(String nodeLoc) {
+        this.nodeLoc = nodeLoc;
+    }
+
+    public SDNO withNodeLoc(String nodeLoc) {
+        this.nodeLoc = nodeLoc;
+        return this;
+    }
+
+    public SDNO withOperation(String operation) {
         this.operation = operation;
         return this;
     }
@@ -124,10 +117,10 @@ public class SDNO implements Serializable
     }
 
     public void setAdditionalProperties(Map<String, Object> map) {
-    	this.additionalProperties = map;
+        this.additionalProperties = map;
     }
-    
-    public SDNO SDNO (String name, Object value) {
+
+    public SDNO SDNO(String name, Object value) {
         this.additionalProperties.put(name, value);
         return this;
     }

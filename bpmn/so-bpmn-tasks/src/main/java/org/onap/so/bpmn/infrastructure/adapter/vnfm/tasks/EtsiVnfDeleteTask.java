@@ -39,46 +39,46 @@ import com.google.common.base.Optional;
 @Component
 public class EtsiVnfDeleteTask {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(EtsiVnfDeleteTask.class);
-  private final ExtractPojosForBB extractPojosForBB;
-  private final ExceptionBuilder exceptionUtil;
-  private final VnfmAdapterServiceProvider vnfmAdapterServiceProvider;
+    private static final Logger LOGGER = LoggerFactory.getLogger(EtsiVnfDeleteTask.class);
+    private final ExtractPojosForBB extractPojosForBB;
+    private final ExceptionBuilder exceptionUtil;
+    private final VnfmAdapterServiceProvider vnfmAdapterServiceProvider;
 
-  @Autowired
-  public EtsiVnfDeleteTask(final ExceptionBuilder exceptionUtil, final ExtractPojosForBB extractPojosForBB,
-      final VnfmAdapterServiceProvider vnfmAdapterServiceProvider) {
-    this.exceptionUtil = exceptionUtil;
-    this.extractPojosForBB = extractPojosForBB;
-    this.vnfmAdapterServiceProvider = vnfmAdapterServiceProvider;
-  }
-
-  /**
-   * Invoke VNFM adapter to delete the VNF
-   *
-   * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
-   */
-  public void invokeVnfmAdapter(final BuildingBlockExecution execution) {
-    try {
-      LOGGER.debug("Executing invokeVnfmAdapter  ...");
-      final GenericVnf vnf = extractPojosForBB.extractByKey(execution, GENERIC_VNF_ID);
-
-      final Optional<DeleteVnfResponse> response = vnfmAdapterServiceProvider.invokeDeleteRequest(vnf.getVnfId());
-
-      if (!response.isPresent()) {
-        final String errorMessage = "Unexpected error while processing delete request";
-        LOGGER.error(errorMessage);
-        exceptionUtil.buildAndThrowWorkflowException(execution, 1211, errorMessage);
-      }
-
-      final DeleteVnfResponse vnfResponse = response.get();
-
-      LOGGER.debug("Vnf delete response: {}", vnfResponse);
-      execution.setVariable(Constants.DELETE_VNF_RESPONSE_PARAM_NAME, vnfResponse);
-
-      LOGGER.debug("Finished executing invokeVnfmAdapter ...");
-    } catch (final Exception exception) {
-      LOGGER.error("Unable to invoke delete request", exception);
-      exceptionUtil.buildAndThrowWorkflowException(execution, 1212, exception);
+    @Autowired
+    public EtsiVnfDeleteTask(final ExceptionBuilder exceptionUtil, final ExtractPojosForBB extractPojosForBB,
+            final VnfmAdapterServiceProvider vnfmAdapterServiceProvider) {
+        this.exceptionUtil = exceptionUtil;
+        this.extractPojosForBB = extractPojosForBB;
+        this.vnfmAdapterServiceProvider = vnfmAdapterServiceProvider;
     }
-  }
+
+    /**
+     * Invoke VNFM adapter to delete the VNF
+     *
+     * @param execution {@link org.onap.so.bpmn.common.DelegateExecutionImpl}
+     */
+    public void invokeVnfmAdapter(final BuildingBlockExecution execution) {
+        try {
+            LOGGER.debug("Executing invokeVnfmAdapter  ...");
+            final GenericVnf vnf = extractPojosForBB.extractByKey(execution, GENERIC_VNF_ID);
+
+            final Optional<DeleteVnfResponse> response = vnfmAdapterServiceProvider.invokeDeleteRequest(vnf.getVnfId());
+
+            if (!response.isPresent()) {
+                final String errorMessage = "Unexpected error while processing delete request";
+                LOGGER.error(errorMessage);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 1211, errorMessage);
+            }
+
+            final DeleteVnfResponse vnfResponse = response.get();
+
+            LOGGER.debug("Vnf delete response: {}", vnfResponse);
+            execution.setVariable(Constants.DELETE_VNF_RESPONSE_PARAM_NAME, vnfResponse);
+
+            LOGGER.debug("Finished executing invokeVnfmAdapter ...");
+        } catch (final Exception exception) {
+            LOGGER.error("Unable to invoke delete request", exception);
+            exceptionUtil.buildAndThrowWorkflowException(execution, 1212, exception);
+        }
+    }
 }

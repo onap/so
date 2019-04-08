@@ -23,14 +23,12 @@ package org.onap.so.bpmn.common;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.common.exceptions.MalformedBuildingBlockInputException;
 import org.onap.so.bpmn.common.exceptions.MissingBuildingBlockInputException;
 import org.onap.so.bpmn.common.exceptions.RequiredExecutionVariableExeception;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

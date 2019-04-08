@@ -22,9 +22,7 @@ package org.onap.so.db.catalog;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.db.catalog.beans.PnfResource;
@@ -46,23 +44,23 @@ public class ServiceTest {
 
     @Test
     public void Find_LatestService_Test() {
-        Service latestVersionService = serviceRepo
-            .findFirstByModelNameOrderByModelVersionDesc("MSOTADevInfra_vSAMP10a_Service");
+        Service latestVersionService =
+                serviceRepo.findFirstByModelNameOrderByModelVersionDesc("MSOTADevInfra_vSAMP10a_Service");
         assertEquals("5df8b6de-2083-11e7-93ae-92361f002675", latestVersionService.getModelUUID());
     }
 
 
     @Test
     public void Find_LatestService_Test_2() {
-        Service latestVersionService = serviceRepo
-            .findByModelNameOrderByModelVersionDesc("MSOTADevInfra_vSAMP10a_Service");
+        Service latestVersionService =
+                serviceRepo.findByModelNameOrderByModelVersionDesc("MSOTADevInfra_vSAMP10a_Service");
         assertEquals("5df8b6de-2083-11e7-93ae-92361f002675", latestVersionService.getModelUUID());
     }
 
     @Test
     public void Find_LatestService_Test_Invariant_UUID() {
-        List<Service> latestVersionService = serviceRepo
-            .findByModelInvariantUUIDOrderByModelVersionDesc("9647dfc4-2083-11e7-93ae-92361f002671");
+        List<Service> latestVersionService =
+                serviceRepo.findByModelInvariantUUIDOrderByModelVersionDesc("9647dfc4-2083-11e7-93ae-92361f002671");
         assertEquals("5df8b6de-2083-11e7-93ae-92361f002675", latestVersionService.get(0).getModelUUID());
         assertEquals("5df8b6de-2083-11e7-93ae-92361f002674", latestVersionService.get(1).getModelUUID());
         assertEquals("5df8b6de-2083-11e7-93ae-92361f002673", latestVersionService.get(2).getModelUUID());
@@ -72,15 +70,15 @@ public class ServiceTest {
 
     @Test
     public void Find_LatestService_Test_4() {
-        Service latestVersionService = serviceRepo
-            .findOneByModelUUIDOrderByModelVersionDesc("5df8b6de-2083-11e7-93ae-92361f002671");
+        Service latestVersionService =
+                serviceRepo.findOneByModelUUIDOrderByModelVersionDesc("5df8b6de-2083-11e7-93ae-92361f002671");
         assertEquals("5df8b6de-2083-11e7-93ae-92361f002671", latestVersionService.getModelUUID());
     }
 
     @Test
     public void Find_LatestService_Test_5() {
         Service latestVersionService = serviceRepo
-            .findFirstByModelInvariantUUIDOrderByModelVersionDesc("9647dfc4-2083-11e7-93ae-92361f002671");
+                .findFirstByModelInvariantUUIDOrderByModelVersionDesc("9647dfc4-2083-11e7-93ae-92361f002671");
         assertEquals("5df8b6de-2083-11e7-93ae-92361f002675", latestVersionService.getModelUUID());
     }
 
@@ -93,8 +91,8 @@ public class ServiceTest {
 
     @Test
     public void findByModelInvariantUUIDOrderByModelVersionDesc_ValidInvariantUuid_ExpectedOutput() {
-        List<Service> services = serviceRepo
-            .findByModelInvariantUUIDOrderByModelVersionDesc("9647dfc4-2083-11e7-93ae-92361f002676");
+        List<Service> services =
+                serviceRepo.findByModelInvariantUUIDOrderByModelVersionDesc("9647dfc4-2083-11e7-93ae-92361f002676");
         assertEquals("One PNF service found", 1, services.size());
         assertEquals("5df8b6de-2083-11e7-93ae-92361f002676", services.get(0).getModelUUID());
     }

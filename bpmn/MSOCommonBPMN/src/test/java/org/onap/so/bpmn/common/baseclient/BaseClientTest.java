@@ -25,41 +25,39 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
-
 import java.util.Map;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.junit.Test;
 import org.onap.so.BaseTest;
 import org.springframework.core.ParameterizedTypeReference;
-
 import wiremock.org.apache.http.entity.ContentType;
 
 
 public class BaseClientTest extends BaseTest {
 
-	@Test
-	public void verifyString() {
-		BaseClient<String, String> client = new BaseClient<>();
-		String response = "{\"hello\" : \"world\"}";
-		client.setTargetUrl(UriBuilder.fromUri("http://localhost/test").port(Integer.parseInt(wireMockPort)).build().toString());
-		wireMockServer.stubFor(get(urlEqualTo("/test"))
-                .willReturn(aResponse().withStatus(200).withBody(response).withHeader("Content-Type", ContentType.APPLICATION_JSON.toString())));
-		
-		String result = client.get("", new ParameterizedTypeReference<String>() {});
-		assertThat(result, equalTo(response));
-	}
-	
-	@Test
-	public void verifyMap() {
-		BaseClient<String, Map<String, Object>> client = new BaseClient<>();
-		String response = "{\"hello\" : \"world\"}";
-		client.setTargetUrl(UriBuilder.fromUri("http://localhost/test").port(Integer.parseInt(wireMockPort)).build().toString());
-		wireMockServer.stubFor(get(urlEqualTo("/test"))
-                .willReturn(aResponse().withStatus(200).withBody(response).withHeader("Content-Type", ContentType.APPLICATION_JSON.toString())));
-		
-		Map<String, Object> result = client.get("", new ParameterizedTypeReference<Map<String, Object>>() {});
-		assertThat("world", equalTo(result.get("hello")));
-	}
+    @Test
+    public void verifyString() {
+        BaseClient<String, String> client = new BaseClient<>();
+        String response = "{\"hello\" : \"world\"}";
+        client.setTargetUrl(
+                UriBuilder.fromUri("http://localhost/test").port(Integer.parseInt(wireMockPort)).build().toString());
+        wireMockServer.stubFor(get(urlEqualTo("/test")).willReturn(aResponse().withStatus(200).withBody(response)
+                .withHeader("Content-Type", ContentType.APPLICATION_JSON.toString())));
+
+        String result = client.get("", new ParameterizedTypeReference<String>() {});
+        assertThat(result, equalTo(response));
+    }
+
+    @Test
+    public void verifyMap() {
+        BaseClient<String, Map<String, Object>> client = new BaseClient<>();
+        String response = "{\"hello\" : \"world\"}";
+        client.setTargetUrl(
+                UriBuilder.fromUri("http://localhost/test").port(Integer.parseInt(wireMockPort)).build().toString());
+        wireMockServer.stubFor(get(urlEqualTo("/test")).willReturn(aResponse().withStatus(200).withBody(response)
+                .withHeader("Content-Type", ContentType.APPLICATION_JSON.toString())));
+
+        Map<String, Object> result = client.get("", new ParameterizedTypeReference<Map<String, Object>>() {});
+        assertThat("world", equalTo(result.get("hello")));
+    }
 }

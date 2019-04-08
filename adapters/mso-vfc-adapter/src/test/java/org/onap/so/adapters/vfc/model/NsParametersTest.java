@@ -20,7 +20,6 @@
 package org.onap.so.adapters.vfc.model;
 
 import org.junit.Test;
-
 import java.util.Collections;
 import java.util.HashMap;
 

@@ -28,14 +28,18 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NetworkResourceRepository extends JpaRepository<NetworkResource, String> {
 
-	/** 
-	 * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the sorting
-	 * @param modelName
-	 * @return
-	 */
-	@Query(value = "SELECT * FROM network_resource WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;", nativeQuery = true)
-	NetworkResource findFirstByModelNameOrderByModelVersionDesc(String modelName);
-	
-	NetworkResource findResourceByModelUUID(String modelUUID);
-	NetworkResource findOneByModelName(String modelName);
+    /**
+     * This method will not work for versions greater than 255, as it is utilizing an ip address function to do the
+     * sorting
+     * 
+     * @param modelName
+     * @return
+     */
+    @Query(value = "SELECT * FROM network_resource WHERE MODEL_NAME = ?1 ORDER BY INET_ATON(SUBSTRING_INDEX(CONCAT(MODEL_VERSION,'.0.0.0'),'.',4)) DESC LIMIT 1;",
+            nativeQuery = true)
+    NetworkResource findFirstByModelNameOrderByModelVersionDesc(String modelName);
+
+    NetworkResource findResourceByModelUUID(String modelUUID);
+
+    NetworkResource findOneByModelName(String modelName);
 }

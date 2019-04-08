@@ -21,7 +21,6 @@
 package org.onap.so.client.orchestration;
 
 import java.util.UUID;
-
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
@@ -30,24 +29,23 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNOHealthCheckResources {
-	@Autowired
-	private InjectionHelper injectionHelper;
-	
+    @Autowired
+    private InjectionHelper injectionHelper;
+
     /**
      * SDNO Call to Check Health Status
      *
      * @param vnf
-     * @param requestContext     * 
+     * @param requestContext *
      * @return healthCheckResult
-     * @throws  
-     * @throws Exception
+     * @throws @throws Exception
      */
     public boolean healthCheck(GenericVnf vnf, RequestContext requestContext) throws Exception {
-    	String requestId = requestContext.getMsoRequestId();			
-		String requestorId = requestContext.getRequestorId();
-    	String vnfId = vnf.getVnfId();
-    	UUID uuid = UUID.fromString(requestId);  	
+        String requestId = requestContext.getMsoRequestId();
+        String requestorId = requestContext.getRequestorId();
+        String vnfId = vnf.getVnfId();
+        UUID uuid = UUID.fromString(requestId);
 
-    	return injectionHelper.getSdnoValidator().healthDiagnostic(vnfId, uuid, requestorId);
-    }   
+        return injectionHelper.getSdnoValidator().healthDiagnostic(vnfId, uuid, requestorId);
+    }
 }

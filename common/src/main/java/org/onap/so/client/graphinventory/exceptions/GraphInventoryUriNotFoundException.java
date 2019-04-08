@@ -21,9 +21,9 @@
 package org.onap.so.client.graphinventory.exceptions;
 
 public class GraphInventoryUriNotFoundException extends Exception {
-	private static final long serialVersionUID = 2789643165122257833L;
+    private static final long serialVersionUID = 2789643165122257833L;
 
-	public GraphInventoryUriNotFoundException(String message) {
-		super(message);
-	}
+    public GraphInventoryUriNotFoundException(String message) {
+        super(message);
+    }
 }

@@ -57,8 +57,8 @@ public class VnfmOperation {
     /**
      * Set the required notification has been processed for the operation.
      *
-     * @param notificationProcessingWasSuccessful <code>true</code> if the notification processing was
-     *        successful, <code>false<code> otherwise
+     * @param notificationProcessingWasSuccessful <code>true</code> if the notification processing was successful,
+     *        <code>false<code> otherwise
      */
     public void setNotificationProcessed(final boolean notificationProcessingWasSuccessful) {
         this.notificationStatus =

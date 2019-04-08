@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
 import static org.junit.Assert.assertNotNull;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.getVnfmBasicHttpConfigProvider;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;

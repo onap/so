@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -30,54 +29,59 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class ControllerSelectionReferenceId implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	@BusinessKey
-	private String vnfType;
-	@BusinessKey
+    private static final long serialVersionUID = 1L;
+    @BusinessKey
+    private String vnfType;
+    @BusinessKey
     private String controllerName;
-	@BusinessKey
+    @BusinessKey
     private String actionCategory;
 
-	
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ControllerSelectionReferenceId)) {
-			return false;
-		}
-		ControllerSelectionReferenceId castOther = (ControllerSelectionReferenceId) other;
-		return new EqualsBuilder().append(vnfType, castOther.vnfType).append(controllerName, castOther.controllerName)
-				.append(actionCategory, castOther.actionCategory).isEquals();
-	}
-	
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(vnfType).append(controllerName).append(actionCategory).toHashCode();
-	}
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("vnfType", vnfType).append("controllerName", controllerName)
-				.append("actionCategory", actionCategory).toString();
-	}
-	
-	public String getVnfType() {
-		return vnfType;
-	}
-	public void setVnfType(String vnfType) {
-		this.vnfType = vnfType;
-	}
-	public String getControllerName() {
-		return controllerName;
-	}
-	public void setControllerName(String controllerName) {
-		this.controllerName = controllerName;
-	}
-	public String getActionCategory() {
-		return actionCategory;
-	}
-	public void setActionCategory(String actionCategory) {
-		this.actionCategory = actionCategory;
-	}	
-	
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ControllerSelectionReferenceId)) {
+            return false;
+        }
+        ControllerSelectionReferenceId castOther = (ControllerSelectionReferenceId) other;
+        return new EqualsBuilder().append(vnfType, castOther.vnfType).append(controllerName, castOther.controllerName)
+                .append(actionCategory, castOther.actionCategory).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(vnfType).append(controllerName).append(actionCategory).toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("vnfType", vnfType).append("controllerName", controllerName)
+                .append("actionCategory", actionCategory).toString();
+    }
+
+    public String getVnfType() {
+        return vnfType;
+    }
+
+    public void setVnfType(String vnfType) {
+        this.vnfType = vnfType;
+    }
+
+    public String getControllerName() {
+        return controllerName;
+    }
+
+    public void setControllerName(String controllerName) {
+        this.controllerName = controllerName;
+    }
+
+    public String getActionCategory() {
+        return actionCategory;
+    }
+
+    public void setActionCategory(String actionCategory) {
+        this.actionCategory = actionCategory;
+    }
+
 
 }

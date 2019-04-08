@@ -29,68 +29,70 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class CatalogQuery {
-	protected static Logger logger = LoggerFactory.getLogger(CatalogQuery.class);
-	private static final boolean IS_EMBED = true;
+    protected static Logger logger = LoggerFactory.getLogger(CatalogQuery.class);
+    private static final boolean IS_EMBED = true;
 
-	public abstract String JSON2(boolean isArray, boolean isEmbed);
+    public abstract String JSON2(boolean isArray, boolean isEmbed);
 
-	protected void put(Map<String, String> valueMap, String key, String value) {
-		valueMap.put(key, value == null? "null": '"'+ value+ '"');
-	}
+    protected void put(Map<String, String> valueMap, String key, String value) {
+        valueMap.put(key, value == null ? "null" : '"' + value + '"');
+    }
 
-	protected void put(Map<String, String> valueMap, String key, Integer value) {
-		valueMap.put(key, value == null? "null": value.toString());
-	}
+    protected void put(Map<String, String> valueMap, String key, Integer value) {
+        valueMap.put(key, value == null ? "null" : value.toString());
+    }
 
-	protected void put(Map<String, String> valueMap, String key, Boolean value) {
-		valueMap.put(key, value == null? "null": value? "true": "false");
-	}
+    protected void put(Map<String, String> valueMap, String key, Boolean value) {
+        valueMap.put(key, value == null ? "null" : value ? "true" : "false");
+    }
 
-	protected String setTemplate(String template, Map<String, String> valueMap) {
-		StringBuffer result = new StringBuffer();
+    protected String setTemplate(String template, Map<String, String> valueMap) {
+        StringBuffer result = new StringBuffer();
 
-		String pattern = "<.*>";
-		Pattern r = Pattern.compile(pattern);
-		Matcher m = r.matcher(template);
+        String pattern = "<.*>";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(template);
 
-		logger.debug("CatalogQuery template: {}", template);
-		while (m.find()) {
-			String key = template.substring(m.start() + 1, m.end() - 1);
-			logger.debug("CatalogQuery key: {} contains key? {}", key , valueMap.containsKey(key));
-			m.appendReplacement(result, Matcher.quoteReplacement(valueMap.getOrDefault(key, "\"TBD\"")));
-		}
-		m.appendTail(result);
-		logger.debug("CatalogQuery return: {}", result.toString());
-		return result.toString();
-	}
+        logger.debug("CatalogQuery template: {}", template);
+        while (m.find()) {
+            String key = template.substring(m.start() + 1, m.end() - 1);
+            logger.debug("CatalogQuery key: {} contains key? {}", key, valueMap.containsKey(key));
+            m.appendReplacement(result, Matcher.quoteReplacement(valueMap.getOrDefault(key, "\"TBD\"")));
+        }
+        m.appendTail(result);
+        logger.debug("CatalogQuery return: {}", result.toString());
+        return result.toString();
+    }
 
-	/**
-	 * The simple, clean, generic way to handle the interface
-	 */
- 	protected String smartToJSON() {
-		String jsonString = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			jsonString = mapper.writeValueAsString(this);
-		}
-		catch (Exception e) {
-		    logger.error("Error converting to JSON" , e);			
-			jsonString = "invalid"; //throws instead?
-		}
-		return jsonString;
-	}
+    /**
+     * The simple, clean, generic way to handle the interface
+     */
+    protected String smartToJSON() {
+        String jsonString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            jsonString = mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            logger.error("Error converting to JSON", e);
+            jsonString = "invalid"; // throws instead?
+        }
+        return jsonString;
+    }
 
-	public String toJsonString(String version, boolean isArray) {
-		switch(version) {
-		case "v1": return smartToJSON();
-		case "v2": return JSON2(isArray, !IS_EMBED);
-		default:
-			return "invalid version: "+ version;
-		}
-	}
-	@Override 
-	public String toString(){
-		return smartToJSON();
-		
-	}
+    public String toJsonString(String version, boolean isArray) {
+        switch (version) {
+            case "v1":
+                return smartToJSON();
+            case "v2":
+                return JSON2(isArray, !IS_EMBED);
+            default:
+                return "invalid version: " + version;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return smartToJSON();
+
+    }
 }

@@ -38,51 +38,60 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIVolumeGroupResources {
-	private static final Logger logger = LoggerFactory.getLogger(AAIVolumeGroupResources.class);
-	
-	@Autowired
-	private InjectionHelper injectionHelper;
-	
-	@Autowired
-	private AAIObjectMapper aaiObjectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(AAIVolumeGroupResources.class);
 
-	public void createVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-		AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
-		volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
-		injectionHelper.getAaiClient().create(uriVolumeGroup, aaiObjectMapper.mapVolumeGroup(volumeGroup));
-	}
-	
-	public void updateOrchestrationStatusVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion, OrchestrationStatus orchestrationStatus) {
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
-		VolumeGroup copiedVolumeGroup = volumeGroup.shallowCopyId();
+    @Autowired
+    private InjectionHelper injectionHelper;
 
-		volumeGroup.setOrchestrationStatus(orchestrationStatus);
-		copiedVolumeGroup.setOrchestrationStatus(orchestrationStatus);
-		injectionHelper.getAaiClient().update(uri, aaiObjectMapper.mapVolumeGroup(copiedVolumeGroup));
-	}
-	
-	public void connectVolumeGroupToVnf(GenericVnf genericVnf, VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-		AAIResourceUri uriGenericVnf = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId());
-		AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
-		injectionHelper.getAaiClient().connect(uriGenericVnf, uriVolumeGroup);
-	}
-	
-	public void connectVolumeGroupToTenant(VolumeGroup volumeGroup , CloudRegion cloudRegion) {
-		AAIResourceUri uriTenant = AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(),cloudRegion.getTenantId());
-		AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
-		injectionHelper.getAaiClient().connect(uriTenant, uriVolumeGroup);
-	}
-	
-	public void deleteVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
-		injectionHelper.getAaiClient().delete(uri);
-	}
-	
-	public void updateHeatStackIdVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
-		AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
-		VolumeGroup copiedVolumeGroup = volumeGroup.shallowCopyId();
-		
-		copiedVolumeGroup.setHeatStackId(volumeGroup.getHeatStackId());
-		injectionHelper.getAaiClient().update(uri, aaiObjectMapper.mapVolumeGroup(copiedVolumeGroup));
-	}
+    @Autowired
+    private AAIObjectMapper aaiObjectMapper;
+
+    public void createVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
+        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
+                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        volumeGroup.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+        injectionHelper.getAaiClient().create(uriVolumeGroup, aaiObjectMapper.mapVolumeGroup(volumeGroup));
+    }
+
+    public void updateOrchestrationStatusVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion,
+            OrchestrationStatus orchestrationStatus) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(),
+                cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        VolumeGroup copiedVolumeGroup = volumeGroup.shallowCopyId();
+
+        volumeGroup.setOrchestrationStatus(orchestrationStatus);
+        copiedVolumeGroup.setOrchestrationStatus(orchestrationStatus);
+        injectionHelper.getAaiClient().update(uri, aaiObjectMapper.mapVolumeGroup(copiedVolumeGroup));
+    }
+
+    public void connectVolumeGroupToVnf(GenericVnf genericVnf, VolumeGroup volumeGroup, CloudRegion cloudRegion) {
+        AAIResourceUri uriGenericVnf =
+                AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, genericVnf.getVnfId());
+        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
+                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        injectionHelper.getAaiClient().connect(uriGenericVnf, uriVolumeGroup);
+    }
+
+    public void connectVolumeGroupToTenant(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
+        AAIResourceUri uriTenant = AAIUriFactory.createResourceUri(AAIObjectType.TENANT, cloudRegion.getCloudOwner(),
+                cloudRegion.getLcpCloudRegionId(), cloudRegion.getTenantId());
+        AAIResourceUri uriVolumeGroup = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP,
+                cloudRegion.getCloudOwner(), cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        injectionHelper.getAaiClient().connect(uriTenant, uriVolumeGroup);
+    }
+
+    public void deleteVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(),
+                cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        injectionHelper.getAaiClient().delete(uri);
+    }
+
+    public void updateHeatStackIdVolumeGroup(VolumeGroup volumeGroup, CloudRegion cloudRegion) {
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.VOLUME_GROUP, cloudRegion.getCloudOwner(),
+                cloudRegion.getLcpCloudRegionId(), volumeGroup.getVolumeGroupId());
+        VolumeGroup copiedVolumeGroup = volumeGroup.shallowCopyId();
+
+        copiedVolumeGroup.setHeatStackId(volumeGroup.getHeatStackId());
+        injectionHelper.getAaiClient().update(uri, aaiObjectMapper.mapVolumeGroup(copiedVolumeGroup));
+    }
 }

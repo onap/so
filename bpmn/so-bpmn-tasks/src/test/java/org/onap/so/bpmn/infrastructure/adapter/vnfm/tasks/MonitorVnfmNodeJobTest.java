@@ -46,66 +46,66 @@ import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
  */
 public class MonitorVnfmNodeJobTest extends BaseTaskTest {
 
-  private static final String VNF_ID = UUID.randomUUID().toString();
+    private static final String VNF_ID = UUID.randomUUID().toString();
 
-  private static final String VNF_NAME = "VNF_NAME";
+    private static final String VNF_NAME = "VNF_NAME";
 
-  private MonitorVnfmNodeTask objUnderTest;
+    private MonitorVnfmNodeTask objUnderTest;
 
-  @Mock
-  private VnfmAdapterServiceProvider mockedVnfmAdapterServiceProvider;
+    @Mock
+    private VnfmAdapterServiceProvider mockedVnfmAdapterServiceProvider;
 
-  private final BuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
+    private final BuildingBlockExecution stubbedxecution = new StubbedBuildingBlockExecution();
 
-  @Before
-  public void setUp() {
-    objUnderTest = getEtsiVnfMonitorNodeJobTask();
-  }
+    @Before
+    public void setUp() {
+        objUnderTest = getEtsiVnfMonitorNodeJobTask();
+    }
 
-  @Test
-  public void testGetNodeStatusCreate() throws Exception {
-    GenericVnf vnf = getGenericVnf();
-    vnf.setOrchestrationStatus(VNF_CREATED);
-    when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(vnf);
-    objUnderTest.getNodeStatus(stubbedxecution);
-    assertTrue(stubbedxecution.getVariable(CREATE_VNF_NODE_STATUS));
-  }
+    @Test
+    public void testGetNodeStatusCreate() throws Exception {
+        GenericVnf vnf = getGenericVnf();
+        vnf.setOrchestrationStatus(VNF_CREATED);
+        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(vnf);
+        objUnderTest.getNodeStatus(stubbedxecution);
+        assertTrue(stubbedxecution.getVariable(CREATE_VNF_NODE_STATUS));
+    }
 
-  @Test
-  public void testGetNodeStatusDelete() throws Exception {
-    GenericVnf vnf = getGenericVnf();
-    vnf.setOrchestrationStatus(VNF_ASSIGNED);
-    when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(vnf);
-    objUnderTest.getNodeStatus(stubbedxecution);
-    assertTrue(stubbedxecution.getVariable(DELETE_VNF_NODE_STATUS));
-  }
+    @Test
+    public void testGetNodeStatusDelete() throws Exception {
+        GenericVnf vnf = getGenericVnf();
+        vnf.setOrchestrationStatus(VNF_ASSIGNED);
+        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(vnf);
+        objUnderTest.getNodeStatus(stubbedxecution);
+        assertTrue(stubbedxecution.getVariable(DELETE_VNF_NODE_STATUS));
+    }
 
-  @Test
-  public void testGetNodeStatusException() throws Exception {
-    when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenThrow(RuntimeException.class);
-    objUnderTest.getNodeStatus(stubbedxecution);
-    assertNull(stubbedxecution.getVariable(CREATE_VNF_NODE_STATUS));
-    assertNull(stubbedxecution.getVariable(DELETE_VNF_NODE_STATUS));
-    verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1220),
-        any(Exception.class));
-  }
+    @Test
+    public void testGetNodeStatusException() throws Exception {
+        when(extractPojosForBB.extractByKey(any(), eq(ResourceKey.GENERIC_VNF_ID))).thenThrow(RuntimeException.class);
+        objUnderTest.getNodeStatus(stubbedxecution);
+        assertNull(stubbedxecution.getVariable(CREATE_VNF_NODE_STATUS));
+        assertNull(stubbedxecution.getVariable(DELETE_VNF_NODE_STATUS));
+        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1220),
+                any(Exception.class));
+    }
 
-  @Test
-  public void testTimeOutLogFailue() throws Exception {
-    objUnderTest.timeOutLogFailue(stubbedxecution);
-    verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1221),
-        eq("Node operation time out"));
-  }
+    @Test
+    public void testTimeOutLogFailue() throws Exception {
+        objUnderTest.timeOutLogFailue(stubbedxecution);
+        verify(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1221),
+                eq("Node operation time out"));
+    }
 
-  private GenericVnf getGenericVnf() {
-    final GenericVnf genericVnf = new GenericVnf();
-    genericVnf.setVnfId(VNF_ID);
-    genericVnf.setVnfName(VNF_NAME);
-    return genericVnf;
-  }
+    private GenericVnf getGenericVnf() {
+        final GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setVnfId(VNF_ID);
+        genericVnf.setVnfName(VNF_NAME);
+        return genericVnf;
+    }
 
-  private MonitorVnfmNodeTask getEtsiVnfMonitorNodeJobTask() {
-    return new MonitorVnfmNodeTask(extractPojosForBB, exceptionUtil);
-  }
+    private MonitorVnfmNodeTask getEtsiVnfMonitorNodeJobTask() {
+        return new MonitorVnfmNodeTask(extractPojosForBB, exceptionUtil);
+    }
 
 }

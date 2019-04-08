@@ -21,42 +21,41 @@
 package org.onap.so.openstack.beans;
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "routeTarget",
-    "routeTargetRole"
-})
-public class RouteTarget implements Serializable{
+@XmlType(name = "", propOrder = {"routeTarget", "routeTargetRole"})
+public class RouteTarget implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5425083030715789604L;
-	private String routeTarget;
-	private String routeTargetRole;
-	
-	public String getRouteTarget() {
-		return routeTarget;
-	}
-	public void setRouteTarget(String routeTarget) {
-		this.routeTarget = routeTarget;
-	}
-	public String getRouteTargetRole() {
-		return routeTargetRole;
-	}
-	public void setRouteTargetRole(String routeTargetRole) {
-		this.routeTargetRole = routeTargetRole;
-	}
-	
-	
-	@Override
-	public String toString() {
-		return "RouteTarget [routeTarget=" + routeTarget + ", routeTargetRole=" + routeTargetRole + "]";
-	}
-	
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5425083030715789604L;
+    private String routeTarget;
+    private String routeTargetRole;
+
+    public String getRouteTarget() {
+        return routeTarget;
+    }
+
+    public void setRouteTarget(String routeTarget) {
+        this.routeTarget = routeTarget;
+    }
+
+    public String getRouteTargetRole() {
+        return routeTargetRole;
+    }
+
+    public void setRouteTargetRole(String routeTargetRole) {
+        this.routeTargetRole = routeTargetRole;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RouteTarget [routeTarget=" + routeTarget + ", routeTargetRole=" + routeTargetRole + "]";
+    }
+
 }

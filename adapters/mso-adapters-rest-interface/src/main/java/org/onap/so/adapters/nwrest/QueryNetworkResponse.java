@@ -25,111 +25,109 @@ package org.onap.so.adapters.nwrest;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.openstack.beans.NetworkStatus;
 import org.onap.so.openstack.beans.RouteTarget;
 
 @XmlRootElement(name = "queryNetworkResponse")
 public class QueryNetworkResponse extends NetworkResponseCommon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -5251191073081795026L;
-	private String networkId;
-	private String neutronNetworkId;
-	private String networkStackId;
-	private Boolean networkExists;
-	private NetworkStatus networkStatus;
-	private List<Integer> vlans;
-	private List<RouteTarget> routeTargets;
-	private Map<String, String> subnetIdMap;
-	private Map<String, String> networkOutputs;
-	
-	public QueryNetworkResponse() {
-		super();
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5251191073081795026L;
+    private String networkId;
+    private String neutronNetworkId;
+    private String networkStackId;
+    private Boolean networkExists;
+    private NetworkStatus networkStatus;
+    private List<Integer> vlans;
+    private List<RouteTarget> routeTargets;
+    private Map<String, String> subnetIdMap;
+    private Map<String, String> networkOutputs;
 
-	public QueryNetworkResponse(String networkId, String neutronNetworkId, String networkStackId,
-			NetworkStatus networkStatus, Map<String, String> networkOutputs) {
-		super();
-		this.networkId = networkId;
-		this.neutronNetworkId = neutronNetworkId;
-		this.networkStackId = networkStackId;
-		this.networkStatus = networkStatus;
-		this.networkOutputs = networkOutputs;
-	}
+    public QueryNetworkResponse() {
+        super();
+    }
 
-	public String getNetworkId() {
-		return networkId;
-	}
+    public QueryNetworkResponse(String networkId, String neutronNetworkId, String networkStackId,
+            NetworkStatus networkStatus, Map<String, String> networkOutputs) {
+        super();
+        this.networkId = networkId;
+        this.neutronNetworkId = neutronNetworkId;
+        this.networkStackId = networkStackId;
+        this.networkStatus = networkStatus;
+        this.networkOutputs = networkOutputs;
+    }
 
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
-	}
+    public String getNetworkId() {
+        return networkId;
+    }
 
-	public String getNeutronNetworkId() {
-		return neutronNetworkId;
-	}
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 
-	public void setNeutronNetworkId(String neutronNetworkId) {
-		this.neutronNetworkId = neutronNetworkId;
-	}
+    public String getNeutronNetworkId() {
+        return neutronNetworkId;
+    }
 
-	public String getNetworkStackId() {
-		return networkStackId;
-	}
+    public void setNeutronNetworkId(String neutronNetworkId) {
+        this.neutronNetworkId = neutronNetworkId;
+    }
 
-	public void setNetworkStackId(String networkStackId) {
-		this.networkStackId = networkStackId;
-	}
+    public String getNetworkStackId() {
+        return networkStackId;
+    }
 
-	public NetworkStatus getNetworkStatus() {
-		return networkStatus;
-	}
+    public void setNetworkStackId(String networkStackId) {
+        this.networkStackId = networkStackId;
+    }
 
-	public void setNetworkStatus(NetworkStatus networkStatus) {
-		this.networkStatus = networkStatus;
-	}
+    public NetworkStatus getNetworkStatus() {
+        return networkStatus;
+    }
 
-	public Boolean getNetworkExists() {
-		return networkExists;
-	}
+    public void setNetworkStatus(NetworkStatus networkStatus) {
+        this.networkStatus = networkStatus;
+    }
 
-	public void setNetworkExists(Boolean networkExists) {
-		this.networkExists = networkExists;
-	}
+    public Boolean getNetworkExists() {
+        return networkExists;
+    }
 
-	public List<Integer> getVlans() {
-		return vlans;
-	}
+    public void setNetworkExists(Boolean networkExists) {
+        this.networkExists = networkExists;
+    }
 
-	public void setVlans(List<Integer> vlans) {
-		this.vlans = vlans;
-	}
+    public List<Integer> getVlans() {
+        return vlans;
+    }
 
-	public List<RouteTarget> getRouteTargets() {
-		return routeTargets;
-	}
+    public void setVlans(List<Integer> vlans) {
+        this.vlans = vlans;
+    }
 
-	public void setRouteTargets(List<RouteTarget> routeTargets) {
-		this.routeTargets = routeTargets;
-	}
+    public List<RouteTarget> getRouteTargets() {
+        return routeTargets;
+    }
 
-	public Map<String, String> getSubnetIdMap() {
-		return subnetIdMap;
-	}
+    public void setRouteTargets(List<RouteTarget> routeTargets) {
+        this.routeTargets = routeTargets;
+    }
 
-	public void setSubnetIdMap(Map<String, String> subnetIdMap) {
-		this.subnetIdMap = subnetIdMap;
-	}
+    public Map<String, String> getSubnetIdMap() {
+        return subnetIdMap;
+    }
 
-	public Map<String, String> getNetworkOutputs() {
-		return networkOutputs;
-	}
+    public void setSubnetIdMap(Map<String, String> subnetIdMap) {
+        this.subnetIdMap = subnetIdMap;
+    }
 
-	public void setNetworkOutputs(Map<String, String> networkOutputs) {
-		this.networkOutputs = networkOutputs;
-	}
+    public Map<String, String> getNetworkOutputs() {
+        return networkOutputs;
+    }
+
+    public void setNetworkOutputs(Map<String, String> networkOutputs) {
+        this.networkOutputs = networkOutputs;
+    }
 }

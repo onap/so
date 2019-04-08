@@ -22,9 +22,7 @@ package org.onap.so.db.catalog.data.repository;
 
 import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
-
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
@@ -42,24 +40,25 @@ public class VnfcCustomizationRepositoryTest extends BaseTest {
     public void findAllTest() throws Exception {
         List<VnfcCustomization> vnfcCustomizationList = vnfcCustomizationRepository.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(vnfcCustomizationList));
-        
-        VnfcCustomization vnfcCustomization = vnfcCustomizationRepository.findById("9bcce658-9b37-11e8-98d0-529269fb1459").
-        		orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+
+        VnfcCustomization vnfcCustomization =
+                vnfcCustomizationRepository.findById("9bcce658-9b37-11e8-98d0-529269fb1459")
+                        .orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
         Assert.assertTrue(vnfcCustomization.getDescription().equalsIgnoreCase("testVnfcCustomizationDescription"));
     }
-    
+
     @Test
     @Transactional
     public void createAndGetTest() throws Exception {
-    	
-    	VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
-    	vnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
-    	vnfcCustomizationRepository.save(vnfcCustomization);	
-    	
-    	VnfcCustomization foundVnfcCustomization = vnfcCustomizationRepository.findById("cf9f6efc-9f14-11e8-98d0-529269fb1459").
-        		orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
-        
-        assertThat(vnfcCustomization, sameBeanAs(foundVnfcCustomization)
-        		.ignoring("created"));
+
+        VnfcCustomization vnfcCustomization = setUpVnfcCustomization();
+        vnfcCustomization.setModelCustomizationUUID("cf9f6efc-9f14-11e8-98d0-529269fb1459");
+        vnfcCustomizationRepository.save(vnfcCustomization);
+
+        VnfcCustomization foundVnfcCustomization =
+                vnfcCustomizationRepository.findById("cf9f6efc-9f14-11e8-98d0-529269fb1459")
+                        .orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+
+        assertThat(vnfcCustomization, sameBeanAs(foundVnfcCustomization).ignoring("created"));
     }
 }

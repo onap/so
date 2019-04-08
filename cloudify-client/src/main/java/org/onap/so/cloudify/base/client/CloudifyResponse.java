@@ -24,16 +24,16 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Map;
 
-public interface CloudifyResponse extends Serializable{
+public interface CloudifyResponse extends Serializable {
 
-	public <T> T getEntity(Class<T> returnType);
+    public <T> T getEntity(Class<T> returnType);
 
-	public <T> T getErrorEntity(Class<T> returnType);
+    public <T> T getErrorEntity(Class<T> returnType);
 
-	public InputStream getInputStream();
+    public InputStream getInputStream();
 
-	public String getHeader(String name);
-	
-	public Map<String, String> headers();
-	
+    public String getHeader(String name);
+
+    public Map<String, String> headers();
+
 }

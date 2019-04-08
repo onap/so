@@ -20,7 +20,6 @@
 package org.onap.so.monitoring.configuration.database;
 
 import java.net.URI;
-
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**

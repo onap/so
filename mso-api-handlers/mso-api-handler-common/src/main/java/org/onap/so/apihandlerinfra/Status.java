@@ -23,14 +23,7 @@ package org.onap.so.apihandlerinfra;
 
 /*
  * Enum for Status values returned by API Handler to Tail-F
-*/
+ */
 public enum Status {
-	PENDING,
-	IN_PROGRESS,
-	COMPLETE,
-	COMPLETED,
-	FAILED,
-	TIMEOUT,
-	UNLOCKED,
-	PENDING_MANUAL_TASK
+    PENDING, IN_PROGRESS, COMPLETE, COMPLETED, FAILED, TIMEOUT, UNLOCKED, PENDING_MANUAL_TASK
 }

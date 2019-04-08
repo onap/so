@@ -31,79 +31,80 @@ import java.util.Map;
  */
 
 public class StackInfo {
-	// Set defaults for everything
-	private String name = "";
-	private String canonicalName = "";
-	private HeatStatus status = HeatStatus.UNKNOWN;
-	private String statusMessage = "";
-	private Map<String,Object> outputs = new HashMap<>();
-	private Map<String,Object> parameters = new HashMap<>();
+    // Set defaults for everything
+    private String name = "";
+    private String canonicalName = "";
+    private HeatStatus status = HeatStatus.UNKNOWN;
+    private String statusMessage = "";
+    private Map<String, Object> outputs = new HashMap<>();
+    private Map<String, Object> parameters = new HashMap<>();
 
-	public StackInfo () {
-	}
-	
-	public StackInfo (String name, HeatStatus status, String statusMessage, Map<String,Object> outputs) {
-		this.name = name;
-		this.canonicalName = name;	// Don't have an ID, so just use name
+    public StackInfo() {}
 
-		this.status = status;
-		if (statusMessage != null)  this.statusMessage = statusMessage;
-		if (outputs != null)  this.outputs = outputs;
-	}
-	
-	public StackInfo (String name, HeatStatus status) {
-		this.name = name;
-		this.canonicalName = name;	// Don't have an ID, so just use name
-		this.status = status;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName (String name) {
-		this.name = name;
-	}
-	
-	public String getCanonicalName() {
-		return canonicalName;
-	}
-	
-	public void setCanonicalName (String name) {
-		this.canonicalName = name;
-	}
-	
-	public HeatStatus getStatus() {
-		return status;
-	}
-	
-	public void setStatus (HeatStatus status) {
-		this.status = status;
-	}
-	
-	public String getStatusMessage() {
-		return statusMessage;
-	}
-	
-	public void setStatusMessage (String statusMessage) {
-		this.statusMessage = statusMessage;
-	}
-	
-	public Map<String,Object> getOutputs () {
-		return outputs;
-	}
-	
-	public void setOutputs (Map<String,Object> outputs) {
-		this.outputs = outputs;
-	}
-	
-	public Map<String,Object> getParameters () {
-		return parameters;
-	}
-	
-	public void setParameters (Map<String,Object> parameters) {
-		this.parameters = parameters;
-	}
-	
+    public StackInfo(String name, HeatStatus status, String statusMessage, Map<String, Object> outputs) {
+        this.name = name;
+        this.canonicalName = name; // Don't have an ID, so just use name
+
+        this.status = status;
+        if (statusMessage != null)
+            this.statusMessage = statusMessage;
+        if (outputs != null)
+            this.outputs = outputs;
+    }
+
+    public StackInfo(String name, HeatStatus status) {
+        this.name = name;
+        this.canonicalName = name; // Don't have an ID, so just use name
+        this.status = status;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCanonicalName() {
+        return canonicalName;
+    }
+
+    public void setCanonicalName(String name) {
+        this.canonicalName = name;
+    }
+
+    public HeatStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(HeatStatus status) {
+        this.status = status;
+    }
+
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    public void setStatusMessage(String statusMessage) {
+        this.statusMessage = statusMessage;
+    }
+
+    public Map<String, Object> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(Map<String, Object> outputs) {
+        this.outputs = outputs;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
 }
 

@@ -21,7 +21,6 @@
 package org.onap.so.client.policy;
 
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,16 +29,16 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 @Component
 public class JettisonStyleMapperProvider extends CommonObjectMapperProvider {
-	
-	public JettisonStyleMapperProvider() {
-		
-		mapper = new ObjectMapper();
-		JaxbAnnotationModule jaxbModule = new JaxbAnnotationModule();
-		mapper.setSerializationInclusion(Include.NON_NULL);
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
-		mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		mapper.registerModule(jaxbModule);
-	}
+
+    public JettisonStyleMapperProvider() {
+
+        mapper = new ObjectMapper();
+        JaxbAnnotationModule jaxbModule = new JaxbAnnotationModule();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, true);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.registerModule(jaxbModule);
+    }
 
 }

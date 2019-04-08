@@ -22,19 +22,19 @@ package org.onap.so.client.graphinventory.exceptions;
 
 public class GraphInventoryPayloadException extends Exception {
 
-	private static final long serialVersionUID = -5712783905947711065L;
-	
-	public GraphInventoryPayloadException(Throwable t) {
-		super(t);
-	}
-	
-	public GraphInventoryPayloadException(String s, Throwable t) {
-		super(s, t);
-	}
-	
-	public GraphInventoryPayloadException(String s) {
-		super(s);
-	}
-	
+    private static final long serialVersionUID = -5712783905947711065L;
+
+    public GraphInventoryPayloadException(Throwable t) {
+        super(t);
+    }
+
+    public GraphInventoryPayloadException(String s, Throwable t) {
+        super(s, t);
+    }
+
+    public GraphInventoryPayloadException(String s) {
+        super(s);
+    }
+
 
 }

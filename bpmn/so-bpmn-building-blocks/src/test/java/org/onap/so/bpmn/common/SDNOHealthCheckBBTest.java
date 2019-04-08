@@ -23,9 +23,7 @@ package org.onap.so.bpmn.common;
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineAssertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import java.io.IOException;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Ignore;
@@ -33,27 +31,28 @@ import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 
 public class SDNOHealthCheckBBTest extends BaseBPMNTest {
-	
-	@Test
-	
-	public void sunnyDaySDNOHealthCheckTest() throws InterruptedException, IOException {		
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("SDNOVnfHealthCheckBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_SDNOHealthCheckBB", "Task_SDNOHealthCheck", "End_SDNOHealthCheckBB");
-		assertThat(pi).isEnded();
-	}
-	
-	@Test
-	public void rainyDaySDNOHealthCheckTest() {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdnoHealthCheckTasks).sdnoHealthCheck(any(BuildingBlockExecution.class));
-		
-		ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("SDNOVnfHealthCheckBB", variables);
-		assertThat(processInstance).isNotNull();
-		assertThat(processInstance).isStarted()
-			.hasPassedInOrder("Start_SDNOHealthCheckBB", "Task_SDNOHealthCheck")
-			.hasNotPassed("End_SDNOHealthCheckBB");
-		assertThat(processInstance).isEnded();
-	}
 
-	
+    @Test
+
+    public void sunnyDaySDNOHealthCheckTest() throws InterruptedException, IOException {
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("SDNOVnfHealthCheckBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("Start_SDNOHealthCheckBB", "Task_SDNOHealthCheck",
+                "End_SDNOHealthCheckBB");
+        assertThat(pi).isEnded();
+    }
+
+    @Test
+    public void rainyDaySDNOHealthCheckTest() {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdnoHealthCheckTasks)
+                .sdnoHealthCheck(any(BuildingBlockExecution.class));
+
+        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey("SDNOVnfHealthCheckBB", variables);
+        assertThat(processInstance).isNotNull();
+        assertThat(processInstance).isStarted().hasPassedInOrder("Start_SDNOHealthCheckBB", "Task_SDNOHealthCheck")
+                .hasNotPassed("End_SDNOHealthCheckBB");
+        assertThat(processInstance).isEnded();
+    }
+
+
 }

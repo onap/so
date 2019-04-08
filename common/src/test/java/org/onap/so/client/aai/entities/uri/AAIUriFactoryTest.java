@@ -21,7 +21,6 @@
 package org.onap.so.client.aai.entities.uri;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
@@ -29,40 +28,41 @@ import org.onap.so.client.graphinventory.entities.uri.SimpleUri;
 
 public class AAIUriFactoryTest {
 
-	@Test
-	public void testCreateResourceUri() {
-		
-		AAIUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "VIP(VelocitytoIP)");
-		
-		String expected = "/network/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
-		assertEquals(expected, uri.build().toString());
-	}
-	
-	@Test
-	public void testCreateNodesUri() {
-		
-		AAIUri uri = AAIUriFactory.createNodesUri(AAIObjectType.GENERIC_VNF, "VIP(VelocitytoIP)");
-		
-		String expected = "/nodes/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
-		assertEquals(expected, uri.build().toString());
-	}
-	
-	@Test
-	public void testCreateResourceFromExistingURI() {
-		
-		AAIUri uri = new AAISimpleUri(AAIObjectType.GENERIC_VNF, "VIP(VelocitytoIP)");
-		AAIUri uri2 = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.GENERIC_VNF, uri.build());
-		
-		String expected = "/network/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
-		assertEquals(expected, uri2.build().toString());
-	}
-	
-	@Test
-	public void testCreateResourceURIForPluralsWithValues() {
-		
-		AAIUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, "customerId", "serviceType");
-		
-		String expected = "/business/customers/customer/customerId/service-subscriptions/service-subscription/serviceType/service-instances";
-		assertEquals(expected, uri.build().toString());
-	}
+    @Test
+    public void testCreateResourceUri() {
+
+        AAIUri uri = AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, "VIP(VelocitytoIP)");
+
+        String expected = "/network/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
+        assertEquals(expected, uri.build().toString());
+    }
+
+    @Test
+    public void testCreateNodesUri() {
+
+        AAIUri uri = AAIUriFactory.createNodesUri(AAIObjectType.GENERIC_VNF, "VIP(VelocitytoIP)");
+
+        String expected = "/nodes/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
+        assertEquals(expected, uri.build().toString());
+    }
+
+    @Test
+    public void testCreateResourceFromExistingURI() {
+
+        AAIUri uri = new AAISimpleUri(AAIObjectType.GENERIC_VNF, "VIP(VelocitytoIP)");
+        AAIUri uri2 = AAIUriFactory.createResourceFromExistingURI(AAIObjectType.GENERIC_VNF, uri.build());
+
+        String expected = "/network/generic-vnfs/generic-vnf/VIP%28VelocitytoIP%29";
+        assertEquals(expected, uri2.build().toString());
+    }
+
+    @Test
+    public void testCreateResourceURIForPluralsWithValues() {
+
+        AAIUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.SERVICE_INSTANCE, "customerId", "serviceType");
+
+        String expected =
+                "/business/customers/customer/customerId/service-subscriptions/service-subscription/serviceType/service-instances";
+        assertEquals(expected, uri.build().toString());
+    }
 }

@@ -24,8 +24,8 @@ package org.onap.so.exceptions;
 public class ValidationException extends Exception {
 
     /**
-     * This class simply extends Exception (without addition additional functionality)
-     * to provide an identifier for RequestsDB related exceptions on create, delete, query.
+     * This class simply extends Exception (without addition additional functionality) to provide an identifier for
+     * RequestsDB related exceptions on create, delete, query.
      *
      *
      **/
@@ -37,18 +37,20 @@ public class ValidationException extends Exception {
     private static final String REPLACE_SECOND_ELEMENT_KEY = "\\$SECOND_ELEMENT";
 
     @Deprecated
-    public ValidationException (String msg) {
-        super (VALIDATION_FAIL.replaceAll (REPLACE_ELEMENT_KEY, msg));
+    public ValidationException(String msg) {
+        super(VALIDATION_FAIL.replaceAll(REPLACE_ELEMENT_KEY, msg));
     }
 
     public ValidationException(String msg, boolean overrideExistingMessage) {
         super(overrideExistingMessage ? VALIDATION_FAIL.replaceAll(REPLACE_ELEMENT_KEY, msg) : msg);
     }
 
-    public ValidationException (String msg, Exception cause) {
-        super (VALIDATION_FAIL.replaceAll (REPLACE_ELEMENT_KEY, msg), cause);
+    public ValidationException(String msg, Exception cause) {
+        super(VALIDATION_FAIL.replaceAll(REPLACE_ELEMENT_KEY, msg), cause);
     }
+
     public ValidationException(String firstElement, String secondElement) {
-        super(UNMATCHED_ELEMENTS.replaceAll(REPLACE_ELEMENT_KEY, firstElement).replaceAll(REPLACE_SECOND_ELEMENT_KEY, secondElement));
+        super(UNMATCHED_ELEMENTS.replaceAll(REPLACE_ELEMENT_KEY, firstElement).replaceAll(REPLACE_SECOND_ELEMENT_KEY,
+                secondElement));
     }
 }

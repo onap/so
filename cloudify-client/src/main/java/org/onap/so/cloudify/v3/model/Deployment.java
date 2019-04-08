@@ -25,18 +25,17 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-//@JsonRootName("deployment")
+// @JsonRootName("deployment")
 public class Deployment implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     @JsonProperty("blueprint_id")
     private String blueprintId;
 
@@ -51,13 +50,13 @@ public class Deployment implements Serializable {
 
     @JsonProperty("groups")
     private Map<String, Group> groups = null;
-    
+
     @JsonProperty("id")
     private String id;
-    
+
     @JsonProperty("inputs")
     private Map<String, Object> inputs = null;
-    
+
     // TODO: Expand the definition of a PolicyTrigger
     @JsonProperty("policy_triggers")
     private List<Object> policyTriggers;
@@ -68,7 +67,7 @@ public class Deployment implements Serializable {
 
     @JsonProperty("scaling_groups")
     private Map<String, ScalingGroup> scalingGroups = null;
-    
+
     @JsonProperty("tenant_name")
     private String tenantName;
 
@@ -77,31 +76,31 @@ public class Deployment implements Serializable {
 
     @JsonProperty("workflows")
     private List<Workflow> workflows;
-    
+
     public List<Object> getPolicyTriggers() {
-		return policyTriggers;
-	}
+        return policyTriggers;
+    }
 
-	public void setPolicyTriggers(List<Object> policyTriggers) {
-		this.policyTriggers = policyTriggers;
-	}
+    public void setPolicyTriggers(List<Object> policyTriggers) {
+        this.policyTriggers = policyTriggers;
+    }
 
-	public List<Object> getPolicyTypes() {
-		return policyTypes;
-	}
+    public List<Object> getPolicyTypes() {
+        return policyTypes;
+    }
 
-	public void setPolicyTypes(List<Object> policyTypes) {
-		this.policyTypes = policyTypes;
-	}
+    public void setPolicyTypes(List<Object> policyTypes) {
+        this.policyTypes = policyTypes;
+    }
 
-	public String getBlueprintId() {
+    public String getBlueprintId() {
         return blueprintId;
     }
 
     public void setBlueprintId(String blueprintId) {
         this.blueprintId = blueprintId;
     }
-   
+
     public Date getCreatedAt() {
         return createdAt;
     }
@@ -125,13 +124,13 @@ public class Deployment implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     public Map<String, Group> getGroups() {
-    	return this.groups;
+        return this.groups;
     }
-    
+
     public void setGroups(Map<String, Group> groups) {
-    	this.groups = groups;
+        this.groups = groups;
     }
 
     public String getId() {
@@ -143,10 +142,11 @@ public class Deployment implements Serializable {
     }
 
     public Map<String, Object> getInputs() {
-    	return this.inputs;
+        return this.inputs;
     }
+
     public void setInputs(Map<String, Object> inputs) {
-    	this.inputs = inputs;
+        this.inputs = inputs;
     }
 
     public String getTenantName() {
@@ -158,14 +158,14 @@ public class Deployment implements Serializable {
     }
 
     public Map<String, ScalingGroup> getScalingGroups() {
-		return scalingGroups;
-	}
+        return scalingGroups;
+    }
 
-	public void setScalingGroups(Map<String, ScalingGroup> scalingGroups) {
-		this.scalingGroups = scalingGroups;
-	}
+    public void setScalingGroups(Map<String, ScalingGroup> scalingGroups) {
+        this.scalingGroups = scalingGroups;
+    }
 
-	public Date getUpdatedAt() {
+    public Date getUpdatedAt() {
         return updatedAt;
     }
 
@@ -185,181 +185,175 @@ public class Deployment implements Serializable {
      * Nested subclasses for Group definitions
      */
     public static final class Group {
-    	@JsonProperty ("policies")
-    	Object policies;
-    	
-    	@JsonProperty("members")
-    	List<String> members;
+        @JsonProperty("policies")
+        Object policies;
 
-		public Object getPolicies() {
-			return policies;
-		}
+        @JsonProperty("members")
+        List<String> members;
 
-		public void setPolicies(Object policies) {
-			this.policies = policies;
-		}
+        public Object getPolicies() {
+            return policies;
+        }
 
-		public List<String> getMembers() {
-			return members;
-		}
+        public void setPolicies(Object policies) {
+            this.policies = policies;
+        }
 
-		public void setMembers(List<String> members) {
-			this.members = members;
-		}
+        public List<String> getMembers() {
+            return members;
+        }
+
+        public void setMembers(List<String> members) {
+            this.members = members;
+        }
     }
 
     /*
      * Nested subclasses for Scaling Group definitions
      */
     public static final class ScalingGroup {
-    	@JsonProperty ("properties")
-    	ScalingGroupProperties properties;
-    	
-    	@JsonProperty("members")
-    	List<String> members;
+        @JsonProperty("properties")
+        ScalingGroupProperties properties;
 
-		public ScalingGroupProperties getProperties() {
-			return properties;
-		}
+        @JsonProperty("members")
+        List<String> members;
 
-		public void setProperties(ScalingGroupProperties properties) {
-			this.properties = properties;
-		}
+        public ScalingGroupProperties getProperties() {
+            return properties;
+        }
 
-		public List<String> getMembers() {
-			return members;
-		}
+        public void setProperties(ScalingGroupProperties properties) {
+            this.properties = properties;
+        }
 
-		public void setMembers(List<String> members) {
-			this.members = members;
-		}
+        public List<String> getMembers() {
+            return members;
+        }
+
+        public void setMembers(List<String> members) {
+            this.members = members;
+        }
     }
 
     public static final class ScalingGroupProperties {
-    	@JsonProperty("current_instances")
-    	int currentInstances;
-    	
-    	@JsonProperty("default_instances")
-    	int defaultInstances;
-    	
-    	@JsonProperty("max_instances")
-    	int maxInstances;
-    	
-    	@JsonProperty("min_instances")
-    	int minInstances;
-    	
-    	@JsonProperty("planned_instances")
-    	int plannedInstances;
+        @JsonProperty("current_instances")
+        int currentInstances;
 
-		public int getCurrentInstances() {
-			return currentInstances;
-		}
+        @JsonProperty("default_instances")
+        int defaultInstances;
 
-		public void setCurrentInstances(int currentInstances) {
-			this.currentInstances = currentInstances;
-		}
+        @JsonProperty("max_instances")
+        int maxInstances;
 
-		public int getDefaultInstances() {
-			return defaultInstances;
-		}
+        @JsonProperty("min_instances")
+        int minInstances;
 
-		public void setDefaultInstances(int defaultInstances) {
-			this.defaultInstances = defaultInstances;
-		}
+        @JsonProperty("planned_instances")
+        int plannedInstances;
 
-		public int getMaxInstances() {
-			return maxInstances;
-		}
+        public int getCurrentInstances() {
+            return currentInstances;
+        }
 
-		public void setMaxInstances(int maxInstances) {
-			this.maxInstances = maxInstances;
-		}
+        public void setCurrentInstances(int currentInstances) {
+            this.currentInstances = currentInstances;
+        }
 
-		public int getMinInstances() {
-			return minInstances;
-		}
+        public int getDefaultInstances() {
+            return defaultInstances;
+        }
 
-		public void setMinInstances(int minInstances) {
-			this.minInstances = minInstances;
-		}
+        public void setDefaultInstances(int defaultInstances) {
+            this.defaultInstances = defaultInstances;
+        }
 
-		public int getPlannedInstances() {
-			return plannedInstances;
-		}
+        public int getMaxInstances() {
+            return maxInstances;
+        }
 
-		public void setPlannedInstances(int plannedInstances) {
-			this.plannedInstances = plannedInstances;
-		}
+        public void setMaxInstances(int maxInstances) {
+            this.maxInstances = maxInstances;
+        }
+
+        public int getMinInstances() {
+            return minInstances;
+        }
+
+        public void setMinInstances(int minInstances) {
+            this.minInstances = minInstances;
+        }
+
+        public int getPlannedInstances() {
+            return plannedInstances;
+        }
+
+        public void setPlannedInstances(int plannedInstances) {
+            this.plannedInstances = plannedInstances;
+        }
     }
-    
+
     /*
-     * Nested subclass for Deployment Workflow entities.
-     * Note that Blueprint class also contains a slightly different Workflow structure.
+     * Nested subclass for Deployment Workflow entities. Note that Blueprint class also contains a slightly different
+     * Workflow structure.
      */
     public static final class Workflow {
-    	@JsonProperty("name")
-    	private String name;
-    	@JsonProperty("created_at")
-    	private Date createdAt;
-    	@JsonProperty("parameters")
-    	private Map<String,ParameterDefinition> parameters;
-    	
-    	public Workflow() {}
-    	
-		public String getName() {
-			return name;
-		}
-		public void setName(String name) {
-			this.name = name;
-		}
-		public Date getCreatedAt() {
-			return createdAt;
-		}
-		public void setCreatedAt(Date createdAt) {
-			this.createdAt = createdAt;
-		}
-		public Map<String, ParameterDefinition> getParameters() {
-			return parameters;
-		}
-		public void setParameters(Map<String, ParameterDefinition> parameters) {
-			this.parameters = parameters;
-		}
+        @JsonProperty("name")
+        private String name;
+        @JsonProperty("created_at")
+        private Date createdAt;
+        @JsonProperty("parameters")
+        private Map<String, ParameterDefinition> parameters;
+
+        public Workflow() {}
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public Date getCreatedAt() {
+            return createdAt;
+        }
+
+        public void setCreatedAt(Date createdAt) {
+            this.createdAt = createdAt;
+        }
+
+        public Map<String, ParameterDefinition> getParameters() {
+            return parameters;
+        }
+
+        public void setParameters(Map<String, ParameterDefinition> parameters) {
+            this.parameters = parameters;
+        }
     }
-    
-	/*
-	 * Return an  output as a Json-mapped Object of the provided type.
-	 * This is useful for json-object outputs.
-	 */
-	public <T> T getMapValue (Map<String,Object> map, String key, Class<T> type)
-	{
 
-		ObjectMapper mapper = new ObjectMapper();
-		if (map.containsKey(key)) {
-			try {
-				String s = mapper.writeValueAsString(map.get(key));
-				return (mapper.readValue(s, type));
-			}
-			catch (IOException e) {
-				return null;
-			}
-		}
-		return null;
-	}
+    /*
+     * Return an output as a Json-mapped Object of the provided type. This is useful for json-object outputs.
+     */
+    public <T> T getMapValue(Map<String, Object> map, String key, Class<T> type) {
 
-	@Override
+        ObjectMapper mapper = new ObjectMapper();
+        if (map.containsKey(key)) {
+            try {
+                String s = mapper.writeValueAsString(map.get(key));
+                return (mapper.readValue(s, type));
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    @Override
     public String toString() {
-        return "Deployment{" +
-                "id='" + id + '\'' +
-                ", description='" + description + '\'' +
-                ", blueprintId='" + blueprintId + '\'' +
-                ", createdBy='" + createdBy + '\'' +
-                ", tenantName='" + tenantName + '\'' +
-                ", createdAt=" + createdAt +
-                ", updatedAt=" + updatedAt +
-                ", inputs='" + inputs + '\'' +
-                ", workflows=" + workflows +
-                ", groups=" + groups +
-                '}';
+        return "Deployment{" + "id='" + id + '\'' + ", description='" + description + '\'' + ", blueprintId='"
+                + blueprintId + '\'' + ", createdBy='" + createdBy + '\'' + ", tenantName='" + tenantName + '\''
+                + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", inputs='" + inputs + '\''
+                + ", workflows=" + workflows + ", groups=" + groups + '}';
     }
 
 }

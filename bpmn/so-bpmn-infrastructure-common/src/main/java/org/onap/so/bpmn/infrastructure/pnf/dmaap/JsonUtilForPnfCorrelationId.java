@@ -41,9 +41,8 @@ public final class JsonUtilForPnfCorrelationId {
         List<String> list = new ArrayList<>();
         Spliterator<JsonElement> spliterator = array.spliterator();
         spliterator.forEachRemaining(jsonElement -> {
-            handleEscapedCharacters(jsonElement)
-                    .ifPresent(jsonObject -> getPnfCorrelationId(jsonObject)
-                            .ifPresent(pnfCorrelationId -> list.add(pnfCorrelationId)));
+            handleEscapedCharacters(jsonElement).ifPresent(jsonObject -> getPnfCorrelationId(jsonObject)
+                    .ifPresent(pnfCorrelationId -> list.add(pnfCorrelationId)));
         });
         return list;
     }

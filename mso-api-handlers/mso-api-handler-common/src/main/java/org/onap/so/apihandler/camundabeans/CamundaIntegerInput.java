@@ -23,24 +23,21 @@ package org.onap.so.apihandler.camundabeans;
 
 
 import org.onap.so.apihandler.common.CommonConstants;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * JavaBean JSON class for a "gMyServiceInput" which contains the xml payload that
- * will be passed to the Camunda process
+ * JavaBean JSON class for a "gMyServiceInput" which contains the xml payload that will be passed to the Camunda process
  */
 public class CamundaIntegerInput {
 
     @JsonProperty(CommonConstants.CAMUNDA_VALUE)
     private int value;
-    
+
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
     private String type = "Integer";
 
 
-    public CamundaIntegerInput() {
-    }
+    public CamundaIntegerInput() {}
 
     @JsonProperty(CommonConstants.CAMUNDA_VALUE)
     public int getValue() {
@@ -51,18 +48,18 @@ public class CamundaIntegerInput {
     public void setValue(int value) {
         this.value = value;
     }
-    
+
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
     public String getType() {
-		return type;
-	}
+        return type;
+    }
 
     @JsonProperty(CommonConstants.CAMUNDA_TYPE)
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	@Override
+    @Override
     public String toString() {
         return "CamundaInput [value=" + Integer.toString(value) + ", type=" + type + "]";
     }

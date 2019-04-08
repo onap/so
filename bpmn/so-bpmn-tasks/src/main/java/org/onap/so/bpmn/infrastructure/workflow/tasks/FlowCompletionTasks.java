@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.workflow.tasks;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
@@ -40,41 +39,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class FlowCompletionTasks {
 
-	private static final Logger logger = LoggerFactory.getLogger(FlowCompletionTasks.class);
+    private static final Logger logger = LoggerFactory.getLogger(FlowCompletionTasks.class);
 
-	@Autowired
-	private RequestsDbClient requestDbclient;
-		
-	public void updateRequestDbStatus(BuildingBlockExecution execution) {
-		try {
-			String requestId = execution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId();
-			InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
-			
-			WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
-			if (workflowException == null) {
-				request.setStatusMessage("RequestCompletedSuccessfully");
-				request.setRequestStatus("COMPLETE");
-							
-			}
-			else {
-				request.setStatusMessage(workflowException.getErrorMessage());		
-				request.setRequestStatus("FAILED");
-			}
-			request.setProgress(100L);
-			request.setLastModifiedBy("CamundaBPMN");
-				
-			requestDbclient.updateInfraActiveRequests(request);
-		} catch (Exception e) {
-			logger.error("Unable to save the updated request status to the DB",e);
-		}
-	}
-	
-	
+    @Autowired
+    private RequestsDbClient requestDbclient;
+
+    public void updateRequestDbStatus(BuildingBlockExecution execution) {
+        try {
+            String requestId = execution.getGeneralBuildingBlock().getRequestContext().getMsoRequestId();
+            InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+
+            WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+            if (workflowException == null) {
+                request.setStatusMessage("RequestCompletedSuccessfully");
+                request.setRequestStatus("COMPLETE");
+
+            } else {
+                request.setStatusMessage(workflowException.getErrorMessage());
+                request.setRequestStatus("FAILED");
+            }
+            request.setProgress(100L);
+            request.setLastModifiedBy("CamundaBPMN");
+
+            requestDbclient.updateInfraActiveRequests(request);
+        } catch (Exception e) {
+            logger.error("Unable to save the updated request status to the DB", e);
+        }
+    }
+
+
 }

@@ -24,7 +24,6 @@ import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
@@ -40,120 +39,126 @@ import org.springframework.stereotype.Component;
 @Component
 public class NetworkAdapterClientImpl implements NetworkAdapterClient {
 
-	private final NetworkAdapterRestProperties props;
+    private final NetworkAdapterRestProperties props;
 
-	public NetworkAdapterClientImpl() {
-		this.props = new NetworkAdapterRestProperties();
-	}
+    public NetworkAdapterClientImpl() {
+        this.props = new NetworkAdapterRestProperties();
+    }
 
-	@Override
-	public CreateNetworkResponse createNetwork(CreateNetworkRequest req) throws NetworkAdapterClientException{
-		try {
-			return new AdapterRestClient(this.props, this.getUri("").build()).post(req,
-					CreateNetworkResponse.class);
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
-	
-	@Override
-	public Response createNetworkAsync(CreateNetworkRequest req) throws NetworkAdapterClientException{
-		try {
-			return new AdapterRestClient(this.props, this.getUri("").build()).post(req);
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
+    @Override
+    public CreateNetworkResponse createNetwork(CreateNetworkRequest req) throws NetworkAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("").build()).post(req, CreateNetworkResponse.class);
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
 
-	@Override
-	public DeleteNetworkResponse deleteNetwork(String aaiNetworkId, DeleteNetworkRequest req) throws NetworkAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req,
-					DeleteNetworkResponse.class);
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
-	
-	@Override
-	public Response deleteNetworkAsync(String aaiNetworkId, DeleteNetworkRequest req) throws NetworkAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req);
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
+    @Override
+    public Response createNetworkAsync(CreateNetworkRequest req) throws NetworkAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("").build()).post(req);
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
 
-	@Override
-	public RollbackNetworkResponse rollbackNetwork(String aaiNetworkId, RollbackNetworkRequest req) throws NetworkAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req,
-					RollbackNetworkResponse.class);
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
-	
-	@Override
-	public Response rollbackNetworkAsync(String aaiNetworkId, RollbackNetworkRequest req) throws NetworkAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req);
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
+    @Override
+    public DeleteNetworkResponse deleteNetwork(String aaiNetworkId, DeleteNetworkRequest req)
+            throws NetworkAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req,
+                    DeleteNetworkResponse.class);
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
 
-	@Override
-	public QueryNetworkResponse queryNetwork(String aaiNetworkId, String cloudSiteId, String tenantId,
-			String networkStackId, boolean skipAAI, String requestId, String serviceInstanceId) throws NetworkAdapterClientException {
-		UriBuilder builder = this.getUri("/" + aaiNetworkId);
-		if (cloudSiteId != null) {
-			builder.queryParam("cloudSiteId", cloudSiteId);
-		}
-		if (tenantId != null) {
-			builder.queryParam("tenantId", tenantId);
-		}
-		if (networkStackId != null) {
-			builder.queryParam("networkStackId", networkStackId);
-		}
+    @Override
+    public Response deleteNetworkAsync(String aaiNetworkId, DeleteNetworkRequest req)
+            throws NetworkAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req);
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
 
-		builder.queryParam("skipAAI", skipAAI);
+    @Override
+    public RollbackNetworkResponse rollbackNetwork(String aaiNetworkId, RollbackNetworkRequest req)
+            throws NetworkAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req,
+                    RollbackNetworkResponse.class);
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
 
-		if (requestId != null) {
-			builder.queryParam("msoRequest.requestId", requestId);
-		}
-		if (serviceInstanceId != null) {
-			builder.queryParam("msoRequest.serviceInstanceId", serviceInstanceId);
-		}
-		try {
-			return new AdapterRestClient(this.props, builder.build(), MediaType.APPLICATION_XML, MediaType.APPLICATION_XML)
-				.get(QueryNetworkResponse.class).get();
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
+    @Override
+    public Response rollbackNetworkAsync(String aaiNetworkId, RollbackNetworkRequest req)
+            throws NetworkAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).delete(req);
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
 
-	@Override
-	public UpdateNetworkResponse updateNetwork(String aaiNetworkId, UpdateNetworkRequest req) throws NetworkAdapterClientException {
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).put(req,
-					UpdateNetworkResponse.class);
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
-	
-	@Override
-	public Response updateNetworkAsync(String aaiNetworkId, UpdateNetworkRequest req) throws NetworkAdapterClientException{
-		try {
-			return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).put(req);
-		} catch (InternalServerErrorException e) {
-			throw new NetworkAdapterClientException(e.getMessage());
-		}
-	}
+    @Override
+    public QueryNetworkResponse queryNetwork(String aaiNetworkId, String cloudSiteId, String tenantId,
+            String networkStackId, boolean skipAAI, String requestId, String serviceInstanceId)
+            throws NetworkAdapterClientException {
+        UriBuilder builder = this.getUri("/" + aaiNetworkId);
+        if (cloudSiteId != null) {
+            builder.queryParam("cloudSiteId", cloudSiteId);
+        }
+        if (tenantId != null) {
+            builder.queryParam("tenantId", tenantId);
+        }
+        if (networkStackId != null) {
+            builder.queryParam("networkStackId", networkStackId);
+        }
 
-	protected UriBuilder getUri(String path) {
-		return UriBuilder.fromPath(path);
-	}
+        builder.queryParam("skipAAI", skipAAI);
+
+        if (requestId != null) {
+            builder.queryParam("msoRequest.requestId", requestId);
+        }
+        if (serviceInstanceId != null) {
+            builder.queryParam("msoRequest.serviceInstanceId", serviceInstanceId);
+        }
+        try {
+            return new AdapterRestClient(this.props, builder.build(), MediaType.APPLICATION_XML,
+                    MediaType.APPLICATION_XML).get(QueryNetworkResponse.class).get();
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
+
+    @Override
+    public UpdateNetworkResponse updateNetwork(String aaiNetworkId, UpdateNetworkRequest req)
+            throws NetworkAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).put(req,
+                    UpdateNetworkResponse.class);
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
+
+    @Override
+    public Response updateNetworkAsync(String aaiNetworkId, UpdateNetworkRequest req)
+            throws NetworkAdapterClientException {
+        try {
+            return new AdapterRestClient(this.props, this.getUri("/" + aaiNetworkId).build()).put(req);
+        } catch (InternalServerErrorException e) {
+            throw new NetworkAdapterClientException(e.getMessage());
+        }
+    }
+
+    protected UriBuilder getUri(String path) {
+        return UriBuilder.fromPath(path);
+    }
 
 }

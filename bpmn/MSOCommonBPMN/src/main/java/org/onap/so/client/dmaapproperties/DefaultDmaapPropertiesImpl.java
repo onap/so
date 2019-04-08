@@ -17,24 +17,23 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client.dmaapproperties;
 
 import org.onap.so.client.dmaap.DmaapProperties;
-
 import java.util.Map;
 
 public class DefaultDmaapPropertiesImpl implements DmaapProperties {
 
-	private final Map<String, String> properties;
+    private final Map<String, String> properties;
 
-	public DefaultDmaapPropertiesImpl() {
-		this.properties = new DmaapPropertiesMap();
-	}
+    public DefaultDmaapPropertiesImpl() {
+        this.properties = new DmaapPropertiesMap();
+    }
 
-	@Override
-	public Map<String, String> getProperties() {
-		return properties;
-	} 
+    @Override
+    public Map<String, String> getProperties() {
+        return properties;
+    }
 
 }

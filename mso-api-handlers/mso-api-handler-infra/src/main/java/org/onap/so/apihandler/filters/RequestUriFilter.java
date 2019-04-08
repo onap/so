@@ -22,37 +22,40 @@ package org.onap.so.apihandler.filters;
 
 import java.io.IOException;
 import java.net.URI;
-
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.UriInfo;
-
 import org.onap.so.apihandlerinfra.Constants;
 
 
 @PreMatching
 public class RequestUriFilter implements ContainerRequestFilter {
 
-	private String requestURI;
-	@Override
-	public void filter(ContainerRequestContext context) throws IOException {
-		UriInfo uriInfo = context.getUriInfo();
-		URI baseURI = uriInfo.getBaseUri();
-		requestURI = uriInfo.getPath();
+    private String requestURI;
 
-		if(requestURI.contains("onap/so/infra/serviceInstances")){
-			requestURI = requestURI.replaceFirst("serviceInstances", "serviceInstantiation");
-	        if(!requestURI.contains(Constants.SERVICE_INSTANCE_PATH)){
-	        	//Adds /serviceInstances after the version provided in the URI
-	        	requestURI = new StringBuilder(requestURI).insert(requestURI.indexOf(Constants.SERVICE_INSTANTIATION_PATH) + 24, Constants.SERVICE_INSTANCE_PATH).toString();
-	        }
-	        requestURI = baseURI + requestURI;
-	        URI uri = URI.create(requestURI);
-	        context.setRequestUri(uri);
-		}
-	}
-	public String getRequestUri(){
-		return requestURI;
-	}
+    @Override
+    public void filter(ContainerRequestContext context) throws IOException {
+        UriInfo uriInfo = context.getUriInfo();
+        URI baseURI = uriInfo.getBaseUri();
+        requestURI = uriInfo.getPath();
+
+        if (requestURI.contains("onap/so/infra/serviceInstances")) {
+            requestURI = requestURI.replaceFirst("serviceInstances", "serviceInstantiation");
+            if (!requestURI.contains(Constants.SERVICE_INSTANCE_PATH)) {
+                // Adds /serviceInstances after the version provided in the URI
+                requestURI = new StringBuilder(requestURI)
+                        .insert(requestURI.indexOf(Constants.SERVICE_INSTANTIATION_PATH) + 24,
+                                Constants.SERVICE_INSTANCE_PATH)
+                        .toString();
+            }
+            requestURI = baseURI + requestURI;
+            URI uri = URI.create(requestURI);
+            context.setRequestUri(uri);
+        }
+    }
+
+    public String getRequestUri() {
+        return requestURI;
+    }
 }

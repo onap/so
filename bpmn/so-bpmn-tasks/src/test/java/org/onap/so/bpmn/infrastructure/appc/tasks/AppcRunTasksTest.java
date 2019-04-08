@@ -30,7 +30,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.onap.appc.client.lcm.model.Action;
@@ -45,47 +44,45 @@ import org.onap.so.db.catalog.beans.ControllerSelectionReference;
 
 public class AppcRunTasksTest extends BaseTaskTest {
 
-	@InjectMocks
-	private AppcRunTasks appcRunTasks = new AppcRunTasks();
+    @InjectMocks
+    private AppcRunTasks appcRunTasks = new AppcRunTasks();
 
-	@Test
-	public void mapRollbackVariablesTest() {
-		
-		BuildingBlockExecution mock = mock(BuildingBlockExecution.class);
-		
-		appcRunTasks.mapRollbackVariables(mock, Action.Lock, "1");
-		verify(mock, times(0)).setVariable(any(String.class), any());
-		appcRunTasks.mapRollbackVariables(mock, Action.Lock, "0");
-		verify(mock, times(1)).setVariable("rollbackVnfLock", true);
-		appcRunTasks.mapRollbackVariables(mock, Action.Unlock, "0");
-		verify(mock, times(1)).setVariable("rollbackVnfLock", false);
-		appcRunTasks.mapRollbackVariables(mock, Action.Start, "0");
-		verify(mock, times(1)).setVariable("rollbackVnfStop", false);
-		appcRunTasks.mapRollbackVariables(mock, Action.Stop, "0");
-		verify(mock, times(1)).setVariable("rollbackVnfStop", true);
-		appcRunTasks.mapRollbackVariables(mock, Action.QuiesceTraffic, "0");
-		verify(mock, times(1)).setVariable("rollbackQuiesceTraffic", true);
-		appcRunTasks.mapRollbackVariables(mock, Action.ResumeTraffic, "0");
-		verify(mock, times(1)).setVariable("rollbackQuiesceTraffic", false);
-	}
+    @Test
+    public void mapRollbackVariablesTest() {
+
+        BuildingBlockExecution mock = mock(BuildingBlockExecution.class);
+
+        appcRunTasks.mapRollbackVariables(mock, Action.Lock, "1");
+        verify(mock, times(0)).setVariable(any(String.class), any());
+        appcRunTasks.mapRollbackVariables(mock, Action.Lock, "0");
+        verify(mock, times(1)).setVariable("rollbackVnfLock", true);
+        appcRunTasks.mapRollbackVariables(mock, Action.Unlock, "0");
+        verify(mock, times(1)).setVariable("rollbackVnfLock", false);
+        appcRunTasks.mapRollbackVariables(mock, Action.Start, "0");
+        verify(mock, times(1)).setVariable("rollbackVnfStop", false);
+        appcRunTasks.mapRollbackVariables(mock, Action.Stop, "0");
+        verify(mock, times(1)).setVariable("rollbackVnfStop", true);
+        appcRunTasks.mapRollbackVariables(mock, Action.QuiesceTraffic, "0");
+        verify(mock, times(1)).setVariable("rollbackQuiesceTraffic", true);
+        appcRunTasks.mapRollbackVariables(mock, Action.ResumeTraffic, "0");
+        verify(mock, times(1)).setVariable("rollbackQuiesceTraffic", false);
+    }
 
     @Test
     public void runAppcCommandVnfNull() throws BBObjectNotFoundException {
         execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "NULL-TEST");
         fillRequiredAppcExecutionFields();
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID)))
-            .thenReturn(null);
-        when(catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory(
-            isNull(), eq(Action.Lock.toString()))).
-            thenThrow(new IllegalArgumentException("name or values is null"));
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(null);
+        when(catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory(isNull(),
+                eq(Action.Lock.toString()))).thenThrow(new IllegalArgumentException("name or values is null"));
 
         appcRunTasks.runAppcCommand(execution, Action.Lock);
 
         // if vnf = null -> vnfType = null ->
-        // IllegalArgumentException will be thrown in catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory
-        verify(exceptionUtil, times(1)).
-            buildAndThrowWorkflowException(
-                any(BuildingBlockExecution.class), eq(1002), eq("name or values is null"));
+        // IllegalArgumentException will be thrown in
+        // catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(1002),
+                eq("name or values is null"));
     }
 
     @Test
@@ -93,13 +90,12 @@ public class AppcRunTasksTest extends BaseTaskTest {
         execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "EXCEPTION-TEST");
         fillRequiredAppcExecutionFields();
         when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID)))
-            .thenThrow(new BBObjectNotFoundException());
+                .thenThrow(new BBObjectNotFoundException());
 
         appcRunTasks.runAppcCommand(execution, Action.Lock);
 
-        verify(exceptionUtil, times(1)).
-            buildAndThrowWorkflowException(
-                any(BuildingBlockExecution.class), eq(7000), eq("No valid VNF exists"));
+        verify(exceptionUtil, times(1)).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000),
+                eq("No valid VNF exists"));
     }
 
     @Test
@@ -107,12 +103,10 @@ public class AppcRunTasksTest extends BaseTaskTest {
         execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "SUCCESS-TEST");
         fillRequiredAppcExecutionFields();
         GenericVnf genericVnf = getTestGenericVnf();
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID)))
-            .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
         mockReferenceResponse();
         execution.getLookupMap().put(ResourceKey.VF_MODULE_ID, "VF-MODULE-ID-TEST");
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID)))
-            .thenReturn(null);
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID))).thenReturn(null);
         when(appCClient.getErrorCode()).thenReturn("0");
 
         appcRunTasks.runAppcCommand(execution, Action.Lock);
@@ -125,14 +119,12 @@ public class AppcRunTasksTest extends BaseTaskTest {
         execution.getLookupMap().put(ResourceKey.GENERIC_VNF_ID, "SUCCESS-TEST");
         fillRequiredAppcExecutionFields();
         GenericVnf genericVnf = getTestGenericVnf();
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID)))
-            .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
         mockReferenceResponse();
         execution.getLookupMap().put(ResourceKey.VF_MODULE_ID, "VF-MODULE-ID-TEST");
         VfModule vfModule = new VfModule();
         vfModule.setVfModuleId("VF-MODULE-ID");
-        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID)))
-            .thenReturn(vfModule);
+        when(extractPojosForBB.extractByKey(eq(execution), eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
         when(appCClient.getErrorCode()).thenReturn("0");
 
         appcRunTasks.runAppcCommand(execution, Action.Lock);
@@ -143,8 +135,8 @@ public class AppcRunTasksTest extends BaseTaskTest {
     private void mockReferenceResponse() {
         ControllerSelectionReference reference = new ControllerSelectionReference();
         reference.setControllerName("TEST-CONTROLLER-NAME");
-        when(catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory(
-            eq("TEST-VNF-TYPE"), eq(Action.Lock.toString()))).thenReturn(reference);
+        when(catalogDbClient.getControllerSelectionReferenceByVnfTypeAndActionCategory(eq("TEST-VNF-TYPE"),
+                eq(Action.Lock.toString()))).thenReturn(reference);
     }
 
     private void fillRequiredAppcExecutionFields() {

@@ -22,7 +22,6 @@ package org.onap.so.adapters.vnf.exceptions;
 
 
 import java.io.Serializable;
-
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 /**
@@ -33,42 +32,42 @@ public class VnfExceptionBean implements Serializable {
     private static final long serialVersionUID = -5699310749783790095L;
 
     private String message;
-	private MsoExceptionCategory category;
-	private Boolean rolledBack;
+    private MsoExceptionCategory category;
+    private Boolean rolledBack;
 
-	public VnfExceptionBean () {}
+    public VnfExceptionBean() {}
 
-	public VnfExceptionBean (String message) {
-		// Create a default category to prevent null pointer exceptions
-		this(message, MsoExceptionCategory.INTERNAL);
-	}
+    public VnfExceptionBean(String message) {
+        // Create a default category to prevent null pointer exceptions
+        this(message, MsoExceptionCategory.INTERNAL);
+    }
 
-	public VnfExceptionBean (String message, MsoExceptionCategory category) {
-		this.message = message;
-		this.category = category;
-	}
+    public VnfExceptionBean(String message, MsoExceptionCategory category) {
+        this.message = message;
+        this.category = category;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public MsoExceptionCategory getCategory () {
-		return category;
-	}
+    public MsoExceptionCategory getCategory() {
+        return category;
+    }
 
-	public void setCategory (MsoExceptionCategory category) {
-		this.category = category;
-	}
+    public void setCategory(MsoExceptionCategory category) {
+        this.category = category;
+    }
 
-	public Boolean isRolledBack() {
-		return rolledBack;
-	}
+    public Boolean isRolledBack() {
+        return rolledBack;
+    }
 
-	public void setRolledBack(Boolean rolledBack) {
-		this.rolledBack = rolledBack;
-	}
+    public void setRolledBack(Boolean rolledBack) {
+        this.rolledBack = rolledBack;
+    }
 }

@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.apache.commons.lang.StringUtils;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
@@ -52,93 +51,96 @@ import org.springframework.stereotype.Component;
 @Component
 public class VnfTopologyOperationRequestMapper {
 
-	@Autowired
-	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
+    @Autowired
+    private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
-	public GenericResourceApiVnfOperationInformation reqMapper(SDNCSvcOperation svcOperation, SDNCSvcAction svcAction,
-			GenericResourceApiRequestActionEnumeration requestAction, GenericVnf vnf, ServiceInstance serviceInstance,
-			Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing) {
-		String sdncReqId = UUID.randomUUID().toString();
-		String msoRequestId = UUID.randomUUID().toString();
-		if (requestContext != null && requestContext.getMsoRequestId() != null) {
-			msoRequestId = requestContext.getMsoRequestId();
-		} 
-		GenericResourceApiVnfOperationInformation req = new GenericResourceApiVnfOperationInformation();
-		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = generalTopologyObjectMapper
-				.buildSdncRequestHeader(svcAction, sdncReqId);
-		GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper
-				.buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, requestAction);
-		GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper
-				.buildServiceInformation(serviceInstance, requestContext, customer, true);
-		GenericResourceApiVnfinformationVnfInformation vnfInformation = generalTopologyObjectMapper
-				.buildVnfInformation(vnf, serviceInstance, true);
-		GenericResourceApiVnfrequestinputVnfRequestInput vnfRequestInput = new GenericResourceApiVnfrequestinputVnfRequestInput();
+    public GenericResourceApiVnfOperationInformation reqMapper(SDNCSvcOperation svcOperation, SDNCSvcAction svcAction,
+            GenericResourceApiRequestActionEnumeration requestAction, GenericVnf vnf, ServiceInstance serviceInstance,
+            Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing) {
+        String sdncReqId = UUID.randomUUID().toString();
+        String msoRequestId = UUID.randomUUID().toString();
+        if (requestContext != null && requestContext.getMsoRequestId() != null) {
+            msoRequestId = requestContext.getMsoRequestId();
+        }
+        GenericResourceApiVnfOperationInformation req = new GenericResourceApiVnfOperationInformation();
+        GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader =
+                generalTopologyObjectMapper.buildSdncRequestHeader(svcAction, sdncReqId);
+        GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper
+                .buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, requestAction);
+        GenericResourceApiServiceinformationServiceInformation serviceInformation =
+                generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, true);
+        GenericResourceApiVnfinformationVnfInformation vnfInformation =
+                generalTopologyObjectMapper.buildVnfInformation(vnf, serviceInstance, true);
+        GenericResourceApiVnfrequestinputVnfRequestInput vnfRequestInput =
+                new GenericResourceApiVnfrequestinputVnfRequestInput();
 
-		vnfRequestInput.setTenant(cloudRegion.getTenantId());
-		vnfRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
-		vnfRequestInput.setCloudOwner(cloudRegion.getCloudOwner());
-		
-		if (StringUtils.isNotBlank(vnf.getVnfName())) {
-			vnfRequestInput.setVnfName(vnf.getVnfName());
-		}
+        vnfRequestInput.setTenant(cloudRegion.getTenantId());
+        vnfRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
+        vnfRequestInput.setCloudOwner(cloudRegion.getCloudOwner());
 
-		req.setRequestInformation(requestInformation);
-		req.setSdncRequestHeader(sdncRequestHeader);
-		req.setServiceInformation(serviceInformation);
-		req.setVnfInformation(vnfInformation);
+        if (StringUtils.isNotBlank(vnf.getVnfName())) {
+            vnfRequestInput.setVnfName(vnf.getVnfName());
+        }
 
-		GenericResourceApiParam vnfInputParameters = new GenericResourceApiParam();
-		if (requestContext != null && requestContext.getUserParams() != null) {
-			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
-				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
-				paramItem.setName(entry.getKey());
-				paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue()));
-				vnfInputParameters.addParamItem(paramItem);
-				vnfRequestInput.setVnfInputParameters(vnfInputParameters);
-			}
-		}
-		if (vnf.getCloudParams() != null) {
-			for (Map.Entry<String, String> entry : vnf.getCloudParams().entrySet()) {
-				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
-				paramItem.setName(entry.getKey());
-				paramItem.setValue(entry.getValue());
-				vnfInputParameters.addParamItem(paramItem);
-			}
-		}
-		if (homing) {
-			License license = vnf.getLicense();
-			if (license != null) {
-				if(license.getEntitlementPoolUuids() != null && !license.getEntitlementPoolUuids().isEmpty()) {
-					String entitlementPoolUuid = license.getEntitlementPoolUuids().get(0);
-					GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
-					paramItem.setName("entitlement_assignment_group_uuid");
-					paramItem.setValue(entitlementPoolUuid);
-					vnfInputParameters.addParamItem(paramItem);
-				}
-				if (license.getLicenseKeyGroupUuids() != null && !license.getLicenseKeyGroupUuids().isEmpty()) {
-					String licenseKeyGroupUuid = license.getLicenseKeyGroupUuids().get(0);
-					GenericResourceApiParamParam paramItem2 = new GenericResourceApiParamParam();
-					paramItem2.setName("license_assignment_group_uuid");
-					paramItem2.setValue(licenseKeyGroupUuid);
-					vnfInputParameters.addParamItem(paramItem2);
-				}
-			}
-		}
-		List<InstanceGroup> instanceGroups = vnf.getInstanceGroups();
-		List<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds> networkInstanceGroupIdList = new ArrayList<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds>();
+        req.setRequestInformation(requestInformation);
+        req.setSdncRequestHeader(sdncRequestHeader);
+        req.setServiceInformation(serviceInformation);
+        req.setVnfInformation(vnfInformation);
 
-		for (InstanceGroup instanceGroup : instanceGroups) {
-			if (ModelInfoInstanceGroup.TYPE_L3_NETWORK
-					.equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
-				GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds instanceGroupId = new GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds();
-				instanceGroupId.setVnfNetworkInstanceGroupId(instanceGroup.getId());
-				networkInstanceGroupIdList.add(instanceGroupId);
-			}
-		}
+        GenericResourceApiParam vnfInputParameters = new GenericResourceApiParam();
+        if (requestContext != null && requestContext.getUserParams() != null) {
+            for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
+                GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+                paramItem.setName(entry.getKey());
+                paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue()));
+                vnfInputParameters.addParamItem(paramItem);
+                vnfRequestInput.setVnfInputParameters(vnfInputParameters);
+            }
+        }
+        if (vnf.getCloudParams() != null) {
+            for (Map.Entry<String, String> entry : vnf.getCloudParams().entrySet()) {
+                GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+                paramItem.setName(entry.getKey());
+                paramItem.setValue(entry.getValue());
+                vnfInputParameters.addParamItem(paramItem);
+            }
+        }
+        if (homing) {
+            License license = vnf.getLicense();
+            if (license != null) {
+                if (license.getEntitlementPoolUuids() != null && !license.getEntitlementPoolUuids().isEmpty()) {
+                    String entitlementPoolUuid = license.getEntitlementPoolUuids().get(0);
+                    GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+                    paramItem.setName("entitlement_assignment_group_uuid");
+                    paramItem.setValue(entitlementPoolUuid);
+                    vnfInputParameters.addParamItem(paramItem);
+                }
+                if (license.getLicenseKeyGroupUuids() != null && !license.getLicenseKeyGroupUuids().isEmpty()) {
+                    String licenseKeyGroupUuid = license.getLicenseKeyGroupUuids().get(0);
+                    GenericResourceApiParamParam paramItem2 = new GenericResourceApiParamParam();
+                    paramItem2.setName("license_assignment_group_uuid");
+                    paramItem2.setValue(licenseKeyGroupUuid);
+                    vnfInputParameters.addParamItem(paramItem2);
+                }
+            }
+        }
+        List<InstanceGroup> instanceGroups = vnf.getInstanceGroups();
+        List<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds> networkInstanceGroupIdList =
+                new ArrayList<GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds>();
 
-		vnfRequestInput.setVnfNetworkInstanceGroupIds(networkInstanceGroupIdList);
-		vnfRequestInput.setVnfInputParameters(vnfInputParameters);
-		req.setVnfRequestInput(vnfRequestInput);
-		return req;
-	}
+        for (InstanceGroup instanceGroup : instanceGroups) {
+            if (ModelInfoInstanceGroup.TYPE_L3_NETWORK
+                    .equalsIgnoreCase(instanceGroup.getModelInfoInstanceGroup().getType())) {
+                GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds instanceGroupId =
+                        new GenericResourceApiVnfrequestinputVnfrequestinputVnfNetworkInstanceGroupIds();
+                instanceGroupId.setVnfNetworkInstanceGroupId(instanceGroup.getId());
+                networkInstanceGroupIdList.add(instanceGroupId);
+            }
+        }
+
+        vnfRequestInput.setVnfNetworkInstanceGroupIds(networkInstanceGroupIdList);
+        vnfRequestInput.setVnfInputParameters(vnfInputParameters);
+        req.setVnfRequestInput(vnfRequestInput);
+        return req;
+    }
 }

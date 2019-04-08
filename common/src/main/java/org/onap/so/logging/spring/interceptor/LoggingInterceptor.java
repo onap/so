@@ -47,16 +47,15 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private MDCSetup mdcSetup;
-    
-    @Context 
+
+    @Context
     private Providers providers;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-    	
-        Map<String, String> headers = Collections.list((request).getHeaderNames())
-                .stream()
+
+        Map<String, String> headers = Collections.list((request).getHeaderNames()).stream()
                 .collect(Collectors.toMap(h -> h, request::getHeader));
         setRequestId(headers);
         setInvocationId(headers);
@@ -68,69 +67,67 @@ public class LoggingInterceptor extends HandlerInterceptorAdapter {
         mdcSetup.setServerFQDN();
         MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, ONAPLogConstants.ResponseStatus.INPROGRESS.toString());
         logger.info(ONAPLogConstants.Markers.ENTRY, "Entering");
-        if (logger.isDebugEnabled()) 
-        	logRequestInformation(request);
+        if (logger.isDebugEnabled())
+            logRequestInformation(request);
         return true;
     }
-    
+
     protected void logRequestInformation(HttpServletRequest request) {
-    	Map<String, String> headers = Collections.list((request).getHeaderNames())
-    		    .stream()
-    		    .collect(Collectors.toMap(h -> h, request::getHeader));
+        Map<String, String> headers = Collections.list((request).getHeaderNames()).stream()
+                .collect(Collectors.toMap(h -> h, request::getHeader));
 
-    	logger.debug("===========================request begin================================================");
-    	logger.debug("URI         : {}", request.getRequestURI());
-    	logger.debug("Method      : {}", request.getMethod());
-    	logger.debug("Headers     : {}", headers);
-    	logger.debug("==========================request end================================================");
-		
-	}
+        logger.debug("===========================request begin================================================");
+        logger.debug("URI         : {}", request.getRequestURI());
+        logger.debug("Method      : {}", request.getMethod());
+        logger.debug("Headers     : {}", headers);
+        logger.debug("==========================request end================================================");
 
-	@Override
-    public void postHandle(
-            HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView)
-            throws Exception {
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+            ModelAndView modelAndView) throws Exception {
         setResponseStatusCode(response);
-        MDC.put(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION,"");      
-        MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE,String.valueOf(response.getStatus()));
+        MDC.put(ONAPLogConstants.MDCs.RESPONSE_DESCRIPTION, "");
+        MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(response.getStatus()));
         logger.info(ONAPLogConstants.Markers.EXIT, "Exiting.");
         MDC.clear();
     }
 
-	protected void setResponseStatusCode(HttpServletResponse response) {
+    protected void setResponseStatusCode(HttpServletResponse response) {
         String statusCode;
-        if(Response.Status.Family.familyOf(response.getStatus()).equals(Response.Status.Family.SUCCESSFUL)){     
-            statusCode=ONAPLogConstants.ResponseStatus.COMPLETED.toString();
-        }else{                          
-            statusCode= ONAPLogConstants.ResponseStatus.ERROR.toString();               
-        }           
+        if (Response.Status.Family.familyOf(response.getStatus()).equals(Response.Status.Family.SUCCESSFUL)) {
+            statusCode = ONAPLogConstants.ResponseStatus.COMPLETED.toString();
+        } else {
+            statusCode = ONAPLogConstants.ResponseStatus.ERROR.toString();
+        }
         MDC.put(ONAPLogConstants.MDCs.RESPONSE_STATUS_CODE, statusCode);
     }
 
-	protected void setServiceName(HttpServletRequest request) {
+    protected void setServiceName(HttpServletRequest request) {
         MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, request.getRequestURI());
     }
-	
-	protected void setRequestId(Map<String, String> headers) {
-        String requestId=headers.get(ONAPLogConstants.Headers.REQUEST_ID.toLowerCase());      
-        if(requestId == null || requestId.isEmpty())
-        	requestId = UUID.randomUUID().toString();    
-        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID,requestId);
+
+    protected void setRequestId(Map<String, String> headers) {
+        String requestId = headers.get(ONAPLogConstants.Headers.REQUEST_ID.toLowerCase());
+        if (requestId == null || requestId.isEmpty())
+            requestId = UUID.randomUUID().toString();
+        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, requestId);
     }
 
-	protected void setInvocationId(Map<String, String> headers) {
+    protected void setInvocationId(Map<String, String> headers) {
         String invocationId = headers.get(ONAPLogConstants.Headers.INVOCATION_ID.toLowerCase());
-        if(invocationId == null || invocationId.isEmpty())
-            invocationId =UUID.randomUUID().toString();
+        if (invocationId == null || invocationId.isEmpty())
+            invocationId = UUID.randomUUID().toString();
         MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, invocationId);
     }
 
-	protected void setMDCPartnerName(Map<String, String> headers) {
-        String partnerName=headers.get(ONAPLogConstants.Headers.PARTNER_NAME.toLowerCase());
-        if(partnerName == null || partnerName.isEmpty())
+    protected void setMDCPartnerName(Map<String, String> headers) {
+        String partnerName = headers.get(ONAPLogConstants.Headers.PARTNER_NAME.toLowerCase());
+        if (partnerName == null || partnerName.isEmpty())
             partnerName = "";
-        MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME,partnerName);
+        MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME, partnerName);
     }
-    
+
 
 }

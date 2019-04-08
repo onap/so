@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.net.URI;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,24 +35,20 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.RemoteResource;
 import uk.co.blackpepper.bowman.annotation.ResourceId;
 
 /**
- * EntityBean class for a CloudSite.  This bean represents a cloud location
- * (i.e. and LCP node) in the NVP/AIC cloud.  It will be loaded via CloudConfig
- * object, of which it is a component
+ * EntityBean class for a CloudSite. This bean represents a cloud location (i.e. and LCP node) in the NVP/AIC cloud. It
+ * will be loaded via CloudConfig object, of which it is a component
  *
  */
 @RemoteResource("/cloudSite")
@@ -111,7 +106,7 @@ public class CloudSite {
     @JsonProperty("last_updated_by")
     @BusinessKey
     @Column(name = "LAST_UPDATED_BY")
-    private String lastUpdatedBy ;
+    private String lastUpdatedBy;
 
     @JsonProperty("creation_timestamp")
     @BusinessKey
@@ -159,10 +154,12 @@ public class CloudSite {
     }
 
     @ResourceId
-    public URI getUri() {return this.uri;}
+    public URI getUri() {
+        return this.uri;
+    }
 
     public void setUri(URI uri) {
-            this.uri = uri;
+        this.uri = uri;
     }
 
     public String getRegionId() {
@@ -174,7 +171,8 @@ public class CloudSite {
     }
 
     public String getIdentityServiceId() {
-        return identityServiceId == null ? (identityService== null? null:identityService.getId()):identityServiceId;
+        return identityServiceId == null ? (identityService == null ? null : identityService.getId())
+                : identityServiceId;
     }
 
     public String getCloudVersion() {
@@ -241,13 +239,14 @@ public class CloudSite {
         this.orchestrator = orchestrator;
     }
 
-    public CloudIdentity getIdentityService () {
+    public CloudIdentity getIdentityService() {
         return identityService;
     }
 
-    public void setIdentityService (CloudIdentity identity) {
+    public void setIdentityService(CloudIdentity identity) {
         this.identityService = identity;
     }
+
     @Deprecated
     public void setIdentityServiceId(String identityServiceId) {
         this.identityServiceId = identityServiceId;
@@ -272,7 +271,8 @@ public class CloudSite {
         CloudSite castOther = (CloudSite) other;
         return new EqualsBuilder().append(getRegionId(), castOther.getRegionId())
                 .append(getIdentityServiceId(), castOther.getIdentityServiceId())
-                .append(getCloudVersion(), castOther.getCloudVersion()).append(getClli(), castOther.getClli()).isEquals();
+                .append(getCloudVersion(), castOther.getCloudVersion()).append(getClli(), castOther.getClli())
+                .isEquals();
     }
 
     @Override

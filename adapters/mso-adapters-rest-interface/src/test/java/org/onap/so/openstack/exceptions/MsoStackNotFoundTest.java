@@ -28,7 +28,8 @@ public class MsoStackNotFoundTest {
     @Test
     public void testConstructor() {
         MsoStackNotFound msoStackNotFound = new MsoStackNotFound("test", "test", "test");
-        Assert.assertEquals("Stack test does not exist in Cloud/Tenant test/test",msoStackNotFound.getMessage());
-        Assert.assertEquals("404 Not Found: Stack test does not exist in Cloud/Tenant test/test",msoStackNotFound.toString());
+        Assert.assertEquals("Stack test does not exist in Cloud/Tenant test/test", msoStackNotFound.getMessage());
+        Assert.assertEquals("404 Not Found: Stack test does not exist in Cloud/Tenant test/test",
+                msoStackNotFound.toString());
     }
 }

@@ -23,21 +23,20 @@ package org.onap.so.bpmn.common.validation;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.springframework.stereotype.Component;
 
 @Component
 public class MyPreValidatorThree implements PreBuildingBlockValidator {
 
-	@Override
-	public boolean shouldRunFor(String bbName) {
-		return Collections.singleton("test2").contains(bbName);
-	}
+    @Override
+    public boolean shouldRunFor(String bbName) {
+        return Collections.singleton("test2").contains(bbName);
+    }
 
-	@Override
-	public Optional<String> validate(BuildingBlockExecution exeuction) {
-		return Optional.of("my-error-three");
-	}
+    @Override
+    public Optional<String> validate(BuildingBlockExecution exeuction) {
+        return Optional.of("my-error-three");
+    }
 
 }

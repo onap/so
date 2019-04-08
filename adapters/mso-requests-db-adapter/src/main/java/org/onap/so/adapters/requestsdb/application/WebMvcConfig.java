@@ -36,7 +36,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public MappedInterceptor mappedLoggingInterceptor() {
-        return new MappedInterceptor(new String[]{"/**"}, loggingInterceptor);
+        return new MappedInterceptor(new String[] {"/**"}, loggingInterceptor);
     }
 
 }

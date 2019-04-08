@@ -26,10 +26,8 @@ package org.onap.so.adapters.nwrest;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,70 +39,71 @@ import org.slf4j.LoggerFactory;
  * Everything that is common between all Network Requests.
  */
 public abstract class NetworkRequestCommon implements Serializable {
-	private static final long serialVersionUID = -6732431343649282079L;
-	private static final Logger logger =  LoggerFactory.getLogger(NetworkRequestCommon.class);
-	private Boolean skipAAI = false;
-	private String messageId;
-	private String notificationUrl;
-	@JsonProperty
-	private boolean synchronous = true;
-	public Boolean getSkipAAI() {
-		return skipAAI;
-	}
+    private static final long serialVersionUID = -6732431343649282079L;
+    private static final Logger logger = LoggerFactory.getLogger(NetworkRequestCommon.class);
+    private Boolean skipAAI = false;
+    private String messageId;
+    private String notificationUrl;
+    @JsonProperty
+    private boolean synchronous = true;
 
-	public void setSkipAAI(Boolean skipAAI) {
-		this.skipAAI = skipAAI;
-	}
+    public Boolean getSkipAAI() {
+        return skipAAI;
+    }
 
-	public String getMessageId() {
-		return messageId;
-	}
+    public void setSkipAAI(Boolean skipAAI) {
+        this.skipAAI = skipAAI;
+    }
 
-	public void setMessageId(String messageId) {
-		this.messageId = messageId;
-	}
+    public String getMessageId() {
+        return messageId;
+    }
 
-	public String getNotificationUrl() {
-		return notificationUrl;
-	}
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
 
-	public void setNotificationUrl(String notificationUrl) {
-		this.notificationUrl = notificationUrl;
-		this.synchronous = notificationUrl == null || (notificationUrl.isEmpty());
-	}
+    public String getNotificationUrl() {
+        return notificationUrl;
+    }
 
-	public boolean isSynchronous() {
-		return this.synchronous; 
-	}
-	
-	@JsonIgnore
-	protected void setSynchronous(boolean synchronous) {
-		this.synchronous = synchronous;
-	}
+    public void setNotificationUrl(String notificationUrl) {
+        this.notificationUrl = notificationUrl;
+        this.synchronous = notificationUrl == null || (notificationUrl.isEmpty());
+    }
 
-	public String toJsonString() {
-		String jsonString = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-			jsonString = mapper.writeValueAsString(this);
-		} catch (Exception e) {
-		    logger.debug("Exception:", e);
-		}
-		return jsonString;
-	}
+    public boolean isSynchronous() {
+        return this.synchronous;
+    }
 
-	public String toXmlString() {
-		try {
-			ByteArrayOutputStream bs = new ByteArrayOutputStream();
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); //pretty print XML
-			marshaller.marshal(this, bs);
-			return bs.toString();
-		} catch (Exception e) {
-		    logger.debug("Exception:", e);
-			return "";
-		}
-	}
+    @JsonIgnore
+    protected void setSynchronous(boolean synchronous) {
+        this.synchronous = synchronous;
+    }
+
+    public String toJsonString() {
+        String jsonString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+            jsonString = mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            logger.debug("Exception:", e);
+        }
+        return jsonString;
+    }
+
+    public String toXmlString() {
+        try {
+            ByteArrayOutputStream bs = new ByteArrayOutputStream();
+            JAXBContext context = JAXBContext.newInstance(this.getClass());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty print XML
+            marshaller.marshal(this, bs);
+            return bs.toString();
+        } catch (Exception e) {
+            logger.debug("Exception:", e);
+            return "";
+        }
+    }
 }

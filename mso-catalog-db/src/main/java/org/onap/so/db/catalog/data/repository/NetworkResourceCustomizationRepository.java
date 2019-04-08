@@ -21,18 +21,17 @@
 package org.onap.so.db.catalog.data.repository;
 
 import java.util.List;
-
 import org.onap.so.db.catalog.beans.NetworkResourceCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "networkResourceCustomization", path = "networkResourceCustomization")
 public interface NetworkResourceCustomizationRepository extends JpaRepository<NetworkResourceCustomization, String> {
-	List<NetworkResourceCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
+    List<NetworkResourceCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
 
-	NetworkResourceCustomization findOneByModelCustomizationUUID(String modelCustomizationUUID);
+    NetworkResourceCustomization findOneByModelCustomizationUUID(String modelCustomizationUUID);
 
-	List<NetworkResourceCustomization> findByNetworkType(String networkType);
+    List<NetworkResourceCustomization> findByNetworkType(String networkType);
 
-	NetworkResourceCustomization findOneByNetworkType(String networkType);
+    NetworkResourceCustomization findOneByNetworkType(String networkType);
 }

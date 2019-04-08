@@ -25,11 +25,11 @@ package org.onap.so.openstack.exceptions;
  */
 public class MsoHeatNotFoundException extends MsoException {
     /**
-	 * Serialization id.
-	 */
-	private static final long serialVersionUID = 6547134336163166841L;
+     * Serialization id.
+     */
+    private static final long serialVersionUID = 6547134336163166841L;
 
-	/**
+    /**
      * Default constructor (needed for BPEL/JAXB)
      */
     public MsoHeatNotFoundException() {
@@ -39,6 +39,7 @@ public class MsoHeatNotFoundException extends MsoException {
 
     /**
      * Constructor to create a new MsoHeatNotFoundException instance
+     * 
      * @param heat the heat parameter
      */
     public MsoHeatNotFoundException(String heat) {

@@ -20,12 +20,10 @@
 package org.onap.so.apihandler.filters;
 
 import java.io.IOException;
-
 import javax.annotation.Priority;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
-
 import org.apache.http.HttpStatus;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.db.request.beans.InfraActiveRequests;
@@ -41,20 +39,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class RequestIdFilter implements ContainerRequestFilter {
 
-	protected static Logger logger = LoggerFactory.getLogger(RequestIdFilter.class);
-	
-	@Autowired
-	private RequestsDbClient infraActiveRequestsClient;
+    protected static Logger logger = LoggerFactory.getLogger(RequestIdFilter.class);
 
-	@Override
-	public void filter(ContainerRequestContext context) throws IOException {
-		String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
-    	
+    @Autowired
+    private RequestsDbClient infraActiveRequestsClient;
+
+    @Override
+    public void filter(ContainerRequestContext context) throws IOException {
+        String requestId = MDC.get(ONAPLogConstants.MDCs.REQUEST_ID);
+
         InfraActiveRequests infraActiveRequests = infraActiveRequestsClient.getInfraActiveRequestbyRequestId(requestId);
-        
+
         if (infraActiveRequests != null) {
-        	MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(HttpStatus.SC_BAD_REQUEST));
-        	logger.error("RequestID exists in RequestDB.InfraActiveRequests : " + requestId);
+            MDC.put(ONAPLogConstants.MDCs.RESPONSE_CODE, String.valueOf(HttpStatus.SC_BAD_REQUEST));
+            logger.error("RequestID exists in RequestDB.InfraActiveRequests : " + requestId);
         }
-	}
+    }
 }

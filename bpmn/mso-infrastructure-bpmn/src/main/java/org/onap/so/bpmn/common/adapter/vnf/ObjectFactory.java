@@ -27,22 +27,18 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.onap.so.adapters.vnf.async.client package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
- * provided in this class.
+ * This object contains factory methods for each Java content interface and Java element interface generated in the
+ * org.onap.so.adapters.vnf.async.client package.
+ * <p>
+ * An ObjectFactory allows you to programatically construct new instances of the Java representation for XML content.
+ * The Java representation of XML content can consist of schema derived interfaces and classes representing the binding
+ * of schema type definitions, element declarations and model groups. Factory methods for each of these are provided in
+ * this class.
  * 
  */
 @XmlRegistry
 public class ObjectFactory {
-	private static final String VNF_NOTIFY = "http://org.onap.so/vnfNotify";
+    private static final String VNF_NOTIFY = "http://org.onap.so/vnfNotify";
     private static final QName _RollbackVnfNotification_QNAME = new QName(VNF_NOTIFY, "rollbackVnfNotification");
     private static final QName _DeleteVnfNotification_QNAME = new QName(VNF_NOTIFY, "deleteVnfNotification");
     private static final QName _CreateVnfNotification_QNAME = new QName(VNF_NOTIFY, "createVnfNotification");
@@ -50,11 +46,11 @@ public class ObjectFactory {
     private static final QName _QueryVnfNotification_QNAME = new QName(VNF_NOTIFY, "queryVnfNotification");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.onap.so.adapters.vnf.async.client
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
+     * org.onap.so.adapters.vnf.async.client
      * 
      */
-    public ObjectFactory() {
-    }
+    public ObjectFactory() {}
 
     /**
      * Create an instance of {@link UpdateVnfNotification }

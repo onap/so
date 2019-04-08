@@ -23,19 +23,19 @@ package org.onap.so.apihandlerinfra.exceptions;
 public class ClientConnectionException extends ApiException {
 
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private static final String clientFailMessage = "Client from $URL failed to connect";
+    * 
+    */
+    private static final long serialVersionUID = 1L;
+    private static final String clientFailMessage = "Client from $URL failed to connect";
 
     private ClientConnectionException(Builder builder) {
         super(builder);
     }
 
-    public static class Builder extends ApiException.Builder<Builder>{
+    public static class Builder extends ApiException.Builder<Builder> {
 
         public Builder(String message, int httpResponseCode, String messageID) {
-            super(clientFailMessage.replaceAll ("\\$URL", message),httpResponseCode,messageID);
+            super(clientFailMessage.replaceAll("\\$URL", message), httpResponseCode, messageID);
         }
 
         public ClientConnectionException build() {

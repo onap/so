@@ -21,9 +21,7 @@
 package org.onap.so.client.appc;
 
 import java.util.Optional;
-
 import org.onap.so.client.appc.ApplicationControllerSupport.StatusCategory;
-
 import org.onap.appc.client.lcm.model.Action;
 import org.onap.appc.client.lcm.model.ActionIdentifiers;
 import org.onap.appc.client.lcm.model.Payload;
@@ -31,23 +29,24 @@ import org.onap.appc.client.lcm.model.Status;
 
 public class ApplicationControllerOrchestrator {
 
-	public Status vnfCommand(Action action, String requestId, String vnfId, Optional<String> vserverId, Optional<String> request, String controllerType) throws ApplicationControllerOrchestratorException {
-		ApplicationControllerClient client = new ApplicationControllerClient(controllerType);
-		Status status;
-		ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
-		actionIdentifiers.setVnfId(vnfId);
-		if (vserverId.isPresent()) {			
-			actionIdentifiers.setVserverId(vserverId.get());
-		}
-		Payload payload = null;
-		if (request.isPresent()) {
-			payload = new Payload(request.get());
-		}
-		status = client.runCommand(action, actionIdentifiers, payload, requestId);
-		if (ApplicationControllerSupport.getCategoryOf(status).equals(StatusCategory.ERROR)) {
-			throw new ApplicationControllerOrchestratorException(status.getMessage(), status.getCode());
-		} else {
-			return status;
-		}
-	}
+    public Status vnfCommand(Action action, String requestId, String vnfId, Optional<String> vserverId,
+            Optional<String> request, String controllerType) throws ApplicationControllerOrchestratorException {
+        ApplicationControllerClient client = new ApplicationControllerClient(controllerType);
+        Status status;
+        ActionIdentifiers actionIdentifiers = new ActionIdentifiers();
+        actionIdentifiers.setVnfId(vnfId);
+        if (vserverId.isPresent()) {
+            actionIdentifiers.setVserverId(vserverId.get());
+        }
+        Payload payload = null;
+        if (request.isPresent()) {
+            payload = new Payload(request.get());
+        }
+        status = client.runCommand(action, actionIdentifiers, payload, requestId);
+        if (ApplicationControllerSupport.getCategoryOf(status).equals(StatusCategory.ERROR)) {
+            throw new ApplicationControllerOrchestratorException(status.getMessage(), status.getCode());
+        } else {
+            return status;
+        }
+    }
 }

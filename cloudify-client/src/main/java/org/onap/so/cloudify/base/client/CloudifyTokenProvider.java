@@ -22,8 +22,8 @@ package org.onap.so.cloudify.base.client;
 
 public interface CloudifyTokenProvider {
 
-	String getToken();
+    String getToken();
 
-	void expireToken();
+    void expireToken();
 
 }

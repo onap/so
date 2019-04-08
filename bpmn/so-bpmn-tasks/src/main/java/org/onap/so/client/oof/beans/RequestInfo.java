@@ -28,16 +28,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "transactionId",
-    "requestId",
-    "callbackUrl",
-    "sourceId",
-    "requestType",
-    "numSolutions",
-    "optimizers",
-    "timeout"
-})
+@JsonPropertyOrder({"transactionId", "requestId", "callbackUrl", "sourceId", "requestType", "numSolutions",
+        "optimizers", "timeout"})
 @JsonRootName("requestInfo")
 public class RequestInfo implements Serializable {
 

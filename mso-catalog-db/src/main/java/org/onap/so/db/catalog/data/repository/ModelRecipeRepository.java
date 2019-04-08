@@ -27,7 +27,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "modelRecipe", path = "modelRecipe")
 public interface ModelRecipeRepository extends JpaRepository<ModelRecipe, Integer> {
 
-	
-	ModelRecipe findByModelIdAndAction(String modelId, String action);
-	
+
+    ModelRecipe findByModelIdAndAction(String modelId, String action);
+
 }

@@ -57,7 +57,7 @@ public class LocationConstraint {
         this.vnfProfileId = vnfProfileId;
     }
 
-    
+
     /**
      * @return Returns the locationConstraints.
      */
@@ -65,7 +65,7 @@ public class LocationConstraint {
         return locationConstraints;
     }
 
-    
+
     /**
      * @param locationConstraints The locationConstraints to set.
      */

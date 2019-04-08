@@ -22,7 +22,5 @@ package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 public enum RecoveryAction {
 
-	retry,
-	abort,
-	skip
+    retry, abort, skip
 }

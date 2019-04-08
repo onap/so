@@ -21,12 +21,10 @@
 package org.onap.so.apihandlerinfra.tenantisolation.dmaap;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.apihandlerinfra.ApiHandlerApplication;
@@ -36,37 +34,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class DmaapOperationalEnvClientTest extends BaseTest{
-	
-	private final String fileLocation = "src/test/resources/org/onap/so/client/asdc/create-ecompoe/";
-	private static final String operationalEnvironmentId = "28122015552391";
-	private static final String operationalEnvironmentName = "OpEnv-name";
-	private static final String operationalEnvironmentType = "VNF";
-	private static final String tenantContext = "Test";
-	private static final String workloadContext = "VNF_E2E-IST";
-	private static final String action = "Create";
-	@Autowired
-	private DmaapOperationalEnvClient client;
-	
-	@Test
-	public void verifyCreateEcompOperationEnvironmentRequest() throws IOException, ApiException {
-		String content = this.getJson("ecomp-openv-request.json");
-		ObjectMapper mapper = new ObjectMapper();
-		CreateEcompOperationEnvironmentBean expected = mapper.readValue(content, CreateEcompOperationEnvironmentBean.class);
-		
-		String actual = client.buildRequest(operationalEnvironmentId, operationalEnvironmentName, operationalEnvironmentType, 
-				tenantContext, workloadContext, action);
-		
-		assertEquals("payloads are equal", mapper.writeValueAsString(expected), actual);
-	}
-	
-	
-	private String getJson(String filename) throws IOException {
-		return new String(Files.readAllBytes(Paths.get(fileLocation + filename)));
-	}
-	
+public class DmaapOperationalEnvClientTest extends BaseTest {
+
+    private final String fileLocation = "src/test/resources/org/onap/so/client/asdc/create-ecompoe/";
+    private static final String operationalEnvironmentId = "28122015552391";
+    private static final String operationalEnvironmentName = "OpEnv-name";
+    private static final String operationalEnvironmentType = "VNF";
+    private static final String tenantContext = "Test";
+    private static final String workloadContext = "VNF_E2E-IST";
+    private static final String action = "Create";
+    @Autowired
+    private DmaapOperationalEnvClient client;
+
+    @Test
+    public void verifyCreateEcompOperationEnvironmentRequest() throws IOException, ApiException {
+        String content = this.getJson("ecomp-openv-request.json");
+        ObjectMapper mapper = new ObjectMapper();
+        CreateEcompOperationEnvironmentBean expected =
+                mapper.readValue(content, CreateEcompOperationEnvironmentBean.class);
+
+        String actual = client.buildRequest(operationalEnvironmentId, operationalEnvironmentName,
+                operationalEnvironmentType, tenantContext, workloadContext, action);
+
+        assertEquals("payloads are equal", mapper.writeValueAsString(expected), actual);
+    }
+
+
+    private String getJson(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(fileLocation + filename)));
+    }
+
 }
-	
+

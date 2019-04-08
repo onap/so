@@ -29,32 +29,32 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class InstanceReferences {
 
-	private String operationalEnvironmentId;
-	private String operationalEnvName;
-	private String requestorId;
-	
-	public String getOperationalEnvironmentId() {
-		return operationalEnvironmentId;
-	}
+    private String operationalEnvironmentId;
+    private String operationalEnvName;
+    private String requestorId;
 
-	public void setOperationalEnvironmentId(String operationalEnvironmentId) {
-		this.operationalEnvironmentId = operationalEnvironmentId;
-	}
+    public String getOperationalEnvironmentId() {
+        return operationalEnvironmentId;
+    }
 
-	public String getOperationalEnvName() {
-		return operationalEnvName;
-	}
+    public void setOperationalEnvironmentId(String operationalEnvironmentId) {
+        this.operationalEnvironmentId = operationalEnvironmentId;
+    }
 
-	public void setOperationalEnvName(String operationalEnvName) {
-		this.operationalEnvName = operationalEnvName;
-	}
-	
-	public String getRequestorId() {
-		return requestorId;
-	}
+    public String getOperationalEnvName() {
+        return operationalEnvName;
+    }
 
-	public void setRequestorId(String requestorId) {
-		this.requestorId = requestorId;
-	}
-	
+    public void setOperationalEnvName(String operationalEnvName) {
+        this.operationalEnvName = operationalEnvName;
+    }
+
+    public String getRequestorId() {
+        return requestorId;
+    }
+
+    public void setRequestorId(String requestorId) {
+        this.requestorId = requestorId;
+    }
+
 }

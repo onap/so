@@ -24,9 +24,7 @@ package org.onap.so.apihandlerinfra;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import javax.transaction.Transactional;
-
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -41,7 +39,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 
@@ -52,42 +49,46 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @Transactional
 @AutoConfigureWireMock(port = 0)
 public abstract class BaseTest {
-	protected Logger logger = LoggerFactory.getLogger(BaseTest.class);
-	protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
+    protected Logger logger = LoggerFactory.getLogger(BaseTest.class);
+    protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
-	@Autowired
-	protected Environment env;
+    @Autowired
+    protected Environment env;
 
-	@LocalServerPort
-	private int port;
-	
-	@Autowired
-	protected WireMockServer wireMockServer;
-	
-	protected String createURLWithPort(String uri) {
-		return "http://localhost:" + port + uri;
-	}
-	
-	protected String createURLWithPort(String uri, int iPort) {
-		return "http://localhost:" + iPort + uri;
-	}	
-	
-	@After
-	public void tearDown(){
-		wireMockServer.resetAll();
-	}
+    @LocalServerPort
+    private int port;
 
-	public static String getResponseTemplate;
-	public static String getResponseTemplateNoBody;
-	public static String infraActivePost;
-	@BeforeClass
-	public static void setupTest() throws Exception {
-		getResponseTemplate = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/InfraActiveRequests/getInfraActiveRequest.json")));
-		getResponseTemplateNoBody = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/InfraActiveRequests/getInfraActiveRequestNoBody.json")));
-		infraActivePost = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/InfraActiveRequests/createInfraActiveRequests.json")));
-	}
+    @Autowired
+    protected WireMockServer wireMockServer;
 
-	public String getTestUrl(String requestId) {
-		return "/infraActiveRequests/" + requestId;
-	}
+    protected String createURLWithPort(String uri) {
+        return "http://localhost:" + port + uri;
+    }
+
+    protected String createURLWithPort(String uri, int iPort) {
+        return "http://localhost:" + iPort + uri;
+    }
+
+    @After
+    public void tearDown() {
+        wireMockServer.resetAll();
+    }
+
+    public static String getResponseTemplate;
+    public static String getResponseTemplateNoBody;
+    public static String infraActivePost;
+
+    @BeforeClass
+    public static void setupTest() throws Exception {
+        getResponseTemplate = new String(Files
+                .readAllBytes(Paths.get("src/test/resources/__files/InfraActiveRequests/getInfraActiveRequest.json")));
+        getResponseTemplateNoBody = new String(Files.readAllBytes(
+                Paths.get("src/test/resources/__files/InfraActiveRequests/getInfraActiveRequestNoBody.json")));
+        infraActivePost = new String(Files.readAllBytes(
+                Paths.get("src/test/resources/__files/InfraActiveRequests/createInfraActiveRequests.json")));
+    }
+
+    public String getTestUrl(String requestId) {
+        return "/infraActiveRequests/" + requestId;
+    }
 }

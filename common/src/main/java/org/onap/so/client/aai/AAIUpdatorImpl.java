@@ -24,27 +24,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 public class AAIUpdatorImpl implements AAIUpdator {
-	
-	@Autowired
-	protected AAIRestClientI client;
-	
-	public AAIRestClientI getClient() {
-		return client;
-	}
+
+    @Autowired
+    protected AAIRestClientI client;
+
+    public AAIRestClientI getClient() {
+        return client;
+    }
 
 
-	public void setClient(AAIRestClientI client) {
-		this.client = client;
-	}
+    public void setClient(AAIRestClientI client) {
+        this.client = client;
+    }
 
-	@Override
-	public void updateVnfToLocked(String vnfId) throws Exception {
-		client.updateMaintenceFlagVnfId(vnfId, true);
-	}
+    @Override
+    public void updateVnfToLocked(String vnfId) throws Exception {
+        client.updateMaintenceFlagVnfId(vnfId, true);
+    }
 
-	@Override
-	public void updateVnfToUnLocked(String vnfId) throws Exception {
-		client.updateMaintenceFlagVnfId(vnfId, false);
-	}
+    @Override
+    public void updateVnfToUnLocked(String vnfId) throws Exception {
+        client.updateMaintenceFlagVnfId(vnfId, false);
+    }
 
 }

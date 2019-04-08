@@ -19,6 +19,7 @@
  */
 
 package org.onap.so.adapters.vfc.model;
+
 /**
  * <br>
  * <p>

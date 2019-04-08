@@ -42,124 +42,158 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class OrchestrationStatusValidator {
-	private static final Logger logger = LoggerFactory.getLogger(OrchestrationStatusValidator.class);
-	
-	private static final String BUILDING_BLOCK_DETAIL_NOT_FOUND = "Building Block (%s) not set up in Orchestration_Status_Validation table in CatalogDB.";
-	private static final String UNKNOWN_RESOURCE_TYPE = "Building Block (%s) not set up correctly in Orchestration_Status_Validation table in CatalogDB. ResourceType=(%s), TargetAction=(%s)";
-	private static final String ORCHESTRATION_VALIDATION_FAIL = "Orchestration Status Validation failed. ResourceType=(%s), TargetAction=(%s), OrchestrationStatus=(%s)";
-	private static final String ORCHESTRATION_STATUS_VALIDATION_RESULT = "orchestrationStatusValidationResult";
-	private static final String ALACARTE = "aLaCarte";
-	private static final String MULTI_STAGE_DESIGN_OFF = "false";
-	private static final String MULTI_STAGE_DESIGN_ON = "true";
-	
-	
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	@Autowired
-	private ExceptionBuilder exceptionBuilder;
-	@Autowired
-	private CatalogDbClient catalogDbClient;
-	
-	public void validateOrchestrationStatus(BuildingBlockExecution execution) {
-		try {
-			OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult = execution.getVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT);
-			
-			execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, null);
-			
-			boolean aLaCarte = (boolean) execution.getVariable(ALACARTE);
-			
-			String buildingBlockFlowName = execution.getFlowToBeCalled();			
-					
-			BuildingBlockDetail buildingBlockDetail = catalogDbClient.getBuildingBlockDetail(buildingBlockFlowName);
-			
-			if (buildingBlockDetail == null) {
-				throw new OrchestrationStatusValidationException(String.format(BUILDING_BLOCK_DETAIL_NOT_FOUND, buildingBlockFlowName));
-			}
-			
-			OrchestrationStatus orchestrationStatus = null;
-			
-			switch(buildingBlockDetail.getResourceType()) {
-			case SERVICE:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-				orchestrationStatus = serviceInstance.getOrchestrationStatus();
-				break;
-			case VNF:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-				orchestrationStatus = genericVnf.getOrchestrationStatus();
-				break;
-			case VF_MODULE:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
-				orchestrationStatus = vfModule.getOrchestrationStatus();
-				break;
-			case VOLUME_GROUP:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup = extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
-				orchestrationStatus = volumeGroup.getOrchestrationStatus();
-				break;
-			case NETWORK:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
-				orchestrationStatus = network.getOrchestrationStatus();
-				break;
-			case NETWORK_COLLECTION:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInst = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
-				org.onap.so.bpmn.servicedecomposition.bbobjects.Collection networkCollection = serviceInst.getCollection();
-				orchestrationStatus = networkCollection.getOrchestrationStatus();
-				break;
-			case CONFIGURATION:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
-				orchestrationStatus = configuration.getOrchestrationStatus();
-				break;
-			case INSTANCE_GROUP:
-				org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup instanceGroup = extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
-				orchestrationStatus = instanceGroup.getOrchestrationStatus();
-				break;				
-			case NO_VALIDATE:
-				//short circuit and exit method
-				execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, OrchestrationStatusValidationDirective.VALIDATION_SKIPPED);
-				return;
-			default:
-				// can't currently get here, so not tested. Added in case enum is expanded without a change to this code
-				throw new OrchestrationStatusValidationException(String.format(UNKNOWN_RESOURCE_TYPE, buildingBlockFlowName, buildingBlockDetail.getResourceType(), buildingBlockDetail.getTargetAction()));
-			}
-			
-			if(orchestrationStatus==null){
-				throw new OrchestrationStatusValidationException("The resource's orchstration status is null. Cannot perform task on a null orchestration status");
-			}
-			OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective = catalogDbClient.getOrchestrationStatusStateTransitionDirective(buildingBlockDetail.getResourceType(), orchestrationStatus, buildingBlockDetail.getTargetAction());
-			
-			if(aLaCarte && ResourceType.VF_MODULE.equals(buildingBlockDetail.getResourceType()) && OrchestrationAction.CREATE.equals(buildingBlockDetail.getTargetAction()) &&
-					OrchestrationStatus.PENDING_ACTIVATION.equals(orchestrationStatus)) {				
-				org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-				orchestrationStatusStateTransitionDirective = processPossibleSecondStageofVfModuleCreate(execution, previousOrchestrationStatusValidationResult,
-						genericVnf, orchestrationStatusStateTransitionDirective);	
-			}
-			
-			if (orchestrationStatusStateTransitionDirective.getFlowDirective() == OrchestrationStatusValidationDirective.FAIL) {
-				throw new OrchestrationStatusValidationException(String.format(ORCHESTRATION_VALIDATION_FAIL, buildingBlockDetail.getResourceType(), buildingBlockDetail.getTargetAction(), orchestrationStatus));
-			}
-			
-			execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, orchestrationStatusStateTransitionDirective.getFlowDirective());
-		}catch(BBObjectNotFoundException ex){
-			if(execution.getFlowToBeCalled().contains("Unassign")){
-				execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, OrchestrationStatusValidationDirective.SILENT_SUCCESS);
-			}else{
-				exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex);
-			}
-		}catch (Exception e) {
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e);
-		}
-	}
-	
-	private OrchestrationStatusStateTransitionDirective processPossibleSecondStageofVfModuleCreate(BuildingBlockExecution execution, OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult,
-			org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf, OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective) {		
-		if (previousOrchestrationStatusValidationResult != null && previousOrchestrationStatusValidationResult.equals(OrchestrationStatusValidationDirective.SILENT_SUCCESS)) {			
-			String multiStageDesign = MULTI_STAGE_DESIGN_OFF;			
-			if (genericVnf.getModelInfoGenericVnf() != null) {
-				multiStageDesign = genericVnf.getModelInfoGenericVnf().getMultiStageDesign();
-			}
-			if (multiStageDesign != null && multiStageDesign.equalsIgnoreCase(MULTI_STAGE_DESIGN_ON)) {				
-				orchestrationStatusStateTransitionDirective.setFlowDirective(OrchestrationStatusValidationDirective.CONTINUE);						
-			}					
-		}
-		return orchestrationStatusStateTransitionDirective;
-	}
+    private static final Logger logger = LoggerFactory.getLogger(OrchestrationStatusValidator.class);
+
+    private static final String BUILDING_BLOCK_DETAIL_NOT_FOUND =
+            "Building Block (%s) not set up in Orchestration_Status_Validation table in CatalogDB.";
+    private static final String UNKNOWN_RESOURCE_TYPE =
+            "Building Block (%s) not set up correctly in Orchestration_Status_Validation table in CatalogDB. ResourceType=(%s), TargetAction=(%s)";
+    private static final String ORCHESTRATION_VALIDATION_FAIL =
+            "Orchestration Status Validation failed. ResourceType=(%s), TargetAction=(%s), OrchestrationStatus=(%s)";
+    private static final String ORCHESTRATION_STATUS_VALIDATION_RESULT = "orchestrationStatusValidationResult";
+    private static final String ALACARTE = "aLaCarte";
+    private static final String MULTI_STAGE_DESIGN_OFF = "false";
+    private static final String MULTI_STAGE_DESIGN_ON = "true";
+
+
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
+    @Autowired
+    private ExceptionBuilder exceptionBuilder;
+    @Autowired
+    private CatalogDbClient catalogDbClient;
+
+    public void validateOrchestrationStatus(BuildingBlockExecution execution) {
+        try {
+            OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult =
+                    execution.getVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT);
+
+            execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT, null);
+
+            boolean aLaCarte = (boolean) execution.getVariable(ALACARTE);
+
+            String buildingBlockFlowName = execution.getFlowToBeCalled();
+
+            BuildingBlockDetail buildingBlockDetail = catalogDbClient.getBuildingBlockDetail(buildingBlockFlowName);
+
+            if (buildingBlockDetail == null) {
+                throw new OrchestrationStatusValidationException(
+                        String.format(BUILDING_BLOCK_DETAIL_NOT_FOUND, buildingBlockFlowName));
+            }
+
+            OrchestrationStatus orchestrationStatus = null;
+
+            switch (buildingBlockDetail.getResourceType()) {
+                case SERVICE:
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInstance =
+                            extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+                    orchestrationStatus = serviceInstance.getOrchestrationStatus();
+                    break;
+                case VNF:
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf =
+                            extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+                    orchestrationStatus = genericVnf.getOrchestrationStatus();
+                    break;
+                case VF_MODULE:
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule vfModule =
+                            extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+                    orchestrationStatus = vfModule.getOrchestrationStatus();
+                    break;
+                case VOLUME_GROUP:
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.VolumeGroup volumeGroup =
+                            extractPojosForBB.extractByKey(execution, ResourceKey.VOLUME_GROUP_ID);
+                    orchestrationStatus = volumeGroup.getOrchestrationStatus();
+                    break;
+                case NETWORK:
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.L3Network network =
+                            extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+                    orchestrationStatus = network.getOrchestrationStatus();
+                    break;
+                case NETWORK_COLLECTION:
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance serviceInst =
+                            extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.Collection networkCollection =
+                            serviceInst.getCollection();
+                    orchestrationStatus = networkCollection.getOrchestrationStatus();
+                    break;
+                case CONFIGURATION:
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.Configuration configuration =
+                            extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
+                    orchestrationStatus = configuration.getOrchestrationStatus();
+                    break;
+                case INSTANCE_GROUP:
+                    org.onap.so.bpmn.servicedecomposition.bbobjects.InstanceGroup instanceGroup =
+                            extractPojosForBB.extractByKey(execution, ResourceKey.INSTANCE_GROUP_ID);
+                    orchestrationStatus = instanceGroup.getOrchestrationStatus();
+                    break;
+                case NO_VALIDATE:
+                    // short circuit and exit method
+                    execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT,
+                            OrchestrationStatusValidationDirective.VALIDATION_SKIPPED);
+                    return;
+                default:
+                    // can't currently get here, so not tested. Added in case enum is expanded without a change to this
+                    // code
+                    throw new OrchestrationStatusValidationException(
+                            String.format(UNKNOWN_RESOURCE_TYPE, buildingBlockFlowName,
+                                    buildingBlockDetail.getResourceType(), buildingBlockDetail.getTargetAction()));
+            }
+
+            if (orchestrationStatus == null) {
+                throw new OrchestrationStatusValidationException(
+                        "The resource's orchstration status is null. Cannot perform task on a null orchestration status");
+            }
+            OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective = catalogDbClient
+                    .getOrchestrationStatusStateTransitionDirective(buildingBlockDetail.getResourceType(),
+                            orchestrationStatus, buildingBlockDetail.getTargetAction());
+
+            if (aLaCarte && ResourceType.VF_MODULE.equals(buildingBlockDetail.getResourceType())
+                    && OrchestrationAction.CREATE.equals(buildingBlockDetail.getTargetAction())
+                    && OrchestrationStatus.PENDING_ACTIVATION.equals(orchestrationStatus)) {
+                org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf =
+                        extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
+                orchestrationStatusStateTransitionDirective = processPossibleSecondStageofVfModuleCreate(execution,
+                        previousOrchestrationStatusValidationResult, genericVnf,
+                        orchestrationStatusStateTransitionDirective);
+            }
+
+            if (orchestrationStatusStateTransitionDirective
+                    .getFlowDirective() == OrchestrationStatusValidationDirective.FAIL) {
+                throw new OrchestrationStatusValidationException(
+                        String.format(ORCHESTRATION_VALIDATION_FAIL, buildingBlockDetail.getResourceType(),
+                                buildingBlockDetail.getTargetAction(), orchestrationStatus));
+            }
+
+            execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT,
+                    orchestrationStatusStateTransitionDirective.getFlowDirective());
+        } catch (BBObjectNotFoundException ex) {
+            if (execution.getFlowToBeCalled().contains("Unassign")) {
+                execution.setVariable(ORCHESTRATION_STATUS_VALIDATION_RESULT,
+                        OrchestrationStatusValidationDirective.SILENT_SUCCESS);
+            } else {
+                exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex);
+            }
+        } catch (Exception e) {
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e);
+        }
+    }
+
+    private OrchestrationStatusStateTransitionDirective processPossibleSecondStageofVfModuleCreate(
+            BuildingBlockExecution execution,
+            OrchestrationStatusValidationDirective previousOrchestrationStatusValidationResult,
+            org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf genericVnf,
+            OrchestrationStatusStateTransitionDirective orchestrationStatusStateTransitionDirective) {
+        if (previousOrchestrationStatusValidationResult != null && previousOrchestrationStatusValidationResult
+                .equals(OrchestrationStatusValidationDirective.SILENT_SUCCESS)) {
+            String multiStageDesign = MULTI_STAGE_DESIGN_OFF;
+            if (genericVnf.getModelInfoGenericVnf() != null) {
+                multiStageDesign = genericVnf.getModelInfoGenericVnf().getMultiStageDesign();
+            }
+            if (multiStageDesign != null && multiStageDesign.equalsIgnoreCase(MULTI_STAGE_DESIGN_ON)) {
+                orchestrationStatusStateTransitionDirective
+                        .setFlowDirective(OrchestrationStatusValidationDirective.CONTINUE);
+            }
+        }
+        return orchestrationStatusStateTransitionDirective;
+    }
 }

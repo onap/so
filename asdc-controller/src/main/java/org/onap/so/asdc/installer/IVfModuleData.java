@@ -22,30 +22,30 @@ package org.onap.so.asdc.installer;
 
 public interface IVfModuleData {
 
-	  // Method descriptor #4 ()Ljava/lang/String;
-	  public abstract java.lang.String getVfModuleModelName();
+    // Method descriptor #4 ()Ljava/lang/String;
+    public abstract java.lang.String getVfModuleModelName();
 
-	  // Method descriptor #4 ()Ljava/lang/String;
-	  public abstract java.lang.String getVfModuleModelInvariantUUID();
+    // Method descriptor #4 ()Ljava/lang/String;
+    public abstract java.lang.String getVfModuleModelInvariantUUID();
 
-	  // Method descriptor #4 ()Ljava/lang/String;
-	  public abstract java.lang.String getVfModuleModelCustomizationUUID();
+    // Method descriptor #4 ()Ljava/lang/String;
+    public abstract java.lang.String getVfModuleModelCustomizationUUID();
 
-	  // Method descriptor #4 ()Ljava/lang/String;
-	  public abstract java.lang.String getVfModuleModelVersion();
+    // Method descriptor #4 ()Ljava/lang/String;
+    public abstract java.lang.String getVfModuleModelVersion();
 
-	  // Method descriptor #4 ()Ljava/lang/String;
-	  public abstract java.lang.String getVfModuleModelUUID();
+    // Method descriptor #4 ()Ljava/lang/String;
+    public abstract java.lang.String getVfModuleModelUUID();
 
-	  // Method descriptor #4 ()Ljava/lang/String;
-	  public abstract java.lang.String getVfModuleModelDescription();
+    // Method descriptor #4 ()Ljava/lang/String;
+    public abstract java.lang.String getVfModuleModelDescription();
 
-	  // Method descriptor #10 ()Z
-	  public abstract boolean isBase();
+    // Method descriptor #10 ()Z
+    public abstract boolean isBase();
 
-	  // Method descriptor #12 ()Ljava/util/List;
-	  // Signature: ()Ljava/util/List<Ljava/lang/String;>;
-	  public abstract java.util.List<String> getArtifacts();
+    // Method descriptor #12 ()Ljava/util/List;
+    // Signature: ()Ljava/util/List<Ljava/lang/String;>;
+    public abstract java.util.List<String> getArtifacts();
 
-	  public abstract java.util.Map<String,String> getProperties();
+    public abstract java.util.Map<String, String> getProperties();
 }

@@ -27,17 +27,17 @@ public class MsoOpenstackExceptionTest {
 
     @Test
     public void testConstructor() {
-        MsoOpenstackException msoOpenstackException= new MsoOpenstackException(404,"test","test");
-        Assert.assertEquals("test",msoOpenstackException.getMessage());
-        Assert.assertEquals("404 test: test",msoOpenstackException.toString());
+        MsoOpenstackException msoOpenstackException = new MsoOpenstackException(404, "test", "test");
+        Assert.assertEquals("test", msoOpenstackException.getMessage());
+        Assert.assertEquals("404 test: test", msoOpenstackException.toString());
         Assert.assertEquals(MsoExceptionCategory.OPENSTACK, msoOpenstackException.category);
     }
 
     @Test
     public void testOverloadedConstructor() {
-        MsoOpenstackException msoOpenstackExceptionEx= new MsoOpenstackException(404,"test","test",new Exception());
-        Assert.assertEquals("test",msoOpenstackExceptionEx.getMessage());
-        Assert.assertEquals("404 test: test",msoOpenstackExceptionEx.toString());
+        MsoOpenstackException msoOpenstackExceptionEx = new MsoOpenstackException(404, "test", "test", new Exception());
+        Assert.assertEquals("test", msoOpenstackExceptionEx.getMessage());
+        Assert.assertEquals("404 test: test", msoOpenstackExceptionEx.toString());
         Assert.assertEquals(MsoExceptionCategory.OPENSTACK, msoOpenstackExceptionEx.category);
         Assert.assertNotNull(msoOpenstackExceptionEx.getCause());
 

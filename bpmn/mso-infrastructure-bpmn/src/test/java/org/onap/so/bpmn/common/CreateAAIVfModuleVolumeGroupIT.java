@@ -26,12 +26,10 @@ import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetGenericVnfByIdWithPri
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockGetVfModuleId;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutVfModuleId;
 import static org.onap.so.bpmn.mock.StubResponseAAI.MockPutVfModuleIdNoResponse;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
@@ -45,91 +43,95 @@ import org.slf4j.LoggerFactory;
 
 public class CreateAAIVfModuleVolumeGroupIT extends BaseIntegrationTest {
 
-	Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleVolumeGroupIT.class);
+    Logger logger = LoggerFactory.getLogger(CreateAAIVfModuleVolumeGroupIT.class);
 
-	/**
-	 * Test the happy path through the flow.
-	 */
-	@Test
-	public void happyPath() throws IOException {
+    /**
+     * Test the happy path through the flow.
+     */
+    @Test
+    public void happyPath() throws IOException {
 
-		logStart();
+        logStart();
 
-		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
-		MockGetGenericVnfByIdWithPriority(wireMockServer, "skask", "lukewarm", 200, "VfModularity/VfModule-lukewarm.xml", 2);
-		MockPutVfModuleIdNoResponse(wireMockServer, "skask", "PCRF", "lukewarm");
+        String updateAAIVfModuleRequest =
+                FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
+        MockGetGenericVnfByIdWithPriority(wireMockServer, "skask", "lukewarm", 200,
+                "VfModularity/VfModule-lukewarm.xml", 2);
+        MockPutVfModuleIdNoResponse(wireMockServer, "skask", "PCRF", "lukewarm");
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", "999-99-9999");
-		variables.put("isDebugLogEnabled","true");
-		variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);
-		invokeSubProcess("CreateAAIVfModuleVolumeGroup", businessKey, variables);
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", "999-99-9999");
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);
+        invokeSubProcess("CreateAAIVfModuleVolumeGroup", businessKey, variables);
 
-		Assert.assertTrue(isProcessEnded(businessKey));
-		String response = (String) getVariableFromHistory(businessKey, "CAAIVfModVG_updateVfModuleResponse");
-		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "CAAIVfModVG_updateVfModuleResponseCode");
-		logger.debug("Subflow response code: {}", responseCode);
-		logger.debug("Subflow response: {}", response);
-		Assert.assertEquals(200, responseCode.intValue());
+        Assert.assertTrue(isProcessEnded(businessKey));
+        String response = (String) getVariableFromHistory(businessKey, "CAAIVfModVG_updateVfModuleResponse");
+        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "CAAIVfModVG_updateVfModuleResponseCode");
+        logger.debug("Subflow response code: {}", responseCode);
+        logger.debug("Subflow response: {}", response);
+        Assert.assertEquals(200, responseCode.intValue());
 
-		logEnd();
-	}
+        logEnd();
+    }
 
-	/**
-	 * Test the case where the GET to AAI returns a 404.
-	 */
-	@Test
-	public void badGet() throws IOException {
+    /**
+     * Test the case where the GET to AAI returns a 404.
+     */
+    @Test
+    public void badGet() throws IOException {
 
-		logStart();
+        logStart();
 
-		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
-		MockGetVfModuleId(wireMockServer, "skask", ".*", "VfModularity/VfModule-supercool.xml", 404);
+        String updateAAIVfModuleRequest =
+                FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
+        MockGetVfModuleId(wireMockServer, "skask", ".*", "VfModularity/VfModule-supercool.xml", 404);
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", "999-99-9999");
-		variables.put("isDebugLogEnabled","true");
-		variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);
-		invokeSubProcess("CreateAAIVfModuleVolumeGroup", businessKey, variables);
-		Assert.assertTrue(isProcessEnded(businessKey));
-		String response = (String) getVariableFromHistory(businessKey, "CAAIVfModVG_getVfModuleResponse");
-		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "CAAIVfModVG_getVfModuleResponseCode");
-		logger.debug("Subflow response code: {}", responseCode);
-		logger.debug("Subflow response: {}", response);
-		Assert.assertEquals(404, responseCode.intValue());
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", "999-99-9999");
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);
+        invokeSubProcess("CreateAAIVfModuleVolumeGroup", businessKey, variables);
+        Assert.assertTrue(isProcessEnded(businessKey));
+        String response = (String) getVariableFromHistory(businessKey, "CAAIVfModVG_getVfModuleResponse");
+        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "CAAIVfModVG_getVfModuleResponseCode");
+        logger.debug("Subflow response code: {}", responseCode);
+        logger.debug("Subflow response: {}", response);
+        Assert.assertEquals(404, responseCode.intValue());
 
-		logEnd();
-	}
+        logEnd();
+    }
 
-	/**
-	 * Test the case where the GET to AAI is successful, but he subsequent PUT returns 404.
-	 */
-	@Test
-	public void badPatch() throws IOException {
+    /**
+     * Test the case where the GET to AAI is successful, but he subsequent PUT returns 404.
+     */
+    @Test
+    public void badPatch() throws IOException {
 
-		logStart();
+        logStart();
 
-		String updateAAIVfModuleRequest = FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
-		MockGetVfModuleId(wireMockServer, "skask", "lukewarm", "VfModularity/VfModule-lukewarm.xml", 200);
-		MockPutVfModuleId(wireMockServer, "skask", "lukewarm", 404);
+        String updateAAIVfModuleRequest =
+                FileUtil.readResourceFile("__files/VfModularity/CreateAAIVfModuleVolumeGroupRequest.xml");
+        MockGetVfModuleId(wireMockServer, "skask", "lukewarm", "VfModularity/VfModule-lukewarm.xml", 200);
+        MockPutVfModuleId(wireMockServer, "skask", "lukewarm", 404);
 
-		String businessKey = UUID.randomUUID().toString();
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("mso-request-id", "999-99-9999");
-		variables.put("isDebugLogEnabled","true");
-		variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);
-		invokeSubProcess("CreateAAIVfModuleVolumeGroup", businessKey, variables);
+        String businessKey = UUID.randomUUID().toString();
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("mso-request-id", "999-99-9999");
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("CreateAAIVfModuleVolumeGroupRequest", updateAAIVfModuleRequest);
+        invokeSubProcess("CreateAAIVfModuleVolumeGroup", businessKey, variables);
 
-		Assert.assertTrue(isProcessEnded(businessKey));
-		String response = (String) getVariableFromHistory(businessKey, "CAAIVfModVG_updateVfModuleResponse");
-		Integer responseCode = (Integer) getVariableFromHistory(businessKey, "CAAIVfModVG_updateVfModuleResponseCode");
-		logger.debug("Subflow response code: {}", responseCode);
-		logger.debug("Subflow response: {}", response);
-		Assert.assertEquals(404, responseCode.intValue());
+        Assert.assertTrue(isProcessEnded(businessKey));
+        String response = (String) getVariableFromHistory(businessKey, "CAAIVfModVG_updateVfModuleResponse");
+        Integer responseCode = (Integer) getVariableFromHistory(businessKey, "CAAIVfModVG_updateVfModuleResponseCode");
+        logger.debug("Subflow response code: {}", responseCode);
+        logger.debug("Subflow response: {}", response);
+        Assert.assertEquals(404, responseCode.intValue());
 
-		logEnd();
-	}
+        logEnd();
+    }
 }
 

@@ -21,7 +21,6 @@
 package org.onap.so.db.catalog.data.repository;
 
 import java.util.List;
-
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,9 +29,11 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "allottedResourceCustomization", path = "allottedResourceCustomization")
 public interface AllottedResourceCustomizationRepository extends JpaRepository<AllottedResourceCustomization, String> {
 
-	@Query(value = "SELECT * FROM ALLOTTED_RESOURCE_CUSTOMIZATION WHERE PROVIDING_SERVICE_MODEL_UUID =?0", nativeQuery = true)
-	List<AllottedResourceCustomization> queryByProvidingServiceModelUUID(String providingServiceModelUUID);
+    @Query(value = "SELECT * FROM ALLOTTED_RESOURCE_CUSTOMIZATION WHERE PROVIDING_SERVICE_MODEL_UUID =?0",
+            nativeQuery = true)
+    List<AllottedResourceCustomization> queryByProvidingServiceModelUUID(String providingServiceModelUUID);
 
-	List<AllottedResourceCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
-	AllottedResourceCustomization findOneByModelCustomizationUUID(String modelCustomizationUUID);
+    List<AllottedResourceCustomization> findByModelCustomizationUUID(String modelCustomizationUUID);
+
+    AllottedResourceCustomization findOneByModelCustomizationUUID(String modelCustomizationUUID);
 }

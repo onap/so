@@ -24,9 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.ArgumentMatchers.any;
-
 import java.util.UUID;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,29 +38,29 @@ import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
 import org.onap.so.client.sdno.SDNOValidator;
 
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class SDNOHealthCheckResourcesTest extends TestDataSetup{
-	@InjectMocks
-	private SDNOHealthCheckResources sdnoHealthCheckResources = new SDNOHealthCheckResources();
-	
-	private GenericVnf genericVnf;
-	private RequestContext requestContext;
-	
-	@Mock
-	protected SDNOValidator MOCK_sdnoValidator;
-	
-	@Mock
-	protected InjectionHelper MOCK_injectionHelper;
-	
-	@Before
-	public void before() {
-		genericVnf = buildGenericVnf();	
-		requestContext = buildRequestContext();
-		doReturn(MOCK_sdnoValidator).when(MOCK_injectionHelper).getSdnoValidator();
-	}
-	
-	@Test
-	public void healthCheckTest() throws Exception {
-		doReturn(true).when(MOCK_sdnoValidator).healthDiagnostic(any(String.class), any(UUID.class), any(String.class));
-		assertTrue(sdnoHealthCheckResources.healthCheck(genericVnf, requestContext));
-	}	
+public class SDNOHealthCheckResourcesTest extends TestDataSetup {
+    @InjectMocks
+    private SDNOHealthCheckResources sdnoHealthCheckResources = new SDNOHealthCheckResources();
+
+    private GenericVnf genericVnf;
+    private RequestContext requestContext;
+
+    @Mock
+    protected SDNOValidator MOCK_sdnoValidator;
+
+    @Mock
+    protected InjectionHelper MOCK_injectionHelper;
+
+    @Before
+    public void before() {
+        genericVnf = buildGenericVnf();
+        requestContext = buildRequestContext();
+        doReturn(MOCK_sdnoValidator).when(MOCK_injectionHelper).getSdnoValidator();
+    }
+
+    @Test
+    public void healthCheckTest() throws Exception {
+        doReturn(true).when(MOCK_sdnoValidator).healthDiagnostic(any(String.class), any(UUID.class), any(String.class));
+        assertTrue(sdnoHealthCheckResources.healthCheck(genericVnf, requestContext));
+    }
 }

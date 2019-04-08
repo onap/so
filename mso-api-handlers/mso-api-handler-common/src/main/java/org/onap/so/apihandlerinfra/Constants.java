@@ -23,32 +23,31 @@ package org.onap.so.apihandlerinfra;
 
 public class Constants {
 
-	private Constants() {
-	}
+    private Constants() {}
 
-	public static final String REQUEST_ID_PATH = "/{request-id}";
+    public static final String REQUEST_ID_PATH = "/{request-id}";
 
-	public static final String STATUS_SUCCESS = "SUCCESS";
+    public static final String STATUS_SUCCESS = "SUCCESS";
 
-	public static final String MODIFIED_BY_APIHANDLER = "APIH";
+    public static final String MODIFIED_BY_APIHANDLER = "APIH";
 
-	public static final long PROGRESS_REQUEST_COMPLETED = 100L;
-	public static final long PROGRESS_REQUEST_RECEIVED = 0L;
-	public static final long PROGRESS_REQUEST_IN_PROGRESS = 20L;
+    public static final long PROGRESS_REQUEST_COMPLETED = 100L;
+    public static final long PROGRESS_REQUEST_RECEIVED = 0L;
+    public static final long PROGRESS_REQUEST_IN_PROGRESS = 20L;
 
-	public static final String VNF_TYPE_WILDCARD = "*";
+    public static final String VNF_TYPE_WILDCARD = "*";
 
-	public static final String VOLUME_GROUP_COMPONENT_TYPE = "VOLUME_GROUP";
+    public static final String VOLUME_GROUP_COMPONENT_TYPE = "VOLUME_GROUP";
 
-	public static final String VALID_INSTANCE_NAME_FORMAT = "^[a-zA-Z][a-zA-Z0-9._-]*$";
+    public static final String VALID_INSTANCE_NAME_FORMAT = "^[a-zA-Z][a-zA-Z0-9._-]*$";
 
-	public static final String A_LA_CARTE = "aLaCarte";
-	
-	public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
-	
-	public final static String VNF_REQUEST_SCOPE = "vnf";
-	public final static String SERVICE_INSTANCE_PATH = "/serviceInstances";
-	public final static String SERVICE_INSTANTIATION_PATH = "/serviceInstantiation";
-	public final static String ORCHESTRATION_REQUESTS_PATH = "/orchestrationRequests";
-	
+    public static final String A_LA_CARTE = "aLaCarte";
+
+    public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+
+    public final static String VNF_REQUEST_SCOPE = "vnf";
+    public final static String SERVICE_INSTANCE_PATH = "/serviceInstances";
+    public final static String SERVICE_INSTANTIATION_PATH = "/serviceInstantiation";
+    public final static String ORCHESTRATION_REQUESTS_PATH = "/orchestrationRequests";
+
 }

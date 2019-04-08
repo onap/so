@@ -26,23 +26,22 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.ExceptionMapper;
-
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
 
-	private static Logger logger = LoggerFactory.getLogger(RuntimeExceptionMapper.class);
+    private static Logger logger = LoggerFactory.getLogger(RuntimeExceptionMapper.class);
 
-	@Override
-	public Response toResponse(RuntimeException exception) {
-		
-		if (exception instanceof NotFoundException) {
-			return Response.status(Status.NOT_FOUND).build();
-		} else {
-			logger.error("Error occured", exception);
-			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(new ExceptionResponse("Unexpected Internal Exception")).build();
-		}
-	}
+    @Override
+    public Response toResponse(RuntimeException exception) {
+
+        if (exception instanceof NotFoundException) {
+            return Response.status(Status.NOT_FOUND).build();
+        } else {
+            logger.error("Error occured", exception);
+            return Response.status(Status.INTERNAL_SERVER_ERROR)
+                    .entity(new ExceptionResponse("Unexpected Internal Exception")).build();
+        }
+    }
 }

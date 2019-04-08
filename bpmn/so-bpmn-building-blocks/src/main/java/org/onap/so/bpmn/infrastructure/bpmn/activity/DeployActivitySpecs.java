@@ -23,9 +23,7 @@ package org.onap.so.bpmn.infrastructure.bpmn.activity;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
 import javax.ws.rs.core.UriBuilder;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
@@ -36,68 +34,65 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DeployActivitySpecs {
-	private static final String ACTIVITY_FILE_LOCATION = "src/main/resources/ActivitySpec/";
-	private static final String ACTIVITY_SPEC_URI = "/activityspec-api/v1.0/activity-spec";
-	private static final String CONTENT_TYPE_JSON = "application/json";
-	
-	public static void main(String[] args) throws Exception {
-		
-		if (args == null || args.length == 0) {
-			System.out.println("Please specify hostname argument");
-			return;
-		}
-		
-		String hostname = args[0];
-		
-    	File dir = new File(ACTIVITY_FILE_LOCATION);
-    	if (!dir.isDirectory()) {
-    		System.out.println("ActivitySpec store is not a directory");
-    		return;
-    	}
-    	
-    	for (File f : dir.listFiles()) {
-    		String activitySpecName = f.getName();
-    		String errorMessage = deployActivitySpec(hostname, activitySpecName);
-    		if (errorMessage == null) {
-    			System.out.println("Deployed Activity Spec: " + activitySpecName);
-    		}
-    		else {
-    			System.out.println("Error deploying Activity Spec: " + activitySpecName + " : " + errorMessage);
-    		}
-    	}
-    	return;    	
-    }    
-    
-	protected static String deployActivitySpec(String hostname, String activitySpecName) throws Exception {		
-		String payload = new String(Files.readAllBytes(Paths.get(ACTIVITY_FILE_LOCATION + activitySpecName)));
-		try {			
-			HttpClient client = HttpClientBuilder.create().build();
-					
-			String url = UriBuilder.fromUri(hostname).path(ACTIVITY_SPEC_URI).build().toString();			
-			HttpPost post = new HttpPost(url);		
-			
-			StringEntity input = new StringEntity(payload);
-			input.setContentType(CONTENT_TYPE_JSON);
-			post.setEntity(input);				
-			
-			HttpResponse response = client.execute(post);
-			StatusLine statusLine = response.getStatusLine();
-			
-			if (statusLine != null) {
-				if (statusLine.getStatusCode() != 200) {
-					return (statusLine.toString());
-				}
-				else {
-					return null;
-				}
-			}
-			else {
-				return("Empty response from the remote endpoint");
-			}
-	            
-		} catch (Exception e) {				
-			return e.getMessage();
-		}
-		
-	}	
+    private static final String ACTIVITY_FILE_LOCATION = "src/main/resources/ActivitySpec/";
+    private static final String ACTIVITY_SPEC_URI = "/activityspec-api/v1.0/activity-spec";
+    private static final String CONTENT_TYPE_JSON = "application/json";
+
+    public static void main(String[] args) throws Exception {
+
+        if (args == null || args.length == 0) {
+            System.out.println("Please specify hostname argument");
+            return;
+        }
+
+        String hostname = args[0];
+
+        File dir = new File(ACTIVITY_FILE_LOCATION);
+        if (!dir.isDirectory()) {
+            System.out.println("ActivitySpec store is not a directory");
+            return;
+        }
+
+        for (File f : dir.listFiles()) {
+            String activitySpecName = f.getName();
+            String errorMessage = deployActivitySpec(hostname, activitySpecName);
+            if (errorMessage == null) {
+                System.out.println("Deployed Activity Spec: " + activitySpecName);
+            } else {
+                System.out.println("Error deploying Activity Spec: " + activitySpecName + " : " + errorMessage);
+            }
+        }
+        return;
+    }
+
+    protected static String deployActivitySpec(String hostname, String activitySpecName) throws Exception {
+        String payload = new String(Files.readAllBytes(Paths.get(ACTIVITY_FILE_LOCATION + activitySpecName)));
+        try {
+            HttpClient client = HttpClientBuilder.create().build();
+
+            String url = UriBuilder.fromUri(hostname).path(ACTIVITY_SPEC_URI).build().toString();
+            HttpPost post = new HttpPost(url);
+
+            StringEntity input = new StringEntity(payload);
+            input.setContentType(CONTENT_TYPE_JSON);
+            post.setEntity(input);
+
+            HttpResponse response = client.execute(post);
+            StatusLine statusLine = response.getStatusLine();
+
+            if (statusLine != null) {
+                if (statusLine.getStatusCode() != 200) {
+                    return (statusLine.toString());
+                } else {
+                    return null;
+                }
+            } else {
+                return ("Empty response from the remote endpoint");
+            }
+
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+
+    }
 }

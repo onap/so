@@ -19,35 +19,37 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
-public class CreateNetworkBBTest extends BaseBPMNTest{
+public class CreateNetworkBBTest extends BaseBPMNTest {
     @Test
     public void sunnyDayCreateNetwork_Test() throws InterruptedException {
 
-        ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkBB",variables);
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("createNetwork_startEvent", "ServiceTask_get_cloud_region", "QueryVpnBinding_ServiceTask", "QueryNetworkPolicy_ServiceTask", "QueryNetworkTableRef_ServiceTask", "QueryNetworkSubnet_ServiceTask", "Create_Network_ServiceTask", "Update_Network_AAI_ServiceTask", "createNetwork_EndEvent");     
+        assertThat(pi).isStarted().hasPassedInOrder("createNetwork_startEvent", "ServiceTask_get_cloud_region",
+                "QueryVpnBinding_ServiceTask", "QueryNetworkPolicy_ServiceTask", "QueryNetworkTableRef_ServiceTask",
+                "QueryNetworkSubnet_ServiceTask", "Create_Network_ServiceTask", "Update_Network_AAI_ServiceTask",
+                "createNetwork_EndEvent");
         assertThat(pi).isEnded();
     }
 
-	@Test
-	public void rainyDayCreateNetwork_Test() throws Exception {
-		
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(createNetwork).buildCreateNetworkRequest(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassedInOrder("createNetwork_startEvent")
-				.hasNotPassed("End Flow");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void rainyDayCreateNetwork_Test() throws Exception {
+
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(createNetwork)
+                .buildCreateNetworkRequest(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("CreateNetworkBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("createNetwork_startEvent").hasNotPassed("End Flow");
+        assertThat(pi).isEnded();
+    }
 }

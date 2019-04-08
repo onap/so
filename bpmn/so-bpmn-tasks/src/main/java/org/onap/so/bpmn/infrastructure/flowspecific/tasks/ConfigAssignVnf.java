@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.Map;
 import java.util.UUID;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.ServiceInstance;
@@ -57,8 +56,8 @@ public class ConfigAssignVnf {
     private ExtractPojosForBB extractPojosForBB;
 
     /**
-     * Getting the vnf data, blueprint name, blueprint version etc and setting them
-     * in execution object and calling the subprocess.
+     * Getting the vnf data, blueprint name, blueprint version etc and setting them in execution object and calling the
+     * subprocess.
      * 
      * @param execution
      */
@@ -66,7 +65,8 @@ public class ConfigAssignVnf {
         logger.info("Start preProcessAbstractCDSProcessing ");
         try {
             GenericVnf vnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            ServiceInstance serviceInstance = extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
+            ServiceInstance serviceInstance =
+                    extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
 
             Map<String, Object> userParams = execution.getGeneralBuildingBlock().getRequestContext().getUserParams();
 

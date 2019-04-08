@@ -21,9 +21,7 @@
 package org.onap.so.adapters.sdnc;
 
 import java.util.Arrays;
-
 import javax.xml.ws.Endpoint;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.LoggingFeature;
@@ -39,7 +37,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
@@ -47,24 +44,24 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 
 @Configuration("CXFConfiguration")
 public class CXFConfiguration {
-	
-	JAXRSServerFactoryBean endpoint;
-	
+
+    JAXRSServerFactoryBean endpoint;
+
     @Autowired
     private Bus bus;
-    
-	@Autowired
-	private JaxRsFilterLogging jaxRsFilterLogging;
-	
-	@Autowired
-	private SDNCAdapterPortType sdncAdapterPortImpl;
-	
-	@Autowired 
-	private SNIROResponse sniroResponse;
-    
-	@Autowired
-	private ObjectMapper mapper;
-	
+
+    @Autowired
+    private JaxRsFilterLogging jaxRsFilterLogging;
+
+    @Autowired
+    private SDNCAdapterPortType sdncAdapterPortImpl;
+
+    @Autowired
+    private SNIROResponse sniroResponse;
+
+    @Autowired
+    private ObjectMapper mapper;
+
     @Bean
     public Server rsServer() {
         endpoint = new JAXRSServerFactoryBean();
@@ -73,7 +70,7 @@ public class CXFConfiguration {
         endpoint.setServiceBeans(Arrays.<Object>asList(sniroResponse));
         endpoint.setAddress("/rest");
         endpoint.setFeatures(Arrays.asList(createSwaggerFeature(), new LoggingFeature()));
-        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper),jaxRsFilterLogging));
+        endpoint.setProviders(Arrays.asList(new JacksonJsonProvider(mapper), jaxRsFilterLogging));
         return endpoint.create();
     }
 
@@ -95,8 +92,8 @@ public class CXFConfiguration {
 
     @Bean
     public Swagger2Feature createSwaggerFeature() {
-    	Swagger2Feature swagger2Feature= new Swagger2Feature();
-    	swagger2Feature.setBasePath("/services/rest");
+        Swagger2Feature swagger2Feature = new Swagger2Feature();
+        swagger2Feature.setBasePath("/services/rest");
         swagger2Feature.setPrettyPrint(true);
         swagger2Feature.setTitle("SO Orchestration Application");
         swagger2Feature.setContact("The ONAP SO team");

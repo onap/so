@@ -21,15 +21,15 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 public class TenantSyncResponse {
-	
-	private RequestReferences requestReferences;
 
-	public RequestReferences getRequestReferences() {
-		return requestReferences;
-	}
+    private RequestReferences requestReferences;
 
-	public void setRequestReferences(RequestReferences requestReferences) {
-		this.requestReferences = requestReferences;
-	}
+    public RequestReferences getRequestReferences() {
+        return requestReferences;
+    }
+
+    public void setRequestReferences(RequestReferences requestReferences) {
+        this.requestReferences = requestReferences;
+    }
 
 }

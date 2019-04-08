@@ -23,7 +23,6 @@ package org.onap.so.adapters.nwrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
@@ -31,26 +30,26 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @XmlRootElement(name = "rollbackNetworkResponse")
 public class RollbackNetworkResponse extends NetworkResponseCommon {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 3115905123337163846L;
-	private Boolean networkRolledBack;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3115905123337163846L;
+    private Boolean networkRolledBack;
 
-	public RollbackNetworkResponse() {
-		super();
-	}
-	
-	public RollbackNetworkResponse(Boolean networkRolledBack, String messageId) {
-		super(messageId);
-		this.networkRolledBack = networkRolledBack;
-	}
+    public RollbackNetworkResponse() {
+        super();
+    }
 
-	public Boolean getNetworkRolledBack() {
-		return networkRolledBack;
-	}
+    public RollbackNetworkResponse(Boolean networkRolledBack, String messageId) {
+        super(messageId);
+        this.networkRolledBack = networkRolledBack;
+    }
 
-	public void setNetworkRolledBack(Boolean networkRolledBack) {
-		this.networkRolledBack = networkRolledBack;
-	}
+    public Boolean getNetworkRolledBack() {
+        return networkRolledBack;
+    }
+
+    public void setNetworkRolledBack(Boolean networkRolledBack) {
+        this.networkRolledBack = networkRolledBack;
+    }
 }

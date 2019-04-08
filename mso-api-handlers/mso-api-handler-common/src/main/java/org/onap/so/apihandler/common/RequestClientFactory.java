@@ -22,7 +22,6 @@ package org.onap.so.apihandler.common;
 
 
 
-
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
@@ -30,39 +29,37 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class RequestClientFactory {
-	
-	@Autowired
-	private Environment env;
-	
-	//based on URI, returns BPEL, CamundaTask or Camunda client
-	public RequestClient getRequestClient(String orchestrationURI) throws IllegalStateException{
-		RequestClient retClient;
 
-		String url;
-		if(orchestrationURI.contains(CommonConstants.TASK_SEARCH_STR)){
-			url = env.getProperty(CommonConstants.CAMUNDA_URL) + orchestrationURI;
-			retClient = new CamundaTaskClient();
-		}
-		else{
-			url = env.getProperty(CommonConstants.CAMUNDA_URL) + orchestrationURI;
-			retClient = new CamundaClient();
-		}
-		retClient.setClient(new DefaultHttpClient());
-		retClient.setProps(env);
-		retClient.setUrl(url);
-		return retClient;
-		
-	}
+    @Autowired
+    private Environment env;
 
-	public Environment getEnv() {
-		return env;
-	}
+    // based on URI, returns BPEL, CamundaTask or Camunda client
+    public RequestClient getRequestClient(String orchestrationURI) throws IllegalStateException {
+        RequestClient retClient;
 
-	public void setEnv(Environment env) {
-		this.env = env;
-	}
-	
-	
+        String url;
+        if (orchestrationURI.contains(CommonConstants.TASK_SEARCH_STR)) {
+            url = env.getProperty(CommonConstants.CAMUNDA_URL) + orchestrationURI;
+            retClient = new CamundaTaskClient();
+        } else {
+            url = env.getProperty(CommonConstants.CAMUNDA_URL) + orchestrationURI;
+            retClient = new CamundaClient();
+        }
+        retClient.setClient(new DefaultHttpClient());
+        retClient.setProps(env);
+        retClient.setUrl(url);
+        return retClient;
+
+    }
+
+    public Environment getEnv() {
+        return env;
+    }
+
+    public void setEnv(Environment env) {
+        this.env = env;
+    }
+
 
 
 }

@@ -27,16 +27,16 @@ import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 
-public class BuildingBlockValidatorRunnerTest extends BaseBPMNTest{
+public class BuildingBlockValidatorRunnerTest extends BaseBPMNTest {
     @Test
     public void sunnyDayActivateNetwork_Test() throws InterruptedException {
-    	variables.put("flowToBeCalled","CreateVolumeGroupBB");
+        variables.put("flowToBeCalled", "CreateVolumeGroupBB");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("BuildingBlockValidatorRunnerTest", variables);
         assertThat(pi).isNotNull();
-        
+
         execute(job());
         execute(job());
-        assertThat(pi).isStarted().hasPassedInOrder("ServiceTask_1","ServiceTask_2","ServiceTask_3");     
+        assertThat(pi).isStarted().hasPassedInOrder("ServiceTask_1", "ServiceTask_2", "ServiceTask_3");
         assertThat(pi).isEnded();
     }
 }

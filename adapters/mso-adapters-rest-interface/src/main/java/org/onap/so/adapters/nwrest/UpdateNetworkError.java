@@ -22,24 +22,22 @@ package org.onap.so.adapters.nwrest;
 
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 @XmlRootElement(name = "updateNetworkError")
 public class UpdateNetworkError extends NetworkExceptionResponse implements Serializable {
-	private static final long serialVersionUID = 46820809807914392L;
+    private static final long serialVersionUID = 46820809807914392L;
 
-	public UpdateNetworkError() {
-		super("");
-	}
+    public UpdateNetworkError() {
+        super("");
+    }
 
-	public UpdateNetworkError(String message) {
-		super(message);
-	}
+    public UpdateNetworkError(String message) {
+        super(message);
+    }
 
-	public UpdateNetworkError(String message, MsoExceptionCategory category, boolean unused, String messageid) {
-		super(message, category, unused, messageid);
-	}
+    public UpdateNetworkError(String message, MsoExceptionCategory category, boolean unused, String messageid) {
+        super(message, category, unused, messageid);
+    }
 }

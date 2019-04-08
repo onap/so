@@ -27,13 +27,13 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "vnfComponentsRecipe", path = "vnfComponentsRecipe")
 public interface VnfComponentRecipeRepository extends JpaRepository<VnfComponentsRecipe, String> {
 
-	VnfComponentsRecipe findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfTypeAndAction(String vfModuleModelUUID,
-			String vnfType, String action);
+    VnfComponentsRecipe findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfTypeAndAction(String vfModuleModelUUID,
+            String vnfType, String action);
 
-	VnfComponentsRecipe findFirstVnfComponentsRecipeByVnfTypeAndAction(String vnfType, String action);
+    VnfComponentsRecipe findFirstVnfComponentsRecipeByVnfTypeAndAction(String vnfType, String action);
 
-	VnfComponentsRecipe findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(String vfModuleModelUUID,
-			String vnfComponentType, String action);
+    VnfComponentsRecipe findFirstVnfComponentsRecipeByVfModuleModelUUIDAndVnfComponentTypeAndAction(
+            String vfModuleModelUUID, String vnfComponentType, String action);
 
-	VnfComponentsRecipe findFirstVnfComponentsRecipeByVnfComponentTypeAndAction(String vnfComponentType, String action);
+    VnfComponentsRecipe findFirstVnfComponentsRecipeByVnfComponentTypeAndAction(String vnfComponentType, String action);
 }

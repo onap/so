@@ -23,18 +23,18 @@ package org.onap.so.client.appc;
 import org.onap.appc.client.lcm.api.ResponseHandler;
 import org.onap.appc.client.lcm.exceptions.AppcClientException;
 
-public class ApplicationControllerCallback<T> implements ResponseHandler<T>  {
+public class ApplicationControllerCallback<T> implements ResponseHandler<T> {
 
-	@Override
-	public void onResponse(T response) {
-		
-		
-	}
+    @Override
+    public void onResponse(T response) {
 
-	@Override
-	public void onException(AppcClientException exception) {
-	
-		
-	}
+
+    }
+
+    @Override
+    public void onException(AppcClientException exception) {
+
+
+    }
 
 }

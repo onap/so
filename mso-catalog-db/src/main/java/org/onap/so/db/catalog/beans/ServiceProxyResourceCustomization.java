@@ -23,7 +23,6 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -40,162 +39,158 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "service_proxy_customization")
 public class ServiceProxyResourceCustomization implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2822457299134903084L;
-	
-	@BusinessKey
-	@Id
-	@Column(name = "MODEL_CUSTOMIZATION_UUID")
-	private String modelCustomizationUUID;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2822457299134903084L;
 
-	@Column(name = "MODEL_INSTANCE_NAME")
-	private String modelInstanceName;
-	
-	@Column(name = "MODEL_UUID")
-	private String modelUUID;
-	
-	@Column(name = "MODEL_INVARIANT_UUID")
-	private String modelInvariantUUID;
-	
-	@Column(name = "MODEL_VERSION")
-	private String modelVersion;
-	
-	@Column(name = "MODEL_NAME")
-	private String modelName;
+    @BusinessKey
+    @Id
+    @Column(name = "MODEL_CUSTOMIZATION_UUID")
+    private String modelCustomizationUUID;
 
-	@Column(name = "TOSCA_NODE_TYPE")
-	private String toscaNodeType;
-	
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "MODEL_INSTANCE_NAME")
+    private String modelInstanceName;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "MODEL_UUID")
+    private String modelUUID;
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "SOURCE_SERVICE_MODEL_UUID")
-	private Service sourceService;
-					
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
-	
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
+    @Column(name = "MODEL_INVARIANT_UUID")
+    private String modelInvariantUUID;
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    @Column(name = "MODEL_VERSION")
+    private String modelVersion;
 
-	public String getModelInstanceName() {
-		return modelInstanceName;
-	}
+    @Column(name = "MODEL_NAME")
+    private String modelName;
 
-	public void setModelInstanceName(String modelInstanceName) {
-		this.modelInstanceName = modelInstanceName;
-	}
+    @Column(name = "TOSCA_NODE_TYPE")
+    private String toscaNodeType;
 
-	public String getToscaNodeType() {
-		return toscaNodeType;
-	}
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	public void setToscaNodeType(String toscaNodeType) {
-		this.toscaNodeType = toscaNodeType;
-	}
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	public Date getCreated() {
-		return created;
-	}
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "SOURCE_SERVICE_MODEL_UUID")
+    private Service sourceService;
 
-	@LinkedResource
-	public Service getSourceService() {
-		return sourceService;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setSourceService(Service sourceService) {
-		this.sourceService = sourceService;
-	}
-	
-	public String getModelUUID() {
-		return modelUUID;
-	}
+    public String getModelCustomizationUUID() {
+        return modelCustomizationUUID;
+    }
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public String getModelInvariantUUID() {
-		return modelInvariantUUID;
-	}
+    public String getModelInstanceName() {
+        return modelInstanceName;
+    }
 
-	public void setModelInvariantUUID(String modelInvariantUUID) {
-		this.modelInvariantUUID = modelInvariantUUID;
-	}
+    public void setModelInstanceName(String modelInstanceName) {
+        this.modelInstanceName = modelInstanceName;
+    }
 
-	public String getModelVersion() {
-		return modelVersion;
-	}
+    public String getToscaNodeType() {
+        return toscaNodeType;
+    }
 
-	public void setModelVersion(String modelVersion) {
-		this.modelVersion = modelVersion;
-	}
+    public void setToscaNodeType(String toscaNodeType) {
+        this.toscaNodeType = toscaNodeType;
+    }
 
-	public String getModelName() {
-		return modelName;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public void setModelName(String modelName) {
-		this.modelName = modelName;
-	}
+    @LinkedResource
+    public Service getSourceService() {
+        return sourceService;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setSourceService(Service sourceService) {
+        this.sourceService = sourceService;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelInstanceName", modelInstanceName).append("toscaNodeType", toscaNodeType)
-				.append("modelUUID", modelUUID)
-				.append("modelInvariantUUID",modelInvariantUUID).append("modelName",modelName)
-				.append("description",description)
-				.append("created", created).append("sourceService", sourceService).toString();
-	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ServiceProxyResourceCustomization)) {
-			return false;
-		}
-		ServiceProxyResourceCustomization castOther = (ServiceProxyResourceCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
-	}
+    public String getModelInvariantUUID() {
+        return modelInvariantUUID;
+    }
+
+    public void setModelInvariantUUID(String modelInvariantUUID) {
+        this.modelInvariantUUID = modelInvariantUUID;
+    }
+
+    public String getModelVersion() {
+        return modelVersion;
+    }
+
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public void setModelName(String modelName) {
+        this.modelName = modelName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName).append("toscaNodeType", toscaNodeType)
+                .append("modelUUID", modelUUID).append("modelInvariantUUID", modelInvariantUUID)
+                .append("modelName", modelName).append("description", description).append("created", created)
+                .append("sourceService", sourceService).toString();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ServiceProxyResourceCustomization)) {
+            return false;
+        }
+        ServiceProxyResourceCustomization castOther = (ServiceProxyResourceCustomization) other;
+        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+    }
 }

@@ -51,10 +51,7 @@ public class AttributeNameValue implements Serializable {
 
     @Override
     public String toString() {
-        return new StringBuilder().append("{\"attribute_name\": \"")
-                .append(attributeName.toString())
-                .append("\", \"attribute_value\": \"")
-                .append(attributeValue.toString())
-                .append("\"}").toString();
+        return new StringBuilder().append("{\"attribute_name\": \"").append(attributeName.toString())
+                .append("\", \"attribute_value\": \"").append(attributeValue.toString()).append("\"}").toString();
     }
 }

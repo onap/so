@@ -21,7 +21,6 @@
 package org.onap.so.client.adapter.network;
 
 import javax.ws.rs.core.Response;
-
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
 import org.onap.so.adapters.nwrest.CreateNetworkResponse;
 import org.onap.so.adapters.nwrest.DeleteNetworkRequest;
@@ -33,25 +32,25 @@ import org.onap.so.adapters.nwrest.UpdateNetworkRequest;
 import org.onap.so.adapters.nwrest.UpdateNetworkResponse;
 
 public interface NetworkAdapterClient {
-	CreateNetworkResponse createNetwork(CreateNetworkRequest req) throws NetworkAdapterClientException;
+    CreateNetworkResponse createNetwork(CreateNetworkRequest req) throws NetworkAdapterClientException;
 
-	DeleteNetworkResponse deleteNetwork(String aaiNetworkId, DeleteNetworkRequest req)
-			throws NetworkAdapterClientException;
+    DeleteNetworkResponse deleteNetwork(String aaiNetworkId, DeleteNetworkRequest req)
+            throws NetworkAdapterClientException;
 
-	RollbackNetworkResponse rollbackNetwork(String aaiNetworkId, RollbackNetworkRequest req)
-			throws NetworkAdapterClientException;
+    RollbackNetworkResponse rollbackNetwork(String aaiNetworkId, RollbackNetworkRequest req)
+            throws NetworkAdapterClientException;
 
-	QueryNetworkResponse queryNetwork(String aaiNetworkId, String cloudSiteId, String tenantId, String networkStackId,
-			boolean skipAAI, String requestId, String serviceInstanceId) throws NetworkAdapterClientException;
+    QueryNetworkResponse queryNetwork(String aaiNetworkId, String cloudSiteId, String tenantId, String networkStackId,
+            boolean skipAAI, String requestId, String serviceInstanceId) throws NetworkAdapterClientException;
 
-	UpdateNetworkResponse updateNetwork(String aaiNetworkId, UpdateNetworkRequest req)
-			throws NetworkAdapterClientException;
+    UpdateNetworkResponse updateNetwork(String aaiNetworkId, UpdateNetworkRequest req)
+            throws NetworkAdapterClientException;
 
-	Response createNetworkAsync(CreateNetworkRequest req) throws NetworkAdapterClientException;
+    Response createNetworkAsync(CreateNetworkRequest req) throws NetworkAdapterClientException;
 
-	Response deleteNetworkAsync(String aaiNetworkId, DeleteNetworkRequest req) throws NetworkAdapterClientException;
+    Response deleteNetworkAsync(String aaiNetworkId, DeleteNetworkRequest req) throws NetworkAdapterClientException;
 
-	Response rollbackNetworkAsync(String aaiNetworkId, RollbackNetworkRequest req) throws NetworkAdapterClientException;
-	
-	Response updateNetworkAsync(String aaiNetworkId, UpdateNetworkRequest req) throws NetworkAdapterClientException;
+    Response rollbackNetworkAsync(String aaiNetworkId, RollbackNetworkRequest req) throws NetworkAdapterClientException;
+
+    Response updateNetworkAsync(String aaiNetworkId, UpdateNetworkRequest req) throws NetworkAdapterClientException;
 }

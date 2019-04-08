@@ -21,9 +21,7 @@
 package org.onap.so.client.sdn.common;
 
 import static org.junit.Assert.assertEquals;
-
 import java.util.LinkedHashMap;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,9 +31,9 @@ import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SdnCommonTasks;
 
 
-public class SdnCommonTasksTest{
+public class SdnCommonTasksTest {
 
-    
+
     SdnCommonTasks sdnCommonTasks = new SdnCommonTasks();
 
     @Rule
@@ -60,7 +58,7 @@ public class SdnCommonTasksTest{
 
     @Test
     public void validateSDNResponseTest() throws BadResponseException {
-    	String jsonResponse = "{\"output\":{\"response-code\":\"0\",\"response-message\":\"success\"}}";
+        String jsonResponse = "{\"output\":{\"response-code\":\"0\",\"response-message\":\"success\"}}";
         LinkedHashMap<String, Object> responseMap = new LinkedHashMap<>();
         LinkedHashMap<String, Object> output = new LinkedHashMap<>();
         output.put("response-code", "0");

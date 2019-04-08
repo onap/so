@@ -22,10 +22,9 @@ package org.onap.so.adapters.nwrest;
 
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "queryNetworkError")
 public class QueryNetworkError extends NetworkExceptionResponse implements Serializable {
-	private static final long serialVersionUID = -6125469596399867146L;
+    private static final long serialVersionUID = -6125469596399867146L;
 }

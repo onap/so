@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,54 +30,52 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestParameters implements Serializable {
 
-	private static final long serialVersionUID = 8530327178156183693L;
-	@JsonProperty("operationalEnvironmentType")
-	private OperationalEnvironment operationalEnvironmentType;
-	@JsonProperty("tenantContext")
-	private String tenantContext;
-	@JsonProperty("workloadContext")
-	private String workloadContext;
-	@JsonProperty("manifest")
-	private Manifest manifest;	
-	
-	public OperationalEnvironment getOperationalEnvironmentType() {
-		return operationalEnvironmentType;
-	}
+    private static final long serialVersionUID = 8530327178156183693L;
+    @JsonProperty("operationalEnvironmentType")
+    private OperationalEnvironment operationalEnvironmentType;
+    @JsonProperty("tenantContext")
+    private String tenantContext;
+    @JsonProperty("workloadContext")
+    private String workloadContext;
+    @JsonProperty("manifest")
+    private Manifest manifest;
 
-	public void setOperationalEnvironmentType(OperationalEnvironment operationalEnvironmentType) {
-		this.operationalEnvironmentType = operationalEnvironmentType;
-	}
+    public OperationalEnvironment getOperationalEnvironmentType() {
+        return operationalEnvironmentType;
+    }
 
-	public String getTenantContext() {
-		return tenantContext;
-	}
+    public void setOperationalEnvironmentType(OperationalEnvironment operationalEnvironmentType) {
+        this.operationalEnvironmentType = operationalEnvironmentType;
+    }
 
-	public void setTenantContext(String tenantContext) {
-		this.tenantContext = tenantContext;
-	}
-	
-	public String getWorkloadContext() {
-		return workloadContext;
-	}
+    public String getTenantContext() {
+        return tenantContext;
+    }
 
-	public void setWorkloadContext(String workloadContext) {
-		this.workloadContext = workloadContext;
-	}		
-	
-	public Manifest getManifest() {
-		return manifest;
-	}
+    public void setTenantContext(String tenantContext) {
+        this.tenantContext = tenantContext;
+    }
 
-	public void setManifest(Manifest manifest) {
-		this.manifest = manifest;
-	}	
-	
+    public String getWorkloadContext() {
+        return workloadContext;
+    }
 
-	@Override
-	public String toString() {
-		return "RequestParameters [operationalEnvironmentType=" + operationalEnvironmentType 
-			                  + ", tenantContext=" + tenantContext
-				              + ", workloadContext=" + workloadContext  
-				              + ", manifes=" + manifest +"]";
-	}
+    public void setWorkloadContext(String workloadContext) {
+        this.workloadContext = workloadContext;
+    }
+
+    public Manifest getManifest() {
+        return manifest;
+    }
+
+    public void setManifest(Manifest manifest) {
+        this.manifest = manifest;
+    }
+
+
+    @Override
+    public String toString() {
+        return "RequestParameters [operationalEnvironmentType=" + operationalEnvironmentType + ", tenantContext="
+                + tenantContext + ", workloadContext=" + workloadContext + ", manifes=" + manifest + "]";
+    }
 }

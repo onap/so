@@ -21,33 +21,31 @@
 package org.onap.so.db.catalog.beans;
 
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @DiscriminatorValue(value = "NetworkCollection")
 public class NetworkCollectionResourceCustomization extends CollectionResourceCustomization {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4571173204548832466L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4571173204548832466L;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "networkResourceCustomization")
-	private Set<CollectionNetworkResourceCustomization> networkResourceCustomization;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "networkResourceCustomization")
+    private Set<CollectionNetworkResourceCustomization> networkResourceCustomization;
 
-	@LinkedResource
-	public Set<CollectionNetworkResourceCustomization> getNetworkResourceCustomization() {
-		return networkResourceCustomization;
-	}
+    @LinkedResource
+    public Set<CollectionNetworkResourceCustomization> getNetworkResourceCustomization() {
+        return networkResourceCustomization;
+    }
 
-	public void setNetworkResourceCustomization(
-			Set<CollectionNetworkResourceCustomization> networkResourceCustomization) {
-		this.networkResourceCustomization = networkResourceCustomization;
-	}
+    public void setNetworkResourceCustomization(
+            Set<CollectionNetworkResourceCustomization> networkResourceCustomization) {
+        this.networkResourceCustomization = networkResourceCustomization;
+    }
 }

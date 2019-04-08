@@ -31,7 +31,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 
 @RunWith(SpringRunner.class)
@@ -41,15 +40,15 @@ import com.github.tomakehurst.wiremock.WireMockServer;
 public abstract class BaseTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-    
+
     @Autowired
     protected WireMockServer wireMockServer;
-    
+
     protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
 
     @Value("${wiremock.server.port}")
     protected String wireMockPort;
-    
+
     @After
     public void after() {
 

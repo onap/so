@@ -21,34 +21,32 @@
 package org.onap.so.apihandlerinfra.validation;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
-
 import org.junit.Test;
 import org.onap.so.apihandlerinfra.Action;
 import org.onap.so.apihandlerinfra.BaseTest;
 import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class CustomWorkflowValidationTest extends BaseTest{
+public class CustomWorkflowValidationTest extends BaseTest {
 
-	@Test
-	public void testCustomWorkflowValidation() throws IOException, ValidationException {
-		String requestJson = new String(Files.readAllBytes(Paths.get("src/test/resources/MsoRequestTest/SuccessfulValidation/v1ExecuteCustomWorkflow.json")));
-		ObjectMapper mapper = new ObjectMapper();
-		ServiceInstancesRequest sir  = mapper.readValue(requestJson, ServiceInstancesRequest.class);
-		ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(), Action.inPlaceSoftwareUpdate, 
-																1, false, sir.getRequestDetails().getRequestParameters());
-		info.setRequestScope("vnf");
-		
-		CustomWorkflowValidation validation = new CustomWorkflowValidation();
-		validation.validate(info);
-		
-		assertEquals(info.getSir().getRequestDetails().getCloudConfiguration().getCloudOwner(), "att-aic");
-	}
+    @Test
+    public void testCustomWorkflowValidation() throws IOException, ValidationException {
+        String requestJson = new String(Files.readAllBytes(
+                Paths.get("src/test/resources/MsoRequestTest/SuccessfulValidation/v1ExecuteCustomWorkflow.json")));
+        ObjectMapper mapper = new ObjectMapper();
+        ServiceInstancesRequest sir = mapper.readValue(requestJson, ServiceInstancesRequest.class);
+        ValidationInformation info = new ValidationInformation(sir, new HashMap<String, String>(),
+                Action.inPlaceSoftwareUpdate, 1, false, sir.getRequestDetails().getRequestParameters());
+        info.setRequestScope("vnf");
+
+        CustomWorkflowValidation validation = new CustomWorkflowValidation();
+        validation.validate(info);
+
+        assertEquals(info.getSir().getRequestDetails().getCloudConfiguration().getCloudOwner(), "att-aic");
+    }
 }

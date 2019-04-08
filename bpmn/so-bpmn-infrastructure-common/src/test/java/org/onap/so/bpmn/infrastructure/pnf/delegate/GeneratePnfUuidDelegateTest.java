@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Test;

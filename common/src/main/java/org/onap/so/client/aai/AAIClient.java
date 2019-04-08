@@ -21,10 +21,8 @@
 package org.onap.so.client.aai;
 
 import java.net.URI;
-
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
-
 import org.onap.so.client.RestClient;
 import org.onap.so.client.graphinventory.GraphInventoryClient;
 import org.onap.so.client.graphinventory.GraphInventoryVersion;
@@ -35,45 +33,47 @@ import org.slf4j.LoggerFactory;
 
 public class AAIClient extends GraphInventoryClient {
 
-	private static final String AAI_ROOT = "/aai";
-	protected static Logger logger = LoggerFactory.getLogger(AAIClient.class);
-	protected AAIVersion version;
-	protected AAIClient() {
-		super(AAIProperties.class);
-	}
-	
-	protected AAIClient(AAIVersion version) {
-		super(AAIProperties.class);
-		this.version = version;
-	}
-	@Override
-	protected URI constructPath(GraphInventoryUri uri) {
-		
-		return UriBuilder.fromUri(AAI_ROOT + "/" + this.getVersion().toString() + uri.build().toString()).build();
-	}
+    private static final String AAI_ROOT = "/aai";
+    protected static Logger logger = LoggerFactory.getLogger(AAIClient.class);
+    protected AAIVersion version;
 
-	@Override
-	public RestClient createClient(GraphInventoryUri uri) {
-		try {
-			return new AAIRestClient(getRestProperties(), constructPath(uri));
-		} catch (GraphInventoryUriComputationException | NotFoundException e) {
-			logger.debug("failed to construct A&AI uri", e);
-			throw e;
-		}
-	}
-	
-	@Override
-	public AAIVersion getVersion() {
-		if (version == null) {
-			return this.<AAIProperties>getRestProperties().getDefaultVersion();
-		} else {
-			return this.version;
-		}
-	}
-	
+    protected AAIClient() {
+        super(AAIProperties.class);
+    }
 
-	@Override
-	public String getGraphDBName() {
-		return "A&AI";
-	}
+    protected AAIClient(AAIVersion version) {
+        super(AAIProperties.class);
+        this.version = version;
+    }
+
+    @Override
+    protected URI constructPath(GraphInventoryUri uri) {
+
+        return UriBuilder.fromUri(AAI_ROOT + "/" + this.getVersion().toString() + uri.build().toString()).build();
+    }
+
+    @Override
+    public RestClient createClient(GraphInventoryUri uri) {
+        try {
+            return new AAIRestClient(getRestProperties(), constructPath(uri));
+        } catch (GraphInventoryUriComputationException | NotFoundException e) {
+            logger.debug("failed to construct A&AI uri", e);
+            throw e;
+        }
+    }
+
+    @Override
+    public AAIVersion getVersion() {
+        if (version == null) {
+            return this.<AAIProperties>getRestProperties().getDefaultVersion();
+        } else {
+            return this.version;
+        }
+    }
+
+
+    @Override
+    public String getGraphDBName() {
+        return "A&AI";
+    }
 }

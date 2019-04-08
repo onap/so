@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.StringTokenizer;
-
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.xml.XMLConstants;
@@ -43,7 +42,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.onap.so.apihandler.common.ResponseBuilder;
 import org.onap.so.apihandlerinfra.tasksbeans.TasksRequest;
 import org.onap.so.apihandlerinfra.validation.MembersValidation;
@@ -95,7 +93,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -104,351 +101,358 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class MsoRequest {
-      
-	@Autowired
-	private RequestsDbClient requestsDbClient;
-	
-	@Autowired
-	private ResponseBuilder builder;
-    
+
+    @Autowired
+    private RequestsDbClient requestsDbClient;
+
+    @Autowired
+    private ResponseBuilder builder;
+
     private static Logger logger = LoggerFactory.getLogger(MsoRequest.class);
-    
-    public Response buildServiceErrorResponse (int httpResponseCode, MsoException exceptionType, 
-    		String errorText, String messageId, List<String> variables, String version) {
-    	
-    	if(errorText.length() > 1999){
-    		errorText = errorText.substring(0, 1999);
-    	}
 
-    	RequestError re = new RequestError();
+    public Response buildServiceErrorResponse(int httpResponseCode, MsoException exceptionType, String errorText,
+            String messageId, List<String> variables, String version) {
 
-    	if("PolicyException".equals(exceptionType.name())){
+        if (errorText.length() > 1999) {
+            errorText = errorText.substring(0, 1999);
+        }
 
-    		PolicyException pe = new PolicyException();
-    		pe.setMessageId(messageId);
-    		pe.setText(errorText);
-    		if(variables != null){
-    			for(String variable: variables){
-    				pe.getVariables().add(variable);
-    			}
-    		}
-    		re.setPolicyException(pe);
+        RequestError re = new RequestError();
 
-    	} else {
+        if ("PolicyException".equals(exceptionType.name())) {
 
-    		ServiceException se = new ServiceException();
-    		se.setMessageId(messageId);
-    		se.setText(errorText);
-    		if(variables != null){
-        			for(String variable: variables){
-        				se.getVariables().add(variable);
-        			}
-        		}
-    		re.setServiceException(se);
-     	}
+            PolicyException pe = new PolicyException();
+            pe.setMessageId(messageId);
+            pe.setText(errorText);
+            if (variables != null) {
+                for (String variable : variables) {
+                    pe.getVariables().add(variable);
+                }
+            }
+            re.setPolicyException(pe);
+
+        } else {
+
+            ServiceException se = new ServiceException();
+            se.setMessageId(messageId);
+            se.setText(errorText);
+            if (variables != null) {
+                for (String variable : variables) {
+                    se.getVariables().add(variable);
+                }
+            }
+            re.setServiceException(se);
+        }
 
         String requestErrorStr = null;
 
-        try{
-        	ObjectMapper mapper = new ObjectMapper();
-        	mapper.setSerializationInclusion(Include.NON_DEFAULT);
-        	requestErrorStr = mapper.writeValueAsString(re);
-        }catch(Exception e){
-					logger.error("{} {} {}", MessageEnum.APIH_VALIDATION_ERROR.toString(), ErrorCode.DataError.getValue(),
-							"Exception in buildServiceErrorResponse writing exceptionType to string ", e);
-				}
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.setSerializationInclusion(Include.NON_DEFAULT);
+            requestErrorStr = mapper.writeValueAsString(re);
+        } catch (Exception e) {
+            logger.error("{} {} {}", MessageEnum.APIH_VALIDATION_ERROR.toString(), ErrorCode.DataError.getValue(),
+                    "Exception in buildServiceErrorResponse writing exceptionType to string ", e);
+        }
 
         return builder.buildResponse(httpResponseCode, null, requestErrorStr, version);
     }
 
-   
+
 
     // Parse request JSON
-    public void parse (ServiceInstancesRequest sir, HashMap<String,String> instanceIdMap, Actions action, String version,
-    		String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag) throws ValidationException, IOException {
-    	
-        logger.debug ("Validating the Service Instance request");
+    public void parse(ServiceInstancesRequest sir, HashMap<String, String> instanceIdMap, Actions action,
+            String version, String originalRequestJSON, int reqVersion, Boolean aLaCarteFlag)
+            throws ValidationException, IOException {
+
+        logger.debug("Validating the Service Instance request");
         List<ValidationRule> rules = new ArrayList<>();
-        logger.debug ("Incoming version is: {} coverting to int: {}", version, reqVersion);
-	    RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();
-        ValidationInformation info = new ValidationInformation(sir, instanceIdMap, action,
-        		reqVersion, aLaCarteFlag, requestParameters);
-        
+        logger.debug("Incoming version is: {} coverting to int: {}", version, reqVersion);
+        RequestParameters requestParameters = sir.getRequestDetails().getRequestParameters();
+        ValidationInformation info =
+                new ValidationInformation(sir, instanceIdMap, action, reqVersion, aLaCarteFlag, requestParameters);
+
         rules.add(new InstanceIdMapValidation());
-        
+
         String workflowUuid = null;
         if (instanceIdMap != null) {
-        	workflowUuid = instanceIdMap.get("workflowUuid");
+            workflowUuid = instanceIdMap.get("workflowUuid");
         }
-        
+
         if (workflowUuid != null) {
-        	rules.add(new CustomWorkflowValidation());
-        }else if(reqVersion >= 6 && action == Action.inPlaceSoftwareUpdate){
-        	rules.add(new InPlaceSoftwareUpdateValidation());
-        }else if(reqVersion >= 6 && action == Action.applyUpdatedConfig){
-        	rules.add(new ApplyUpdatedConfigValidation());
-        }else if(action == Action.addMembers || action == Action.removeMembers){
-        	rules.add(new MembersValidation());
-        }else{
-	        rules.add(new RequestScopeValidation());
-	        rules.add(new RequestParametersValidation());
-	        rules.add(new RequestInfoValidation());
-	        rules.add(new ModelInfoValidation());
-	        rules.add(new CloudConfigurationValidation());
-	        rules.add(new SubscriberInfoValidation());
-	        rules.add(new PlatformLOBValidation());
-	        rules.add(new ProjectOwningEntityValidation());
-	        rules.add(new RelatedInstancesValidation());
-	        rules.add(new ConfigurationParametersValidation());
-        } 
-	    if(reqVersion >= 7 && requestParameters != null && requestParameters.getUserParams() != null){
-	    	for(Map<String, Object> params : requestParameters.getUserParams()){
-        		if(params.containsKey("service")){
-        			ObjectMapper obj = new ObjectMapper();
-					String input = obj.writeValueAsString(params.get("service"));
-					Service validate = obj.readValue(input, Service.class);
-					info.setUserParams(validate);
-					rules.add(new UserParamsValidation());
-					break;
-        		}
-        	}
-	    }
-	    for(ValidationRule rule : rules){
-        	rule.validate(info);
-    	}
+            rules.add(new CustomWorkflowValidation());
+        } else if (reqVersion >= 6 && action == Action.inPlaceSoftwareUpdate) {
+            rules.add(new InPlaceSoftwareUpdateValidation());
+        } else if (reqVersion >= 6 && action == Action.applyUpdatedConfig) {
+            rules.add(new ApplyUpdatedConfigValidation());
+        } else if (action == Action.addMembers || action == Action.removeMembers) {
+            rules.add(new MembersValidation());
+        } else {
+            rules.add(new RequestScopeValidation());
+            rules.add(new RequestParametersValidation());
+            rules.add(new RequestInfoValidation());
+            rules.add(new ModelInfoValidation());
+            rules.add(new CloudConfigurationValidation());
+            rules.add(new SubscriberInfoValidation());
+            rules.add(new PlatformLOBValidation());
+            rules.add(new ProjectOwningEntityValidation());
+            rules.add(new RelatedInstancesValidation());
+            rules.add(new ConfigurationParametersValidation());
+        }
+        if (reqVersion >= 7 && requestParameters != null && requestParameters.getUserParams() != null) {
+            for (Map<String, Object> params : requestParameters.getUserParams()) {
+                if (params.containsKey("service")) {
+                    ObjectMapper obj = new ObjectMapper();
+                    String input = obj.writeValueAsString(params.get("service"));
+                    Service validate = obj.readValue(input, Service.class);
+                    info.setUserParams(validate);
+                    rules.add(new UserParamsValidation());
+                    break;
+                }
+            }
+        }
+        for (ValidationRule rule : rules) {
+            rule.validate(info);
+        }
     }
-    void parseOrchestration (ServiceInstancesRequest sir) throws ValidationException {
+
+    void parseOrchestration(ServiceInstancesRequest sir) throws ValidationException {
         RequestInfo requestInfo = sir.getRequestDetails().getRequestInfo();
 
         if (requestInfo == null) {
-            throw new ValidationException ("requestInfo");
+            throw new ValidationException("requestInfo");
         }
 
-        if (empty (requestInfo.getSource ())) {
-        	throw new ValidationException ("source");
+        if (empty(requestInfo.getSource())) {
+            throw new ValidationException("source");
         }
-        if (empty (requestInfo.getRequestorId ())) {
-        	throw new ValidationException ("requestorId");
+        if (empty(requestInfo.getRequestorId())) {
+            throw new ValidationException("requestorId");
         }
     }
-    public Map<String, List<String>> getOrchestrationFilters (MultivaluedMap<String, String> queryParams) throws ValidationException {
+
+    public Map<String, List<String>> getOrchestrationFilters(MultivaluedMap<String, String> queryParams)
+            throws ValidationException {
 
         String queryParam = null;
         Map<String, List<String>> orchestrationFilterParams = new HashMap<>();
 
 
-        for (Entry<String,List<String>> entry : queryParams.entrySet()) {
+        for (Entry<String, List<String>> entry : queryParams.entrySet()) {
             queryParam = entry.getKey();
 
-            try{
-          	  if("filter".equalsIgnoreCase(queryParam)){
-          		  for(String value : entry.getValue()) {
-	          		  StringTokenizer st = new StringTokenizer(value, ":");
-	
-	          		  int counter=0;
-	          		  String mapKey=null;
-	          		  List<String> orchestrationList = new ArrayList<>();
-	          		  while (st.hasMoreElements()) {
-	          			  if(counter == 0){
-	          				  mapKey = st.nextElement() + "";
-	          			  } else{
-	          				  orchestrationList.add(st.nextElement() + "");
-	          			  }
-	          			 counter++;
-	        		  }
-	          		  orchestrationFilterParams.put(mapKey, orchestrationList);
-          		  }
-          	  }
+            try {
+                if ("filter".equalsIgnoreCase(queryParam)) {
+                    for (String value : entry.getValue()) {
+                        StringTokenizer st = new StringTokenizer(value, ":");
 
-            }catch(Exception e){
-                throw new ValidationException ("QueryParam ServiceInfo", e);
-        	}
+                        int counter = 0;
+                        String mapKey = null;
+                        List<String> orchestrationList = new ArrayList<>();
+                        while (st.hasMoreElements()) {
+                            if (counter == 0) {
+                                mapKey = st.nextElement() + "";
+                            } else {
+                                orchestrationList.add(st.nextElement() + "");
+                            }
+                            counter++;
+                        }
+                        orchestrationFilterParams.put(mapKey, orchestrationList);
+                    }
+                }
+
+            } catch (Exception e) {
+                throw new ValidationException("QueryParam ServiceInfo", e);
+            }
 
         }
 
 
         return orchestrationFilterParams;
-  }
+    }
 
-    public InfraActiveRequests createRequestObject (ServiceInstancesRequest servInsReq, Actions action, String requestId,
-    		 Status status, String originalRequestJSON, String requestScope) {
-    	InfraActiveRequests aq = new InfraActiveRequests ();
+    public InfraActiveRequests createRequestObject(ServiceInstancesRequest servInsReq, Actions action, String requestId,
+            Status status, String originalRequestJSON, String requestScope) {
+        InfraActiveRequests aq = new InfraActiveRequests();
         try {
             if (null == servInsReq) {
-            	servInsReq = new ServiceInstancesRequest ();
+                servInsReq = new ServiceInstancesRequest();
             }
             String networkType = "";
             String vnfType = "";
-            aq.setRequestId (requestId);
+            aq.setRequestId(requestId);
             aq.setRequestAction(action.toString());
             aq.setAction(action.toString());
             aq.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
 
-            Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
+            Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
 
-            aq.setStartTime (startTimeStamp);
-            if(requestScope.equals(ModelType.instanceGroup.name()) && action == Action.deleteInstance){
-            	aq.setRequestScope(requestScope);
-            }else{
-	            RequestInfo requestInfo =servInsReq.getRequestDetails().getRequestInfo();
-	            if (requestInfo != null) {
-	            	
-	            	if(requestInfo.getSource() != null){
-	            		aq.setSource(requestInfo.getSource());
-	            	}
-	            	if(requestInfo.getCallbackUrl() != null){
-	            		aq.setCallBackUrl(requestInfo.getCallbackUrl());
-	            	}
-	            	if(requestInfo.getCorrelator() != null){
-	            		aq.setCorrelator(requestInfo.getCorrelator());
-	            	}
-	
-	            	if(requestInfo.getRequestorId() != null) {
-	            		aq.setRequestorId(requestInfo.getRequestorId());
-	            	}
-	            }
-	
-	            if (servInsReq.getRequestDetails().getModelInfo() != null  ||  (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig)) {
-	            	aq.setRequestScope(requestScope);
-	            }
-	
-	            if (servInsReq.getRequestDetails().getCloudConfiguration() != null) {
-	            	CloudConfiguration cloudConfiguration = servInsReq.getRequestDetails().getCloudConfiguration();
-	            	if(cloudConfiguration.getLcpCloudRegionId() != null) {
-	            		aq.setAicCloudRegion(cloudConfiguration.getLcpCloudRegionId());
-	            	}
-	
-	               	if(cloudConfiguration.getTenantId() != null) {
-	            		aq.setTenantId(cloudConfiguration.getTenantId());
-	            	}
-	
-	            }
-	
-	            if(servInsReq.getServiceInstanceId() != null){
-	            	aq.setServiceInstanceId(servInsReq.getServiceInstanceId());
-	            }
-	
-	            if(servInsReq.getVnfInstanceId() != null){
-	            	aq.setVnfId(servInsReq.getVnfInstanceId());
-	            }
-	
-	            if(ModelType.service.name().equalsIgnoreCase(requestScope)){
-	              	if(servInsReq.getRequestDetails().getRequestInfo().getInstanceName() != null){
-	            		aq.setServiceInstanceName(requestInfo.getInstanceName());
-	            	}
-	            }
-	
-	            if(ModelType.network.name().equalsIgnoreCase(requestScope)){
-	            	aq.setNetworkName(servInsReq.getRequestDetails().getRequestInfo().getInstanceName());
-	            	aq.setNetworkType(networkType);
-	            	aq.setNetworkId(servInsReq.getNetworkInstanceId());
-	            }
-	
-	            if(ModelType.volumeGroup.name().equalsIgnoreCase(requestScope)){
-	            	aq.setVolumeGroupId(servInsReq.getVolumeGroupInstanceId());
-	            	aq.setVolumeGroupName(servInsReq.getRequestDetails().getRequestInfo().getInstanceName());
-	              	aq.setVnfType(vnfType);
-	
-	            }
-	
-	            if(ModelType.vfModule.name().equalsIgnoreCase(requestScope)){
-	             	aq.setVfModuleName(requestInfo.getInstanceName());
-	             	aq.setVfModuleModelName(servInsReq.getRequestDetails().getModelInfo().getModelName());
-	             	aq.setVfModuleId(servInsReq.getVfModuleInstanceId());
-	             	aq.setVolumeGroupId(servInsReq.getVolumeGroupInstanceId());
-	              	aq.setVnfType(vnfType);
-	
-	            }
-	            
-	            if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-	            	aq.setConfigurationId(servInsReq.getConfigurationId());
-	            	aq.setConfigurationName(requestInfo.getInstanceName());
-	            }
-	            if(requestScope.equalsIgnoreCase(ModelType.instanceGroup.name())){
-	            	aq.setInstanceGroupId(servInsReq.getInstanceGroupId());
-	            	aq.setInstanceGroupName(requestInfo.getInstanceName());
-	            }
-	            if(ModelType.vnf.name().equalsIgnoreCase(requestScope)){
-	            	if (requestInfo != null) {
-	            		aq.setVnfName(requestInfo.getInstanceName());
-	            	}
-					if (null != servInsReq.getRequestDetails()) {
-						RelatedInstanceList[] instanceList = servInsReq.getRequestDetails().getRelatedInstanceList();
-	
-						if (instanceList != null) {
-	
-							for(RelatedInstanceList relatedInstanceList : instanceList){
-	
-								RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-								if(relatedInstance.getModelInfo().getModelType().equals(ModelType.service)){
-									aq.setVnfType(vnfType);
-								}
-							}
-						}
-					}
-	            }
+            aq.setStartTime(startTimeStamp);
+            if (requestScope.equals(ModelType.instanceGroup.name()) && action == Action.deleteInstance) {
+                aq.setRequestScope(requestScope);
+            } else {
+                RequestInfo requestInfo = servInsReq.getRequestDetails().getRequestInfo();
+                if (requestInfo != null) {
+
+                    if (requestInfo.getSource() != null) {
+                        aq.setSource(requestInfo.getSource());
+                    }
+                    if (requestInfo.getCallbackUrl() != null) {
+                        aq.setCallBackUrl(requestInfo.getCallbackUrl());
+                    }
+                    if (requestInfo.getCorrelator() != null) {
+                        aq.setCorrelator(requestInfo.getCorrelator());
+                    }
+
+                    if (requestInfo.getRequestorId() != null) {
+                        aq.setRequestorId(requestInfo.getRequestorId());
+                    }
+                }
+
+                if (servInsReq.getRequestDetails().getModelInfo() != null
+                        || (action == Action.inPlaceSoftwareUpdate || action == Action.applyUpdatedConfig)) {
+                    aq.setRequestScope(requestScope);
+                }
+
+                if (servInsReq.getRequestDetails().getCloudConfiguration() != null) {
+                    CloudConfiguration cloudConfiguration = servInsReq.getRequestDetails().getCloudConfiguration();
+                    if (cloudConfiguration.getLcpCloudRegionId() != null) {
+                        aq.setAicCloudRegion(cloudConfiguration.getLcpCloudRegionId());
+                    }
+
+                    if (cloudConfiguration.getTenantId() != null) {
+                        aq.setTenantId(cloudConfiguration.getTenantId());
+                    }
+
+                }
+
+                if (servInsReq.getServiceInstanceId() != null) {
+                    aq.setServiceInstanceId(servInsReq.getServiceInstanceId());
+                }
+
+                if (servInsReq.getVnfInstanceId() != null) {
+                    aq.setVnfId(servInsReq.getVnfInstanceId());
+                }
+
+                if (ModelType.service.name().equalsIgnoreCase(requestScope)) {
+                    if (servInsReq.getRequestDetails().getRequestInfo().getInstanceName() != null) {
+                        aq.setServiceInstanceName(requestInfo.getInstanceName());
+                    }
+                }
+
+                if (ModelType.network.name().equalsIgnoreCase(requestScope)) {
+                    aq.setNetworkName(servInsReq.getRequestDetails().getRequestInfo().getInstanceName());
+                    aq.setNetworkType(networkType);
+                    aq.setNetworkId(servInsReq.getNetworkInstanceId());
+                }
+
+                if (ModelType.volumeGroup.name().equalsIgnoreCase(requestScope)) {
+                    aq.setVolumeGroupId(servInsReq.getVolumeGroupInstanceId());
+                    aq.setVolumeGroupName(servInsReq.getRequestDetails().getRequestInfo().getInstanceName());
+                    aq.setVnfType(vnfType);
+
+                }
+
+                if (ModelType.vfModule.name().equalsIgnoreCase(requestScope)) {
+                    aq.setVfModuleName(requestInfo.getInstanceName());
+                    aq.setVfModuleModelName(servInsReq.getRequestDetails().getModelInfo().getModelName());
+                    aq.setVfModuleId(servInsReq.getVfModuleInstanceId());
+                    aq.setVolumeGroupId(servInsReq.getVolumeGroupInstanceId());
+                    aq.setVnfType(vnfType);
+
+                }
+
+                if (ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+                    aq.setConfigurationId(servInsReq.getConfigurationId());
+                    aq.setConfigurationName(requestInfo.getInstanceName());
+                }
+                if (requestScope.equalsIgnoreCase(ModelType.instanceGroup.name())) {
+                    aq.setInstanceGroupId(servInsReq.getInstanceGroupId());
+                    aq.setInstanceGroupName(requestInfo.getInstanceName());
+                }
+                if (ModelType.vnf.name().equalsIgnoreCase(requestScope)) {
+                    if (requestInfo != null) {
+                        aq.setVnfName(requestInfo.getInstanceName());
+                    }
+                    if (null != servInsReq.getRequestDetails()) {
+                        RelatedInstanceList[] instanceList = servInsReq.getRequestDetails().getRelatedInstanceList();
+
+                        if (instanceList != null) {
+
+                            for (RelatedInstanceList relatedInstanceList : instanceList) {
+
+                                RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+                                if (relatedInstance.getModelInfo().getModelType().equals(ModelType.service)) {
+                                    aq.setVnfType(vnfType);
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
-            aq.setRequestBody (originalRequestJSON);
+            aq.setRequestBody(originalRequestJSON);
 
-            aq.setRequestStatus (status.toString ());
-            aq.setLastModifiedBy (Constants.MODIFIED_BY_APIHANDLER);           
+            aq.setRequestStatus(status.toString());
+            aq.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
         } catch (Exception e) {
-					logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), ErrorCode.DataError.getValue(),
-						"Exception when creation record request", e);
+            logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), ErrorCode.DataError.getValue(),
+                    "Exception when creation record request", e);
 
-					if (!status.equals (Status.FAILED)) {
+            if (!status.equals(Status.FAILED)) {
                 throw e;
             }
         }
         return aq;
     }
-    
-    public InfraActiveRequests createRequestObject (TasksRequest taskRequest, Action action, String requestId,
-   		 Status status, String originalRequestJSON) {
-    	InfraActiveRequests aq = new InfraActiveRequests ();
-       try {
-        
-    	   org.onap.so.apihandlerinfra.tasksbeans.RequestInfo requestInfo = taskRequest.getRequestDetails().getRequestInfo();
-           aq.setRequestId (requestId);
-           aq.setRequestAction(action.name());
-           aq.setAction(action.name());
-           aq.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
 
-           Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
+    public InfraActiveRequests createRequestObject(TasksRequest taskRequest, Action action, String requestId,
+            Status status, String originalRequestJSON) {
+        InfraActiveRequests aq = new InfraActiveRequests();
+        try {
 
-           aq.setStartTime (startTimeStamp);           
-           if (requestInfo != null) {
-           	
-           	if(requestInfo.getSource() != null){
-           		aq.setSource(requestInfo.getSource());
-           	}           
+            org.onap.so.apihandlerinfra.tasksbeans.RequestInfo requestInfo =
+                    taskRequest.getRequestDetails().getRequestInfo();
+            aq.setRequestId(requestId);
+            aq.setRequestAction(action.name());
+            aq.setAction(action.name());
+            aq.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
 
-           	if(requestInfo.getRequestorId() != null) {
-           		aq.setRequestorId(requestInfo.getRequestorId());
-           	}
-           }  
+            Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
 
-           aq.setRequestBody (originalRequestJSON);
-           aq.setRequestStatus (status.toString ());
-           aq.setLastModifiedBy (Constants.MODIFIED_BY_APIHANDLER);
-                  
-       } catch (Exception e) {
-				 logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), ErrorCode.DataError.getValue(),
-					 "Exception when creation record request", e);
+            aq.setStartTime(startTimeStamp);
+            if (requestInfo != null) {
 
-				 if (!status.equals (Status.FAILED)) {
-               throw e;
-           }
-       }
-       return aq;
-   }
-    
-    public void createErrorRequestRecord (Status status, String requestId, String errorMessage, Actions action, String requestScope, String requestJSON) {
+                if (requestInfo.getSource() != null) {
+                    aq.setSource(requestInfo.getSource());
+                }
+
+                if (requestInfo.getRequestorId() != null) {
+                    aq.setRequestorId(requestInfo.getRequestorId());
+                }
+            }
+
+            aq.setRequestBody(originalRequestJSON);
+            aq.setRequestStatus(status.toString());
+            aq.setLastModifiedBy(Constants.MODIFIED_BY_APIHANDLER);
+
+        } catch (Exception e) {
+            logger.error("{} {} {}", MessageEnum.APIH_DB_INSERT_EXC.toString(), ErrorCode.DataError.getValue(),
+                    "Exception when creation record request", e);
+
+            if (!status.equals(Status.FAILED)) {
+                throw e;
+            }
+        }
+        return aq;
+    }
+
+    public void createErrorRequestRecord(Status status, String requestId, String errorMessage, Actions action,
+            String requestScope, String requestJSON) {
         try {
             InfraActiveRequests request = new InfraActiveRequests(requestId);
-            Timestamp startTimeStamp = new Timestamp (System.currentTimeMillis());
-            request.setStartTime (startTimeStamp);
+            Timestamp startTimeStamp = new Timestamp(System.currentTimeMillis());
+            request.setStartTime(startTimeStamp);
             request.setRequestStatus(status.toString());
             request.setStatusMessage(errorMessage);
             request.setProgress((long) 100);
@@ -458,338 +462,345 @@ public class MsoRequest {
             request.setRequestBody(requestJSON);
             Timestamp endTimeStamp = new Timestamp(System.currentTimeMillis());
             request.setEndTime(endTimeStamp);
-            request.setRequestUrl(MDC.get(LogConstants.HTTP_URL));            
-			requestsDbClient.save(request);
+            request.setRequestUrl(MDC.get(LogConstants.HTTP_URL));
+            requestsDbClient.save(request);
         } catch (Exception e) {
-					logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
-						ErrorCode.DataError.getValue(), "Exception when updating record in DB");
-					logger.debug("Exception: ", e);
-				}
-    }
-    
-    
-
-
-    public Response buildResponse (int httpResponseCode, String errorCode, InfraActiveRequests inProgress) {
-        return buildResponseWithError (httpResponseCode, errorCode, inProgress, null);
+            logger.error("{} {} {} {}", MessageEnum.APIH_DB_UPDATE_EXC.toString(), e.getMessage(),
+                    ErrorCode.DataError.getValue(), "Exception when updating record in DB");
+            logger.debug("Exception: ", e);
+        }
     }
 
-    public Response buildResponseWithError (int httpResponseCode,
-                                            String errorCode,
-                                            InfraActiveRequests inProgress,
-                                            String errorString) {
+
+
+    public Response buildResponse(int httpResponseCode, String errorCode, InfraActiveRequests inProgress) {
+        return buildResponseWithError(httpResponseCode, errorCode, inProgress, null);
+    }
+
+    public Response buildResponseWithError(int httpResponseCode, String errorCode, InfraActiveRequests inProgress,
+            String errorString) {
 
 
 
         // Log the failed request into the MSO Requests database
 
-        return Response.status (httpResponseCode).entity (null).build ();
+        return Response.status(httpResponseCode).entity(null).build();
 
     }
 
-    public Response buildResponseFailedValidation (int httpResponseCode, String exceptionMessage) {
+    public Response buildResponseFailedValidation(int httpResponseCode, String exceptionMessage) {
 
-        return Response.status (httpResponseCode).entity (null).build ();
-    }
-    
-  
-
-    public String getServiceType (VnfInputs vnfInputs) {
-    	if (vnfInputs.getServiceType () != null)
-    		return vnfInputs.getServiceType ();
-    	if (vnfInputs.getServiceId () != null)
-    		return vnfInputs.getServiceId ();
-    	return null;
+        return Response.status(httpResponseCode).entity(null).build();
     }
 
-    public long translateStatus (RequestStatusType status) {        
+
+
+    public String getServiceType(VnfInputs vnfInputs) {
+        if (vnfInputs.getServiceType() != null)
+            return vnfInputs.getServiceType();
+        if (vnfInputs.getServiceId() != null)
+            return vnfInputs.getServiceId();
+        return null;
+    }
+
+    public long translateStatus(RequestStatusType status) {
         switch (status) {
-        case FAILED:
-        case COMPLETE:
-        	return Constants.PROGRESS_REQUEST_COMPLETED;        	
-        case IN_PROGRESS:
-        	return Constants.PROGRESS_REQUEST_IN_PROGRESS;
-		default:
-			return 0;        	
+            case FAILED:
+            case COMPLETE:
+                return Constants.PROGRESS_REQUEST_COMPLETED;
+            case IN_PROGRESS:
+                return Constants.PROGRESS_REQUEST_IN_PROGRESS;
+            default:
+                return 0;
         }
     }
 
-    public static String domToStr (Document doc) {
+    public static String domToStr(Document doc) {
         if (doc == null) {
             return null;
         }
 
         try {
-            StringWriter sw = new StringWriter ();
-            StreamResult sr = new StreamResult (sw);
-            TransformerFactory tf = TransformerFactory.newInstance ();
-			tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
-			tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET,"");
-            Transformer t = tf.newTransformer ();
-            t.setOutputProperty (OutputKeys.STANDALONE, "yes");
-            NodeList nl = doc.getDocumentElement ().getChildNodes ();
+            StringWriter sw = new StringWriter();
+            StreamResult sr = new StreamResult(sw);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+            tf.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+            Transformer t = tf.newTransformer();
+            t.setOutputProperty(OutputKeys.STANDALONE, "yes");
+            NodeList nl = doc.getDocumentElement().getChildNodes();
             DOMSource source = null;
-            for (int x = 0; x < nl.getLength (); x++) {
-                Node e = nl.item (x);
+            for (int x = 0; x < nl.getLength(); x++) {
+                Node e = nl.item(x);
                 if (e instanceof Element) {
-                    source = new DOMSource (e);
+                    source = new DOMSource(e);
                     break;
                 }
             }
             if (source != null) {
-                t.transform (source, sr);
+                t.transform(source, sr);
 
-                String s = sw.toString ();
+                String s = sw.toString();
                 return s;
             }
 
             return null;
 
         } catch (Exception e) {
-					logger.error("{} {} {}", MessageEnum.APIH_DOM2STR_ERROR.toString(), ErrorCode.DataError.getValue(),
-						"Exception in domToStr", e);
-				}
+            logger.error("{} {} {}", MessageEnum.APIH_DOM2STR_ERROR.toString(), ErrorCode.DataError.getValue(),
+                    "Exception in domToStr", e);
+        }
         return null;
     }
 
-    public void addBPMNSpecificInputs(VnfRequest vnfReq, VnfInputs vnfInputs, String personaModelId, String personaModelVersion, Boolean isBaseVfModule,
-    			String vnfPersonaModelId, String vnfPersonaModelVersion) {
-    	vnfInputs.setPersonaModelId(personaModelId);
-    	vnfInputs.setPersonaModelVersion(personaModelVersion);
-    	vnfInputs.setIsBaseVfModule(isBaseVfModule);
-    	vnfInputs.setVnfPersonaModelId(vnfPersonaModelId);
-    	vnfInputs.setVnfPersonaModelVersion(vnfPersonaModelVersion);
+    public void addBPMNSpecificInputs(VnfRequest vnfReq, VnfInputs vnfInputs, String personaModelId,
+            String personaModelVersion, Boolean isBaseVfModule, String vnfPersonaModelId,
+            String vnfPersonaModelVersion) {
+        vnfInputs.setPersonaModelId(personaModelId);
+        vnfInputs.setPersonaModelVersion(personaModelVersion);
+        vnfInputs.setIsBaseVfModule(isBaseVfModule);
+        vnfInputs.setVnfPersonaModelId(vnfPersonaModelId);
+        vnfInputs.setVnfPersonaModelVersion(vnfPersonaModelVersion);
 
-    	vnfReq.setVnfInputs(vnfInputs);
-      
+        vnfReq.setVnfInputs(vnfInputs);
+
     }
 
     private static boolean empty(String s) {
-    	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
 
-    public String getRequestJSON(ServiceInstancesRequest sir) throws JsonGenerationException, JsonMappingException, IOException {
-    	ObjectMapper mapper = new ObjectMapper();
-    	mapper.setSerializationInclusion(Include.NON_NULL);
-    	//mapper.configure(Feature.WRAP_ROOT_VALUE, true);
-    	logger.debug ("building sir from object {}", sir);
-    	String requestJSON = mapper.writeValueAsString(sir);
-    	
-    	// Perform mapping from VID-style modelInfo fields to ASDC-style modelInfo fields
-    	
-    	logger.debug("REQUEST JSON before mapping: {}", requestJSON);
-    	// modelUuid = modelVersionId
-    	requestJSON = requestJSON.replaceAll("\"modelVersionId\":","\"modelUuid\":");
-    	// modelCustomizationUuid = modelCustomizationId
-    	requestJSON = requestJSON.replaceAll("\"modelCustomizationId\":","\"modelCustomizationUuid\":");
-    	// modelInstanceName = modelCustomizationName
-    	requestJSON = requestJSON.replaceAll("\"modelCustomizationName\":","\"modelInstanceName\":");
-    	// modelInvariantUuid = modelInvariantId 
-    	requestJSON = requestJSON.replaceAll("\"modelInvariantId\":","\"modelInvariantUuid\":");    	
-    	logger.debug("REQUEST JSON after mapping: {}", requestJSON);
-    	
-    	return requestJSON;
+    public String getRequestJSON(ServiceInstancesRequest sir)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        // mapper.configure(Feature.WRAP_ROOT_VALUE, true);
+        logger.debug("building sir from object {}", sir);
+        String requestJSON = mapper.writeValueAsString(sir);
+
+        // Perform mapping from VID-style modelInfo fields to ASDC-style modelInfo fields
+
+        logger.debug("REQUEST JSON before mapping: {}", requestJSON);
+        // modelUuid = modelVersionId
+        requestJSON = requestJSON.replaceAll("\"modelVersionId\":", "\"modelUuid\":");
+        // modelCustomizationUuid = modelCustomizationId
+        requestJSON = requestJSON.replaceAll("\"modelCustomizationId\":", "\"modelCustomizationUuid\":");
+        // modelInstanceName = modelCustomizationName
+        requestJSON = requestJSON.replaceAll("\"modelCustomizationName\":", "\"modelInstanceName\":");
+        // modelInvariantUuid = modelInvariantId
+        requestJSON = requestJSON.replaceAll("\"modelInvariantId\":", "\"modelInvariantUuid\":");
+        logger.debug("REQUEST JSON after mapping: {}", requestJSON);
+
+        return requestJSON;
     }
 
 
-	public boolean getAlacarteFlag(ServiceInstancesRequest sir) {
-		if(sir.getRequestDetails().getRequestParameters() != null &&
-				sir.getRequestDetails().getRequestParameters().getALaCarte() != null)
-			return sir.getRequestDetails().getRequestParameters().getALaCarte();
-		
-		return false;
-	}
+    public boolean getAlacarteFlag(ServiceInstancesRequest sir) {
+        if (sir.getRequestDetails().getRequestParameters() != null
+                && sir.getRequestDetails().getRequestParameters().getALaCarte() != null)
+            return sir.getRequestDetails().getRequestParameters().getALaCarte();
+
+        return false;
+    }
 
 
-	public String getNetworkType(ServiceInstancesRequest sir, String requestScope) {
-		  if(requestScope.equalsIgnoreCase(ModelType.network.name()))
-		        return sir.getRequestDetails().getModelInfo().getModelName();	
-		  else return null;
-	}
+    public String getNetworkType(ServiceInstancesRequest sir, String requestScope) {
+        if (requestScope.equalsIgnoreCase(ModelType.network.name()))
+            return sir.getRequestDetails().getModelInfo().getModelName();
+        else
+            return null;
+    }
 
 
-	public String getServiceInstanceType(ServiceInstancesRequest sir, String requestScope) {
-		 if(requestScope.equalsIgnoreCase(ModelType.network.name()))
-		        return sir.getRequestDetails().getModelInfo().getModelName();	
-		  else return null;		
-	}
+    public String getServiceInstanceType(ServiceInstancesRequest sir, String requestScope) {
+        if (requestScope.equalsIgnoreCase(ModelType.network.name()))
+            return sir.getRequestDetails().getModelInfo().getModelName();
+        else
+            return null;
+    }
 
 
-	public String getSDCServiceModelVersion(ServiceInstancesRequest sir) {
-		String sdcServiceModelVersion = null;
-		if(sir.getRequestDetails().getRelatedInstanceList() != null)
-			for(RelatedInstanceList relatedInstanceList : sir.getRequestDetails().getRelatedInstanceList()){
-				RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-				ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo ();	
-				if(relatedInstanceModelInfo.getModelType().equals(ModelType.service))          		          		
-					sdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion ();
-			}
+    public String getSDCServiceModelVersion(ServiceInstancesRequest sir) {
+        String sdcServiceModelVersion = null;
+        if (sir.getRequestDetails().getRelatedInstanceList() != null)
+            for (RelatedInstanceList relatedInstanceList : sir.getRequestDetails().getRelatedInstanceList()) {
+                RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+                ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo();
+                if (relatedInstanceModelInfo.getModelType().equals(ModelType.service))
+                    sdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion();
+            }
         return sdcServiceModelVersion;
-	}
+    }
 
 
-	public String getVfModuleType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {	
-	
-      	String serviceInstanceType = null;
-      	String networkType = null;
-      	String vnfType = null;
-      	String vfModuleType = null;
-      	String vfModuleModelName = null;
-		ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
-		RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
-		String serviceModelName = null;
+    public String getVfModuleType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {
+
+        String serviceInstanceType = null;
+        String networkType = null;
+        String vnfType = null;
+        String vfModuleType = null;
+        String vfModuleModelName = null;
+        ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
+        RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
+        String serviceModelName = null;
         String vnfModelName = null;
         String asdcServiceModelVersion = null;
         String volumeGroupId = null;
         boolean isRelatedServiceInstancePresent = false;
         boolean isRelatedVnfInstancePresent = false;
-    	boolean isSourceVnfPresent = false;
-      	boolean isDestinationVnfPresent = false;
-      	boolean isConnectionPointPresent = false;	
+        boolean isSourceVnfPresent = false;
+        boolean isDestinationVnfPresent = false;
+        boolean isConnectionPointPresent = false;
 
-	    if (instanceList != null) {
-	       	for(RelatedInstanceList relatedInstanceList : instanceList){
-	        	RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-	        	ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo ();	
+        if (instanceList != null) {
+            for (RelatedInstanceList relatedInstanceList : instanceList) {
+                RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+                ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo();
 
-	          	if (action != Action.deleteInstance) {
-		          	
-		          	if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-		          		if(InstanceDirection.source.equals(relatedInstance.getInstanceDirection()) && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
-		          			isSourceVnfPresent = true;
-		          		} else if(InstanceDirection.destination.equals(relatedInstance.getInstanceDirection()) && 
-		          				(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf) && reqVersion == 6))) {
-		          			isDestinationVnfPresent = true;
-		          		}
-		          	}
-		          	
-		          	if(ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType()) && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-		          		isConnectionPointPresent = true;
-		          	}
-		        }
-	          	
+                if (action != Action.deleteInstance) {
 
-	          	if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
-	          		isRelatedServiceInstancePresent = true;	          		
-	          		serviceModelName = relatedInstanceModelInfo.getModelName ();
-	          		asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion ();
-	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
-	          		isRelatedVnfInstancePresent = true;	          		
-	          		vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
-	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {	          		
-	           		volumeGroupId = relatedInstance.getInstanceId ();
-	          	}
-          	}
-	       	
-	        if(requestScope.equalsIgnoreCase (ModelType.volumeGroup.name ())) {	        	
-	          	serviceInstanceType = serviceModelName;
-	          	vnfType = serviceModelName + "/" + vnfModelName;	  
-	        }
-	        else if(requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) {	     
-	        	vfModuleModelName = modelInfo.getModelName ();
-	          	serviceInstanceType = serviceModelName;
-	          	vnfType = serviceModelName + "/" + vnfModelName;
-	          	vfModuleType = vnfType + "::" + vfModuleModelName;
-	          	sir.setVolumeGroupInstanceId (volumeGroupId);	         
-	        }
-	        else if (requestScope.equalsIgnoreCase (ModelType.vnf.name ()))
-	        	vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();	        	
-	       
-        }     
-    	
-		return vfModuleType;
+                    if (ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+                        if (InstanceDirection.source.equals(relatedInstance.getInstanceDirection())
+                                && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
+                            isSourceVnfPresent = true;
+                        } else if (InstanceDirection.destination.equals(relatedInstance.getInstanceDirection())
+                                && (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
+                                        || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf)
+                                                && reqVersion == 6))) {
+                            isDestinationVnfPresent = true;
+                        }
+                    }
 
-	}
-	
-	public String getVnfType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {	
-		
-      	String serviceInstanceType = null;
-      	String networkType = null;
-      	String vnfType = null;
-      	String vfModuleType = null;
-      	String vfModuleModelName = null;
-		ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
-		RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
-		String serviceModelName = null;
+                    if (ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType())
+                            && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+                        isConnectionPointPresent = true;
+                    }
+                }
+
+
+                if (relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
+                    isRelatedServiceInstancePresent = true;
+                    serviceModelName = relatedInstanceModelInfo.getModelName();
+                    asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion();
+                } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
+                        && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
+                    isRelatedVnfInstancePresent = true;
+                    vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
+                } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {
+                    volumeGroupId = relatedInstance.getInstanceId();
+                }
+            }
+
+            if (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name())) {
+                serviceInstanceType = serviceModelName;
+                vnfType = serviceModelName + "/" + vnfModelName;
+            } else if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
+                vfModuleModelName = modelInfo.getModelName();
+                serviceInstanceType = serviceModelName;
+                vnfType = serviceModelName + "/" + vnfModelName;
+                vfModuleType = vnfType + "::" + vfModuleModelName;
+                sir.setVolumeGroupInstanceId(volumeGroupId);
+            } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name()))
+                vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
+
+        }
+
+        return vfModuleType;
+
+    }
+
+    public String getVnfType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {
+
+        String serviceInstanceType = null;
+        String networkType = null;
+        String vnfType = null;
+        String vfModuleType = null;
+        String vfModuleModelName = null;
+        ModelInfo modelInfo = sir.getRequestDetails().getModelInfo();
+        RelatedInstanceList[] instanceList = sir.getRequestDetails().getRelatedInstanceList();
+        String serviceModelName = null;
         String vnfModelName = null;
         String asdcServiceModelVersion = null;
         String volumeGroupId = null;
         boolean isRelatedServiceInstancePresent = false;
         boolean isRelatedVnfInstancePresent = false;
-    	boolean isSourceVnfPresent = false;
-      	boolean isDestinationVnfPresent = false;
-      	boolean isConnectionPointPresent = false;	
+        boolean isSourceVnfPresent = false;
+        boolean isDestinationVnfPresent = false;
+        boolean isConnectionPointPresent = false;
 
-	    if (instanceList != null) {
-	       	for(RelatedInstanceList relatedInstanceList : instanceList){
-	        	RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
-	        	ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo ();	
+        if (instanceList != null) {
+            for (RelatedInstanceList relatedInstanceList : instanceList) {
+                RelatedInstance relatedInstance = relatedInstanceList.getRelatedInstance();
+                ModelInfo relatedInstanceModelInfo = relatedInstance.getModelInfo();
 
-	          	if (action != Action.deleteInstance) {
-		          	
-		          	if(ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-		          		if(InstanceDirection.source.equals(relatedInstance.getInstanceDirection()) && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
-		          			isSourceVnfPresent = true;
-		          		} else if(InstanceDirection.destination.equals(relatedInstance.getInstanceDirection()) && 
-		          				(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf) && reqVersion == 6))) {
-		          			isDestinationVnfPresent = true;
-		          		}
-		          	}
-		          	
-		          	if(ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType()) && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
-		          		isConnectionPointPresent = true;
-		          	}
-		        }
-	          	
+                if (action != Action.deleteInstance) {
 
-	          	if(relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
-	          		isRelatedServiceInstancePresent = true;	          		
-	          		serviceModelName = relatedInstanceModelInfo.getModelName ();
-	          		asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion ();
-	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.vnf) && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
-	          		isRelatedVnfInstancePresent = true;	          		
-	          		vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
-	          	} else if(relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {	          		
-	           		volumeGroupId = relatedInstance.getInstanceId ();
-	          	}
-          	}
-	       	
-	        if(requestScope.equalsIgnoreCase (ModelType.volumeGroup.name ())) {	        	
-	          	serviceInstanceType = serviceModelName;
-	          	vnfType = serviceModelName + "/" + vnfModelName;	  
-	        }
-	        else if(requestScope.equalsIgnoreCase(ModelType.vfModule.name ())) {	     
-	        	vfModuleModelName = modelInfo.getModelName ();
-	          	serviceInstanceType = serviceModelName;
-	          	vnfType = serviceModelName + "/" + vnfModelName;
-	          	vfModuleType = vnfType + "::" + vfModuleModelName;
-	          	sir.setVolumeGroupInstanceId (volumeGroupId);	         
-	        }
-	        else if (requestScope.equalsIgnoreCase (ModelType.vnf.name ()))
-	        	vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();	        	
-	       
-        }     
-    	
-		return vnfType;
+                    if (ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+                        if (InstanceDirection.source.equals(relatedInstance.getInstanceDirection())
+                                && relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)) {
+                            isSourceVnfPresent = true;
+                        } else if (InstanceDirection.destination.equals(relatedInstance.getInstanceDirection())
+                                && (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
+                                        || (relatedInstanceModelInfo.getModelType().equals(ModelType.pnf)
+                                                && reqVersion == 6))) {
+                            isDestinationVnfPresent = true;
+                        }
+                    }
 
-	}
-	
-	public Optional<URL> buildSelfLinkUrl(String url, String requestId) {
-		Optional<URL> selfLinkUrl = Optional.empty();
-		String version = "";		
-		try {
-			URL aUrl = new URL(url);
-			String aPath = aUrl.getPath();
-			if (aPath.indexOf("/v") == -1) {
-				version = aPath.substring(aPath.indexOf("/V"), aPath.indexOf("/V")+4);
-			} else {
-				version = aPath.substring(aPath.indexOf("/v"), aPath.indexOf("/v")+4);
-			}
-			String selfLinkPath = Constants.ORCHESTRATION_REQUESTS_PATH.concat(version).concat(requestId);
-			selfLinkUrl = Optional.of(new URL(aUrl.getProtocol(), aUrl.getHost(), aUrl.getPort(), selfLinkPath));
-		} catch (Exception e) {
-			selfLinkUrl = Optional.empty();  // ignore
-		}
-		return selfLinkUrl;
-	}	
+                    if (ModelType.connectionPoint.equals(relatedInstanceModelInfo.getModelType())
+                            && ModelType.configuration.name().equalsIgnoreCase(requestScope)) {
+                        isConnectionPointPresent = true;
+                    }
+                }
+
+
+                if (relatedInstanceModelInfo.getModelType().equals(ModelType.service)) {
+                    isRelatedServiceInstancePresent = true;
+                    serviceModelName = relatedInstanceModelInfo.getModelName();
+                    asdcServiceModelVersion = relatedInstanceModelInfo.getModelVersion();
+                } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.vnf)
+                        && !(ModelType.configuration.name().equalsIgnoreCase(requestScope))) {
+                    isRelatedVnfInstancePresent = true;
+                    vnfModelName = relatedInstanceModelInfo.getModelCustomizationName();
+                } else if (relatedInstanceModelInfo.getModelType().equals(ModelType.volumeGroup)) {
+                    volumeGroupId = relatedInstance.getInstanceId();
+                }
+            }
+
+            if (requestScope.equalsIgnoreCase(ModelType.volumeGroup.name())) {
+                serviceInstanceType = serviceModelName;
+                vnfType = serviceModelName + "/" + vnfModelName;
+            } else if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())) {
+                vfModuleModelName = modelInfo.getModelName();
+                serviceInstanceType = serviceModelName;
+                vnfType = serviceModelName + "/" + vnfModelName;
+                vfModuleType = vnfType + "::" + vfModuleModelName;
+                sir.setVolumeGroupInstanceId(volumeGroupId);
+            } else if (requestScope.equalsIgnoreCase(ModelType.vnf.name()))
+                vnfType = serviceModelName + "/" + sir.getRequestDetails().getModelInfo().getModelCustomizationName();
+
+        }
+
+        return vnfType;
+
+    }
+
+    public Optional<URL> buildSelfLinkUrl(String url, String requestId) {
+        Optional<URL> selfLinkUrl = Optional.empty();
+        String version = "";
+        try {
+            URL aUrl = new URL(url);
+            String aPath = aUrl.getPath();
+            if (aPath.indexOf("/v") == -1) {
+                version = aPath.substring(aPath.indexOf("/V"), aPath.indexOf("/V") + 4);
+            } else {
+                version = aPath.substring(aPath.indexOf("/v"), aPath.indexOf("/v") + 4);
+            }
+            String selfLinkPath = Constants.ORCHESTRATION_REQUESTS_PATH.concat(version).concat(requestId);
+            selfLinkUrl = Optional.of(new URL(aUrl.getProtocol(), aUrl.getHost(), aUrl.getPort(), selfLinkPath));
+        } catch (Exception e) {
+            selfLinkUrl = Optional.empty(); // ignore
+        }
+        return selfLinkUrl;
+    }
 }

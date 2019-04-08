@@ -21,9 +21,7 @@
 package org.onap.so.adapters.sdnc.util;
 
 import static org.junit.Assert.assertEquals;
-
 import java.util.UUID;
-
 import org.junit.Test;
 
 
@@ -33,14 +31,14 @@ public class SDNCRequestIdUtilTest {
      * Test method for {@link org.onap.so.adapters.sdnc.SDNCRequestIdUtil#getSDNCOriginalRequestId()}.
      */
     @Test
-    public final void testGetSDNCOriginalRequestId () {
-    	String originalRequestId = UUID.randomUUID().toString();
-    	String postfixedRequestId = originalRequestId + "-1466203712068";
-    	String postfixedRequestId2 = originalRequestId + "-1466203712068-2";
+    public final void testGetSDNCOriginalRequestId() {
+        String originalRequestId = UUID.randomUUID().toString();
+        String postfixedRequestId = originalRequestId + "-1466203712068";
+        String postfixedRequestId2 = originalRequestId + "-1466203712068-2";
 
         assertEquals(originalRequestId, SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId));
         assertEquals(postfixedRequestId2, SDNCRequestIdUtil.getSDNCOriginalRequestId(postfixedRequestId2));
-       
+
     }
 
 }

@@ -24,10 +24,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.Test;
 import org.onap.so.monitoring.camunda.model.ActivityInstance;
 import org.onap.so.monitoring.camunda.model.ProcessDefinition;
@@ -39,7 +37,6 @@ import org.onap.so.monitoring.model.ProcessDefinitionDetail;
 import org.onap.so.monitoring.model.ProcessInstanceIdDetail;
 import org.onap.so.monitoring.model.ProcessInstanceVariableDetail;
 import org.onap.so.rest.service.HttpRestServiceProvider;
-
 import com.google.common.base.Optional;
 
 

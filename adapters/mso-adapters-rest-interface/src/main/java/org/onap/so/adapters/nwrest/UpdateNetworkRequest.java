@@ -27,12 +27,9 @@ package org.onap.so.adapters.nwrest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.Subnet;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -40,157 +37,160 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonRootName("updateNetworkRequest")
 @XmlRootElement(name = "updateNetworkRequest")
 public class UpdateNetworkRequest extends NetworkRequestCommon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1219693235726357143L;
-	private String cloudSiteId;
-	private String tenantId;
-	private String networkId;
-	private String networkStackId;
-	private String networkName;
-	private String networkType;
-	private String networkTypeVersion;
-	private String modelCustomizationUuid;
-	private String networkTechnology = "NEUTRON";
-	private List<Subnet> subnets;
-	private ProviderVlanNetwork providerVlanNetwork;
-	private ContrailNetwork contrailNetwork;
-	private Boolean backout = true;
-	private Map<String,String> networkParams = new HashMap<>();
-	private MsoRequest msoRequest = new MsoRequest();
-	
-	@JsonProperty
-	private boolean contrailRequest;
-	public UpdateNetworkRequest() {
-		super();
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1219693235726357143L;
+    private String cloudSiteId;
+    private String tenantId;
+    private String networkId;
+    private String networkStackId;
+    private String networkName;
+    private String networkType;
+    private String networkTypeVersion;
+    private String modelCustomizationUuid;
+    private String networkTechnology = "NEUTRON";
+    private List<Subnet> subnets;
+    private ProviderVlanNetwork providerVlanNetwork;
+    private ContrailNetwork contrailNetwork;
+    private Boolean backout = true;
+    private Map<String, String> networkParams = new HashMap<>();
+    private MsoRequest msoRequest = new MsoRequest();
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    @JsonProperty
+    private boolean contrailRequest;
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public UpdateNetworkRequest() {
+        super();
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
-	public String getNetworkId() {
-		return networkId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getNetworkStackId() {
-		return networkStackId;
-	}
+    public String getNetworkId() {
+        return networkId;
+    }
 
-	public void setNetworkStackId(String networkStackId) {
-		this.networkStackId = networkStackId;
-	}
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 
-	public String getNetworkName() {
-		return networkName;
-	}
+    public String getNetworkStackId() {
+        return networkStackId;
+    }
 
-	public void setNetworkName(String networkName) {
-		this.networkName = networkName;
-	}
+    public void setNetworkStackId(String networkStackId) {
+        this.networkStackId = networkStackId;
+    }
 
-	public String getNetworkType() {
-		return networkType;
-	}
+    public String getNetworkName() {
+        return networkName;
+    }
 
-	public void setNetworkType(String networkType) {
-		this.networkType = networkType;
-	}
+    public void setNetworkName(String networkName) {
+        this.networkName = networkName;
+    }
 
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
+    public String getNetworkType() {
+        return networkType;
+    }
 
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
-	}
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
+    }
 
-	public String getNetworkTypeVersion() {
-		return networkTypeVersion;
-	}
+    public String getModelCustomizationUuid() {
+        return this.modelCustomizationUuid;
+    }
 
-	public void setNetworkTypeVersion(String networkTypeVersion) {
-		this.networkTypeVersion = networkTypeVersion;
-	}
+    public void setModelCustomizationUuid(String modelCustomizationUuid) {
+        this.modelCustomizationUuid = modelCustomizationUuid;
+    }
 
-	public String getNetworkTechnology() {
-		return networkTechnology;
-	}
+    public String getNetworkTypeVersion() {
+        return networkTypeVersion;
+    }
 
-	public void setNetworkTechnology(String networkTechnology) {
-		this.networkTechnology = networkTechnology;
-	}
+    public void setNetworkTypeVersion(String networkTypeVersion) {
+        this.networkTypeVersion = networkTypeVersion;
+    }
 
-	public List<Subnet> getSubnets() {
-		return subnets;
-	}
+    public String getNetworkTechnology() {
+        return networkTechnology;
+    }
 
-	public void setSubnets(List<Subnet> subnets) {
-		this.subnets = subnets;
-	}
+    public void setNetworkTechnology(String networkTechnology) {
+        this.networkTechnology = networkTechnology;
+    }
 
-	public ProviderVlanNetwork getProviderVlanNetwork() {
-		return providerVlanNetwork;
-	}
+    public List<Subnet> getSubnets() {
+        return subnets;
+    }
 
-	public void setProviderVlanNetwork(ProviderVlanNetwork providerVlanNetwork) {
-		this.providerVlanNetwork = providerVlanNetwork;
-	}
+    public void setSubnets(List<Subnet> subnets) {
+        this.subnets = subnets;
+    }
 
-	public ContrailNetwork getContrailNetwork() {
-		return contrailNetwork;
-	}
+    public ProviderVlanNetwork getProviderVlanNetwork() {
+        return providerVlanNetwork;
+    }
 
-	public void setContrailNetwork(ContrailNetwork contrailNetwork) {
-		this.contrailNetwork = contrailNetwork;
-	}
+    public void setProviderVlanNetwork(ProviderVlanNetwork providerVlanNetwork) {
+        this.providerVlanNetwork = providerVlanNetwork;
+    }
 
-	public Boolean getBackout() {
-		return backout;
-	}
+    public ContrailNetwork getContrailNetwork() {
+        return contrailNetwork;
+    }
 
-	public void setBackout(Boolean backout) {
-		this.backout = backout;
-	}
+    public void setContrailNetwork(ContrailNetwork contrailNetwork) {
+        this.contrailNetwork = contrailNetwork;
+    }
 
-	public Map<String, String> getNetworkParams() {
-		return networkParams;
-	}
+    public Boolean getBackout() {
+        return backout;
+    }
 
-	public void setNetworkParams(Map<String, String> networkParams) {
-		this.networkParams = networkParams;
-	}
+    public void setBackout(Boolean backout) {
+        this.backout = backout;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public Map<String, String> getNetworkParams() {
+        return networkParams;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
-	@JsonIgnore
-	protected void setContrailRequest(boolean contrailRequest) {
-		this.contrailRequest = contrailRequest;
-	}
-	public boolean isContrailRequest() {
-		return contrailRequest;
-	}
-	
+    public void setNetworkParams(Map<String, String> networkParams) {
+        this.networkParams = networkParams;
+    }
+
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
+
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
+
+    @JsonIgnore
+    protected void setContrailRequest(boolean contrailRequest) {
+        this.contrailRequest = contrailRequest;
+    }
+
+    public boolean isContrailRequest() {
+        return contrailRequest;
+    }
+
 }

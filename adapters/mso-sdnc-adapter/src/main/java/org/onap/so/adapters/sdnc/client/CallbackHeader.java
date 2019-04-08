@@ -28,9 +28,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  *
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  *
  * <pre>
  * &lt;complexType>
@@ -48,13 +50,9 @@ import javax.xml.bind.annotation.XmlType;
  *
  *
  */
-//SDNCAdapter to BPEL Async response header
+// SDNCAdapter to BPEL Async response header
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "requestId",
-    "responseCode",
-    "responseMessage"
-})
+@XmlType(name = "", propOrder = {"requestId", "responseCode", "responseMessage"})
 @XmlRootElement(name = "CallbackHeader")
 public class CallbackHeader {
 
@@ -70,17 +68,15 @@ public class CallbackHeader {
     }
 
     public CallbackHeader(String reqId, String respCode, String respMsg) {
-    	this.requestId = reqId;
-    	this.responseCode = respCode;
-    	this.responseMessage  = respMsg;
+        this.requestId = reqId;
+        this.responseCode = respCode;
+        this.responseMessage = respMsg;
     }
 
     /**
      * Gets the value of the requestId property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getRequestId() {
@@ -90,9 +86,7 @@ public class CallbackHeader {
     /**
      * Sets the value of the requestId property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setRequestId(String value) {
@@ -102,9 +96,7 @@ public class CallbackHeader {
     /**
      * Gets the value of the responseCode property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getResponseCode() {
@@ -114,9 +106,7 @@ public class CallbackHeader {
     /**
      * Sets the value of the responseCode property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setResponseCode(String value) {
@@ -126,9 +116,7 @@ public class CallbackHeader {
     /**
      * Gets the value of the responseMessage property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getResponseMessage() {
@@ -138,18 +126,16 @@ public class CallbackHeader {
     /**
      * Sets the value of the responseMessage property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setResponseMessage(String value) {
         this.responseMessage = value;
     }
 
-	@Override
-	public String toString() {
-		return "CallbackHeader [requestId=" + requestId + ", responseCode="
-				+ responseCode + ", responseMessage=" + responseMessage + "]";
-	}
+    @Override
+    public String toString() {
+        return "CallbackHeader [requestId=" + requestId + ", responseCode=" + responseCode + ", responseMessage="
+                + responseMessage + "]";
+    }
 }

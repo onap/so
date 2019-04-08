@@ -21,14 +21,13 @@
 package org.onap.so.cloudify.v3.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 import java.util.Map;
 
 public class UpdateNodeInstanceParams implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     @JsonProperty("state")
     private String state;
 
@@ -40,37 +39,34 @@ public class UpdateNodeInstanceParams implements Serializable {
 
 
     public String getState() {
-		return state;
-	}
+        return state;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public String getVersion() {
-		return version;
-	}
+    public String getVersion() {
+        return version;
+    }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+    public void setVersion(String version) {
+        this.version = version;
+    }
 
-	public Map<String, Object> getRuntimeProperties() {
-		return runtimeProperties;
-	}
+    public Map<String, Object> getRuntimeProperties() {
+        return runtimeProperties;
+    }
 
-	public void setRuntimeProperties(Map<String, Object> runtimeProperties) {
-		this.runtimeProperties = runtimeProperties;
-	}
+    public void setRuntimeProperties(Map<String, Object> runtimeProperties) {
+        this.runtimeProperties = runtimeProperties;
+    }
 
 
-	@Override
+    @Override
     public String toString() {
-        return "UpdateNodeInstanceParams{" +
-                "state='" + state + '\'' +
-                "version='" + version + '\'' +
-                ", runtimeProperties=" + runtimeProperties +
-                '}';
+        return "UpdateNodeInstanceParams{" + "state='" + state + '\'' + "version='" + version + '\''
+                + ", runtimeProperties=" + runtimeProperties + '}';
     }
 
 }

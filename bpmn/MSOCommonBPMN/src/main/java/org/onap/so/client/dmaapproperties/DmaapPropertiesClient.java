@@ -23,7 +23,6 @@
 package org.onap.so.client.dmaapproperties;
 
 import javax.inject.Provider;
-
 import org.onap.so.client.avpn.dmaap.beans.AVPNDmaapBean;
 import org.onap.so.client.avpn.dmaap.beans.AsyncRequestStatus;
 import org.onap.so.client.avpn.dmaap.beans.InstanceReferences;
@@ -33,86 +32,90 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class DmaapPropertiesClient {
 
-	private static final Logger logger = LoggerFactory.getLogger(DmaapPropertiesClient.class);
+    private static final Logger logger = LoggerFactory.getLogger(DmaapPropertiesClient.class);
 
-	@Autowired
-	private Provider<GlobalDmaapPublisher> dmaapPublisher;
+    @Autowired
+    private Provider<GlobalDmaapPublisher> dmaapPublisher;
 
-	protected AVPNDmaapBean buildRequestJson(String requestId, String clientSource, String correlator, String serviceInstanceId, String startTime, String finishTime,
-											 String requestScope, String requestType, String timestamp, String requestState, String statusMessage, String percentProgress, Boolean wasRolledBack) {
+    protected AVPNDmaapBean buildRequestJson(String requestId, String clientSource, String correlator,
+            String serviceInstanceId, String startTime, String finishTime, String requestScope, String requestType,
+            String timestamp, String requestState, String statusMessage, String percentProgress,
+            Boolean wasRolledBack) {
 
-		RequestStatus requestStatus = buildRequestStatus(timestamp, requestState, statusMessage, percentProgress, wasRolledBack);
+        RequestStatus requestStatus =
+                buildRequestStatus(timestamp, requestState, statusMessage, percentProgress, wasRolledBack);
 
-		InstanceReferences instanceReferences = buildInstanceReferences(serviceInstanceId);
+        InstanceReferences instanceReferences = buildInstanceReferences(serviceInstanceId);
 
-		AsyncRequestStatus asyncRequestStatus = buildAsyncRequestStatus(requestId, clientSource, correlator, startTime, finishTime,
-				requestScope, requestType, requestStatus, instanceReferences);
+        AsyncRequestStatus asyncRequestStatus = buildAsyncRequestStatus(requestId, clientSource, correlator, startTime,
+                finishTime, requestScope, requestType, requestStatus, instanceReferences);
 
-		AVPNDmaapBean dmaapBean = new AVPNDmaapBean();
-		dmaapBean.setAsyncRequestStatus(asyncRequestStatus);
+        AVPNDmaapBean dmaapBean = new AVPNDmaapBean();
+        dmaapBean.setAsyncRequestStatus(asyncRequestStatus);
 
-		return dmaapBean;
-	}
+        return dmaapBean;
+    }
 
-	private String jsonToString(AVPNDmaapBean dmaapBean) throws JsonProcessingException, MapperException {
-		try {
-			return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dmaapBean);
-		} catch (JsonProcessingException e) {
-			logger.error("Exception occurred", e);
-			throw new MapperException(e.getMessage());
-		}
-	}
+    private String jsonToString(AVPNDmaapBean dmaapBean) throws JsonProcessingException, MapperException {
+        try {
+            return new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(dmaapBean);
+        } catch (JsonProcessingException e) {
+            logger.error("Exception occurred", e);
+            throw new MapperException(e.getMessage());
+        }
+    }
 
-	private AsyncRequestStatus buildAsyncRequestStatus(String requestId, String clientSource, String correlator, String startTime,
-													   String finishTime, String requestScope, String requestType,
-													   RequestStatus requestStatus, InstanceReferences instanceReferences) {
+    private AsyncRequestStatus buildAsyncRequestStatus(String requestId, String clientSource, String correlator,
+            String startTime, String finishTime, String requestScope, String requestType, RequestStatus requestStatus,
+            InstanceReferences instanceReferences) {
 
-		AsyncRequestStatus asyncRequestStatus = new AsyncRequestStatus();
-		asyncRequestStatus.setRequestId(requestId);
-		asyncRequestStatus.setClientSource(clientSource);
-		asyncRequestStatus.setCorrelator(correlator);
-		asyncRequestStatus.setStartTime(startTime);
-		asyncRequestStatus.setFinishTime(finishTime);
-		asyncRequestStatus.setRequestScope(requestScope);
-		asyncRequestStatus.setRequestType(requestType);
-		asyncRequestStatus.setInstanceReferences(instanceReferences);
-		asyncRequestStatus.setRequestStatus(requestStatus);
+        AsyncRequestStatus asyncRequestStatus = new AsyncRequestStatus();
+        asyncRequestStatus.setRequestId(requestId);
+        asyncRequestStatus.setClientSource(clientSource);
+        asyncRequestStatus.setCorrelator(correlator);
+        asyncRequestStatus.setStartTime(startTime);
+        asyncRequestStatus.setFinishTime(finishTime);
+        asyncRequestStatus.setRequestScope(requestScope);
+        asyncRequestStatus.setRequestType(requestType);
+        asyncRequestStatus.setInstanceReferences(instanceReferences);
+        asyncRequestStatus.setRequestStatus(requestStatus);
 
-		return asyncRequestStatus;
-	}
+        return asyncRequestStatus;
+    }
 
-	private InstanceReferences buildInstanceReferences(String serviceInstanceId) {
-		InstanceReferences instanceReferences = new InstanceReferences();
-		instanceReferences.setServiceInstanceId(serviceInstanceId);
-		return instanceReferences;
-	}
+    private InstanceReferences buildInstanceReferences(String serviceInstanceId) {
+        InstanceReferences instanceReferences = new InstanceReferences();
+        instanceReferences.setServiceInstanceId(serviceInstanceId);
+        return instanceReferences;
+    }
 
-	private RequestStatus buildRequestStatus(String timestamp, String requestState, String statusMessage,
-											 String percentProgress, Boolean wasRolledBack) {
-		RequestStatus requestStatus = new RequestStatus();
-		requestStatus.setTimestamp(timestamp);
-		requestStatus.setRequestState(requestState);
-		requestStatus.setStatusMessage(statusMessage);
-		requestStatus.setPercentProgress(percentProgress);
-		requestStatus.setWasRolledBack(wasRolledBack);
-		return requestStatus;
-	}
+    private RequestStatus buildRequestStatus(String timestamp, String requestState, String statusMessage,
+            String percentProgress, Boolean wasRolledBack) {
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setTimestamp(timestamp);
+        requestStatus.setRequestState(requestState);
+        requestStatus.setStatusMessage(statusMessage);
+        requestStatus.setPercentProgress(percentProgress);
+        requestStatus.setWasRolledBack(wasRolledBack);
+        return requestStatus;
+    }
 
-	public void dmaapPublishRequest(String requestId, String clientSource, String correlator, String serviceInstanceId, String startTime,
-									String finishTime, String requestScope, String requestType, String timestamp, String requestState,
-									String statusMessage, String percentProgress, Boolean wasRolledBack) throws MapperException, JsonProcessingException {
+    public void dmaapPublishRequest(String requestId, String clientSource, String correlator, String serviceInstanceId,
+            String startTime, String finishTime, String requestScope, String requestType, String timestamp,
+            String requestState, String statusMessage, String percentProgress, Boolean wasRolledBack)
+            throws MapperException, JsonProcessingException {
 
-		AVPNDmaapBean bean = this.buildRequestJson(requestId, clientSource, correlator, serviceInstanceId, startTime, finishTime,
-				requestScope, requestType, timestamp, requestState, statusMessage, percentProgress, wasRolledBack);
+        AVPNDmaapBean bean = this.buildRequestJson(requestId, clientSource, correlator, serviceInstanceId, startTime,
+                finishTime, requestScope, requestType, timestamp, requestState, statusMessage, percentProgress,
+                wasRolledBack);
 
-		String request = jsonToString(bean);
-		dmaapPublisher.get().send(request);
-	}
+        String request = jsonToString(bean);
+        dmaapPublisher.get().send(request);
+    }
 }

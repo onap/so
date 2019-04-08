@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -33,66 +32,64 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonRootName(value = "networks")
 @JsonInclude(Include.NON_DEFAULT)
-public class Networks implements Serializable{
+public class Networks implements Serializable {
 
-	private static final long serialVersionUID = 8081495240474276501L;
-	@JsonProperty("modelInfo")
-	protected ModelInfo modelInfo;
-	@JsonProperty("cloudConfiguration")
-	protected CloudConfiguration cloudConfiguration;
-	@JsonProperty("instanceName")
-	protected String instanceName;
-	@JsonProperty("productFamilyId")
-	protected String productFamilyId;
-	@JsonProperty("instanceParams")
-	private List<Map<String, String>> instanceParams = new ArrayList<>();
+    private static final long serialVersionUID = 8081495240474276501L;
+    @JsonProperty("modelInfo")
+    protected ModelInfo modelInfo;
+    @JsonProperty("cloudConfiguration")
+    protected CloudConfiguration cloudConfiguration;
+    @JsonProperty("instanceName")
+    protected String instanceName;
+    @JsonProperty("productFamilyId")
+    protected String productFamilyId;
+    @JsonProperty("instanceParams")
+    private List<Map<String, String>> instanceParams = new ArrayList<>();
 
-	public ModelInfo getModelInfo() {
-		return modelInfo;
-	}
+    public ModelInfo getModelInfo() {
+        return modelInfo;
+    }
 
-	public void setModelInfo(ModelInfo modelInfo) {
-		this.modelInfo = modelInfo;
-	}
+    public void setModelInfo(ModelInfo modelInfo) {
+        this.modelInfo = modelInfo;
+    }
 
-	public CloudConfiguration getCloudConfiguration() {
-		return cloudConfiguration;
-	}
+    public CloudConfiguration getCloudConfiguration() {
+        return cloudConfiguration;
+    }
 
-	public void setCloudConfiguration(CloudConfiguration cloudConfiguration) {
-		this.cloudConfiguration = cloudConfiguration;
-	}
+    public void setCloudConfiguration(CloudConfiguration cloudConfiguration) {
+        this.cloudConfiguration = cloudConfiguration;
+    }
 
-	public String getInstanceName() {
-		return instanceName;
-	}
+    public String getInstanceName() {
+        return instanceName;
+    }
 
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-	
-	public String getProductFamilyId() {
-		return productFamilyId;
-	}
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
 
-	public void setProductFamilyId(String productFamilyId) {
-		this.productFamilyId = productFamilyId;
-	}
+    public String getProductFamilyId() {
+        return productFamilyId;
+    }
 
-	public List<Map<String, String>> getInstanceParams() {
-		return instanceParams;
-	}
+    public void setProductFamilyId(String productFamilyId) {
+        this.productFamilyId = productFamilyId;
+    }
 
-	public void setInstanceParams(List<Map<String, String>> instanceParams) {
-		this.instanceParams = instanceParams;
-	}
+    public List<Map<String, String>> getInstanceParams() {
+        return instanceParams;
+    }
 
-	@Override
-	public String toString() {
-		return "Networks [modelInfo=" + modelInfo + 
-				", cloudConfiguration=" + cloudConfiguration + 
-				", instanceName=" + instanceName + ", productFamilyId=" + productFamilyId + 
-				", instanceParams=" + instanceParams + "]";
-	}
-	
+    public void setInstanceParams(List<Map<String, String>> instanceParams) {
+        this.instanceParams = instanceParams;
+    }
+
+    @Override
+    public String toString() {
+        return "Networks [modelInfo=" + modelInfo + ", cloudConfiguration=" + cloudConfiguration + ", instanceName="
+                + instanceName + ", productFamilyId=" + productFamilyId + ", instanceParams=" + instanceParams + "]";
+    }
+
 }

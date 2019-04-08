@@ -21,7 +21,6 @@
 package org.onap.so.db.request;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
@@ -40,47 +39,49 @@ import org.springframework.test.context.junit4.SpringRunner;
 @ActiveProfiles("test")
 public class OperationalEnvServiceModelStatusTest {
 
-	@Autowired
-	private OperationalEnvServiceModelStatusRepository repository;
-	
-	
-	@Test
-	public void updateWithoutAllKeys() throws Exception {
-		
-		OperationalEnvServiceModelStatus status = new OperationalEnvServiceModelStatus();
-		status.setRequestId("request-id-1");
-		status.setOperationalEnvId("oper-env-id-1");
-		status.setServiceModelVersionId("service-model-ver-id-1");
-		status.setVnfOperationalEnvId("vnf-oper-env-id-1");
-		status.setRetryCount(0);
-		
-		repository.saveAndFlush(status);
-		OperationalEnvServiceModelStatus status2 = repository.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("oper-env-id-1", "service-model-ver-id-1", "request-id-1");
-		status2.setRetryCount(1);
-		assertEquals("request-id-1", status2.getRequestId());		
-		assertEquals("vnf-oper-env-id-1", status2.getVnfOperationalEnvId());
-		
-		repository.saveAndFlush(status2);
-		
-		OperationalEnvServiceModelStatus status3 = new OperationalEnvServiceModelStatus();
+    @Autowired
+    private OperationalEnvServiceModelStatusRepository repository;
 
-		status3.setRequestId("request-id-2");
-		status3.setOperationalEnvId("oper-env-id-1");
-		status3.setServiceModelVersionId("service-model-ver-id-2");
-		status3.setVnfOperationalEnvId("vnf-oper-env-id-2");
-		status3.setRetryCount(2);
-		
-		repository.saveAndFlush(status3);
-		
-		OperationalEnvServiceModelStatus exampleObj = new OperationalEnvServiceModelStatus();
-		exampleObj.setOperationalEnvId("oper-env-id-1");
-		exampleObj.setServiceModelVersionId("service-model-ver-id-1");
-		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("requestId");
-		OperationalEnvServiceModelStatus foundStatus = repository.findOne(Example.of(exampleObj,matcher))
-				.orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
-		if(foundStatus== null)
-			throw new Exception("No status found");
 
-		assertEquals(new Integer(1), foundStatus.getRetryCount());		
-	}
+    @Test
+    public void updateWithoutAllKeys() throws Exception {
+
+        OperationalEnvServiceModelStatus status = new OperationalEnvServiceModelStatus();
+        status.setRequestId("request-id-1");
+        status.setOperationalEnvId("oper-env-id-1");
+        status.setServiceModelVersionId("service-model-ver-id-1");
+        status.setVnfOperationalEnvId("vnf-oper-env-id-1");
+        status.setRetryCount(0);
+
+        repository.saveAndFlush(status);
+        OperationalEnvServiceModelStatus status2 =
+                repository.findOneByOperationalEnvIdAndServiceModelVersionIdAndRequestId("oper-env-id-1",
+                        "service-model-ver-id-1", "request-id-1");
+        status2.setRetryCount(1);
+        assertEquals("request-id-1", status2.getRequestId());
+        assertEquals("vnf-oper-env-id-1", status2.getVnfOperationalEnvId());
+
+        repository.saveAndFlush(status2);
+
+        OperationalEnvServiceModelStatus status3 = new OperationalEnvServiceModelStatus();
+
+        status3.setRequestId("request-id-2");
+        status3.setOperationalEnvId("oper-env-id-1");
+        status3.setServiceModelVersionId("service-model-ver-id-2");
+        status3.setVnfOperationalEnvId("vnf-oper-env-id-2");
+        status3.setRetryCount(2);
+
+        repository.saveAndFlush(status3);
+
+        OperationalEnvServiceModelStatus exampleObj = new OperationalEnvServiceModelStatus();
+        exampleObj.setOperationalEnvId("oper-env-id-1");
+        exampleObj.setServiceModelVersionId("service-model-ver-id-1");
+        ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("requestId");
+        OperationalEnvServiceModelStatus foundStatus = repository.findOne(Example.of(exampleObj, matcher))
+                .orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+        if (foundStatus == null)
+            throw new Exception("No status found");
+
+        assertEquals(new Integer(1), foundStatus.getRetryCount());
+    }
 }

@@ -27,9 +27,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for deleteVnfNotification complex type.
+ * <p>
+ * Java class for deleteVnfNotification complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="deleteVnfNotification">
@@ -49,12 +51,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "deleteVnfNotification1", propOrder = {
-    "messageId",
-    "completed",
-    "exception",
-    "errorMessage"
-})
+@XmlType(name = "deleteVnfNotification1", propOrder = {"messageId", "completed", "exception", "errorMessage"})
 public class DeleteVnfNotification {
 
     @XmlElement(required = true)
@@ -66,10 +63,8 @@ public class DeleteVnfNotification {
     /**
      * Gets the value of the messageId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getMessageId() {
         return messageId;
@@ -78,10 +73,8 @@ public class DeleteVnfNotification {
     /**
      * Sets the value of the messageId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setMessageId(String value) {
         this.messageId = value;
@@ -106,10 +99,8 @@ public class DeleteVnfNotification {
     /**
      * Gets the value of the exception property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @return possible object is {@link MsoExceptionCategory }
+     * 
      */
     public MsoExceptionCategory getException() {
         return exception;
@@ -118,10 +109,8 @@ public class DeleteVnfNotification {
     /**
      * Sets the value of the exception property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @param value allowed object is {@link MsoExceptionCategory }
+     * 
      */
     public void setException(MsoExceptionCategory value) {
         this.exception = value;
@@ -130,10 +119,8 @@ public class DeleteVnfNotification {
     /**
      * Gets the value of the errorMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getErrorMessage() {
         return errorMessage;
@@ -142,57 +129,43 @@ public class DeleteVnfNotification {
     /**
      * Sets the value of the errorMessage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setErrorMessage(String value) {
         this.errorMessage = value;
     }
 
     /**
-     * Overrides toString() method 
+     * Overrides toString() method
+     * 
      * @return String type (deleteVnfNotification)
      */
- 
-    @Override
-	public String toString() {
-    	String deleteVnfNotification;
-    	if (exception == null) {
-    		deleteVnfNotification = "<ns2:deleteVnfNotification xmlns:ns2=\"http://org.onap.so/vnfNotify\"" + '\n' +
-    				       "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' +
-    				       "   <messageId>"+messageId+"</messageId>" + '\n' +
-    				       "   <completed>"+completed+"</completed>" + '\n' +
-    				       "</ns2:deleteVnfNotification>";
-    	} else {
-    		deleteVnfNotification = "<ns2:deleteVnfNotification xmlns:ns2=\"http://org.onap.so/vnfNotify\"" + '\n' +
-				       "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' +
-				       "   <messageId>"+messageId+"</messageId>" + '\n' +
-				       "   <completed>"+completed+"</completed>" + '\n' +
-    				   "   <exception>"+exception+"</exception>" + '\n' +
-    				   "   <errorMessage>"+errorMessage+"</errorMessage>" + '\n' +
-				       "</ns2:deleteVnfNotification>";
-    	}
-    	return deleteVnfNotification;
-   	}    
 
-/*	
-	public String toString() {
-		StringWriter writer = new StringWriter();
-		try {
-			JAXBContext context = JAXBContext
-					.newInstance(DeleteVnfNotification.class);
-			Marshaller m = context.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			m.marshal(this, writer);
-			//System.out.println("toString() - " + writer.getBuffer().toString());			
-			return writer.getBuffer().toString();
-		} catch (JAXBException e) {
-			//System.out.println("JAXBException - " + e.getStackTrace());			
-			return "";
-		}
-	}    
-*/	
-	
+    @Override
+    public String toString() {
+        String deleteVnfNotification;
+        if (exception == null) {
+            deleteVnfNotification = "<ns2:deleteVnfNotification xmlns:ns2=\"http://org.onap.so/vnfNotify\"" + '\n'
+                    + "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' + "   <messageId>"
+                    + messageId + "</messageId>" + '\n' + "   <completed>" + completed + "</completed>" + '\n'
+                    + "</ns2:deleteVnfNotification>";
+        } else {
+            deleteVnfNotification = "<ns2:deleteVnfNotification xmlns:ns2=\"http://org.onap.so/vnfNotify\"" + '\n'
+                    + "  xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + '\n' + "   <messageId>"
+                    + messageId + "</messageId>" + '\n' + "   <completed>" + completed + "</completed>" + '\n'
+                    + "   <exception>" + exception + "</exception>" + '\n' + "   <errorMessage>" + errorMessage
+                    + "</errorMessage>" + '\n' + "</ns2:deleteVnfNotification>";
+        }
+        return deleteVnfNotification;
+    }
+
+    /*
+     * public String toString() { StringWriter writer = new StringWriter(); try { JAXBContext context = JAXBContext
+     * .newInstance(DeleteVnfNotification.class); Marshaller m = context.createMarshaller();
+     * m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE); m.marshal(this, writer);
+     * //System.out.println("toString() - " + writer.getBuffer().toString()); return writer.getBuffer().toString(); }
+     * catch (JAXBException e) { //System.out.println("JAXBException - " + e.getStackTrace()); return ""; } }
+     */
+
 }

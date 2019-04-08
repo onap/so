@@ -26,18 +26,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class RequestStatusTest {
 
-	@Test
-	public void requestStatusDefaultValues() throws Exception {
-		RequestStatus requestStatus = new RequestStatus();
-		requestStatus.setRequestState("COMPLETE");
-		requestStatus.setStatusMessage("STATUS: COMPLETED");
-		requestStatus.setPercentProgress(100);
-		requestStatus.setTimeStamp("Fri, 08 Mar 2019 04:41:42 GMT");
-		String expectedResponse = "{\"requestState\":\"COMPLETE\",\"statusMessage\":\"STATUS: COMPLETED\",\"percentProgress\":100,\"timestamp\":\"Fri, 08 Mar 2019 04:41:42 GMT\"}";
+    @Test
+    public void requestStatusDefaultValues() throws Exception {
+        RequestStatus requestStatus = new RequestStatus();
+        requestStatus.setRequestState("COMPLETE");
+        requestStatus.setStatusMessage("STATUS: COMPLETED");
+        requestStatus.setPercentProgress(100);
+        requestStatus.setTimeStamp("Fri, 08 Mar 2019 04:41:42 GMT");
+        String expectedResponse =
+                "{\"requestState\":\"COMPLETE\",\"statusMessage\":\"STATUS: COMPLETED\",\"percentProgress\":100,\"timestamp\":\"Fri, 08 Mar 2019 04:41:42 GMT\"}";
 
-		ObjectMapper mapper = new ObjectMapper();	
-		String realResponse = mapper.writeValueAsString(requestStatus);		
-		
-		JSONAssert.assertEquals(expectedResponse, realResponse, false);
-	}
+        ObjectMapper mapper = new ObjectMapper();
+        String realResponse = mapper.writeValueAsString(requestStatus);
+
+        JSONAssert.assertEquals(expectedResponse, realResponse, false);
+    }
 }

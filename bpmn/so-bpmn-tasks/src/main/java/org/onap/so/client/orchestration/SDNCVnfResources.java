@@ -42,54 +42,60 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCVnfResources {
-	private static final Logger logger = LoggerFactory.getLogger(SDNCVnfResources.class);
+    private static final Logger logger = LoggerFactory.getLogger(SDNCVnfResources.class);
 
-	@Autowired
-	private VnfTopologyOperationRequestMapper sdncRM;
-	
-	@Autowired
-	private SDNCClient sdncClient;
-	
-	public GenericResourceApiVnfOperationInformation assignVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer,
-			CloudRegion cloudRegion, RequestContext requestContext, boolean homing) {
-		return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION,
-				SDNCSvcAction.ASSIGN,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer, cloudRegion, requestContext, homing);
-	}
+    @Autowired
+    private VnfTopologyOperationRequestMapper sdncRM;
 
-	public GenericResourceApiVnfOperationInformation activateVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer,
-			CloudRegion cloudRegion, RequestContext requestContext) {
-		 return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION,
-				SDNCSvcAction.ACTIVATE,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,cloudRegion, requestContext, false);
-	}
+    @Autowired
+    private SDNCClient sdncClient;
 
-	
-	public GenericResourceApiVnfOperationInformation deactivateVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer,
-			CloudRegion cloudRegion, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION,
-				SDNCSvcAction.DEACTIVATE,GenericResourceApiRequestActionEnumeration.DELETEVNFINSTANCE, vnf, serviceInstance, customer,cloudRegion, requestContext, false);
-	}
+    public GenericResourceApiVnfOperationInformation assignVnf(GenericVnf vnf, ServiceInstance serviceInstance,
+            Customer customer, CloudRegion cloudRegion, RequestContext requestContext, boolean homing) {
+        return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
+                GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
+                cloudRegion, requestContext, homing);
+    }
 
-  
-	public GenericResourceApiVnfOperationInformation unassignVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer,
-			CloudRegion cloudRegion, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION,
-				SDNCSvcAction.UNASSIGN,GenericResourceApiRequestActionEnumeration.DELETEVNFINSTANCE, vnf, serviceInstance, customer, cloudRegion, requestContext, false);
-	}
-	
-	public GenericResourceApiVnfOperationInformation deleteVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer,
-			CloudRegion cloudRegion, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION,
-				SDNCSvcAction.DEACTIVATE, GenericResourceApiRequestActionEnumeration.DELETEVNFINSTANCE,vnf, serviceInstance, customer, cloudRegion, requestContext, false);
-	}
-	
-	public GenericResourceApiVnfOperationInformation changeModelVnf(GenericVnf vnf, ServiceInstance serviceInstance, Customer customer, 
-			CloudRegion cloudRegion, RequestContext requestContext) {
-		return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, 
-				SDNCSvcAction.CHANGE_ASSIGN,GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer, cloudRegion, requestContext, false);
-	}
-	
-	public String queryVnf(GenericVnf vnf) throws MapperException, BadResponseException {
-		String queryPath = vnf.getSelflink();		
-		return sdncClient.get(queryPath);
-	}
+    public GenericResourceApiVnfOperationInformation activateVnf(GenericVnf vnf, ServiceInstance serviceInstance,
+            Customer customer, CloudRegion cloudRegion, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE,
+                GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
+                cloudRegion, requestContext, false);
+    }
+
+
+    public GenericResourceApiVnfOperationInformation deactivateVnf(GenericVnf vnf, ServiceInstance serviceInstance,
+            Customer customer, CloudRegion cloudRegion, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
+                GenericResourceApiRequestActionEnumeration.DELETEVNFINSTANCE, vnf, serviceInstance, customer,
+                cloudRegion, requestContext, false);
+    }
+
+
+    public GenericResourceApiVnfOperationInformation unassignVnf(GenericVnf vnf, ServiceInstance serviceInstance,
+            Customer customer, CloudRegion cloudRegion, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN,
+                GenericResourceApiRequestActionEnumeration.DELETEVNFINSTANCE, vnf, serviceInstance, customer,
+                cloudRegion, requestContext, false);
+    }
+
+    public GenericResourceApiVnfOperationInformation deleteVnf(GenericVnf vnf, ServiceInstance serviceInstance,
+            Customer customer, CloudRegion cloudRegion, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
+                GenericResourceApiRequestActionEnumeration.DELETEVNFINSTANCE, vnf, serviceInstance, customer,
+                cloudRegion, requestContext, false);
+    }
+
+    public GenericResourceApiVnfOperationInformation changeModelVnf(GenericVnf vnf, ServiceInstance serviceInstance,
+            Customer customer, CloudRegion cloudRegion, RequestContext requestContext) {
+        return sdncRM.reqMapper(SDNCSvcOperation.VNF_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN,
+                GenericResourceApiRequestActionEnumeration.CREATEVNFINSTANCE, vnf, serviceInstance, customer,
+                cloudRegion, requestContext, false);
+    }
+
+    public String queryVnf(GenericVnf vnf) throws MapperException, BadResponseException {
+        String queryPath = vnf.getSelflink();
+        return sdncClient.get(queryPath);
+    }
 }

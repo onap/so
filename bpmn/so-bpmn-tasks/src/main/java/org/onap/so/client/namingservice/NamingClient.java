@@ -25,7 +25,6 @@ package org.onap.so.client.namingservice;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.onap.namingservice.model.NameGenDeleteRequest;
 import org.onap.namingservice.model.NameGenDeleteResponse;
 import org.onap.namingservice.model.NameGenRequest;
@@ -47,53 +46,53 @@ import org.springframework.web.client.RestTemplate;
 
 
 @Component
-public class NamingClient{
-	private static final Logger logger = LoggerFactory.getLogger(NamingClient.class);
-	private static final String ENDPOINT = "mso.naming.endpoint";
-	private static final String AUTH = "mso.naming.auth";
-	
-	@Autowired
-	private RestTemplate restTemplate;
-	@Autowired
+public class NamingClient {
+    private static final Logger logger = LoggerFactory.getLogger(NamingClient.class);
+    private static final String ENDPOINT = "mso.naming.endpoint";
+    private static final String AUTH = "mso.naming.auth";
+
+    @Autowired
+    private RestTemplate restTemplate;
+    @Autowired
     private Environment env;
-	@Autowired
-	private NamingClientResponseValidator namingClientResponseValidator;
-	
-	public String postNameGenRequest(NameGenRequest request) throws BadResponseException, IOException {
-		String targetUrl = env.getProperty(ENDPOINT);
-		HttpHeaders headers = setHeaders(env.getProperty(AUTH)); 
-		logger.info("Sending postNameGenRequest to url: {}", targetUrl);
-		HttpEntity<NameGenRequest> requestEntity = new HttpEntity<>(request, headers);
-		ResponseEntity<NameGenResponse> response;
-		try{
-			 response = restTemplate.postForEntity(targetUrl, requestEntity, NameGenResponse.class);
-		}catch(HttpStatusCodeException e){
-			throw new BadResponseException(namingClientResponseValidator.formatError(e));
-		}
-		return namingClientResponseValidator.validateNameGenResponse(response);
-	}
+    @Autowired
+    private NamingClientResponseValidator namingClientResponseValidator;
 
-	public String deleteNameGenRequest(NameGenDeleteRequest request) throws BadResponseException, IOException {
-		String targetUrl = env.getProperty(ENDPOINT);
-		HttpHeaders headers = setHeaders(env.getProperty(AUTH)); 
-		logger.info("Sending deleteNameGenRequest to url: {}", targetUrl);
-		HttpEntity<NameGenDeleteRequest> requestEntity = new HttpEntity<>(request, headers);
-		ResponseEntity<NameGenDeleteResponse> response;
-		try{
-			response = restTemplate.exchange(targetUrl, HttpMethod.DELETE, requestEntity, NameGenDeleteResponse.class);
-		}catch(HttpStatusCodeException e){
-			throw new BadResponseException(namingClientResponseValidator.formatError(e));
-		}
-		return namingClientResponseValidator.validateNameGenDeleteResponse(response);
-	}
+    public String postNameGenRequest(NameGenRequest request) throws BadResponseException, IOException {
+        String targetUrl = env.getProperty(ENDPOINT);
+        HttpHeaders headers = setHeaders(env.getProperty(AUTH));
+        logger.info("Sending postNameGenRequest to url: {}", targetUrl);
+        HttpEntity<NameGenRequest> requestEntity = new HttpEntity<>(request, headers);
+        ResponseEntity<NameGenResponse> response;
+        try {
+            response = restTemplate.postForEntity(targetUrl, requestEntity, NameGenResponse.class);
+        } catch (HttpStatusCodeException e) {
+            throw new BadResponseException(namingClientResponseValidator.formatError(e));
+        }
+        return namingClientResponseValidator.validateNameGenResponse(response);
+    }
 
-	private HttpHeaders setHeaders(String auth) {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		List<MediaType> acceptableMediaTypes = new ArrayList<>();
-		acceptableMediaTypes.add(MediaType.APPLICATION_JSON);
-		headers.setAccept(acceptableMediaTypes);
-		headers.add(HttpHeaders.AUTHORIZATION, auth);
-		return headers;
-	}
+    public String deleteNameGenRequest(NameGenDeleteRequest request) throws BadResponseException, IOException {
+        String targetUrl = env.getProperty(ENDPOINT);
+        HttpHeaders headers = setHeaders(env.getProperty(AUTH));
+        logger.info("Sending deleteNameGenRequest to url: {}", targetUrl);
+        HttpEntity<NameGenDeleteRequest> requestEntity = new HttpEntity<>(request, headers);
+        ResponseEntity<NameGenDeleteResponse> response;
+        try {
+            response = restTemplate.exchange(targetUrl, HttpMethod.DELETE, requestEntity, NameGenDeleteResponse.class);
+        } catch (HttpStatusCodeException e) {
+            throw new BadResponseException(namingClientResponseValidator.formatError(e));
+        }
+        return namingClientResponseValidator.validateNameGenDeleteResponse(response);
+    }
+
+    private HttpHeaders setHeaders(String auth) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        List<MediaType> acceptableMediaTypes = new ArrayList<>();
+        acceptableMediaTypes.add(MediaType.APPLICATION_JSON);
+        headers.setAccept(acceptableMediaTypes);
+        headers.add(HttpHeaders.AUTHORIZATION, auth);
+        return headers;
+    }
 }

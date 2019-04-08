@@ -21,7 +21,6 @@
 package org.onap.so.client.graphinventory;
 
 import java.net.URI;
-
 import org.onap.so.client.RestClient;
 import org.onap.so.client.RestProperties;
 import org.onap.so.client.RestPropertiesLoader;
@@ -29,24 +28,26 @@ import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 
 public abstract class GraphInventoryClient {
 
-	private RestProperties props;
-	protected GraphInventoryClient(Class<? extends RestProperties> propertiesClass) {
-				
-		RestProperties props = RestPropertiesLoader.getInstance().getNewImpl(propertiesClass);
-		this.props = props;
-	}
-	protected abstract URI constructPath(GraphInventoryUri uri);
-	
-	public abstract RestClient createClient(GraphInventoryUri uri);
+    private RestProperties props;
 
-	public <T extends RestProperties> T getRestProperties() {
-		if (props == null) {
-			throw new IllegalStateException("No RestProperty implementation found on classpath");
-		}
-		return (T)props;
-	}
-	
-	public abstract GraphInventoryVersion getVersion();
-	
-	public abstract String getGraphDBName();
+    protected GraphInventoryClient(Class<? extends RestProperties> propertiesClass) {
+
+        RestProperties props = RestPropertiesLoader.getInstance().getNewImpl(propertiesClass);
+        this.props = props;
+    }
+
+    protected abstract URI constructPath(GraphInventoryUri uri);
+
+    public abstract RestClient createClient(GraphInventoryUri uri);
+
+    public <T extends RestProperties> T getRestProperties() {
+        if (props == null) {
+            throw new IllegalStateException("No RestProperty implementation found on classpath");
+        }
+        return (T) props;
+    }
+
+    public abstract GraphInventoryVersion getVersion();
+
+    public abstract String getGraphDBName();
 }

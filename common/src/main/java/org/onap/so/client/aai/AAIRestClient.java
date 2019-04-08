@@ -23,9 +23,7 @@ package org.onap.so.client.aai;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.ws.rs.core.Response;
-
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.graphinventory.GraphInventoryPatchConverter;
 import org.onap.so.client.graphinventory.GraphInventoryRestClient;
@@ -34,38 +32,38 @@ import org.onap.so.utils.TargetEntity;
 
 public class AAIRestClient extends GraphInventoryRestClient {
 
-	private final AAIProperties aaiProperties;
+    private final AAIProperties aaiProperties;
 
-	protected AAIRestClient(AAIProperties props, URI uri) {
-		super(props, uri);
-		this.aaiProperties = props;
-	}
-
-	@Override
-    public TargetEntity getTargetEntity(){
-	    return TargetEntity.AAI;
+    protected AAIRestClient(AAIProperties props, URI uri) {
+        super(props, uri);
+        this.aaiProperties = props;
     }
 
-	@Override
-	protected void initializeHeaderMap(Map<String, String> headerMap) {
-		headerMap.put("X-FromAppId", aaiProperties.getSystemName());
-		headerMap.put("X-TransactionId", requestId);
-		String auth = aaiProperties.getAuth();
-		String key = aaiProperties.getKey();
+    @Override
+    public TargetEntity getTargetEntity() {
+        return TargetEntity.AAI;
+    }
 
-		if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
-			addBasicAuthHeader(auth, key);
-		}
-	}
+    @Override
+    protected void initializeHeaderMap(Map<String, String> headerMap) {
+        headerMap.put("X-FromAppId", aaiProperties.getSystemName());
+        headerMap.put("X-TransactionId", requestId);
+        String auth = aaiProperties.getAuth();
+        String key = aaiProperties.getKey();
 
-	@Override
-	protected Optional<ResponseExceptionMapper> addResponseExceptionMapper() {
+        if (auth != null && !auth.isEmpty() && key != null && !key.isEmpty()) {
+            addBasicAuthHeader(auth, key);
+        }
+    }
 
-		return Optional.of(new AAIClientResponseExceptionMapper());
-	}
-	
-	protected GraphInventoryPatchConverter getPatchConverter() {
-		return this.patchConverter;
-	}
+    @Override
+    protected Optional<ResponseExceptionMapper> addResponseExceptionMapper() {
+
+        return Optional.of(new AAIClientResponseExceptionMapper());
+    }
+
+    protected GraphInventoryPatchConverter getPatchConverter() {
+        return this.patchConverter;
+    }
 
 }

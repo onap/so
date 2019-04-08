@@ -28,8 +28,11 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "operationStatus", path = "operationStatus")
 public interface OperationStatusRepository extends JpaRepository<OperationStatus, OperationStatusId> {
-	
-	OperationStatus findOneByServiceIdAndOperationId(@Param("SERVICE_ID") String serviceId, @Param("OPERATION_ID") String operationId);
-	public OperationStatus findOneByServiceName(String serviceName);
-	public OperationStatus findOneByServiceId(String serviceId);
+
+    OperationStatus findOneByServiceIdAndOperationId(@Param("SERVICE_ID") String serviceId,
+            @Param("OPERATION_ID") String operationId);
+
+    public OperationStatus findOneByServiceName(String serviceName);
+
+    public OperationStatus findOneByServiceId(String serviceId);
 }

@@ -22,19 +22,17 @@ package org.onap.so.apihandlerinfra.tasksbeans;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class RequestInfo {
 
-	protected String source;
-	protected ValidResponses responseValue;
+    protected String source;
+    protected ValidResponses responseValue;
     protected String requestorId;
-   
+
     /**
      * Gets the value of the source property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getSource() {
@@ -44,30 +42,28 @@ public class RequestInfo {
     /**
      * Sets the value of the source property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setSource(String value) {
         this.source = value;
     }
 
-	public ValidResponses getResponseValue() {
-		return responseValue;
-	}
+    public ValidResponses getResponseValue() {
+        return responseValue;
+    }
 
-	public void setResponseValue(ValidResponses responseValue) {
-		this.responseValue = responseValue;
-	}
+    public void setResponseValue(ValidResponses responseValue) {
+        this.responseValue = responseValue;
+    }
 
-	
-	public String getRequestorId() {
-		return requestorId;
-	}
 
-	public void setRequestorId(String requestorId) {
-		this.requestorId = requestorId;
-	}
+    public String getRequestorId() {
+        return requestorId;
+    }
+
+    public void setRequestorId(String requestorId) {
+        this.requestorId = requestorId;
+    }
 
 }

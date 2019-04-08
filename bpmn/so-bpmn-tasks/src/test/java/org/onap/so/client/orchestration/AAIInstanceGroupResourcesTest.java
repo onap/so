@@ -28,9 +28,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import java.util.Optional;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,75 +47,88 @@ import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
+
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class AAIInstanceGroupResourcesTest extends TestDataSetup{
-	
-	@InjectMocks
-	private AAIInstanceGroupResources aaiInstanceGroupResources = new AAIInstanceGroupResources();
-	
-	private InstanceGroup instanceGroup;
-	private GenericVnf vnf;
-	private ServiceInstance serviceInstance;
-	
-	@Mock
-	protected AAIResourcesClient MOCK_aaiResourcesClient;
-    
+public class AAIInstanceGroupResourcesTest extends TestDataSetup {
+
+    @InjectMocks
+    private AAIInstanceGroupResources aaiInstanceGroupResources = new AAIInstanceGroupResources();
+
+    private InstanceGroup instanceGroup;
+    private GenericVnf vnf;
+    private ServiceInstance serviceInstance;
+
+    @Mock
+    protected AAIResourcesClient MOCK_aaiResourcesClient;
+
     @Mock
     protected AAIObjectMapper MOCK_aaiObjectMapper;
-    
+
     @Mock
     protected InjectionHelper MOCK_injectionHelper;
-	
-	@Before
-	public void before() {
-		instanceGroup = buildInstanceGroup();
-		vnf = buildGenericVnf();
-		serviceInstance = buildServiceInstance();
-		 doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-	}
-	
-	@Test
-	public void createInstanceGroupTest() throws Exception {
-		doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper).mapInstanceGroup(instanceGroup);
-		aaiInstanceGroupResources.createInstanceGroup(instanceGroup);
-		verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())), isA(Optional.class));
-	}
-	
-	@Test
-	public void deleteInstanceGroupTest() throws Exception {
-		aaiInstanceGroupResources.deleteInstanceGroup(instanceGroup);
-		verify(MOCK_aaiResourcesClient, times(1)).delete(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())));
-	}
-	
-	@Test
-	public void connectInstanceGroupTest() throws Exception {
-		aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf);
-		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())), eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId())));
-	}
-	
-	@Test
-	public void connectInstanceGroupWithEdgeTest() throws Exception {
-		aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.BELONGS_TO);
-		verify(MOCK_aaiResourcesClient, times(1)).connect(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())), eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId())), eq(AAIEdgeLabel.BELONGS_TO));
-	}
-	
-	@Test
-	public void existsTest() throws Exception {
-		aaiInstanceGroupResources.exists(instanceGroup);
-		verify(MOCK_aaiResourcesClient, times(1)).exists(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())));
-	}
-	
-	@Test
-	public void createInstanceGroupandConnectServiceInstanceTest() {
-		doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper).mapInstanceGroup(instanceGroup);
-		doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class), any(Optional.class));
-		doNothing().when(MOCK_aaiResourcesClient).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
-		
-		aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
 
-		verify(MOCK_aaiObjectMapper, times(1)).mapInstanceGroup(instanceGroup);
-		verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
-		verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
-	}
-	
+    @Before
+    public void before() {
+        instanceGroup = buildInstanceGroup();
+        vnf = buildGenericVnf();
+        serviceInstance = buildServiceInstance();
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
+    }
+
+    @Test
+    public void createInstanceGroupTest() throws Exception {
+        doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper)
+                .mapInstanceGroup(instanceGroup);
+        aaiInstanceGroupResources.createInstanceGroup(instanceGroup);
+        verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(
+                eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())),
+                isA(Optional.class));
+    }
+
+    @Test
+    public void deleteInstanceGroupTest() throws Exception {
+        aaiInstanceGroupResources.deleteInstanceGroup(instanceGroup);
+        verify(MOCK_aaiResourcesClient, times(1))
+                .delete(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())));
+    }
+
+    @Test
+    public void connectInstanceGroupTest() throws Exception {
+        aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf);
+        verify(MOCK_aaiResourcesClient, times(1)).connect(
+                eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())),
+                eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId())));
+    }
+
+    @Test
+    public void connectInstanceGroupWithEdgeTest() throws Exception {
+        aaiInstanceGroupResources.connectInstanceGroupToVnf(instanceGroup, vnf, AAIEdgeLabel.BELONGS_TO);
+        verify(MOCK_aaiResourcesClient, times(1)).connect(
+                eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())),
+                eq(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnf.getVnfId())),
+                eq(AAIEdgeLabel.BELONGS_TO));
+    }
+
+    @Test
+    public void existsTest() throws Exception {
+        aaiInstanceGroupResources.exists(instanceGroup);
+        verify(MOCK_aaiResourcesClient, times(1))
+                .exists(eq(AAIUriFactory.createResourceUri(AAIObjectType.INSTANCE_GROUP, instanceGroup.getId())));
+    }
+
+    @Test
+    public void createInstanceGroupandConnectServiceInstanceTest() {
+        doReturn(new org.onap.aai.domain.yang.InstanceGroup()).when(MOCK_aaiObjectMapper)
+                .mapInstanceGroup(instanceGroup);
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_aaiResourcesClient).createIfNotExists(isA(AAIResourceUri.class),
+                any(Optional.class));
+        doNothing().when(MOCK_aaiResourcesClient).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+
+        aaiInstanceGroupResources.createInstanceGroupandConnectServiceInstance(instanceGroup, serviceInstance);
+
+        verify(MOCK_aaiObjectMapper, times(1)).mapInstanceGroup(instanceGroup);
+        verify(MOCK_aaiResourcesClient, times(1)).createIfNotExists(any(AAIResourceUri.class), any(Optional.class));
+        verify(MOCK_aaiResourcesClient, times(1)).connect(any(AAIResourceUri.class), any(AAIResourceUri.class));
+    }
+
 }

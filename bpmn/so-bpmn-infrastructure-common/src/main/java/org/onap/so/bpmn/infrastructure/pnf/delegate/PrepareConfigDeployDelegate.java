@@ -1,20 +1,15 @@
 /*
- * ============LICENSE_START=======================================================
- *  Copyright (C) 2019 Nordix Foundation.
- *  ================================================================================
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
+ * ============LICENSE_START======================================================= Copyright (C) 2019 Nordix
+ * Foundation. ================================================================================ Licensed under the
+ * Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may
+ * obtain a copy of the License at
  *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * http://www.apache.org/licenses/LICENSE-2.0 Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ * either express or implied. See the License for the specific language governing permissions and limitations under the
+ * License.
  *
- *  SPDX-License-Identifier: Apache-2.0
- *  ============LICENSE_END=========================================================
+ * SPDX-License-Identifier: Apache-2.0 ============LICENSE_END=========================================================
  */
 
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
@@ -24,7 +19,6 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableName
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PRC_CUSTOMIZATION_UUID;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.SERVICE_INSTANCE_ID;
-
 import java.io.IOException;
 import java.util.Optional;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -55,7 +49,7 @@ public class PrepareConfigDeployDelegate extends PrepareCdsCallDelegate {
     }
 
     @Override
-    protected String getRequestObject(DelegateExecution delegateExecution){
+    protected String getRequestObject(DelegateExecution delegateExecution) {
 
         ConfigDeployPropertiesForPnf configDeployProperties = new ConfigDeployPropertiesForPnf();
 
@@ -85,7 +79,8 @@ public class PrepareConfigDeployDelegate extends PrepareCdsCallDelegate {
         return configDeployRequest.toString();
     }
 
-    private void setIpAddress(ConfigDeployPropertiesForPnf configDeployProperties, DelegateExecution delegateExecution) {
+    private void setIpAddress(ConfigDeployPropertiesForPnf configDeployProperties,
+            DelegateExecution delegateExecution) {
 
         /**
          * Retrieve PNF entry from AAI.
@@ -93,21 +88,23 @@ public class PrepareConfigDeployDelegate extends PrepareCdsCallDelegate {
         try {
             String pnfName = (String) delegateExecution.getVariable(PNF_CORRELATION_ID);
             Optional<Pnf> pnfOptional = pnfManagement.getEntryFor(pnfName);
-            if ( pnfOptional.isPresent()){
+            if (pnfOptional.isPresent()) {
                 Pnf pnf = pnfOptional.get();
 
                 /**
-                 * PRH patches the AAI with oam address.
-                 * Use ipaddress-v4-oam and ipaddress-v6-oam for the config deploy request.
+                 * PRH patches the AAI with oam address. Use ipaddress-v4-oam and ipaddress-v6-oam for the config deploy
+                 * request.
                  */
                 configDeployProperties.setPnfIpV4Address(pnf.getIpaddressV4Oam());
                 configDeployProperties.setPnfIpV6Address(pnf.getIpaddressV6Oam());
             } else {
-                exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE, "AAI entry for PNF: " + pnfName + " does not exist");
+                exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE,
+                        "AAI entry for PNF: " + pnfName + " does not exist");
             }
         } catch (IOException e) {
             logger.warn(e.getMessage(), e);
-            exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE, "Unable to fetch from AAI" + e.getMessage());
+            exceptionUtil.buildAndThrowWorkflowException(delegateExecution, ERROR_CODE,
+                    "Unable to fetch from AAI" + e.getMessage());
         }
     }
 }

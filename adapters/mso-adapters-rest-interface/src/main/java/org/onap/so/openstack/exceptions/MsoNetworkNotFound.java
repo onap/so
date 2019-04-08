@@ -24,12 +24,12 @@ package org.onap.so.openstack.exceptions;
 
 public class MsoNetworkNotFound extends MsoOpenstackException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	// Constructor to create a new MsoOpenstackException instance
-	public MsoNetworkNotFound (String networkId, String tenant, String cloud) {
-		// Set the detailed error as the Exception 'message'
-		super(404, "Not Found", "Network " + networkId + " does not exist in Cloud/Tenant " + cloud + "/" + tenant);
-	}
-		
+    // Constructor to create a new MsoOpenstackException instance
+    public MsoNetworkNotFound(String networkId, String tenant, String cloud) {
+        // Set the detailed error as the Exception 'message'
+        super(404, "Not Found", "Network " + networkId + " does not exist in Cloud/Tenant " + cloud + "/" + tenant);
+    }
+
 }

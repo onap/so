@@ -24,9 +24,7 @@ package org.onap.so.bpmn.common.recipe;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-
 import javax.xml.bind.DatatypeConverter;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -44,9 +42,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Support to call resource recipes from the BPMN workflow.
- * Such as call resource recipe in service workflow.
- * <br>
+ * Support to call resource recipes from the BPMN workflow. Such as call resource recipe in service workflow. <br>
  * <p>
  * </p>
  * 
@@ -66,13 +62,13 @@ public class BpmnRestClient {
 
     public static final String CAMUNDA_AUTH = "mso.camundaAuth";
 
-    private static final  String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+    private static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
     @Autowired
     private UrnPropertiesReader urnPropertiesReader;
 
     private static boolean noProperties = true;
 
-    //because for NS it will take a long time the time out of the resouce will be 2 hours.
+    // because for NS it will take a long time the time out of the resouce will be 2 hours.
     private static final String DEFAULT_TIME_OUT = "7200";
 
     public synchronized final boolean getNoPropertiesState() {
@@ -80,8 +76,7 @@ public class BpmnRestClient {
     }
 
     /**
-     * post the recipe Uri
-     * <br>
+     * post the recipe Uri <br>
      * 
      * @param recipeUri The request recipe uri
      * @param requestId the request id
@@ -96,36 +91,39 @@ public class BpmnRestClient {
      * @throws IOException
      * @since ONAP Beijing Release
      */
-    public HttpResponse post(String recipeUri, String requestId, int recipeTimeout, String requestAction, String serviceInstanceId, String serviceType,
-            String requestDetails, String recipeParamXsd) throws ClientProtocolException, IOException {
+    public HttpResponse post(String recipeUri, String requestId, int recipeTimeout, String requestAction,
+            String serviceInstanceId, String serviceType, String requestDetails, String recipeParamXsd)
+            throws ClientProtocolException, IOException {
 
         HttpClient client = HttpClientBuilder.create().build();
 
         HttpPost post = new HttpPost(recipeUri);
-        RequestConfig requestConfig =
-                RequestConfig.custom().setSocketTimeout(recipeTimeout).setConnectTimeout(recipeTimeout).setConnectionRequestTimeout(recipeTimeout).build();
+        RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(recipeTimeout)
+                .setConnectTimeout(recipeTimeout).setConnectionRequestTimeout(recipeTimeout).build();
         post.setConfig(requestConfig);
         logger.debug("call the bpmn,  url: {}", recipeUri);
-        String jsonReq = wrapResourceRequest(requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType, requestDetails, recipeParamXsd);
+        String jsonReq = wrapResourceRequest(requestId, recipeTimeout, requestAction, serviceInstanceId, serviceType,
+                requestDetails, recipeParamXsd);
 
         StringEntity input = new StringEntity(jsonReq);
         input.setContentType(CONTENT_TYPE_JSON);
         String encryptedCredentials;
         encryptedCredentials = urnPropertiesReader.getVariable(CAMUNDA_AUTH);
-        if(encryptedCredentials != null) {
-            String userCredentials = getEncryptedPropValue(encryptedCredentials, DEFAULT_BPEL_AUTH, ENCRYPTION_KEY_PROP);
-            if(userCredentials != null) {
-                post.addHeader("Authorization", "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
+        if (encryptedCredentials != null) {
+            String userCredentials =
+                    getEncryptedPropValue(encryptedCredentials, DEFAULT_BPEL_AUTH, ENCRYPTION_KEY_PROP);
+            if (userCredentials != null) {
+                post.addHeader("Authorization",
+                        "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes()));
             }
         }
-        
+
         post.setEntity(input);
         return client.execute(post);
     }
 
     /**
-     * prepare the resource recipe bpmn request.
-     * <br>
+     * prepare the resource recipe bpmn request. <br>
      * 
      * @param requestId
      * @param recipeTimeout
@@ -137,20 +135,20 @@ public class BpmnRestClient {
      * @return
      * @since ONAP Beijing Release
      */
-    private String wrapResourceRequest(String requestId, int recipeTimeout, String requestAction, String serviceInstanceId, String serviceType,
-            String requestDetails, String recipeParams) {
+    private String wrapResourceRequest(String requestId, int recipeTimeout, String requestAction,
+            String serviceInstanceId, String serviceType, String requestDetails, String recipeParams) {
         String jsonReq = null;
-        if(requestId == null) {
+        if (requestId == null) {
             requestId = "";
         }
-        if(requestAction == null) {
+        if (requestAction == null) {
             requestAction = "";
         }
-        if(serviceInstanceId == null) {
+        if (serviceInstanceId == null) {
             serviceInstanceId = "";
         }
 
-        if(requestDetails == null) {
+        if (requestDetails == null) {
             requestDetails = "";
         }
 
@@ -182,9 +180,9 @@ public class BpmnRestClient {
             recipeRequest.setRecipeTimeout(recipeTimeoutInput);
             jsonReq = recipeRequest.toString();
             logger.trace("request body is {}", jsonReq);
-        } catch(Exception e) {
+        } catch (Exception e) {
             logger.error("{} {} {} {} {}", MessageEnum.APIH_WARP_REQUEST.toString(), "Camunda", "wrapVIDRequest",
-                ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
+                    ErrorCode.BusinessProcesssError.getValue(), "Error in APIH Warp request", e);
         }
         return jsonReq;
     }
@@ -201,7 +199,7 @@ public class BpmnRestClient {
     protected String getEncryptedPropValue(String prop, String defaultValue, String encryptionKey) {
         try {
             return CryptoUtils.decrypt(prop, urnPropertiesReader.getVariable(encryptionKey));
-        } catch(GeneralSecurityException e) {
+        } catch (GeneralSecurityException e) {
             logger.debug("Security exception", e);
         }
         return defaultValue;

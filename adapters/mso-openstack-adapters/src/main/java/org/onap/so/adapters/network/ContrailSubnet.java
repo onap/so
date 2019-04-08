@@ -27,7 +27,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HostRoute;
@@ -41,178 +40,161 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ContrailSubnet {
 
     private static final Logger logger = LoggerFactory.getLogger(ContrailSubnet.class);
-	@Autowired
-	private MsoCommonUtils msoCommonUtils;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet")
-	private ContrailSubnetIp subnet = new ContrailSubnetIp();
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_default_gateway")
-	private String defaultGateway;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_name")
-	private String subnetName;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_enable_dhcp")
-	private Boolean enableDhcp;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_addr_from_start")
-	private Boolean addrFromStart = true;	
-	/** future - leave this commented
-	private String subnet_uuid;
-	private String dns_server_address;
-	private List<String> dns_nameservers;
-	private String dhcp_option_list;
-	**/
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools")
-	private List<ContrailSubnetPool> allocationPools =  new ArrayList <> ();
+    @Autowired
+    private MsoCommonUtils msoCommonUtils;
 
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes")
-	private final ContrailSubnetHostRoutes host_routes = new ContrailSubnetHostRoutes();
-	
-	public ContrailSubnet() {
-		super();
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_subnet")
+    private ContrailSubnetIp subnet = new ContrailSubnetIp();
 
-	public String getDefaultGateway() {
-		return defaultGateway;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_default_gateway")
+    private String defaultGateway;
 
-	public void setDefaultGateway(String defaultGateway) {
-		this.defaultGateway = defaultGateway;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_name")
+    private String subnetName;
 
-	public ContrailSubnetIp getSubnet() {
-		return subnet;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_enable_dhcp")
+    private Boolean enableDhcp;
 
-	public void setSubnet(ContrailSubnetIp subnet) {
-		this.subnet = subnet;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_addr_from_start")
+    private Boolean addrFromStart = true;
+    /**
+     * future - leave this commented private String subnet_uuid; private String dns_server_address; private List<String>
+     * dns_nameservers; private String dhcp_option_list;
+     **/
 
-	public Boolean isEnableDhcp() {
-		return enableDhcp;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools")
+    private List<ContrailSubnetPool> allocationPools = new ArrayList<>();
 
-	public void setEnableDhcp(Boolean enableDhcp) {
-		this.enableDhcp = enableDhcp;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes")
+    private final ContrailSubnetHostRoutes host_routes = new ContrailSubnetHostRoutes();
 
-	public String getSubnetName() {
-		return subnetName;
-	}
+    public ContrailSubnet() {
+        super();
+    }
 
-	public void setSubnetName(String subnetName) {
-		this.subnetName = subnetName;
-	}
+    public String getDefaultGateway() {
+        return defaultGateway;
+    }
 
-	public List<ContrailSubnetPool> getAllocationPools() {
-		return allocationPools;
-	}
+    public void setDefaultGateway(String defaultGateway) {
+        this.defaultGateway = defaultGateway;
+    }
 
-	public void setPools(List<ContrailSubnetPool> allocationPools) {
-		this.allocationPools = allocationPools;
-	}
+    public ContrailSubnetIp getSubnet() {
+        return subnet;
+    }
 
-	public Boolean isAddrFromStart() {
-		return addrFromStart;
-	}
+    public void setSubnet(ContrailSubnetIp subnet) {
+        this.subnet = subnet;
+    }
 
-	public void setAddrFromStart(Boolean addrFromStart) {
-		this.addrFromStart = addrFromStart;
-	}
+    public Boolean isEnableDhcp() {
+        return enableDhcp;
+    }
 
-	public JsonNode toJsonNode()
-	{
-		JsonNode node = null;
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			node = mapper.convertValue(this, JsonNode.class);
-		}
-		catch (Exception e)
-		{
-        logger.error("{} {} Error creating JsonNode for Contrail Subnet: {} ", MessageEnum.RA_MARSHING_ERROR,
-            ErrorCode.SchemaError.getValue(), subnetName, e);
-		}
-		
-		return node;
-	}
-	
-	public String toJsonString()
-	{
-		String jsonString = null;
-		try
-		{
-			ObjectMapper mapper = new ObjectMapper();
-			jsonString = mapper.writeValueAsString(this);
-		}
-		catch (Exception e)
-		{
-        logger.error("{} {} Error creating JsonString for Contrail Subnet: {} ", MessageEnum.RA_MARSHING_ERROR,
-            ErrorCode.SchemaError.getValue(), subnetName, e);
-		}
-		
-		return jsonString;
-	}
-	//poulate contrail subnet with input(from bopel) subnet
-	public void populateWith(Subnet inputSubnet)
-	{
-		if (inputSubnet != null)
-		{
-			if (!msoCommonUtils.isNullOrEmpty(inputSubnet.getSubnetName()))
-				subnetName = inputSubnet.getSubnetName();
-			else
-				subnetName = inputSubnet.getSubnetId();
-			enableDhcp = inputSubnet.getEnableDHCP();
-			defaultGateway = inputSubnet.getGatewayIp();
-			if (!msoCommonUtils.isNullOrEmpty(inputSubnet.getCidr()) )
-			{
-				int idx = inputSubnet.getCidr().indexOf("/");
-				if (idx != -1)
-				{
-					subnet.setIpPrefix(inputSubnet.getCidr().substring(0, idx));
-					subnet.setIpPrefixLen(inputSubnet.getCidr().substring(idx+1));
-				}
-			}
-			if (inputSubnet.getAllocationPools() != null)
-			{
-				for (Pool pool : inputSubnet.getAllocationPools())
-				{
-					if ( !msoCommonUtils.isNullOrEmpty(pool.getStart()) && !msoCommonUtils.isNullOrEmpty(pool.getEnd()) )
-					{		
-						ContrailSubnetPool csp = new ContrailSubnetPool();
-						csp.populateWith(pool);
-						allocationPools.add (csp);
-					}
-				}
-			}
-			if (inputSubnet.getHostRoutes() != null)
-			{
-				List<ContrailSubnetHostRoute> hrList = host_routes.getHost_routes();
-				for (HostRoute hr : inputSubnet.getHostRoutes())
-				{
-					if ( !msoCommonUtils.isNullOrEmpty(hr.getPrefix()) || !msoCommonUtils.isNullOrEmpty(hr.getNextHop()) )
-					{		
-						ContrailSubnetHostRoute cshr = new ContrailSubnetHostRoute();
-						cshr.populateWith(hr);
-						hrList.add (cshr);
-					}
-				}
-			}
-		}
-	}
+    public void setEnableDhcp(Boolean enableDhcp) {
+        this.enableDhcp = enableDhcp;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder buf = new StringBuilder ();
-		for (ContrailSubnetPool pool : allocationPools)
-		{
-			 buf.append(pool.toString());
-		}
-		return "ContrailSubnet [subnet=" + subnet.toString() + " default_gateway=" + defaultGateway
-				+ " enable_dhcp=" + enableDhcp +  " addr_from_start=" + addrFromStart + " subnet_name=" + subnetName + " allocation_pools=" + buf + " ]";
-	}
+    public String getSubnetName() {
+        return subnetName;
+    }
+
+    public void setSubnetName(String subnetName) {
+        this.subnetName = subnetName;
+    }
+
+    public List<ContrailSubnetPool> getAllocationPools() {
+        return allocationPools;
+    }
+
+    public void setPools(List<ContrailSubnetPool> allocationPools) {
+        this.allocationPools = allocationPools;
+    }
+
+    public Boolean isAddrFromStart() {
+        return addrFromStart;
+    }
+
+    public void setAddrFromStart(Boolean addrFromStart) {
+        this.addrFromStart = addrFromStart;
+    }
+
+    public JsonNode toJsonNode() {
+        JsonNode node = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            node = mapper.convertValue(this, JsonNode.class);
+        } catch (Exception e) {
+            logger.error("{} {} Error creating JsonNode for Contrail Subnet: {} ", MessageEnum.RA_MARSHING_ERROR,
+                    ErrorCode.SchemaError.getValue(), subnetName, e);
+        }
+
+        return node;
+    }
+
+    public String toJsonString() {
+        String jsonString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            jsonString = mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            logger.error("{} {} Error creating JsonString for Contrail Subnet: {} ", MessageEnum.RA_MARSHING_ERROR,
+                    ErrorCode.SchemaError.getValue(), subnetName, e);
+        }
+
+        return jsonString;
+    }
+
+    // poulate contrail subnet with input(from bopel) subnet
+    public void populateWith(Subnet inputSubnet) {
+        if (inputSubnet != null) {
+            if (!msoCommonUtils.isNullOrEmpty(inputSubnet.getSubnetName()))
+                subnetName = inputSubnet.getSubnetName();
+            else
+                subnetName = inputSubnet.getSubnetId();
+            enableDhcp = inputSubnet.getEnableDHCP();
+            defaultGateway = inputSubnet.getGatewayIp();
+            if (!msoCommonUtils.isNullOrEmpty(inputSubnet.getCidr())) {
+                int idx = inputSubnet.getCidr().indexOf("/");
+                if (idx != -1) {
+                    subnet.setIpPrefix(inputSubnet.getCidr().substring(0, idx));
+                    subnet.setIpPrefixLen(inputSubnet.getCidr().substring(idx + 1));
+                }
+            }
+            if (inputSubnet.getAllocationPools() != null) {
+                for (Pool pool : inputSubnet.getAllocationPools()) {
+                    if (!msoCommonUtils.isNullOrEmpty(pool.getStart())
+                            && !msoCommonUtils.isNullOrEmpty(pool.getEnd())) {
+                        ContrailSubnetPool csp = new ContrailSubnetPool();
+                        csp.populateWith(pool);
+                        allocationPools.add(csp);
+                    }
+                }
+            }
+            if (inputSubnet.getHostRoutes() != null) {
+                List<ContrailSubnetHostRoute> hrList = host_routes.getHost_routes();
+                for (HostRoute hr : inputSubnet.getHostRoutes()) {
+                    if (!msoCommonUtils.isNullOrEmpty(hr.getPrefix())
+                            || !msoCommonUtils.isNullOrEmpty(hr.getNextHop())) {
+                        ContrailSubnetHostRoute cshr = new ContrailSubnetHostRoute();
+                        cshr.populateWith(hr);
+                        hrList.add(cshr);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        for (ContrailSubnetPool pool : allocationPools) {
+            buf.append(pool.toString());
+        }
+        return "ContrailSubnet [subnet=" + subnet.toString() + " default_gateway=" + defaultGateway + " enable_dhcp="
+                + enableDhcp + " addr_from_start=" + addrFromStart + " subnet_name=" + subnetName + " allocation_pools="
+                + buf + " ]";
+    }
 
 }

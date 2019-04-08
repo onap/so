@@ -22,8 +22,7 @@ package org.onap.so.serviceinstancebeans;
 
 public enum InstanceDirection {
 
-    source,
-    destination;
+    source, destination;
 
     public String value() {
         return name();

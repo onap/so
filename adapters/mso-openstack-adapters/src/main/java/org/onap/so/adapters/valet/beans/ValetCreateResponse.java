@@ -24,47 +24,51 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import java.util.Objects;
 import java.io.Serializable;
+
 /*
  * This class represents the body of a Create response on a Valet Placement API call
  */
 public class ValetCreateResponse implements Serializable {
-	private static final long serialVersionUID = 768026109321305392L;
-	
-	@JsonProperty("status")
-	private ValetStatus status;
-	@JsonProperty("parameters")
-	private Map<String, Object> parameters;
-	
-	public ValetCreateResponse() {
-		super();
-	}
-	
-	public ValetStatus getStatus() {
-		return this.status;
-	}
-	public void setStatus(ValetStatus status) {
-		this.status = status;
-	}
-	public Map<String, Object> getParameters() {
-		return this.parameters;
-	}
-	public void setParameters(Map<String, Object> parameters) {
-		this.parameters = parameters;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(status, parameters);
-	}
-	@Override
-	public boolean equals(Object o) {
-		if (o == this)
-			return true;
-		if (!(o instanceof ValetCreateResponse)) {
-			return false;
-		}
-		ValetCreateResponse vcr = (ValetCreateResponse) o;
-		return Objects.equals(status, vcr.status) 
-				&& Objects.equals(parameters, vcr.parameters);
-	}
+    private static final long serialVersionUID = 768026109321305392L;
+
+    @JsonProperty("status")
+    private ValetStatus status;
+    @JsonProperty("parameters")
+    private Map<String, Object> parameters;
+
+    public ValetCreateResponse() {
+        super();
+    }
+
+    public ValetStatus getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(ValetStatus status) {
+        this.status = status;
+    }
+
+    public Map<String, Object> getParameters() {
+        return this.parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(status, parameters);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof ValetCreateResponse)) {
+            return false;
+        }
+        ValetCreateResponse vcr = (ValetCreateResponse) o;
+        return Objects.equals(status, vcr.status) && Objects.equals(parameters, vcr.parameters);
+    }
 }

@@ -26,7 +26,6 @@ import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.D
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.EXPECTED_URL;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.JOB_STATUS_EXPECTED_URL;
 import static org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.TestConstants.getVnfmBasicHttpConfigProvider;
-
 import org.junit.Test;
 
 

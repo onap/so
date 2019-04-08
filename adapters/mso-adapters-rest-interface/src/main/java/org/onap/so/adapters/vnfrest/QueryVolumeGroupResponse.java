@@ -24,83 +24,73 @@ package org.onap.so.adapters.vnfrest;
 
 
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.openstack.beans.VnfStatus;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @XmlRootElement(name = "queryVolumeGroupResponse")
 public class QueryVolumeGroupResponse {
-	private static final Logger logger = LoggerFactory.getLogger(QueryVolumeGroupResponse.class);
-	private String volumeGroupId;
-	private String volumeGroupStackId;
-	private VnfStatus volumeGroupStatus;
-	private Map<String,String> volumeGroupOutputs;
+    private static final Logger logger = LoggerFactory.getLogger(QueryVolumeGroupResponse.class);
+    private String volumeGroupId;
+    private String volumeGroupStackId;
+    private VnfStatus volumeGroupStatus;
+    private Map<String, String> volumeGroupOutputs;
 
-	public QueryVolumeGroupResponse() {
-	}
+    public QueryVolumeGroupResponse() {}
 
-	public QueryVolumeGroupResponse(
-			String volumeGroupId,
-			String volumeGroupStackId,
-			VnfStatus volumeGroupStatus,
-			Map<String, String> volumeGroupOutputs)
-	{
-		super();
-		this.volumeGroupId = volumeGroupId;
-		this.volumeGroupStackId = volumeGroupStackId;
-		this.volumeGroupStatus = volumeGroupStatus;
-		this.volumeGroupOutputs = volumeGroupOutputs;
-	}
+    public QueryVolumeGroupResponse(String volumeGroupId, String volumeGroupStackId, VnfStatus volumeGroupStatus,
+            Map<String, String> volumeGroupOutputs) {
+        super();
+        this.volumeGroupId = volumeGroupId;
+        this.volumeGroupStackId = volumeGroupStackId;
+        this.volumeGroupStatus = volumeGroupStatus;
+        this.volumeGroupOutputs = volumeGroupOutputs;
+    }
 
-	public String getVolumeGroupId() {
-		return volumeGroupId;
-	}
+    public String getVolumeGroupId() {
+        return volumeGroupId;
+    }
 
-	public void setVolumeGroupId(String volumeGroupId) {
-		this.volumeGroupId = volumeGroupId;
-	}
+    public void setVolumeGroupId(String volumeGroupId) {
+        this.volumeGroupId = volumeGroupId;
+    }
 
-	public String getVolumeGroupStackId() {
-		return volumeGroupStackId;
-	}
+    public String getVolumeGroupStackId() {
+        return volumeGroupStackId;
+    }
 
-	public void setVolumeGroupStackId(String volumeGroupStackId) {
-		this.volumeGroupStackId = volumeGroupStackId;
-	}
+    public void setVolumeGroupStackId(String volumeGroupStackId) {
+        this.volumeGroupStackId = volumeGroupStackId;
+    }
 
-	public VnfStatus getVolumeGroupStatus() {
-		return volumeGroupStatus;
-	}
+    public VnfStatus getVolumeGroupStatus() {
+        return volumeGroupStatus;
+    }
 
-	public void setVolumeGroupStatus(VnfStatus volumeGroupStatus) {
-		this.volumeGroupStatus = volumeGroupStatus;
-	}
+    public void setVolumeGroupStatus(VnfStatus volumeGroupStatus) {
+        this.volumeGroupStatus = volumeGroupStatus;
+    }
 
-	public Map<String, String> getVolumeGroupOutputs() {
-		return volumeGroupOutputs;
-	}
+    public Map<String, String> getVolumeGroupOutputs() {
+        return volumeGroupOutputs;
+    }
 
-	public void setVolumeGroupOutputs(Map<String, String> volumeGroupOutputs) {
-		this.volumeGroupOutputs = volumeGroupOutputs;
-	}
+    public void setVolumeGroupOutputs(Map<String, String> volumeGroupOutputs) {
+        this.volumeGroupOutputs = volumeGroupOutputs;
+    }
 
-	public String toJsonString() {
-		String jsonString = null;
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-			jsonString = mapper.writeValueAsString(this);
-		}
-		catch (Exception e) {
-			logger.debug("Exception :", e);
-		}
-		return jsonString;
-	}
+    public String toJsonString() {
+        String jsonString = null;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+            jsonString = mapper.writeValueAsString(this);
+        } catch (Exception e) {
+            logger.debug("Exception :", e);
+        }
+        return jsonString;
+    }
 }

@@ -22,29 +22,29 @@ package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
 
-public class Distribution implements Serializable{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -529289171571892371L;
-	private Status status;
-	private String errorReason;
-	
-	public Status getStatus() {
-		return status;
-	}
-	
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	
-	public String getErrorReason() {
-		return errorReason;
-	}
-	
-	public void setErrorReason(String errorReason) {
-		this.errorReason = errorReason;
-	}
+public class Distribution implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -529289171571892371L;
+    private Status status;
+    private String errorReason;
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getErrorReason() {
+        return errorReason;
+    }
+
+    public void setErrorReason(String errorReason) {
+        this.errorReason = errorReason;
+    }
 
 }

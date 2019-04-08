@@ -39,64 +39,64 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCNetworkResources {
-	private static final Logger logger = LoggerFactory.getLogger(SDNCNetworkResources.class);
+    private static final Logger logger = LoggerFactory.getLogger(SDNCNetworkResources.class);
 
-	@Autowired
-	private NetworkTopologyOperationRequestMapper sdncRM;
+    @Autowired
+    private NetworkTopologyOperationRequestMapper sdncRM;
 
-	public GenericResourceApiNetworkOperationInformation assignNetwork(L3Network network,
-			ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
-			CloudRegion cloudRegion) {
-		return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
-				GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
-				requestContext, cloudRegion);
-	}
+    public GenericResourceApiNetworkOperationInformation assignNetwork(L3Network network,
+            ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
+            CloudRegion cloudRegion) {
+        return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ASSIGN,
+                GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
+                requestContext, cloudRegion);
+    }
 
-	public GenericResourceApiNetworkOperationInformation rollbackAssignNetwork(L3Network network,
-			ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
-			CloudRegion cloudRegion) {
-		return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN,
-				GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
-				requestContext, cloudRegion);
-	}
+    public GenericResourceApiNetworkOperationInformation rollbackAssignNetwork(L3Network network,
+            ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
+            CloudRegion cloudRegion) {
+        return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN,
+                GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
+                requestContext, cloudRegion);
+    }
 
-	public GenericResourceApiNetworkOperationInformation activateNetwork(L3Network network,
-			ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
-			CloudRegion cloudRegion) {
-		return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE,
-				GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
-				requestContext, cloudRegion);
-	}
+    public GenericResourceApiNetworkOperationInformation activateNetwork(L3Network network,
+            ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
+            CloudRegion cloudRegion) {
+        return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.ACTIVATE,
+                GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
+                requestContext, cloudRegion);
+    }
 
-	public GenericResourceApiNetworkOperationInformation deactivateNetwork(L3Network network,
-			ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
-			CloudRegion cloudRegion) {
-		return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
-				GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
-				requestContext, cloudRegion);
-	}
+    public GenericResourceApiNetworkOperationInformation deactivateNetwork(L3Network network,
+            ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
+            CloudRegion cloudRegion) {
+        return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.DEACTIVATE,
+                GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
+                requestContext, cloudRegion);
+    }
 
-	public GenericResourceApiNetworkOperationInformation deleteNetwork(L3Network network,
-			ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
-			CloudRegion cloudRegion) {
-		return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.DELETE,
-				GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
-				requestContext, cloudRegion);
-	}
+    public GenericResourceApiNetworkOperationInformation deleteNetwork(L3Network network,
+            ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
+            CloudRegion cloudRegion) {
+        return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.DELETE,
+                GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
+                requestContext, cloudRegion);
+    }
 
-	public GenericResourceApiNetworkOperationInformation changeAssignNetwork(L3Network network,
-			ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
-			CloudRegion cloudRegion) {
-		return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN,
-				GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
-				requestContext, cloudRegion);
-	}
+    public GenericResourceApiNetworkOperationInformation changeAssignNetwork(L3Network network,
+            ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
+            CloudRegion cloudRegion) {
+        return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.CHANGE_ASSIGN,
+                GenericResourceApiRequestActionEnumeration.CREATENETWORKINSTANCE, network, serviceInstance, customer,
+                requestContext, cloudRegion);
+    }
 
-	public GenericResourceApiNetworkOperationInformation unassignNetwork(L3Network network,
-			ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
-			CloudRegion cloudRegion) {
-		return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN,
-				GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
-				requestContext, cloudRegion);
-	}
+    public GenericResourceApiNetworkOperationInformation unassignNetwork(L3Network network,
+            ServiceInstance serviceInstance, Customer customer, RequestContext requestContext,
+            CloudRegion cloudRegion) {
+        return sdncRM.reqMapper(SDNCSvcOperation.NETWORK_TOPOLOGY_OPERATION, SDNCSvcAction.UNASSIGN,
+                GenericResourceApiRequestActionEnumeration.DELETENETWORKINSTANCE, network, serviceInstance, customer,
+                requestContext, cloudRegion);
+    }
 }

@@ -20,4 +20,6 @@
 
 package org.onap.so.adapters.catalogdb.catalogrest;
 
-public enum CatalogQueryExceptionCategory { OPENSTACK, IO, INTERNAL, USERDATA }
+public enum CatalogQueryExceptionCategory {
+    OPENSTACK, IO, INTERNAL, USERDATA
+}

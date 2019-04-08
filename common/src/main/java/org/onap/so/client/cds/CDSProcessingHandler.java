@@ -46,7 +46,7 @@ class CDSProcessingHandler {
         ActionIdentifiers header = request.getActionIdentifiers();
 
         log.info("Processing blueprint({}:{}) for action({})", header.getBlueprintVersion(), header.getBlueprintName(),
-            header.getBlueprintVersion());
+                header.getBlueprintVersion());
 
         final CountDownLatch finishLatch = new CountDownLatch(1);
 
@@ -67,7 +67,7 @@ class CDSProcessingHandler {
             @Override
             public void onCompleted() {
                 log.info("Completed blueprint({}:{}) for action({})", header.getBlueprintVersion(),
-                    header.getBlueprintName(), header.getBlueprintVersion());
+                        header.getBlueprintName(), header.getBlueprintVersion());
                 finishLatch.countDown();
             }
         };

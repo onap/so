@@ -26,10 +26,8 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -50,84 +48,89 @@ import org.onap.so.db.catalog.beans.VfModuleCustomization;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 
 public class ToscaResourceStructureTest {
-	private ArtifactInfoImpl artifactInfo;
-	private SdcCsarHelperImpl sdcCsarHelper;
-	
-	private ToscaResourceStructure toscaResourceStructure;
-	
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	
-	@Test
-	public void toscaResourceStructureBeanTest() {
-		artifactInfo = mock(ArtifactInfoImpl.class);
-		sdcCsarHelper = mock(SdcCsarHelperImpl.class);
-		
-		toscaResourceStructure = new ToscaResourceStructure();
-		toscaResourceStructure.setHeatTemplateUUID("heatTemplateUUID");
-		toscaResourceStructure.setAllottedList(new ArrayList<NodeTemplate>());
-		toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
-		toscaResourceStructure.setServiceMetadata(new Metadata(new HashMap<>()));
-		toscaResourceStructure.setCatalogService(new Service());
-		toscaResourceStructure.setNetworkTypes(new ArrayList<>());
-		toscaResourceStructure.setVfTypes(new ArrayList<>());
-		toscaResourceStructure.setCatalogResourceCustomization(new AllottedResourceCustomization());
-		toscaResourceStructure.setCatalogNetworkResourceCustomization(new NetworkResourceCustomization());
-		toscaResourceStructure.setCatalogNetworkResource(new NetworkResource());
-		toscaResourceStructure.setCatalogVfModule(new VfModule());
-		toscaResourceStructure.setVnfResourceCustomization(new VnfResourceCustomization());
-		toscaResourceStructure.setVfModuleCustomization(new VfModuleCustomization());
-		toscaResourceStructure.setAllottedResource(new AllottedResource());
-		toscaResourceStructure.setAllottedResourceCustomization(new AllottedResourceCustomization());
-		toscaResourceStructure.setCatalogTempNetworkHeatTemplateLookup(new TempNetworkHeatTemplateLookup());
-		toscaResourceStructure.setHeatFilesUUID("heatFilesUUID");
-		toscaResourceStructure.setToscaArtifact(artifactInfo);
-		toscaResourceStructure.setToscaCsar(new ToscaCsar());
-		toscaResourceStructure.setVolHeatTemplateUUID("volHeatTemplateUUID");
-		toscaResourceStructure.setEnvHeatTemplateUUID("envHeatTemplateUUID");
-		toscaResourceStructure.setServiceVersion("serviceVersion");
-		toscaResourceStructure.setWorkloadPerformance("workloadPerformance");
-		toscaResourceStructure.setVfModule(new VfModule());
-		toscaResourceStructure.setTempNetworkHeatTemplateLookup(new TempNetworkHeatTemplateLookup());
-		toscaResourceStructure.setSuccessfulDeployment();
-		
-		assertEquals("heatTemplateUUID", toscaResourceStructure.getHeatTemplateUUID());
-		assertThat(toscaResourceStructure.getAllottedList(), sameBeanAs(new ArrayList<NodeTemplate>()));
-		assertEquals(sdcCsarHelper, toscaResourceStructure.getSdcCsarHelper());
-		assertThat(toscaResourceStructure.getServiceMetadata(), sameBeanAs(new Metadata(new HashMap<>())));
-		assertThat(toscaResourceStructure.getCatalogService(), sameBeanAs(new Service()));
-		assertThat(toscaResourceStructure.getNetworkTypes(), sameBeanAs(new ArrayList<>()));
-		assertThat(toscaResourceStructure.getVfTypes(), sameBeanAs(new ArrayList<>()));
-		assertThat(toscaResourceStructure.getCatalogResourceCustomization(), sameBeanAs(new AllottedResourceCustomization()));
-		assertThat(toscaResourceStructure.getCatalogNetworkResourceCustomization(), sameBeanAs(new NetworkResourceCustomization()));
-		assertThat(toscaResourceStructure.getCatalogNetworkResource(), sameBeanAs(new NetworkResource()));
-		assertThat(toscaResourceStructure.getCatalogVfModule(), sameBeanAs(new VfModule()));
-		assertThat(toscaResourceStructure.getVnfResourceCustomization(), sameBeanAs(new VnfResourceCustomization()));
-		assertThat(toscaResourceStructure.getVfModuleCustomization(), sameBeanAs(new VfModuleCustomization()));
-		assertThat(toscaResourceStructure.getAllottedResource(), sameBeanAs(new AllottedResource()));
-		assertThat(toscaResourceStructure.getAllottedResourceCustomization(), sameBeanAs(new AllottedResourceCustomization()));
-		assertThat(toscaResourceStructure.getCatalogTempNetworkHeatTemplateLookup(), sameBeanAs(new TempNetworkHeatTemplateLookup()));
-		assertEquals("heatFilesUUID", toscaResourceStructure.getHeatFilesUUID());
-		assertEquals(artifactInfo, toscaResourceStructure.getToscaArtifact());
-		assertThat(toscaResourceStructure.getToscaCsar(), sameBeanAs(new ToscaCsar()));
-		assertEquals("volHeatTemplateUUID", toscaResourceStructure.getVolHeatTemplateUUID());
-		assertEquals("envHeatTemplateUUID", toscaResourceStructure.getEnvHeatTemplateUUID());
-		assertEquals("serviceVersion", toscaResourceStructure.getServiceVersion());
-		assertEquals("workloadPerformance", toscaResourceStructure.getWorkloadPerformance());
-		assertThat(toscaResourceStructure.getVfModule(), sameBeanAs(new VfModule()));
-		assertThat(toscaResourceStructure.getTempNetworkHeatTemplateLookup(), sameBeanAs(new TempNetworkHeatTemplateLookup()));
-		assertEquals(true, toscaResourceStructure.isDeployedSuccessfully());
-	}
-	
-	@Test
-	public void updateResourceStructureExceptionTest() throws Exception {
-		expectedException.expect(ASDCDownloadException.class);
-		
-		artifactInfo = mock(ArtifactInfoImpl.class);
-		toscaResourceStructure = new ToscaResourceStructure();
+    private ArtifactInfoImpl artifactInfo;
+    private SdcCsarHelperImpl sdcCsarHelper;
 
-		doReturn("artifactName").when(artifactInfo).getArtifactName();
-		
-		toscaResourceStructure.updateResourceStructure(artifactInfo);
-	}
+    private ToscaResourceStructure toscaResourceStructure;
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+
+    @Test
+    public void toscaResourceStructureBeanTest() {
+        artifactInfo = mock(ArtifactInfoImpl.class);
+        sdcCsarHelper = mock(SdcCsarHelperImpl.class);
+
+        toscaResourceStructure = new ToscaResourceStructure();
+        toscaResourceStructure.setHeatTemplateUUID("heatTemplateUUID");
+        toscaResourceStructure.setAllottedList(new ArrayList<NodeTemplate>());
+        toscaResourceStructure.setSdcCsarHelper(sdcCsarHelper);
+        toscaResourceStructure.setServiceMetadata(new Metadata(new HashMap<>()));
+        toscaResourceStructure.setCatalogService(new Service());
+        toscaResourceStructure.setNetworkTypes(new ArrayList<>());
+        toscaResourceStructure.setVfTypes(new ArrayList<>());
+        toscaResourceStructure.setCatalogResourceCustomization(new AllottedResourceCustomization());
+        toscaResourceStructure.setCatalogNetworkResourceCustomization(new NetworkResourceCustomization());
+        toscaResourceStructure.setCatalogNetworkResource(new NetworkResource());
+        toscaResourceStructure.setCatalogVfModule(new VfModule());
+        toscaResourceStructure.setVnfResourceCustomization(new VnfResourceCustomization());
+        toscaResourceStructure.setVfModuleCustomization(new VfModuleCustomization());
+        toscaResourceStructure.setAllottedResource(new AllottedResource());
+        toscaResourceStructure.setAllottedResourceCustomization(new AllottedResourceCustomization());
+        toscaResourceStructure.setCatalogTempNetworkHeatTemplateLookup(new TempNetworkHeatTemplateLookup());
+        toscaResourceStructure.setHeatFilesUUID("heatFilesUUID");
+        toscaResourceStructure.setToscaArtifact(artifactInfo);
+        toscaResourceStructure.setToscaCsar(new ToscaCsar());
+        toscaResourceStructure.setVolHeatTemplateUUID("volHeatTemplateUUID");
+        toscaResourceStructure.setEnvHeatTemplateUUID("envHeatTemplateUUID");
+        toscaResourceStructure.setServiceVersion("serviceVersion");
+        toscaResourceStructure.setWorkloadPerformance("workloadPerformance");
+        toscaResourceStructure.setVfModule(new VfModule());
+        toscaResourceStructure.setTempNetworkHeatTemplateLookup(new TempNetworkHeatTemplateLookup());
+        toscaResourceStructure.setSuccessfulDeployment();
+
+        assertEquals("heatTemplateUUID", toscaResourceStructure.getHeatTemplateUUID());
+        assertThat(toscaResourceStructure.getAllottedList(), sameBeanAs(new ArrayList<NodeTemplate>()));
+        assertEquals(sdcCsarHelper, toscaResourceStructure.getSdcCsarHelper());
+        assertThat(toscaResourceStructure.getServiceMetadata(), sameBeanAs(new Metadata(new HashMap<>())));
+        assertThat(toscaResourceStructure.getCatalogService(), sameBeanAs(new Service()));
+        assertThat(toscaResourceStructure.getNetworkTypes(), sameBeanAs(new ArrayList<>()));
+        assertThat(toscaResourceStructure.getVfTypes(), sameBeanAs(new ArrayList<>()));
+        assertThat(toscaResourceStructure.getCatalogResourceCustomization(),
+                sameBeanAs(new AllottedResourceCustomization()));
+        assertThat(toscaResourceStructure.getCatalogNetworkResourceCustomization(),
+                sameBeanAs(new NetworkResourceCustomization()));
+        assertThat(toscaResourceStructure.getCatalogNetworkResource(), sameBeanAs(new NetworkResource()));
+        assertThat(toscaResourceStructure.getCatalogVfModule(), sameBeanAs(new VfModule()));
+        assertThat(toscaResourceStructure.getVnfResourceCustomization(), sameBeanAs(new VnfResourceCustomization()));
+        assertThat(toscaResourceStructure.getVfModuleCustomization(), sameBeanAs(new VfModuleCustomization()));
+        assertThat(toscaResourceStructure.getAllottedResource(), sameBeanAs(new AllottedResource()));
+        assertThat(toscaResourceStructure.getAllottedResourceCustomization(),
+                sameBeanAs(new AllottedResourceCustomization()));
+        assertThat(toscaResourceStructure.getCatalogTempNetworkHeatTemplateLookup(),
+                sameBeanAs(new TempNetworkHeatTemplateLookup()));
+        assertEquals("heatFilesUUID", toscaResourceStructure.getHeatFilesUUID());
+        assertEquals(artifactInfo, toscaResourceStructure.getToscaArtifact());
+        assertThat(toscaResourceStructure.getToscaCsar(), sameBeanAs(new ToscaCsar()));
+        assertEquals("volHeatTemplateUUID", toscaResourceStructure.getVolHeatTemplateUUID());
+        assertEquals("envHeatTemplateUUID", toscaResourceStructure.getEnvHeatTemplateUUID());
+        assertEquals("serviceVersion", toscaResourceStructure.getServiceVersion());
+        assertEquals("workloadPerformance", toscaResourceStructure.getWorkloadPerformance());
+        assertThat(toscaResourceStructure.getVfModule(), sameBeanAs(new VfModule()));
+        assertThat(toscaResourceStructure.getTempNetworkHeatTemplateLookup(),
+                sameBeanAs(new TempNetworkHeatTemplateLookup()));
+        assertEquals(true, toscaResourceStructure.isDeployedSuccessfully());
+    }
+
+    @Test
+    public void updateResourceStructureExceptionTest() throws Exception {
+        expectedException.expect(ASDCDownloadException.class);
+
+        artifactInfo = mock(ArtifactInfoImpl.class);
+        toscaResourceStructure = new ToscaResourceStructure();
+
+        doReturn("artifactName").when(artifactInfo).getArtifactName();
+
+        toscaResourceStructure.updateResourceStructure(artifactInfo);
+    }
 }

@@ -25,9 +25,9 @@ import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.util.ClassUtils;
 
 public class DefaultToShortClassNameBeanNameGenerator extends AnnotationBeanNameGenerator {
-	
-	@Override
-	protected String buildDefaultBeanName(BeanDefinition definition) {
-		return ClassUtils.getShortName(definition.getBeanClassName());
-	}
+
+    @Override
+    protected String buildDefaultBeanName(BeanDefinition definition) {
+        return ClassUtils.getShortName(definition.getBeanClassName());
+    }
 }

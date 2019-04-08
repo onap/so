@@ -23,7 +23,6 @@
 package org.onap.so.asdc;
 
 import javax.annotation.PreDestroy;
-
 import org.onap.so.asdc.client.ASDCController;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.slf4j.Logger;
@@ -38,32 +37,32 @@ import java.security.SecureRandom;
 @Component
 @Profile("!test")
 public class ASDCControllerSingleton {
-   
-   
+
+
     @Autowired
     private ASDCController asdcController;
     private static Logger logger = LoggerFactory.getLogger(ASDCControllerSingleton.class);
-  
 
 
-    @Scheduled (fixedRate = 50000)
-	public void periodicControllerTask() {
-			try {
-				int randomNumber = new SecureRandom().nextInt(Integer.MAX_VALUE);
-				asdcController.setControllerName("mso-controller" + randomNumber);
-				asdcController.initASDC();
-			} catch (ASDCControllerException e) {
-				logger.error("Exception occurred", e);
-			}
-	}
-   
-   @PreDestroy
-   private void terminate () {
-		 try {
-			 asdcController.closeASDC();
-		 } catch (ASDCControllerException e) {
-			 logger.error("Exception occurred", e);
-		 }
-	 }
+
+    @Scheduled(fixedRate = 50000)
+    public void periodicControllerTask() {
+        try {
+            int randomNumber = new SecureRandom().nextInt(Integer.MAX_VALUE);
+            asdcController.setControllerName("mso-controller" + randomNumber);
+            asdcController.initASDC();
+        } catch (ASDCControllerException e) {
+            logger.error("Exception occurred", e);
+        }
+    }
+
+    @PreDestroy
+    private void terminate() {
+        try {
+            asdcController.closeASDC();
+        } catch (ASDCControllerException e) {
+            logger.error("Exception occurred", e);
+        }
+    }
 
 }

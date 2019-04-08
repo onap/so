@@ -26,7 +26,6 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,42 +42,47 @@ import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.aai.mapper.AAIObjectMapper;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
 
-public class AAICollectionResourcesTest extends BaseTaskTest{
-	
-	@InjectMocks
-	private AAICollectionResources aaiCollectionResources = new AAICollectionResources();
-	
-	
-	private Collection networkCollection;
-	
-	@Before
-	public void before() {
-		networkCollection = buildCollection();
-		doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
-	}
-	
-	@Test
-	public void createCollectionTest() throws Exception {
-		networkCollection.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
-		doReturn(new org.onap.aai.domain.yang.Collection()).when(MOCK_aaiObjectMapper).mapCollection(networkCollection);
-		
-		aaiCollectionResources.createCollection(networkCollection);
-		
-		assertEquals(OrchestrationStatus.INVENTORIED, networkCollection.getOrchestrationStatus());
-		verify(MOCK_aaiResourcesClient, times(1)).create(eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())), isA(org.onap.aai.domain.yang.Collection.class));
-	}
-	
-	@Test
-	public void updateCollectionTest() throws Exception {
-		doReturn(new org.onap.aai.domain.yang.Collection()).when(MOCK_aaiObjectMapper).mapCollection(networkCollection);
-		aaiCollectionResources.updateCollection(networkCollection);
-		verify(MOCK_aaiResourcesClient, times(1)).update(eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())), isA(org.onap.aai.domain.yang.Collection.class));
-	}
-	
-	@Test
-	public void deleteCollectionTest() throws Exception {
-		aaiCollectionResources.deleteCollection(networkCollection);
-		verify(MOCK_aaiResourcesClient, times(1)).delete(eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())));
-	}
-	
+public class AAICollectionResourcesTest extends BaseTaskTest {
+
+    @InjectMocks
+    private AAICollectionResources aaiCollectionResources = new AAICollectionResources();
+
+
+    private Collection networkCollection;
+
+    @Before
+    public void before() {
+        networkCollection = buildCollection();
+        doReturn(MOCK_aaiResourcesClient).when(MOCK_injectionHelper).getAaiClient();
+    }
+
+    @Test
+    public void createCollectionTest() throws Exception {
+        networkCollection.setOrchestrationStatus(OrchestrationStatus.PRECREATED);
+        doReturn(new org.onap.aai.domain.yang.Collection()).when(MOCK_aaiObjectMapper).mapCollection(networkCollection);
+
+        aaiCollectionResources.createCollection(networkCollection);
+
+        assertEquals(OrchestrationStatus.INVENTORIED, networkCollection.getOrchestrationStatus());
+        verify(MOCK_aaiResourcesClient, times(1)).create(
+                eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())),
+                isA(org.onap.aai.domain.yang.Collection.class));
+    }
+
+    @Test
+    public void updateCollectionTest() throws Exception {
+        doReturn(new org.onap.aai.domain.yang.Collection()).when(MOCK_aaiObjectMapper).mapCollection(networkCollection);
+        aaiCollectionResources.updateCollection(networkCollection);
+        verify(MOCK_aaiResourcesClient, times(1)).update(
+                eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())),
+                isA(org.onap.aai.domain.yang.Collection.class));
+    }
+
+    @Test
+    public void deleteCollectionTest() throws Exception {
+        aaiCollectionResources.deleteCollection(networkCollection);
+        verify(MOCK_aaiResourcesClient, times(1))
+                .delete(eq(AAIUriFactory.createResourceUri(AAIObjectType.COLLECTION, networkCollection.getId())));
+    }
+
 }

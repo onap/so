@@ -21,46 +21,49 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-
 import javax.persistence.Id;
 
-public class Metadatum implements Serializable, ShallowCopy<Metadatum>{
-	
-	private static final long serialVersionUID = -2259570072414712965L;
+public class Metadatum implements Serializable, ShallowCopy<Metadatum> {
 
-	@Id
-	@JsonProperty("metaname")
-	private String metaname;
-	@JsonProperty("metaval")
-	private String metaval;
-	
-	public String getMetaname() {
-		return metaname;
-	}
-	public void setMetaname(String metaname) {
-		this.metaname = metaname;
-	}
-	public String getMetaval() {
-		return metaval;
-	}
-	public void setMetaval(String metaval) {
-		this.metaval = metaval;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof Metadatum)) {
-			return false;
-		}
-		Metadatum castOther = (Metadatum) other;
-		return new EqualsBuilder().append(metaname, castOther.metaname).isEquals();
-	}
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(metaname).toHashCode();
-	}
+    private static final long serialVersionUID = -2259570072414712965L;
+
+    @Id
+    @JsonProperty("metaname")
+    private String metaname;
+    @JsonProperty("metaval")
+    private String metaval;
+
+    public String getMetaname() {
+        return metaname;
+    }
+
+    public void setMetaname(String metaname) {
+        this.metaname = metaname;
+    }
+
+    public String getMetaval() {
+        return metaval;
+    }
+
+    public void setMetaval(String metaval) {
+        this.metaval = metaval;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof Metadatum)) {
+            return false;
+        }
+        Metadatum castOther = (Metadatum) other;
+        return new EqualsBuilder().append(metaname, castOther.metaname).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(metaname).toHashCode();
+    }
 }

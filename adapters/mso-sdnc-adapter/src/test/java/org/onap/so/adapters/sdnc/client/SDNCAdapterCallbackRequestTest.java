@@ -23,35 +23,32 @@ package org.onap.so.adapters.sdnc.client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import org.junit.Test;
 import org.onap.so.adapters.sdnc.client.CallbackHeader;
 import org.onap.so.adapters.sdnc.client.SDNCAdapterCallbackRequest;
 
 public class SDNCAdapterCallbackRequestTest {
 
-  static SDNCAdapterCallbackRequest sdc = new SDNCAdapterCallbackRequest();
-   static CallbackHeader ch = new CallbackHeader("413658f4-7f42-482e-b834-23a5c15657da-1474471336781","200","OK");
-   
-   @Test
-   public void testSDNCAdapterCallbackRequest()
-   {
-       sdc.setCallbackHeader(ch);
-       sdc.setRequestData("data");
-       assertNotNull(sdc.getCallbackHeader());
-       assertNotNull(sdc.getRequestData());
-       assertEquals(ch, sdc.getCallbackHeader());
-       assertEquals("data", sdc.getRequestData());
+    static SDNCAdapterCallbackRequest sdc = new SDNCAdapterCallbackRequest();
+    static CallbackHeader ch = new CallbackHeader("413658f4-7f42-482e-b834-23a5c15657da-1474471336781", "200", "OK");
 
-   }
-   
-   @Test
-   public void testtoString()
-   {
-       assertNotNull(ch.toString());
-       assertNotNull(sdc.toString());
-   }
-   
+    @Test
+    public void testSDNCAdapterCallbackRequest() {
+        sdc.setCallbackHeader(ch);
+        sdc.setRequestData("data");
+        assertNotNull(sdc.getCallbackHeader());
+        assertNotNull(sdc.getRequestData());
+        assertEquals(ch, sdc.getCallbackHeader());
+        assertEquals("data", sdc.getRequestData());
+
+    }
+
+    @Test
+    public void testtoString() {
+        assertNotNull(ch.toString());
+        assertNotNull(sdc.toString());
+    }
+
 }
 
 

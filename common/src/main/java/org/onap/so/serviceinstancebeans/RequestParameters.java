@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,126 +34,127 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestParameters implements Serializable {
 
-	private static final long serialVersionUID = -5979049912538894930L;
-	@JsonProperty("subscriptionServiceType")
-	private String subscriptionServiceType;
-	@JsonProperty("userParams")
-	private List<Map<String, Object>> userParams = new ArrayList<>();
-	@JsonProperty("aLaCarte")
-	private Boolean aLaCarte;
-	@JsonProperty("payload")
-	private String payload;
-	@JsonProperty("usePreload")
-	private Boolean usePreload; // usePreload would always be true for Update
-	
-	@JsonProperty("autoBuildVfModules")
-	private Boolean autoBuildVfModules;
-	@JsonProperty("cascadeDelete")
-	private Boolean cascadeDelete;
-	@JsonProperty("testApi")
-	private String testApi; // usePreload would always be true for Update
-	@JsonProperty("rebuildVolumeGroups")
-	private Boolean rebuildVolumeGroups;	
+    private static final long serialVersionUID = -5979049912538894930L;
+    @JsonProperty("subscriptionServiceType")
+    private String subscriptionServiceType;
+    @JsonProperty("userParams")
+    private List<Map<String, Object>> userParams = new ArrayList<>();
+    @JsonProperty("aLaCarte")
+    private Boolean aLaCarte;
+    @JsonProperty("payload")
+    private String payload;
+    @JsonProperty("usePreload")
+    private Boolean usePreload; // usePreload would always be true for Update
 
-	public String getSubscriptionServiceType() {
-		return subscriptionServiceType;
-	}
+    @JsonProperty("autoBuildVfModules")
+    private Boolean autoBuildVfModules;
+    @JsonProperty("cascadeDelete")
+    private Boolean cascadeDelete;
+    @JsonProperty("testApi")
+    private String testApi; // usePreload would always be true for Update
+    @JsonProperty("rebuildVolumeGroups")
+    private Boolean rebuildVolumeGroups;
 
-	public void setSubscriptionServiceType(String subscriptionServiceType) {
-		this.subscriptionServiceType = subscriptionServiceType;
-	}
-	@JsonProperty("aLaCarte")
-	public Boolean getALaCarte() {
-		return aLaCarte;
-	}
-	@JsonProperty("aLaCarte")
-	public void setaLaCarte(Boolean aLaCarte) {
-		this.aLaCarte = aLaCarte;
-	}
-	
-	public Boolean isaLaCarte() {
-		return aLaCarte;
-	}
-	
-	public String getPayload(){
-		return payload;
-	}
-	public void setPayload(String value){
-		this.payload = value;
-	}
-	
-	public Boolean isUsePreload() {
-		return usePreload;
-	}
-	
-	@JsonProperty("usePreload")
-	public Boolean getUsePreload() {
-		return usePreload;
-	}
-	
-	@JsonProperty("usePreload")
-	public void setUsePreload(Boolean usePreload) {
-		this.usePreload = usePreload;
-	}	
+    public String getSubscriptionServiceType() {
+        return subscriptionServiceType;
+    }
 
-	public String getTestApi() {
-		return testApi;
-	}
+    public void setSubscriptionServiceType(String subscriptionServiceType) {
+        this.subscriptionServiceType = subscriptionServiceType;
+    }
 
-	public void setTestApi(String testApi) {
-		this.testApi = testApi;
-	}
-	
-	public List<Map<String, Object>> getUserParams() {
-		return userParams;
-	}
+    @JsonProperty("aLaCarte")
+    public Boolean getALaCarte() {
+        return aLaCarte;
+    }
 
-	public void setUserParams(List<Map<String, Object>> userParams) {
-		this.userParams = userParams;
-	}
+    @JsonProperty("aLaCarte")
+    public void setaLaCarte(Boolean aLaCarte) {
+        this.aLaCarte = aLaCarte;
+    }
 
-	public String getUserParamValue(String name){
-		if(userParams!=null){
-			for(Map<String, Object> param:userParams){
-				if(param.containsKey("name") && param.get("name").equals(name) && param.containsKey("value")){
-					return param.get("value").toString();
-				}
-			}
-		}
-		return null;
-	}
-	
-	public Boolean getAutoBuildVfModules() {
-		return autoBuildVfModules;
-	}
-	
-	public void setAutoBuildVfModules(Boolean autoBuildVfModules) {
-		this.autoBuildVfModules = autoBuildVfModules;
-	}
+    public Boolean isaLaCarte() {
+        return aLaCarte;
+    }
 
-	public Boolean getCascadeDelete() {
-		return cascadeDelete;
-	}
+    public String getPayload() {
+        return payload;
+    }
 
-	public void setCascadeDelete(Boolean cascadeDelete) {
-		this.cascadeDelete = cascadeDelete;
-	}	
-	
-	public Boolean getRebuildVolumeGroups() {
-		return rebuildVolumeGroups;
-	}
+    public void setPayload(String value) {
+        this.payload = value;
+    }
 
-	public void setRebuildVolumeGroups(Boolean rebuildVolumeGroups) {
-		this.rebuildVolumeGroups = rebuildVolumeGroups;
-	}	
-	
-	@Override
-	public String toString() {
-		return "RequestParameters [subscriptionServiceType="
-				+ subscriptionServiceType + ", userParams=" + userParams
-				+ ", aLaCarte=" + aLaCarte + ", testApi= " + testApi + ", autoBuildVfModules="
-				+ autoBuildVfModules + ", usePreload="
-				+ usePreload + ", rebuildVolumeGroups="
-				+ rebuildVolumeGroups + ", payload=" + payload + "]";
-	}
+    public Boolean isUsePreload() {
+        return usePreload;
+    }
+
+    @JsonProperty("usePreload")
+    public Boolean getUsePreload() {
+        return usePreload;
+    }
+
+    @JsonProperty("usePreload")
+    public void setUsePreload(Boolean usePreload) {
+        this.usePreload = usePreload;
+    }
+
+    public String getTestApi() {
+        return testApi;
+    }
+
+    public void setTestApi(String testApi) {
+        this.testApi = testApi;
+    }
+
+    public List<Map<String, Object>> getUserParams() {
+        return userParams;
+    }
+
+    public void setUserParams(List<Map<String, Object>> userParams) {
+        this.userParams = userParams;
+    }
+
+    public String getUserParamValue(String name) {
+        if (userParams != null) {
+            for (Map<String, Object> param : userParams) {
+                if (param.containsKey("name") && param.get("name").equals(name) && param.containsKey("value")) {
+                    return param.get("value").toString();
+                }
+            }
+        }
+        return null;
+    }
+
+    public Boolean getAutoBuildVfModules() {
+        return autoBuildVfModules;
+    }
+
+    public void setAutoBuildVfModules(Boolean autoBuildVfModules) {
+        this.autoBuildVfModules = autoBuildVfModules;
+    }
+
+    public Boolean getCascadeDelete() {
+        return cascadeDelete;
+    }
+
+    public void setCascadeDelete(Boolean cascadeDelete) {
+        this.cascadeDelete = cascadeDelete;
+    }
+
+    public Boolean getRebuildVolumeGroups() {
+        return rebuildVolumeGroups;
+    }
+
+    public void setRebuildVolumeGroups(Boolean rebuildVolumeGroups) {
+        this.rebuildVolumeGroups = rebuildVolumeGroups;
+    }
+
+    @Override
+    public String toString() {
+        return "RequestParameters [subscriptionServiceType=" + subscriptionServiceType + ", userParams=" + userParams
+                + ", aLaCarte=" + aLaCarte + ", testApi= " + testApi + ", autoBuildVfModules=" + autoBuildVfModules
+                + ", usePreload=" + usePreload + ", rebuildVolumeGroups=" + rebuildVolumeGroups + ", payload=" + payload
+                + "]";
+    }
 }

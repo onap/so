@@ -22,7 +22,6 @@ package org.onap.so.utils;
 
 import org.junit.Assert;
 import org.junit.Test;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -57,8 +56,7 @@ public class XMLMarshallerTest {
         String firstName;
         String lastName;
 
-        public TestPOJO() {
-        }
+        public TestPOJO() {}
 
 
         public String getFirstName() {
@@ -79,14 +77,18 @@ public class XMLMarshallerTest {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof TestPOJO)) return false;
+            if (this == o)
+                return true;
+            if (!(o instanceof TestPOJO))
+                return false;
 
             TestPOJO testPOJO = (TestPOJO) o;
 
-            if (getFirstName() != null ? !getFirstName().equals(testPOJO.getFirstName()) : testPOJO.getFirstName() != null)
+            if (getFirstName() != null ? !getFirstName().equals(testPOJO.getFirstName())
+                    : testPOJO.getFirstName() != null)
                 return false;
-            return getLastName() != null ? getLastName().equals(testPOJO.getLastName()) : testPOJO.getLastName() == null;
+            return getLastName() != null ? getLastName().equals(testPOJO.getLastName())
+                    : testPOJO.getLastName() == null;
         }
 
         @Override

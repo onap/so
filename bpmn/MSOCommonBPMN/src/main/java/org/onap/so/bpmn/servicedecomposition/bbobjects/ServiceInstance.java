@@ -23,15 +23,12 @@ package org.onap.so.bpmn.servicedecomposition.bbobjects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.Id;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.Metadata;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoServiceInstance;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
@@ -40,175 +37,191 @@ import org.onap.so.bpmn.servicedecomposition.homingobjects.SolutionInfo;
 @JsonRootName("service-instance")
 public class ServiceInstance implements Serializable, ShallowCopy<ServiceInstance> {
 
-	private static final long serialVersionUID = -1843348234891739356L;
+    private static final long serialVersionUID = -1843348234891739356L;
 
-	@Id
-	@JsonProperty("service-instance-id")
-	private String serviceInstanceId;
-	@JsonProperty("service-instance-name")
-	private String serviceInstanceName;
-	@JsonProperty("orchestration-status")
-	private OrchestrationStatus orchestrationStatus;
-	@JsonProperty("owning-entity")
-	private OwningEntity owningEntity;
-	@JsonProperty("project")
-	private Project project;
-	@JsonProperty("collection")
-	private Collection collection;
-	@JsonProperty("vnfs")
-	private List<GenericVnf> vnfs = new ArrayList<>();
-	@JsonProperty("pnfs")
-	private List<Pnf> pnfs = new ArrayList<>();
-	@JsonProperty("allotted-resources")
-	private List<AllottedResource> allottedResources = new ArrayList<>();
-	@JsonProperty("networks")
-	private List<L3Network> networks = new ArrayList<>();
-	@JsonProperty("vpn-bonding-links")
-	private List<VpnBondingLink> vpnBondingLinks = new ArrayList<>();
-	@JsonProperty("vhn-portal-url")
+    @Id
+    @JsonProperty("service-instance-id")
+    private String serviceInstanceId;
+    @JsonProperty("service-instance-name")
+    private String serviceInstanceName;
+    @JsonProperty("orchestration-status")
+    private OrchestrationStatus orchestrationStatus;
+    @JsonProperty("owning-entity")
+    private OwningEntity owningEntity;
+    @JsonProperty("project")
+    private Project project;
+    @JsonProperty("collection")
+    private Collection collection;
+    @JsonProperty("vnfs")
+    private List<GenericVnf> vnfs = new ArrayList<>();
+    @JsonProperty("pnfs")
+    private List<Pnf> pnfs = new ArrayList<>();
+    @JsonProperty("allotted-resources")
+    private List<AllottedResource> allottedResources = new ArrayList<>();
+    @JsonProperty("networks")
+    private List<L3Network> networks = new ArrayList<>();
+    @JsonProperty("vpn-bonding-links")
+    private List<VpnBondingLink> vpnBondingLinks = new ArrayList<>();
+    @JsonProperty("vhn-portal-url")
     private String vhnPortalUrl;
-	@JsonProperty("service-instance-location-id")
+    @JsonProperty("service-instance-location-id")
     private String serviceInstanceLocationId;
-	@JsonProperty("selflink")
+    @JsonProperty("selflink")
     private String selflink;
-	@JsonProperty("metadata")
+    @JsonProperty("metadata")
     private Metadata metadata;
-	@JsonProperty("configurations")
-	private List<Configuration> configurations = new ArrayList<>();
-	@JsonProperty("solution-info")
-	private SolutionInfo solutionInfo;
-	@JsonProperty("model-info-service-instance")
-	private ModelInfoServiceInstance modelInfoServiceInstance;
-	@JsonProperty("instance-groups")
-	private List<InstanceGroup> instanceGroups = new ArrayList<>();
+    @JsonProperty("configurations")
+    private List<Configuration> configurations = new ArrayList<>();
+    @JsonProperty("solution-info")
+    private SolutionInfo solutionInfo;
+    @JsonProperty("model-info-service-instance")
+    private ModelInfoServiceInstance modelInfoServiceInstance;
+    @JsonProperty("instance-groups")
+    private List<InstanceGroup> instanceGroups = new ArrayList<>();
 
-	public List<GenericVnf> getVnfs() {
-		return vnfs;
-	}
-	public List<AllottedResource> getAllottedResources() {
-		return allottedResources;
-	}
-	public List<L3Network> getNetworks() {
-		return networks;
-	}
-	public ModelInfoServiceInstance getModelInfoServiceInstance() {
-		return modelInfoServiceInstance;
-	}
-	public void setModelInfoServiceInstance(ModelInfoServiceInstance modelInfoServiceInstance) {
-		this.modelInfoServiceInstance = modelInfoServiceInstance;
-	}
-	public List<Configuration> getConfigurations() {
-		return configurations;
-	}
-	public void setConfigurations(List<Configuration> configurations) {
-		this.configurations = configurations;
-	}
-	public String getVhnPortalUrl() {
-		return vhnPortalUrl;
-	}
+    public List<GenericVnf> getVnfs() {
+        return vnfs;
+    }
 
-	public void setVhnPortalUrl(String vhnPortalUrl) {
-		this.vhnPortalUrl = vhnPortalUrl;
-	}
+    public List<AllottedResource> getAllottedResources() {
+        return allottedResources;
+    }
 
-	public String getServiceInstanceLocationId() {
-		return serviceInstanceLocationId;
-	}
+    public List<L3Network> getNetworks() {
+        return networks;
+    }
 
-	public void setServiceInstanceLocationId(String serviceInstanceLocationId) {
-		this.serviceInstanceLocationId = serviceInstanceLocationId;
-	}
+    public ModelInfoServiceInstance getModelInfoServiceInstance() {
+        return modelInfoServiceInstance;
+    }
 
-	public String getSelflink() {
-		return selflink;
-	}
+    public void setModelInfoServiceInstance(ModelInfoServiceInstance modelInfoServiceInstance) {
+        this.modelInfoServiceInstance = modelInfoServiceInstance;
+    }
 
-	public void setSelflink(String selflink) {
-		this.selflink = selflink;
-	}
+    public List<Configuration> getConfigurations() {
+        return configurations;
+    }
 
-	public Metadata getMetadata() {
-		return metadata;
-	}
+    public void setConfigurations(List<Configuration> configurations) {
+        this.configurations = configurations;
+    }
 
-	public void setMetadata(Metadata metadata) {
-		this.metadata = metadata;
-	}
+    public String getVhnPortalUrl() {
+        return vhnPortalUrl;
+    }
 
-	public String getServiceInstanceId() {
-		return serviceInstanceId;
-	}
+    public void setVhnPortalUrl(String vhnPortalUrl) {
+        this.vhnPortalUrl = vhnPortalUrl;
+    }
 
-	public void setServiceInstanceId(String serviceInstanceId) {
-		this.serviceInstanceId = serviceInstanceId;
-	}
+    public String getServiceInstanceLocationId() {
+        return serviceInstanceLocationId;
+    }
 
-	public String getServiceInstanceName() {
-		return serviceInstanceName;
-	}
+    public void setServiceInstanceLocationId(String serviceInstanceLocationId) {
+        this.serviceInstanceLocationId = serviceInstanceLocationId;
+    }
 
-	public void setServiceInstanceName(String serviceInstanceName) {
-		this.serviceInstanceName = serviceInstanceName;
-	}
+    public String getSelflink() {
+        return selflink;
+    }
 
-	public OrchestrationStatus getOrchestrationStatus() {
-		return orchestrationStatus;
-	}
+    public void setSelflink(String selflink) {
+        this.selflink = selflink;
+    }
 
-	public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
-		this.orchestrationStatus = orchestrationStatus;
-	}
+    public Metadata getMetadata() {
+        return metadata;
+    }
 
-	public OwningEntity getOwningEntity() {
-		return owningEntity;
-	}
+    public void setMetadata(Metadata metadata) {
+        this.metadata = metadata;
+    }
 
-	public void setOwningEntity(OwningEntity owningEntity) {
-		this.owningEntity = owningEntity;
-	}
+    public String getServiceInstanceId() {
+        return serviceInstanceId;
+    }
 
-	public Project getProject() {
-		return project;
-	}
+    public void setServiceInstanceId(String serviceInstanceId) {
+        this.serviceInstanceId = serviceInstanceId;
+    }
 
-	public void setProject(Project project) {
-		this.project = project;
-	}
+    public String getServiceInstanceName() {
+        return serviceInstanceName;
+    }
 
-	public Collection getCollection() {
-		return collection;
-	}
-	public void setCollection(Collection collection) {
-		this.collection = collection;
-	}
-	public List<VpnBondingLink> getVpnBondingLinks() {
-		return vpnBondingLinks;
-	}
-	public List<Pnf> getPnfs() {
-		return pnfs;
-	}
-	public SolutionInfo getSolutionInfo() {
-		return solutionInfo;
-	}
-	public void setSolutionInfo(SolutionInfo solutionInfo) {
-		this.solutionInfo = solutionInfo;
-	}
-	public List<InstanceGroup> getInstanceGroups() {
-		return instanceGroups;
-	}
-	public void setInstanceGroups(List<InstanceGroup> instanceGroups) {
-		this.instanceGroups = instanceGroups;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof ServiceInstance)) {
-			return false;
-		}
-		ServiceInstance castOther = (ServiceInstance) other;
-		return new EqualsBuilder().append(serviceInstanceId, castOther.serviceInstanceId).isEquals();
-	}
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(serviceInstanceId).toHashCode();
-	}
+    public void setServiceInstanceName(String serviceInstanceName) {
+        this.serviceInstanceName = serviceInstanceName;
+    }
+
+    public OrchestrationStatus getOrchestrationStatus() {
+        return orchestrationStatus;
+    }
+
+    public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
+        this.orchestrationStatus = orchestrationStatus;
+    }
+
+    public OwningEntity getOwningEntity() {
+        return owningEntity;
+    }
+
+    public void setOwningEntity(OwningEntity owningEntity) {
+        this.owningEntity = owningEntity;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Collection getCollection() {
+        return collection;
+    }
+
+    public void setCollection(Collection collection) {
+        this.collection = collection;
+    }
+
+    public List<VpnBondingLink> getVpnBondingLinks() {
+        return vpnBondingLinks;
+    }
+
+    public List<Pnf> getPnfs() {
+        return pnfs;
+    }
+
+    public SolutionInfo getSolutionInfo() {
+        return solutionInfo;
+    }
+
+    public void setSolutionInfo(SolutionInfo solutionInfo) {
+        this.solutionInfo = solutionInfo;
+    }
+
+    public List<InstanceGroup> getInstanceGroups() {
+        return instanceGroups;
+    }
+
+    public void setInstanceGroups(List<InstanceGroup> instanceGroups) {
+        this.instanceGroups = instanceGroups;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof ServiceInstance)) {
+            return false;
+        }
+        ServiceInstance castOther = (ServiceInstance) other;
+        return new EqualsBuilder().append(serviceInstanceId, castOther.serviceInstanceId).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(serviceInstanceId).toHashCode();
+    }
 }

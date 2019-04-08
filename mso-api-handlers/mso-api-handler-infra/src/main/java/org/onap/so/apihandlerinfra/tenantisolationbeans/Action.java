@@ -21,8 +21,5 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 public enum Action {
-	create,
-	activate,
-	deactivate,
-	distributionStatus
+    create, activate, deactivate, distributionStatus
 }

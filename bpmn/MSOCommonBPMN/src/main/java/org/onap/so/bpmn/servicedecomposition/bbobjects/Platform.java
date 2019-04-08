@@ -21,51 +21,48 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
-
 import javax.persistence.Id;
 
 @JsonRootName("platform")
 public class Platform implements Serializable, ShallowCopy<Platform> {
 
-	private static final long serialVersionUID = -9127507763010448699L;
+    private static final long serialVersionUID = -9127507763010448699L;
 
-	@Id
-	@JsonProperty("platform-name")
-	private String platformName;
-	
-	public Platform() {
-	}
+    @Id
+    @JsonProperty("platform-name")
+    private String platformName;
+
+    public Platform() {}
 
 
-	public Platform(String platformName) {
-		this.platformName = platformName;
-	}
+    public Platform(String platformName) {
+        this.platformName = platformName;
+    }
 
-	public String getPlatformName() {
-		return platformName;
-	}
+    public String getPlatformName() {
+        return platformName;
+    }
 
-	public void setPlatformName(String platformName) {
-		this.platformName = platformName;
-	}
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof Platform)) {
-			return false;
-		}
-		Platform castOther = (Platform) other;
-		return new EqualsBuilder().append(platformName, castOther.platformName).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof Platform)) {
+            return false;
+        }
+        Platform castOther = (Platform) other;
+        return new EqualsBuilder().append(platformName, castOther.platformName).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(platformName).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(platformName).toHashCode();
+    }
 }

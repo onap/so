@@ -26,26 +26,26 @@ package org.onap.so.asdc.client.exceptions;
  */
 public class ASDCDownloadException extends Exception {
 
-	/**
+    /**
      * serialization id.
-	 */
-	private static final long serialVersionUID = -5276848693231134901L;
-
-	/**
-     * @param message The message to dump
-     * @param cause The Throwable cause object
      */
-    public ASDCDownloadException (final String message) {
-        super (message);
-       
-    }
-	
+    private static final long serialVersionUID = -5276848693231134901L;
+
     /**
      * @param message The message to dump
      * @param cause The Throwable cause object
      */
-    public ASDCDownloadException (final String message, final Throwable cause) {
-        super (message, cause);
-       
+    public ASDCDownloadException(final String message) {
+        super(message);
+
+    }
+
+    /**
+     * @param message The message to dump
+     * @param cause The Throwable cause object
+     */
+    public ASDCDownloadException(final String message, final Throwable cause) {
+        super(message, cause);
+
     }
 }

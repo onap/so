@@ -23,19 +23,18 @@ package org.onap.so.utils;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.AppenderBase;
-
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class TestAppender extends AppenderBase<ILoggingEvent> {
     public static List<ILoggingEvent> events = new ArrayList<>();
- 
-	@Override
-	protected void append(ILoggingEvent loggingEvent) {
-		if (loggingEvent.getLevel() == Level.INFO) {
-		    events.add(loggingEvent);
+
+    @Override
+    protected void append(ILoggingEvent loggingEvent) {
+        if (loggingEvent.getLevel() == Level.INFO) {
+            events.add(loggingEvent);
         }
-	}
+    }
 
 }

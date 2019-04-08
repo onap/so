@@ -23,9 +23,7 @@ package org.onap.so.openpojo.rules;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.anything;
 import static org.hamcrest.CoreMatchers.not;
-
 import org.hamcrest.Matcher;
-
 import com.openpojo.reflection.PojoClass;
 import com.openpojo.reflection.PojoField;
 import com.openpojo.validation.affirm.Affirm;
@@ -33,26 +31,29 @@ import com.openpojo.validation.rule.Rule;
 
 public class CustomSetterMustExistRule implements Rule {
 
-	private Matcher[] excludeMatchers = new Matcher[]{not(anything())};
-	private Matcher<PojoField>[] includeMatchers = new Matcher[]{anything()};
-	public CustomSetterMustExistRule() {
-	}
-	@Override
-	public void evaluate(final PojoClass pojoClass) {
-		for (PojoField fieldEntry : pojoClass.getPojoFields()) {
-			if (!anyOf(excludeMatchers).matches(fieldEntry) && anyOf(includeMatchers).matches(fieldEntry) && !fieldEntry.isFinal() && !fieldEntry.hasSetter()) {
-				Affirm.fail(String.format("[%s] is missing a setter", fieldEntry));
-			}
-		}
-	}
-	public CustomSetterMustExistRule exclude(Matcher... excludeMatchers) {
-		this.excludeMatchers = excludeMatchers;
-		return this;
-	}
+    private Matcher[] excludeMatchers = new Matcher[] {not(anything())};
+    private Matcher<PojoField>[] includeMatchers = new Matcher[] {anything()};
 
-	public CustomSetterMustExistRule include(Matcher<PojoField>... includeMatchers) {
-		this.includeMatchers = includeMatchers;
-		return this;
-	}
+    public CustomSetterMustExistRule() {}
+
+    @Override
+    public void evaluate(final PojoClass pojoClass) {
+        for (PojoField fieldEntry : pojoClass.getPojoFields()) {
+            if (!anyOf(excludeMatchers).matches(fieldEntry) && anyOf(includeMatchers).matches(fieldEntry)
+                    && !fieldEntry.isFinal() && !fieldEntry.hasSetter()) {
+                Affirm.fail(String.format("[%s] is missing a setter", fieldEntry));
+            }
+        }
+    }
+
+    public CustomSetterMustExistRule exclude(Matcher... excludeMatchers) {
+        this.excludeMatchers = excludeMatchers;
+        return this;
+    }
+
+    public CustomSetterMustExistRule include(Matcher<PojoField>... includeMatchers) {
+        this.includeMatchers = includeMatchers;
+        return this;
+    }
 
 }

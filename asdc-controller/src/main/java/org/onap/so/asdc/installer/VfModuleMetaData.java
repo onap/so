@@ -23,74 +23,73 @@ package org.onap.so.asdc.installer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VfModuleMetaData implements IVfModuleData {
 
-	@JsonProperty("artifacts")
-	private List<String> artifacts;
+    @JsonProperty("artifacts")
+    private List<String> artifacts;
 
-	@JsonProperty("properties")
-	//private List<Map<String, Object>> properties = new ArrayList<>();
-	private Map<String,String> properties = new HashMap<>();
+    @JsonProperty("properties")
+    // private List<Map<String, Object>> properties = new ArrayList<>();
+    private Map<String, String> properties = new HashMap<>();
 
-	@JsonIgnore
-	private Map<String,Object> attributesMap = new HashMap<>();
+    @JsonIgnore
+    private Map<String, Object> attributesMap = new HashMap<>();
 
-	@Override
-	public List<String> getArtifacts() {
-		return artifacts;
-	}
+    @Override
+    public List<String> getArtifacts() {
+        return artifacts;
+    }
 
-	public Map<String, String> getProperties() {
-		return properties;
-	}
+    public Map<String, String> getProperties() {
+        return properties;
+    }
 
-	@Override
-	public String getVfModuleModelDescription() {
-		return (String)attributesMap.get("vfModuleModelDescription");
-	}
+    @Override
+    public String getVfModuleModelDescription() {
+        return (String) attributesMap.get("vfModuleModelDescription");
+    }
 
-	@Override
-	public String getVfModuleModelInvariantUUID() {
-		return (String)attributesMap.get("vfModuleModelInvariantUUID");
-	}
+    @Override
+    public String getVfModuleModelInvariantUUID() {
+        return (String) attributesMap.get("vfModuleModelInvariantUUID");
+    }
 
-	public String getVfModuleModelCustomizationUUID() {
-		return (String)attributesMap.get("vfModuleModelCustomizationUUID");
-	}
+    public String getVfModuleModelCustomizationUUID() {
+        return (String) attributesMap.get("vfModuleModelCustomizationUUID");
+    }
 
-	@Override
-	public String getVfModuleModelName() {
-		return (String)attributesMap.get("vfModuleModelName");
-	}
+    @Override
+    public String getVfModuleModelName() {
+        return (String) attributesMap.get("vfModuleModelName");
+    }
 
-	@Override
-	public String getVfModuleModelUUID() {
-		return (String)attributesMap.get("vfModuleModelUUID");
-	}
+    @Override
+    public String getVfModuleModelUUID() {
+        return (String) attributesMap.get("vfModuleModelUUID");
+    }
 
-	@Override
-	public String getVfModuleModelVersion() {
-		return (String)attributesMap.get("vfModuleModelVersion");
-	}
+    @Override
+    public String getVfModuleModelVersion() {
+        return (String) attributesMap.get("vfModuleModelVersion");
+    }
 
-	@Override
-	public boolean isBase() {
-		return (boolean)attributesMap.get("isBase");
-	}
+    @Override
+    public boolean isBase() {
+        return (boolean) attributesMap.get("isBase");
+    }
 
 
 
-	@SuppressWarnings("unused")
-	@JsonAnySetter
-	public final void setAttribute(String attrName, Object attrValue) {
-		if ((null != attrName) && (!attrName.isEmpty()) && (null != attrValue) && (null != attrValue.toString())) {
-			this.attributesMap.put(attrName,attrValue);
-		}
-	}
+    @SuppressWarnings("unused")
+    @JsonAnySetter
+    public final void setAttribute(String attrName, Object attrValue) {
+        if ((null != attrName) && (!attrName.isEmpty()) && (null != attrValue) && (null != attrValue.toString())) {
+            this.attributesMap.put(attrName, attrValue);
+        }
+    }
 
 }

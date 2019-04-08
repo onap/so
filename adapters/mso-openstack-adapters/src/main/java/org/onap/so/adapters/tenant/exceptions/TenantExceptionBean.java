@@ -22,7 +22,6 @@ package org.onap.so.adapters.tenant.exceptions;
 
 
 import java.io.Serializable;
-
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 
 /**
@@ -33,32 +32,32 @@ public class TenantExceptionBean implements Serializable {
     private static final long serialVersionUID = -9062290006520066109L;
 
     private String message;
-	private MsoExceptionCategory category;
+    private MsoExceptionCategory category;
 
-	public TenantExceptionBean () {}
+    public TenantExceptionBean() {}
 
-	public TenantExceptionBean (String message) {
-		this.message = message;
-	}
+    public TenantExceptionBean(String message) {
+        this.message = message;
+    }
 
-	public TenantExceptionBean (String message, MsoExceptionCategory category) {
-		this.message = message;
-		this.category = category;
-	}
+    public TenantExceptionBean(String message, MsoExceptionCategory category) {
+        this.message = message;
+        this.category = category;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public MsoExceptionCategory getCategory () {
-		return category;
-	}
+    public MsoExceptionCategory getCategory() {
+        return category;
+    }
 
-	public void setCategory (MsoExceptionCategory category) {
-		this.category = category;
-	}
+    public void setCategory(MsoExceptionCategory category) {
+        this.category = category;
+    }
 }

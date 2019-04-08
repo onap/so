@@ -22,7 +22,6 @@ package org.onap.so.adapters.vnf.async.client;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,9 +29,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for updateVnfNotification complex type.
+ * <p>
+ * Java class for updateVnfNotification complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType name="updateVnfNotification">
@@ -75,14 +76,8 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "updateVnfNotification", propOrder = {
-    "messageId",
-    "completed",
-    "exception",
-    "errorMessage",
-    "outputs",
-    "rollback"
-})
+@XmlType(name = "updateVnfNotification",
+        propOrder = {"messageId", "completed", "exception", "errorMessage", "outputs", "rollback"})
 public class UpdateVnfNotification {
 
     @XmlElement(required = true)
@@ -96,10 +91,8 @@ public class UpdateVnfNotification {
     /**
      * Gets the value of the messageId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getMessageId() {
         return messageId;
@@ -108,10 +101,8 @@ public class UpdateVnfNotification {
     /**
      * Sets the value of the messageId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setMessageId(String value) {
         this.messageId = value;
@@ -136,10 +127,8 @@ public class UpdateVnfNotification {
     /**
      * Gets the value of the exception property.
      * 
-     * @return
-     *     possible object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @return possible object is {@link MsoExceptionCategory }
+     * 
      */
     public MsoExceptionCategory getException() {
         return exception;
@@ -148,10 +137,8 @@ public class UpdateVnfNotification {
     /**
      * Sets the value of the exception property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link MsoExceptionCategory }
-     *     
+     * @param value allowed object is {@link MsoExceptionCategory }
+     * 
      */
     public void setException(MsoExceptionCategory value) {
         this.exception = value;
@@ -160,10 +147,8 @@ public class UpdateVnfNotification {
     /**
      * Gets the value of the errorMessage property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     * @return possible object is {@link String }
+     * 
      */
     public String getErrorMessage() {
         return errorMessage;
@@ -172,10 +157,8 @@ public class UpdateVnfNotification {
     /**
      * Sets the value of the errorMessage property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * @param value allowed object is {@link String }
+     * 
      */
     public void setErrorMessage(String value) {
         this.errorMessage = value;
@@ -184,10 +167,8 @@ public class UpdateVnfNotification {
     /**
      * Gets the value of the outputs property.
      * 
-     * @return
-     *     possible object is
-     *     {@link UpdateVnfNotification.Outputs }
-     *     
+     * @return possible object is {@link UpdateVnfNotification.Outputs }
+     * 
      */
     public UpdateVnfNotification.Outputs getOutputs() {
         return outputs;
@@ -196,10 +177,8 @@ public class UpdateVnfNotification {
     /**
      * Sets the value of the outputs property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link UpdateVnfNotification.Outputs }
-     *     
+     * @param value allowed object is {@link UpdateVnfNotification.Outputs }
+     * 
      */
     public void setOutputs(UpdateVnfNotification.Outputs value) {
         this.outputs = value;
@@ -208,10 +187,8 @@ public class UpdateVnfNotification {
     /**
      * Gets the value of the rollback property.
      * 
-     * @return
-     *     possible object is
-     *     {@link VnfRollback }
-     *     
+     * @return possible object is {@link VnfRollback }
+     * 
      */
     public VnfRollback getRollback() {
         return rollback;
@@ -220,10 +197,8 @@ public class UpdateVnfNotification {
     /**
      * Sets the value of the rollback property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link VnfRollback }
-     *     
+     * @param value allowed object is {@link VnfRollback }
+     * 
      */
     public void setRollback(VnfRollback value) {
         this.rollback = value;
@@ -231,9 +206,11 @@ public class UpdateVnfNotification {
 
 
     /**
-     * <p>Java class for anonymous complex type.
+     * <p>
+     * Java class for anonymous complex type.
      * 
-     * <p>The following schema fragment specifies the expected content contained within this class.
+     * <p>
+     * The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
      * &lt;complexType>
@@ -261,9 +238,7 @@ public class UpdateVnfNotification {
      * 
      */
     @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "entry"
-    })
+    @XmlType(name = "", propOrder = {"entry"})
     public static class Outputs {
 
         protected List<UpdateVnfNotification.Outputs.Entry> entry;
@@ -272,21 +247,20 @@ public class UpdateVnfNotification {
          * Gets the value of the entry property.
          * 
          * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the entry property.
+         * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you
+         * make to the returned list will be present inside the JAXB object. This is why there is not a <CODE>set</CODE>
+         * method for the entry property.
          * 
          * <p>
          * For example, to add a new item, do as follows:
+         * 
          * <pre>
-         *    getEntry().add(newItem);
+         * getEntry().add(newItem);
          * </pre>
          * 
          * 
          * <p>
-         * Objects of the following type(s) are allowed in the list
-         * {@link UpdateVnfNotification.Outputs.Entry }
+         * Objects of the following type(s) are allowed in the list {@link UpdateVnfNotification.Outputs.Entry }
          * 
          * 
          */
@@ -299,9 +273,11 @@ public class UpdateVnfNotification {
 
 
         /**
-         * <p>Java class for anonymous complex type.
+         * <p>
+         * Java class for anonymous complex type.
          * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
+         * <p>
+         * The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
          * &lt;complexType>
@@ -319,10 +295,7 @@ public class UpdateVnfNotification {
          * 
          */
         @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "key",
-            "value"
-        })
+        @XmlType(name = "", propOrder = {"key", "value"})
         public static class Entry {
 
             protected String key;
@@ -331,10 +304,8 @@ public class UpdateVnfNotification {
             /**
              * Gets the value of the key property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getKey() {
                 return key;
@@ -343,10 +314,8 @@ public class UpdateVnfNotification {
             /**
              * Sets the value of the key property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setKey(String value) {
                 this.key = value;
@@ -355,10 +324,8 @@ public class UpdateVnfNotification {
             /**
              * Gets the value of the value property.
              * 
-             * @return
-             *     possible object is
-             *     {@link String }
-             *     
+             * @return possible object is {@link String }
+             * 
              */
             public String getValue() {
                 return value;
@@ -367,10 +334,8 @@ public class UpdateVnfNotification {
             /**
              * Sets the value of the value property.
              * 
-             * @param value
-             *     allowed object is
-             *     {@link String }
-             *     
+             * @param value allowed object is {@link String }
+             * 
              */
             public void setValue(String value) {
                 this.value = value;

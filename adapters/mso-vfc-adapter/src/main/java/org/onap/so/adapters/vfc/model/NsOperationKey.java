@@ -21,8 +21,7 @@
 package org.onap.so.adapters.vfc.model;
 
 /**
- * The operation key object for NS
- * <br>
+ * The operation key object for NS <br>
  * <p>
  * </p>
  * 

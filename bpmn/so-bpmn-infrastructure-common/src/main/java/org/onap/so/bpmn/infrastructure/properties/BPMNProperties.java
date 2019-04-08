@@ -22,22 +22,22 @@ package org.onap.so.bpmn.infrastructure.properties;
 import java.util.Arrays;
 import java.util.List;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-
 import org.onap.so.bpmn.core.UrnPropertiesReader;
 
 public class BPMNProperties {
 
     public static String getProperty(String key, String defaultValue) {
-       String value = UrnPropertiesReader.getVariable(key);
-       if (value == null) {
-    	   return defaultValue;
-       } else {
-    	   return value;
-       }
+        String value = UrnPropertiesReader.getVariable(key);
+        if (value == null) {
+            return defaultValue;
+        } else {
+            return value;
+        }
     }
 
     public static List<String> getResourceSequenceProp(String input) {
-        String resourceSequence = UrnPropertiesReader.getVariable("mso.workflow.custom."+ input + ".resource.sequence");
+        String resourceSequence =
+                UrnPropertiesReader.getVariable("mso.workflow.custom." + input + ".resource.sequence");
         if (resourceSequence != null) {
             return Arrays.asList(resourceSequence.split(","));
         }

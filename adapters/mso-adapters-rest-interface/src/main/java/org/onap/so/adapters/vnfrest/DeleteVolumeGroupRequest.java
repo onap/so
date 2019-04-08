@@ -22,33 +22,31 @@ package org.onap.so.adapters.vnfrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.entity.MsoRequest;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @JsonRootName("deleteVolumeGroupRequest")
 @XmlRootElement(name = "deleteVolumeGroupRequest")
 public class DeleteVolumeGroupRequest extends VfRequestCommon {
-	private String cloudSiteId;
-	private String cloudOwner;
-	private String tenantId;
-	private String volumeGroupId;
-	private String volumeGroupStackId;
-	private MsoRequest msoRequest = new MsoRequest();
+    private String cloudSiteId;
+    private String cloudOwner;
+    private String tenantId;
+    private String volumeGroupId;
+    private String volumeGroupStackId;
+    private MsoRequest msoRequest = new MsoRequest();
 
-	public DeleteVolumeGroupRequest() {
-		super();
-	}
+    public DeleteVolumeGroupRequest() {
+        super();
+    }
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
     public String getCloudOwner() {
         return cloudOwner;
@@ -58,42 +56,42 @@ public class DeleteVolumeGroupRequest extends VfRequestCommon {
         this.cloudOwner = cloudOwner;
     }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getVolumeGroupId() {
-		return volumeGroupId;
-	}
+    public String getVolumeGroupId() {
+        return volumeGroupId;
+    }
 
-	public void setVolumeGroupId(String volumeGroupId) {
-		this.volumeGroupId = volumeGroupId;
-	}
+    public void setVolumeGroupId(String volumeGroupId) {
+        this.volumeGroupId = volumeGroupId;
+    }
 
-	public String getVolumeGroupStackId() {
-		return volumeGroupStackId;
-	}
+    public String getVolumeGroupStackId() {
+        return volumeGroupStackId;
+    }
 
-	public void setVolumeGroupStackId(String volumeGroupStackId) {
-		this.volumeGroupStackId = volumeGroupStackId;
-	}
+    public void setVolumeGroupStackId(String volumeGroupStackId) {
+        this.volumeGroupStackId = volumeGroupStackId;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).appendSuper(super.toString()).append("cloudSiteId", cloudSiteId)
-				.append("tenantId", tenantId).append("volumeGroupId", volumeGroupId)
-				.append("volumeGroupStackId", volumeGroupStackId).append("msoRequest", msoRequest).toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).appendSuper(super.toString()).append("cloudSiteId", cloudSiteId)
+                .append("tenantId", tenantId).append("volumeGroupId", volumeGroupId)
+                .append("volumeGroupStackId", volumeGroupStackId).append("msoRequest", msoRequest).toString();
+    }
 }

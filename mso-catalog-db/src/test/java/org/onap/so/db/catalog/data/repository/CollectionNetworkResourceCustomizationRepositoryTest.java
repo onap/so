@@ -22,9 +22,7 @@ package org.onap.so.db.catalog.data.repository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
@@ -33,17 +31,18 @@ import org.onap.so.db.catalog.beans.CollectionNetworkResourceCustomization;
 public class CollectionNetworkResourceCustomizationRepositoryTest extends BaseTest {
     @Autowired
     private CollectionNetworkResourceCustomizationRepository cnrcRepo;
-    
+
     @Test
     public void findAllTest() throws Exception {
         List<CollectionNetworkResourceCustomization> cnrcList = cnrcRepo.findAll();
         Assert.assertFalse(CollectionUtils.isEmpty(cnrcList));
     }
-    
+
     @Test
     public void findOneByUuidTest() throws Exception {
-    	CollectionNetworkResourceCustomization cnrc = cnrcRepo.findOneByModelCustomizationUUID("3bdbb104-ffff-483e-9f8b-c095b3d3068c");
-    	Assert.assertTrue(cnrc != null);
-    	Assert.assertTrue("ExtVL 01".equals(cnrc.getModelInstanceName()));
+        CollectionNetworkResourceCustomization cnrc =
+                cnrcRepo.findOneByModelCustomizationUUID("3bdbb104-ffff-483e-9f8b-c095b3d3068c");
+        Assert.assertTrue(cnrc != null);
+        Assert.assertTrue("ExtVL 01".equals(cnrc.getModelInstanceName()));
     }
 }

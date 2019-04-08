@@ -25,11 +25,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -47,8 +45,8 @@ import org.springframework.core.env.Environment;
 @RunWith(MockitoJUnitRunner.class)
 public class CamundaTaskClientTest {
 
-	@Mock
-	private Environment env;
+    @Mock
+    private Environment env;
     private CamundaTaskClient testedObject = new CamundaTaskClient();
     private HttpClient httpClientMock;
     private static final String JSON_REQUEST = "{\"value1\": \"aaa\",\"value2\": \"bbb\"}";
@@ -61,7 +59,8 @@ public class CamundaTaskClientTest {
 
     @Before
     public void init() {
-    	when(env.getProperty(eq(CommonConstants.CAMUNDA_AUTH))).thenReturn("E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE");
+        when(env.getProperty(eq(CommonConstants.CAMUNDA_AUTH))).thenReturn(
+                "E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE");
         when(env.getProperty(eq(CommonConstants.ENCRYPTION_KEY_PROP))).thenReturn("aa3871669d893c7fb8abbcda31b88b4f");
         testedObject = new CamundaTaskClient();
         httpClientMock = mock(HttpClient.class);
@@ -75,8 +74,8 @@ public class CamundaTaskClientTest {
         testedObject.post(JSON_REQUEST);
         verify(httpClientMock).execute(httpPostCaptor.capture());
         checkUri(httpPostCaptor.getValue());
-        assertThat(httpPostCaptor.getValue().getEntity().getContentType().getValue()).
-                isEqualTo(CommonConstants.CONTENT_TYPE_JSON);
+        assertThat(httpPostCaptor.getValue().getEntity().getContentType().getValue())
+                .isEqualTo(CommonConstants.CONTENT_TYPE_JSON);
         assertThat(getJsonFromEntity(httpPostCaptor.getValue().getEntity())).isEqualTo(JSON_REQUEST);
     }
 
@@ -87,7 +86,8 @@ public class CamundaTaskClientTest {
         testedObject.post(JSON_REQUEST);
         verify(httpClientMock).execute(httpPostCaptor.capture());
         assertThat(httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)).isNotEmpty();
-        Assert.assertEquals("Basic YXBpaEJwbW46Y2FtdW5kYS1SMTUxMiE=",httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)[0].getValue());
+        Assert.assertEquals("Basic YXBpaEJwbW46Y2FtdW5kYS1SMTUxMiE=",
+                httpPostCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)[0].getValue());
     }
 
     @Test
@@ -106,7 +106,8 @@ public class CamundaTaskClientTest {
         testedObject.get();
         verify(httpClientMock).execute(httpGetCaptor.capture());
         assertThat(httpGetCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)).isNotEmpty();
-        Assert.assertEquals("Basic YXBpaEJwbW46Y2FtdW5kYS1SMTUxMiE=",httpGetCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)[0].getValue());
+        Assert.assertEquals("Basic YXBpaEJwbW46Y2FtdW5kYS1SMTUxMiE=",
+                httpGetCaptor.getValue().getHeaders(AUTHORIZATION_HEADER_NAME)[0].getValue());
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -127,8 +128,7 @@ public class CamundaTaskClientTest {
     }
 
     private String getJsonFromEntity(HttpEntity httpEntity) throws IOException {
-        BufferedReader rd = new BufferedReader(
-                new InputStreamReader(httpEntity.getContent()));
+        BufferedReader rd = new BufferedReader(new InputStreamReader(httpEntity.getContent()));
         StringBuilder result = new StringBuilder();
         String line;
         while ((line = rd.readLine()) != null) {

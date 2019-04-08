@@ -29,7 +29,6 @@ import static org.junit.Assert.assertTrue;
 import static org.hamcrest.Matchers.isIn;
 import java.util.Arrays;
 import java.util.Collections;
-
 import org.junit.Test;
 
 public class RollbackDataTest {
@@ -48,11 +47,11 @@ public class RollbackDataTest {
         data.put(TYPE_A, "key2", "value2");
         data.put(TYPE_B, "key3", "value3");
         // when, then
-        assertThat(data.toString(), isIn(Arrays.asList(
-                "[typeB{key3=value3},typeA{key1=value1, key2=value2}]",
-                "[typeB{key3=value3},typeA{key2=value2, key1=value1}]",
-                "[typeA{key1=value1, key2=value2},typeB{key3=value3}]",
-                "[typeA{key2=value2, key1=value1},typeB{key3=value3}]")));
+        assertThat(data.toString(),
+                isIn(Arrays.asList("[typeB{key3=value3},typeA{key1=value1, key2=value2}]",
+                        "[typeB{key3=value3},typeA{key2=value2, key1=value1}]",
+                        "[typeA{key1=value1, key2=value2},typeB{key3=value3}]",
+                        "[typeA{key2=value2, key1=value1},typeB{key3=value3}]")));
     }
 
     @Test

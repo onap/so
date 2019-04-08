@@ -26,19 +26,20 @@ package org.onap.so.openstack.exceptions;
  */
 public class MsoStackNotFound extends MsoOpenstackException {
 
-	/**
+    /**
      * Serialization id.
      */
     private static final long serialVersionUID = 7354069716354359246L;
 
     /**
-	 * Constructor to create a new MsoOpenstackException instance.
-	 * @param stack the stack name
-	 * @param tenant the tenant name
-	 * @param cloud the cloud name
-	 */
-	public MsoStackNotFound (String stack, String tenant, String cloud) {
-		// Set the detailed error as the Exception 'message'
-		super(404, "Not Found", "Stack " + stack + " does not exist in Cloud/Tenant " + cloud + "/" + tenant);
-	}
+     * Constructor to create a new MsoOpenstackException instance.
+     * 
+     * @param stack the stack name
+     * @param tenant the tenant name
+     * @param cloud the cloud name
+     */
+    public MsoStackNotFound(String stack, String tenant, String cloud) {
+        // Set the detailed error as the Exception 'message'
+        super(404, "Not Found", "Stack " + stack + " does not exist in Cloud/Tenant " + cloud + "/" + tenant);
+    }
 }

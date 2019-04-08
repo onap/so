@@ -25,7 +25,7 @@ import java.util.Map;
 
 /*
  * Map of actions to RequestActions
-*/
+ */
 public class RequestActionMap {
     private static final Map<String, String> actionMap;
 

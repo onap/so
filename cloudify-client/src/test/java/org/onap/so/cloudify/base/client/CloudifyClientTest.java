@@ -25,79 +25,83 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static org.junit.Assert.assertEquals;
-
 import org.apache.http.HttpStatus;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.onap.so.cloudify.v3.model.Execution;
-
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 public class CloudifyClientTest {
-	@Rule
-	public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
-	
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(wireMockConfig().dynamicPort());
 
-	@Test
-	public void clientCreate(){
-		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-				.withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}").withStatus(HttpStatus.SC_OK)));
-		int port = wireMockRule.port();
-		CloudifyClient cc = new CloudifyClient("http://localhost:"+port);
-		cc.setToken("token");
-		CloudifyRequest<Execution> crx = cc.get("/testUrl", Execution.class);
-		Execution x = crx.execute();
-		assertEquals("123", x.getId());
-	}
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-	@Test
-	public void clientCreateWithBadConnector(){
-		thrown.expect(CloudifyResponseException.class);
-		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-				.withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}").withStatus(HttpStatus.SC_OK)));
-		int port = wireMockRule.port();
-		CloudifyClientConnector ccc = new CloudifyClientConnector(){
-			@Override
-			public <T> CloudifyResponse request(CloudifyRequest<T> request) {
-				throw new CloudifyResponseException("test case", 401);
-			}}; 
-		CloudifyClient cc = new CloudifyClient("http://localhost:"+port, ccc);
-//		cc.setToken("token");
-		CloudifyRequest<Execution> crx = cc.get("/testUrl", Execution.class);
-		Execution x = crx.execute();
-	}
+    @Test
+    public void clientCreate() {
+        wireMockRule.stubFor(
+                get(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{\"id\": \"123\"}").withStatus(HttpStatus.SC_OK)));
+        int port = wireMockRule.port();
+        CloudifyClient cc = new CloudifyClient("http://localhost:" + port);
+        cc.setToken("token");
+        CloudifyRequest<Execution> crx = cc.get("/testUrl", Execution.class);
+        Execution x = crx.execute();
+        assertEquals("123", x.getId());
+    }
 
-	@Test
-	public void clientCreateWithBadConnectorAndToken(){
-		thrown.expect(CloudifyResponseException.class);
-		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-				.withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}").withStatus(HttpStatus.SC_OK)));
-		int port = wireMockRule.port();
-		CloudifyClientConnector ccc = new CloudifyClientConnector(){
-			@Override
-			public <T> CloudifyResponse request(CloudifyRequest<T> request) {
-				throw new CloudifyResponseException("test case", 401);
-			}}; 
-		CloudifyClient cc = new CloudifyClient("http://localhost:"+port, ccc);
-		cc.setToken("token");
-		CloudifyRequest<Execution> crx = cc.get("/testUrl", Execution.class);
-		Execution x = crx.execute();
-	}
+    @Test
+    public void clientCreateWithBadConnector() {
+        thrown.expect(CloudifyResponseException.class);
+        wireMockRule.stubFor(
+                get(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{\"id\": \"123\"}").withStatus(HttpStatus.SC_OK)));
+        int port = wireMockRule.port();
+        CloudifyClientConnector ccc = new CloudifyClientConnector() {
+            @Override
+            public <T> CloudifyResponse request(CloudifyRequest<T> request) {
+                throw new CloudifyResponseException("test case", 401);
+            }
+        };
+        CloudifyClient cc = new CloudifyClient("http://localhost:" + port, ccc);
+        // cc.setToken("token");
+        CloudifyRequest<Execution> crx = cc.get("/testUrl", Execution.class);
+        Execution x = crx.execute();
+    }
 
-	@Test
-	public void clientCreateWithTenant(){
-		wireMockRule.stubFor(get(urlPathEqualTo("/testUrl")).willReturn(aResponse()
-				.withHeader("Content-Type", "application/json").withBody("{\"id\": \"123\"}").withStatus(HttpStatus.SC_OK)));
-		int port = wireMockRule.port();
-		CloudifyClient cc = new CloudifyClient("http://localhost:"+port, "other_tenant");
-		cc.setToken("token");
-		cc.property("property", "value");
-		CloudifyRequest<Execution> crx = cc.get("/testUrl", Execution.class);
-		Execution x = crx.execute();
-		assertEquals("123", x.getId());
-	}
+    @Test
+    public void clientCreateWithBadConnectorAndToken() {
+        thrown.expect(CloudifyResponseException.class);
+        wireMockRule.stubFor(
+                get(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{\"id\": \"123\"}").withStatus(HttpStatus.SC_OK)));
+        int port = wireMockRule.port();
+        CloudifyClientConnector ccc = new CloudifyClientConnector() {
+            @Override
+            public <T> CloudifyResponse request(CloudifyRequest<T> request) {
+                throw new CloudifyResponseException("test case", 401);
+            }
+        };
+        CloudifyClient cc = new CloudifyClient("http://localhost:" + port, ccc);
+        cc.setToken("token");
+        CloudifyRequest<Execution> crx = cc.get("/testUrl", Execution.class);
+        Execution x = crx.execute();
+    }
+
+    @Test
+    public void clientCreateWithTenant() {
+        wireMockRule.stubFor(
+                get(urlPathEqualTo("/testUrl")).willReturn(aResponse().withHeader("Content-Type", "application/json")
+                        .withBody("{\"id\": \"123\"}").withStatus(HttpStatus.SC_OK)));
+        int port = wireMockRule.port();
+        CloudifyClient cc = new CloudifyClient("http://localhost:" + port, "other_tenant");
+        cc.setToken("token");
+        cc.property("property", "value");
+        CloudifyRequest<Execution> crx = cc.get("/testUrl", Execution.class);
+        Execution x = crx.execute();
+        assertEquals("123", x.getId());
+    }
 
 }

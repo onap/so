@@ -23,9 +23,7 @@ package org.onap.so.client.graphinventory;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.ws.rs.core.Response;
-
 import org.onap.so.client.ResponseExceptionMapper;
 import org.onap.so.client.RestClientSSL;
 import org.onap.so.client.RestProperties;
@@ -34,44 +32,45 @@ import org.onap.so.utils.TargetEntity;
 
 public abstract class GraphInventoryRestClient extends RestClientSSL {
 
-	protected static final GraphInventoryCommonObjectMapperProvider standardProvider = new GraphInventoryCommonObjectMapperProvider();
+    protected static final GraphInventoryCommonObjectMapperProvider standardProvider =
+            new GraphInventoryCommonObjectMapperProvider();
 
-	protected final GraphInventoryPatchConverter patchConverter = new GraphInventoryPatchConverter();
-	
-	protected GraphInventoryRestClient(RestProperties props, URI uri) {
-		super(props, Optional.of(uri));
-	}
+    protected final GraphInventoryPatchConverter patchConverter = new GraphInventoryPatchConverter();
 
-	@Override
+    protected GraphInventoryRestClient(RestProperties props, URI uri) {
+        super(props, Optional.of(uri));
+    }
+
+    @Override
     public abstract TargetEntity getTargetEntity();
 
-	@Override
-	protected abstract void initializeHeaderMap(Map<String, String> headerMap);
+    @Override
+    protected abstract void initializeHeaderMap(Map<String, String> headerMap);
 
-	@Override
-	protected abstract Optional<ResponseExceptionMapper> addResponseExceptionMapper();
-	
-	@Override
-	protected CommonObjectMapperProvider getCommonObjectMapperProvider() {
-		return standardProvider;
-	}
+    @Override
+    protected abstract Optional<ResponseExceptionMapper> addResponseExceptionMapper();
 
-	@Override
-	public Response patch(Object obj) {
-		return super.patch(convertToPatchFormat(obj));
-	}
+    @Override
+    protected CommonObjectMapperProvider getCommonObjectMapperProvider() {
+        return standardProvider;
+    }
 
-	@Override
-	public <T> T patch(Object obj, Class<T> resultClass) {
-		return super.patch(convertToPatchFormat(obj), resultClass);
-	}
-	
-	protected GraphInventoryPatchConverter getPatchConverter() {
-		return this.patchConverter;
-	}
-	
-	protected String convertToPatchFormat(Object obj) {
-		return getPatchConverter().convertPatchFormat(obj);
-	}
+    @Override
+    public Response patch(Object obj) {
+        return super.patch(convertToPatchFormat(obj));
+    }
+
+    @Override
+    public <T> T patch(Object obj, Class<T> resultClass) {
+        return super.patch(convertToPatchFormat(obj), resultClass);
+    }
+
+    protected GraphInventoryPatchConverter getPatchConverter() {
+        return this.patchConverter;
+    }
+
+    protected String convertToPatchFormat(Object obj) {
+        return getPatchConverter().convertPatchFormat(obj);
+    }
 
 }

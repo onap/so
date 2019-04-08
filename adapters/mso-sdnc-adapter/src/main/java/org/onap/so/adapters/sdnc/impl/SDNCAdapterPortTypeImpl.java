@@ -25,63 +25,60 @@ package org.onap.so.adapters.sdnc.impl;
 import javax.annotation.PostConstruct;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletResponse;
-
 import org.onap.so.adapters.sdnc.SDNCAdapterPortType;
 import org.onap.so.adapters.sdnc.SDNCAdapterRequest;
 import org.onap.so.adapters.sdnc.SDNCAdapterResponse;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-//BPEL SDNCAdapter SOAP Web Service implementation
-@WebService(serviceName = "SDNCAdapterService", endpointInterface = "org.onap.so.adapters.sdnc.SDNCAdapterPortType", targetNamespace = "http://org.onap/workflow/sdnc/adapter/wsdl/v1")
+// BPEL SDNCAdapter SOAP Web Service implementation
+@WebService(serviceName = "SDNCAdapterService", endpointInterface = "org.onap.so.adapters.sdnc.SDNCAdapterPortType",
+        targetNamespace = "http://org.onap/workflow/sdnc/adapter/wsdl/v1")
 @Component
 public class SDNCAdapterPortTypeImpl implements SDNCAdapterPortType {
 
 
 
-	private static Logger logger = LoggerFactory.getLogger(SDNCAdapterPortTypeImpl.class);
-
-	
-	@Autowired
-	private SDNCRestClient sdncClient;
-	
-	@PostConstruct
-	public void init () {
-		logger.info("{} {} {}", MessageEnum.RA_INIT_SDNC_ADAPTER.toString(), "SDNC", "SDNCAdapterPortType");
-	}
-
-	/**
-	 * Health Check web method.  Does nothing but return to show the adapter is deployed.
-	 */
-	@Override
-	public void healthCheck ()
-	{
-		logger.debug("Health check call in SDNC Adapter");
-	}
+    private static Logger logger = LoggerFactory.getLogger(SDNCAdapterPortTypeImpl.class);
 
 
-	@Override
-	public SDNCAdapterResponse sdncAdapter(SDNCAdapterRequest bpelRequest) {
-		String bpelReqId = bpelRequest.getRequestHeader().getRequestId();
-		String callbackUrl = bpelRequest.getRequestHeader().getCallbackUrl();
-		try {
-			sdncClient.executeRequest(bpelRequest);
-		}
-		catch (Exception e){
-			String respMsg = "Error sending request to SDNC. Failed to start SDNC Client thread " + e.getMessage();
-			logger.error("{} {} {} {}", MessageEnum.RA_SEND_REQUEST_SDNC_ERR.toString(), "SDNC",
-				ErrorCode.DataError.getValue(), respMsg, e);
+    @Autowired
+    private SDNCRestClient sdncClient;
 
-			SDNCResponse sdncResp = new SDNCResponse(bpelReqId);
-			sdncResp.setRespCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-			sdncResp.setRespMsg(respMsg);
-			sdncClient.sendRespToBpel(callbackUrl, sdncResp);
-		}
-		return (new SDNCAdapterResponse());
-	}
+    @PostConstruct
+    public void init() {
+        logger.info("{} {} {}", MessageEnum.RA_INIT_SDNC_ADAPTER.toString(), "SDNC", "SDNCAdapterPortType");
+    }
+
+    /**
+     * Health Check web method. Does nothing but return to show the adapter is deployed.
+     */
+    @Override
+    public void healthCheck() {
+        logger.debug("Health check call in SDNC Adapter");
+    }
+
+
+    @Override
+    public SDNCAdapterResponse sdncAdapter(SDNCAdapterRequest bpelRequest) {
+        String bpelReqId = bpelRequest.getRequestHeader().getRequestId();
+        String callbackUrl = bpelRequest.getRequestHeader().getCallbackUrl();
+        try {
+            sdncClient.executeRequest(bpelRequest);
+        } catch (Exception e) {
+            String respMsg = "Error sending request to SDNC. Failed to start SDNC Client thread " + e.getMessage();
+            logger.error("{} {} {} {}", MessageEnum.RA_SEND_REQUEST_SDNC_ERR.toString(), "SDNC",
+                    ErrorCode.DataError.getValue(), respMsg, e);
+
+            SDNCResponse sdncResp = new SDNCResponse(bpelReqId);
+            sdncResp.setRespCode(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            sdncResp.setRespMsg(respMsg);
+            sdncClient.sendRespToBpel(callbackUrl, sdncResp);
+        }
+        return (new SDNCAdapterResponse());
+    }
 }

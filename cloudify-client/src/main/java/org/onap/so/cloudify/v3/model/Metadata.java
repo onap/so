@@ -21,37 +21,29 @@
 package org.onap.so.cloudify.v3.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.io.Serializable;
 
 /**
- * This class represents a generic Cloudify response to a GET command.
- * These responses have a common format:
- * {
- *     "items": [
- *          List of objects of the requested type
- *     ],
- *     "metadata": {
- *     }
- * }
+ * This class represents a generic Cloudify response to a GET command. These responses have a common format: { "items":
+ * [ List of objects of the requested type ], "metadata": { } }
  * 
  * @author jc1348
  *
  */
 public class Metadata implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	@JsonProperty("pagination")
-	private Pagination pagination;
-	
+    private static final long serialVersionUID = 1L;
 
-	public Pagination getPagination() {
-		return pagination;
-	}
+    @JsonProperty("pagination")
+    private Pagination pagination;
 
-	public void setPagination(Pagination pagination) {
-		this.pagination = pagination;
-	}
+
+    public Pagination getPagination() {
+        return pagination;
+    }
+
+    public void setPagination(Pagination pagination) {
+        this.pagination = pagination;
+    }
 
 }

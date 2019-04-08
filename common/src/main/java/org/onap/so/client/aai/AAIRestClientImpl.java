@@ -45,8 +45,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     public List<Pserver> getPhysicalServerByVnfId(String vnfId) throws IOException {
         List<AAIResourceUri> startNodes = new ArrayList<>();
         startNodes.add(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId));
-        String jsonInput = new AAIQueryClient()
-                .query(Format.RESOURCE, new CustomQuery(startNodes, PSERVER_VNF_QUERY));
+        String jsonInput = new AAIQueryClient().query(Format.RESOURCE, new CustomQuery(startNodes, PSERVER_VNF_QUERY));
 
         return this.getListOfPservers(jsonInput);
 
@@ -54,9 +53,8 @@ public class AAIRestClientImpl implements AAIRestClientI {
 
     protected List<Pserver> getListOfPservers(String jsonInput) throws IOException {
         ObjectMapper mapper = new AAICommonObjectMapperProvider().getMapper();
-        Results<Map<String, Pserver>> resultsFromJson = mapper.readValue(jsonInput,
-                new TypeReference<Results<Map<String, Pserver>>>() {
-                });
+        Results<Map<String, Pserver>> resultsFromJson =
+                mapper.readValue(jsonInput, new TypeReference<Results<Map<String, Pserver>>>() {});
         List<Pserver> results = new ArrayList<>();
         for (Map<String, Pserver> m : resultsFromJson.getResult()) {
             results.add(m.get("pserver"));
@@ -68,8 +66,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
     public void updateMaintenceFlagVnfId(String vnfId, boolean inMaint) {
         GenericVnf genericVnf = new GenericVnf();
         genericVnf.setInMaint(inMaint);
-        new AAIResourcesClient()
-                .update(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId), genericVnf);
+        new AAIResourcesClient().update(AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId), genericVnf);
 
     }
 
@@ -81,8 +78,8 @@ public class AAIRestClientImpl implements AAIRestClientI {
 
     @Override
     public Optional<Pnf> getPnfByName(String pnfId) {
-        Response response = new AAIResourcesClient()
-                .getFullResponse(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId));
+        Response response =
+                new AAIResourcesClient().getFullResponse(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId));
         if (response.getStatus() != 200) {
             return Optional.empty();
         } else {
@@ -92,7 +89,7 @@ public class AAIRestClientImpl implements AAIRestClientI {
 
     @Override
     public void createPnf(String pnfId, Pnf pnf) {
-        new AAIResourcesClient()
-                .createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId), Optional.of(pnf));
+        new AAIResourcesClient().createIfNotExists(AAIUriFactory.createResourceUri(AAIObjectType.PNF, pnfId),
+                Optional.of(pnf));
     }
 }

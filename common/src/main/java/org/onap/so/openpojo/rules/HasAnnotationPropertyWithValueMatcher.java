@@ -25,56 +25,59 @@ package org.onap.so.openpojo.rules;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;
-
 import com.openpojo.reflection.PojoField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class HasAnnotationPropertyWithValueMatcher<T extends PojoField> extends TypeSafeDiagnosingMatcher<T> {
-	private Logger logger = LoggerFactory.getLogger(HasAnnotationPropertyWithValueMatcher.class);
-	private final String attribute;
-	private final Matcher<?> annotationMatcher;
-	private final Class<? extends Annotation> annotationClass;
-	public HasAnnotationPropertyWithValueMatcher(Class<? extends Annotation> clazz, String attribute, final Matcher<?> annotationMatcher) {
-		this.attribute = attribute;
-		this.annotationMatcher = annotationMatcher;
-		this.annotationClass = clazz;
-	}
+    private Logger logger = LoggerFactory.getLogger(HasAnnotationPropertyWithValueMatcher.class);
+    private final String attribute;
+    private final Matcher<?> annotationMatcher;
+    private final Class<? extends Annotation> annotationClass;
 
-	@Override
-	protected boolean matchesSafely(T obj, final Description mismatchDescription) {
-		final PojoField temp = (PojoField)obj;
-		final Method method;
-		try {
-			Annotation a = temp.getAnnotation(this.annotationClass);
-			if (a == null) {
-				mismatchDescription.appendText("does not have annotation ").appendText(this.annotationClass.getSimpleName());
-				return false;
-			}
-			method = a.getClass().getMethod(attribute);
-			final Object result = method.invoke(a);
-			if (!this.annotationMatcher.matches(result)) {
-				this.annotationMatcher.describeMismatch(result, mismatchDescription);
-				return false;
-			}
-		} catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			mismatchDescription.appendText("does not have property ").appendText(attribute);
-			logger.debug("Error occured", e);
-			return false;
-		}
-		return true;
-	}
+    public HasAnnotationPropertyWithValueMatcher(Class<? extends Annotation> clazz, String attribute,
+            final Matcher<?> annotationMatcher) {
+        this.attribute = attribute;
+        this.annotationMatcher = annotationMatcher;
+        this.annotationClass = clazz;
+    }
 
-	@Override
-	public void describeTo(final Description description) {
-		// Intentionally left blank.
-	}
+    @Override
+    protected boolean matchesSafely(T obj, final Description mismatchDescription) {
+        final PojoField temp = (PojoField) obj;
+        final Method method;
+        try {
+            Annotation a = temp.getAnnotation(this.annotationClass);
+            if (a == null) {
+                mismatchDescription.appendText("does not have annotation ")
+                        .appendText(this.annotationClass.getSimpleName());
+                return false;
+            }
+            method = a.getClass().getMethod(attribute);
+            final Object result = method.invoke(a);
+            if (!this.annotationMatcher.matches(result)) {
+                this.annotationMatcher.describeMismatch(result, mismatchDescription);
+                return false;
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            mismatchDescription.appendText("does not have property ").appendText(attribute);
+            logger.debug("Error occured", e);
+            return false;
+        }
+        return true;
+    }
 
-	public static <T extends PojoField> Matcher<T> hasAnnotationPropertyWithValue(Class<? extends Annotation> clazz, String attribute, final Matcher<?> annotationMatcher) {
-		return new HasAnnotationPropertyWithValueMatcher<T>(clazz, attribute, annotationMatcher);
-	}
+    @Override
+    public void describeTo(final Description description) {
+        // Intentionally left blank.
+    }
+
+    public static <T extends PojoField> Matcher<T> hasAnnotationPropertyWithValue(Class<? extends Annotation> clazz,
+            String attribute, final Matcher<?> annotationMatcher) {
+        return new HasAnnotationPropertyWithValueMatcher<T>(clazz, attribute, annotationMatcher);
+    }
 }

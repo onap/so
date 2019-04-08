@@ -22,86 +22,83 @@ package org.onap.so.adapters.vnfrest;
 
 
 import java.io.Serializable;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.entity.MsoRequest;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("deleteVfModuleRequest")
 @XmlRootElement(name = "deleteVfModuleRequest")
 public class DeleteVfModuleRequest extends VfRequestCommon implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8504083539107392561L;
-	private String cloudSiteId;
-	private String cloudOwner;
-	private String tenantId;
-	private String vnfId;
-	private String vfModuleId;
-	private String vfModuleStackId;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8504083539107392561L;
+    private String cloudSiteId;
+    private String cloudOwner;
+    private String tenantId;
+    private String vnfId;
+    private String vfModuleId;
+    private String vfModuleStackId;
 
-	private MsoRequest msoRequest = new MsoRequest();
+    private MsoRequest msoRequest = new MsoRequest();
 
-	public DeleteVfModuleRequest() {
-		super();
-	}
+    public DeleteVfModuleRequest() {
+        super();
+    }
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
-	public String getCloudOwner() {
-		return cloudOwner;
-	}
+    public String getCloudOwner() {
+        return cloudOwner;
+    }
 
-	public void setCloudOwner(String cloudOwner) {
-		this.cloudOwner = cloudOwner;
-	}
+    public void setCloudOwner(String cloudOwner) {
+        this.cloudOwner = cloudOwner;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getVnfId() {
-		return vnfId;
-	}
+    public String getVnfId() {
+        return vnfId;
+    }
 
-	public void setVnfId(String vnfId) {
-		this.vnfId = vnfId;
-	}
+    public void setVnfId(String vnfId) {
+        this.vnfId = vnfId;
+    }
 
-	public String getVfModuleId() {
-		return vfModuleId;
-	}
+    public String getVfModuleId() {
+        return vfModuleId;
+    }
 
-	public void setVfModuleId(String vfModuleId) {
-		this.vfModuleId = vfModuleId;
-	}
+    public void setVfModuleId(String vfModuleId) {
+        this.vfModuleId = vfModuleId;
+    }
 
-	public String getVfModuleStackId() {
-		return vfModuleStackId;
-	}
+    public String getVfModuleStackId() {
+        return vfModuleStackId;
+    }
 
-	public void setVfModuleStackId(String vfModuleStackId) {
-		this.vfModuleStackId = vfModuleStackId;
-	}
+    public void setVfModuleStackId(String vfModuleStackId) {
+        this.vfModuleStackId = vfModuleStackId;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
 }

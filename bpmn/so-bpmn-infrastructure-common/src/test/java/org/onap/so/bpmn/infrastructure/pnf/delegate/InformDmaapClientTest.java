@@ -27,7 +27,6 @@ import org.camunda.bpm.engine.runtime.MessageCorrelationBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -74,7 +73,8 @@ public class InformDmaapClientTest {
 
     private DelegateExecution mockDelegateExecution() {
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
-        when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID))).thenReturn("testPnfCorrelationId");
+        when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID)))
+                .thenReturn("testPnfCorrelationId");
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
         ProcessEngineServices processEngineServices = mock(ProcessEngineServices.class);
         when(delegateExecution.getProcessEngineServices()).thenReturn(processEngineServices);

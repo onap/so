@@ -23,58 +23,59 @@ package org.onap.so.adapters.tenantrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.entity.MsoRequest;
 
 /**
- * Javabean representing the rollback criteria following a "Create Tenant"
- * operation.  This structure can be passed back to the "Rollback Tenant"
- * operation to undo the effects of the create.
+ * Javabean representing the rollback criteria following a "Create Tenant" operation. This structure can be passed back
+ * to the "Rollback Tenant" operation to undo the effects of the create.
  *
  *
  */
 
 @XmlRootElement(name = "rollbackTenantRequest")
 public class TenantRollback extends TenantRequestCommon {
-	private static final long serialVersionUID = -4540810517355635993L;
-	private String tenantId;
-	private String cloudId;
-	private boolean tenantCreated = false;
-	private MsoRequest msoRequest;
+    private static final long serialVersionUID = -4540810517355635993L;
+    private String tenantId;
+    private String cloudId;
+    private boolean tenantCreated = false;
+    private MsoRequest msoRequest;
 
-	public TenantRollback() {}
-	
-	public String getTenantId() {
-		return tenantId;
-	}
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public TenantRollback() {}
 
-	public String getCloudId() {
-		return cloudId;
-	}
-	public void setCloudId(String cloudId) {
-		this.cloudId = cloudId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public boolean getTenantCreated() {
-		return tenantCreated;
-	}
-	public void setTenantCreated(boolean tenantCreated) {
-		this.tenantCreated = tenantCreated;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
-	public void setMsoRequest (MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public String getCloudId() {
+        return cloudId;
+    }
 
-	@Override
+    public void setCloudId(String cloudId) {
+        this.cloudId = cloudId;
+    }
+
+    public boolean getTenantCreated() {
+        return tenantCreated;
+    }
+
+    public void setTenantCreated(boolean tenantCreated) {
+        this.tenantCreated = tenantCreated;
+    }
+
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
+
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
+
+    @Override
     public String toString() {
-		return "VnfRollback: cloud=" + cloudId + ", tenant=" + tenantId +
-				", tenantCreated=" + tenantCreated;
-	}
+        return "VnfRollback: cloud=" + cloudId + ", tenant=" + tenantId + ", tenantCreated=" + tenantCreated;
+    }
 }

@@ -21,32 +21,30 @@
 package org.onap.so.client.restproperties;
 
 import static org.junit.Assert.assertEquals;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.junit.Test;
 
 public class PolicyRestPropertiesImplTest {
-	
-	
-	@Test
-	public void getEndpointTest() throws MalformedURLException {
-		assertEquals("policy.endpoint", PolicyRestPropertiesImpl.POLICY_ENDPOINT);
-	}
-	
-	@Test
-	public void getEnvironmentTest() {
-		assertEquals("policy.environment", PolicyRestPropertiesImpl.POLICY_ENVIRONMENT);
-	}
-	
-	@Test
-	public void getClientAuthTest() {
-		assertEquals("policy.auth", PolicyRestPropertiesImpl.POLICY_AUTH);
-	}
-	
-	@Test
-	public void getAuthTest() {
-		assertEquals("policy.client.auth", PolicyRestPropertiesImpl.POLICY_CLIENT_AUTH);
-	}
+
+
+    @Test
+    public void getEndpointTest() throws MalformedURLException {
+        assertEquals("policy.endpoint", PolicyRestPropertiesImpl.POLICY_ENDPOINT);
+    }
+
+    @Test
+    public void getEnvironmentTest() {
+        assertEquals("policy.environment", PolicyRestPropertiesImpl.POLICY_ENVIRONMENT);
+    }
+
+    @Test
+    public void getClientAuthTest() {
+        assertEquals("policy.auth", PolicyRestPropertiesImpl.POLICY_AUTH);
+    }
+
+    @Test
+    public void getAuthTest() {
+        assertEquals("policy.client.auth", PolicyRestPropertiesImpl.POLICY_CLIENT_AUTH);
+    }
 }

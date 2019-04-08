@@ -19,10 +19,10 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -30,24 +30,26 @@ import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class DeleteVolumeGroupBBTest extends BaseBPMNTest {
-	@Test
-	public void sunnyDayDeleteVolumeGroup_Test() throws InterruptedException {
-		mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupHeatStackId", "UpdateVolumeGroupAAI", "DeleteVolumeGroupBB_End");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void sunnyDayDeleteVolumeGroup_Test() throws InterruptedException {
+        mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter",
+                "VnfAdapter", "UpdateVolumeGroupHeatStackId", "UpdateVolumeGroupAAI", "DeleteVolumeGroupBB_End");
+        assertThat(pi).isEnded();
+    }
 
-	@Test
-	public void rainyDayDeleteVolumeGroup_Test() throws Exception {
-		mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks).updateOrchestrationStatusAssignedVolumeGroup(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter", "VnfAdapter", "UpdateVolumeGroupHeatStackId", "UpdateVolumeGroupAAI")
-				.hasNotPassed("DeleteVolumeGroupBB_End");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void rainyDayDeleteVolumeGroup_Test() throws Exception {
+        mockSubprocess("VnfAdapter", "Mocked VnfAdapter", "GenericStub");
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiUpdateTasks)
+                .updateOrchestrationStatusAssignedVolumeGroup(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeleteVolumeGroupBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("DeleteVolumeGroupBB_Start", "DeleteVolumeGroupVnfAdapter",
+                "VnfAdapter", "UpdateVolumeGroupHeatStackId", "UpdateVolumeGroupAAI")
+                .hasNotPassed("DeleteVolumeGroupBB_End");
+        assertThat(pi).isEnded();
+    }
 }

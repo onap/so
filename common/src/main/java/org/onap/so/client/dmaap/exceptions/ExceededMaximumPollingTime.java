@@ -17,18 +17,18 @@
  * limitations under the License.
  * ============LICENSE_END=========================================================
  */
- 
+
 package org.onap.so.client.dmaap.exceptions;
 
-public class ExceededMaximumPollingTime extends RuntimeException  {
+public class ExceededMaximumPollingTime extends RuntimeException {
 
-	private static final long serialVersionUID = 2331207691092906423L;
+    private static final long serialVersionUID = 2331207691092906423L;
 
-	public ExceededMaximumPollingTime() {
-		super();
-	}
-	
-	public ExceededMaximumPollingTime(String message) {
-		super(message);
-	}
+    public ExceededMaximumPollingTime() {
+        super();
+    }
+
+    public ExceededMaximumPollingTime(String message) {
+        super(message);
+    }
 }

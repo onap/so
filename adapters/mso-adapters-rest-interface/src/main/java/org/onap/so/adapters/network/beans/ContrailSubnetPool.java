@@ -24,32 +24,32 @@ package org.onap.so.adapters.network.beans;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContrailSubnetPool {
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_start")
-	private String start;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_end")
-	private String end;
 
-	public String getStart() {
-		return start;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_start")
+    private String start;
 
-	public void setStart(String start) {
-		this.start = start;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools_end")
+    private String end;
 
-	public String getEnd() {
-		return end;
-	}
+    public String getStart() {
+        return start;
+    }
 
-	public void setEnd(String end) {
-		this.end = end;
-	}
+    public void setStart(String start) {
+        this.start = start;
+    }
 
-	@Override
-	public String toString() {
-		return "ContrailSubnetPool [start=" + start + ", end=" + end + "]";
-	}
-	
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    @Override
+    public String toString() {
+        return "ContrailSubnetPool [start=" + start + ", end=" + end + "]";
+    }
+
 }

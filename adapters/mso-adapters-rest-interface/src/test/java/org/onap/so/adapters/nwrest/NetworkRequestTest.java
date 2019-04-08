@@ -21,21 +21,20 @@
 package org.onap.so.adapters.nwrest;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 public class NetworkRequestTest {
 
-	
-	@Test
-	public void isSynchronousTrue() {
-		CreateNetworkRequest networkResponse = new CreateNetworkRequest();
-		assertEquals(true, networkResponse.isSynchronous());
-		//flip synchronous to false in the background
-		networkResponse.setNotificationUrl("testtest");
-		assertEquals(false, networkResponse.isSynchronous());
-		networkResponse.setNotificationUrl("");
-		assertEquals(true, networkResponse.isSynchronous());
-	}
-	
+
+    @Test
+    public void isSynchronousTrue() {
+        CreateNetworkRequest networkResponse = new CreateNetworkRequest();
+        assertEquals(true, networkResponse.isSynchronous());
+        // flip synchronous to false in the background
+        networkResponse.setNotificationUrl("testtest");
+        assertEquals(false, networkResponse.isSynchronous());
+        networkResponse.setNotificationUrl("");
+        assertEquals(true, networkResponse.isSynchronous());
+    }
+
 }

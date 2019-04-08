@@ -22,7 +22,7 @@ package org.onap.so.client.graphinventory.exceptions;
 
 public class BulkProcessFailed extends Exception {
 
-	public BulkProcessFailed(String message) {
-		super(message);
-	}
+    public BulkProcessFailed(String message) {
+        super(message);
+    }
 }

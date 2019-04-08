@@ -24,9 +24,12 @@ import org.onap.so.db.catalog.beans.ExternalServiceToInternalService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "externalServiceToInternalService", path = "externalServiceToInternalService")
+@RepositoryRestResource(collectionResourceRel = "externalServiceToInternalService",
+        path = "externalServiceToInternalService")
 public interface ExternalServiceToInternalServiceRepository
-		extends JpaRepository<ExternalServiceToInternalService, Integer> {
-	ExternalServiceToInternalService findByServiceName(String serviceName);
-	ExternalServiceToInternalService findByServiceNameAndSubscriptionServiceType(String serviceName , String subscriptionServiceType);
+        extends JpaRepository<ExternalServiceToInternalService, Integer> {
+    ExternalServiceToInternalService findByServiceName(String serviceName);
+
+    ExternalServiceToInternalService findByServiceNameAndSubscriptionServiceType(String serviceName,
+            String subscriptionServiceType);
 }

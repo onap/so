@@ -38,29 +38,29 @@ public class NsScaleParameters {
     /**
      * @return Returns the scaleNsByStepsData.
      */
-	public List<ScaleNsByStepsData> getScaleNsByStepsData() {
-		return scaleNsByStepsData;
-	}
+    public List<ScaleNsByStepsData> getScaleNsByStepsData() {
+        return scaleNsByStepsData;
+    }
 
-	/**
-	 * @param scaleNsByStepsData The scaleNsByStepsData to set.
-	 */
-	public void setScaleNsByStepsData(List<ScaleNsByStepsData> scaleNsByStepsData) {
-		this.scaleNsByStepsData = scaleNsByStepsData;
-	}
+    /**
+     * @param scaleNsByStepsData The scaleNsByStepsData to set.
+     */
+    public void setScaleNsByStepsData(List<ScaleNsByStepsData> scaleNsByStepsData) {
+        this.scaleNsByStepsData = scaleNsByStepsData;
+    }
 
-	/**
-	 * @return Returns the scale Type.
-	 */
-	public String getScaleType() {
-		return scaleType;
-	}
+    /**
+     * @return Returns the scale Type.
+     */
+    public String getScaleType() {
+        return scaleType;
+    }
 
-	/**
-	 * @param scaleType The scaleType to set.
-	 */
-	public void setScaleType(String scaleType) {
-		this.scaleType = scaleType;
-	}
+    /**
+     * @param scaleType The scaleType to set.
+     */
+    public void setScaleType(String scaleType) {
+        this.scaleType = scaleType;
+    }
 
 }

@@ -21,146 +21,144 @@
 package org.onap.so.db.catalog.beans.macro;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
 @Table(name = "rainy_day_handler_macro")
 public class RainyDayHandlerStatus implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-	@BusinessKey
-	@Column(name = "FLOW_NAME")
-	private String flowName;
+    @BusinessKey
+    @Column(name = "FLOW_NAME")
+    private String flowName;
 
-	@BusinessKey
-	@Column(name = "SERVICE_TYPE")
-	private String serviceType;
+    @BusinessKey
+    @Column(name = "SERVICE_TYPE")
+    private String serviceType;
 
-	@BusinessKey
-	@Column(name = "VNF_TYPE")
-	private String vnfType;
+    @BusinessKey
+    @Column(name = "VNF_TYPE")
+    private String vnfType;
 
-	@BusinessKey
-	@Column(name = "ERROR_CODE")
-	private String errorCode;
+    @BusinessKey
+    @Column(name = "ERROR_CODE")
+    private String errorCode;
 
-	@BusinessKey
-	@Column(name = "WORK_STEP")
-	private String workStep;
+    @BusinessKey
+    @Column(name = "WORK_STEP")
+    private String workStep;
 
-	@BusinessKey
-	@Column(name = "POLICY")
-	private String policy;
-	
-	@Column(name = "SECONDARY_POLICY")
-	private String secondaryPolicy;
+    @BusinessKey
+    @Column(name = "POLICY")
+    private String policy;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("flowName", flowName)
-				.append("serviceType", serviceType).append("vnfType", vnfType).append("errorCode", errorCode)
-				.append("workStep", workStep).append("policy", policy).append("secondaryPolicy",secondaryPolicy).toString();
-	}
+    @Column(name = "SECONDARY_POLICY")
+    private String secondaryPolicy;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof RainyDayHandlerStatus)) {
-			return false;
-		}
-		RainyDayHandlerStatus castOther = (RainyDayHandlerStatus) other;
-		return new EqualsBuilder().append(flowName, castOther.flowName).append(serviceType, castOther.serviceType)
-				.append(vnfType, castOther.vnfType).append(errorCode, castOther.errorCode)
-				.append(workStep, castOther.workStep).append(policy, castOther.policy).isEquals();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("flowName", flowName)
+                .append("serviceType", serviceType).append("vnfType", vnfType).append("errorCode", errorCode)
+                .append("workStep", workStep).append("policy", policy).append("secondaryPolicy", secondaryPolicy)
+                .toString();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(flowName).append(serviceType).append(vnfType).append(errorCode)
-				.append(workStep).append(policy).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof RainyDayHandlerStatus)) {
+            return false;
+        }
+        RainyDayHandlerStatus castOther = (RainyDayHandlerStatus) other;
+        return new EqualsBuilder().append(flowName, castOther.flowName).append(serviceType, castOther.serviceType)
+                .append(vnfType, castOther.vnfType).append(errorCode, castOther.errorCode)
+                .append(workStep, castOther.workStep).append(policy, castOther.policy).isEquals();
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(flowName).append(serviceType).append(vnfType).append(errorCode)
+                .append(workStep).append(policy).toHashCode();
+    }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getFlowName() {
-		return flowName;
-	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public void setFlowName(String flowName) {
-		this.flowName = flowName;
-	}
+    public String getFlowName() {
+        return flowName;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public String getVnfType() {
-		return vnfType;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public void setVnfType(String vnfType) {
-		this.vnfType = vnfType;
-	}
+    public String getVnfType() {
+        return vnfType;
+    }
 
-	public String getErrorCode() {
-		return errorCode;
-	}
+    public void setVnfType(String vnfType) {
+        this.vnfType = vnfType;
+    }
 
-	public void setErrorCode(String errorCode) {
-		this.errorCode = errorCode;
-	}
+    public String getErrorCode() {
+        return errorCode;
+    }
 
-	public String getWorkStep() {
-		return workStep;
-	}
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
 
-	public void setWorkStep(String workStep) {
-		this.workStep = workStep;
-	}
+    public String getWorkStep() {
+        return workStep;
+    }
 
-	public String getPolicy() {
-		return policy;
-	}
+    public void setWorkStep(String workStep) {
+        this.workStep = workStep;
+    }
 
-	public void setPolicy(String policy) {
-		this.policy = policy;
-	}
-	
-	public String getSecondaryPolicy() {
-		return secondaryPolicy;
-	}
-	
-	public void setSecondaryPolicy(String secondaryPolicy) {
-		this.secondaryPolicy = secondaryPolicy;
-	}
+    public String getPolicy() {
+        return policy;
+    }
+
+    public void setPolicy(String policy) {
+        this.policy = policy;
+    }
+
+    public String getSecondaryPolicy() {
+        return secondaryPolicy;
+    }
+
+    public void setSecondaryPolicy(String secondaryPolicy) {
+        this.secondaryPolicy = secondaryPolicy;
+    }
 }

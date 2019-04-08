@@ -27,11 +27,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 /**
  * Class used to create data object and serialize it to JSON which the BPEL macro flow understands.
  */
-public class CamundaMacroRequestSerializer  {
+public class CamundaMacroRequestSerializer {
 
-    private CamundaMacroRequestSerializer(){}
+    private CamundaMacroRequestSerializer() {}
 
-    public static String getJsonRequest(String requestId, String action, String serviceInstanceId)throws JsonProcessingException{
+    public static String getJsonRequest(String requestId, String action, String serviceInstanceId)
+            throws JsonProcessingException {
         CamundaMacroRequest macroRequest = new CamundaMacroRequest();
         macroRequest.setAction(getCamundaInput(action));
         macroRequest.setRequestId(getCamundaInput(requestId));
@@ -41,7 +42,7 @@ public class CamundaMacroRequestSerializer  {
         return mapper.writeValueAsString(macroRequest);
     }
 
-    private static CamundaInput getCamundaInput(String value){
+    private static CamundaInput getCamundaInput(String value) {
         CamundaInput input = new CamundaInput();
         input.setType("String");
         input.setValue(value);

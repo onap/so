@@ -31,7 +31,6 @@ import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 
@@ -40,19 +39,19 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 @ActiveProfiles("test")
 @ContextConfiguration
 @AutoConfigureWireMock(port = 0)
-public abstract class  BaseIntegrationTest extends WorkflowTest {
-	@Autowired
-	BPMNUtil bpmnUtil;
+public abstract class BaseIntegrationTest extends WorkflowTest {
+    @Autowired
+    BPMNUtil bpmnUtil;
 
-	@Value("${wiremock.server.port}")
-	protected String wiremockPort;
-	
-	@Autowired
-	protected WireMockServer wireMockServer;
-	
-	@After
-	public void baseAfterTest() {
-		wireMockServer.resetAll();
-	}
+    @Value("${wiremock.server.port}")
+    protected String wiremockPort;
+
+    @Autowired
+    protected WireMockServer wireMockServer;
+
+    @After
+    public void baseAfterTest() {
+        wireMockServer.resetAll();
+    }
 }
 

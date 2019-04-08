@@ -28,9 +28,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "stack"
-})
+@JsonPropertyOrder({"stack"})
 public class MulticloudCreateStackResponse implements Serializable {
     private final static long serialVersionUID = -5215028275577848311L;
 
@@ -38,8 +36,7 @@ public class MulticloudCreateStackResponse implements Serializable {
     private MulticloudCreateHeatResponse stack;
 
     @JsonCreator
-    public MulticloudCreateStackResponse(
-            @JsonProperty("stack") MulticloudCreateHeatResponse stack) {
+    public MulticloudCreateStackResponse(@JsonProperty("stack") MulticloudCreateHeatResponse stack) {
         this.stack = stack;
     }
 

@@ -21,7 +21,6 @@
 package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_UUID;
-
 import java.util.UUID;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -35,7 +34,7 @@ public class GeneratePnfUuidDelegate implements JavaDelegate {
     private static final Logger logger = LoggerFactory.getLogger(GeneratePnfUuidDelegate.class);
 
     @Override
-    public void execute(DelegateExecution delegateExecution){
+    public void execute(DelegateExecution delegateExecution) {
         UUID uuid = UUID.randomUUID();
         logger.debug("Generated UUID for pnf: {}, version: {}, variant: {}", uuid, uuid.version(), uuid.variant());
         delegateExecution.setVariable(PNF_UUID, uuid.toString());

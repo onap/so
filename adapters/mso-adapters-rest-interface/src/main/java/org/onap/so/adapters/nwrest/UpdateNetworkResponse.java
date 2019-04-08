@@ -23,56 +23,54 @@ package org.onap.so.adapters.nwrest;
 
 
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("updateNetworkResponse")
 @XmlRootElement(name = "updateNetworkResponse")
 public class UpdateNetworkResponse extends NetworkResponseCommon {
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7528214382414366136L;
-	private String networkId;
-	private String neutronNetworkId;
-	private Map<String, String> subnetMap;
 
-	public UpdateNetworkResponse() {
-		/* Empty Constructor */
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7528214382414366136L;
+    private String networkId;
+    private String neutronNetworkId;
+    private Map<String, String> subnetMap;
 
-	public UpdateNetworkResponse(String networkId, String neutronNetworkId,
-								 Map<String, String> subnetMap, String messageId) {
-		super(messageId);
-		this.networkId = networkId;
-		this.neutronNetworkId = neutronNetworkId;
-		this.subnetMap = subnetMap;
-	}
+    public UpdateNetworkResponse() {
+        /* Empty Constructor */
+    }
 
-	public String getNetworkId() {
-		return networkId;
-	}
+    public UpdateNetworkResponse(String networkId, String neutronNetworkId, Map<String, String> subnetMap,
+            String messageId) {
+        super(messageId);
+        this.networkId = networkId;
+        this.neutronNetworkId = neutronNetworkId;
+        this.subnetMap = subnetMap;
+    }
 
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
-	}
+    public String getNetworkId() {
+        return networkId;
+    }
 
-	public String getNeutronNetworkId() {
-		return neutronNetworkId;
-	}
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 
-	public void setNeutronNetworkId(String neutronNetworkId) {
-		this.neutronNetworkId = neutronNetworkId;
-	}
+    public String getNeutronNetworkId() {
+        return neutronNetworkId;
+    }
 
-	public Map<String, String> getSubnetMap() {
-		return subnetMap;
-	}
+    public void setNeutronNetworkId(String neutronNetworkId) {
+        this.neutronNetworkId = neutronNetworkId;
+    }
 
-	public void setSubnetMap(Map<String, String> subnetMap) {
-		this.subnetMap = subnetMap;
-	}
+    public Map<String, String> getSubnetMap() {
+        return subnetMap;
+    }
+
+    public void setSubnetMap(Map<String, String> subnetMap) {
+        this.subnetMap = subnetMap;
+    }
 }

@@ -26,7 +26,7 @@ import org.onap.so.asdc.client.exceptions.ArtifactInstallerException;
 
 public interface IVfResourceInstaller {
 
-	boolean isResourceAlreadyDeployed (VfResourceStructure vfResourceStructure) throws ArtifactInstallerException;
+    boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStructure) throws ArtifactInstallerException;
 
-	public void installTheResource (VfResourceStructure vfResourceStructure) throws ArtifactInstallerException;
+    public void installTheResource(VfResourceStructure vfResourceStructure) throws ArtifactInstallerException;
 }

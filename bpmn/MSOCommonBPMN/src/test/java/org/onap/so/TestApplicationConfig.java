@@ -24,73 +24,71 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.onap.so.bpmn.common.WorkflowTestTransformer;
 import org.springframework.cloud.contract.wiremock.WireMockConfigurationCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.extension.ResponseTransformer;
 
 @Configuration
 @Profile({"test"})
 public class TestApplicationConfig {
-	
-	@Bean
-	protected ResponseTransformer[] transformerArray() {
-		// Process WorkflowTestTransformer annotations
-		List<ResponseTransformer> transformerList = new ArrayList<ResponseTransformer>();
 
-		for (Field field : getClass().getFields()) {
-			WorkflowTestTransformer annotation = field.getAnnotation(WorkflowTestTransformer.class);
+    @Bean
+    protected ResponseTransformer[] transformerArray() {
+        // Process WorkflowTestTransformer annotations
+        List<ResponseTransformer> transformerList = new ArrayList<ResponseTransformer>();
 
-			if (annotation == null) {
-				continue;
-			}
+        for (Field field : getClass().getFields()) {
+            WorkflowTestTransformer annotation = field.getAnnotation(WorkflowTestTransformer.class);
 
-			if (!Modifier.isStatic(field.getModifiers())) {
-				throw new RuntimeException(field.getDeclaringClass().getName()
-					+ "#" + field.getName() + " has a @WorkflowTestTransformer "
-					+ " annotation but it is not declared static");
-			}
+            if (annotation == null) {
+                continue;
+            }
 
-			ResponseTransformer transformer;
+            if (!Modifier.isStatic(field.getModifiers())) {
+                throw new RuntimeException(field.getDeclaringClass().getName() + "#" + field.getName()
+                        + " has a @WorkflowTestTransformer " + " annotation but it is not declared static");
+            }
 
-			try {
-				transformer = (ResponseTransformer) field.get(null);
-			} catch (IllegalAccessException e) {
-				throw new RuntimeException(field.getDeclaringClass().getName()
-					+ "#" + field.getName() + " is not accessible", e);
-			} catch (ClassCastException e) {
-				throw new RuntimeException(field.getDeclaringClass().getName()
-					+ "#" + field.getName() + " is not a ResponseTransformer", e);
-			}
+            ResponseTransformer transformer;
 
-			if (transformer == null) {
-				continue;
-			}
+            try {
+                transformer = (ResponseTransformer) field.get(null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(
+                        field.getDeclaringClass().getName() + "#" + field.getName() + " is not accessible", e);
+            } catch (ClassCastException e) {
+                throw new RuntimeException(
+                        field.getDeclaringClass().getName() + "#" + field.getName() + " is not a ResponseTransformer",
+                        e);
+            }
 
-			transformerList.add(transformer);
-		}
+            if (transformer == null) {
+                continue;
+            }
 
-		ResponseTransformer[] transformerArray =
-			transformerList.toArray(new ResponseTransformer[transformerList.size()]);
+            transformerList.add(transformer);
+        }
 
-		optionsCustomizer(transformerArray);
-		
-		return transformerArray;
-	}
-	
-	@Bean
-	WireMockConfigurationCustomizer optionsCustomizer(ResponseTransformer[] transformerArray) {
-		return new WireMockConfigurationCustomizer() {
-			@Override
-			public void customize(WireMockConfiguration options) {
-				options.extensions(transformerArray);
-			}
-		};
-	}
-	
+        ResponseTransformer[] transformerArray =
+                transformerList.toArray(new ResponseTransformer[transformerList.size()]);
+
+        optionsCustomizer(transformerArray);
+
+        return transformerArray;
+    }
+
+    @Bean
+    WireMockConfigurationCustomizer optionsCustomizer(ResponseTransformer[] transformerArray) {
+        return new WireMockConfigurationCustomizer() {
+            @Override
+            public void customize(WireMockConfiguration options) {
+                options.extensions(transformerArray);
+            }
+        };
+    }
+
 }

@@ -27,8 +27,9 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 @RepositoryRestResource(collectionResourceRel = "watchdogServiceModVerIdLookup", path = "watchdogServiceModVerIdLookup")
-public interface WatchdogServiceModVerIdLookupRepository extends JpaRepository<WatchdogServiceModVerIdLookup, WatchdogServiceModVerIdLookupId> {
+public interface WatchdogServiceModVerIdLookupRepository
+        extends JpaRepository<WatchdogServiceModVerIdLookup, WatchdogServiceModVerIdLookupId> {
 
-	public WatchdogServiceModVerIdLookup findOneByDistributionId(String distributionId);
-	
+    public WatchdogServiceModVerIdLookup findOneByDistributionId(String distributionId);
+
 }

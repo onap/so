@@ -22,16 +22,15 @@ package org.onap.so.cloudify.v3.model;
 
 import java.io.Serializable;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class StartExecutionParams implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     @JsonProperty("workflow_id")
     private String workflowId;
-    
+
     @JsonProperty("deployment_id")
     private String deploymentId;
 
@@ -43,56 +42,52 @@ public class StartExecutionParams implements Serializable {
 
     @JsonProperty("parameters")
     private Map<String, Object> parameters;
-    
-	public String getWorkflowId() {
-		return workflowId;
-	}
 
-	public void setWorkflowId(String workflowId) {
-		this.workflowId = workflowId;
-	}
+    public String getWorkflowId() {
+        return workflowId;
+    }
 
-	public String getDeploymentId() {
-		return deploymentId;
-	}
+    public void setWorkflowId(String workflowId) {
+        this.workflowId = workflowId;
+    }
 
-	public void setDeploymentId(String deploymentId) {
-		this.deploymentId = deploymentId;
-	}
+    public String getDeploymentId() {
+        return deploymentId;
+    }
 
-	public boolean isAllowCustomParameters() {
-		return allowCustomParameters;
-	}
+    public void setDeploymentId(String deploymentId) {
+        this.deploymentId = deploymentId;
+    }
 
-	public void setAllowCustomParameters(boolean allowCustomParameters) {
-		this.allowCustomParameters = allowCustomParameters;
-	}
+    public boolean isAllowCustomParameters() {
+        return allowCustomParameters;
+    }
 
-	public boolean isForce() {
-		return force;
-	}
+    public void setAllowCustomParameters(boolean allowCustomParameters) {
+        this.allowCustomParameters = allowCustomParameters;
+    }
 
-	public void setForce(boolean force) {
-		this.force = force;
-	}
+    public boolean isForce() {
+        return force;
+    }
 
-	public Map<String, Object> getParameters() {
-		return parameters;
-	}
+    public void setForce(boolean force) {
+        this.force = force;
+    }
 
-	public void setParameters(Map<String, Object> parameters) {
-		this.parameters = parameters;
-	}
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
 
-	@Override
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
+    @Override
     public String toString() {
-        return "UpdateExecutionParams{" +
-                "workflowId='" + workflowId + '\'' +
-                "deploymentId='" + deploymentId + '\'' +
-                "allowCustomParameters='" + allowCustomParameters + '\'' +
-                "force='" + force + '\'' +
-                "parameters='" + parameters + '\'' +
-                '}';
+        return "UpdateExecutionParams{" + "workflowId='" + workflowId + '\'' + "deploymentId='" + deploymentId + '\''
+                + "allowCustomParameters='" + allowCustomParameters + '\'' + "force='" + force + '\'' + "parameters='"
+                + parameters + '\'' + '}';
     }
 
 }

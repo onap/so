@@ -22,7 +22,6 @@
 package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 
 import java.util.Optional;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.client.CatalogDbClient;
@@ -35,45 +34,49 @@ import org.springframework.stereotype.Component;
 @Component
 public class CloudSiteCatalogUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(CloudSiteCatalogUtils.class);
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	
-	@Autowired
-	private CatalogDbClient catalogDbClient;
-	
-	
-	public void getIdentityUrlFromCloudSite(DelegateExecution execution) {
-		String cloudRegionId = (String) execution.getVariable("lcpCloudRegionId");
-	
-		if (cloudRegionId != null) {
-			Optional<CloudSite> cloudSite = getCloudSite(cloudRegionId);
-			if (!cloudSite.isPresent()) {
-				logger.debug("Cloud Region with cloudRegionId {} not found in Catalog DB", cloudRegionId);
-				exceptionUtil.buildAndThrowWorkflowException(execution, 404, "Cloud Region with cloudRegionId " + cloudRegionId + " not found in Catalog DB");
-			}
-			
-			if (cloudSite.get().getIdentityService() == null)	 {
-				logger.debug("No identityService found for Cloud Region with cloudRegionId {} in Catalog DB", cloudRegionId);
-				exceptionUtil.buildAndThrowWorkflowException(execution, 404, "No identityService found for Cloud Region with cloudRegionId " + cloudRegionId + " in Catalog DB");
-			}			
-			String identityUrl = cloudSite.get().getIdentityService().getIdentityUrl();
-			
-			logger.debug("identityUrl from Catalog DB is: {}", identityUrl);
-			execution.setVariable("identityUrl", identityUrl);
-		}
-	}
-	
-	protected Optional<CloudSite> getCloudSite(String id) {
-		if (id == null) {
-			return Optional.empty();
-		}
-		CloudSite cloudSite = catalogDbClient.getCloudSite(id);
+    private static final Logger logger = LoggerFactory.getLogger(CloudSiteCatalogUtils.class);
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
 
-		if (cloudSite != null) {
-			return Optional.of(cloudSite);
-		} else {
-			return(Optional.of(catalogDbClient.getCloudSiteByClliAndAicVersion(id,"2.5")));			
-		}
-	}
+    @Autowired
+    private CatalogDbClient catalogDbClient;
+
+
+    public void getIdentityUrlFromCloudSite(DelegateExecution execution) {
+        String cloudRegionId = (String) execution.getVariable("lcpCloudRegionId");
+
+        if (cloudRegionId != null) {
+            Optional<CloudSite> cloudSite = getCloudSite(cloudRegionId);
+            if (!cloudSite.isPresent()) {
+                logger.debug("Cloud Region with cloudRegionId {} not found in Catalog DB", cloudRegionId);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 404,
+                        "Cloud Region with cloudRegionId " + cloudRegionId + " not found in Catalog DB");
+            }
+
+            if (cloudSite.get().getIdentityService() == null) {
+                logger.debug("No identityService found for Cloud Region with cloudRegionId {} in Catalog DB",
+                        cloudRegionId);
+                exceptionUtil.buildAndThrowWorkflowException(execution, 404,
+                        "No identityService found for Cloud Region with cloudRegionId " + cloudRegionId
+                                + " in Catalog DB");
+            }
+            String identityUrl = cloudSite.get().getIdentityService().getIdentityUrl();
+
+            logger.debug("identityUrl from Catalog DB is: {}", identityUrl);
+            execution.setVariable("identityUrl", identityUrl);
+        }
+    }
+
+    protected Optional<CloudSite> getCloudSite(String id) {
+        if (id == null) {
+            return Optional.empty();
+        }
+        CloudSite cloudSite = catalogDbClient.getCloudSite(id);
+
+        if (cloudSite != null) {
+            return Optional.of(cloudSite);
+        } else {
+            return (Optional.of(catalogDbClient.getCloudSiteByClliAndAicVersion(id, "2.5")));
+        }
+    }
 }

@@ -22,26 +22,26 @@ package org.onap.so.bpmn.servicedecomposition.tasks.exceptions;
 
 public class MultipleObjectsFoundException extends Exception {
 
-	private static final long serialVersionUID = -5045275644426587447L;
+    private static final long serialVersionUID = -5045275644426587447L;
 
-	public MultipleObjectsFoundException() {
-		super();
-	}
+    public MultipleObjectsFoundException() {
+        super();
+    }
 
-	public MultipleObjectsFoundException(String message) {
-		super(message);
-	}
-	
-	public MultipleObjectsFoundException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public MultipleObjectsFoundException(String message) {
+        super(message);
+    }
 
-	public MultipleObjectsFoundException(Throwable cause) {
-		super(cause);
-	}
-	
-	public MultipleObjectsFoundException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    public MultipleObjectsFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public MultipleObjectsFoundException(Throwable cause) {
+        super(cause);
+    }
+
+    public MultipleObjectsFoundException(String message, Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

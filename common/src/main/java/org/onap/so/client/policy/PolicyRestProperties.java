@@ -23,9 +23,11 @@ package org.onap.so.client.policy;
 import org.onap.so.client.RestProperties;
 
 public interface PolicyRestProperties extends RestProperties {
-	
-	public String getClientAuth();
-	public String getAuth();
-	public String getEnvironment();
+
+    public String getClientAuth();
+
+    public String getAuth();
+
+    public String getEnvironment();
 
 }

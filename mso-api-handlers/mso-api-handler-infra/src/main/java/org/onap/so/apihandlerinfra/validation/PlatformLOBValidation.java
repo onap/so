@@ -28,33 +28,34 @@ import org.onap.so.exceptions.ValidationException;
 import org.onap.so.serviceinstancebeans.LineOfBusiness;
 import org.onap.so.serviceinstancebeans.Platform;
 
-public class PlatformLOBValidation implements ValidationRule{
+public class PlatformLOBValidation implements ValidationRule {
     private static boolean empty(String s) {
-  	  return (s == null || s.trim().isEmpty());
+        return (s == null || s.trim().isEmpty());
     }
-	@Override
-	public ValidationInformation validate(ValidationInformation info) throws ValidationException{
-		int reqVersion = info.getReqVersion();
-		Platform platform;
-		LineOfBusiness lineOfBusiness;
-		String requestScope = info.getRequestScope();
-		Actions action = info.getAction();
-		
-		platform = info.getSir().getRequestDetails().getPlatform();
-    	lineOfBusiness = info.getSir().getRequestDetails().getLineOfBusiness();
-    	if(reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.createInstance){
-    		if(reqVersion > 5 && platform == null) {
-        		throw new ValidationException("platform");
-        	}
-        	if(platform != null && empty(platform.getPlatformName())){
-        		throw new ValidationException("platformName");
-        	}
-        	if(lineOfBusiness != null && empty(lineOfBusiness.getLineOfBusinessName())){
-            	throw new ValidationException("lineOfBusinessName");
+
+    @Override
+    public ValidationInformation validate(ValidationInformation info) throws ValidationException {
+        int reqVersion = info.getReqVersion();
+        Platform platform;
+        LineOfBusiness lineOfBusiness;
+        String requestScope = info.getRequestScope();
+        Actions action = info.getAction();
+
+        platform = info.getSir().getRequestDetails().getPlatform();
+        lineOfBusiness = info.getSir().getRequestDetails().getLineOfBusiness();
+        if (reqVersion >= 5 && requestScope.equalsIgnoreCase(ModelType.vnf.name()) && action == Action.createInstance) {
+            if (reqVersion > 5 && platform == null) {
+                throw new ValidationException("platform");
             }
-    	}
+            if (platform != null && empty(platform.getPlatformName())) {
+                throw new ValidationException("platformName");
+            }
+            if (lineOfBusiness != null && empty(lineOfBusiness.getLineOfBusinessName())) {
+                throw new ValidationException("lineOfBusinessName");
+            }
+        }
         info.setPlatform(platform);
         info.setLOB(lineOfBusiness);
         return info;
-	}
+    }
 }

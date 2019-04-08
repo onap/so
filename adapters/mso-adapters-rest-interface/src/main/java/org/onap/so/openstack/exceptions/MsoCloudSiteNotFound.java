@@ -34,23 +34,24 @@ public class MsoCloudSiteNotFound extends MsoException {
     /**
      * Default constructor (needed for BPEL/JAXB)
      */
-    public MsoCloudSiteNotFound () {
+    public MsoCloudSiteNotFound() {
         super("Cloud site not found");
-        super.category=MsoExceptionCategory.USERDATA;
+        super.category = MsoExceptionCategory.USERDATA;
     }
 
     /**
      * Constructor to create a new MsoOpenstackException instance
+     * 
      * @param cloudSite the cloud site
      */
-    public MsoCloudSiteNotFound (String cloudSite) {
+    public MsoCloudSiteNotFound(String cloudSite) {
         // Set the detailed error as the Exception 'message'
         super("Cloud Site [" + cloudSite + "] not found");
-        super.category=MsoExceptionCategory.USERDATA;
+        super.category = MsoExceptionCategory.USERDATA;
     }
 
     @Override
-    public String toString () {
+    public String toString() {
         return getMessage();
     }
 }

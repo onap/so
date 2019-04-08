@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.infrastructure.workflow.serviceTask;
 
 import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.onap.msb.sdk.httpclient.RestServiceCreater;
 import org.onap.msb.sdk.httpclient.msb.MSBServiceClient;
@@ -46,33 +45,32 @@ public class SdncUnderlayVpnOperationClient {
 
     private static Logger logger = LoggerFactory.getLogger(SdncUnderlayVpnOperationClient.class);
 
-    public boolean excute(String msbIp,
-                       int msbPort,
-                       Map<String, String> inputs,
-                       String iServiceID,
-                       String iOperationID,
-                       String resourceTemplateUUID_i){
-    	ResourceOperationStatusId id = new ResourceOperationStatusId(iServiceID, iOperationID, resourceTemplateUUID_i);
+    public boolean excute(String msbIp, int msbPort, Map<String, String> inputs, String iServiceID, String iOperationID,
+            String resourceTemplateUUID_i) {
+        ResourceOperationStatusId id = new ResourceOperationStatusId(iServiceID, iOperationID, resourceTemplateUUID_i);
         GenericResourceApi genericResourceApiClient = getGenericResourceApiClient(msbIp, msbPort);
         updateProgress(id, RequestsDbConstant.Status.PROCESSING, null, "10", "execute begin!");
         return sendRestrequestAndHandleResponse(id, inputs, genericResourceApiClient);
     }
 
-    public boolean sendRestrequestAndHandleResponse(ResourceOperationStatusId id, Map<String, String> inputs, GenericResourceApi genericResourceApiClient){
+    public boolean sendRestrequestAndHandleResponse(ResourceOperationStatusId id, Map<String, String> inputs,
+            GenericResourceApi genericResourceApiClient) {
         updateProgress(id, null, null, "40", "sendRestrequestAndHandleResponse begin!");
         NetworkRpcInputEntityBuilder builder = new NetworkRpcInputEntityBuilder();
         RpcNetworkTopologyOperationInputEntity body = builder.build(null, inputs);
         updateProgress(id, null, null, "50", "RequestBody build finished!");
-        //RpcNetworkTopologyOperationOutputEntity networkRpcOutputEntiy = null;
+        // RpcNetworkTopologyOperationOutputEntity networkRpcOutputEntiy = null;
         try {
-            genericResourceApiClient.postNetworkTopologyOperation(HeaderUtil.DefaulAuth ,body).execute().body();
+            genericResourceApiClient.postNetworkTopologyOperation(HeaderUtil.DefaulAuth, body).execute().body();
         } catch (Exception e) {
             logger.debug("Exception: ", e);
-            updateProgress(id, RequestsDbConstant.Status.ERROR, null, null, "sendRestrequestAndHandleResponse exception:" + e.getMessage());
+            updateProgress(id, RequestsDbConstant.Status.ERROR, null, null,
+                    "sendRestrequestAndHandleResponse exception:" + e.getMessage());
             return false;
         }
         updateProgress(id, null, null, "90", "sendRestrequestAndHandleResponse finished!");
-        updateProgress(id, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED, "execute finished!");
+        updateProgress(id, RequestsDbConstant.Status.FINISHED, null, RequestsDbConstant.Progress.ONE_HUNDRED,
+                "execute finished!");
         return true;
     }
 
@@ -88,13 +86,11 @@ public class SdncUnderlayVpnOperationClient {
         return restServiceCreater.createService(GenericResourceApi.class);
     }
 
-    public void updateProgress(ResourceOperationStatusId id, String status,
-                               String errorCode,
-                               String progress,
-                               String statusDescription) {
-    	
-    	
-        ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus();//rosRepo.getOne(id);
+    public void updateProgress(ResourceOperationStatusId id, String status, String errorCode, String progress,
+            String statusDescription) {
+
+
+        ResourceOperationStatus resourceOperationStatus = new ResourceOperationStatus();// rosRepo.getOne(id);
         if (!StringUtils.isBlank(status)) {
             resourceOperationStatus.setStatus(status);
         }
@@ -107,7 +103,7 @@ public class SdncUnderlayVpnOperationClient {
         if (!StringUtils.isBlank(statusDescription)) {
             resourceOperationStatus.setStatusDescription(statusDescription);
         }
-        //rosRepo.save(resourceOperationStatus);
+        // rosRepo.save(resourceOperationStatus);
     }
 
     private void saveOutput() {

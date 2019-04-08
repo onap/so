@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -31,15 +30,15 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class RelatedInstanceList implements Serializable {
 
-	private static final long serialVersionUID = 1758713583807257102L;
-	@JsonProperty("relatedInstance")
-	protected RelatedInstance relatedInstance;
+    private static final long serialVersionUID = 1758713583807257102L;
+    @JsonProperty("relatedInstance")
+    protected RelatedInstance relatedInstance;
 
-	public RelatedInstance getRelatedInstance() {
-		return relatedInstance;
-	}
+    public RelatedInstance getRelatedInstance() {
+        return relatedInstance;
+    }
 
-	public void setRelatedInstance(RelatedInstance relatedInstance) {
-		this.relatedInstance = relatedInstance;
-	}
+    public void setRelatedInstance(RelatedInstance relatedInstance) {
+        this.relatedInstance = relatedInstance;
+    }
 }

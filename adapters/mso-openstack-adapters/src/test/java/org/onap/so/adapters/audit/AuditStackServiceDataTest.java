@@ -23,12 +23,10 @@ package org.onap.so.adapters.audit;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
-
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.junit.Before;
@@ -40,160 +38,165 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.onap.so.audit.beans.AuditInventory;
 import org.springframework.core.env.Environment;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class AuditStackServiceDataTest extends AuditCreateStackService {
 
-	@InjectMocks
-	private AuditCreateStackService auditStackService = new AuditCreateStackService();
+    @InjectMocks
+    private AuditCreateStackService auditStackService = new AuditCreateStackService();
 
-	@Mock
-	private HeatStackAudit heatStackAuditMock;
+    @Mock
+    private HeatStackAudit heatStackAuditMock;
 
-	@Mock
-	private Environment mockEnv;
+    @Mock
+    private Environment mockEnv;
 
-	@Mock
-	private ExternalTask mockExternalTask;
+    @Mock
+    private ExternalTask mockExternalTask;
 
-	@Mock
-	private ExternalTaskService mockExternalTaskService;
+    @Mock
+    private ExternalTaskService mockExternalTaskService;
 
-	private ObjectMapper objectMapper = new ObjectMapper();
-	
-	private AuditInventory auditInventory = new AuditInventory();
+    private ObjectMapper objectMapper = new ObjectMapper();
 
-	Optional<AAIObjectAuditList> auditListOptSuccess;
-	
-	Optional<AAIObjectAuditList> auditListOptFailure;
-	
-	@Before
-	public void setup() throws JsonParseException, JsonMappingException, IOException {
-		auditInventory.setCloudOwner("cloudOwner");
-		auditInventory.setCloudRegion("cloudRegion");
-		auditInventory.setTenantId("tenantId");
-		auditInventory.setHeatStackName("stackName");
-		MockitoAnnotations.initMocks(this);
-		
-		AAIObjectAuditList auditListSuccess = objectMapper.readValue(new File("src/test/resources/ExpectedVServerFound.json"), AAIObjectAuditList.class);
-		auditListOptSuccess = Optional.of(auditListSuccess);
-		
-		AAIObjectAuditList auditListFailure = objectMapper.readValue(new File("src/test/resources/Vserver2_Found_VServer1_Not_Found.json"), AAIObjectAuditList.class);
-		auditListOptFailure = Optional.of(auditListFailure);
-		String[] retrySequence = new String[8];
-		retrySequence[0] = "1";
-		retrySequence[1] = "1";
-		retrySequence[2] = "2";
-		retrySequence[3] = "3";
-		retrySequence[4] = "5";
-		retrySequence[5] = "8";
-		retrySequence[6] = "13";
-		retrySequence[7] = "20";
-		doReturn(auditInventory).when(mockExternalTask).getVariable("auditInventory");
-		doReturn("6000").when(mockEnv).getProperty("mso.workflow.topics.retryMultiplier","6000");
-		doReturn(retrySequence).when(mockEnv).getProperty("mso.workflow.topics.retrySequence",String[].class);
-		doReturn("aasdfasdf").when(mockExternalTask).getId();
-	}
+    private AuditInventory auditInventory = new AuditInventory();
 
-	@Test
-	public void execute_external_task_audit_success_Test() {
-		doReturn(auditListOptSuccess).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
-		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
-		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
-		ArgumentCaptor<ExternalTask> taskCaptor = ArgumentCaptor.forClass(ExternalTask.class);
-		Mockito.verify(mockExternalTaskService).complete(taskCaptor.capture(),captor.capture());
-		Map actualMap = captor.getValue();
-		assertEquals(true,actualMap.get("auditIsSuccessful"));
-		assertNotNull(actualMap.get("auditInventoryResult"));
-	}
+    Optional<AAIObjectAuditList> auditListOptSuccess;
 
-	@Test
-	public void execute_external_task_audit_first_failure_Test() {
-		doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
-		doReturn(null).when(mockExternalTask).getRetries();
-		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
-		Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
-				"Unable to find all VServers and L-Interaces in A&AI",
-				"Unable to find all VServers and L-Interaces in A&AI", 8, 10000L);
-	}
+    Optional<AAIObjectAuditList> auditListOptFailure;
 
-	@Test
-	public void execute_external_task_audit_intermediate_failure_Test() {
-		doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
-		doReturn(6).when(mockExternalTask).getRetries();
-		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);		
-		Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
-				"Unable to find all VServers and L-Interaces in A&AI",
-				"Unable to find all VServers and L-Interaces in A&AI", 5, 12000L);
+    @Before
+    public void setup() throws JsonParseException, JsonMappingException, IOException {
+        auditInventory.setCloudOwner("cloudOwner");
+        auditInventory.setCloudRegion("cloudRegion");
+        auditInventory.setTenantId("tenantId");
+        auditInventory.setHeatStackName("stackName");
+        MockitoAnnotations.initMocks(this);
 
-	}
+        AAIObjectAuditList auditListSuccess = objectMapper
+                .readValue(new File("src/test/resources/ExpectedVServerFound.json"), AAIObjectAuditList.class);
+        auditListOptSuccess = Optional.of(auditListSuccess);
 
-	@Test
-	public void execute_external_task_audit_final_failure_Test() {
-		doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId", "stackName");
-		doReturn(1).when(mockExternalTask).getRetries();
-		auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);		
-		ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
-		ArgumentCaptor<ExternalTask> taskCaptor = ArgumentCaptor.forClass(ExternalTask.class);
-		Mockito.verify(mockExternalTaskService).complete(taskCaptor.capture(),captor.capture());
-		Map actualMap = captor.getValue();
-		assertEquals(false,actualMap.get("auditIsSuccessful"));
-		assertNotNull(actualMap.get("auditInventoryResult"));
-	}
+        AAIObjectAuditList auditListFailure = objectMapper.readValue(
+                new File("src/test/resources/Vserver2_Found_VServer1_Not_Found.json"), AAIObjectAuditList.class);
+        auditListOptFailure = Optional.of(auditListFailure);
+        String[] retrySequence = new String[8];
+        retrySequence[0] = "1";
+        retrySequence[1] = "1";
+        retrySequence[2] = "2";
+        retrySequence[3] = "3";
+        retrySequence[4] = "5";
+        retrySequence[5] = "8";
+        retrySequence[6] = "13";
+        retrySequence[7] = "20";
+        doReturn(auditInventory).when(mockExternalTask).getVariable("auditInventory");
+        doReturn("6000").when(mockEnv).getProperty("mso.workflow.topics.retryMultiplier", "6000");
+        doReturn(retrySequence).when(mockEnv).getProperty("mso.workflow.topics.retrySequence", String[].class);
+        doReturn("aasdfasdf").when(mockExternalTask).getId();
+    }
 
-	@Test
-	public void retry_sequence_calculation_Test() {
-		long firstRetry = auditStackService.calculateRetryDelay(8);
-		assertEquals(6000L, firstRetry);
-		long secondRetry = auditStackService.calculateRetryDelay(7);
-		assertEquals(6000L, secondRetry);
-		long thirdRetry = auditStackService.calculateRetryDelay(6);
-		assertEquals(12000L, thirdRetry);
-		long fourthRetry = auditStackService.calculateRetryDelay(5);
-		assertEquals(18000L, fourthRetry);
-		long fifthRetry = auditStackService.calculateRetryDelay(4);
-		assertEquals(30000L, fifthRetry);
-		long sixRetry = auditStackService.calculateRetryDelay(3);
-		assertEquals(48000L, sixRetry);
-		long seventhRetry = auditStackService.calculateRetryDelay(2);
-		assertEquals(78000L, seventhRetry);
-		long eigthRetry = auditStackService.calculateRetryDelay(1);
-		assertEquals(120000L, eigthRetry);
-	}
+    @Test
+    public void execute_external_task_audit_success_Test() {
+        doReturn(auditListOptSuccess).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId",
+                "stackName");
+        auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
+        ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<ExternalTask> taskCaptor = ArgumentCaptor.forClass(ExternalTask.class);
+        Mockito.verify(mockExternalTaskService).complete(taskCaptor.capture(), captor.capture());
+        Map actualMap = captor.getValue();
+        assertEquals(true, actualMap.get("auditIsSuccessful"));
+        assertNotNull(actualMap.get("auditInventoryResult"));
+    }
 
-	@Test
-	public void retry_sequence_Test() {
-		long firstRetry = auditStackService.calculateRetryDelay(8);
-		assertEquals(6000L, firstRetry);
-		long secondRetry = auditStackService.calculateRetryDelay(7);
-		assertEquals(6000L, secondRetry);
-		long thirdRetry = auditStackService.calculateRetryDelay(6);
-		assertEquals(12000L, thirdRetry);
-		long fourthRetry = auditStackService.calculateRetryDelay(5);
-		assertEquals(18000L, fourthRetry);
-		long fifthRetry = auditStackService.calculateRetryDelay(4);
-		assertEquals(30000L, fifthRetry);
-		long sixRetry = auditStackService.calculateRetryDelay(3);
-		assertEquals(48000L, sixRetry);
-		long seventhRetry = auditStackService.calculateRetryDelay(2);
-		assertEquals(78000L, seventhRetry);
-		long eigthRetry = auditStackService.calculateRetryDelay(1);
-		assertEquals(120000L, eigthRetry);
-	}
-	
+    @Test
+    public void execute_external_task_audit_first_failure_Test() {
+        doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId",
+                "stackName");
+        doReturn(null).when(mockExternalTask).getRetries();
+        auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
+        Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
+                "Unable to find all VServers and L-Interaces in A&AI",
+                "Unable to find all VServers and L-Interaces in A&AI", 8, 10000L);
+    }
 
-	@Test
-	public void determineAuditResult_Test() throws Exception{		
-		boolean actual = auditStackService.didCreateAuditFail(auditListOptSuccess);
-		assertEquals(false, actual);
-	}
-	
-	@Test
-	public void determineAuditResult_Failure_Test() throws Exception{
-		boolean actual = auditStackService.didCreateAuditFail(auditListOptFailure);
-		assertEquals(true, actual);
-	}
+    @Test
+    public void execute_external_task_audit_intermediate_failure_Test() {
+        doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId",
+                "stackName");
+        doReturn(6).when(mockExternalTask).getRetries();
+        auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
+        Mockito.verify(mockExternalTaskService).handleFailure(mockExternalTask,
+                "Unable to find all VServers and L-Interaces in A&AI",
+                "Unable to find all VServers and L-Interaces in A&AI", 5, 12000L);
+
+    }
+
+    @Test
+    public void execute_external_task_audit_final_failure_Test() {
+        doReturn(auditListOptFailure).when(heatStackAuditMock).auditHeatStack("cloudRegion", "cloudOwner", "tenantId",
+                "stackName");
+        doReturn(1).when(mockExternalTask).getRetries();
+        auditStackService.executeExternalTask(mockExternalTask, mockExternalTaskService);
+        ArgumentCaptor<Map> captor = ArgumentCaptor.forClass(Map.class);
+        ArgumentCaptor<ExternalTask> taskCaptor = ArgumentCaptor.forClass(ExternalTask.class);
+        Mockito.verify(mockExternalTaskService).complete(taskCaptor.capture(), captor.capture());
+        Map actualMap = captor.getValue();
+        assertEquals(false, actualMap.get("auditIsSuccessful"));
+        assertNotNull(actualMap.get("auditInventoryResult"));
+    }
+
+    @Test
+    public void retry_sequence_calculation_Test() {
+        long firstRetry = auditStackService.calculateRetryDelay(8);
+        assertEquals(6000L, firstRetry);
+        long secondRetry = auditStackService.calculateRetryDelay(7);
+        assertEquals(6000L, secondRetry);
+        long thirdRetry = auditStackService.calculateRetryDelay(6);
+        assertEquals(12000L, thirdRetry);
+        long fourthRetry = auditStackService.calculateRetryDelay(5);
+        assertEquals(18000L, fourthRetry);
+        long fifthRetry = auditStackService.calculateRetryDelay(4);
+        assertEquals(30000L, fifthRetry);
+        long sixRetry = auditStackService.calculateRetryDelay(3);
+        assertEquals(48000L, sixRetry);
+        long seventhRetry = auditStackService.calculateRetryDelay(2);
+        assertEquals(78000L, seventhRetry);
+        long eigthRetry = auditStackService.calculateRetryDelay(1);
+        assertEquals(120000L, eigthRetry);
+    }
+
+    @Test
+    public void retry_sequence_Test() {
+        long firstRetry = auditStackService.calculateRetryDelay(8);
+        assertEquals(6000L, firstRetry);
+        long secondRetry = auditStackService.calculateRetryDelay(7);
+        assertEquals(6000L, secondRetry);
+        long thirdRetry = auditStackService.calculateRetryDelay(6);
+        assertEquals(12000L, thirdRetry);
+        long fourthRetry = auditStackService.calculateRetryDelay(5);
+        assertEquals(18000L, fourthRetry);
+        long fifthRetry = auditStackService.calculateRetryDelay(4);
+        assertEquals(30000L, fifthRetry);
+        long sixRetry = auditStackService.calculateRetryDelay(3);
+        assertEquals(48000L, sixRetry);
+        long seventhRetry = auditStackService.calculateRetryDelay(2);
+        assertEquals(78000L, seventhRetry);
+        long eigthRetry = auditStackService.calculateRetryDelay(1);
+        assertEquals(120000L, eigthRetry);
+    }
+
+
+    @Test
+    public void determineAuditResult_Test() throws Exception {
+        boolean actual = auditStackService.didCreateAuditFail(auditListOptSuccess);
+        assertEquals(false, actual);
+    }
+
+    @Test
+    public void determineAuditResult_Failure_Test() throws Exception {
+        boolean actual = auditStackService.didCreateAuditFail(auditListOptFailure);
+        assertEquals(true, actual);
+    }
 }

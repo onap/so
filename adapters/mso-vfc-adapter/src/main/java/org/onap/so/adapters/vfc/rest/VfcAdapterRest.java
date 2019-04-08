@@ -55,10 +55,10 @@ import org.springframework.stereotype.Component;
 public class VfcAdapterRest {
 
     private static final Logger logger = LoggerFactory.getLogger(VfcAdapterRest.class);
-    private static final String REQUEST_DEBUG_MSG="body from request is {}";
-    private static final String APPLICATION_EXCEPTION="ApplicationException: ";
+    private static final String REQUEST_DEBUG_MSG = "body from request is {}";
+    private static final String APPLICATION_EXCEPTION = "ApplicationException: ";
     @Autowired
-    private VfcManager driverMgr ;
+    private VfcManager driverMgr;
 
     public VfcAdapterRest() {
 
@@ -82,7 +82,7 @@ public class VfcAdapterRest {
             NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
             RestfulResponse rsp = driverMgr.createNs(nsInput);
             return buildResponse(rsp);
-        } catch(ApplicationException e) {
+        } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
@@ -92,7 +92,7 @@ public class VfcAdapterRest {
      * Delete NS instance<br>
      *
      * @param data The http request
-     * @param  nsInstanceId The NS instance id
+     * @param nsInstanceId The NS instance id
      * @return response
      * @since ONAP Amsterdam Release
      */
@@ -108,7 +108,7 @@ public class VfcAdapterRest {
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.deleteNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
-        } catch(ApplicationException e) {
+        } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
@@ -133,7 +133,7 @@ public class VfcAdapterRest {
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.getNsProgress(nsOperationKey, jobId);
             return buildResponse(rsp);
-        } catch(ApplicationException e) {
+        } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
@@ -158,7 +158,7 @@ public class VfcAdapterRest {
             NSResourceInputParameter nsInput = JsonUtil.unMarshal(data, NSResourceInputParameter.class);
             RestfulResponse rsp = driverMgr.instantiateNs(nsInstanceId, nsInput);
             return buildResponse(rsp);
-        } catch(ApplicationException e) {
+        } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
@@ -183,15 +183,14 @@ public class VfcAdapterRest {
             NsOperationKey nsOperationKey = JsonUtil.unMarshal(data, NsOperationKey.class);
             RestfulResponse rsp = driverMgr.terminateNs(nsOperationKey, nsInstanceId);
             return buildResponse(rsp);
-        } catch(ApplicationException e) {
+        } catch (ApplicationException e) {
             logger.debug(APPLICATION_EXCEPTION, e);
             return e.buildErrorResponse();
         }
     }
 
     /**
-     * Scale NS instance
-     * <br>
+     * Scale NS instance <br>
      * 
      * @param servletReq The http request
      * @param nsInstanceId The NS instance id

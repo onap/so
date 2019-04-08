@@ -26,10 +26,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -40,104 +38,103 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // NOTE: the JAXB (XML) annotations are required with JBoss AS7 and RESTEasy,
-//       even though we are using JSON exclusively.  The @NoJackson annotation
-//       is also required in this environment.
+// even though we are using JSON exclusively. The @NoJackson annotation
+// is also required in this environment.
 
 /**
- Map<String, String> elements when marshalled to XML produce a list of <entry><key>${MsoUtils.xmlEscape(key)}</key><value>${MsoUtils.xmlEscape(value)}</value></entry> elements.
- When marshalling to JSON they create a list of "${key}" : "${value}" pairs with no extra wrappers.
+ * Map<String, String> elements when marshalled to XML produce a list of
+ * <entry><key>${MsoUtils.xmlEscape(key)}</key><value>${MsoUtils.xmlEscape(value)}</value></entry> elements. When
+ * marshalling to JSON they create a list of "${key}" : "${value}" pairs with no extra wrappers.
  * </pre>
  */
 @JsonRootName("SDNCEvent")
 @JsonInclude(Include.NON_NULL)
 @XmlRootElement(name = "SDNCEvent")
 public class SDNCEvent implements Serializable {
-	private static final long serialVersionUID = 1L;
-	
-	private static final Logger logger = LoggerFactory.getLogger(SDNCEvent.class);
+    private static final long serialVersionUID = 1L;
 
-	// Event type
-	private String eventType;
+    private static final Logger logger = LoggerFactory.getLogger(SDNCEvent.class);
 
-	// Event correlator type
-	private String eventCorrelatorType;
+    // Event type
+    private String eventType;
 
-	// Event correlator value.
-	private String eventCorrelator;
+    // Event correlator type
+    private String eventCorrelatorType;
 
-	// Map of response parameters (possibly none).
-	private Map<String, String> params = null;
+    // Event correlator value.
+    private String eventCorrelator;
 
-	public SDNCEvent(String eventType, String eventCorrelatorType, String eventCorrelator) {
-		this.eventType = eventType;
-		this.eventCorrelatorType =  eventCorrelatorType;
-		this.eventCorrelator =  eventCorrelator;
-	}
+    // Map of response parameters (possibly none).
+    private Map<String, String> params = null;
 
-	public SDNCEvent() {
-	}
+    public SDNCEvent(String eventType, String eventCorrelatorType, String eventCorrelator) {
+        this.eventType = eventType;
+        this.eventCorrelatorType = eventCorrelatorType;
+        this.eventCorrelator = eventCorrelator;
+    }
 
-	@JsonProperty("eventType")
-	@XmlElement(name = "eventType")
-	public String getEventType() {
-		return eventType;
-	}
+    public SDNCEvent() {}
 
-	@JsonProperty("eventType")
-	public void setEventType(String eventType) {
-		this.eventType = eventType;
-	}
+    @JsonProperty("eventType")
+    @XmlElement(name = "eventType")
+    public String getEventType() {
+        return eventType;
+    }
 
-	@JsonProperty("eventCorrelatorType")
-	@XmlElement(name = "eventCorrelatorType")
-	public String getEventCorrelatorType() {
-		return eventCorrelatorType;
-	}
+    @JsonProperty("eventType")
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
-	@JsonProperty("eventCorrelatorType")
-	public void setEventCorrelatorType(String eventCorrelatorType) {
-		this.eventCorrelatorType = eventCorrelatorType;
-	}
+    @JsonProperty("eventCorrelatorType")
+    @XmlElement(name = "eventCorrelatorType")
+    public String getEventCorrelatorType() {
+        return eventCorrelatorType;
+    }
 
-	@JsonProperty("eventCorrelator")
-	@XmlElement(name = "eventCorrelator")
-	public String getEventCorrelator() {
-		return eventCorrelator;
-	}
+    @JsonProperty("eventCorrelatorType")
+    public void setEventCorrelatorType(String eventCorrelatorType) {
+        this.eventCorrelatorType = eventCorrelatorType;
+    }
 
-	@JsonProperty("eventCorrelator")
-	public void setEventCorrelator(String eventCorrelator) {
-		this.eventCorrelator = eventCorrelator;
-	}
+    @JsonProperty("eventCorrelator")
+    @XmlElement(name = "eventCorrelator")
+    public String getEventCorrelator() {
+        return eventCorrelator;
+    }
 
-	@JsonProperty("params")
-	@XmlElement(name = "params")
-	public Map<String, String> getParams() {
-		return params;
-	}
+    @JsonProperty("eventCorrelator")
+    public void setEventCorrelator(String eventCorrelator) {
+        this.eventCorrelator = eventCorrelator;
+    }
 
-	@JsonProperty("params")
-	public void setParams(Map<String, String> params) {
-		this.params = params;
-	}
+    @JsonProperty("params")
+    @XmlElement(name = "params")
+    public Map<String, String> getParams() {
+        return params;
+    }
 
-	public void addParam(String name, String value) {
-		if (params == null) {
-			params = new LinkedHashMap<>();
-		}
-		params.put(name, value);
-	}
+    @JsonProperty("params")
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
 
-	public String toJson() {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
-			mapper.setSerializationInclusion(Include.NON_NULL);
-			return mapper.writeValueAsString(this);
-		} catch (IOException e) {
-			logger.debug("Exception:", e);
-			throw new UnsupportedOperationException("Cannot convert "
-				+ getClass().getSimpleName() + " to JSON", e);
-		}
-	}
+    public void addParam(String name, String value) {
+        if (params == null) {
+            params = new LinkedHashMap<>();
+        }
+        params.put(name, value);
+    }
+
+    public String toJson() {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
+            mapper.setSerializationInclusion(Include.NON_NULL);
+            return mapper.writeValueAsString(this);
+        } catch (IOException e) {
+            logger.debug("Exception:", e);
+            throw new UnsupportedOperationException("Cannot convert " + getClass().getSimpleName() + " to JSON", e);
+        }
+    }
 }

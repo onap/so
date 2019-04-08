@@ -34,28 +34,29 @@ import org.springframework.stereotype.Component;
 @Component
 public class AssignNetwork {
 
-	private static final Logger logger = LoggerFactory.getLogger(AssignNetwork.class);
+    private static final Logger logger = LoggerFactory.getLogger(AssignNetwork.class);
 
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
-	
-	/**
-	 * Check if network was found by name
-	 * @param execution
-	 * @return
-	 */
-	public boolean networkFoundByName(BuildingBlockExecution execution) {
-		boolean networkFound = false;
-		try {
-			L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
 
-			if (!OrchestrationStatus.PRECREATED.equals(l3network.getOrchestrationStatus())){
-				networkFound = true;
-				logger.debug("network found in NOT PRECREATED status");
-			}
-		} catch (Exception ex) {
-			// return false if no network present
-		}
-		return networkFound;
-	}
+    /**
+     * Check if network was found by name
+     * 
+     * @param execution
+     * @return
+     */
+    public boolean networkFoundByName(BuildingBlockExecution execution) {
+        boolean networkFound = false;
+        try {
+            L3Network l3network = extractPojosForBB.extractByKey(execution, ResourceKey.NETWORK_ID);
+
+            if (!OrchestrationStatus.PRECREATED.equals(l3network.getOrchestrationStatus())) {
+                networkFound = true;
+                logger.debug("network found in NOT PRECREATED status");
+            }
+        } catch (Exception ex) {
+            // return false if no network present
+        }
+        return networkFound;
+    }
 }

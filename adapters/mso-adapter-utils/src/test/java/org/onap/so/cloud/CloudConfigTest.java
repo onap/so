@@ -21,9 +21,7 @@
 package org.onap.so.cloud;
 
 import static org.junit.Assert.*;
-
 import java.util.Optional;
-
 import org.junit.Test;
 import org.onap.so.BaseTest;
 import org.onap.so.db.catalog.beans.AuthenticationType;
@@ -38,35 +36,35 @@ import org.springframework.beans.factory.annotation.Autowired;
  *
  *
  */
-public class CloudConfigTest extends BaseTest{
+public class CloudConfigTest extends BaseTest {
 
-	@Autowired
-	private CloudConfig con;
+    @Autowired
+    private CloudConfig con;
 
-	/**
-	 * This method implements a test for the getCloudSite method.
-	 */
-	@Test
-	public final void testGetCloudSite () {
-		CloudSite site1 = con.getCloudSite("MTN13").get();
+    /**
+     * This method implements a test for the getCloudSite method.
+     */
+    @Test
+    public final void testGetCloudSite() {
+        CloudSite site1 = con.getCloudSite("MTN13").get();
 
-		assertEquals ("mtn13", site1.getRegionId());
-		assertEquals ("mtn13", site1.getIdentityServiceId());
-		assertEquals ("MDT13", site1.getClli());
-		assertEquals ("3.0", site1.getCloudVersion());
-	}
+        assertEquals("mtn13", site1.getRegionId());
+        assertEquals("mtn13", site1.getIdentityServiceId());
+        assertEquals("MDT13", site1.getClli());
+        assertEquals("3.0", site1.getCloudVersion());
+    }
 
-	/**
-	 * This method implements a test for the getCloudSite method.
-	 */
-	@Test
-	public final void testGetDefaultCloudSite () {
-		Optional<CloudSite> site  = con.getCloudSite("NotThere");
-		assertTrue(site.isPresent());
-		CloudSite site1 = site.get();
-		assertEquals ("NotThere", site1.getRegionId());
-		assertEquals("MDT13", site1.getClli());
-		assertEquals("NotThere", site1.getId());
-	}
-	
+    /**
+     * This method implements a test for the getCloudSite method.
+     */
+    @Test
+    public final void testGetDefaultCloudSite() {
+        Optional<CloudSite> site = con.getCloudSite("NotThere");
+        assertTrue(site.isPresent());
+        CloudSite site1 = site.get();
+        assertEquals("NotThere", site1.getRegionId());
+        assertEquals("MDT13", site1.getClli());
+        assertEquals("NotThere", site1.getId());
+    }
+
 }

@@ -22,55 +22,50 @@ package org.onap.so.apihandler.camundabeans;
 
 
 
-
 import org.onap.so.apihandler.common.CommonConstants;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * JavaBean JSON class for a "gMyServiceInput" which contains the xml payload that
- * will be passed to the Camunda process
+ * JavaBean JSON class for a "gMyServiceInput" which contains the xml payload that will be passed to the Camunda process
  * 
  */
 
 
 public class CamundaInput {
-	
-	@JsonProperty(CommonConstants.CAMUNDA_VALUE)
-	private String value;
-	
-	
-	@JsonProperty(CommonConstants.CAMUNDA_TYPE)
-	private String type = "String";
-	
-	
-	@JsonProperty(CommonConstants.CAMUNDA_VALUE)
-	public String getValue() {
-		return value;
-	}
-	
-	@JsonProperty(CommonConstants.CAMUNDA_TYPE)
-	public String getType() {
-		return type;
-	}
 
-	@JsonProperty(CommonConstants.CAMUNDA_TYPE)
-	public void setType(String type) {
-		this.type = type;
-	}
+    @JsonProperty(CommonConstants.CAMUNDA_VALUE)
+    private String value;
 
-	@JsonProperty(CommonConstants.CAMUNDA_VALUE)
-	public void setValue(String value) {
-		this.value = value;
-	}
 
-	@Override
-	public String toString() {
-		return "CamundaInput [value=" + value + ", type=" + type + "]";
-	}
-	
+    @JsonProperty(CommonConstants.CAMUNDA_TYPE)
+    private String type = "String";
 
-	
-	
-	
+
+    @JsonProperty(CommonConstants.CAMUNDA_VALUE)
+    public String getValue() {
+        return value;
+    }
+
+    @JsonProperty(CommonConstants.CAMUNDA_TYPE)
+    public String getType() {
+        return type;
+    }
+
+    @JsonProperty(CommonConstants.CAMUNDA_TYPE)
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @JsonProperty(CommonConstants.CAMUNDA_VALUE)
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "CamundaInput [value=" + value + ", type=" + type + "]";
+    }
+
+
+
 }

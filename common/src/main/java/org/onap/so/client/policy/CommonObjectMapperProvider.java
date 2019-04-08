@@ -28,19 +28,19 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class CommonObjectMapperProvider {
 
-	protected ObjectMapper mapper;
+    protected ObjectMapper mapper;
 
-	public CommonObjectMapperProvider() {
-		
-		mapper = new ObjectMapper();
-		mapper.setSerializationInclusion(Include.NON_NULL);
+    public CommonObjectMapperProvider() {
+
+        mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(Include.NON_NULL);
         mapper.enable(MapperFeature.USE_ANNOTATIONS);
-		mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-		mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
-		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-	}
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        mapper.configure(DeserializationFeature.UNWRAP_ROOT_VALUE, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
-	public ObjectMapper getMapper() {
-		return mapper;
-	}
+    public ObjectMapper getMapper() {
+        return mapper;
+    }
 }

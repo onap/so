@@ -23,7 +23,9 @@ import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "collectionResourceCustomization", path = "collectionResourceCustomization")
-public interface CollectionResourceCustomizationRepository extends JpaRepository<CollectionResourceCustomization, Long> {
-	CollectionResourceCustomization findByModelCustomizationUUID(String modelCustomizationUUID);
+@RepositoryRestResource(collectionResourceRel = "collectionResourceCustomization",
+        path = "collectionResourceCustomization")
+public interface CollectionResourceCustomizationRepository
+        extends JpaRepository<CollectionResourceCustomization, Long> {
+    CollectionResourceCustomization findByModelCustomizationUUID(String modelCustomizationUUID);
 }

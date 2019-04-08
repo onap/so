@@ -25,175 +25,173 @@ package org.onap.so.adapters.nwrest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.Subnet;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
-/* README
- Map<String, String> elements when marshalled to XML produce a list of <entry><key>${MsoUtils.xmlEscape(key)}</key><value>${MsoUtils.xmlEscape(value)}</value></entry> elements.
- When marshalling to JSON they create a list of "${key}" : "${value}" pairs with no extra wrappers.
-*/
+/*
+ * README Map<String, String> elements when marshalled to XML produce a list of
+ * <entry><key>${MsoUtils.xmlEscape(key)}</key><value>${MsoUtils.xmlEscape(value)}</value></entry> elements. When
+ * marshalling to JSON they create a list of "${key}" : "${value}" pairs with no extra wrappers.
+ */
 @JsonRootName("createNetworkRequest")
 @XmlRootElement(name = "createNetworkRequest")
 public class CreateNetworkRequest extends NetworkRequestCommon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -8984362978831333521L;
-	private String cloudSiteId;
-	private String tenantId;
-	private String networkId;
-	private String networkName;
-	private String networkType;
-	private String networkTypeVersion;
-	private String modelCustomizationUuid;
-	private String networkTechnology = "NEUTRON";
-	private List<Subnet> subnets;
-	private ProviderVlanNetwork providerVlanNetwork;
-	private ContrailNetwork contrailNetwork;
-	private Boolean failIfExists = false;
-	private Boolean backout = true;
-	private Map<String,String> networkParams = new HashMap<>();
-	private MsoRequest msoRequest = new MsoRequest();
-	private boolean contrailRequest;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8984362978831333521L;
+    private String cloudSiteId;
+    private String tenantId;
+    private String networkId;
+    private String networkName;
+    private String networkType;
+    private String networkTypeVersion;
+    private String modelCustomizationUuid;
+    private String networkTechnology = "NEUTRON";
+    private List<Subnet> subnets;
+    private ProviderVlanNetwork providerVlanNetwork;
+    private ContrailNetwork contrailNetwork;
+    private Boolean failIfExists = false;
+    private Boolean backout = true;
+    private Map<String, String> networkParams = new HashMap<>();
+    private MsoRequest msoRequest = new MsoRequest();
+    private boolean contrailRequest;
 
-	public CreateNetworkRequest() {
-		super();
-	}
+    public CreateNetworkRequest() {
+        super();
+    }
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getNetworkId() {
-		return networkId;
-	}
+    public String getNetworkId() {
+        return networkId;
+    }
 
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
-	}
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 
-	public String getNetworkName() {
-		return networkName;
-	}
+    public String getNetworkName() {
+        return networkName;
+    }
 
-	public void setNetworkName(String networkName) {
-		this.networkName = networkName;
-	}
+    public void setNetworkName(String networkName) {
+        this.networkName = networkName;
+    }
 
-	public String getNetworkType() {
-		return networkType;
-	}
+    public String getNetworkType() {
+        return networkType;
+    }
 
-	public void setNetworkType(String networkType) {
-		this.networkType = networkType;
-	}
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
+    }
 
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
+    public String getModelCustomizationUuid() {
+        return this.modelCustomizationUuid;
+    }
 
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
-	}
+    public void setModelCustomizationUuid(String modelCustomizationUuid) {
+        this.modelCustomizationUuid = modelCustomizationUuid;
+    }
 
-	public String getNetworkTypeVersion() {
-		return networkTypeVersion;
-	}
+    public String getNetworkTypeVersion() {
+        return networkTypeVersion;
+    }
 
-	public void setNetworkTypeVersion(String networkTypeVersion) {
-		this.networkTypeVersion = networkTypeVersion;
-	}
+    public void setNetworkTypeVersion(String networkTypeVersion) {
+        this.networkTypeVersion = networkTypeVersion;
+    }
 
-	public String getNetworkTechnology() {
-		return networkTechnology;
-	}
+    public String getNetworkTechnology() {
+        return networkTechnology;
+    }
 
-	public void setNetworkTechnology(String networkTechnology) {
-		this.networkTechnology = networkTechnology;
-	}
+    public void setNetworkTechnology(String networkTechnology) {
+        this.networkTechnology = networkTechnology;
+    }
 
-	public List<Subnet> getSubnets() {
-		return subnets;
-	}
+    public List<Subnet> getSubnets() {
+        return subnets;
+    }
 
-	public void setSubnets(List<Subnet> subnets) {
-		this.subnets = subnets;
-	}
+    public void setSubnets(List<Subnet> subnets) {
+        this.subnets = subnets;
+    }
 
-	public ProviderVlanNetwork getProviderVlanNetwork() {
-		return providerVlanNetwork;
-	}
+    public ProviderVlanNetwork getProviderVlanNetwork() {
+        return providerVlanNetwork;
+    }
 
-	public void setProviderVlanNetwork(ProviderVlanNetwork providerVlanNetwork) {
-		this.providerVlanNetwork = providerVlanNetwork;
-	}
+    public void setProviderVlanNetwork(ProviderVlanNetwork providerVlanNetwork) {
+        this.providerVlanNetwork = providerVlanNetwork;
+    }
 
-	public ContrailNetwork getContrailNetwork() {
-		return contrailNetwork;
-	}
+    public ContrailNetwork getContrailNetwork() {
+        return contrailNetwork;
+    }
 
-	public void setContrailNetwork(ContrailNetwork contrailNetwork) {
-		this.contrailNetwork = contrailNetwork;
-	}
+    public void setContrailNetwork(ContrailNetwork contrailNetwork) {
+        this.contrailNetwork = contrailNetwork;
+    }
 
-	public Boolean getFailIfExists() {
-		return failIfExists;
-	}
+    public Boolean getFailIfExists() {
+        return failIfExists;
+    }
 
-	public void setFailIfExists(Boolean failIfExists) {
-		this.failIfExists = failIfExists;
-	}
+    public void setFailIfExists(Boolean failIfExists) {
+        this.failIfExists = failIfExists;
+    }
 
-	public Boolean getBackout() {
-		return backout;
-	}
+    public Boolean getBackout() {
+        return backout;
+    }
 
-	public void setBackout(Boolean backout) {
-		this.backout = backout;
-	}
+    public void setBackout(Boolean backout) {
+        this.backout = backout;
+    }
 
-	public Map<String, String> getNetworkParams() {
-		return networkParams;
-	}
+    public Map<String, String> getNetworkParams() {
+        return networkParams;
+    }
 
-	public void setNetworkParams(Map<String, String> networkParams) {
-		this.networkParams = networkParams;
-	}
+    public void setNetworkParams(Map<String, String> networkParams) {
+        this.networkParams = networkParams;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
 
-	public boolean isContrailRequest() {
-		return this.contrailRequest;
-	}
-	
-	public void setContrailRequest(boolean contrailRequest) {
-		this.contrailRequest = contrailRequest;
-	}
-	
+    public boolean isContrailRequest() {
+        return this.contrailRequest;
+    }
+
+    public void setContrailRequest(boolean contrailRequest) {
+        this.contrailRequest = contrailRequest;
+    }
+
 }

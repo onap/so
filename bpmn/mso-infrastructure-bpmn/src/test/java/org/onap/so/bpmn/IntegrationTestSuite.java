@@ -27,6 +27,6 @@ import org.junit.runner.RunWith;
 @RunWith(WildcardPatternSuite.class)
 @SuiteClasses({"**/*IT.class"})
 public class IntegrationTestSuite {
-  // the class remains empty,
-  // used only as a holder for the above annotations
+    // the class remains empty,
+    // used only as a holder for the above annotations
 }

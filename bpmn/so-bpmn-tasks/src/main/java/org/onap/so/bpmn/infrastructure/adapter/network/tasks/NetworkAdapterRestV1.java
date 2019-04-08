@@ -22,12 +22,10 @@ package org.onap.so.bpmn.infrastructure.adapter.network.tasks;
 
 import java.io.StringReader;
 import java.util.Optional;
-
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.adapters.nwrest.CreateNetworkError;
 import org.onap.so.adapters.nwrest.CreateNetworkRequest;
@@ -48,111 +46,119 @@ import org.springframework.stereotype.Component;
 @Component
 public class NetworkAdapterRestV1 {
 
-	private static final Logger logger = LoggerFactory.getLogger(NetworkAdapterRestV1.class);
-	
-	private static final String NETWORK_REQUEST = "networkAdapterRequest";
-	private static final String NETWORK_MESSAGE = "NetworkAResponse_MESSAGE";
-	private static final String NETWORK_SYNC_CODE = "NETWORKREST_networkAdapterStatusCode";
-	private static final String NETWORK_SYNC_RESPONSE = "NETWORKREST_networkAdapterResponse";
-	private static final String NETWORK_CORRELATOR = "NetworkAResponse_CORRELATOR";
-	
-	@Autowired
-	private ExceptionBuilder exceptionBuilder;
+    private static final Logger logger = LoggerFactory.getLogger(NetworkAdapterRestV1.class);
 
-	@Autowired
-	private NetworkAdapterResources networkAdapterResources;
-	
-	public void callNetworkAdapter (DelegateExecution execution) {
-		try {
-			Object networkAdapterRequest = execution.getVariable(NETWORK_REQUEST);
-			if (networkAdapterRequest != null) {
-				Optional<Response> response = Optional.empty();
-				if (networkAdapterRequest instanceof CreateNetworkRequest) {
-					CreateNetworkRequest createNetworkRequest = (CreateNetworkRequest) networkAdapterRequest;
-					execution.setVariable(NETWORK_CORRELATOR, createNetworkRequest.getMessageId());
-					response = networkAdapterResources.createNetworkAsync(createNetworkRequest);
-				} else if (networkAdapterRequest instanceof DeleteNetworkRequest) {
-					DeleteNetworkRequest deleteNetworkRequest = (DeleteNetworkRequest) networkAdapterRequest;
-					execution.setVariable(NETWORK_CORRELATOR, deleteNetworkRequest.getMessageId());
-					response = networkAdapterResources.deleteNetworkAsync(deleteNetworkRequest);
-				} else if (networkAdapterRequest instanceof UpdateNetworkRequest) {
-					UpdateNetworkRequest updateNetworkRequest = (UpdateNetworkRequest) networkAdapterRequest;
-					execution.setVariable(NETWORK_CORRELATOR, updateNetworkRequest.getMessageId());
-					response = networkAdapterResources.updateNetworkAsync(updateNetworkRequest);
-				}
-				if(response.isPresent()) {
-					String statusCode = Integer.toString(response.get().getStatus());
-					String responseString = "";
-					if(response.get().getEntity() != null) {
-						responseString = (String) response.get().getEntity();
-					}
-					execution.setVariable(NETWORK_SYNC_CODE, statusCode);
-					execution.setVariable(NETWORK_SYNC_RESPONSE, responseString);
-				} else {
-					throw new Exception("No Ack response from Openstack Adapter");
-				}
-			} else {
-				throw new Exception("No Network Request was created. networkAdapterRequest was null.");
-			}
-		} catch (Exception ex) {
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	public void processCallback (DelegateExecution execution) {
-		try {
-			Object networkAdapterRequest = execution.getVariable(NETWORK_REQUEST);
-			String callback = (String) execution.getVariable(NETWORK_MESSAGE);
-			String logCallbackMessage = "Callback from OpenstackAdapter: " + callback;
-			logger.debug(logCallbackMessage);
-			if (networkAdapterRequest != null) {
-				if (networkAdapterRequest instanceof CreateNetworkRequest) {
-					if(callback.contains("createNetworkError")) {
-						CreateNetworkError createNetworkError = (CreateNetworkError) unmarshalXml(callback, CreateNetworkError.class);
-						throw new Exception(createNetworkError.getMessage());
-					} else {
-						CreateNetworkResponse createNetworkResponse = (CreateNetworkResponse) unmarshalXml(callback, CreateNetworkResponse.class);
-						execution.setVariable("createNetworkResponse", createNetworkResponse);
-					}
-				} else if (networkAdapterRequest instanceof DeleteNetworkRequest) {
-					if(callback.contains("deleteNetworkError")) {
-						DeleteNetworkError deleteNetworkError = (DeleteNetworkError) unmarshalXml(callback, DeleteNetworkError.class);
-						throw new Exception(deleteNetworkError.getMessage());
-					} else {
-						DeleteNetworkResponse deleteNetworkResponse = (DeleteNetworkResponse) unmarshalXml(callback, DeleteNetworkResponse.class);
-						execution.setVariable("deleteNetworkResponse", deleteNetworkResponse);
-					}
-				} else if (networkAdapterRequest instanceof UpdateNetworkRequest) {
-					if (callback.contains("updateNetworkError")) {
-						UpdateNetworkError updateNetworkError = (UpdateNetworkError) unmarshalXml(callback, UpdateNetworkError.class);
-						throw new Exception(updateNetworkError.getMessage());
-					} else {
-						UpdateNetworkResponse updateNetworkResponse = (UpdateNetworkResponse) unmarshalXml(callback, UpdateNetworkResponse.class);
-						execution.setVariable("updateNetworkResponse", updateNetworkResponse);
-					}
-				}
-			}
-		} catch (Exception e) {
-			logger.error("Error in Openstack Adapter callback", e);
-			exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage());
-		}
-	}
-	
-	protected <T> Object unmarshalXml(String xmlString, Class<T> resultClass) throws JAXBException {
-		StringReader reader = new StringReader(xmlString);
-		JAXBContext context = JAXBContext.newInstance(resultClass);
-		Unmarshaller unmarshaller = context.createUnmarshaller();
-		return unmarshaller.unmarshal(reader);
-	}
-	
-	public void handleTimeOutException (DelegateExecution execution) {		
-		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, "Error timed out waiting on Openstack Async-Response");
-	}
-	
-	public void handleSyncError (DelegateExecution execution) {
-		String statusCode = (String) execution.getVariable(NETWORK_SYNC_CODE);
-		String responseString = (String) execution.getVariable(NETWORK_SYNC_RESPONSE);
-		String errorMessage = "Error with Openstack Adapter Sync Request: StatusCode = " + statusCode + " Response = " + responseString;
-		exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, errorMessage);
-	}
+    private static final String NETWORK_REQUEST = "networkAdapterRequest";
+    private static final String NETWORK_MESSAGE = "NetworkAResponse_MESSAGE";
+    private static final String NETWORK_SYNC_CODE = "NETWORKREST_networkAdapterStatusCode";
+    private static final String NETWORK_SYNC_RESPONSE = "NETWORKREST_networkAdapterResponse";
+    private static final String NETWORK_CORRELATOR = "NetworkAResponse_CORRELATOR";
+
+    @Autowired
+    private ExceptionBuilder exceptionBuilder;
+
+    @Autowired
+    private NetworkAdapterResources networkAdapterResources;
+
+    public void callNetworkAdapter(DelegateExecution execution) {
+        try {
+            Object networkAdapterRequest = execution.getVariable(NETWORK_REQUEST);
+            if (networkAdapterRequest != null) {
+                Optional<Response> response = Optional.empty();
+                if (networkAdapterRequest instanceof CreateNetworkRequest) {
+                    CreateNetworkRequest createNetworkRequest = (CreateNetworkRequest) networkAdapterRequest;
+                    execution.setVariable(NETWORK_CORRELATOR, createNetworkRequest.getMessageId());
+                    response = networkAdapterResources.createNetworkAsync(createNetworkRequest);
+                } else if (networkAdapterRequest instanceof DeleteNetworkRequest) {
+                    DeleteNetworkRequest deleteNetworkRequest = (DeleteNetworkRequest) networkAdapterRequest;
+                    execution.setVariable(NETWORK_CORRELATOR, deleteNetworkRequest.getMessageId());
+                    response = networkAdapterResources.deleteNetworkAsync(deleteNetworkRequest);
+                } else if (networkAdapterRequest instanceof UpdateNetworkRequest) {
+                    UpdateNetworkRequest updateNetworkRequest = (UpdateNetworkRequest) networkAdapterRequest;
+                    execution.setVariable(NETWORK_CORRELATOR, updateNetworkRequest.getMessageId());
+                    response = networkAdapterResources.updateNetworkAsync(updateNetworkRequest);
+                }
+                if (response.isPresent()) {
+                    String statusCode = Integer.toString(response.get().getStatus());
+                    String responseString = "";
+                    if (response.get().getEntity() != null) {
+                        responseString = (String) response.get().getEntity();
+                    }
+                    execution.setVariable(NETWORK_SYNC_CODE, statusCode);
+                    execution.setVariable(NETWORK_SYNC_RESPONSE, responseString);
+                } else {
+                    throw new Exception("No Ack response from Openstack Adapter");
+                }
+            } else {
+                throw new Exception("No Network Request was created. networkAdapterRequest was null.");
+            }
+        } catch (Exception ex) {
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    public void processCallback(DelegateExecution execution) {
+        try {
+            Object networkAdapterRequest = execution.getVariable(NETWORK_REQUEST);
+            String callback = (String) execution.getVariable(NETWORK_MESSAGE);
+            String logCallbackMessage = "Callback from OpenstackAdapter: " + callback;
+            logger.debug(logCallbackMessage);
+            if (networkAdapterRequest != null) {
+                if (networkAdapterRequest instanceof CreateNetworkRequest) {
+                    if (callback.contains("createNetworkError")) {
+                        CreateNetworkError createNetworkError =
+                                (CreateNetworkError) unmarshalXml(callback, CreateNetworkError.class);
+                        throw new Exception(createNetworkError.getMessage());
+                    } else {
+                        CreateNetworkResponse createNetworkResponse =
+                                (CreateNetworkResponse) unmarshalXml(callback, CreateNetworkResponse.class);
+                        execution.setVariable("createNetworkResponse", createNetworkResponse);
+                    }
+                } else if (networkAdapterRequest instanceof DeleteNetworkRequest) {
+                    if (callback.contains("deleteNetworkError")) {
+                        DeleteNetworkError deleteNetworkError =
+                                (DeleteNetworkError) unmarshalXml(callback, DeleteNetworkError.class);
+                        throw new Exception(deleteNetworkError.getMessage());
+                    } else {
+                        DeleteNetworkResponse deleteNetworkResponse =
+                                (DeleteNetworkResponse) unmarshalXml(callback, DeleteNetworkResponse.class);
+                        execution.setVariable("deleteNetworkResponse", deleteNetworkResponse);
+                    }
+                } else if (networkAdapterRequest instanceof UpdateNetworkRequest) {
+                    if (callback.contains("updateNetworkError")) {
+                        UpdateNetworkError updateNetworkError =
+                                (UpdateNetworkError) unmarshalXml(callback, UpdateNetworkError.class);
+                        throw new Exception(updateNetworkError.getMessage());
+                    } else {
+                        UpdateNetworkResponse updateNetworkResponse =
+                                (UpdateNetworkResponse) unmarshalXml(callback, UpdateNetworkResponse.class);
+                        execution.setVariable("updateNetworkResponse", updateNetworkResponse);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.error("Error in Openstack Adapter callback", e);
+            exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, e.getMessage());
+        }
+    }
+
+    protected <T> Object unmarshalXml(String xmlString, Class<T> resultClass) throws JAXBException {
+        StringReader reader = new StringReader(xmlString);
+        JAXBContext context = JAXBContext.newInstance(resultClass);
+        Unmarshaller unmarshaller = context.createUnmarshaller();
+        return unmarshaller.unmarshal(reader);
+    }
+
+    public void handleTimeOutException(DelegateExecution execution) {
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000,
+                "Error timed out waiting on Openstack Async-Response");
+    }
+
+    public void handleSyncError(DelegateExecution execution) {
+        String statusCode = (String) execution.getVariable(NETWORK_SYNC_CODE);
+        String responseString = (String) execution.getVariable(NETWORK_SYNC_RESPONSE);
+        String errorMessage = "Error with Openstack Adapter Sync Request: StatusCode = " + statusCode + " Response = "
+                + responseString;
+        exceptionBuilder.buildAndThrowWorkflowException(execution, 7000, errorMessage);
+    }
 }

@@ -23,12 +23,10 @@
 package org.onap.so.bpmn.common;
 
 import static org.onap.so.bpmn.mock.StubResponseDatabase.MockPostRequestDB;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import org.camunda.bpm.engine.TaskService;
 import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.task.TaskQuery;
@@ -42,58 +40,58 @@ import org.slf4j.LoggerFactory;
  * Unit test for RainyDayHandler.bpmn.
  */
 public class ManualHandlingIT extends BaseIntegrationTest {
-	Logger logger = LoggerFactory.getLogger(ManualHandlingIT.class);
-	
-	@Test
-	public void  TestManualHandlingSuccess() {
-		MockPostRequestDB(wireMockServer);
-		
-		Map<String, Object> variables = new HashMap<>();
-		variables.put("isDebugLogEnabled","true");
-		variables.put("msoRequestId", "testRequestId");
-		variables.put("serviceType", "X");
-		variables.put("vnfType", "Y");
-		variables.put("currentActivity", "BB1");
-		variables.put("workStep", "1");
-		variables.put("failedActivity", "AAI");
-		variables.put("vnfName", "vSAMP12");
-		variables.put("errorCode", "123");
-		variables.put("errorText", "update failed");
-		variables.put("validResponses", "Rollback");
-		variables.put("vnfName", "vSAMP1");
+    Logger logger = LoggerFactory.getLogger(ManualHandlingIT.class);
+
+    @Test
+    public void TestManualHandlingSuccess() {
+        MockPostRequestDB(wireMockServer);
+
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("isDebugLogEnabled", "true");
+        variables.put("msoRequestId", "testRequestId");
+        variables.put("serviceType", "X");
+        variables.put("vnfType", "Y");
+        variables.put("currentActivity", "BB1");
+        variables.put("workStep", "1");
+        variables.put("failedActivity", "AAI");
+        variables.put("vnfName", "vSAMP12");
+        variables.put("errorCode", "123");
+        variables.put("errorText", "update failed");
+        variables.put("validResponses", "Rollback");
+        variables.put("vnfName", "vSAMP1");
 
 
-		String businessKey = UUID.randomUUID().toString();
-		invokeSubProcess("ManualHandling", businessKey, variables);
-		
-		try {
-			Thread.sleep(5);
-		} catch (Exception e) {
+        String businessKey = UUID.randomUUID().toString();
+        invokeSubProcess("ManualHandling", businessKey, variables);
 
-		}
+        try {
+            Thread.sleep(5);
+        } catch (Exception e) {
 
-		TaskService taskService = processEngine.getTaskService();
+        }
 
-		TaskQuery q = taskService.createTaskQuery();
+        TaskService taskService = processEngine.getTaskService();
 
-		List<Task> tasks = q.orderByTaskCreateTime().asc().list();
-		
-		for (Task task : tasks) {
-			logger.debug("TASK ID: {}", task.getId());
-			logger.debug("TASK NAME: {}", task.getName());
-			
-			try {
-				logger.debug("Completing the task");
-				Map<String,Object> completeVariables = new HashMap<>();
-				completeVariables.put("responseValue", "skip");
-				taskService.complete(task.getId(), completeVariables);
-			} catch(Exception e) {
-				logger.debug("GOT EXCEPTION: {}", e.getMessage());
-			}
-		}
-		
-		waitForProcessEnd(businessKey, 100000);
-		
-		Assert.assertTrue(isProcessEnded(businessKey));
-	}
+        TaskQuery q = taskService.createTaskQuery();
+
+        List<Task> tasks = q.orderByTaskCreateTime().asc().list();
+
+        for (Task task : tasks) {
+            logger.debug("TASK ID: {}", task.getId());
+            logger.debug("TASK NAME: {}", task.getName());
+
+            try {
+                logger.debug("Completing the task");
+                Map<String, Object> completeVariables = new HashMap<>();
+                completeVariables.put("responseValue", "skip");
+                taskService.complete(task.getId(), completeVariables);
+            } catch (Exception e) {
+                logger.debug("GOT EXCEPTION: {}", e.getMessage());
+            }
+        }
+
+        waitForProcessEnd(businessKey, 100000);
+
+        Assert.assertTrue(isProcessEnded(businessKey));
+    }
 }

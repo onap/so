@@ -25,6 +25,6 @@ import java.io.Serializable;
 /* This class has no body - placeholder if needed - for the response to a Confirm operation */
 
 public class ValetConfirmResponse implements Serializable {
-	private static final long serialVersionUID = 768026109321305392L;
+    private static final long serialVersionUID = 768026109321305392L;
 
 }

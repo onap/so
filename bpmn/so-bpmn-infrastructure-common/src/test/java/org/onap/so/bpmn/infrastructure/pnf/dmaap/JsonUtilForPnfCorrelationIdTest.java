@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.List;
 import org.junit.Test;
 
@@ -41,12 +40,12 @@ public class JsonUtilForPnfCorrelationIdTest {
 
     @Test
     public void parseJsonSuccessful() {
-        List<String> expectedResult = JsonUtilForPnfCorrelationId
-                .parseJsonToGelAllPnfCorrelationId(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID);
+        List<String> expectedResult =
+                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID);
         assertThat(expectedResult).containsExactly("corrTest1", "corrTest2");
 
-        List<String> expectedResult2 = JsonUtilForPnfCorrelationId
-                .parseJsonToGelAllPnfCorrelationId(JSON_WITH_ONE_PNF_CORRELATION_ID);
+        List<String> expectedResult2 =
+                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(JSON_WITH_ONE_PNF_CORRELATION_ID);
         assertThat(expectedResult2).containsExactly("corrTest3");
     }
 
@@ -59,8 +58,8 @@ public class JsonUtilForPnfCorrelationIdTest {
 
     @Test
     public void parseJson_emptyListReturnedWhenNothingFound() {
-        List<String> expectedResult = JsonUtilForPnfCorrelationId
-                .parseJsonToGelAllPnfCorrelationId(JSON_WITH_NO_PNF_CORRELATION_ID);
+        List<String> expectedResult =
+                JsonUtilForPnfCorrelationId.parseJsonToGelAllPnfCorrelationId(JSON_WITH_NO_PNF_CORRELATION_ID);
         assertThat(expectedResult).isEmpty();
     }
 

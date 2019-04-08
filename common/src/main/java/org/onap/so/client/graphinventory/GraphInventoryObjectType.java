@@ -20,6 +20,7 @@
 
 package org.onap.so.client.graphinventory;
 
-public interface GraphInventoryObjectType extends GraphInventoryObjectName, GraphInventoryObjectUriTemplate, GraphInventoryObjectUriPartial {
+public interface GraphInventoryObjectType
+        extends GraphInventoryObjectName, GraphInventoryObjectUriTemplate, GraphInventoryObjectUriPartial {
 
 }

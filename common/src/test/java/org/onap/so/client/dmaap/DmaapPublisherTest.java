@@ -20,7 +20,6 @@
 package org.onap.so.client.dmaap;
 
 import org.junit.Test;
-
 import javax.ws.rs.ProcessingException;
 import java.io.IOException;
 import java.util.Optional;
@@ -49,12 +48,11 @@ public class DmaapPublisherTest {
         }
     };
 
-    public DmaapPublisherTest() throws IOException {
-    }
+    public DmaapPublisherTest() throws IOException {}
 
     @Test(expected = ProcessingException.class)
     public void sendTest() throws Exception {
-            dmaapPublisher.send("{'key': 'value'}");
+        dmaapPublisher.send("{'key': 'value'}");
     }
 
 }

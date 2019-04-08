@@ -22,7 +22,6 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,13 +34,10 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
-
 import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
@@ -49,132 +45,132 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 @Table(name = "collection_resource_instance_group_customization")
 public class CollectionResourceInstanceGroupCustomization implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 5169990063225044265L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5169990063225044265L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID")
-	private String modelCustomizationUUID;
+    @BusinessKey
+    @Id
+    @Column(name = "COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID")
+    private String modelCustomizationUUID;
 
-	@BusinessKey
-	@Id
-	@Column(name = "INSTANCE_GROUP_MODEL_UUID")
-	private String modelUUID;
+    @BusinessKey
+    @Id
+    @Column(name = "INSTANCE_GROUP_MODEL_UUID")
+    private String modelUUID;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID", updatable = false, insertable = false)
-	private CollectionResourceCustomization collectionResourceCust;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COLLECTION_RESOURCE_CUSTOMIZATION_MODEL_UUID", updatable = false, insertable = false)
+    private CollectionResourceCustomization collectionResourceCust;
 
-	@ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@JoinColumn(name = "INSTANCE_GROUP_MODEL_UUID", updatable = false, insertable = false)
-	private InstanceGroup instanceGroup;
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "INSTANCE_GROUP_MODEL_UUID", updatable = false, insertable = false)
+    private InstanceGroup instanceGroup;
 
-	@Column(name = "FUNCTION")
-	private String function;
+    @Column(name = "FUNCTION")
+    private String function;
 
-	@Column(name = "DESCRIPTION")
-	private String description;
+    @Column(name = "DESCRIPTION")
+    private String description;
 
-	@Column(name = "CREATION_TIMESTAMP", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+    @Column(name = "CREATION_TIMESTAMP", updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created;
 
-	@Column(name = "SUBINTERFACE_NETWORK_QUANTITY")
-	private Integer subInterfaceNetworkQuantity;
+    @Column(name = "SUBINTERFACE_NETWORK_QUANTITY")
+    private Integer subInterfaceNetworkQuantity;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-				.append("modelUUID", modelUUID).append("collectionResourceCust", collectionResourceCust)
-				.append("instanceGroup", instanceGroup).append("function", function).append("description", description)
-				.append("created", created).append("subInterfaceNetworkQuantity", subInterfaceNetworkQuantity)
-				.toString();
-	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelUUID", modelUUID).append("collectionResourceCust", collectionResourceCust)
+                .append("instanceGroup", instanceGroup).append("function", function).append("description", description)
+                .append("created", created).append("subInterfaceNetworkQuantity", subInterfaceNetworkQuantity)
+                .toString();
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof CollectionResourceInstanceGroupCustomization)) {
-			return false;
-		}
-		CollectionResourceInstanceGroupCustomization castOther = (CollectionResourceInstanceGroupCustomization) other;
-		return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID)
-				.append(modelUUID, castOther.modelUUID).append(collectionResourceCust, castOther.collectionResourceCust)
-				.append(instanceGroup, castOther.instanceGroup).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof CollectionResourceInstanceGroupCustomization)) {
+            return false;
+        }
+        CollectionResourceInstanceGroupCustomization castOther = (CollectionResourceInstanceGroupCustomization) other;
+        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID)
+                .append(modelUUID, castOther.modelUUID).append(collectionResourceCust, castOther.collectionResourceCust)
+                .append(instanceGroup, castOther.instanceGroup).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(modelCustomizationUUID).append(modelUUID).append(collectionResourceCust)
-				.append(instanceGroup).toHashCode();
-	}
-	
-	@PrePersist
-	protected void onCreate() {
-		this.created = new Date();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelCustomizationUUID).append(modelUUID).append(collectionResourceCust)
+                .append(instanceGroup).toHashCode();
+    }
 
-	public String getModelCustomizationUUID() {
-		return modelCustomizationUUID;
-	}
+    @PrePersist
+    protected void onCreate() {
+        this.created = new Date();
+    }
 
-	public void setModelCustomizationUUID(String modelCustomizationUUID) {
-		this.modelCustomizationUUID = modelCustomizationUUID;
-	}
+    public String getModelCustomizationUUID() {
+        return modelCustomizationUUID;
+    }
 
-	public String getModelUUID() {
-		return modelUUID;
-	}
+    public void setModelCustomizationUUID(String modelCustomizationUUID) {
+        this.modelCustomizationUUID = modelCustomizationUUID;
+    }
 
-	public void setModelUUID(String modelUUID) {
-		this.modelUUID = modelUUID;
-	}
+    public String getModelUUID() {
+        return modelUUID;
+    }
 
-	public String getFunction() {
-		return function;
-	}
+    public void setModelUUID(String modelUUID) {
+        this.modelUUID = modelUUID;
+    }
 
-	public void setFunction(String function) {
-		this.function = function;
-	}
+    public String getFunction() {
+        return function;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setFunction(String function) {
+        this.function = function;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public Date getCreated() {
-		return created;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public Integer getSubInterfaceNetworkQuantity() {
-		return subInterfaceNetworkQuantity;
-	}
+    public Date getCreated() {
+        return created;
+    }
 
-	public void setSubInterfaceNetworkQuantity(Integer subInterfaceNetworkQuantity) {
-		this.subInterfaceNetworkQuantity = subInterfaceNetworkQuantity;
-	}
+    public Integer getSubInterfaceNetworkQuantity() {
+        return subInterfaceNetworkQuantity;
+    }
 
-	@LinkedResource
-	public CollectionResourceCustomization getCollectionResourceCust() {
-		return collectionResourceCust;
-	}
+    public void setSubInterfaceNetworkQuantity(Integer subInterfaceNetworkQuantity) {
+        this.subInterfaceNetworkQuantity = subInterfaceNetworkQuantity;
+    }
 
-	public void setCollectionResourceCust(CollectionResourceCustomization collectionResourceCust) {
-		this.collectionResourceCust = collectionResourceCust;
-	}
+    @LinkedResource
+    public CollectionResourceCustomization getCollectionResourceCust() {
+        return collectionResourceCust;
+    }
 
-	@LinkedResource
-	public InstanceGroup getInstanceGroup() {
-		return instanceGroup;
-	}
+    public void setCollectionResourceCust(CollectionResourceCustomization collectionResourceCust) {
+        this.collectionResourceCust = collectionResourceCust;
+    }
 
-	public void setInstanceGroup(InstanceGroup instanceGroup) {
-		this.instanceGroup = instanceGroup;
-	}
+    @LinkedResource
+    public InstanceGroup getInstanceGroup() {
+        return instanceGroup;
+    }
+
+    public void setInstanceGroup(InstanceGroup instanceGroup) {
+        this.instanceGroup = instanceGroup;
+    }
 }

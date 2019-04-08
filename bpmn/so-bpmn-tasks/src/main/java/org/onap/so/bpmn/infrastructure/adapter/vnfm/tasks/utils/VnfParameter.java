@@ -20,7 +20,6 @@
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks.utils;
 
 import java.util.Objects;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**

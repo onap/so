@@ -21,49 +21,52 @@
 package org.onap.so.db.catalog.beans;
 
 import static org.junit.Assert.assertTrue;
-
 import org.junit.Test;
 
 public class CvnfcConfigurationCustomizationTest {
-	
-	private static final String CONFIGURATION_FUNCTION = "testconfigurationFunction";
-	private static final String CONFIGURATION_ROLE = "testconfigurationRole";
-	private static final String CONFIGURATION_TYPE = "testconfigurationType";
-	private static final Integer ID = new Integer(1);
-	private static final String MODEL_CUSTOMIZATION_UUID = "testModelCustomizationUUID";
-	private static final String MODEL_INSTANCE_NAME = "testModelInstanceName";
-	private static final String MODEL_UUID = "testModelUUID";
-	private static final String POLICY_NAME = "testPolicyName";
-	
-    @Test
-    public final void testVnfVfmoduleCvnfcConfigurationCustomization () {
-    	CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization = new CvnfcConfigurationCustomization();
-    	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationFunction(CONFIGURATION_FUNCTION);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(setupConfigurationResource());
-    	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationRole(CONFIGURATION_ROLE);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationType(CONFIGURATION_TYPE);
-    	CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
-    	cvnfcCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setCvnfcCustomization(cvnfcCustomization);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setId(ID);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setModelInstanceName(MODEL_INSTANCE_NAME);
-    	vnfVfmoduleCvnfcConfigurationCustomization.setPolicyName(POLICY_NAME);
 
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getId().equals (new Integer(1)));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationFunction().equals (CONFIGURATION_FUNCTION));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationRole().equals (CONFIGURATION_ROLE));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationType().equals (CONFIGURATION_TYPE));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getModelCustomizationUUID().equals (MODEL_CUSTOMIZATION_UUID));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getModelInstanceName().equals (MODEL_INSTANCE_NAME));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName().equals (POLICY_NAME));
-        assertTrue (vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization().getModelCustomizationUUID().equals (MODEL_CUSTOMIZATION_UUID));
+    private static final String CONFIGURATION_FUNCTION = "testconfigurationFunction";
+    private static final String CONFIGURATION_ROLE = "testconfigurationRole";
+    private static final String CONFIGURATION_TYPE = "testconfigurationType";
+    private static final Integer ID = new Integer(1);
+    private static final String MODEL_CUSTOMIZATION_UUID = "testModelCustomizationUUID";
+    private static final String MODEL_INSTANCE_NAME = "testModelInstanceName";
+    private static final String MODEL_UUID = "testModelUUID";
+    private static final String POLICY_NAME = "testPolicyName";
+
+    @Test
+    public final void testVnfVfmoduleCvnfcConfigurationCustomization() {
+        CvnfcConfigurationCustomization vnfVfmoduleCvnfcConfigurationCustomization =
+                new CvnfcConfigurationCustomization();
+        vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationFunction(CONFIGURATION_FUNCTION);
+        vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationResource(setupConfigurationResource());
+        vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationRole(CONFIGURATION_ROLE);
+        vnfVfmoduleCvnfcConfigurationCustomization.setConfigurationType(CONFIGURATION_TYPE);
+        CvnfcCustomization cvnfcCustomization = new CvnfcCustomization();
+        cvnfcCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
+        vnfVfmoduleCvnfcConfigurationCustomization.setCvnfcCustomization(cvnfcCustomization);
+        vnfVfmoduleCvnfcConfigurationCustomization.setId(ID);
+        vnfVfmoduleCvnfcConfigurationCustomization.setModelCustomizationUUID(MODEL_CUSTOMIZATION_UUID);
+        vnfVfmoduleCvnfcConfigurationCustomization.setModelInstanceName(MODEL_INSTANCE_NAME);
+        vnfVfmoduleCvnfcConfigurationCustomization.setPolicyName(POLICY_NAME);
+
+        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getId().equals(new Integer(1)));
+        assertTrue(
+                vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationFunction().equals(CONFIGURATION_FUNCTION));
+        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationRole().equals(CONFIGURATION_ROLE));
+        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getConfigurationType().equals(CONFIGURATION_TYPE));
+        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getModelCustomizationUUID()
+                .equals(MODEL_CUSTOMIZATION_UUID));
+        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getModelInstanceName().equals(MODEL_INSTANCE_NAME));
+        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getPolicyName().equals(POLICY_NAME));
+        assertTrue(vnfVfmoduleCvnfcConfigurationCustomization.getCvnfcCustomization().getModelCustomizationUUID()
+                .equals(MODEL_CUSTOMIZATION_UUID));
     }
 
-    
-    private ConfigurationResource setupConfigurationResource(){
-    	ConfigurationResource configurationResource = new ConfigurationResource();
-    	configurationResource.setModelUUID(MODEL_UUID);
-    	return configurationResource;
+
+    private ConfigurationResource setupConfigurationResource() {
+        ConfigurationResource configurationResource = new ConfigurationResource();
+        configurationResource.setModelUUID(MODEL_UUID);
+        return configurationResource;
     }
 }

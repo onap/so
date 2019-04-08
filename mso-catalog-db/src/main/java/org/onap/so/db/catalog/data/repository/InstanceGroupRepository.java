@@ -25,5 +25,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "instanceGroup", path = "instanceGroup")
 public interface InstanceGroupRepository extends JpaRepository<InstanceGroup, String> {
-	InstanceGroup findByModelUUID(String modelUUID);
+    InstanceGroup findByModelUUID(String modelUUID);
 }

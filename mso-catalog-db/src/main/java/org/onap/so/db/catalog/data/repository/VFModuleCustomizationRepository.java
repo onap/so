@@ -27,7 +27,10 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "vfModuleCustomization", path = "vfModuleCustomization")
 public interface VFModuleCustomizationRepository extends JpaRepository<VfModuleCustomization, Integer> {
-	VfModuleCustomization findFirstByModelCustomizationUUIDOrderByCreatedDesc(@Param("MODEL_CUSTOMIZATION_UUID")String modelCustomizationUUID);
+    VfModuleCustomization findFirstByModelCustomizationUUIDOrderByCreatedDesc(
+            @Param("MODEL_CUSTOMIZATION_UUID") String modelCustomizationUUID);
 
-	VfModuleCustomization findFirstByModelCustomizationUUIDAndVfModuleModelUUIDOrderByCreatedDesc(@Param("MODEL_CUSTOMIZATION_UUID")String modelCustomizationUUID, @Param("MODEL_UUID")String vfModuleModelUUID);
+    VfModuleCustomization findFirstByModelCustomizationUUIDAndVfModuleModelUUIDOrderByCreatedDesc(
+            @Param("MODEL_CUSTOMIZATION_UUID") String modelCustomizationUUID,
+            @Param("MODEL_UUID") String vfModuleModelUUID);
 }

@@ -20,7 +20,6 @@
 package org.onap.so.monitoring.configuration.camunda;
 
 import java.net.URI;
-
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -52,8 +51,8 @@ public class CamundaRestUrlProvider {
 
     /**
      * see {@link <a href=
-     * "https://docs.camunda.org/manual/7.5/reference/rest/history/process-instance/get-process-instance/">Get
-     * Single Process Instance</a>}.
+     * "https://docs.camunda.org/manual/7.5/reference/rest/history/process-instance/get-process-instance/">Get Single
+     * Process Instance</a>}.
      * 
      * @param processInstanceId the process instance id.
      * @return URL
@@ -64,8 +63,7 @@ public class CamundaRestUrlProvider {
     }
 
     /**
-     * see {@link <a href=
-     * "https://docs.camunda.org/manual/7.5/reference/rest/process-definition/get-xml/">Get BPMN 2.0
+     * see {@link <a href= "https://docs.camunda.org/manual/7.5/reference/rest/process-definition/get-xml/">Get BPMN 2.0
      * XML</a>}.
      * 
      * @param processDefinitionId the process definition id.
@@ -78,8 +76,8 @@ public class CamundaRestUrlProvider {
 
     /**
      * see {@link <a href=
-     * "https://docs.camunda.org/manual/7.5/reference/rest/history/activity-instance/get-activity-instance/">Get
-     * Single Activity Instance (Historic)</a>}.
+     * "https://docs.camunda.org/manual/7.5/reference/rest/history/activity-instance/get-activity-instance/">Get Single
+     * Activity Instance (Historic)</a>}.
      * 
      * @param processInstanceId the process instance id.
      * @return URL
@@ -92,8 +90,8 @@ public class CamundaRestUrlProvider {
 
     /**
      * see {@link <a href=
-     * "https://docs.camunda.org/manual/7.5/reference/rest/history/variable-instance/get-variable-instance/">Get
-     * Single Variable Instance</a>}.
+     * "https://docs.camunda.org/manual/7.5/reference/rest/history/variable-instance/get-variable-instance/">Get Single
+     * Variable Instance</a>}.
      * 
      * @param processInstanceId the process instance id.
      * @return URL

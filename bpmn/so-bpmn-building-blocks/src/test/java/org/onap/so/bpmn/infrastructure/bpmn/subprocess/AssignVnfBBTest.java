@@ -19,12 +19,11 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import java.io.IOException;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
@@ -32,27 +31,29 @@ import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
 public class AssignVnfBBTest extends BaseBPMNTest {
-	@Test
-	public void sunnyDayAssignVnfBBTest() throws InterruptedException, IOException {
-		variables.put("callHoming", true);
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf", "ServiceTask_ConnectVnfToCloudRegion", "ServiceTask_ConnectVnfToTenant", "Task_createPlatform", "Task_createLineOfBusiness", "Task_createInstanceGroups",
-				"Task_callHoming", "Task_SDNCAdapterVnfTopologyAssign","CallActivity_sdncAssign", "Task_UpdateVnfOrchestrationStatusAssigned",
-				"End_AssignVnfBB");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void sunnyDayAssignVnfBBTest() throws InterruptedException, IOException {
+        variables.put("callHoming", true);
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf",
+                "ServiceTask_ConnectVnfToCloudRegion", "ServiceTask_ConnectVnfToTenant", "Task_createPlatform",
+                "Task_createLineOfBusiness", "Task_createInstanceGroups", "Task_callHoming",
+                "Task_SDNCAdapterVnfTopologyAssign", "CallActivity_sdncAssign",
+                "Task_UpdateVnfOrchestrationStatusAssigned", "End_AssignVnfBB");
+        assertThat(pi).isEnded();
+    }
 
-	@Test
-	public void rainyDayAssignVnfBBTest() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiCreateTasks)
-				.createVnf(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf").hasNotPassed(
-				"Task_createPlatform", "Task_createLineOfBusiness", "Task_createInstanceGroups", "Task_SDNCAdapterVnfTopologyAssign",
-				"Task_UpdateVnfOrchestrationStatusAssigned", "End_AssignVnfBB");
-		assertThat(pi).isEnded();
-	}
+    @Test
+    public void rainyDayAssignVnfBBTest() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(aaiCreateTasks)
+                .createVnf(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf").hasNotPassed(
+                "Task_createPlatform", "Task_createLineOfBusiness", "Task_createInstanceGroups",
+                "Task_SDNCAdapterVnfTopologyAssign", "Task_UpdateVnfOrchestrationStatusAssigned", "End_AssignVnfBB");
+        assertThat(pi).isEnded();
+    }
 }

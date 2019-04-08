@@ -26,7 +26,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 @RepositoryRestResource(collectionResourceRel = "siteStatus", path = "siteStatus")
-public interface SiteStatusRepository extends JpaRepository<SiteStatus, String> {	
-	SiteStatus findOneBySiteName(String siteName);
+public interface SiteStatusRepository extends JpaRepository<SiteStatus, String> {
+    SiteStatus findOneBySiteName(String siteName);
 
 }

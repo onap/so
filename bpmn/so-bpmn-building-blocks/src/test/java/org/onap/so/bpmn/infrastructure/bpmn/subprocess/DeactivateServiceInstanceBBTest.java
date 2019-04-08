@@ -19,8 +19,8 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
-import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 
+import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareAssertions.assertThat;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
@@ -28,13 +28,15 @@ import org.onap.so.bpmn.BaseBPMNTest;
 /**
  * Unit test cases for DeActivateServiceInstanceTest.bpmn
  */
-public class DeactivateServiceInstanceBBTest extends BaseBPMNTest{
-	@Test
-	public void sunnyDayDeactivateServiceInstanceSDNC() throws InterruptedException {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateServiceInstanceBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("Start_DeactivateServiceInstanceBB", "Task_DeactivateServiceInstance_SDNC", "CallActivity_sdncHandler", "Task_DeactivateServiceInstance_AAI", "End_DeactivateServiceInstanceBB");
-		assertThat(pi).isEnded();
-	}
+public class DeactivateServiceInstanceBBTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayDeactivateServiceInstanceSDNC() throws InterruptedException {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("DeactivateServiceInstanceBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("Start_DeactivateServiceInstanceBB",
+                "Task_DeactivateServiceInstance_SDNC", "CallActivity_sdncHandler", "Task_DeactivateServiceInstance_AAI",
+                "End_DeactivateServiceInstanceBB");
+        assertThat(pi).isEnded();
+    }
 }

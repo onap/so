@@ -21,13 +21,13 @@
 package org.onap.so;
 
 import org.junit.runner.RunWith;
-
 import com.googlecode.junittoolbox.SuiteClasses;
 import com.googlecode.junittoolbox.WildcardPatternSuite;
 
 @RunWith(WildcardPatternSuite.class)
-@SuiteClasses({"**/common/aai/tasks/*Test.class", "**/bpmn/sdno/tasks/*Test.class", "**/buildingblock/SniroHomingV2Test.class"})
+@SuiteClasses({"**/common/aai/tasks/*Test.class", "**/bpmn/sdno/tasks/*Test.class",
+        "**/buildingblock/SniroHomingV2Test.class"})
 public class AllBaseTaskTestSuite {
-	// the class remains empty,
-	// used only as a holder for the above annotations
+    // the class remains empty,
+    // used only as a holder for the above annotations
 }

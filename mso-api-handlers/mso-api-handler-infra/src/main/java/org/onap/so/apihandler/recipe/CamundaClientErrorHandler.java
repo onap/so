@@ -23,7 +23,6 @@
 package org.onap.so.apihandler.recipe;
 
 import java.io.IOException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -32,20 +31,19 @@ import org.springframework.web.client.ResponseErrorHandler;
 
 
 
-public class CamundaClientErrorHandler implements ResponseErrorHandler{
-	
-	 private static Logger logger = LoggerFactory.getLogger(CamundaClientErrorHandler.class);
-	
-	  @Override
-	  public void handleError(ClientHttpResponse response) throws IOException {
-			logger.debug(response.getBody().toString());
-		}
+public class CamundaClientErrorHandler implements ResponseErrorHandler {
 
-	  @Override
-	  public boolean hasError(ClientHttpResponse response) throws IOException {
-		        HttpStatus.Series series = response.getStatusCode().series();
-		        return (HttpStatus.Series.CLIENT_ERROR.equals(series)
-		                || HttpStatus.Series.SERVER_ERROR.equals(series));
-	}
-	    
+    private static Logger logger = LoggerFactory.getLogger(CamundaClientErrorHandler.class);
+
+    @Override
+    public void handleError(ClientHttpResponse response) throws IOException {
+        logger.debug(response.getBody().toString());
+    }
+
+    @Override
+    public boolean hasError(ClientHttpResponse response) throws IOException {
+        HttpStatus.Series series = response.getStatusCode().series();
+        return (HttpStatus.Series.CLIENT_ERROR.equals(series) || HttpStatus.Series.SERVER_ERROR.equals(series));
+    }
+
 }

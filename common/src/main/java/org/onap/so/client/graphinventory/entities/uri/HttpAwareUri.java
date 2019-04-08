@@ -24,6 +24,6 @@ import java.net.URI;
 
 public interface HttpAwareUri {
 
-	
-	public URI buildNoNetwork();
+
+    public URI buildNoNetwork();
 }

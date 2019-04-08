@@ -23,45 +23,43 @@ package org.onap.so.adapters.network;
 
 import org.onap.so.openstack.beans.HostRoute;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ContrailSubnetHostRoute {
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route_prefix")
-	private String prefix;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route_next_hop")
-	private String nextHop;
 
-	public ContrailSubnetHostRoute() {
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route_prefix")
+    private String prefix;
 
-	public String getPrefix() {
-		return prefix;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route_next_hop")
+    private String nextHop;
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
+    public ContrailSubnetHostRoute() {}
 
-	public String getNextHop() {
-		return nextHop;
-	}
+    public String getPrefix() {
+        return prefix;
+    }
 
-	public void setNextHop(String nextHop) {
-		this.nextHop = nextHop;
-	}
-	
-	public void populateWith(HostRoute hostRoute)
-	{
-		if (hostRoute != null)
-		{
-			prefix = hostRoute.getPrefix();
-			nextHop = hostRoute.getNextHop();
-		}
-	}
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
 
-	@Override
-	public String toString() {
-		return "ContrailSubnetHostRoute [prefix=" + prefix + ", nextHop=" + nextHop + "]";
-	}
-	
+    public String getNextHop() {
+        return nextHop;
+    }
+
+    public void setNextHop(String nextHop) {
+        this.nextHop = nextHop;
+    }
+
+    public void populateWith(HostRoute hostRoute) {
+        if (hostRoute != null) {
+            prefix = hostRoute.getPrefix();
+            nextHop = hostRoute.getNextHop();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "ContrailSubnetHostRoute [prefix=" + prefix + ", nextHop=" + nextHop + "]";
+    }
+
 }

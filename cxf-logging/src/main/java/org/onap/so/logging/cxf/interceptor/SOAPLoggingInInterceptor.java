@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 
-public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor{
+public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor {
 
     protected static Logger logger = LoggerFactory.getLogger(SOAPLoggingInInterceptor.class);
 
@@ -49,10 +49,10 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor{
     public void handleMessage(SoapMessage message) throws Fault {
         try {
             SOAPMDCSetup mdcSetup = new SOAPMDCSetup();
-            Map<String, List<String>> headers  = (Map<String,List<String>>) message.get(Message.PROTOCOL_HEADERS);
-            HttpServletRequest request = (HttpServletRequest)message.get(AbstractHTTPDestination.HTTP_REQUEST);
+            Map<String, List<String>> headers = (Map<String, List<String>>) message.get(Message.PROTOCOL_HEADERS);
+            HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
             request.getRemoteAddr();
-            
+
             setRequestId(headers);
             setInvocationId(headers);
             setServiceName(message);
@@ -67,36 +67,38 @@ public class SOAPLoggingInInterceptor extends AbstractSoapInterceptor{
             logger.warn("Error in incoming SOAP Message Inteceptor", e);
         }
     }
- 
+
     private void setServiceName(SoapMessage message) {
         String requestURI = (String) message.get(Message.REQUEST_URI);
         MDC.put(ONAPLogConstants.MDCs.SERVICE_NAME, requestURI);
     }
 
-    //CXF Appears to flatten headers to lower case
-    private void setMDCPartnerName(Map<String, List<String>> headers){
-        String partnerName=getValueOrDefault(headers, ONAPLogConstants.Headers.PARTNER_NAME.toLowerCase(),"");
-        MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME,partnerName);
+    // CXF Appears to flatten headers to lower case
+    private void setMDCPartnerName(Map<String, List<String>> headers) {
+        String partnerName = getValueOrDefault(headers, ONAPLogConstants.Headers.PARTNER_NAME.toLowerCase(), "");
+        MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME, partnerName);
     }
 
     private void setInvocationId(Map<String, List<String>> headers) {
-        String invocationId=getValueOrDefault(headers, ONAPLogConstants.Headers.INVOCATION_ID.toLowerCase(),UUID.randomUUID().toString());
+        String invocationId = getValueOrDefault(headers, ONAPLogConstants.Headers.INVOCATION_ID.toLowerCase(),
+                UUID.randomUUID().toString());
         MDC.put(ONAPLogConstants.MDCs.INVOCATION_ID, invocationId);
     }
 
     private void setRequestId(Map<String, List<String>> headers) {
-        String requestId=getValueOrDefault(headers, ONAPLogConstants.Headers.REQUEST_ID.toLowerCase(),UUID.randomUUID().toString());
-        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID,requestId);
+        String requestId = getValueOrDefault(headers, ONAPLogConstants.Headers.REQUEST_ID.toLowerCase(),
+                UUID.randomUUID().toString());
+        MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, requestId);
     }
 
-    private String getValueOrDefault(Map<String, List<String>> headers, String headerName, String defaultValue){
+    private String getValueOrDefault(Map<String, List<String>> headers, String headerName, String defaultValue) {
         String headerValue;
-        List<String> headerList=headers.get(headerName);
-        if(headerList != null && !headerList.isEmpty()){
-            headerValue= headerList.get(0);
-            if(headerValue == null || headerValue.isEmpty())
+        List<String> headerList = headers.get(headerName);
+        if (headerList != null && !headerList.isEmpty()) {
+            headerValue = headerList.get(0);
+            if (headerValue == null || headerValue.isEmpty())
                 headerValue = defaultValue;
-        }else
+        } else
             headerValue = defaultValue;
         return headerValue;
     }

@@ -23,7 +23,6 @@ package org.onap.so.bpmn.servicedecomposition.generalobjects;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -32,25 +31,28 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 @JsonRootName("license")
 public class License implements Serializable {
 
-	private static final long serialVersionUID = 2345786874755685318L;
+    private static final long serialVersionUID = 2345786874755685318L;
 
-	@JsonProperty("entitlement-pool-uuids")
-	private List<String> entitlementPoolUuids = new ArrayList<String>();
-	@JsonProperty("license-key-group-uuids")
-	private List<String> licenseKeyGroupUuids = new ArrayList<String>();
+    @JsonProperty("entitlement-pool-uuids")
+    private List<String> entitlementPoolUuids = new ArrayList<String>();
+    @JsonProperty("license-key-group-uuids")
+    private List<String> licenseKeyGroupUuids = new ArrayList<String>();
 
 
-	public List<String> getEntitlementPoolUuids() {
-		return entitlementPoolUuids;
-	}
-	public void setEntitlementPoolUuids(List<String> entitlementPoolUuids) {
-		this.entitlementPoolUuids = entitlementPoolUuids;
-	}
-	public List<String> getLicenseKeyGroupUuids() {
-		return licenseKeyGroupUuids;
-	}
-	public void setLicenseKeyGroupUuids(List<String> licenseKeyGroupUuids) {
-		this.licenseKeyGroupUuids = licenseKeyGroupUuids;
-	}
+    public List<String> getEntitlementPoolUuids() {
+        return entitlementPoolUuids;
+    }
+
+    public void setEntitlementPoolUuids(List<String> entitlementPoolUuids) {
+        this.entitlementPoolUuids = entitlementPoolUuids;
+    }
+
+    public List<String> getLicenseKeyGroupUuids() {
+        return licenseKeyGroupUuids;
+    }
+
+    public void setLicenseKeyGroupUuids(List<String> licenseKeyGroupUuids) {
+        this.licenseKeyGroupUuids = licenseKeyGroupUuids;
+    }
 
 }

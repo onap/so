@@ -23,7 +23,6 @@
 package org.onap.so.bpmn.servicedecomposition.tasks;
 
 import java.util.Map;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.onap.so.bpmn.core.WorkflowException;
@@ -44,154 +43,154 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExecuteBuildingBlockRainyDay {
 
-	private static final Logger logger = LoggerFactory.getLogger(ExecuteBuildingBlockRainyDay.class);
-	public static final String HANDLING_CODE = "handlingCode";
+    private static final Logger logger = LoggerFactory.getLogger(ExecuteBuildingBlockRainyDay.class);
+    public static final String HANDLING_CODE = "handlingCode";
 
-	@Autowired
-	private CatalogDbClient catalogDbClient;
-	@Autowired
-	private RequestsDbClient requestDbclient;
-	private static final String ASTERISK = "*";
+    @Autowired
+    private CatalogDbClient catalogDbClient;
+    @Autowired
+    private RequestsDbClient requestDbclient;
+    private static final String ASTERISK = "*";
 
-	@Autowired
-	private Environment environment;
-	protected String retryDurationPath = "mso.rainyDay.retryDurationMultiplier";
-	protected String defaultCode = "mso.rainyDay.defaultCode";
-	protected String maxRetries = "mso.rainyDay.maxRetries";
+    @Autowired
+    private Environment environment;
+    protected String retryDurationPath = "mso.rainyDay.retryDurationMultiplier";
+    protected String defaultCode = "mso.rainyDay.defaultCode";
+    protected String maxRetries = "mso.rainyDay.maxRetries";
 
-	public void setRetryTimer(DelegateExecution execution) {
-		try {
-			int retryDurationMult = Integer.parseInt(this.environment.getProperty(retryDurationPath));
-			int retryCount = (int) execution.getVariable("retryCount");
-			int retryTimeToWait = (int) Math.pow(retryDurationMult, retryCount) * 10;
-			String RetryDuration = "PT" + retryTimeToWait + "S";
-			execution.setVariable("RetryDuration", RetryDuration);
-		} catch (Exception e) {
-			logger.error("Exception occurred", e);
-			throw new BpmnError("Unknown error incrementing retry counter");
-		}
-	}
+    public void setRetryTimer(DelegateExecution execution) {
+        try {
+            int retryDurationMult = Integer.parseInt(this.environment.getProperty(retryDurationPath));
+            int retryCount = (int) execution.getVariable("retryCount");
+            int retryTimeToWait = (int) Math.pow(retryDurationMult, retryCount) * 10;
+            String RetryDuration = "PT" + retryTimeToWait + "S";
+            execution.setVariable("RetryDuration", RetryDuration);
+        } catch (Exception e) {
+            logger.error("Exception occurred", e);
+            throw new BpmnError("Unknown error incrementing retry counter");
+        }
+    }
 
-	public void queryRainyDayTable(DelegateExecution execution, boolean primaryPolicy) {
-		try {
-			ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
-			String bbName = ebb.getBuildingBlock().getBpmnFlowName();
-			GeneralBuildingBlock gBBInput = (GeneralBuildingBlock) execution.getVariable("gBBInput");
-			String requestId = (String) execution.getVariable("mso-request-id");
-			Map<ResourceKey, String> lookupKeyMap = (Map<ResourceKey, String>) execution.getVariable("lookupKeyMap");
-			String serviceType = ASTERISK;
-			boolean aLaCarte = (boolean) execution.getVariable("aLaCarte");
-			boolean suppressRollback = (boolean) execution.getVariable("suppressRollback");
-			String handlingCode = "";
-			
-			WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
-			try {
-				// Extract error data to be returned to WorkflowAction
-				execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
-			} catch (Exception e) {
-				logger.error("No WorkflowException Found",e);
-			}
-			
-			if (suppressRollback) {
-				handlingCode = "Abort";
-			} else {
-				try {
-					serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
-							.getModelInfoServiceInstance().getServiceType();
-				} catch (Exception ex) {
-					// keep default serviceType value
-				}
-				String vnfType = ASTERISK;
-				try {
-					for (GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
-							.getVnfs()) {
-						if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
-							vnfType = vnf.getVnfType();
-						}
-					}
-				} catch (Exception ex) {
-					// keep default vnfType value
-				}
-				
-				String errorCode = ASTERISK;
-				try {
-					errorCode = "" + workflowException.getErrorCode();
-				} catch (Exception ex) {
-					// keep default errorCode value
-				}
-				try {
-					errorCode = "" + (String) execution.getVariable("WorkflowExceptionCode");
-				} catch (Exception ex) {
-					// keep default errorCode value
-				}
+    public void queryRainyDayTable(DelegateExecution execution, boolean primaryPolicy) {
+        try {
+            ExecuteBuildingBlock ebb = (ExecuteBuildingBlock) execution.getVariable("buildingBlock");
+            String bbName = ebb.getBuildingBlock().getBpmnFlowName();
+            GeneralBuildingBlock gBBInput = (GeneralBuildingBlock) execution.getVariable("gBBInput");
+            String requestId = (String) execution.getVariable("mso-request-id");
+            Map<ResourceKey, String> lookupKeyMap = (Map<ResourceKey, String>) execution.getVariable("lookupKeyMap");
+            String serviceType = ASTERISK;
+            boolean aLaCarte = (boolean) execution.getVariable("aLaCarte");
+            boolean suppressRollback = (boolean) execution.getVariable("suppressRollback");
+            String handlingCode = "";
 
-				String workStep = ASTERISK;
-				try {
-					workStep = workflowException.getWorkStep();
-				} catch (Exception ex) {
-					// keep default workStep value
-				}
-				
-				RainyDayHandlerStatus rainyDayHandlerStatus;
-				rainyDayHandlerStatus = catalogDbClient
-						.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
-								serviceType, vnfType, errorCode, workStep);
-				if (rainyDayHandlerStatus == null) {
-					rainyDayHandlerStatus = catalogDbClient
-							.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
-									ASTERISK, ASTERISK, errorCode, ASTERISK);
-				}
-				
-				if (rainyDayHandlerStatus == null) {
-					rainyDayHandlerStatus = catalogDbClient
-							.getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
-									ASTERISK, ASTERISK, ASTERISK, ASTERISK);
-					if (rainyDayHandlerStatus == null) {
-						handlingCode = "Abort";
-					} else {
-						if (primaryPolicy) {
-							handlingCode = rainyDayHandlerStatus.getPolicy();
-						} else {
-							handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
-						}
-					}
-				} else {
-					if (primaryPolicy) {
-						handlingCode = rainyDayHandlerStatus.getPolicy();
-					} else {
-						handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
-					}
-				}
-				if (!primaryPolicy) {
-					try {
-						InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
-						request.setRetryStatusMessage("Retries have been exhausted.");
-						requestDbclient.updateInfraActiveRequests(request);
-					} catch (Exception ex) {
-						logger.error("Failed to update Request Db Infra Active Requests with Retry Status",ex);
-					}
-				}
-				if (handlingCode.equals("RollbackToAssigned") && !aLaCarte) {
-					handlingCode = "Rollback";
-				}
-			}
-			logger.debug("RainyDayHandler Status Code is: {}", handlingCode);
-			execution.setVariable(HANDLING_CODE, handlingCode);
-		} catch (Exception e) {
-			String code = this.environment.getProperty(defaultCode);
-			logger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = {}", code, e);
-			execution.setVariable(HANDLING_CODE, code);
-		}
-		try{
-			int envMaxRetries = Integer.parseInt(this.environment.getProperty(maxRetries));
-			execution.setVariable("maxRetries", envMaxRetries);
-		} catch (Exception ex) {
-			logger.error("Could not read maxRetries from config file. Setting max to 5 retries");
-			execution.setVariable("maxRetries", 5);
-		}
-	}
+            WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+            try {
+                // Extract error data to be returned to WorkflowAction
+                execution.setVariable("WorkflowExceptionErrorMessage", workflowException.getErrorMessage());
+            } catch (Exception e) {
+                logger.error("No WorkflowException Found", e);
+            }
 
-	public void setHandlingStatusSuccess(DelegateExecution execution) {
-		execution.setVariable(HANDLING_CODE, "Success");
-	}
+            if (suppressRollback) {
+                handlingCode = "Abort";
+            } else {
+                try {
+                    serviceType = gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+                            .getModelInfoServiceInstance().getServiceType();
+                } catch (Exception ex) {
+                    // keep default serviceType value
+                }
+                String vnfType = ASTERISK;
+                try {
+                    for (GenericVnf vnf : gBBInput.getCustomer().getServiceSubscription().getServiceInstances().get(0)
+                            .getVnfs()) {
+                        if (vnf.getVnfId().equalsIgnoreCase(lookupKeyMap.get(ResourceKey.GENERIC_VNF_ID))) {
+                            vnfType = vnf.getVnfType();
+                        }
+                    }
+                } catch (Exception ex) {
+                    // keep default vnfType value
+                }
+
+                String errorCode = ASTERISK;
+                try {
+                    errorCode = "" + workflowException.getErrorCode();
+                } catch (Exception ex) {
+                    // keep default errorCode value
+                }
+                try {
+                    errorCode = "" + (String) execution.getVariable("WorkflowExceptionCode");
+                } catch (Exception ex) {
+                    // keep default errorCode value
+                }
+
+                String workStep = ASTERISK;
+                try {
+                    workStep = workflowException.getWorkStep();
+                } catch (Exception ex) {
+                    // keep default workStep value
+                }
+
+                RainyDayHandlerStatus rainyDayHandlerStatus;
+                rainyDayHandlerStatus = catalogDbClient
+                        .getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
+                                serviceType, vnfType, errorCode, workStep);
+                if (rainyDayHandlerStatus == null) {
+                    rainyDayHandlerStatus = catalogDbClient
+                            .getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
+                                    ASTERISK, ASTERISK, errorCode, ASTERISK);
+                }
+
+                if (rainyDayHandlerStatus == null) {
+                    rainyDayHandlerStatus = catalogDbClient
+                            .getRainyDayHandlerStatusByFlowNameAndServiceTypeAndVnfTypeAndErrorCodeAndWorkStep(bbName,
+                                    ASTERISK, ASTERISK, ASTERISK, ASTERISK);
+                    if (rainyDayHandlerStatus == null) {
+                        handlingCode = "Abort";
+                    } else {
+                        if (primaryPolicy) {
+                            handlingCode = rainyDayHandlerStatus.getPolicy();
+                        } else {
+                            handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+                        }
+                    }
+                } else {
+                    if (primaryPolicy) {
+                        handlingCode = rainyDayHandlerStatus.getPolicy();
+                    } else {
+                        handlingCode = rainyDayHandlerStatus.getSecondaryPolicy();
+                    }
+                }
+                if (!primaryPolicy) {
+                    try {
+                        InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
+                        request.setRetryStatusMessage("Retries have been exhausted.");
+                        requestDbclient.updateInfraActiveRequests(request);
+                    } catch (Exception ex) {
+                        logger.error("Failed to update Request Db Infra Active Requests with Retry Status", ex);
+                    }
+                }
+                if (handlingCode.equals("RollbackToAssigned") && !aLaCarte) {
+                    handlingCode = "Rollback";
+                }
+            }
+            logger.debug("RainyDayHandler Status Code is: {}", handlingCode);
+            execution.setVariable(HANDLING_CODE, handlingCode);
+        } catch (Exception e) {
+            String code = this.environment.getProperty(defaultCode);
+            logger.error("Failed to determine RainyDayHandler Status. Seting handlingCode = {}", code, e);
+            execution.setVariable(HANDLING_CODE, code);
+        }
+        try {
+            int envMaxRetries = Integer.parseInt(this.environment.getProperty(maxRetries));
+            execution.setVariable("maxRetries", envMaxRetries);
+        } catch (Exception ex) {
+            logger.error("Could not read maxRetries from config file. Setting max to 5 retries");
+            execution.setVariable("maxRetries", 5);
+        }
+    }
+
+    public void setHandlingStatusSuccess(DelegateExecution execution) {
+        execution.setVariable(HANDLING_CODE, "Success");
+    }
 }

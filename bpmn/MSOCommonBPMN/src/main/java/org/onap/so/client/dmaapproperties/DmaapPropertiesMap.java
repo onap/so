@@ -21,27 +21,26 @@
 package org.onap.so.client.dmaapproperties;
 
 import org.onap.so.bpmn.core.UrnPropertiesReader;
-
 import java.util.HashMap;
 
 /**
- * This class is used when Dmaap Properties are to be accessed from
- * application.yaml and it delegates get calls to UrnPropertyReader class
- * for reading the value from active configuration
+ * This class is used when Dmaap Properties are to be accessed from application.yaml and it delegates get calls to
+ * UrnPropertyReader class for reading the value from active configuration
+ * 
  * @param <K> Key for Map Entry
  * @param <V> Value for Map Entry
  */
-public class DmaapPropertiesMap<K,V> extends HashMap<K,V> {
+public class DmaapPropertiesMap<K, V> extends HashMap<K, V> {
 
     @Override
     public V get(Object key) {
-        return (V)UrnPropertiesReader.getVariable((String)key);
+        return (V) UrnPropertiesReader.getVariable((String) key);
     }
 
     @Override
     public V getOrDefault(Object key, V defaultValue) {
-        String str = UrnPropertiesReader.getVariable((String)key);
-        return str ==null ? defaultValue : (V)str;
+        String str = UrnPropertiesReader.getVariable((String) key);
+        return str == null ? defaultValue : (V) str;
     }
 
 

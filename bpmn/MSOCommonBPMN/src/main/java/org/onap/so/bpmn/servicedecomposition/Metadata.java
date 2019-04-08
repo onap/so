@@ -23,18 +23,17 @@ package org.onap.so.bpmn.servicedecomposition;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Metadatum;
 
-public class Metadata implements Serializable{
-	
-	private static final long serialVersionUID = 4981393122007858950L;
-	
-	@JsonProperty("metadatum")
-	private List<Metadatum> metadatum = new ArrayList<Metadatum>();
+public class Metadata implements Serializable {
 
-	public List<Metadatum> getMetadatum() {
-		return metadatum;
-	}	
+    private static final long serialVersionUID = 4981393122007858950L;
+
+    @JsonProperty("metadatum")
+    private List<Metadatum> metadatum = new ArrayList<Metadatum>();
+
+    public List<Metadatum> getMetadatum() {
+        return metadatum;
+    }
 }

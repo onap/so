@@ -24,7 +24,6 @@ package org.onap.so.client.sdnc.mapper;
 
 import java.util.Map;
 import java.util.UUID;
-
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiParamParam;
 import org.onap.sdnc.northbound.client.model.GenericResourceApiRequestActionEnumeration;
@@ -53,134 +52,146 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class VfModuleTopologyOperationRequestMapper {
-	private static final Logger logger = LoggerFactory.getLogger(VfModuleTopologyOperationRequestMapper.class);
-	
-	@Autowired
-	private GeneralTopologyObjectMapper generalTopologyObjectMapper;
+    private static final Logger logger = LoggerFactory.getLogger(VfModuleTopologyOperationRequestMapper.class);
 
-	public GenericResourceApiVfModuleOperationInformation reqMapper(SDNCSvcOperation svcOperation,
-			SDNCSvcAction svcAction,  VfModule vfModule, VolumeGroup volumeGroup, GenericVnf vnf, ServiceInstance serviceInstance,
-			Customer customer, CloudRegion cloudRegion, RequestContext requestContext, String sdncAssignResponse) throws MapperException {
-		GenericResourceApiVfModuleOperationInformation req = new GenericResourceApiVfModuleOperationInformation();
-		
-		boolean includeModelInformation = false;	
-		
-		GenericResourceApiRequestActionEnumeration requestAction = GenericResourceApiRequestActionEnumeration.CREATEVFMODULEINSTANCE;
-		GenericResourceApiSvcActionEnumeration genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.ASSIGN;
+    @Autowired
+    private GeneralTopologyObjectMapper generalTopologyObjectMapper;
 
-		if (svcAction.equals(SDNCSvcAction.ACTIVATE)) {
-			genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.ACTIVATE;
-			requestAction = GenericResourceApiRequestActionEnumeration.CREATEVFMODULEINSTANCE;
-			includeModelInformation = true;
-		} else if (svcAction.equals(SDNCSvcAction.ASSIGN)) {
-			genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.ASSIGN;
-			requestAction = GenericResourceApiRequestActionEnumeration.CREATEVFMODULEINSTANCE;
-			includeModelInformation = true;
-		} else if (svcAction.equals(SDNCSvcAction.DEACTIVATE)) {
-			genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.DEACTIVATE;
-			requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
-			includeModelInformation = false;
-		} else if (svcAction.equals(SDNCSvcAction.DELETE)) {
-			genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.DELETE;
-			requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
-			includeModelInformation = false;			
-		} else if (svcAction.equals(SDNCSvcAction.UNASSIGN)) {
-			genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.UNASSIGN;
-			requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
-			includeModelInformation = false;
-		}		
-		
-		String sdncReqId = UUID.randomUUID().toString();
-		String msoRequestId = UUID.randomUUID().toString();
-		if (requestContext != null && requestContext.getMsoRequestId() != null) {
-			msoRequestId = requestContext.getMsoRequestId();
-		} 
-		
-		GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper.buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, 
-				requestAction);
-		GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper.buildServiceInformation(serviceInstance, requestContext, customer, includeModelInformation);
-				GenericResourceApiVnfinformationVnfInformation vnfInformation = generalTopologyObjectMapper.buildVnfInformation(vnf, serviceInstance, includeModelInformation);
-		GenericResourceApiVfmoduleinformationVfModuleInformation vfModuleInformation = generalTopologyObjectMapper.buildVfModuleInformation(vfModule, vnf, serviceInstance, requestContext, includeModelInformation);
-		GenericResourceApiVfmodulerequestinputVfModuleRequestInput vfModuleRequestInput = buildVfModuleRequestInput(vfModule, volumeGroup, cloudRegion, requestContext);
-		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = buildVfModuleSdncRequestHeader(sdncReqId, genericResourceApiSvcAction);		
-		
-		req.setRequestInformation(requestInformation);
-		req.setSdncRequestHeader(sdncRequestHeader);
-		req.setServiceInformation(serviceInformation);
-		req.setVnfInformation(vnfInformation);
-		req.setVfModuleInformation(vfModuleInformation);		
-		req.setVfModuleRequestInput(vfModuleRequestInput);
-		
-		return req;
-	}
-	
-	private GenericResourceApiVfmodulerequestinputVfModuleRequestInput buildVfModuleRequestInput(VfModule vfModule, VolumeGroup volumeGroup, CloudRegion cloudRegion, RequestContext requestContext) {	
-		GenericResourceApiVfmodulerequestinputVfModuleRequestInput vfModuleRequestInput = new GenericResourceApiVfmodulerequestinputVfModuleRequestInput();
-		if (cloudRegion != null) {
-			vfModuleRequestInput.setTenant(cloudRegion.getTenantId());
-			vfModuleRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
-			vfModuleRequestInput.setCloudOwner(cloudRegion.getCloudOwner());
-		}
-		if (vfModule.getVfModuleName() != null && !vfModule.getVfModuleName().equals("")) {
-			vfModuleRequestInput.setVfModuleName(vfModule.getVfModuleName());
-		}
-		GenericResourceApiParam vfModuleInputParameters = new GenericResourceApiParam();
-		
-		if (requestContext != null && requestContext.getUserParams() != null) {
-			for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
-				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
-				paramItem.setName(entry.getKey()); 
-				paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue())); 
-				vfModuleInputParameters.addParamItem(paramItem);
-			}
-		}
-		
-		if (vfModule.getCloudParams() != null) {
-			for (Map.Entry<String, String> entry : vfModule.getCloudParams().entrySet()) {
-				GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
-				paramItem.setName(entry.getKey());
-				paramItem.setValue(entry.getValue());
-				vfModuleInputParameters.addParamItem(paramItem);
-			}
-		}
-		
-		if (volumeGroup != null) {
-			GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
-			paramItem.setName("volume-group-id");
-			paramItem.setValue(volumeGroup.getVolumeGroupId());
-			vfModuleInputParameters.addParamItem(paramItem);
-		}
-		vfModuleRequestInput.setVfModuleInputParameters(vfModuleInputParameters);
-		
-		return vfModuleRequestInput;
-	}
-	
-	private GenericResourceApiSdncrequestheaderSdncRequestHeader buildVfModuleSdncRequestHeader(String sdncReqId, GenericResourceApiSvcActionEnumeration svcAction) {
-		GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader = new GenericResourceApiSdncrequestheaderSdncRequestHeader();	
-		
-		sdncRequestHeader.setSvcRequestId(sdncReqId);
-		sdncRequestHeader.setSvcAction(svcAction);
-		
-		return sdncRequestHeader;
-	}
-	
-	public String buildObjectPath(String sdncAssignResponse) {
-		String objectPath = null;
-		if (sdncAssignResponse != null) {
-			ObjectMapper mapper = new ObjectMapper();
-			try {
-				GenericResourceApiVfModuleResponseInformation assignResponseInfo = mapper.readValue(sdncAssignResponse, GenericResourceApiVfModuleResponseInformation.class);				
-				objectPath = assignResponseInfo.getVfModuleResponseInformation().getObjectPath();
-			} catch (Exception e) {
-				logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), e.getMessage(), "BPMN",
-					ErrorCode.UnknownError.getValue(), e.getMessage());
-			}
-		}
-		return objectPath;
-	}
+    public GenericResourceApiVfModuleOperationInformation reqMapper(SDNCSvcOperation svcOperation,
+            SDNCSvcAction svcAction, VfModule vfModule, VolumeGroup volumeGroup, GenericVnf vnf,
+            ServiceInstance serviceInstance, Customer customer, CloudRegion cloudRegion, RequestContext requestContext,
+            String sdncAssignResponse) throws MapperException {
+        GenericResourceApiVfModuleOperationInformation req = new GenericResourceApiVfModuleOperationInformation();
+
+        boolean includeModelInformation = false;
+
+        GenericResourceApiRequestActionEnumeration requestAction =
+                GenericResourceApiRequestActionEnumeration.CREATEVFMODULEINSTANCE;
+        GenericResourceApiSvcActionEnumeration genericResourceApiSvcAction =
+                GenericResourceApiSvcActionEnumeration.ASSIGN;
+
+        if (svcAction.equals(SDNCSvcAction.ACTIVATE)) {
+            genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.ACTIVATE;
+            requestAction = GenericResourceApiRequestActionEnumeration.CREATEVFMODULEINSTANCE;
+            includeModelInformation = true;
+        } else if (svcAction.equals(SDNCSvcAction.ASSIGN)) {
+            genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.ASSIGN;
+            requestAction = GenericResourceApiRequestActionEnumeration.CREATEVFMODULEINSTANCE;
+            includeModelInformation = true;
+        } else if (svcAction.equals(SDNCSvcAction.DEACTIVATE)) {
+            genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.DEACTIVATE;
+            requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
+            includeModelInformation = false;
+        } else if (svcAction.equals(SDNCSvcAction.DELETE)) {
+            genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.DELETE;
+            requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
+            includeModelInformation = false;
+        } else if (svcAction.equals(SDNCSvcAction.UNASSIGN)) {
+            genericResourceApiSvcAction = GenericResourceApiSvcActionEnumeration.UNASSIGN;
+            requestAction = GenericResourceApiRequestActionEnumeration.DELETEVFMODULEINSTANCE;
+            includeModelInformation = false;
+        }
+
+        String sdncReqId = UUID.randomUUID().toString();
+        String msoRequestId = UUID.randomUUID().toString();
+        if (requestContext != null && requestContext.getMsoRequestId() != null) {
+            msoRequestId = requestContext.getMsoRequestId();
+        }
+
+        GenericResourceApiRequestinformationRequestInformation requestInformation = generalTopologyObjectMapper
+                .buildGenericResourceApiRequestinformationRequestInformation(msoRequestId, requestAction);
+        GenericResourceApiServiceinformationServiceInformation serviceInformation = generalTopologyObjectMapper
+                .buildServiceInformation(serviceInstance, requestContext, customer, includeModelInformation);
+        GenericResourceApiVnfinformationVnfInformation vnfInformation =
+                generalTopologyObjectMapper.buildVnfInformation(vnf, serviceInstance, includeModelInformation);
+        GenericResourceApiVfmoduleinformationVfModuleInformation vfModuleInformation = generalTopologyObjectMapper
+                .buildVfModuleInformation(vfModule, vnf, serviceInstance, requestContext, includeModelInformation);
+        GenericResourceApiVfmodulerequestinputVfModuleRequestInput vfModuleRequestInput =
+                buildVfModuleRequestInput(vfModule, volumeGroup, cloudRegion, requestContext);
+        GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader =
+                buildVfModuleSdncRequestHeader(sdncReqId, genericResourceApiSvcAction);
+
+        req.setRequestInformation(requestInformation);
+        req.setSdncRequestHeader(sdncRequestHeader);
+        req.setServiceInformation(serviceInformation);
+        req.setVnfInformation(vnfInformation);
+        req.setVfModuleInformation(vfModuleInformation);
+        req.setVfModuleRequestInput(vfModuleRequestInput);
+
+        return req;
+    }
+
+    private GenericResourceApiVfmodulerequestinputVfModuleRequestInput buildVfModuleRequestInput(VfModule vfModule,
+            VolumeGroup volumeGroup, CloudRegion cloudRegion, RequestContext requestContext) {
+        GenericResourceApiVfmodulerequestinputVfModuleRequestInput vfModuleRequestInput =
+                new GenericResourceApiVfmodulerequestinputVfModuleRequestInput();
+        if (cloudRegion != null) {
+            vfModuleRequestInput.setTenant(cloudRegion.getTenantId());
+            vfModuleRequestInput.setAicCloudRegion(cloudRegion.getLcpCloudRegionId());
+            vfModuleRequestInput.setCloudOwner(cloudRegion.getCloudOwner());
+        }
+        if (vfModule.getVfModuleName() != null && !vfModule.getVfModuleName().equals("")) {
+            vfModuleRequestInput.setVfModuleName(vfModule.getVfModuleName());
+        }
+        GenericResourceApiParam vfModuleInputParameters = new GenericResourceApiParam();
+
+        if (requestContext != null && requestContext.getUserParams() != null) {
+            for (Map.Entry<String, Object> entry : requestContext.getUserParams().entrySet()) {
+                GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+                paramItem.setName(entry.getKey());
+                paramItem.setValue(generalTopologyObjectMapper.mapUserParamValue(entry.getValue()));
+                vfModuleInputParameters.addParamItem(paramItem);
+            }
+        }
+
+        if (vfModule.getCloudParams() != null) {
+            for (Map.Entry<String, String> entry : vfModule.getCloudParams().entrySet()) {
+                GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+                paramItem.setName(entry.getKey());
+                paramItem.setValue(entry.getValue());
+                vfModuleInputParameters.addParamItem(paramItem);
+            }
+        }
+
+        if (volumeGroup != null) {
+            GenericResourceApiParamParam paramItem = new GenericResourceApiParamParam();
+            paramItem.setName("volume-group-id");
+            paramItem.setValue(volumeGroup.getVolumeGroupId());
+            vfModuleInputParameters.addParamItem(paramItem);
+        }
+        vfModuleRequestInput.setVfModuleInputParameters(vfModuleInputParameters);
+
+        return vfModuleRequestInput;
+    }
+
+    private GenericResourceApiSdncrequestheaderSdncRequestHeader buildVfModuleSdncRequestHeader(String sdncReqId,
+            GenericResourceApiSvcActionEnumeration svcAction) {
+        GenericResourceApiSdncrequestheaderSdncRequestHeader sdncRequestHeader =
+                new GenericResourceApiSdncrequestheaderSdncRequestHeader();
+
+        sdncRequestHeader.setSvcRequestId(sdncReqId);
+        sdncRequestHeader.setSvcAction(svcAction);
+
+        return sdncRequestHeader;
+    }
+
+    public String buildObjectPath(String sdncAssignResponse) {
+        String objectPath = null;
+        if (sdncAssignResponse != null) {
+            ObjectMapper mapper = new ObjectMapper();
+            try {
+                GenericResourceApiVfModuleResponseInformation assignResponseInfo =
+                        mapper.readValue(sdncAssignResponse, GenericResourceApiVfModuleResponseInformation.class);
+                objectPath = assignResponseInfo.getVfModuleResponseInformation().getObjectPath();
+            } catch (Exception e) {
+                logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), e.getMessage(), "BPMN",
+                        ErrorCode.UnknownError.getValue(), e.getMessage());
+            }
+        }
+        return objectPath;
+    }
 }

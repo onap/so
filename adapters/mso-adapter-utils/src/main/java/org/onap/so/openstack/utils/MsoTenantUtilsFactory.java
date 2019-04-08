@@ -36,28 +36,28 @@ public class MsoTenantUtilsFactory {
 
     protected static Logger logger = LoggerFactory.getLogger(MsoTenantUtilsFactory.class);
     @Autowired
-	protected CloudConfig cloudConfig;
-	@Autowired
-	protected MsoKeystoneUtils keystoneUtils;
-	@Autowired
-	protected MsoKeystoneV3Utils keystoneV3Utils;
-	
-	// based on Cloud IdentityServerType returns ORM or KEYSTONE Utils
-	public MsoTenantUtils getTenantUtils(String cloudSiteId) throws MsoCloudSiteNotFound {
-		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId).orElseThrow(
-				() -> new MsoCloudSiteNotFound(cloudSiteId));
+    protected CloudConfig cloudConfig;
+    @Autowired
+    protected MsoKeystoneUtils keystoneUtils;
+    @Autowired
+    protected MsoKeystoneV3Utils keystoneV3Utils;
 
-		return getTenantUtilsByServerType(cloudSite.getIdentityService().getIdentityServerType());
-	}
+    // based on Cloud IdentityServerType returns ORM or KEYSTONE Utils
+    public MsoTenantUtils getTenantUtils(String cloudSiteId) throws MsoCloudSiteNotFound {
+        CloudSite cloudSite =
+                cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
 
-	public MsoTenantUtils getTenantUtilsByServerType(ServerType serverType) {
+        return getTenantUtilsByServerType(cloudSite.getIdentityService().getIdentityServerType());
+    }
 
-		MsoTenantUtils tenantU = null;
-		if (ServerType.KEYSTONE.equals(serverType)) {
-			tenantU = keystoneUtils;
-		} else if (ServerType.KEYSTONE_V3.equals(serverType)) {
-			tenantU = keystoneV3Utils;
-		}
-		return tenantU;
-	}
+    public MsoTenantUtils getTenantUtilsByServerType(ServerType serverType) {
+
+        MsoTenantUtils tenantU = null;
+        if (ServerType.KEYSTONE.equals(serverType)) {
+            tenantU = keystoneUtils;
+        } else if (ServerType.KEYSTONE_V3.equals(serverType)) {
+            tenantU = keystoneV3Utils;
+        }
+        return tenantU;
+    }
 }

@@ -25,37 +25,37 @@ package org.onap.so.adapters.nwrest;
 import java.io.Serializable;
 import java.util.List;
 
-public class ProviderVlanNetwork implements Serializable{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 6744949861614446315L;
-	private String physicalNetworkName;
-	private List<Integer> vlans;
-	
-	public ProviderVlanNetwork() {
-		super();
-	}
-	
-	public ProviderVlanNetwork(String physicalNetworkName, List<Integer> vlans) {
-		super();
-		this.physicalNetworkName = physicalNetworkName;
-		this.vlans = vlans;
-	}
+public class ProviderVlanNetwork implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6744949861614446315L;
+    private String physicalNetworkName;
+    private List<Integer> vlans;
 
-	public String getPhysicalNetworkName() {
-		return physicalNetworkName;
-	}
+    public ProviderVlanNetwork() {
+        super();
+    }
 
-	public void setPhysicalNetworkName(String physicalNetworkName) {
-		this.physicalNetworkName = physicalNetworkName;
-	}
+    public ProviderVlanNetwork(String physicalNetworkName, List<Integer> vlans) {
+        super();
+        this.physicalNetworkName = physicalNetworkName;
+        this.vlans = vlans;
+    }
 
-	public List<Integer> getVlans() {
-		return vlans;
-	}
+    public String getPhysicalNetworkName() {
+        return physicalNetworkName;
+    }
 
-	public void setVlans(List<Integer> vlans) {
-		this.vlans = vlans;
-	}	
+    public void setPhysicalNetworkName(String physicalNetworkName) {
+        this.physicalNetworkName = physicalNetworkName;
+    }
+
+    public List<Integer> getVlans() {
+        return vlans;
+    }
+
+    public void setVlans(List<Integer> vlans) {
+        this.vlans = vlans;
+    }
 }

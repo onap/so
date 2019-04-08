@@ -24,10 +24,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-
 import java.util.Arrays;
 import java.util.List;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.extension.mockito.delegate.DelegateExecutionFake;
 import org.junit.Rule;
@@ -45,46 +43,48 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = {ValidationConfig.class})
 public class BuildingBlockValidatorRunnerTest {
 
-	@Rule
-    public ExpectedException thrown= ExpectedException.none();
-	
-	@Autowired
-	private BuildingBlockValidatorRunner runner;
-	
-	@Test
-	public void filterValidatorTest() {
-		
-		MyPreValidatorOne one = new MyPreValidatorOne();
-		MyPreValidatorTwo two = new MyPreValidatorTwo();
-		MyPreValidatorThree three = new MyPreValidatorThree();
-		List<FlowValidator> validators = Arrays.asList(one, two, three);
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
-		List<FlowValidator> result = runner.filterValidators(validators, "test");
+    @Autowired
+    private BuildingBlockValidatorRunner runner;
 
-		List<FlowValidator> expected = Arrays.asList(two, one);
-		
-		assertEquals(expected, result);
-	}
-	
-	@Test
-	public void testValidate() {
-		
-		BuildingBlockExecution execution = new DelegateExecutionImpl(new DelegateExecutionFake());
-		execution.setVariable("testProcessKey", "1234");
-		try {
-			runner.preValidate("test", execution);
-			fail("exception not thrown");
-		} catch (BpmnError e) {
-			WorkflowException workflowException = (WorkflowException)execution.getVariable("WorkflowException");
-			assertEquals("Failed Validations:\norg.onap.so.bpmn.common.validation.MyPreValidatorTwo: my-error-two\norg.onap.so.bpmn.common.validation.MyPreValidatorOne: my-error-one", workflowException.getErrorMessage());
-		}
-		runner.preValidate("test2", mock(BuildingBlockExecution.class));
-	}
-	
-	@Test
-	public void testEmptyList() {
-		boolean result = runner.preValidate("test3", mock(BuildingBlockExecution.class));
-		
-		assertTrue(result);
-	}
+    @Test
+    public void filterValidatorTest() {
+
+        MyPreValidatorOne one = new MyPreValidatorOne();
+        MyPreValidatorTwo two = new MyPreValidatorTwo();
+        MyPreValidatorThree three = new MyPreValidatorThree();
+        List<FlowValidator> validators = Arrays.asList(one, two, three);
+
+        List<FlowValidator> result = runner.filterValidators(validators, "test");
+
+        List<FlowValidator> expected = Arrays.asList(two, one);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void testValidate() {
+
+        BuildingBlockExecution execution = new DelegateExecutionImpl(new DelegateExecutionFake());
+        execution.setVariable("testProcessKey", "1234");
+        try {
+            runner.preValidate("test", execution);
+            fail("exception not thrown");
+        } catch (BpmnError e) {
+            WorkflowException workflowException = (WorkflowException) execution.getVariable("WorkflowException");
+            assertEquals(
+                    "Failed Validations:\norg.onap.so.bpmn.common.validation.MyPreValidatorTwo: my-error-two\norg.onap.so.bpmn.common.validation.MyPreValidatorOne: my-error-one",
+                    workflowException.getErrorMessage());
+        }
+        runner.preValidate("test2", mock(BuildingBlockExecution.class));
+    }
+
+    @Test
+    public void testEmptyList() {
+        boolean result = runner.preValidate("test3", mock(BuildingBlockExecution.class));
+
+        assertTrue(result);
+    }
 }

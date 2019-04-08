@@ -24,18 +24,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonRootName;
-
 import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "modelType",
-    "modelInvariantId",
-    "modelVersionId",
-    "modelName",
-    "modelVersion",
-    "modelCustomizationName"
-})
+@JsonPropertyOrder({"modelType", "modelInvariantId", "modelVersionId", "modelName", "modelVersion",
+        "modelCustomizationName"})
 @JsonRootName("modelInfo")
 public class ModelInfo implements Serializable {
 

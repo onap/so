@@ -21,16 +21,13 @@
 package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.Table;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import com.openpojo.business.annotation.BusinessKey;
 
 @Entity
@@ -38,82 +35,82 @@ import com.openpojo.business.annotation.BusinessKey;
 @IdClass(TempNetworkHeatTemplateLookupId.class)
 public class TempNetworkHeatTemplateLookup implements Serializable {
 
-	public static final long serialVersionUID = -1322322139926390329L;
+    public static final long serialVersionUID = -1322322139926390329L;
 
-	@BusinessKey
-	@Id
-	@Column(name = "NETWORK_RESOURCE_MODEL_NAME")
-	private String networkResourceModelName;
+    @BusinessKey
+    @Id
+    @Column(name = "NETWORK_RESOURCE_MODEL_NAME")
+    private String networkResourceModelName;
 
-	@BusinessKey
-	@Id
-	@Column(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
-	private String heatTemplateArtifactUuid;
+    @BusinessKey
+    @Id
+    @Column(name = "HEAT_TEMPLATE_ARTIFACT_UUID")
+    private String heatTemplateArtifactUuid;
 
-	@Column(name = "AIC_VERSION_MIN")
-	private String aicVersionMin;
+    @Column(name = "AIC_VERSION_MIN")
+    private String aicVersionMin;
 
-	@Column(name = "AIC_VERSION_MAX")
-	private String aicVersionMax;
+    @Column(name = "AIC_VERSION_MAX")
+    private String aicVersionMax;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof TempNetworkHeatTemplateLookup)) {
-			return false;
-		}
-		TempNetworkHeatTemplateLookup castOther = (TempNetworkHeatTemplateLookup) other;
-		return new EqualsBuilder().append(networkResourceModelName, castOther.networkResourceModelName)
-				.append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid).isEquals();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof TempNetworkHeatTemplateLookup)) {
+            return false;
+        }
+        TempNetworkHeatTemplateLookup castOther = (TempNetworkHeatTemplateLookup) other;
+        return new EqualsBuilder().append(networkResourceModelName, castOther.networkResourceModelName)
+                .append(heatTemplateArtifactUuid, castOther.heatTemplateArtifactUuid).isEquals();
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(networkResourceModelName).append(heatTemplateArtifactUuid).toHashCode();
-	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(networkResourceModelName).append(heatTemplateArtifactUuid).toHashCode();
+    }
 
-	public TempNetworkHeatTemplateLookup() {
-		super();
-	}
+    public TempNetworkHeatTemplateLookup() {
+        super();
+    }
 
-	public String getNetworkResourceModelName() {
-		return this.networkResourceModelName;
-	}
+    public String getNetworkResourceModelName() {
+        return this.networkResourceModelName;
+    }
 
-	public void setNetworkResourceModelName(String networkResourceModelName) {
-		this.networkResourceModelName = networkResourceModelName;
-	}
+    public void setNetworkResourceModelName(String networkResourceModelName) {
+        this.networkResourceModelName = networkResourceModelName;
+    }
 
-	public String getHeatTemplateArtifactUuid() {
-		return this.heatTemplateArtifactUuid;
-	}
+    public String getHeatTemplateArtifactUuid() {
+        return this.heatTemplateArtifactUuid;
+    }
 
-	public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
-		this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
-	}
+    public void setHeatTemplateArtifactUuid(String heatTemplateArtifactUuid) {
+        this.heatTemplateArtifactUuid = heatTemplateArtifactUuid;
+    }
 
-	public String getAicVersionMin() {
-		return this.aicVersionMin;
-	}
+    public String getAicVersionMin() {
+        return this.aicVersionMin;
+    }
 
-	public void setAicVersionMin(String aicVersionMin) {
-		this.aicVersionMin = aicVersionMin;
-	}
+    public void setAicVersionMin(String aicVersionMin) {
+        this.aicVersionMin = aicVersionMin;
+    }
 
-	public String getAicVersionMax() {
-		return this.aicVersionMax;
-	}
+    public String getAicVersionMax() {
+        return this.aicVersionMax;
+    }
 
-	public void setAicVersionMax(String aicVersionMax) {
-		this.aicVersionMax = aicVersionMax;
-	}
+    public void setAicVersionMax(String aicVersionMax) {
+        this.aicVersionMax = aicVersionMax;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("NetworkResourceModelName=" + this.networkResourceModelName);
-		sb.append("HeatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid);
-		sb.append("aicVersionMin=" + this.aicVersionMin);
-		sb.append("aicVersionMax=" + this.aicVersionMax);
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("NetworkResourceModelName=" + this.networkResourceModelName);
+        sb.append("HeatTemplateArtifactUuid=" + this.heatTemplateArtifactUuid);
+        sb.append("aicVersionMin=" + this.aicVersionMin);
+        sb.append("aicVersionMax=" + this.aicVersionMax);
+        return sb.toString();
+    }
 }

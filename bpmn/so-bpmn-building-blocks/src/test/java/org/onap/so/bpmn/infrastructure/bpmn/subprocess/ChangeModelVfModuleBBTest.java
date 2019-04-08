@@ -19,36 +19,37 @@
  */
 
 package org.onap.so.bpmn.infrastructure.bpmn.subprocess;
+
 import static org.camunda.bpm.engine.test.assertions.ProcessEngineTests.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 
-public class ChangeModelVfModuleBBTest extends BaseBPMNTest{
-	@Test
-	public void sunnyDayChangeModelVfModuleTest() throws InterruptedException {
-		mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ChangeModelVfModuleBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted().hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule", "CallActivity_sdncHandler", "UpdateVfModuleModel", "ChangeModelVfModuleBB_End");
-		assertThat(pi).isEnded();
-	}
+public class ChangeModelVfModuleBBTest extends BaseBPMNTest {
+    @Test
+    public void sunnyDayChangeModelVfModuleTest() throws InterruptedException {
+        mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("ChangeModelVfModuleBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule",
+                "CallActivity_sdncHandler", "UpdateVfModuleModel", "ChangeModelVfModuleBB_End");
+        assertThat(pi).isEnded();
+    }
 
-	@Test
-	public void rainyDayChangeModelVfModuleTest() throws Exception {
-		doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncChangeAssignTasks).changeAssignModelVfModule(any(BuildingBlockExecution.class));
-		ProcessInstance pi = runtimeService.startProcessInstanceByKey("ChangeModelVfModuleBB", variables);
-		assertThat(pi).isNotNull();
-		assertThat(pi).isStarted()
-				.hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule")
-				.hasNotPassed("ChangeModelVfModuleBB_End");
-		assertThat(pi).isEnded();
-	}
-	
-	
+    @Test
+    public void rainyDayChangeModelVfModuleTest() throws Exception {
+        doThrow(new BpmnError("7000", "TESTING ERRORS")).when(sdncChangeAssignTasks)
+                .changeAssignModelVfModule(any(BuildingBlockExecution.class));
+        ProcessInstance pi = runtimeService.startProcessInstanceByKey("ChangeModelVfModuleBB", variables);
+        assertThat(pi).isNotNull();
+        assertThat(pi).isStarted().hasPassedInOrder("ChangeModelVfModuleBB_Start", "ChangeModelVfModule")
+                .hasNotPassed("ChangeModelVfModuleBB_End");
+        assertThat(pi).isEnded();
+    }
+
+
 }

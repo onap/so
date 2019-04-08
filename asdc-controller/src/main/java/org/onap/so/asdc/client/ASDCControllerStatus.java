@@ -23,5 +23,5 @@ package org.onap.so.asdc.client;
 
 
 public enum ASDCControllerStatus {
-                                  STOPPED, IDLE, BUSY
+    STOPPED, IDLE, BUSY
 }

@@ -41,111 +41,111 @@ import com.google.common.base.Optional;
 @Service
 public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvider {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(VnfmAdapterServiceProviderImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(VnfmAdapterServiceProviderImpl.class);
 
-  private final VnfmAdapterUrlProvider urlProvider;
-  private final HttpRestServiceProvider httpServiceProvider;
+    private final VnfmAdapterUrlProvider urlProvider;
+    private final HttpRestServiceProvider httpServiceProvider;
 
-  @Autowired
-  public VnfmAdapterServiceProviderImpl(final VnfmAdapterUrlProvider urlProvider,
-      final HttpRestServiceProvider httpServiceProvider) {
-    this.urlProvider = urlProvider;
-    this.httpServiceProvider = httpServiceProvider;
-  }
-
-  @Override
-  public Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId,
-      final CreateVnfRequest request) {
-    try {
-      final String url = urlProvider.getCreateInstantiateUrl(vnfId);
-
-      final ResponseEntity<CreateVnfResponse> response =
-          httpServiceProvider.postHttpRequest(request, url, CreateVnfResponse.class);
-
-      final HttpStatus httpStatus = response.getStatusCode();
-      if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
-        LOGGER.error("Unable to invoke HTTP POST using URL: {}, Response Code: {}", url, httpStatus.value());
-        return Optional.absent();
-      }
-
-      if (!response.hasBody()) {
-        LOGGER.error("Received response without body: {}", response);
-        return Optional.absent();
-      }
-
-      final CreateVnfResponse createVnfResponse = response.getBody();
-
-      if (createVnfResponse.getJobId() == null || createVnfResponse.getJobId().isEmpty()) {
-        LOGGER.error("Received invalid instantiation response: {}", response);
-        return Optional.absent();
-      }
-
-      return Optional.of(createVnfResponse);
-    } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
-      LOGGER.error("Unexpected error while processing create and instantiation request", httpInvocationException);
-      return Optional.absent();
+    @Autowired
+    public VnfmAdapterServiceProviderImpl(final VnfmAdapterUrlProvider urlProvider,
+            final HttpRestServiceProvider httpServiceProvider) {
+        this.urlProvider = urlProvider;
+        this.httpServiceProvider = httpServiceProvider;
     }
 
-  }
+    @Override
+    public Optional<CreateVnfResponse> invokeCreateInstantiationRequest(final String vnfId,
+            final CreateVnfRequest request) {
+        try {
+            final String url = urlProvider.getCreateInstantiateUrl(vnfId);
 
-  @Override
-  public Optional<DeleteVnfResponse> invokeDeleteRequest(final String vnfId) {
-    try {
-      final String url = urlProvider.getDeleteUrl(vnfId);
-      LOGGER.debug("Will send request to vnfm adapter using url: {}", url);
+            final ResponseEntity<CreateVnfResponse> response =
+                    httpServiceProvider.postHttpRequest(request, url, CreateVnfResponse.class);
 
-      final ResponseEntity<DeleteVnfResponse> response =
-          httpServiceProvider.deleteHttpRequest(url, DeleteVnfResponse.class);
+            final HttpStatus httpStatus = response.getStatusCode();
+            if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
+                LOGGER.error("Unable to invoke HTTP POST using URL: {}, Response Code: {}", url, httpStatus.value());
+                return Optional.absent();
+            }
 
-      LOGGER.debug("Response received: ", response);
+            if (!response.hasBody()) {
+                LOGGER.error("Received response without body: {}", response);
+                return Optional.absent();
+            }
 
-      final HttpStatus httpStatus = response.getStatusCode();
+            final CreateVnfResponse createVnfResponse = response.getBody();
 
-      if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
-        LOGGER.error("Unable to invoke HTTP DELETE using URL: {}, Response Code: {}", url, httpStatus.value());
-        return Optional.absent();
-      }
+            if (createVnfResponse.getJobId() == null || createVnfResponse.getJobId().isEmpty()) {
+                LOGGER.error("Received invalid instantiation response: {}", response);
+                return Optional.absent();
+            }
 
-      if (!response.hasBody()) {
-        LOGGER.error("Received response without body: {}", response);
-        return Optional.absent();
-      }
-      final DeleteVnfResponse deleteVnfResponse = response.getBody();
+            return Optional.of(createVnfResponse);
+        } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
+            LOGGER.error("Unexpected error while processing create and instantiation request", httpInvocationException);
+            return Optional.absent();
+        }
 
-      if (deleteVnfResponse.getJobId() == null || deleteVnfResponse.getJobId().isEmpty()) {
-        LOGGER.error("Received invalid delete response: {}", response);
-        return Optional.absent();
-      }
-      return Optional.of(deleteVnfResponse);
-    } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
-      LOGGER.error("Unexpected error while processing delete request", httpInvocationException);
-      return Optional.absent();
     }
-  }
 
-  @Override
-  public Optional<QueryJobResponse> getInstantiateOperationJobStatus(final String jobId) {
-    try {
-      final String url = urlProvider.getJobStatusUrl(jobId);
+    @Override
+    public Optional<DeleteVnfResponse> invokeDeleteRequest(final String vnfId) {
+        try {
+            final String url = urlProvider.getDeleteUrl(vnfId);
+            LOGGER.debug("Will send request to vnfm adapter using url: {}", url);
 
-      final ResponseEntity<QueryJobResponse> response =
-          httpServiceProvider.getHttpResponse(url, QueryJobResponse.class);
+            final ResponseEntity<DeleteVnfResponse> response =
+                    httpServiceProvider.deleteHttpRequest(url, DeleteVnfResponse.class);
 
-      final HttpStatus httpStatus = response.getStatusCode();
+            LOGGER.debug("Response received: ", response);
 
-      if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
-        LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: ", url, httpStatus.value());
-        return Optional.absent();
-      }
+            final HttpStatus httpStatus = response.getStatusCode();
 
-      if (!response.hasBody()) {
-        LOGGER.error("Received response without body: {}", response);
-        return Optional.absent();
-      }
-      return Optional.of(response.getBody());
-    } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
-      LOGGER.error("Unexpected error while processing job request", httpInvocationException);
-      return Optional.absent();
+            if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
+                LOGGER.error("Unable to invoke HTTP DELETE using URL: {}, Response Code: {}", url, httpStatus.value());
+                return Optional.absent();
+            }
+
+            if (!response.hasBody()) {
+                LOGGER.error("Received response without body: {}", response);
+                return Optional.absent();
+            }
+            final DeleteVnfResponse deleteVnfResponse = response.getBody();
+
+            if (deleteVnfResponse.getJobId() == null || deleteVnfResponse.getJobId().isEmpty()) {
+                LOGGER.error("Received invalid delete response: {}", response);
+                return Optional.absent();
+            }
+            return Optional.of(deleteVnfResponse);
+        } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
+            LOGGER.error("Unexpected error while processing delete request", httpInvocationException);
+            return Optional.absent();
+        }
     }
-  }
+
+    @Override
+    public Optional<QueryJobResponse> getInstantiateOperationJobStatus(final String jobId) {
+        try {
+            final String url = urlProvider.getJobStatusUrl(jobId);
+
+            final ResponseEntity<QueryJobResponse> response =
+                    httpServiceProvider.getHttpResponse(url, QueryJobResponse.class);
+
+            final HttpStatus httpStatus = response.getStatusCode();
+
+            if (!(httpStatus.equals(HttpStatus.ACCEPTED)) && !(httpStatus.equals(HttpStatus.OK))) {
+                LOGGER.error("Unable to invoke HTTP GET using URL: {}, Response Code: ", url, httpStatus.value());
+                return Optional.absent();
+            }
+
+            if (!response.hasBody()) {
+                LOGGER.error("Received response without body: {}", response);
+                return Optional.absent();
+            }
+            return Optional.of(response.getBody());
+        } catch (final RestProcessingException | InvalidRestRequestException httpInvocationException) {
+            LOGGER.error("Unexpected error while processing job request", httpInvocationException);
+            return Optional.absent();
+        }
+    }
 }

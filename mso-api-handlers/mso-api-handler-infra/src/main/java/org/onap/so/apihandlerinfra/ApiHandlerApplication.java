@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra;
 
 import java.util.concurrent.Executor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -31,43 +30,43 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
 
-@SpringBootApplication(scanBasePackages = { "org.onap"})
+@SpringBootApplication(scanBasePackages = {"org.onap"})
 @EnableAsync
 public class ApiHandlerApplication {
-	
-	@Value("${mso.async.core-pool-size}")
-	private int corePoolSize;
 
-	@Value("${mso.async.max-pool-size}")
-	private int maxPoolSize;
+    @Value("${mso.async.core-pool-size}")
+    private int corePoolSize;
 
-	@Value("${mso.async.queue-capacity}")
-	private int queueCapacity;
+    @Value("${mso.async.max-pool-size}")
+    private int maxPoolSize;
 
-	private static final String LOGS_DIR = "logs_dir";
+    @Value("${mso.async.queue-capacity}")
+    private int queueCapacity;
 
-	private static void setLogsDir() {
-		if (System.getProperty(LOGS_DIR) == null) {
-			System.getProperties().setProperty(LOGS_DIR, "./logs/apih/");
-		}
-	}
+    private static final String LOGS_DIR = "logs_dir";
 
-	public static void main(String[] args) {
-		SpringApplication.run(ApiHandlerApplication.class, args);
-		System.getProperties().setProperty("mso.db", "MARIADB");
-		System.getProperties().setProperty("server.name", "Springboot");
-		setLogsDir();
-	}
+    private static void setLogsDir() {
+        if (System.getProperty(LOGS_DIR) == null) {
+            System.getProperties().setProperty(LOGS_DIR, "./logs/apih/");
+        }
+    }
 
-	@Bean
-	public Executor asyncExecutor() {
-		ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-		executor.setCorePoolSize(corePoolSize);
-		executor.setMaxPoolSize(maxPoolSize);
-		executor.setQueueCapacity(queueCapacity);
-		executor.setThreadNamePrefix("mso-apihandler-infra-");
-		executor.setTaskDecorator(new MDCTaskDecorator());
-		executor.initialize();
-		return executor;
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ApiHandlerApplication.class, args);
+        System.getProperties().setProperty("mso.db", "MARIADB");
+        System.getProperties().setProperty("server.name", "Springboot");
+        setLogsDir();
+    }
+
+    @Bean
+    public Executor asyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(corePoolSize);
+        executor.setMaxPoolSize(maxPoolSize);
+        executor.setQueueCapacity(queueCapacity);
+        executor.setThreadNamePrefix("mso-apihandler-infra-");
+        executor.setTaskDecorator(new MDCTaskDecorator());
+        executor.initialize();
+        return executor;
+    }
 }

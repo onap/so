@@ -21,14 +21,14 @@
 package org.onap.so.db.catalog.data.repository;
 
 import java.util.List;
-
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(collectionResourceRel = "collectionResourceInstanceGroupCustomization", path = "collectionResourceInstanceGroupCustomization")
+@RepositoryRestResource(collectionResourceRel = "collectionResourceInstanceGroupCustomization",
+        path = "collectionResourceInstanceGroupCustomization")
 public interface CollectionResourceInstanceGroupCustomizationRepository
-		extends JpaRepository<CollectionResourceInstanceGroupCustomization, String> {
+        extends JpaRepository<CollectionResourceInstanceGroupCustomization, String> {
 
-	List<CollectionResourceInstanceGroupCustomization> findByModelCustomizationUUID(String modelCustomizationlUUID);
+    List<CollectionResourceInstanceGroupCustomization> findByModelCustomizationUUID(String modelCustomizationlUUID);
 }

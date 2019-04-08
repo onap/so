@@ -32,18 +32,18 @@ import org.onap.so.adapters.vnfrest.UpdateVfModuleResponse;
 
 public interface VnfAdapterClient {
 
-	CreateVfModuleResponse createVfModule(String aaiVnfId, CreateVfModuleRequest req) throws VnfAdapterClientException;
+    CreateVfModuleResponse createVfModule(String aaiVnfId, CreateVfModuleRequest req) throws VnfAdapterClientException;
 
-	RollbackVfModuleResponse rollbackVfModule(String aaiVnfId, String aaiVfModuleId, RollbackVfModuleRequest req)
-			throws VnfAdapterClientException;
+    RollbackVfModuleResponse rollbackVfModule(String aaiVnfId, String aaiVfModuleId, RollbackVfModuleRequest req)
+            throws VnfAdapterClientException;
 
-	DeleteVfModuleResponse deleteVfModule(String aaiVnfId, String aaiVfModuleId, DeleteVfModuleRequest req)
-			throws VnfAdapterClientException;
+    DeleteVfModuleResponse deleteVfModule(String aaiVnfId, String aaiVfModuleId, DeleteVfModuleRequest req)
+            throws VnfAdapterClientException;
 
-	UpdateVfModuleResponse updateVfModule(String aaiVnfId, String aaiVfModuleId, UpdateVfModuleRequest req)
-			throws VnfAdapterClientException;
+    UpdateVfModuleResponse updateVfModule(String aaiVnfId, String aaiVfModuleId, UpdateVfModuleRequest req)
+            throws VnfAdapterClientException;
 
-	QueryVfModuleResponse queryVfModule(String aaiVnfId, String aaiVfModuleId, String cloudSiteId, String tenantId,
-			String vfModuleName, boolean skipAAI, String requestId, String serviceInstanceId)
-			throws VnfAdapterClientException;
+    QueryVfModuleResponse queryVfModule(String aaiVnfId, String aaiVfModuleId, String cloudSiteId, String tenantId,
+            String vfModuleName, boolean skipAAI, String requestId, String serviceInstanceId)
+            throws VnfAdapterClientException;
 }

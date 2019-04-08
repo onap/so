@@ -25,27 +25,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Extracts variable name from expression if entire expression is just
- * one variable, for example "${x}".
+ * Extracts variable name from expression if entire expression is just one variable, for example "${x}".
  *
  * Ignores all whitespaces, except inside variable name.
  *
- * Examples:
- * "${x}", extracted variable name is "x"
- * " ${\t weird_NAME    }", extracted variable name is "weird_NAME"
- * "${incorrect name}", no extracted name
- * "${two}+${two}", no extracted name
+ * Examples: "${x}", extracted variable name is "x" " ${\t weird_NAME }", extracted variable name is "weird_NAME"
+ * "${incorrect name}", no extracted name "${two}+${two}", no extracted name
  */
 public class VariableNameExtractor {
 
-    private static final Pattern VARIABLE_NAME_PATTERN = Pattern
-            .compile("^\\s*\\$\\s*\\{\\s*([a-zA-Z0-9_]+)\\s*\\}\\s*$");
+    private static final Pattern VARIABLE_NAME_PATTERN =
+            Pattern.compile("^\\s*\\$\\s*\\{\\s*([a-zA-Z0-9_]+)\\s*\\}\\s*$");
 
     private final String expression;
 
 
     /**
      * Creates new VariableNameExtractor
+     * 
      * @param expression expression to be parsed
      */
     public VariableNameExtractor(String expression) {
@@ -54,6 +51,7 @@ public class VariableNameExtractor {
 
     /**
      * Extracts variable name from expression given in constructor
+     * 
      * @return Optional of variable name, empty if expression wasn't single variable
      */
     public Optional<String> extract() {

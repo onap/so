@@ -22,5 +22,5 @@ package org.onap.so.bpmn.core.domain;
 
 public enum ResourceType {
 
-	VNF, NETWORK, MODULE, ALLOTTED_RESOURCE, CONFIGURATION // etc.
+    VNF, NETWORK, MODULE, ALLOTTED_RESOURCE, CONFIGURATION // etc.
 }

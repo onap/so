@@ -26,22 +26,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.woorea.openstack.heat.model.CreateStackParam;
-
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-        "generic-vnf-id",
-        "vf-module-id",
-        "vf-module-model-invariant-id",
-        "vf-module-model-version-id",
-        "vf-module-model-customization-id",
-        "oof_directives",
-        "sdnc_directives",
-        "user_directives",
-        "template_type",
-        "template_data"
-})
+@JsonPropertyOrder({"generic-vnf-id", "vf-module-id", "vf-module-model-invariant-id", "vf-module-model-version-id",
+        "vf-module-model-customization-id", "oof_directives", "sdnc_directives", "user_directives", "template_type",
+        "template_data"})
 public class MulticloudRequest implements Serializable {
     private final static long serialVersionUID = -5215028275577848311L;
 
@@ -169,15 +159,12 @@ public class MulticloudRequest implements Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("genericVnfId", genericVnfId)
-                .append("vfModuleId", vfModuleId)
+        return new ToStringBuilder(this).append("genericVnfId", genericVnfId).append("vfModuleId", vfModuleId)
                 .append("vfModuleModelInvariantId", vfModuleModelInvariantId)
                 .append("vfModuleModelVersionId", vfModuleModelVersionId)
                 .append("vfModuleModelCustomizationId", vfModuleModelCustomizationId)
-                .append("oofDirectives", oofDirectives)
-                .append("sdncDirectives", sdncDirectives)
-                .append("userDirectives", userDirectives)
-                .append("templateType", templateType)
+                .append("oofDirectives", oofDirectives).append("sdncDirectives", sdncDirectives)
+                .append("userDirectives", userDirectives).append("templateType", templateType)
                 .append("templateData", templateData).toString();
     }
 

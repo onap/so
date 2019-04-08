@@ -22,7 +22,6 @@ package org.onap.so.db.request.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -32,140 +31,137 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.openpojo.business.annotation.BusinessKey;
 
 /**
- * persist the request identifiers created when MSO POSTs a request to PINC 
- * <br>
+ * persist the request identifiers created when MSO POSTs a request to PINC <br>
  * <p>
  * </p>
  * 
  * @author
- * @version 
+ * @version
  */
 
 @Entity
 
 @JsonInclude(Include.NON_NULL)
 @Table(name = "request_processing_data")
-public class RequestProcessingData implements Serializable{
+public class RequestProcessingData implements Serializable {
 
-	/**
+    /**
      * 
      */
-	private static final long serialVersionUID = -3497593687393936143L;
+    private static final long serialVersionUID = -3497593687393936143L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
-	private Integer id;
-	
-	@BusinessKey
-   	@Column(name = "SO_REQUEST_ID", length=50, unique=true)
-	private String soRequestId;
-	
-   	@BusinessKey
-   	@Column(name = "GROUPING_ID", length=100, unique=true)
-	private String groupingId;
-   	
-   	@BusinessKey
-   	@Column(name = "NAME", length=200)
-	private String name;
-   	
-   	@Column(name = "VALUE", columnDefinition = "LONGTEXT")
-	private String value;
-   	
-   	@BusinessKey
-   	@Column(name = "TAG", length=200)
-	private String tag;
-   	
-	@Column(name = "CREATE_TIME", insertable = false, updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date created = null;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID")
+    private Integer id;
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof RequestProcessingData)) {
-			return false;
-		}
-		RequestProcessingData castOther = (RequestProcessingData) other;
-		return new EqualsBuilder().append(soRequestId, castOther.soRequestId).append(groupingId, castOther.groupingId)
-				.append(name, castOther.name).append(tag, castOther.tag).isEquals();
-	}
+    @BusinessKey
+    @Column(name = "SO_REQUEST_ID", length = 50, unique = true)
+    private String soRequestId;
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(soRequestId).append(groupingId).append(name).append(tag).toHashCode();
-	}
+    @BusinessKey
+    @Column(name = "GROUPING_ID", length = 100, unique = true)
+    private String groupingId;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this).append("id", id).append("soRequestId", soRequestId)
-				.append("groupingId", groupingId).append("name", name).append("value", value).append("tag", tag)
-				.toString();
-	}
+    @BusinessKey
+    @Column(name = "NAME", length = 200)
+    private String name;
 
-	@PrePersist
-	protected void createdAt() {
-		this.created = new Date();
-	}
-	
-	public Integer getId() {
- 		return id;
- 	}
+    @Column(name = "VALUE", columnDefinition = "LONGTEXT")
+    private String value;
 
- 	public void setId(Integer id) {
- 		this.id = id;
- 	}
+    @BusinessKey
+    @Column(name = "TAG", length = 200)
+    private String tag;
 
- 	public String getSoRequestId() {
- 		return soRequestId;
- 	}
+    @Column(name = "CREATE_TIME", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date created = null;
 
- 	public void setSoRequestId(String soRequestId) {
- 		this.soRequestId = soRequestId;
- 	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof RequestProcessingData)) {
+            return false;
+        }
+        RequestProcessingData castOther = (RequestProcessingData) other;
+        return new EqualsBuilder().append(soRequestId, castOther.soRequestId).append(groupingId, castOther.groupingId)
+                .append(name, castOther.name).append(tag, castOther.tag).isEquals();
+    }
 
- 	public String getGroupingId() {
- 		return groupingId;
- 	}
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(soRequestId).append(groupingId).append(name).append(tag).toHashCode();
+    }
 
- 	public void setGroupingId(String groupingId) {
- 		this.groupingId = groupingId;
- 	}
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("id", id).append("soRequestId", soRequestId)
+                .append("groupingId", groupingId).append("name", name).append("value", value).append("tag", tag)
+                .toString();
+    }
 
- 	public String getName() {
- 		return name;
- 	}
+    @PrePersist
+    protected void createdAt() {
+        this.created = new Date();
+    }
 
- 	public void setName(String name) {
- 		this.name = name;
- 	}
+    public Integer getId() {
+        return id;
+    }
 
- 	public String getValue() {
- 		return value;
- 	}
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
- 	public void setValue(String value) {
- 		this.value = value;
- 	}
+    public String getSoRequestId() {
+        return soRequestId;
+    }
 
- 	public String getTag() {
- 		return tag;
- 	}
+    public void setSoRequestId(String soRequestId) {
+        this.soRequestId = soRequestId;
+    }
 
- 	public void setTag(String tag) {
- 		this.tag = tag;
- 	}
- 	
+    public String getGroupingId() {
+        return groupingId;
+    }
+
+    public void setGroupingId(String groupingId) {
+        this.groupingId = groupingId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
     public Date getCreated() {
-		return created;
-	}
+        return created;
+    }
 }

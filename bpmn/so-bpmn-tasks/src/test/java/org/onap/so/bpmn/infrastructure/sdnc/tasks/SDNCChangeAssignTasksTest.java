@@ -27,7 +27,6 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,61 +47,70 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 
-public class SDNCChangeAssignTasksTest extends BaseTaskTest{
-	@InjectMocks
-	private SDNCChangeAssignTasks sdncChangeAssignTasks = new SDNCChangeAssignTasks();
-	
-	private ServiceInstance serviceInstance;
-	private RequestContext requestContext;
-	private CloudRegion cloudRegion;
-	private VfModule vfModule;
-	private GenericVnf genericVnf;
-	private Customer customer;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		customer = setCustomer();
-		serviceInstance = setServiceInstance();
-		genericVnf = setGenericVnf();
-		vfModule = setVfModule();
-		cloudRegion = setCloudRegion();
-		requestContext = setRequestContext();
+public class SDNCChangeAssignTasksTest extends BaseTaskTest {
+    @InjectMocks
+    private SDNCChangeAssignTasks sdncChangeAssignTasks = new SDNCChangeAssignTasks();
 
-		doThrow(new BpmnError("BPMN Error")).when(exceptionUtil).buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-	}
-	
-	@Test
-	public void changeModelVnfTest() throws Exception {
-		doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncChangeAssignTasks.changeModelVnf(execution);
-		verify(sdncVnfResources, times(1)).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.VNF,sdncRequest.getTopology());
-	}
-	
-	@Test
-	public void changeModelVnfExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(sdncVnfResources).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncChangeAssignTasks.changeModelVnf(execution);
-	}
-	
-	@Test
-	public void changeAssignModelVfModuleTest() throws Exception {
-		doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncChangeAssignTasks.changeAssignModelVfModule(execution);
-		verify(sdncVfModuleResources, times(1)).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
-		assertEquals(SDNCTopology.VFMODULE,sdncRequest.getTopology());
-	}
-	
-	@Test
-	public void changeAssignModelVfModuleExceptionTest() throws Exception {
-		expectedException.expect(BpmnError.class);
-		doThrow(RuntimeException.class).when(sdncVfModuleResources).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
-		sdncChangeAssignTasks.changeAssignModelVfModule(execution);
-	}
+    private ServiceInstance serviceInstance;
+    private RequestContext requestContext;
+    private CloudRegion cloudRegion;
+    private VfModule vfModule;
+    private GenericVnf genericVnf;
+    private Customer customer;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        customer = setCustomer();
+        serviceInstance = setServiceInstance();
+        genericVnf = setGenericVnf();
+        vfModule = setVfModule();
+        cloudRegion = setCloudRegion();
+        requestContext = setRequestContext();
+
+        doThrow(new BpmnError("BPMN Error")).when(exceptionUtil)
+                .buildAndThrowWorkflowException(any(BuildingBlockExecution.class), eq(7000), any(Exception.class));
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+    }
+
+    @Test
+    public void changeModelVnfTest() throws Exception {
+        doReturn(new GenericResourceApiVnfOperationInformation()).when(sdncVnfResources).changeModelVnf(genericVnf,
+                serviceInstance, customer, cloudRegion, requestContext);
+        sdncChangeAssignTasks.changeModelVnf(execution);
+        verify(sdncVnfResources, times(1)).changeModelVnf(genericVnf, serviceInstance, customer, cloudRegion,
+                requestContext);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.VNF, sdncRequest.getTopology());
+    }
+
+    @Test
+    public void changeModelVnfExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(sdncVnfResources).changeModelVnf(genericVnf, serviceInstance, customer,
+                cloudRegion, requestContext);
+        sdncChangeAssignTasks.changeModelVnf(execution);
+    }
+
+    @Test
+    public void changeAssignModelVfModuleTest() throws Exception {
+        doReturn(new GenericResourceApiVfModuleOperationInformation()).when(sdncVfModuleResources)
+                .changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer, cloudRegion, requestContext);
+        sdncChangeAssignTasks.changeAssignModelVfModule(execution);
+        verify(sdncVfModuleResources, times(1)).changeAssignVfModule(vfModule, genericVnf, serviceInstance, customer,
+                cloudRegion, requestContext);
+        SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
+        assertEquals(SDNCTopology.VFMODULE, sdncRequest.getTopology());
+    }
+
+    @Test
+    public void changeAssignModelVfModuleExceptionTest() throws Exception {
+        expectedException.expect(BpmnError.class);
+        doThrow(RuntimeException.class).when(sdncVfModuleResources).changeAssignVfModule(vfModule, genericVnf,
+                serviceInstance, customer, cloudRegion, requestContext);
+        sdncChangeAssignTasks.changeAssignModelVfModule(execution);
+    }
 }

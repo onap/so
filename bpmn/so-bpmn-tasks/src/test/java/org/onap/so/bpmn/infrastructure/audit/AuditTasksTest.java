@@ -23,7 +23,6 @@ import static com.shazam.shazamcrest.MatcherAssert.assertThat;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -38,37 +37,39 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
 import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
 import org.onap.so.client.exception.BBObjectNotFoundException;
 
-public class AuditTasksTest extends BaseTaskTest{
-	
-	@InjectMocks
-	private AuditTasks auditTasks = new AuditTasks();
-	private ServiceInstance serviceInstance;
-	private GenericVnf genericVnf;
-	private VfModule vfModule;
+public class AuditTasksTest extends BaseTaskTest {
 
-	
-	@Rule
-	public final ExpectedException exception = ExpectedException.none();
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		serviceInstance = setServiceInstance();		
-		genericVnf = setGenericVnf();
-		vfModule = setVfModule();
-		setCloudRegion();
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID))).thenReturn(genericVnf);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-	}
-	
-	@Test
-	public void setupAuditVariableTest() throws Exception {
-		AuditInventory expectedAuditInventory = new AuditInventory();
-		expectedAuditInventory.setCloudOwner("testCloudOwner");
-		expectedAuditInventory.setCloudRegion("testLcpCloudRegionId");
-		expectedAuditInventory.setHeatStackName("testVfModuleName1");
-		expectedAuditInventory.setTenantId("testTenantId");
-		auditTasks.setupAuditVariable(execution);
-		assertThat((AuditInventory)execution.getVariable("auditInventory"), sameBeanAs(expectedAuditInventory));
-	}
+    @InjectMocks
+    private AuditTasks auditTasks = new AuditTasks();
+    private ServiceInstance serviceInstance;
+    private GenericVnf genericVnf;
+    private VfModule vfModule;
+
+
+    @Rule
+    public final ExpectedException exception = ExpectedException.none();
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        serviceInstance = setServiceInstance();
+        genericVnf = setGenericVnf();
+        vfModule = setVfModule();
+        setCloudRegion();
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.GENERIC_VNF_ID)))
+                .thenReturn(genericVnf);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID))).thenReturn(vfModule);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+    }
+
+    @Test
+    public void setupAuditVariableTest() throws Exception {
+        AuditInventory expectedAuditInventory = new AuditInventory();
+        expectedAuditInventory.setCloudOwner("testCloudOwner");
+        expectedAuditInventory.setCloudRegion("testLcpCloudRegionId");
+        expectedAuditInventory.setHeatStackName("testVfModuleName1");
+        expectedAuditInventory.setTenantId("testTenantId");
+        auditTasks.setupAuditVariable(execution);
+        assertThat((AuditInventory) execution.getVariable("auditInventory"), sameBeanAs(expectedAuditInventory));
+    }
 }

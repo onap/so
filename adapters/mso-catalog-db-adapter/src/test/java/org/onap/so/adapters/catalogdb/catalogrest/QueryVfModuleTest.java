@@ -21,10 +21,8 @@
 package org.onap.so.adapters.catalogdb.catalogrest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 import org.onap.so.db.catalog.beans.HeatEnvironment;
 import org.onap.so.db.catalog.beans.VfModule;
@@ -52,8 +50,7 @@ public class QueryVfModuleTest {
                 .contains(VF_MODEL_UUID);
         assertThat(JsonPathUtil.getInstance().locateResult(jsonResult, "$.vfModules[0].modelInfo.modelInvariantUuid"))
                 .contains(VF_MODULE_INVARIANT_UUID);
-        assertThat(JsonPathUtil.getInstance().locateResult(jsonResult, "$.vfModules[0].isBase"))
-                .contains("true");
+        assertThat(JsonPathUtil.getInstance().locateResult(jsonResult, "$.vfModules[0].isBase")).contains("true");
         assertThat(JsonPathUtil.getInstance().locateResult(jsonResult, "$.vfModules[0].vfModuleLabel"))
                 .contains(VF_MODEL_CUSTOMIZATION_LABEL);
         assertThat(JsonPathUtil.getInstance().locateResult(jsonResult, "$.vfModules[0].initialCount"))

@@ -26,26 +26,26 @@ package org.onap.so.asdc.client.exceptions;
  */
 public class ArtifactInstallerException extends Exception {
 
-	/**
+    /**
      * serialization id.
-	 */
-	private static final long serialVersionUID = 4095937499475915021L;
+     */
+    private static final long serialVersionUID = 4095937499475915021L;
 
     /**
      * @param message The message to dump
      * @param cause The Throwable cause object
      */
-    public ArtifactInstallerException (final String message) {
-        super (message);
-       
+    public ArtifactInstallerException(final String message) {
+        super(message);
+
     }
-	
+
     /**
      * @param message The message to dump
      * @param cause The Throwable cause object
      */
-    public ArtifactInstallerException (final String message, final Throwable cause) {
-        super (message, cause);
-       
+    public ArtifactInstallerException(final String message, final Throwable cause) {
+        super(message, cause);
+
     }
 }

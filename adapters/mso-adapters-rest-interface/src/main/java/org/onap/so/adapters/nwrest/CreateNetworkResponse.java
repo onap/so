@@ -23,105 +23,96 @@ package org.onap.so.adapters.nwrest;
 
 
 import java.util.Map;
-
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.openstack.beans.NetworkRollback;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("createNetworkResponse")
 @XmlRootElement(name = "createNetworkResponse")
 
 public class CreateNetworkResponse extends NetworkResponseCommon {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -7730406297031948309L;
-	
-	private String networkId;
-	private String neutronNetworkId;
-	private String networkStackId;
-	private String networkFqdn;
-	private Boolean networkCreated;
-	private Map<String, String> subnetMap;
-	private NetworkRollback rollback = new NetworkRollback();
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7730406297031948309L;
 
-	public CreateNetworkResponse() {
-		super();
-	}
+    private String networkId;
+    private String neutronNetworkId;
+    private String networkStackId;
+    private String networkFqdn;
+    private Boolean networkCreated;
+    private Map<String, String> subnetMap;
+    private NetworkRollback rollback = new NetworkRollback();
 
-	public CreateNetworkResponse(String networkId,
-			String neutronNetworkId,
-			String networkStackId,
-			String networkFqdn,
-			Boolean networkCreated,
-			Map<String, String> subnetIdMap,
-			NetworkRollback rollback,
-			String messageId) {
-		super(messageId);
-		this.networkId = networkId;
-		this.neutronNetworkId = neutronNetworkId;
-		this.networkStackId = networkStackId;
-		this.networkFqdn = networkFqdn;
-		this.networkCreated = networkCreated;
-		this.subnetMap = subnetIdMap;
-		this.rollback = rollback;
-	}
+    public CreateNetworkResponse() {
+        super();
+    }
 
-	public String getNetworkId() {
-		return networkId;
-	}
+    public CreateNetworkResponse(String networkId, String neutronNetworkId, String networkStackId, String networkFqdn,
+            Boolean networkCreated, Map<String, String> subnetIdMap, NetworkRollback rollback, String messageId) {
+        super(messageId);
+        this.networkId = networkId;
+        this.neutronNetworkId = neutronNetworkId;
+        this.networkStackId = networkStackId;
+        this.networkFqdn = networkFqdn;
+        this.networkCreated = networkCreated;
+        this.subnetMap = subnetIdMap;
+        this.rollback = rollback;
+    }
 
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
-	}
+    public String getNetworkId() {
+        return networkId;
+    }
 
-	public String getNeutronNetworkId() {
-		return neutronNetworkId;
-	}
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 
-	public void setNeutronNetworkId(String neutronNetworkId) {
-		this.neutronNetworkId = neutronNetworkId;
-	}
+    public String getNeutronNetworkId() {
+        return neutronNetworkId;
+    }
 
-	public String getNetworkStackId() {
-		return networkStackId;
-	}
+    public void setNeutronNetworkId(String neutronNetworkId) {
+        this.neutronNetworkId = neutronNetworkId;
+    }
 
-	public void setNetworkStackId(String networkStackId) {
-		this.networkStackId = networkStackId;
-	}
+    public String getNetworkStackId() {
+        return networkStackId;
+    }
 
-	public String getNetworkFqdn() {
-		return networkFqdn;
-	}
+    public void setNetworkStackId(String networkStackId) {
+        this.networkStackId = networkStackId;
+    }
 
-	public void setNetworkFqdn(String networkFqdn) {
-		this.networkFqdn = networkFqdn;
-	}
+    public String getNetworkFqdn() {
+        return networkFqdn;
+    }
 
-	public Boolean getNetworkCreated() {
-		return networkCreated;
-	}
+    public void setNetworkFqdn(String networkFqdn) {
+        this.networkFqdn = networkFqdn;
+    }
 
-	public void setNetworkCreated(Boolean networkCreated) {
-		this.networkCreated = networkCreated;
-	}
+    public Boolean getNetworkCreated() {
+        return networkCreated;
+    }
 
-	public Map<String, String> getSubnetMap() {
-		return subnetMap;
-	}
+    public void setNetworkCreated(Boolean networkCreated) {
+        this.networkCreated = networkCreated;
+    }
 
-	public void setSubnetMap(Map<String, String> subnetMap) {
-		this.subnetMap = subnetMap;
-	}
+    public Map<String, String> getSubnetMap() {
+        return subnetMap;
+    }
 
-	public NetworkRollback getRollback() {
-		return rollback;
-	}
+    public void setSubnetMap(Map<String, String> subnetMap) {
+        this.subnetMap = subnetMap;
+    }
 
-	public void setRollback(NetworkRollback rollback) {
-		this.rollback = rollback;
-	}
+    public NetworkRollback getRollback() {
+        return rollback;
+    }
+
+    public void setRollback(NetworkRollback rollback) {
+        this.rollback = rollback;
+    }
 }

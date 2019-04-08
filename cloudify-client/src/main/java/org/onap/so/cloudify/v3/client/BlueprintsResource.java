@@ -21,7 +21,6 @@
 package org.onap.so.cloudify.v3.client;
 
 import java.io.InputStream;
-
 import org.onap.so.cloudify.v3.model.Blueprint;
 import org.onap.so.cloudify.v3.model.Blueprints;
 import org.onap.so.cloudify.base.client.Entity;
@@ -38,15 +37,15 @@ public class BlueprintsResource {
     }
 
     /*
-     * Upload a blueprint package directly.  The blueprint must be a ZIP archive.
-     * However, this method will not validate this.  
+     * Upload a blueprint package directly. The blueprint must be a ZIP archive. However, this method will not validate
+     * this.
      */
-    public UploadBlueprint uploadFromStream (String blueprintId, String mainFileName, InputStream blueprint) {
-        return new UploadBlueprint (blueprintId, mainFileName, blueprint, null);
+    public UploadBlueprint uploadFromStream(String blueprintId, String mainFileName, InputStream blueprint) {
+        return new UploadBlueprint(blueprintId, mainFileName, blueprint, null);
     }
 
-    public UploadBlueprint uploadFromUrl (String blueprintId, String mainFileName, String blueprintUrl) {
-        return new UploadBlueprint (blueprintId, mainFileName, null, blueprintUrl);
+    public UploadBlueprint uploadFromUrl(String blueprintId, String mainFileName, String blueprintUrl) {
+        return new UploadBlueprint(blueprintId, mainFileName, null, blueprintUrl);
     }
 
     public ListBlueprints list() {
@@ -68,14 +67,14 @@ public class BlueprintsResource {
 
     public class UploadBlueprint extends CloudifyRequest<Blueprint> {
         public UploadBlueprint(String blueprintId, String mainFileName, InputStream blueprint, String blueprintUrl) {
-        	// Initialize the request elements dynamically.
-        	// Either a blueprint input stream or a URL will be provided.
-        	// If a URL is provided, add it to the query string
-        	// If a Stream is provided, set it as the Entity body
-        	super(client, HttpMethod.PUT,
-        			"/api/v3/blueprints/" + blueprintId + "?application_file_name=" + mainFileName + ((blueprintUrl != null) ? "&blueprint_archive=" + blueprintUrl : ""),
-        			((blueprint != null) ? Entity.stream(blueprint) : null),
-        			Blueprint.class);
+            // Initialize the request elements dynamically.
+            // Either a blueprint input stream or a URL will be provided.
+            // If a URL is provided, add it to the query string
+            // If a Stream is provided, set it as the Entity body
+            super(client, HttpMethod.PUT,
+                    "/api/v3/blueprints/" + blueprintId + "?application_file_name=" + mainFileName
+                            + ((blueprintUrl != null) ? "&blueprint_archive=" + blueprintUrl : ""),
+                    ((blueprint != null) ? Entity.stream(blueprint) : null), Blueprint.class);
         }
     }
 
@@ -94,10 +93,10 @@ public class BlueprintsResource {
     public class ListBlueprints extends CloudifyRequest<Blueprints> {
         public ListBlueprints() {
             super(client, HttpMethod.GET, "/api/v3/blueprints", null, Blueprints.class);
-       }
+        }
     }
 
-    // TODO:  DownloadBlueprint is not supported, as it needs to return an input stream
-    //        containing the full blueprint ZIP.
-    //        For a full client library, this will require returning an open stream as the entity...
+    // TODO: DownloadBlueprint is not supported, as it needs to return an input stream
+    // containing the full blueprint ZIP.
+    // For a full client library, this will require returning an open stream as the entity...
 }

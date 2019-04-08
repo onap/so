@@ -22,10 +22,9 @@ package org.onap.so.openstack.beans;
 
 
 /**
- * Enum status values to mirror the Openstack Neutron
- * network status values
+ * Enum status values to mirror the Openstack Neutron network status values
  */
 public enum NetworkStatus {
-	NOTFOUND, ACTIVE, DOWN, BUILD, ERROR, UNKNOWN
+    NOTFOUND, ACTIVE, DOWN, BUILD, ERROR, UNKNOWN
 }
 

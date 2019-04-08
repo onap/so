@@ -21,19 +21,18 @@
 package org.onap.so.apihandlerinfra.tasksbeans;
 
 import java.util.List;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-@JsonSerialize(include=JsonSerialize.Inclusion.NON_DEFAULT)
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class TaskVariables {
 
-	private List<TaskVariableValue> taskVariables;	
+    private List<TaskVariableValue> taskVariables;
 
-	public List<TaskVariableValue> getTaskVariables() {
-		return taskVariables;
-	}
+    public List<TaskVariableValue> getTaskVariables() {
+        return taskVariables;
+    }
 
-	public void setTaskVariables(List<TaskVariableValue> taskVariables) {
-		this.taskVariables = taskVariables;
-	}
+    public void setTaskVariables(List<TaskVariableValue> taskVariables) {
+        this.taskVariables = taskVariables;
+    }
 }

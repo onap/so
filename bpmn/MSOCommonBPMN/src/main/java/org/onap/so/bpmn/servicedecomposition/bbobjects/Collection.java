@@ -22,12 +22,10 @@ package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
 import javax.persistence.Id;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.so.bpmn.servicedecomposition.modelinfo.ModelInfoCollection;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
@@ -35,63 +33,74 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 
 @JsonRootName("collection")
 public class Collection implements Serializable, ShallowCopy<Collection> {
-	
-	private static final long serialVersionUID = 6389915895863066288L;
 
-	@Id
-	@JsonProperty("id")
-	private String id;
-	@JsonProperty("model-info-collection")
-	private ModelInfoCollection modelInfoCollection;
-	@JsonProperty("instance-group")
-	private InstanceGroup instanceGroup;
-	@JsonProperty("orchestration-status")
+    private static final long serialVersionUID = 6389915895863066288L;
+
+    @Id
+    @JsonProperty("id")
+    private String id;
+    @JsonProperty("model-info-collection")
+    private ModelInfoCollection modelInfoCollection;
+    @JsonProperty("instance-group")
+    private InstanceGroup instanceGroup;
+    @JsonProperty("orchestration-status")
     private OrchestrationStatus orchestrationStatus;
-	@JsonProperty("name")
-	private String name;
-	
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public ModelInfoCollection getModelInfoCollection() {
-		return modelInfoCollection;
-	}
-	public void setModelInfoCollection(ModelInfoCollection modelInfoCollection) {
-		this.modelInfoCollection = modelInfoCollection;
-	}
-	public InstanceGroup getInstanceGroup() {
-		return instanceGroup;
-	}
-	public void setInstanceGroup(InstanceGroup instanceGroup) {
-		this.instanceGroup = instanceGroup;
-	}
-	public OrchestrationStatus getOrchestrationStatus() {
-		return orchestrationStatus;
-	}
-	public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
-		this.orchestrationStatus = orchestrationStatus;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof Collection)) {
-			return false;
-		}
-		Collection castOther = (Collection) other;
-		return new EqualsBuilder().append(id, castOther.id).isEquals();
-	}
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(id).toHashCode();
-	}
+    @JsonProperty("name")
+    private String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public ModelInfoCollection getModelInfoCollection() {
+        return modelInfoCollection;
+    }
+
+    public void setModelInfoCollection(ModelInfoCollection modelInfoCollection) {
+        this.modelInfoCollection = modelInfoCollection;
+    }
+
+    public InstanceGroup getInstanceGroup() {
+        return instanceGroup;
+    }
+
+    public void setInstanceGroup(InstanceGroup instanceGroup) {
+        this.instanceGroup = instanceGroup;
+    }
+
+    public OrchestrationStatus getOrchestrationStatus() {
+        return orchestrationStatus;
+    }
+
+    public void setOrchestrationStatus(OrchestrationStatus orchestrationStatus) {
+        this.orchestrationStatus = orchestrationStatus;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof Collection)) {
+            return false;
+        }
+        Collection castOther = (Collection) other;
+        return new EqualsBuilder().append(id, castOther.id).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(id).toHashCode();
+    }
 
 
 }

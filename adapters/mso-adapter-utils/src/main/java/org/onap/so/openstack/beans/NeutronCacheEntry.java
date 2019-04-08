@@ -24,44 +24,43 @@ import java.io.Serializable;
 import java.util.Calendar;
 
 /*
- * An entry in the Neutron Client Cache.  It saves the Neutron client object
- * along with the token expiration.  After this interval, this cache
- * item will no longer be used.
+ * An entry in the Neutron Client Cache. It saves the Neutron client object along with the token expiration. After this
+ * interval, this cache item will no longer be used.
  */
 public class NeutronCacheEntry implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private String neutronUrl;
-	private String token;
-	private Calendar expires;
+    private String neutronUrl;
+    private String token;
+    private Calendar expires;
 
-	public NeutronCacheEntry (String neutronUrl, String token, Calendar expires) {
-		this.neutronUrl = neutronUrl;
-		this.token = token;
-		this.expires = expires;
-	}
-	
-	public String getNeutronUrl() {
-		return neutronUrl;
-	}
+    public NeutronCacheEntry(String neutronUrl, String token, Calendar expires) {
+        this.neutronUrl = neutronUrl;
+        this.token = token;
+        this.expires = expires;
+    }
 
-	public void setNeutronUrl(String neutronUrl) {
-		this.neutronUrl = neutronUrl;
-	}
+    public String getNeutronUrl() {
+        return neutronUrl;
+    }
 
-	public String getToken() {
-		return token;
-	}
+    public void setNeutronUrl(String neutronUrl) {
+        this.neutronUrl = neutronUrl;
+    }
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+    public String getToken() {
+        return token;
+    }
 
-	public boolean isExpired() {
-		if (expires == null) {
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public boolean isExpired() {
+        if (expires == null) {
             return true;
         }
 
         return System.currentTimeMillis() > expires.getTimeInMillis();
-	}
+    }
 }

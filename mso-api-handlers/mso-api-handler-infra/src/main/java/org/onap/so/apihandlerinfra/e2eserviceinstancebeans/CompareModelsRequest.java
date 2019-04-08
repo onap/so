@@ -25,44 +25,44 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
 public class CompareModelsRequest {
 
-	private String globalSubscriberId;
-	
-	private String serviceType;
+    private String globalSubscriberId;
 
-	private String modelInvariantIdTarget;
-	
-	private String modelVersionIdTarget;
+    private String serviceType;
+
+    private String modelInvariantIdTarget;
+
+    private String modelVersionIdTarget;
 
 
-	public String getGlobalSubscriberId() {
-		return globalSubscriberId;
-	}
+    public String getGlobalSubscriberId() {
+        return globalSubscriberId;
+    }
 
-	public void setGlobalSubscriberId(String globalSubscriberId) {
-		this.globalSubscriberId = globalSubscriberId;
-	}
+    public void setGlobalSubscriberId(String globalSubscriberId) {
+        this.globalSubscriberId = globalSubscriberId;
+    }
 
-	public String getServiceType() {
-		return serviceType;
-	}
+    public String getServiceType() {
+        return serviceType;
+    }
 
-	public void setServiceType(String serviceType) {
-		this.serviceType = serviceType;
-	}
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
 
-	public String getModelInvariantIdTarget() {
-		return modelInvariantIdTarget;
-	}
+    public String getModelInvariantIdTarget() {
+        return modelInvariantIdTarget;
+    }
 
-	public void setModelInvariantIdTarget(String modelInvariantIdTarget) {
-		this.modelInvariantIdTarget = modelInvariantIdTarget;
-	}
+    public void setModelInvariantIdTarget(String modelInvariantIdTarget) {
+        this.modelInvariantIdTarget = modelInvariantIdTarget;
+    }
 
-	public String getModelVersionIdTarget() {
-		return modelVersionIdTarget;
-	}
+    public String getModelVersionIdTarget() {
+        return modelVersionIdTarget;
+    }
 
-	public void setModelVersionIdTarget(String modelVersionIdTarget) {
-		this.modelVersionIdTarget = modelVersionIdTarget;
-	}
+    public void setModelVersionIdTarget(String modelVersionIdTarget) {
+        this.modelVersionIdTarget = modelVersionIdTarget;
+    }
 }

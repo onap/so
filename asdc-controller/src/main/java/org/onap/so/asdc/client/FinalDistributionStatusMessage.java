@@ -23,64 +23,65 @@ package org.onap.so.asdc.client;
 import org.onap.sdc.api.consumer.IFinalDistrStatusMessage;
 import org.onap.sdc.utils.DistributionStatusEnum;
 
-public class FinalDistributionStatusMessage implements IFinalDistrStatusMessage{
+public class FinalDistributionStatusMessage implements IFinalDistrStatusMessage {
 
-	private String componentName;
+    private String componentName;
 
-	private String consumerID;
-	
-	private String distributionID;
-	
-	private DistributionStatusEnum status;
-	
-	private long timestamp;
-	
-	public FinalDistributionStatusMessage (String distributionId, final DistributionStatusEnum distributionStatusEnum, final long timestampL, String consumerId) {
-		//componentName = componentname;
-		consumerID = consumerId;
-		distributionID = distributionId;
-		status = distributionStatusEnum;
-		timestamp = timestampL;
-	}
+    private String consumerID;
 
-	public DistributionStatusEnum getStatus() {
-		return status;
-	}
+    private String distributionID;
 
-	public void setStatus(DistributionStatusEnum status) {
-		this.status = status;
-	}
+    private DistributionStatusEnum status;
 
-	public String getDistributionID() {
-		return distributionID;
-	}
+    private long timestamp;
 
-	public void setDistributionID(String distributionID) {
-		this.distributionID = distributionID;
-	}
+    public FinalDistributionStatusMessage(String distributionId, final DistributionStatusEnum distributionStatusEnum,
+            final long timestampL, String consumerId) {
+        // componentName = componentname;
+        consumerID = consumerId;
+        distributionID = distributionId;
+        status = distributionStatusEnum;
+        timestamp = timestampL;
+    }
 
-	public long getTimestamp() {
-		return timestamp;
-	}
+    public DistributionStatusEnum getStatus() {
+        return status;
+    }
 
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
+    public void setStatus(DistributionStatusEnum status) {
+        this.status = status;
+    }
 
-	public String getComponentName() {
-		return componentName;
-	}
+    public String getDistributionID() {
+        return distributionID;
+    }
 
-	public void setComponentName(String componentName) {
-		this.componentName = componentName;
-	}
+    public void setDistributionID(String distributionID) {
+        this.distributionID = distributionID;
+    }
 
-	public String getConsumerID() {
-		return consumerID;
-	}
+    public long getTimestamp() {
+        return timestamp;
+    }
 
-	public void setConsumerID(String consumerID) {
-		this.consumerID = consumerID;
-	}
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getComponentName() {
+        return componentName;
+    }
+
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
+    public String getConsumerID() {
+        return consumerID;
+    }
+
+    public void setConsumerID(String consumerID) {
+        this.consumerID = consumerID;
+    }
 
 }

@@ -23,72 +23,85 @@ package org.onap.so.bpmn.core.domain;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("vfModule")
-public class ModuleResource  extends Resource {
+public class ModuleResource extends Resource {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/*
-	 * set resourceType for this object
-	 */
-	public ModuleResource(){
-		resourceType = ResourceType.MODULE;
-	}
+    /*
+     * set resourceType for this object
+     */
+    public ModuleResource() {
+        resourceType = ResourceType.MODULE;
+    }
 
-	/*
-	 * fields specific to VF Module resource type
-	 */
-	private String vfModuleName;
-	private String vfModuleType;
-	private String heatStackId;
-	private boolean hasVolumeGroup;
-	private boolean isBase;
-	private String vfModuleLabel;
-	private int initialCount;
+    /*
+     * fields specific to VF Module resource type
+     */
+    private String vfModuleName;
+    private String vfModuleType;
+    private String heatStackId;
+    private boolean hasVolumeGroup;
+    private boolean isBase;
+    private String vfModuleLabel;
+    private int initialCount;
 
-	/*
-	 * GET && SET
-	 */
-	public String getVfModuleName() {
-		return vfModuleName;
-	}
-	public void setVfModuleName(String vfModuleName) {
-		this.vfModuleName = vfModuleName;
-	}
-	public String getHeatStackId() {
-		return heatStackId;
-	}
-	public void setHeatStackId(String heatStackId) {
-		this.heatStackId = heatStackId;
-	}
-	public boolean getIsBase() {
-		return isBase;
-	}
-	public void setIsBase(boolean isBase) {
-		this.isBase = isBase;
-	}
-	public String getVfModuleLabel() {
-		return vfModuleLabel;
-	}
-	public void setVfModuleLabel(String vfModuleLabel) {
-		this.vfModuleLabel = vfModuleLabel;
-	}
-	public int getInitialCount() {
-		return initialCount;
-	}
-	public void setInitialCount(int initialCount) {
-		this.initialCount = initialCount;
-	}
-	public String getVfModuleType() {
-		return vfModuleType;
-	}
-	public void setVfModuleType(String vfModuleType) {
-		this.vfModuleType = vfModuleType;
-	}
-	public boolean isHasVolumeGroup() {
-		return hasVolumeGroup;
-	}
-	public void setHasVolumeGroup(boolean hasVolumeGroup) {
-		this.hasVolumeGroup = hasVolumeGroup;
-	}
+    /*
+     * GET && SET
+     */
+    public String getVfModuleName() {
+        return vfModuleName;
+    }
+
+    public void setVfModuleName(String vfModuleName) {
+        this.vfModuleName = vfModuleName;
+    }
+
+    public String getHeatStackId() {
+        return heatStackId;
+    }
+
+    public void setHeatStackId(String heatStackId) {
+        this.heatStackId = heatStackId;
+    }
+
+    public boolean getIsBase() {
+        return isBase;
+    }
+
+    public void setIsBase(boolean isBase) {
+        this.isBase = isBase;
+    }
+
+    public String getVfModuleLabel() {
+        return vfModuleLabel;
+    }
+
+    public void setVfModuleLabel(String vfModuleLabel) {
+        this.vfModuleLabel = vfModuleLabel;
+    }
+
+    public int getInitialCount() {
+        return initialCount;
+    }
+
+    public void setInitialCount(int initialCount) {
+        this.initialCount = initialCount;
+    }
+
+    public String getVfModuleType() {
+        return vfModuleType;
+    }
+
+    public void setVfModuleType(String vfModuleType) {
+        this.vfModuleType = vfModuleType;
+    }
+
+    public boolean isHasVolumeGroup() {
+        return hasVolumeGroup;
+    }
+
+    public void setHasVolumeGroup(boolean hasVolumeGroup) {
+        this.hasVolumeGroup = hasVolumeGroup;
+    }
 
 }

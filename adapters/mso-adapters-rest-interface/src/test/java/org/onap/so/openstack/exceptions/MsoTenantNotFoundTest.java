@@ -27,9 +27,9 @@ public class MsoTenantNotFoundTest {
 
     @Test
     public void testConstructor() {
-        MsoTenantNotFound msoTenantNotFound = new MsoTenantNotFound("test","test");
-        Assert.assertEquals("Tenant test does not exist in Cloud test",msoTenantNotFound.getMessage());
-        Assert.assertEquals("404 Not Found: Tenant test does not exist in Cloud test",msoTenantNotFound.toString());
+        MsoTenantNotFound msoTenantNotFound = new MsoTenantNotFound("test", "test");
+        Assert.assertEquals("Tenant test does not exist in Cloud test", msoTenantNotFound.getMessage());
+        Assert.assertEquals("404 Not Found: Tenant test does not exist in Cloud test", msoTenantNotFound.toString());
     }
 
 }

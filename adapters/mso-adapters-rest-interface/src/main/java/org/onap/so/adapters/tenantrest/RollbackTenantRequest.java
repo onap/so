@@ -27,15 +27,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "rollbackTenantRequest")
 public class RollbackTenantRequest extends TenantRequestCommon {
 
-	private TenantRollback tenantRollback;
+    private TenantRollback tenantRollback;
 
-	public RollbackTenantRequest() {}
+    public RollbackTenantRequest() {}
 
-	public TenantRollback getTenantRollback() {
-		return tenantRollback;
-	}
+    public TenantRollback getTenantRollback() {
+        return tenantRollback;
+    }
 
-	public void setTenantRollback(TenantRollback tenantRollback) {
-		this.tenantRollback = tenantRollback;
-	}
+    public void setTenantRollback(TenantRollback tenantRollback) {
+        this.tenantRollback = tenantRollback;
+    }
 }

@@ -23,7 +23,6 @@
 package org.onap.so.client.orchestration;
 
 import java.io.IOException;
-
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
 import org.onap.so.adapters.vnfrest.DeleteVfModuleRequest;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.CloudRegion;
@@ -41,19 +40,23 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VnfAdapterVfModuleResources {
-	private static final Logger logger = LoggerFactory.getLogger(VnfAdapterVfModuleResources.class);
-		
-	@Autowired
-	private VnfAdapterVfModuleObjectMapper vnfAdapterVfModuleObjectMapper;
-	
-	public CreateVfModuleRequest createVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion, OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf, 
-			VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse) throws IOException {
-		return vnfAdapterVfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse, sdncVfModuleQueryResponse);
-	}
-	
-	public DeleteVfModuleRequest deleteVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion, 
-			ServiceInstance serviceInstance, GenericVnf genericVnf, 
-			VfModule vfModule) throws IOException {
-		return vnfAdapterVfModuleObjectMapper.deleteVfModuleRequestMapper(requestContext, cloudRegion, serviceInstance, genericVnf, vfModule);
-	}
+    private static final Logger logger = LoggerFactory.getLogger(VnfAdapterVfModuleResources.class);
+
+    @Autowired
+    private VnfAdapterVfModuleObjectMapper vnfAdapterVfModuleObjectMapper;
+
+    public CreateVfModuleRequest createVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion,
+            OrchestrationContext orchestrationContext, ServiceInstance serviceInstance, GenericVnf genericVnf,
+            VfModule vfModule, VolumeGroup volumeGroup, String sdncVnfQueryResponse, String sdncVfModuleQueryResponse)
+            throws IOException {
+        return vnfAdapterVfModuleObjectMapper.createVfModuleRequestMapper(requestContext, cloudRegion,
+                orchestrationContext, serviceInstance, genericVnf, vfModule, volumeGroup, sdncVnfQueryResponse,
+                sdncVfModuleQueryResponse);
+    }
+
+    public DeleteVfModuleRequest deleteVfModuleRequest(RequestContext requestContext, CloudRegion cloudRegion,
+            ServiceInstance serviceInstance, GenericVnf genericVnf, VfModule vfModule) throws IOException {
+        return vnfAdapterVfModuleObjectMapper.deleteVfModuleRequestMapper(requestContext, cloudRegion, serviceInstance,
+                genericVnf, vfModule);
+    }
 }

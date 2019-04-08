@@ -21,7 +21,6 @@
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 
 public class E2EServiceInstanceDeleteRequestTest {
@@ -33,9 +32,9 @@ public class E2EServiceInstanceDeleteRequestTest {
     public void verifyE2ESerInstanceDelReq() throws Exception {
 
         test.setGlobalSubscriberId("id");
-        assertEquals(test.getGlobalSubscriberId(),"id");
+        assertEquals(test.getGlobalSubscriberId(), "id");
         test.setServiceType("type");
-        assertEquals(test.getServiceType(),"type");
+        assertEquals(test.getServiceType(), "type");
     }
 
 }

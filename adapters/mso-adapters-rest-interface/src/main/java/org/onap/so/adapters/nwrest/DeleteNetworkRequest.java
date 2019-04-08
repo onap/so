@@ -25,9 +25,7 @@ package org.onap.so.adapters.nwrest;
 
 
 import javax.xml.bind.annotation.XmlRootElement;
-
 import org.onap.so.entity.MsoRequest;
-
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
@@ -35,75 +33,75 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @XmlRootElement(name = "deleteNetworkRequest")
 public class DeleteNetworkRequest extends NetworkRequestCommon {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2445072708572065058L;
-	private String cloudSiteId;
-	private String tenantId;
-	private String networkId;
-	private String networkStackId;
-	private String networkType;
-	private String modelCustomizationUuid;
-	private MsoRequest msoRequest = new MsoRequest();
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2445072708572065058L;
+    private String cloudSiteId;
+    private String tenantId;
+    private String networkId;
+    private String networkStackId;
+    private String networkType;
+    private String modelCustomizationUuid;
+    private MsoRequest msoRequest = new MsoRequest();
 
-	public DeleteNetworkRequest() {
-		//empty default constructor
-	}
+    public DeleteNetworkRequest() {
+        // empty default constructor
+    }
 
-	public String getCloudSiteId() {
-		return cloudSiteId;
-	}
+    public String getCloudSiteId() {
+        return cloudSiteId;
+    }
 
-	public void setCloudSiteId(String cloudSiteId) {
-		this.cloudSiteId = cloudSiteId;
-	}
+    public void setCloudSiteId(String cloudSiteId) {
+        this.cloudSiteId = cloudSiteId;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getNetworkId() {
-		return networkId;
-	}
+    public String getNetworkId() {
+        return networkId;
+    }
 
-	public void setNetworkId(String networkId) {
-		this.networkId = networkId;
-	}
+    public void setNetworkId(String networkId) {
+        this.networkId = networkId;
+    }
 
-	public String getNetworkStackId() {
-		return networkStackId;
-	}
+    public String getNetworkStackId() {
+        return networkStackId;
+    }
 
-	public void setNetworkStackId(String networkStackId) {
-		this.networkStackId = networkStackId;
-	}
+    public void setNetworkStackId(String networkStackId) {
+        this.networkStackId = networkStackId;
+    }
 
-	public String getNetworkType() {
-		return networkType;
-	}
+    public String getNetworkType() {
+        return networkType;
+    }
 
-	public void setNetworkType(String networkType) {
-		this.networkType = networkType;
-	}
+    public void setNetworkType(String networkType) {
+        this.networkType = networkType;
+    }
 
-	public String getModelCustomizationUuid() {
-		return this.modelCustomizationUuid;
-	}
+    public String getModelCustomizationUuid() {
+        return this.modelCustomizationUuid;
+    }
 
-	public void setModelCustomizationUuid(String modelCustomizationUuid) {
-		this.modelCustomizationUuid = modelCustomizationUuid;
-	}
+    public void setModelCustomizationUuid(String modelCustomizationUuid) {
+        this.modelCustomizationUuid = modelCustomizationUuid;
+    }
 
-	public MsoRequest getMsoRequest() {
-		return msoRequest;
-	}
+    public MsoRequest getMsoRequest() {
+        return msoRequest;
+    }
 
-	public void setMsoRequest(MsoRequest msoRequest) {
-		this.msoRequest = msoRequest;
-	}
+    public void setMsoRequest(MsoRequest msoRequest) {
+        this.msoRequest = msoRequest;
+    }
 }

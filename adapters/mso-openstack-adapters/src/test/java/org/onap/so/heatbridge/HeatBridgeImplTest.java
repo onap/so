@@ -1,17 +1,14 @@
 /*
  * Copyright (C) 2018 Bell Canada. All rights reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 package org.onap.so.heatbridge;
 
@@ -25,7 +22,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -35,7 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
@@ -69,7 +64,6 @@ import org.openstack4j.model.network.NetworkType;
 import org.openstack4j.model.network.Port;
 import org.openstack4j.openstack.heat.domain.HeatResource;
 import org.openstack4j.openstack.heat.domain.HeatResource.Resources;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 
@@ -86,14 +80,14 @@ public class HeatBridgeImplTest {
     private OpenstackClient osClient;
 
     private CloudIdentity cloudIdentity = new CloudIdentity();
-    
+
     @Mock
     private AAIResourcesClient resourcesClient;
     @Mock
     private AAISingleTransactionClient transaction;
 
-    private HeatBridgeImpl heatbridge; 
-    
+    private HeatBridgeImpl heatbridge;
+
     @Before
     public void setUp() throws HeatBridgeException, OpenstackClientException, BulkProcessFailed {
 
@@ -108,7 +102,7 @@ public class HeatBridgeImplTest {
         String heatStackId = "1234567";
         List<Resource> expectedResourceList = (List<Resource>) extractTestStackResources();
         when(osClient.getStackBasedResources(heatStackId, HeatBridgeConstants.OS_DEFAULT_HEAT_NESTING))
-            .thenReturn(expectedResourceList);
+                .thenReturn(expectedResourceList);
 
         // Act
         List<Resource> resourceList = heatbridge.queryNestedHeatStackResources(heatStackId);
@@ -122,12 +116,12 @@ public class HeatBridgeImplTest {
     public void testExtractStackResourceIdsByResourceType() throws HeatBridgeException {
         // Arrange
         List<Resource> expectedResourceList = (List<Resource>) extractTestStackResources();
-        List<String> expectedServerIds = Arrays.asList("43c2159b-2c04-46ac-bda5-594110cae2d3",
-            "7cff109a-b2b7-4933-97b4-ec44a8365568");
+        List<String> expectedServerIds =
+                Arrays.asList("43c2159b-2c04-46ac-bda5-594110cae2d3", "7cff109a-b2b7-4933-97b4-ec44a8365568");
 
         // Act
-        List<String> serverIds = heatbridge
-            .extractStackResourceIdsByResourceType(expectedResourceList, HeatBridgeConstants.OS_SERVER_RESOURCE_TYPE);
+        List<String> serverIds = heatbridge.extractStackResourceIdsByResourceType(expectedResourceList,
+                HeatBridgeConstants.OS_SERVER_RESOURCE_TYPE);
 
         // Assert
         assertEquals(expectedServerIds, serverIds);
@@ -205,7 +199,7 @@ public class HeatBridgeImplTest {
     public void testUpdateVserversToAai() throws HeatBridgeException {
         // Arrange
         Server server1 = mock(Server.class);
-        
+
         when(server1.getId()).thenReturn("test-server1-id");
         when(server1.getHypervisorHostname()).thenReturn("test-hypervisor");
         when(server1.getName()).thenReturn("test-server1-name");
@@ -234,16 +228,16 @@ public class HeatBridgeImplTest {
 
         // Act
         heatbridge.buildAddVserversToAaiAction("test-genericVnf-id", "test-vfModule-id", servers);
-        
+
         // Assert
         ArgumentCaptor<AAIResourceUri> captor = ArgumentCaptor.forClass(AAIResourceUri.class);
         verify(transaction, times(2)).create(captor.capture(), any(Vserver.class));
-        
+
         List<AAIResourceUri> uris = captor.getAllValues();
-        assertEquals(AAIUriFactory.createResourceUri(
-                AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID, server1.getId()), uris.get(0));
-        assertEquals(AAIUriFactory.createResourceUri(
-                AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID, server2.getId()), uris.get(1));
+        assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
+                server1.getId()), uris.get(0));
+        assertEquals(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, CLOUD_OWNER, REGION_ID, TENANT_ID,
+                server2.getId()), uris.get(1));
 
     }
 
@@ -315,11 +309,10 @@ public class HeatBridgeImplTest {
         when(port.getMacAddress()).thenReturn("78:4f:43:68:e2:78");
         when(port.getNetworkId()).thenReturn("890a203a-23gg-56jh-df67-731656a8f13a");
         when(port.getDeviceId()).thenReturn("test-device-id");
-        when(port.getVifDetails())
-            .thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_VLAN_NETWORK_KEY, "2345"));
+        when(port.getVifDetails()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_VLAN_NETWORK_KEY, "2345"));
         String pfPciId = "0000:08:00.0";
         when(port.getProfile()).thenReturn(ImmutableMap.of(HeatBridgeConstants.OS_PCI_SLOT_KEY, pfPciId,
-            HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
+                HeatBridgeConstants.OS_PHYSICAL_NETWORK_KEY, "physical_network_id"));
 
         Network network = mock(Network.class);
         when(network.getId()).thenReturn("test-network-id");
@@ -351,8 +344,7 @@ public class HeatBridgeImplTest {
     private List<? extends Resource> extractTestStackResources() {
         List<HeatResource> stackResources = null;
         try {
-            stackResources = MAPPER.readValue(readTestResourceFile("stack-resources.json"), Resources.class)
-                .getList();
+            stackResources = MAPPER.readValue(readTestResourceFile("stack-resources.json"), Resources.class).getList();
             assertNotNull(stackResources);
             assertFalse(stackResources.isEmpty());
         } catch (IOException e) {

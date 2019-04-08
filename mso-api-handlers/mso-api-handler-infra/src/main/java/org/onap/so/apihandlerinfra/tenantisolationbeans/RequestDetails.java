@@ -22,7 +22,6 @@ package org.onap.so.apihandlerinfra.tenantisolationbeans;
 
 import java.io.Serializable;
 import java.util.Arrays;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -32,20 +31,18 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestDetails implements Serializable {
 
-	private static final long serialVersionUID = -73080684945860609L;
-	@JsonProperty("requestInfo")
+    private static final long serialVersionUID = -73080684945860609L;
+    @JsonProperty("requestInfo")
     protected RequestInfo requestInfo;
-	@JsonProperty("relatedInstanceList")
+    @JsonProperty("relatedInstanceList")
     protected RelatedInstanceList[] relatedInstanceList;
-	@JsonProperty("requestParameters")
+    @JsonProperty("requestParameters")
     protected RequestParameters requestParameters;
 
     /**
      * Gets the value of the requestInfo property.
      *
-     * @return
-     *     possible object is
-     *     {@link RequestInfo }
+     * @return possible object is {@link RequestInfo }
      *
      */
     public RequestInfo getRequestInfo() {
@@ -55,9 +52,7 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the requestInfo property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link RequestInfo }
+     * @param value allowed object is {@link RequestInfo }
      *
      */
     public void setRequestInfo(RequestInfo value) {
@@ -67,9 +62,7 @@ public class RequestDetails implements Serializable {
     /**
      * Gets the value of the requestParameters property.
      *
-     * @return
-     *     possible object is
-     *     {@link RequestParameters }
+     * @return possible object is {@link RequestParameters }
      *
      */
     public RequestParameters getRequestParameters() {
@@ -79,26 +72,24 @@ public class RequestDetails implements Serializable {
     /**
      * Sets the value of the requestParameters property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link RequestParameters }
+     * @param value allowed object is {@link RequestParameters }
      *
      */
     public void setRequestParameters(RequestParameters value) {
         this.requestParameters = value;
     }
 
-	public RelatedInstanceList[] getRelatedInstanceList() {
-		return relatedInstanceList;
-	}
+    public RelatedInstanceList[] getRelatedInstanceList() {
+        return relatedInstanceList;
+    }
 
-	public void setRelatedInstanceList(RelatedInstanceList[] relatedInstanceList) {
-		this.relatedInstanceList = relatedInstanceList;
-	}
-	@Override
-	public String toString() {
-		return "RequestDetails [requestInfo=" + requestInfo + 
-				            ", relatedInstanceList=" + Arrays.toString(relatedInstanceList) + 
-				            ", requestParameters=" + requestParameters + "]";
-	}
+    public void setRelatedInstanceList(RelatedInstanceList[] relatedInstanceList) {
+        this.relatedInstanceList = relatedInstanceList;
+    }
+
+    @Override
+    public String toString() {
+        return "RequestDetails [requestInfo=" + requestInfo + ", relatedInstanceList="
+                + Arrays.toString(relatedInstanceList) + ", requestParameters=" + requestParameters + "]";
+    }
 }

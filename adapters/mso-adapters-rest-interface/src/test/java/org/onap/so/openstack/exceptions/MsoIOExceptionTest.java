@@ -27,14 +27,14 @@ public class MsoIOExceptionTest {
     @Test
     public void testConstructor() {
         MsoIOException msoIOException = new MsoIOException("test");
-        Assert.assertEquals("test",msoIOException.getMessage());
+        Assert.assertEquals("test", msoIOException.getMessage());
         Assert.assertEquals(MsoExceptionCategory.IO, msoIOException.category);
     }
 
     @Test
     public void testOverloadedConstructor() {
         MsoIOException msoIOException = new MsoIOException("test", new Throwable());
-        Assert.assertEquals("test",msoIOException.getMessage());
+        Assert.assertEquals("test", msoIOException.getMessage());
         Assert.assertEquals(MsoExceptionCategory.IO, msoIOException.category);
         Assert.assertNotNull(msoIOException.getCause());
     }

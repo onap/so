@@ -25,15 +25,19 @@ import java.net.URL;
 
 public interface RestProperties {
 
-	public URL getEndpoint() throws MalformedURLException;
-	public String getSystemName();
-	public default Integer getRetries() {
-		return Integer.valueOf(2);
-	}
-	public default Long getDelayBetweenRetries() {
-		return Long.valueOf(500);
-	}
-	public default boolean mapNotFoundToEmpty() {
-		return false;
-	}
+    public URL getEndpoint() throws MalformedURLException;
+
+    public String getSystemName();
+
+    public default Integer getRetries() {
+        return Integer.valueOf(2);
+    }
+
+    public default Long getDelayBetweenRetries() {
+        return Long.valueOf(500);
+    }
+
+    public default boolean mapNotFoundToEmpty() {
+        return false;
+    }
 }

@@ -23,6 +23,6 @@ package org.onap.so.cloudify.base.client;
 
 public interface CloudifyClientConnector {
 
-	public <T> CloudifyResponse request(CloudifyRequest<T> request);
+    public <T> CloudifyResponse request(CloudifyRequest<T> request);
 
 }

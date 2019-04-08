@@ -23,7 +23,6 @@ package org.onap.so.client.sdno.beans;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -32,11 +31,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({
-    "input"
-})
-public class Body implements Serializable
-{
+@JsonPropertyOrder({"input"})
+public class Body implements Serializable {
 
     @JsonProperty("input")
     private Input input;
@@ -68,8 +64,9 @@ public class Body implements Serializable
     public void setAdditionalProperty(String name, Object value) {
         this.additionalProperties.put(name, value);
     }
+
     public void setAdditionalProperties(Map<String, Object> map) {
-    	this.additionalProperties = map;
+        this.additionalProperties = map;
     }
 
     public Body withAdditionalProperty(String name, Object value) {

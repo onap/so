@@ -27,40 +27,41 @@ import javax.xml.namespace.QName;
 
 
 /**
- * This object contains factory methods for each 
- * Java content interface and Java element interface 
- * generated in the org.onap.so.adapters.network.async.client package. 
- * <p>An ObjectFactory allows you to programatically 
- * construct new instances of the Java representation 
- * for XML content. The Java representation of XML 
- * content can consist of schema derived interfaces 
- * and classes representing the binding of schema 
- * type definitions, element declarations and model 
- * groups.  Factory methods for each of these are 
- * provided in this class.
+ * This object contains factory methods for each Java content interface and Java element interface generated in the
+ * org.onap.so.adapters.network.async.client package.
+ * <p>
+ * An ObjectFactory allows you to programatically construct new instances of the Java representation for XML content.
+ * The Java representation of XML content can consist of schema derived interfaces and classes representing the binding
+ * of schema type definitions, element declarations and model groups. Factory methods for each of these are provided in
+ * this class.
  * 
  */
 @XmlRegistry
 public class ObjectFactory {
-    
-	private static final String Url= "http://org.onap.so/networkNotify";
+
+    private static final String Url = "http://org.onap.so/networkNotify";
     private static final QName _RollbackNetworkNotification_QNAME = new QName(Url, "rollbackNetworkNotification");
     private static final QName _UpdateNetworkNotification_QNAME = new QName(Url, "updateNetworkNotification");
-    private static final QName _QueryNetworkNotificationResponse_QNAME = new QName(Url, "queryNetworkNotificationResponse");
-    private static final QName _UpdateNetworkNotificationResponse_QNAME = new QName(Url, "updateNetworkNotificationResponse");
-    private static final QName _CreateNetworkNotificationResponse_QNAME = new QName(Url, "createNetworkNotificationResponse");
+    private static final QName _QueryNetworkNotificationResponse_QNAME =
+            new QName(Url, "queryNetworkNotificationResponse");
+    private static final QName _UpdateNetworkNotificationResponse_QNAME =
+            new QName(Url, "updateNetworkNotificationResponse");
+    private static final QName _CreateNetworkNotificationResponse_QNAME =
+            new QName(Url, "createNetworkNotificationResponse");
     private static final QName _DeleteNetworkNotification_QNAME = new QName(Url, "deleteNetworkNotification");
-    private static final QName _DeleteNetworkNotificationResponse_QNAME = new QName(Url, "deleteNetworkNotificationResponse");
+    private static final QName _DeleteNetworkNotificationResponse_QNAME =
+            new QName(Url, "deleteNetworkNotificationResponse");
     private static final QName _CreateNetworkNotification_QNAME = new QName(Url, "createNetworkNotification");
     private static final QName _QueryNetworkNotification_QNAME = new QName(Url, "queryNetworkNotification");
-    private static final QName _RollbackNetworkNotificationResponse_QNAME = new QName(Url, "rollbackNetworkNotificationResponse");
+    private static final QName _RollbackNetworkNotificationResponse_QNAME =
+            new QName(Url, "rollbackNetworkNotificationResponse");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.onap.so.adapters.network.async.client
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
+     * org.onap.so.adapters.network.async.client
      * 
      */
-    public ObjectFactory() {
-    }
+    public ObjectFactory() {}
 
     /**
      * Create an instance of {@link QueryNetworkNotification }
@@ -211,7 +212,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = Url, name = "rollbackNetworkNotification")
-    public JAXBElement<RollbackNetworkNotification> createRollbackNetworkNotification(RollbackNetworkNotification value) {
+    public JAXBElement<RollbackNetworkNotification> createRollbackNetworkNotification(
+            RollbackNetworkNotification value) {
         return new JAXBElement<>(_RollbackNetworkNotification_QNAME, RollbackNetworkNotification.class, null, value);
     }
 
@@ -229,8 +231,10 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = Url, name = "queryNetworkNotificationResponse")
-    public JAXBElement<QueryNetworkNotificationResponse> createQueryNetworkNotificationResponse(QueryNetworkNotificationResponse value) {
-        return new JAXBElement<>(_QueryNetworkNotificationResponse_QNAME, QueryNetworkNotificationResponse.class, null, value);
+    public JAXBElement<QueryNetworkNotificationResponse> createQueryNetworkNotificationResponse(
+            QueryNetworkNotificationResponse value) {
+        return new JAXBElement<>(_QueryNetworkNotificationResponse_QNAME, QueryNetworkNotificationResponse.class, null,
+                value);
     }
 
     /**
@@ -238,8 +242,10 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = Url, name = "updateNetworkNotificationResponse")
-    public JAXBElement<UpdateNetworkNotificationResponse> createUpdateNetworkNotificationResponse(UpdateNetworkNotificationResponse value) {
-        return new JAXBElement<>(_UpdateNetworkNotificationResponse_QNAME, UpdateNetworkNotificationResponse.class, null, value);
+    public JAXBElement<UpdateNetworkNotificationResponse> createUpdateNetworkNotificationResponse(
+            UpdateNetworkNotificationResponse value) {
+        return new JAXBElement<>(_UpdateNetworkNotificationResponse_QNAME, UpdateNetworkNotificationResponse.class,
+                null, value);
     }
 
     /**
@@ -247,8 +253,10 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = Url, name = "createNetworkNotificationResponse")
-    public JAXBElement<CreateNetworkNotificationResponse> createCreateNetworkNotificationResponse(CreateNetworkNotificationResponse value) {
-        return new JAXBElement<>(_CreateNetworkNotificationResponse_QNAME, CreateNetworkNotificationResponse.class, null, value);
+    public JAXBElement<CreateNetworkNotificationResponse> createCreateNetworkNotificationResponse(
+            CreateNetworkNotificationResponse value) {
+        return new JAXBElement<>(_CreateNetworkNotificationResponse_QNAME, CreateNetworkNotificationResponse.class,
+                null, value);
     }
 
     /**
@@ -265,8 +273,10 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = Url, name = "deleteNetworkNotificationResponse")
-    public JAXBElement<DeleteNetworkNotificationResponse> createDeleteNetworkNotificationResponse(DeleteNetworkNotificationResponse value) {
-        return new JAXBElement<>(_DeleteNetworkNotificationResponse_QNAME, DeleteNetworkNotificationResponse.class, null, value);
+    public JAXBElement<DeleteNetworkNotificationResponse> createDeleteNetworkNotificationResponse(
+            DeleteNetworkNotificationResponse value) {
+        return new JAXBElement<>(_DeleteNetworkNotificationResponse_QNAME, DeleteNetworkNotificationResponse.class,
+                null, value);
     }
 
     /**
@@ -292,8 +302,10 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = Url, name = "rollbackNetworkNotificationResponse")
-    public JAXBElement<RollbackNetworkNotificationResponse> createRollbackNetworkNotificationResponse(RollbackNetworkNotificationResponse value) {
-        return new JAXBElement<>(_RollbackNetworkNotificationResponse_QNAME, RollbackNetworkNotificationResponse.class, null, value);
+    public JAXBElement<RollbackNetworkNotificationResponse> createRollbackNetworkNotificationResponse(
+            RollbackNetworkNotificationResponse value) {
+        return new JAXBElement<>(_RollbackNetworkNotificationResponse_QNAME, RollbackNetworkNotificationResponse.class,
+                null, value);
     }
 
 }

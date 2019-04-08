@@ -42,18 +42,19 @@ public class ExecutionsResource {
         return new ListExecutions(null);
     }
 
-    public ListExecutions listSorted (String sortBy) {
+    public ListExecutions listSorted(String sortBy) {
         return new ListExecutions("?_sort=" + sortBy);
     }
-    
+
     // Return a filtered list.
     // The filter parameter should be a query string of filter criteria (without leading "?")
-    public ListExecutions listFiltered (String filter, String sortBy) {
-    	String listParams = "?" + filter;
-    	if (sortBy != null)  listParams += "&_sort=" + sortBy;
+    public ListExecutions listFiltered(String filter, String sortBy) {
+        String listParams = "?" + filter;
+        if (sortBy != null)
+            listParams += "&_sort=" + sortBy;
         return new ListExecutions(listParams);
     }
-    
+
     public GetExecution byId(String id) {
         return new GetExecution(id);
     }
@@ -61,28 +62,29 @@ public class ExecutionsResource {
     public StartExecution start(StartExecutionParams params) {
         return new StartExecution(params);
     }
-    
+
     public UpdateExecution updateStatus(String id, String status) {
-    	UpdateExecutionParams params = new UpdateExecutionParams();
-    	params.setStatus(status);
+        UpdateExecutionParams params = new UpdateExecutionParams();
+        params.setStatus(status);
         return new UpdateExecution(id, params);
     }
 
     public CancelExecution cancel(String executionId, CancelExecutionParams params) {
         return new CancelExecution(executionId, params);
     }
-    
+
 
     public class GetExecution extends CloudifyRequest<Execution> {
-        public GetExecution (String id) {
+        public GetExecution(String id) {
             super(client, HttpMethod.GET, "/api/v3/executions/" + id, null, Execution.class);
         }
     }
 
     public class ListExecutions extends CloudifyRequest<Executions> {
         public ListExecutions(String listParams) {
-            super(client, HttpMethod.GET, "/api/v3/executions" + ((listParams!=null) ? listParams : ""), null, Executions.class);
-       }
+            super(client, HttpMethod.GET, "/api/v3/executions" + ((listParams != null) ? listParams : ""), null,
+                    Executions.class);
+        }
     }
 
     public class StartExecution extends CloudifyRequest<Execution> {

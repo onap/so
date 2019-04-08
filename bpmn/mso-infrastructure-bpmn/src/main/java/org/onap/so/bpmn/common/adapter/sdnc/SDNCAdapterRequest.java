@@ -28,9 +28,11 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for anonymous complex type.
+ * <p>
+ * Java class for anonymous complex type.
  * 
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -48,10 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-    "requestHeader",
-    "requestData"
-})
+@XmlType(name = "", propOrder = {"requestHeader", "requestData"})
 @XmlRootElement(name = "SDNCAdapterRequest")
 public class SDNCAdapterRequest {
 
@@ -63,10 +62,8 @@ public class SDNCAdapterRequest {
     /**
      * Gets the value of the requestHeader property.
      * 
-     * @return
-     *     possible object is
-     *     {@link RequestHeader }
-     *     
+     * @return possible object is {@link RequestHeader }
+     * 
      */
     public RequestHeader getRequestHeader() {
         return requestHeader;
@@ -75,10 +72,8 @@ public class SDNCAdapterRequest {
     /**
      * Sets the value of the requestHeader property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link RequestHeader }
-     *     
+     * @param value allowed object is {@link RequestHeader }
+     * 
      */
     public void setRequestHeader(RequestHeader value) {
         this.requestHeader = value;
@@ -87,10 +82,8 @@ public class SDNCAdapterRequest {
     /**
      * Gets the value of the requestData property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Object }
-     *     
+     * @return possible object is {@link Object }
+     * 
      */
     public Object getRequestData() {
         return requestData;
@@ -99,10 +92,8 @@ public class SDNCAdapterRequest {
     /**
      * Sets the value of the requestData property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Object }
-     *     
+     * @param value allowed object is {@link Object }
+     * 
      */
     public void setRequestData(Object value) {
         this.requestData = value;

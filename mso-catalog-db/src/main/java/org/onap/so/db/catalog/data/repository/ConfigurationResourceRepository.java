@@ -25,5 +25,5 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource(collectionResourceRel = "configurationResource", path = "configurationResource")
 public interface ConfigurationResourceRepository extends JpaRepository<ConfigurationResource, Long> {
-	ConfigurationResource findResourceByModelUUID(String modelUUID);
+    ConfigurationResource findResourceByModelUUID(String modelUUID);
 }

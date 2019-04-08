@@ -27,12 +27,12 @@ package org.onap.so.adapters.vfc.model;
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-10-18
+ * @version ONAP Amsterdam Release 2017-10-18
  */
 public class VimLocation {
     private String vimId;
 
-    
+
     /**
      * @return Returns the vimId.
      */
@@ -40,12 +40,12 @@ public class VimLocation {
         return vimId;
     }
 
-    
+
     /**
      * @param vimId The vimId to set.
      */
     public void setVimId(String vimId) {
         this.vimId = vimId;
     }
-    
+
 }

@@ -21,7 +21,6 @@
 package org.onap.so.serviceinstancebeans;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -33,36 +32,34 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize.Inclusion;
 @JsonInclude(Include.NON_DEFAULT)
 public class RequestInfo implements Serializable {
 
-	private static final long serialVersionUID = -1370946827136030181L;
-	@JsonProperty("billingAccountNumber")
-	protected String billingAccountNumber;
-	@JsonProperty("callbackUrl")
-	protected String callbackUrl;
-	@JsonProperty("correlator")
+    private static final long serialVersionUID = -1370946827136030181L;
+    @JsonProperty("billingAccountNumber")
+    protected String billingAccountNumber;
+    @JsonProperty("callbackUrl")
+    protected String callbackUrl;
+    @JsonProperty("correlator")
     protected String correlator;
-	@JsonProperty("orderNumber")
+    @JsonProperty("orderNumber")
     protected String orderNumber;
-	@JsonProperty("productFamilyId")
+    @JsonProperty("productFamilyId")
     protected String productFamilyId;
-	@JsonProperty("orderVersion")
+    @JsonProperty("orderVersion")
     protected Integer orderVersion;
-    @JsonSerialize(include=Inclusion.ALWAYS)
-	@JsonProperty("source")
+    @JsonSerialize(include = Inclusion.ALWAYS)
+    @JsonProperty("source")
     protected String source;
-	@JsonProperty("instanceName")
+    @JsonProperty("instanceName")
     protected String instanceName;
-	@JsonProperty("suppressRollback")
-    @JsonSerialize(include=Inclusion.ALWAYS)
+    @JsonProperty("suppressRollback")
+    @JsonSerialize(include = Inclusion.ALWAYS)
     protected boolean suppressRollback;
-	@JsonProperty("requestorId")
+    @JsonProperty("requestorId")
     protected String requestorId;
 
     /**
      * Gets the value of the callbackUrl property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getCallbackUrl() {
@@ -72,9 +69,7 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the callbackUrl property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setCallbackUrl(String value) {
@@ -84,9 +79,7 @@ public class RequestInfo implements Serializable {
     /**
      * Gets the value of the correlator property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getCorrelator() {
@@ -96,9 +89,7 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the correlator property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setCorrelator(String value) {
@@ -108,9 +99,7 @@ public class RequestInfo implements Serializable {
     /**
      * Gets the value of the orderNumber property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getOrderNumber() {
@@ -120,9 +109,7 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the orderNumber property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setOrderNumber(String value) {
@@ -132,9 +119,7 @@ public class RequestInfo implements Serializable {
     /**
      * Gets the value of the orderVersion property.
      *
-     * @return
-     *     possible object is
-     *     {@link Integer }
+     * @return possible object is {@link Integer }
      *
      */
     public Integer getOrderVersion() {
@@ -144,9 +129,7 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the orderVersion property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
+     * @param value allowed object is {@link Integer }
      *
      */
     public void setOrderVersion(Integer value) {
@@ -156,9 +139,7 @@ public class RequestInfo implements Serializable {
     /**
      * Gets the value of the source property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
+     * @return possible object is {@link String }
      *
      */
     public String getSource() {
@@ -168,69 +149,65 @@ public class RequestInfo implements Serializable {
     /**
      * Sets the value of the source property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
+     * @param value allowed object is {@link String }
      *
      */
     public void setSource(String value) {
         this.source = value;
     }
 
-	public String getInstanceName() {
-		return instanceName;
-	}
+    public String getInstanceName() {
+        return instanceName;
+    }
 
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
 
-	public String getBillingAccountNumber() {
-		return billingAccountNumber;
-	}
+    public String getBillingAccountNumber() {
+        return billingAccountNumber;
+    }
 
-	public void setBillingAccountNumber(String billingAccountNumber) {
-		this.billingAccountNumber = billingAccountNumber;
-	}
+    public void setBillingAccountNumber(String billingAccountNumber) {
+        this.billingAccountNumber = billingAccountNumber;
+    }
 
-	public String getProductFamilyId() {
-		return productFamilyId;
-	}
+    public String getProductFamilyId() {
+        return productFamilyId;
+    }
 
-	public void setProductFamilyId(String productFamilyId) {
-		this.productFamilyId = productFamilyId;
-	}
+    public void setProductFamilyId(String productFamilyId) {
+        this.productFamilyId = productFamilyId;
+    }
 
-	/**
-	 * Required for Marshalers to send the fields.
-	 * @return
-	 */
-	public boolean getSuppressRollback() {
-		return suppressRollback;
-	}
+    /**
+     * Required for Marshalers to send the fields.
+     * 
+     * @return
+     */
+    public boolean getSuppressRollback() {
+        return suppressRollback;
+    }
 
-	public void setSuppressRollback(boolean suppressRollback) {
-		this.suppressRollback = suppressRollback;
-	}
+    public void setSuppressRollback(boolean suppressRollback) {
+        this.suppressRollback = suppressRollback;
+    }
 
-	public String getRequestorId() {
-		return requestorId;
-	}
+    public String getRequestorId() {
+        return requestorId;
+    }
 
-	public void setRequestorId(String requestorId) {
-		this.requestorId = requestorId;
-	}
+    public void setRequestorId(String requestorId) {
+        this.requestorId = requestorId;
+    }
 
-	@Override
-	public String toString() {
-		return "RequestInfo [billingAccountNumber=" + billingAccountNumber
-				+ ", callbackUrl=" + callbackUrl + ", correlator=" + correlator
-				+ ", orderNumber=" + orderNumber + ", productFamilyId="
-				+ productFamilyId + ", orderVersion=" + orderVersion
-				+ ", source=" + source + ", instanceName=" + instanceName
-				+ ", suppressRollback=" + suppressRollback + ", requestorId="
-				+ requestorId + "]";
-	}
+    @Override
+    public String toString() {
+        return "RequestInfo [billingAccountNumber=" + billingAccountNumber + ", callbackUrl=" + callbackUrl
+                + ", correlator=" + correlator + ", orderNumber=" + orderNumber + ", productFamilyId=" + productFamilyId
+                + ", orderVersion=" + orderVersion + ", source=" + source + ", instanceName=" + instanceName
+                + ", suppressRollback=" + suppressRollback + ", requestorId=" + requestorId + "]";
+    }
 
 
 }

@@ -22,7 +22,6 @@ package org.onap.so.bpmn.common.validation;
 
 import java.util.Collections;
 import java.util.Optional;
-
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.springframework.stereotype.Component;
 
@@ -30,15 +29,15 @@ import org.springframework.stereotype.Component;
 @Skip
 public class MyDisabledValidator implements PreBuildingBlockValidator {
 
-	@Override
-	public boolean shouldRunFor(String bbName) {
-		
-		return Collections.singleton("test").contains(bbName);
-	}
+    @Override
+    public boolean shouldRunFor(String bbName) {
 
-	@Override
-	public Optional<String> validate(BuildingBlockExecution exeuction) {
-		return Optional.of("my-disabled-validator");
-	}
+        return Collections.singleton("test").contains(bbName);
+    }
+
+    @Override
+    public Optional<String> validate(BuildingBlockExecution exeuction) {
+        return Optional.of("my-disabled-validator");
+    }
 
 }

@@ -22,107 +22,104 @@ package org.onap.so.adapters.network.beans;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ContrailSubnet {
 
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet")
-	private ContrailSubnetIp subnet = new ContrailSubnetIp();
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_default_gateway")
-	private String defaultGateway;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_name")
-	private String subnetName;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_enable_dhcp")
-	private Boolean enableDhcp;
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_addr_from_start")
-	private Boolean addrFromStart = true;	
-	/** future - leave this commented
-	private String subnet_uuid;
-	private String dns_server_address;
-	private List<String> dns_nameservers;
-	private String dhcp_option_list;
-	**/
-	
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools")
-	private List<ContrailSubnetPool> allocationPools =  new ArrayList<>();
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_subnet")
+    private ContrailSubnetIp subnet = new ContrailSubnetIp();
 
-	@JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes")
-	private ContrailSubnetHostRoutes hostRoutes = new ContrailSubnetHostRoutes();
-	
-	public ContrailSubnet() {
-		super();
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_default_gateway")
+    private String defaultGateway;
 
-	public String getDefaultGateway() {
-		return defaultGateway;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_subnet_name")
+    private String subnetName;
 
-	public void setDefaultGateway(String defaultGateway) {
-		this.defaultGateway = defaultGateway;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_enable_dhcp")
+    private Boolean enableDhcp;
 
-	public ContrailSubnetIp getSubnet() {
-		return subnet;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_addr_from_start")
+    private Boolean addrFromStart = true;
+    /**
+     * future - leave this commented private String subnet_uuid; private String dns_server_address; private List<String>
+     * dns_nameservers; private String dhcp_option_list;
+     **/
 
-	public void setSubnet(ContrailSubnetIp subnet) {
-		this.subnet = subnet;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_allocation_pools")
+    private List<ContrailSubnetPool> allocationPools = new ArrayList<>();
 
-	public Boolean isEnableDhcp() {
-		return enableDhcp;
-	}
+    @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes")
+    private ContrailSubnetHostRoutes hostRoutes = new ContrailSubnetHostRoutes();
 
-	public void setEnableDhcp(Boolean enableDhcp) {
-		this.enableDhcp = enableDhcp;
-	}
+    public ContrailSubnet() {
+        super();
+    }
 
-	public String getSubnetName() {
-		return subnetName;
-	}
+    public String getDefaultGateway() {
+        return defaultGateway;
+    }
 
-	public void setSubnetName(String subnetName) {
-		this.subnetName = subnetName;
-	}
+    public void setDefaultGateway(String defaultGateway) {
+        this.defaultGateway = defaultGateway;
+    }
 
-	public List<ContrailSubnetPool> getAllocationPools() {
-		return allocationPools;
-	}
+    public ContrailSubnetIp getSubnet() {
+        return subnet;
+    }
 
-	public void setAllocationPools(List<ContrailSubnetPool> allocationPools) {
-		this.allocationPools = allocationPools;
-	}
+    public void setSubnet(ContrailSubnetIp subnet) {
+        this.subnet = subnet;
+    }
 
-	public Boolean isAddrFromStart() {
-		return addrFromStart;
-	}
+    public Boolean isEnableDhcp() {
+        return enableDhcp;
+    }
 
-	public void setAddrFromStart(Boolean addrFromStart) {
-		this.addrFromStart = addrFromStart;
-	}
+    public void setEnableDhcp(Boolean enableDhcp) {
+        this.enableDhcp = enableDhcp;
+    }
 
-	public ContrailSubnetHostRoutes getHostRoutes() {
-		return hostRoutes;
-	}
+    public String getSubnetName() {
+        return subnetName;
+    }
 
-	public void setHostRoutes(ContrailSubnetHostRoutes hostRoutes) {
-		this.hostRoutes = hostRoutes;
-	}
+    public void setSubnetName(String subnetName) {
+        this.subnetName = subnetName;
+    }
 
-	@Override
-	public String toString() {
-		StringBuilder buf = new StringBuilder ();
-		for (ContrailSubnetPool pool : allocationPools)
-		{
-			 buf.append(pool.toString());
-		}
-		return "ContrailSubnet [subnet=" + subnet.toString() + " default_gateway=" + defaultGateway
-				+ " enable_dhcp=" + enableDhcp +  " addr_from_start=" + addrFromStart + " subnet_name=" + subnetName + " allocation_pools=" + buf + " ]";
-	}
+    public List<ContrailSubnetPool> getAllocationPools() {
+        return allocationPools;
+    }
+
+    public void setAllocationPools(List<ContrailSubnetPool> allocationPools) {
+        this.allocationPools = allocationPools;
+    }
+
+    public Boolean isAddrFromStart() {
+        return addrFromStart;
+    }
+
+    public void setAddrFromStart(Boolean addrFromStart) {
+        this.addrFromStart = addrFromStart;
+    }
+
+    public ContrailSubnetHostRoutes getHostRoutes() {
+        return hostRoutes;
+    }
+
+    public void setHostRoutes(ContrailSubnetHostRoutes hostRoutes) {
+        this.hostRoutes = hostRoutes;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        for (ContrailSubnetPool pool : allocationPools) {
+            buf.append(pool.toString());
+        }
+        return "ContrailSubnet [subnet=" + subnet.toString() + " default_gateway=" + defaultGateway + " enable_dhcp="
+                + enableDhcp + " addr_from_start=" + addrFromStart + " subnet_name=" + subnetName + " allocation_pools="
+                + buf + " ]";
+    }
 
 }

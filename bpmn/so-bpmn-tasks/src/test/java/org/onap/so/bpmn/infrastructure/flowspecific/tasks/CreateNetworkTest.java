@@ -26,9 +26,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-
 import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -45,47 +43,51 @@ import org.onap.so.client.exception.BBObjectNotFoundException;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class CreateNetworkTest extends BaseTaskTest{
-	@InjectMocks
-	private CreateNetwork createNetwork = new CreateNetwork();
-	
-	private L3Network network;
-	private ServiceInstance serviceInstance;
-	private CloudRegion cloudRegion;
-	private OrchestrationContext orchestrationContext;
-	private Map<String, String> userInput;
-	private RequestContext requestContext;
-	private String cloudRegionPo = "testCloudRegionPo";
-	private Customer customer;
-	
-	@Before
-	public void before() throws BBObjectNotFoundException {
-		customer = setCustomer();
-		serviceInstance = setServiceInstance();
-		network = setL3Network();
-		cloudRegion = setCloudRegion();
-		orchestrationContext = setOrchestrationContext();
-		orchestrationContext.setIsRollbackEnabled(true);
-		requestContext = setRequestContext();
-		userInput = setUserInput();
+public class CreateNetworkTest extends BaseTaskTest {
+    @InjectMocks
+    private CreateNetwork createNetwork = new CreateNetwork();
 
-		customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
-		when(extractPojosForBB.extractByKey(any(),ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID))).thenReturn(serviceInstance);
-	}
-	
-	@Test
-	public void buildCreateNetworkRequestTest() throws Exception {
-		execution.setVariable("cloudRegionPo", cloudRegionPo);
-		
-		CreateNetworkRequest expectedCreateNetworkRequest = new CreateNetworkRequest();
-		
-		doReturn(expectedCreateNetworkRequest).when(networkAdapterObjectMapper).createNetworkRequestMapper(requestContext, cloudRegion,  orchestrationContext, serviceInstance, network, userInput, cloudRegionPo, customer);
-		
-		createNetwork.buildCreateNetworkRequest(execution);
-		
-		verify(networkAdapterObjectMapper, times(1)).createNetworkRequestMapper(requestContext, cloudRegion,  orchestrationContext, serviceInstance, network, userInput, cloudRegionPo, customer);
-		
-		assertThat(expectedCreateNetworkRequest, sameBeanAs(execution.getVariable("createNetworkRequest")));
-	}
+    private L3Network network;
+    private ServiceInstance serviceInstance;
+    private CloudRegion cloudRegion;
+    private OrchestrationContext orchestrationContext;
+    private Map<String, String> userInput;
+    private RequestContext requestContext;
+    private String cloudRegionPo = "testCloudRegionPo";
+    private Customer customer;
+
+    @Before
+    public void before() throws BBObjectNotFoundException {
+        customer = setCustomer();
+        serviceInstance = setServiceInstance();
+        network = setL3Network();
+        cloudRegion = setCloudRegion();
+        orchestrationContext = setOrchestrationContext();
+        orchestrationContext.setIsRollbackEnabled(true);
+        requestContext = setRequestContext();
+        userInput = setUserInput();
+
+        customer.getServiceSubscription().getServiceInstances().add(serviceInstance);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.NETWORK_ID))).thenReturn(network);
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.SERVICE_INSTANCE_ID)))
+                .thenReturn(serviceInstance);
+    }
+
+    @Test
+    public void buildCreateNetworkRequestTest() throws Exception {
+        execution.setVariable("cloudRegionPo", cloudRegionPo);
+
+        CreateNetworkRequest expectedCreateNetworkRequest = new CreateNetworkRequest();
+
+        doReturn(expectedCreateNetworkRequest).when(networkAdapterObjectMapper).createNetworkRequestMapper(
+                requestContext, cloudRegion, orchestrationContext, serviceInstance, network, userInput, cloudRegionPo,
+                customer);
+
+        createNetwork.buildCreateNetworkRequest(execution);
+
+        verify(networkAdapterObjectMapper, times(1)).createNetworkRequestMapper(requestContext, cloudRegion,
+                orchestrationContext, serviceInstance, network, userInput, cloudRegionPo, customer);
+
+        assertThat(expectedCreateNetworkRequest, sameBeanAs(execution.getVariable("createNetworkRequest")));
+    }
 }

@@ -25,31 +25,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({ "dictionaryType", "dictionary" })
+@JsonPropertyOrder({"dictionaryType", "dictionary"})
 public class DictionaryItemsRequest {
 
-	@JsonProperty("dictionary")
-	private String dictionary;
-	@JsonProperty("dictionaryType")
-	private String dictionaryType;
+    @JsonProperty("dictionary")
+    private String dictionary;
+    @JsonProperty("dictionaryType")
+    private String dictionaryType;
 
-	@JsonProperty("dictionary")
-	public String getDictionary() {
-		return dictionary;
-	}
+    @JsonProperty("dictionary")
+    public String getDictionary() {
+        return dictionary;
+    }
 
-	@JsonProperty("dictionary")
-	public void setDictionary(String dictionary) {
-		this.dictionary = dictionary;
-	}
+    @JsonProperty("dictionary")
+    public void setDictionary(String dictionary) {
+        this.dictionary = dictionary;
+    }
 
-	@JsonProperty("dictionaryType")
-	public String getDictionaryType() {
-		return dictionaryType;
-	}
+    @JsonProperty("dictionaryType")
+    public String getDictionaryType() {
+        return dictionaryType;
+    }
 
-	@JsonProperty("dictionaryType")
-	public void setDictionaryType(String dictionaryType) {
-		this.dictionaryType = dictionaryType;
-	}
+    @JsonProperty("dictionaryType")
+    public void setDictionaryType(String dictionaryType) {
+        this.dictionaryType = dictionaryType;
+    }
 }

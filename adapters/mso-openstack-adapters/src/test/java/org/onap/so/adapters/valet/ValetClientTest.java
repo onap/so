@@ -27,9 +27,7 @@ import static org.onap.so.bpmn.mock.StubOpenStack.mockValetCreatePostResponse_20
 import static org.onap.so.bpmn.mock.StubOpenStack.mockValetCreatePutResponse_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockValetDeleteDeleteResponse_200;
 import static org.onap.so.bpmn.mock.StubOpenStack.mockValetRollbackPutRequest_200;
-
 import java.io.File;
-
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,77 +38,90 @@ import org.onap.so.adapters.valet.beans.ValetRollbackResponse;
 import org.onap.so.adapters.valet.beans.ValetUpdateResponse;
 import org.onap.so.adapters.vnf.BaseRestTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ValetClientTest extends BaseRestTestUtils {
-	@Autowired
-	protected ValetClient client;
-	
-	private ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    protected ValetClient client;
 
-	@Before
-	public void init() {
-		client.baseUrl = "http://localhost:" + wireMockPort;
-	}
-	
-	@Test
-	public void testCallValetCreateRequest() throws Exception {	
-		ValetCreateResponse vcr = mapper.readValue(new File("src/test/resources/__files/ValetCreateRequest.json"), ValetCreateResponse.class);
-		GenericValetResponse<ValetCreateResponse> expected = new GenericValetResponse<ValetCreateResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vcr);
-		
-		mockValetCreatePostResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vcr));
-		
-		GenericValetResponse<ValetCreateResponse> actual = client.callValetCreateRequest("requestId", "regionId", "ownerId", "tenantId", "serviceInstanceId", "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
+    private ObjectMapper mapper = new ObjectMapper();
 
-		assertThat(actual, sameBeanAs(expected));
-	}
-	
-	@Test
-	public void testCallValetUpdateRequest() throws Exception {	
-		ValetUpdateResponse vur = mapper.readValue(new File("src/test/resources/__files/ValetCreateRequest.json"), ValetUpdateResponse.class);
-		GenericValetResponse<ValetUpdateResponse> expected = new GenericValetResponse<ValetUpdateResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vur);
-		
-		mockValetCreatePutResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vur));
-		
-		GenericValetResponse<ValetUpdateResponse> actual = client.callValetUpdateRequest("requestId", "regionId", "ownerId", "tenantId", "serviceInstanceId", "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
+    @Before
+    public void init() {
+        client.baseUrl = "http://localhost:" + wireMockPort;
+    }
 
-		assertThat(actual, sameBeanAs(expected));
-	}
-	
-	@Test
-	public void testCallValetDeleteRequest() throws Exception {
-		ValetDeleteResponse vdr = mapper.readValue(new File("src/test/resources/__files/ValetDeleteRequest.json"), ValetDeleteResponse.class);
-		GenericValetResponse<ValetDeleteResponse> expected = new GenericValetResponse<ValetDeleteResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vdr);
-		
-		mockValetDeleteDeleteResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vdr));
-		
-		GenericValetResponse<ValetDeleteResponse> actual = client.callValetDeleteRequest("requestId", "regionId", "ownerId", "tenantId", "vfModuleId", "vfModuleName");
+    @Test
+    public void testCallValetCreateRequest() throws Exception {
+        ValetCreateResponse vcr = mapper.readValue(new File("src/test/resources/__files/ValetCreateRequest.json"),
+                ValetCreateResponse.class);
+        GenericValetResponse<ValetCreateResponse> expected =
+                new GenericValetResponse<ValetCreateResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vcr);
 
-		assertThat(actual, sameBeanAs(expected));
-	}
-	
-	@Test
-	public void testCallValetConfirmRequest() throws Exception {		
-		ValetConfirmResponse vcr = new ValetConfirmResponse();
-		GenericValetResponse<ValetConfirmResponse> expected = new GenericValetResponse<ValetConfirmResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vcr);
-		
-		mockValetConfirmPutRequest_200(wireMockServer, "requestId", "{}");
-		
-		GenericValetResponse<ValetConfirmResponse> actual = client.callValetConfirmRequest("requestId", "stackId");
+        mockValetCreatePostResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vcr));
 
-		assertThat(actual, sameBeanAs(expected));
-	}
-	
-	@Test
-	public void testCallValetRollbackRequest() throws Exception {		
-		ValetRollbackResponse vrr = new ValetRollbackResponse();	
-		GenericValetResponse<ValetRollbackResponse> expected = new GenericValetResponse<ValetRollbackResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vrr);
-		
-		mockValetRollbackPutRequest_200(wireMockServer, "requestId", "{}");
-		
-		GenericValetResponse<ValetRollbackResponse> actual = client.callValetRollbackRequest("requestId", "stackId", true, "error");
+        GenericValetResponse<ValetCreateResponse> actual =
+                client.callValetCreateRequest("requestId", "regionId", "ownerId", "tenantId", "serviceInstanceId",
+                        "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
 
-		assertThat(actual, sameBeanAs(expected));
-	}
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void testCallValetUpdateRequest() throws Exception {
+        ValetUpdateResponse vur = mapper.readValue(new File("src/test/resources/__files/ValetCreateRequest.json"),
+                ValetUpdateResponse.class);
+        GenericValetResponse<ValetUpdateResponse> expected =
+                new GenericValetResponse<ValetUpdateResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vur);
+
+        mockValetCreatePutResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vur));
+
+        GenericValetResponse<ValetUpdateResponse> actual =
+                client.callValetUpdateRequest("requestId", "regionId", "ownerId", "tenantId", "serviceInstanceId",
+                        "vnfId", "vnfName", "vfModuleId", "vfModuleName", "keystoneUrl", null);
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void testCallValetDeleteRequest() throws Exception {
+        ValetDeleteResponse vdr = mapper.readValue(new File("src/test/resources/__files/ValetDeleteRequest.json"),
+                ValetDeleteResponse.class);
+        GenericValetResponse<ValetDeleteResponse> expected =
+                new GenericValetResponse<ValetDeleteResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vdr);
+
+        mockValetDeleteDeleteResponse_200(wireMockServer, "requestId", mapper.writeValueAsString(vdr));
+
+        GenericValetResponse<ValetDeleteResponse> actual = client.callValetDeleteRequest("requestId", "regionId",
+                "ownerId", "tenantId", "vfModuleId", "vfModuleName");
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void testCallValetConfirmRequest() throws Exception {
+        ValetConfirmResponse vcr = new ValetConfirmResponse();
+        GenericValetResponse<ValetConfirmResponse> expected =
+                new GenericValetResponse<ValetConfirmResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vcr);
+
+        mockValetConfirmPutRequest_200(wireMockServer, "requestId", "{}");
+
+        GenericValetResponse<ValetConfirmResponse> actual = client.callValetConfirmRequest("requestId", "stackId");
+
+        assertThat(actual, sameBeanAs(expected));
+    }
+
+    @Test
+    public void testCallValetRollbackRequest() throws Exception {
+        ValetRollbackResponse vrr = new ValetRollbackResponse();
+        GenericValetResponse<ValetRollbackResponse> expected =
+                new GenericValetResponse<ValetRollbackResponse>(HttpStatus.SC_OK, ValetClient.NO_STATUS_RETURNED, vrr);
+
+        mockValetRollbackPutRequest_200(wireMockServer, "requestId", "{}");
+
+        GenericValetResponse<ValetRollbackResponse> actual =
+                client.callValetRollbackRequest("requestId", "stackId", true, "error");
+
+        assertThat(actual, sameBeanAs(expected));
+    }
 }

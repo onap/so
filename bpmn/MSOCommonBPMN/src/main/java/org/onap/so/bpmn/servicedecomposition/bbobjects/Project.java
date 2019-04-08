@@ -21,9 +21,7 @@
 package org.onap.so.bpmn.servicedecomposition.bbobjects;
 
 import java.io.Serializable;
-
 import javax.persistence.Id;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -33,31 +31,31 @@ import org.onap.so.bpmn.servicedecomposition.ShallowCopy;
 @JsonRootName("project")
 public class Project implements Serializable, ShallowCopy<Project> {
 
-	private static final long serialVersionUID = 2449880559554533585L;
-	
-	@Id
-	@JsonProperty("project-name")
-	private String projectName;
+    private static final long serialVersionUID = 2449880559554533585L;
 
-	public String getProjectName() {
-		return projectName;
-	}
+    @Id
+    @JsonProperty("project-name")
+    private String projectName;
 
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
-	}
+    public String getProjectName() {
+        return projectName;
+    }
 
-	@Override
-	public boolean equals(final Object other) {
-		if (!(other instanceof Project)) {
-			return false;
-		}
-		Project castOther = (Project) other;
-		return new EqualsBuilder().append(projectName, castOther.projectName).isEquals();
-	}
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder().append(projectName).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof Project)) {
+            return false;
+        }
+        Project castOther = (Project) other;
+        return new EqualsBuilder().append(projectName, castOther.projectName).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(projectName).toHashCode();
+    }
 }

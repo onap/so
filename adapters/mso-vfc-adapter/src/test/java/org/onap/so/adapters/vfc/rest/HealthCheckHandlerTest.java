@@ -21,11 +21,7 @@
 package org.onap.so.adapters.vfc.rest;
 
 import static org.junit.Assert.*;
-
-
-
 import javax.ws.rs.core.Response;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.vfc.MSOVfcApplication;
@@ -45,28 +41,27 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = MSOVfcApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 public class HealthCheckHandlerTest {
-	
-	@LocalServerPort
-	private int port;
 
-	TestRestTemplate restTemplate = new TestRestTemplate();
+    @LocalServerPort
+    private int port;
 
-	HttpHeaders headers = new HttpHeaders();
+    TestRestTemplate restTemplate = new TestRestTemplate();
 
-	
-	@Test
-	public void testHealthcheck() throws JSONException {
+    HttpHeaders headers = new HttpHeaders();
 
-		HttpEntity<String> entity = new HttpEntity<String>(null, headers);
 
-		ResponseEntity<String> response = restTemplate.exchange(
-				createURLWithPort("manage/health"),
-				HttpMethod.GET, entity, String.class);
-		
-		assertEquals(Response.Status.OK.getStatusCode(),response.getStatusCode().value());
-	}
-	
-	private String createURLWithPort(String uri) {
-		return "http://localhost:" + port + uri;
-	}
+    @Test
+    public void testHealthcheck() throws JSONException {
+
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
+
+        ResponseEntity<String> response =
+                restTemplate.exchange(createURLWithPort("manage/health"), HttpMethod.GET, entity, String.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    }
+
+    private String createURLWithPort(String uri) {
+        return "http://localhost:" + port + uri;
+    }
 }

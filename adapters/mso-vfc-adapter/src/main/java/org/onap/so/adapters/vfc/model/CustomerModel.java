@@ -21,21 +21,20 @@
 package org.onap.so.adapters.vfc.model;
 
 /**
- * The Customer Model
- * <br>
+ * The Customer Model <br>
  * <p>
  * </p>
  * 
  * @author
- * @version     ONAP Amsterdam Release  2017-10-12
+ * @version ONAP Amsterdam Release 2017-10-12
  */
 public class CustomerModel {
-    
+
     String globalCustomerId;
 
     String serviceType;
 
-    
+
     /**
      * @return Returns the globalCustomerId.
      */
@@ -43,7 +42,7 @@ public class CustomerModel {
         return globalCustomerId;
     }
 
-    
+
     /**
      * @param globalCustomerId The globalCustomerId to set.
      */
@@ -51,7 +50,7 @@ public class CustomerModel {
         this.globalCustomerId = globalCustomerId;
     }
 
-    
+
     /**
      * @return Returns the serviceType.
      */
@@ -59,12 +58,12 @@ public class CustomerModel {
         return serviceType;
     }
 
-    
+
     /**
      * @param serviceType The serviceType to set.
      */
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
-    
+
 }

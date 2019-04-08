@@ -23,26 +23,25 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BpmnIntegerParam {
 
-	@JsonProperty("value")
-	private int value;
-	@JsonProperty("type")
-	private final String type = "Integer";
+    @JsonProperty("value")
+    private int value;
+    @JsonProperty("type")
+    private final String type = "Integer";
 
-	public BpmnIntegerParam() {
-	}
+    public BpmnIntegerParam() {}
 
-	@JsonProperty("value")
-	public int getValue() {
-		return value;
-	}
+    @JsonProperty("value")
+    public int getValue() {
+        return value;
+    }
 
-	@JsonProperty("type")
-	public void setValue(int value) {
-		this.value = value;
-	}
+    @JsonProperty("type")
+    public void setValue(int value) {
+        this.value = value;
+    }
 
-	@Override
-	public String toString() {
-		return "CamundaInput [value=" + Integer.toString(value) + ", type=" + type + "]";
-	}
+    @Override
+    public String toString() {
+        return "CamundaInput [value=" + Integer.toString(value) + ", type=" + type + "]";
+    }
 }

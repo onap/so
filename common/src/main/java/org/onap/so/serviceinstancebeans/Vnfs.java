@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -33,99 +32,97 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonRootName(value = "vnfs")
 @JsonInclude(Include.NON_DEFAULT)
-public class Vnfs implements Serializable{
+public class Vnfs implements Serializable {
 
-	private static final long serialVersionUID = 8081495240474276501L;
-	@JsonProperty("modelInfo")
-	protected ModelInfo modelInfo;
-	@JsonProperty("cloudConfiguration")
-	protected CloudConfiguration cloudConfiguration;
-	@JsonProperty("instanceName")
-	protected String instanceName;
-	@JsonProperty("platform")
-	protected Platform platform;
-	@JsonProperty("lineOfBusiness")
-	protected LineOfBusiness lineOfBusiness;
-	@JsonProperty("productFamilyId")
-	protected String productFamilyId;
-	@JsonProperty("instanceParams")
-	private List<Map<String, String>> instanceParams = new ArrayList<>();
-	@JsonProperty("vfModules")
-	private List<VfModules> vfModules = new ArrayList<>();
-	
+    private static final long serialVersionUID = 8081495240474276501L;
+    @JsonProperty("modelInfo")
+    protected ModelInfo modelInfo;
+    @JsonProperty("cloudConfiguration")
+    protected CloudConfiguration cloudConfiguration;
+    @JsonProperty("instanceName")
+    protected String instanceName;
+    @JsonProperty("platform")
+    protected Platform platform;
+    @JsonProperty("lineOfBusiness")
+    protected LineOfBusiness lineOfBusiness;
+    @JsonProperty("productFamilyId")
+    protected String productFamilyId;
+    @JsonProperty("instanceParams")
+    private List<Map<String, String>> instanceParams = new ArrayList<>();
+    @JsonProperty("vfModules")
+    private List<VfModules> vfModules = new ArrayList<>();
 
-	public ModelInfo getModelInfo() {
-		return modelInfo;
-	}
 
-	public void setModelInfo(ModelInfo modelInfo) {
-		this.modelInfo = modelInfo;
-	}
+    public ModelInfo getModelInfo() {
+        return modelInfo;
+    }
 
-	public CloudConfiguration getCloudConfiguration() {
-		return cloudConfiguration;
-	}
+    public void setModelInfo(ModelInfo modelInfo) {
+        this.modelInfo = modelInfo;
+    }
 
-	public void setCloudConfiguration(CloudConfiguration cloudConfiguration) {
-		this.cloudConfiguration = cloudConfiguration;
-	}
+    public CloudConfiguration getCloudConfiguration() {
+        return cloudConfiguration;
+    }
 
-	public String getInstanceName() {
-		return instanceName;
-	}
+    public void setCloudConfiguration(CloudConfiguration cloudConfiguration) {
+        this.cloudConfiguration = cloudConfiguration;
+    }
 
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
+    public String getInstanceName() {
+        return instanceName;
+    }
 
-	public Platform getPlatform() {
-		return platform;
-	}
+    public void setInstanceName(String instanceName) {
+        this.instanceName = instanceName;
+    }
 
-	public void setPlatform(Platform platform) {
-		this.platform = platform;
-	}
+    public Platform getPlatform() {
+        return platform;
+    }
 
-	public LineOfBusiness getLineOfBusiness() {
-		return lineOfBusiness;
-	}
+    public void setPlatform(Platform platform) {
+        this.platform = platform;
+    }
 
-	public void setLineOfBusiness(LineOfBusiness lineOfBusiness) {
-		this.lineOfBusiness = lineOfBusiness;
-	}
+    public LineOfBusiness getLineOfBusiness() {
+        return lineOfBusiness;
+    }
 
-	public String getProductFamilyId() {
-		return productFamilyId;
-	}
+    public void setLineOfBusiness(LineOfBusiness lineOfBusiness) {
+        this.lineOfBusiness = lineOfBusiness;
+    }
 
-	public void setProductFamilyId(String productFamilyId) {
-		this.productFamilyId = productFamilyId;
-	}
+    public String getProductFamilyId() {
+        return productFamilyId;
+    }
 
-	public List<Map<String, String>> getInstanceParams() {
-		return instanceParams;
-	}
+    public void setProductFamilyId(String productFamilyId) {
+        this.productFamilyId = productFamilyId;
+    }
 
-	public void setInstanceParams(List<Map<String, String>> instanceParams) {
-		this.instanceParams = instanceParams;
-	}
+    public List<Map<String, String>> getInstanceParams() {
+        return instanceParams;
+    }
 
-	public List<VfModules> getVfModules() {
-		return vfModules;
-	}
+    public void setInstanceParams(List<Map<String, String>> instanceParams) {
+        this.instanceParams = instanceParams;
+    }
 
-	public void setVfModules(List<VfModules> vfModules) {
-		this.vfModules = vfModules;
-	}
+    public List<VfModules> getVfModules() {
+        return vfModules;
+    }
 
-	@Override
-	public String toString() {
-		return "Vnfs [modelInfo=" + modelInfo + 
-				", cloudConfiguration=" + cloudConfiguration + 
-				", instanceName=" + instanceName + ", platform=" + platform + ", " + 
-				"lineOfBusiness=" + lineOfBusiness + 
-				", productFamilyId=" + productFamilyId + ", instanceParams=" + instanceParams + 
-				", vfModules=" + vfModules + "]";
-	}
-	
+    public void setVfModules(List<VfModules> vfModules) {
+        this.vfModules = vfModules;
+    }
+
+    @Override
+    public String toString() {
+        return "Vnfs [modelInfo=" + modelInfo + ", cloudConfiguration=" + cloudConfiguration + ", instanceName="
+                + instanceName + ", platform=" + platform + ", " + "lineOfBusiness=" + lineOfBusiness
+                + ", productFamilyId=" + productFamilyId + ", instanceParams=" + instanceParams + ", vfModules="
+                + vfModules + "]";
+    }
+
 }

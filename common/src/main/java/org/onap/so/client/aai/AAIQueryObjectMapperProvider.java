@@ -27,13 +27,13 @@ import com.fasterxml.jackson.module.jaxb.JaxbAnnotationIntrospector;
 
 public class AAIQueryObjectMapperProvider extends AAICommonObjectMapperProvider {
 
-	public AAIQueryObjectMapperProvider() {
-		super();
-		AnnotationIntrospector aiJaxb = new JaxbAnnotationIntrospector(TypeFactory.defaultInstance());
+    public AAIQueryObjectMapperProvider() {
+        super();
+        AnnotationIntrospector aiJaxb = new JaxbAnnotationIntrospector(TypeFactory.defaultInstance());
         AnnotationIntrospector aiJackson = new JacksonAnnotationIntrospector();
         // first Jaxb, second Jackson annotations
         mapper.setAnnotationIntrospector(AnnotationIntrospector.pair(aiJaxb, aiJackson));
 
-	}
+    }
 
 }

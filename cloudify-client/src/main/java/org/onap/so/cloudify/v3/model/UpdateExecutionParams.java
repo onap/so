@@ -21,30 +21,27 @@
 package org.onap.so.cloudify.v3.model;
 
 import java.io.Serializable;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UpdateExecutionParams implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     @JsonProperty("status")
     private String status;
-    
+
     public String getStatus() {
-		return status;
-	}
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
 
-	@Override
+    @Override
     public String toString() {
-        return "UpdateExecutionParams{" +
-                "status='" + status + '\'' +
-                '}';
+        return "UpdateExecutionParams{" + "status='" + status + '\'' + '}';
     }
 
 }

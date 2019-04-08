@@ -29,7 +29,6 @@ import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.PnfManagementTestImpl.ID_WITH_ENTRY;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.AAI_CONTAINS_INFO_ABOUT_PNF;
 import static org.onap.so.bpmn.infrastructure.pnf.delegate.ExecutionVariableNames.PNF_CORRELATION_ID;
-
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Before;
@@ -46,9 +45,9 @@ public class CheckAaiForPnfCorrelationIdDelegateTest {
     public static class ConnectionOkTests {
 
         private CheckAaiForPnfCorrelationIdDelegate delegate;
-        
+
         @Rule
-    	public ExpectedException expectedException = ExpectedException.none();
+        public ExpectedException expectedException = ExpectedException.none();
 
         @Before
         public void setUp() {
@@ -94,9 +93,9 @@ public class CheckAaiForPnfCorrelationIdDelegateTest {
     public static class NoConnectionTests {
 
         private CheckAaiForPnfCorrelationIdDelegate delegate;
-        
+
         @Rule
-    	public ExpectedException expectedException = ExpectedException.none();
+        public ExpectedException expectedException = ExpectedException.none();
 
         @Before
         public void setUp() {

@@ -25,7 +25,6 @@
 package org.onap.so.adapters.sdnc.sdncrest;
 
 import javax.xml.bind.DatatypeConverter;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
@@ -38,7 +37,6 @@ import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.adapters.sdnc.impl.Constants;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,132 +50,125 @@ import org.springframework.core.env.Environment;
  */
 @Component
 public class BPRestCallback {
-	private static final Logger logger = LoggerFactory.getLogger(BPRestCallback.class);
+    private static final Logger logger = LoggerFactory.getLogger(BPRestCallback.class);
 
-	private static final String CAMUNDA="Camunda";
-	private static final String MSO_INTERNAL_ERROR="MsoInternalError";
-	@Autowired
-	private Environment env;
+    private static final String CAMUNDA = "Camunda";
+    private static final String MSO_INTERNAL_ERROR = "MsoInternalError";
+    @Autowired
+    private Environment env;
 
-	/**
-	 * Sends a message to the BPMN workflow message service. The URL path is
-	 * constructed using the specified message type and correlator.
-	 * @param workflowMessageUrl the base BPMN WorkflowMessage URL
-	 * @param messageType the message type
-	 * @param correlator the message correlator
-	 * @param message the JSON content
-	 * @return true if the message was consumed successfully by the endpoint
-	 */
-	public boolean send(String workflowMessageUrl, String messageType, String correlator, String message) {
-		logger.debug(getClass().getSimpleName() + ".send("
-			+ "workflowMessageUrl=" + workflowMessageUrl
-			+ " messageType=" + messageType
-			+ " correlator=" + correlator
-			+ " message=" + message
-			+ ")");
+    /**
+     * Sends a message to the BPMN workflow message service. The URL path is constructed using the specified message
+     * type and correlator.
+     * 
+     * @param workflowMessageUrl the base BPMN WorkflowMessage URL
+     * @param messageType the message type
+     * @param correlator the message correlator
+     * @param message the JSON content
+     * @return true if the message was consumed successfully by the endpoint
+     */
+    public boolean send(String workflowMessageUrl, String messageType, String correlator, String message) {
+        logger.debug(getClass().getSimpleName() + ".send(" + "workflowMessageUrl=" + workflowMessageUrl
+                + " messageType=" + messageType + " correlator=" + correlator + " message=" + message + ")");
 
-		while (workflowMessageUrl.endsWith("/")) {
-			workflowMessageUrl = workflowMessageUrl.substring(0, workflowMessageUrl.length()-1);
-		}
+        while (workflowMessageUrl.endsWith("/")) {
+            workflowMessageUrl = workflowMessageUrl.substring(0, workflowMessageUrl.length() - 1);
+        }
 
-		String endpoint = workflowMessageUrl + "/" + SDNCAdapterUtils.encodeURLPathSegment(messageType)
-			+ "/" + SDNCAdapterUtils.encodeURLPathSegment(correlator);
+        String endpoint = workflowMessageUrl + "/" + SDNCAdapterUtils.encodeURLPathSegment(messageType) + "/"
+                + SDNCAdapterUtils.encodeURLPathSegment(correlator);
 
-		return send(endpoint, message);
-	}
+        return send(endpoint, message);
+    }
 
-	/**
-	 * Sends a message to the BPMN workflow message service. The specified URL
-	 * must have the message type and correlator already embedded in it.
-	 * @param url the endpoint URL
-	 * @param message the JSON content
-	 * @return true if the message was consumed successfully by the endpoint
-	 */
-	public boolean send(String url, String message) {
-		logger.debug(getClass().getSimpleName() + ".send("
-			+ "url=" + url
-			+ " message=" + message
-			+ ")");
+    /**
+     * Sends a message to the BPMN workflow message service. The specified URL must have the message type and correlator
+     * already embedded in it.
+     * 
+     * @param url the endpoint URL
+     * @param message the JSON content
+     * @return true if the message was consumed successfully by the endpoint
+     */
+    public boolean send(String url, String message) {
+        logger.debug(getClass().getSimpleName() + ".send(" + "url=" + url + " message=" + message + ")");
 
-		logger.info("{} {} {}", MessageEnum.RA_CALLBACK_BPEL.toString(), message == null ? "[no content]" : message,
-			CAMUNDA);
+        logger.info("{} {} {}", MessageEnum.RA_CALLBACK_BPEL.toString(), message == null ? "[no content]" : message,
+                CAMUNDA);
 
-		HttpPost method = null;
-		HttpResponse httpResponse = null;
+        HttpPost method = null;
+        HttpResponse httpResponse = null;
 
-		try {		
-			int timeout = 60 * 1000;
+        try {
+            int timeout = 60 * 1000;
 
-			RequestConfig requestConfig = RequestConfig.custom()
-				.setSocketTimeout(timeout)
-				.setConnectTimeout(timeout)
-				.setConnectionRequestTimeout(timeout)
-				.build();
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).setConnectTimeout(timeout)
+                    .setConnectionRequestTimeout(timeout).build();
 
-			HttpClient client = HttpClientBuilder.create().build();
-			method = new HttpPost(url);
-			method.setConfig(requestConfig);
+            HttpClient client = HttpClientBuilder.create().build();
+            method = new HttpPost(url);
+            method.setConfig(requestConfig);
 
-			if (message != null) {
-				method.setEntity(new StringEntity(message, ContentType.APPLICATION_JSON));
-			}
+            if (message != null) {
+                method.setEntity(new StringEntity(message, ContentType.APPLICATION_JSON));
+            }
 
-			boolean error = false;
+            boolean error = false;
 
-			try {	
-				String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.BPEL_AUTH_PROP),
-					env.getProperty(Constants.ENCRYPTION_KEY_PROP));
-				String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
-				method.setHeader("Authorization", authorization);
-				method.setHeader(ONAPLogConstants.Headers.REQUEST_ID,MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
-				method.setHeader(ONAPLogConstants.Headers.INVOCATION_ID,MDC.get(ONAPLogConstants.MDCs.INVOCATION_ID));
-				method.setHeader(ONAPLogConstants.Headers.PARTNER_NAME,"SO-SDNCAdapter");
-			} catch (Exception e) {
-				logger.error("{} {} {} {}", MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
-					ErrorCode.BusinessProcesssError.getValue(), "Unable to set authorization in callback request", e);
-				error = true;
-			}
+            try {
+                String userCredentials = CryptoUtils.decrypt(env.getProperty(Constants.BPEL_AUTH_PROP),
+                        env.getProperty(Constants.ENCRYPTION_KEY_PROP));
+                String authorization = "Basic " + DatatypeConverter.printBase64Binary(userCredentials.getBytes());
+                method.setHeader("Authorization", authorization);
+                method.setHeader(ONAPLogConstants.Headers.REQUEST_ID, MDC.get(ONAPLogConstants.MDCs.REQUEST_ID));
+                method.setHeader(ONAPLogConstants.Headers.INVOCATION_ID, MDC.get(ONAPLogConstants.MDCs.INVOCATION_ID));
+                method.setHeader(ONAPLogConstants.Headers.PARTNER_NAME, "SO-SDNCAdapter");
+            } catch (Exception e) {
+                logger.error("{} {} {} {}", MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
+                        ErrorCode.BusinessProcesssError.getValue(), "Unable to set authorization in callback request",
+                        e);
+                error = true;
+            }
 
-			if (!error) {
-				httpResponse = client.execute(method);
+            if (!error) {
+                httpResponse = client.execute(method);
 
-				@SuppressWarnings("unused")
-				String responseContent = null;
+                @SuppressWarnings("unused")
+                String responseContent = null;
 
-				if (httpResponse.getEntity() != null) {
-					responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
-				}
+                if (httpResponse.getEntity() != null) {
+                    responseContent = EntityUtils.toString(httpResponse.getEntity(), "UTF-8");
+                }
 
-				if (httpResponse.getStatusLine().getStatusCode() >= 300) {
-					String msg = "Received error response to callback request: " + httpResponse.getStatusLine();
-					logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA, ErrorCode
-						.BusinessProcesssError.getValue(), msg);
+                if (httpResponse.getStatusLine().getStatusCode() >= 300) {
+                    String msg = "Received error response to callback request: " + httpResponse.getStatusLine();
+                    logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
+                            ErrorCode.BusinessProcesssError.getValue(), msg);
 
-				}
-			}
-			return true;
-		} catch (Exception e) {
-			logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
-				ErrorCode.BusinessProcesssError.getValue(), "Error sending callback request", e);
-			return false;
-		} finally {
-			if (httpResponse != null) {
-				try {
-					EntityUtils.consume(httpResponse.getEntity());
-					httpResponse = null;
-				} catch (Exception e) {
-					logger.debug("Exception:", e);
-				}
-			}
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            logger.error("{} {} {} {}", MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), CAMUNDA,
+                    ErrorCode.BusinessProcesssError.getValue(), "Error sending callback request", e);
+            return false;
+        } finally {
+            if (httpResponse != null) {
+                try {
+                    EntityUtils.consume(httpResponse.getEntity());
+                    httpResponse = null;
+                } catch (Exception e) {
+                    logger.debug("Exception:", e);
+                }
+            }
 
-			if (method != null) {
-				try {
-					method.reset();
-				} catch (Exception e) {
-					logger.debug("Exception:", e);
-				}
-			}
-			logger.info("{} {}", MessageEnum.RA_CALLBACK_BPEL_COMPLETE.toString(), CAMUNDA);
-		}
-	}
+            if (method != null) {
+                try {
+                    method.reset();
+                } catch (Exception e) {
+                    logger.debug("Exception:", e);
+                }
+            }
+            logger.info("{} {}", MessageEnum.RA_CALLBACK_BPEL_COMPLETE.toString(), CAMUNDA);
+        }
+    }
 }

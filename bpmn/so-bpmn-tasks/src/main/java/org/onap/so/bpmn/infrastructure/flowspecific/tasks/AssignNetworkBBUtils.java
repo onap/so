@@ -37,65 +37,69 @@ import org.springframework.stereotype.Component;
 @Component
 public class AssignNetworkBBUtils {
 
-	private static final Logger logger = LoggerFactory.getLogger(AssignNetworkBBUtils.class);
-	@Autowired
-	private ExceptionBuilder exceptionUtil;
-	@Autowired
-	private AAINetworkResources aaiNetworkResources;
-	@Autowired
-	private SDNCNetworkResources sdncNetworkResources;
-	@Autowired
-	private ExtractPojosForBB extractPojosForBB;
+    private static final Logger logger = LoggerFactory.getLogger(AssignNetworkBBUtils.class);
+    @Autowired
+    private ExceptionBuilder exceptionUtil;
+    @Autowired
+    private AAINetworkResources aaiNetworkResources;
+    @Autowired
+    private SDNCNetworkResources sdncNetworkResources;
+    @Autowired
+    private ExtractPojosForBB extractPojosForBB;
 
-	/**
-	 * BPMN access method. Verify if network name was provided as input to BB
-	 * @param execution
-	 * @return
-	 */
-	public boolean networkFoundByName(BuildingBlockExecution execution) throws Exception {
-		boolean found = false;
-		//TODO - populate logic after iTrack MSO-2143 implemented
-		return found;
-	}
-	
-	/**
-	 * BPMN access method to extract Cloud Region data
-	 * @param execution
-	 * @throws Exception
-	 */
-	public void getCloudRegion(BuildingBlockExecution execution) {
-		try{
-			GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
-			CloudRegion cloudRegion = gBBInput.getCloudRegion();
-			String cloudRegionSdnc;
-			String cloudRegionPo = cloudRegion.getLcpCloudRegionId();
-			if (cloudRegion.getCloudRegionVersion().equalsIgnoreCase("2.5")){
-				cloudRegionSdnc = "AAIAIC25";
-			} else {
-				cloudRegionSdnc = cloudRegionPo;
-			}
-			execution.setVariable("cloudRegionPo", cloudRegionPo);
-			execution.setVariable("cloudRegionSdnc", cloudRegionSdnc);
-		}catch (Exception ex) {
-			exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
-		}
-	}
-	
-	/**
-	 * BPMN access method. Process silent success scenario
-	 * @param execution
-	 */
-	public void processSilentSuccess(BuildingBlockExecution execution) {
-			String msg = "Silent success processing network assign";
-		logger.info(msg);
-	}
-	
-	/**
-	 * BPMN access method. Process silent success scenario
-	 * @param execution
-	 */
-	public void failOrchestrationStatus(BuildingBlockExecution execution) {
-		BpmnError error = new BpmnError("Failed orchestration status verificaiton");
-		exceptionUtil.buildAndThrowWorkflowException(execution, 7000, error);
-	}
+    /**
+     * BPMN access method. Verify if network name was provided as input to BB
+     * 
+     * @param execution
+     * @return
+     */
+    public boolean networkFoundByName(BuildingBlockExecution execution) throws Exception {
+        boolean found = false;
+        // TODO - populate logic after iTrack MSO-2143 implemented
+        return found;
+    }
+
+    /**
+     * BPMN access method to extract Cloud Region data
+     * 
+     * @param execution
+     * @throws Exception
+     */
+    public void getCloudRegion(BuildingBlockExecution execution) {
+        try {
+            GeneralBuildingBlock gBBInput = execution.getGeneralBuildingBlock();
+            CloudRegion cloudRegion = gBBInput.getCloudRegion();
+            String cloudRegionSdnc;
+            String cloudRegionPo = cloudRegion.getLcpCloudRegionId();
+            if (cloudRegion.getCloudRegionVersion().equalsIgnoreCase("2.5")) {
+                cloudRegionSdnc = "AAIAIC25";
+            } else {
+                cloudRegionSdnc = cloudRegionPo;
+            }
+            execution.setVariable("cloudRegionPo", cloudRegionPo);
+            execution.setVariable("cloudRegionSdnc", cloudRegionSdnc);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
+    /**
+     * BPMN access method. Process silent success scenario
+     * 
+     * @param execution
+     */
+    public void processSilentSuccess(BuildingBlockExecution execution) {
+        String msg = "Silent success processing network assign";
+        logger.info(msg);
+    }
+
+    /**
+     * BPMN access method. Process silent success scenario
+     * 
+     * @param execution
+     */
+    public void failOrchestrationStatus(BuildingBlockExecution execution) {
+        BpmnError error = new BpmnError("Failed orchestration status verificaiton");
+        exceptionUtil.buildAndThrowWorkflowException(execution, 7000, error);
+    }
 }

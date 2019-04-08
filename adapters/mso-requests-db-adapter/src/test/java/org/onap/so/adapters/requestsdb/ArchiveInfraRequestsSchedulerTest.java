@@ -21,10 +21,8 @@
 package org.onap.so.adapters.requestsdb;
 
 import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.data.repository.ArchivedInfraRequestsRepository;
@@ -34,45 +32,45 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
 public class ArchiveInfraRequestsSchedulerTest extends RequestsAdapterBase {
-	
-	@Autowired
-	private ArchiveInfraRequestsScheduler scheduler;
-	
-	@Autowired
-	private InfraActiveRequestsRepository iarRepo;
-	
-	@Autowired
-	private ArchivedInfraRequestsRepository archivedRepo;
-	
-	@Value("${mso.infra-requests.archived.period}")
-	private int archivedPeriod;
-	
-	@Test 
-	@Transactional
-	public void testArchiveInfraRequests() throws Exception {
-		String requestId1 = "requestId1";
-		String requestId2 = "requestId2";
-		
-		InfraActiveRequests iar1 = new InfraActiveRequests();
-		iar1.setRequestId(requestId1);
-		iar1.setAction("action1");
-		
-		InfraActiveRequests iar2 = new InfraActiveRequests();
-		iar2.setRequestId(requestId2);
-		iar2.setAction("action2");
-		
-		List<InfraActiveRequests> requests = new ArrayList<>();
-		requests.add(iar1);
-		requests.add(iar2);
-		iarRepo.saveAll(requests);
-		
-		scheduler.archiveInfraRequests(requests);
-		
-		assertEquals(2, archivedRepo.count());
-		assertEquals(requestId1, archivedRepo.findById(requestId1)
-		        .orElseThrow( () -> new Exception("Request Not Found")).getRequestId());
-		assertEquals(requestId2, archivedRepo.findById(requestId2).
-		        orElseThrow( () -> new Exception("Request Not Found")).getRequestId());
-	}
+
+    @Autowired
+    private ArchiveInfraRequestsScheduler scheduler;
+
+    @Autowired
+    private InfraActiveRequestsRepository iarRepo;
+
+    @Autowired
+    private ArchivedInfraRequestsRepository archivedRepo;
+
+    @Value("${mso.infra-requests.archived.period}")
+    private int archivedPeriod;
+
+    @Test
+    @Transactional
+    public void testArchiveInfraRequests() throws Exception {
+        String requestId1 = "requestId1";
+        String requestId2 = "requestId2";
+
+        InfraActiveRequests iar1 = new InfraActiveRequests();
+        iar1.setRequestId(requestId1);
+        iar1.setAction("action1");
+
+        InfraActiveRequests iar2 = new InfraActiveRequests();
+        iar2.setRequestId(requestId2);
+        iar2.setAction("action2");
+
+        List<InfraActiveRequests> requests = new ArrayList<>();
+        requests.add(iar1);
+        requests.add(iar2);
+        iarRepo.saveAll(requests);
+
+        scheduler.archiveInfraRequests(requests);
+
+        assertEquals(2, archivedRepo.count());
+        assertEquals(requestId1,
+                archivedRepo.findById(requestId1).orElseThrow(() -> new Exception("Request Not Found")).getRequestId());
+        assertEquals(requestId2,
+                archivedRepo.findById(requestId2).orElseThrow(() -> new Exception("Request Not Found")).getRequestId());
+    }
 
 }
