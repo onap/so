@@ -26,6 +26,7 @@ import javax.ws.rs.ApplicationPath;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.onap.so.apihandler.filters.RequestUriFilter;
+import org.onap.so.apihandler.filters.RequestIdFilter;
 import org.onap.so.apihandlerinfra.exceptions.ApiExceptionMapper;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudOrchestration;
 import org.onap.so.apihandlerinfra.tenantisolation.CloudResourcesOrchestration;
@@ -61,6 +62,7 @@ public class JerseyConfiguration extends ResourceConfig {
 		register(ApiExceptionMapper.class);
 		register(RuntimeExceptionMapper.class);
 		register(RequestUriFilter.class);
+		register(RequestIdFilter.class);
 		register(E2EServiceInstances.class);
 		register(WorkflowSpecificationsHandler.class);
 		register(InstanceManagement.class);
