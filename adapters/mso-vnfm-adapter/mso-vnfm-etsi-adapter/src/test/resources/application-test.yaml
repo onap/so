@@ -17,6 +17,9 @@ spring:
     - username: test
       password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
       role: BPEL-Client
+    - username: vnfm
+      password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+      role: BPEL-Client
       
 mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
@@ -25,3 +28,6 @@ aai:
   auth: 2A11B07DB6214A839394AA1EC5844695F5114FC407FF5422625FB00175A3DCB8A1FF745F22867EFA72D5369D599BBD88DA8BED4233CF5586
   endpoint: https://aai.onap:8443
   version: v15
+  
+vnfmadapter:
+  endpoint: https://so-vnfm-adapter.onap:30406

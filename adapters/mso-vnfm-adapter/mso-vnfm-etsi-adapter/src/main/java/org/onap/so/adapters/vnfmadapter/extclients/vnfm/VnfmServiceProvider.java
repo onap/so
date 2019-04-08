@@ -22,8 +22,10 @@ package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
 
 /**
@@ -47,6 +49,16 @@ public interface VnfmServiceProvider {
      * @return the operation ID of the instantiation operation
      */
     String instantiateVnf(final String vnfSelfLink, final InstantiateVnfRequest instantiateVnfRequest);
+
+    /**
+     * Invoke a notification subscription request to a VNFM.
+     *
+     * @param vnfmId the ID of the VNFM
+     * @param subscriptionRequest
+     * @return the response to the subscription request
+     */
+    InlineResponse2001 subscribeForNotifications(final String vnfmId,
+            final LccnSubscriptionRequest subscriptionRequest);
 
     /**
      * Invoke a terminate request for a VNF.

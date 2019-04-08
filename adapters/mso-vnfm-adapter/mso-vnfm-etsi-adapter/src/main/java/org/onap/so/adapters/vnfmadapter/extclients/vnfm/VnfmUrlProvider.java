@@ -59,6 +59,20 @@ public class VnfmUrlProvider {
         return url;
     }
 
+    /**
+     * Get the URL for the subscriptions on a VNFM.
+     *
+     * @param vnfmId The ID of the VNFM
+     * @return the URL of the subscriptions
+     */
+    public String getSubscriptionsUrl(final String vnfmId) {
+        final String url =
+                UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("/subscriptions").build().toString();
+        logger.debug("getOperationUrl:" + url);
+
+        return url;
+    }
+
     private URI getBaseUri(final String vnfmId) {
         final EsrSystemInfoList vnfmEsrSystemInfoList = aaiServiceProvider.invokeGetVnfmEsrSystemInfoList(vnfmId);
 

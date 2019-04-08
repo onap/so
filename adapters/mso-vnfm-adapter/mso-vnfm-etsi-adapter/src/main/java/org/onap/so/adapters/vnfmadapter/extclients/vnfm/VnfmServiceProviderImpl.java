@@ -22,8 +22,10 @@ package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmRequestFailureException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
@@ -76,7 +78,29 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
         }
         final String locationHeader = response.getHeaders().get("Location").iterator().next();
         return locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
+    }
 
+
+    @Override
+    public InlineResponse2001 subscribeForNotifications(final String vnfmId,
+            final LccnSubscriptionRequest subscriptionRequest) {
+        final String url = urlProvider.getSubscriptionsUrl(vnfmId);
+        ResponseEntity<InlineResponse2001> response = null;
+        try {
+            response = httpServiceProvider.postHttpRequest(subscriptionRequest, url, InlineResponse2001.class);
+        } catch (final Exception exception) {
+            final String errorMessage =
+                    "Subscription to VNFM " + vnfmId + " resulted in exception" + subscriptionRequest;
+            logger.error(errorMessage, exception);
+            throw new VnfmRequestFailureException(errorMessage, exception);
+        }
+        if (response.getStatusCode() != HttpStatus.OK) {
+            final String errorMessage = "Subscription to VNFM " + vnfmId + " returned status code: "
+                    + response.getStatusCode() + ", request: " + subscriptionRequest;
+            logger.error(errorMessage);
+            throw new VnfmRequestFailureException(errorMessage);
+        }
+        return response.getBody();
     }
 
     @Override

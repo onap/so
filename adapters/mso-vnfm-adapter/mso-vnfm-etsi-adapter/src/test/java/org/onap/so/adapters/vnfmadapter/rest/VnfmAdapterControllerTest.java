@@ -27,7 +27,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import com.google.gson.Gson;
@@ -50,6 +52,7 @@ import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -122,6 +125,13 @@ public class VnfmAdapterControllerTest {
         setUpGenericVnfInMockAai("vnfmType2");
         setUpVnfmsInMockAai();
         setUpVimInMockAai();
+
+        final String expectedsubscriptionRequest =
+                "{\"filter\":{\"vnfInstanceSubscriptionFilter\":{\"vnfInstanceIds\":[\"vnfId\"]},\"notificationTypes\":[\"VnfLcmOperationOccurrenceNotification\"]},\"callbackUri\":\"https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/lcn/VnfLcmOperationOccurrenceNotification\",\"authentication\":{\"authType\":[\"BASIC\"],\"paramsBasic\":{\"userName\":\"vnfm\",\"password\":\"$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke\"}}}";
+        final InlineResponse2001 subscriptionResponse = new InlineResponse2001();
+        mockRestServer.expect(requestTo("http://vnfm2:8080/subscriptions"))
+                .andExpect(content().json(expectedsubscriptionRequest))
+                .andRespond(withSuccess(gson.toJson(subscriptionResponse), MediaType.APPLICATION_JSON));
 
         mockRestServer.expect(requestTo("http://dummy.value/until/create/implememted/vnfId/instantiate"))
                 .andRespond(withStatus(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON)
@@ -214,6 +224,8 @@ public class VnfmAdapterControllerTest {
         addRelationshipFromGenericVnfToVnfm(genericVnf, "vnfm1");
         setUpVnfmsInMockAai();
         setUpVimInMockAai();
+
+        mockRestServer.expect(requestTo("http://vnfm2:8080/subscriptions")).andRespond(withBadRequest());
 
         mockRestServer.expect(requestTo("http://dummy.value/until/create/implememted/vnfId/instantiate"))
                 .andRespond(withStatus(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON)
