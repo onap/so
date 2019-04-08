@@ -28,6 +28,7 @@ public class Constants {
     public static final String SERVICE_NAME = "vnfm-adapter";
     public static final String SERVICE_VERSION = "v1";
     public static final String BASE_URL = "/so/" + SERVICE_NAME + "/" + SERVICE_VERSION;
+    public static final String OPERATION_NOTIFICATION_ENDPOINT = "/lcn/VnfLcmOperationOccurrenceNotification";
 
     private Constants() {}
 }

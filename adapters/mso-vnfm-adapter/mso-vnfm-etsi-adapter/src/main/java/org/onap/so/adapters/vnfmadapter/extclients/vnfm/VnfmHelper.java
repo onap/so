@@ -20,6 +20,8 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
+import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
+import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -33,14 +35,23 @@ import org.onap.so.adapters.vnfmadapter.extclients.vim.model.AccessInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.InterfaceInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.VimCredentials;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication.AuthTypeEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsBasic;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilter;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilter.NotificationTypesEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilterVnfInstanceSubscriptionFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.VnfInstancesvnfInstanceIdinstantiateExtVirtualLinks;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.VnfInstancesvnfInstanceIdinstantiateVimConnectionInfo;
+import org.onap.so.security.WebSecurityConfig;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.ExternalVirtualLink;
 import org.onap.vnfmadapter.v1.model.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 /**
@@ -52,10 +63,15 @@ public class VnfmHelper {
     private static final Logger logger = LoggerFactory.getLogger(VnfmHelper.class);
     private static final String SEPARATOR = "_";
     private final AaiServiceProvider aaiServiceProvider;
+    private final WebSecurityConfig webSecurityConfig;
+
+    @Value("${vnfmadapter.endpoint}")
+    private String vnfmAdapterEndoint;
 
     @Autowired
-    public VnfmHelper(final AaiServiceProvider aaiServiceProvider) {
+    public VnfmHelper(final AaiServiceProvider aaiServiceProvider, final WebSecurityConfig webSecurityConfig) {
         this.aaiServiceProvider = aaiServiceProvider;
+        this.webSecurityConfig = webSecurityConfig;
     }
 
     /**
@@ -147,6 +163,41 @@ public class VnfmHelper {
                     new TypeToken<List<VnfInstancesvnfInstanceIdinstantiateExtVirtualLinks>>() {}.getType());
         }
         return null;
+    }
+
+    /**
+     * Create a {@link LccnSubscriptionRequest} to send in an notification subscription request to a
+     * VNFM.
+     *
+     * @param the ID of the VNF notifications are required for
+     *
+     * @return the request
+     */
+    public LccnSubscriptionRequest createNotificationSubscriptionRequest(final String vnfId) {
+        final LccnSubscriptionRequest lccnSubscriptionRequest = new LccnSubscriptionRequest();
+        lccnSubscriptionRequest.setAuthentication(getSubscriptionsAuthentication());
+        lccnSubscriptionRequest.setCallbackUri(vnfmAdapterEndoint + BASE_URL + OPERATION_NOTIFICATION_ENDPOINT);
+        final SubscriptionsFilter filter = new SubscriptionsFilter();
+        filter.addNotificationTypesItem(NotificationTypesEnum.VNFLCMOPERATIONOCCURRENCENOTIFICATION);
+        final SubscriptionsFilterVnfInstanceSubscriptionFilter vnfInstanceSubscriptionFilter =
+                new SubscriptionsFilterVnfInstanceSubscriptionFilter();
+        vnfInstanceSubscriptionFilter.addVnfInstanceIdsItem(vnfId);
+        filter.setVnfInstanceSubscriptionFilter(vnfInstanceSubscriptionFilter);
+        lccnSubscriptionRequest.setFilter(filter);
+        return lccnSubscriptionRequest;
+    }
+
+    private SubscriptionsAuthentication getSubscriptionsAuthentication() {
+        final SubscriptionsAuthenticationParamsBasic basicAuthParams = new SubscriptionsAuthenticationParamsBasic();
+        basicAuthParams.setUserName("vnfm");
+        basicAuthParams.setPassword(webSecurityConfig.getUsercredentials().stream()
+                .filter(userCredentials -> "vnfm".equals(userCredentials.getUsername())).findFirst().get()
+                .getPassword());
+
+        final SubscriptionsAuthentication authentication = new SubscriptionsAuthentication();
+        authentication.addAuthTypeItem(AuthTypeEnum.BASIC);
+        authentication.paramsBasic(basicAuthParams);
+        return authentication;
     }
 
 }

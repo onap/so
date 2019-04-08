@@ -29,6 +29,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest.TerminationTypeEnum;
 import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
@@ -82,6 +83,7 @@ public class LifecycleManager {
         }
 
         final String vnfIdInVnfm = sendCreateRequestToVnfm(genericVnf);
+        createNotificationSubscription(vnfm.getVnfmId(), vnfIdInVnfm);
         final String operationId = sendInstantiateRequestToVnfm(vnfm, genericVnf, request, vnfIdInAai, vnfIdInVnfm);
 
         final String jobId = jobManager.createJob(vnfm.getVnfmId(), operationId, false);
@@ -109,6 +111,17 @@ public class LifecycleManager {
         // TODO call create request
         genericVnf.setSelflink("http://dummy.value/until/create/implememted/vnfId");
         return "vnfId";
+    }
+
+    private void createNotificationSubscription(final String vnfmId, final String vnfId) {
+        try {
+            final LccnSubscriptionRequest subscriptionRequest = vnfmHelper.createNotificationSubscriptionRequest(vnfId);
+            vnfmServiceProvider.subscribeForNotifications(vnfmId, subscriptionRequest);
+        } catch (final Exception exception) {
+            logger.warn("Subscription for notifications to VNFM: " + vnfmId + " for VNF " + vnfId
+                    + " failed. AAI will not be updated unless the VNFM is configured by other means to send notifications relating to this VNF",
+                    exception);
+        }
     }
 
     private String sendInstantiateRequestToVnfm(final EsrVnfm vnfm, final GenericVnf genericVnf,

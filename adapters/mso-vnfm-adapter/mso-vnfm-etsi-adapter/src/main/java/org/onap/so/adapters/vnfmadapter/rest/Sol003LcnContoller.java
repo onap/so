@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.rest;
 
 import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
+import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
 import static org.slf4j.LoggerFactory.getLogger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -83,7 +84,7 @@ public class Sol003LcnContoller {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PostMapping(value = "/lcn/VnfLcmOperationOccurrenceNotification")
+    @PostMapping(value = OPERATION_NOTIFICATION_ENDPOINT)
     public ResponseEntity<Void> lcnVnfLcmOperationOccurrenceNotificationPost(
             @RequestBody final VnfLcmOperationOccurrenceNotification vnfLcmOperationOccurrenceNotification) {
         logger.info(LOG_LCN_RECEIVED + vnfLcmOperationOccurrenceNotification);
