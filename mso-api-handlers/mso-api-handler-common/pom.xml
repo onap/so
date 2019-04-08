@@ -38,6 +38,12 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+			<!-- Dependencies on other MSO Projects -->
+		<dependency>
+			<groupId>org.onap.so</groupId>
+			<artifactId>mso-requests-db</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-jersey</artifactId>
