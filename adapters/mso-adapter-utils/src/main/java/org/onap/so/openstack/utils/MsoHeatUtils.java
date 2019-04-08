@@ -1710,12 +1710,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin{
 
     	return vduStatus;
     }
-
-	public Resources queryStackResources(String cloudSiteId, String tenantId, String stackName) throws MsoException {
+    
+	public Resources queryStackResources(String cloudSiteId, String tenantId, String stackName, int nestedDepth) throws MsoException {
 		CloudSite cloudSite = cloudConfig.getCloudSite(cloudSiteId)
 				.orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
 		Heat heatClient = getHeatClient(cloudSite, tenantId);
-		OpenStackRequest<Resources> request = heatClient.getResources().listResources(stackName);
+		OpenStackRequest<Resources> request = heatClient.getResources().listResources(stackName).queryParam("nested_depth", nestedDepth);
 		return executeAndRecordOpenstackRequest(request);
 	}
 
