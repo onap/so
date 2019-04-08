@@ -27,8 +27,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
@@ -51,6 +55,8 @@ import org.onap.so.client.exception.MapperException;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sdnc.beans.SDNCRequest;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -131,10 +137,27 @@ public class SDNCRequestTasksTest extends SDNCRequestTasks{
 	
 	@Test
 	public void processCallBack_Final_Test() throws MapperException, BadResponseException, IOException{
-		final String sdncResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNC_ASYNC_Request.json")));	
+		final String sdncResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNC_Async_Request2.xml")));	
 		delegateExecution.setVariable("correlationName_MESSAGE", sdncResponse);   		
 		sndcRequestTasks.processCallback(delegateExecution);		
 		assertEquals(true,delegateExecution.getVariable(IS_CALLBACK_COMPLETED));
+	}
+	
+	@Test
+	public void getXmlElementTest() throws Exception {
+		final String sdncResponse = new String(Files.readAllBytes(Paths.get("src/test/resources/__files/SDNC_Async_Request2.xml")));	
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance ();
+        DocumentBuilder db;
+        db = dbf.newDocumentBuilder ();
+        Document doc = db.parse (new InputSource(new StringReader(sdncResponse)));
+        
+        String finalMessageIndicator = getXmlElement(doc, "/input/ack-final-indicator");
+        String responseCode = getXmlElement(doc, "/input/response-code");
+		String responseMessage = getXmlElement(doc, "/input/response-message"); 
+		
+		assertEquals("Y", finalMessageIndicator);
+		assertEquals("200", responseCode);
+		assertEquals("Success", responseMessage);
 	}
 	
 	public SDNCRequest createSDNCRequest(){

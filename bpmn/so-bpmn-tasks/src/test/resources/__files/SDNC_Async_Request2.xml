@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<input>
+   <service-information>
+      <service-type>MY-SERVICE-TYPE</service-type>
+      <service-instance-id>b8308928-de76-4ce6-9e58-ec6033ff43b3</service-instance-id>
+   </service-information>
+   <svc-request-id>aa243891-4575-4040-bceb-25d5b7bc8c61</svc-request-id>
+   <response-code>200</response-code>
+   <response-message>Success</response-message>
+   <ack-final-indicator>Y</ack-final-indicator>
+</input>
