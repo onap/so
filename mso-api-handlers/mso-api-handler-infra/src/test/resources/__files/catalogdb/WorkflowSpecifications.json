@@ -28,46 +28,7 @@
           }
         ],
         "workflowInputParameters": [
-          {
-            "label": "Cloud Owner",
-            "inputType": "text",
-            "required": true,
-            "validation": [
-              {
-                "maxLength": "7",
-                "allowableChars": "someRegEx"
-              }
-            ],
-            "soFieldName": "cloudOwner",
-            "soPayloadLocation": "cloudConfiguration"
-          },
-          {
-            "label": "Cloud Region ID",
-            "inputType": "text",
-            "required": true,
-            "validation": [
-              {
-                "maxLength": "7",
-                "allowableChars": "someRegEx"
-              }
-            ],
-            "soFieldName": "lcpCloudRegionId",
-            "soPayloadLocation": "cloudConfiguration"
-          },
-          {
-            "label": "Tenant/Project ID",
-            "inputType": "text",
-            "required": true,
-            "validation": [
-              {
-                "maxLength": "36",
-                "allowableChars": "someRegEx"
-              }
-            ],
-            "soFieldName": "tenantId",
-            "soPayloadLocation": "cloudConfiguration"
-          },
-          {
+        	{
             "label": "Operations Timeout",
             "inputType": "text",
             "required": true,
@@ -79,7 +40,7 @@
             ],
             "soFieldName": "operations_timeout",
             "soPayloadLocation": "userParams"
-          },
+          },             
           {
             "label": "Existing Software Version",
             "inputType": "text",
@@ -92,7 +53,33 @@
             ],
             "soFieldName": "existing_software_version",
             "soPayloadLocation": "userParams"
-          },
+          },	
+          {
+            "label": "Cloud Owner",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "7",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "cloudOwner",
+            "soPayloadLocation": "cloudConfiguration"
+          },          
+          {
+            "label": "Tenant/Project ID",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "36",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "tenantId",
+            "soPayloadLocation": "cloudConfiguration"
+          },         
           {
             "label": "New Software Version",
             "inputType": "text",
@@ -105,12 +92,22 @@
             ],
             "soFieldName": "new_software_version",
             "soPayloadLocation": "userParams"
-          }
+          },
+           {
+            "label": "Cloud Region ID",
+            "inputType": "text",
+            "required": true,
+            "validation": [
+              {
+                "maxLength": "7",
+                "allowableChars": "someRegEx"
+              }
+            ],
+            "soFieldName": "lcpCloudRegionId",
+            "soPayloadLocation": "cloudConfiguration"
+          }      
         ]
       }
-    },
-    {
-      "workflowSpecification": {}
     }
   ]
 }

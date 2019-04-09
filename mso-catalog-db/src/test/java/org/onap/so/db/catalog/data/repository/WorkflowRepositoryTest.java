@@ -18,12 +18,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import java.util.List;
+import org.junit.Assert;
 import org.junit.Test;
 import org.onap.so.db.catalog.BaseTest;
-import org.onap.so.db.catalog.beans.PnfResource;
-import org.onap.so.db.catalog.beans.PnfResourceCustomization;
 import org.onap.so.db.catalog.beans.Workflow;
-import org.onap.so.db.catalog.exceptions.NoEntityFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class WorkflowRepositoryTest extends BaseTest {
@@ -36,6 +34,16 @@ public class WorkflowRepositoryTest extends BaseTest {
         Workflow workflow = workflowRepository.findByArtifactUUID("5b0c4322-643d-4c9f-b184-4516049e99b1");
 
         assertEquals("artifactName", "testingWorkflow", workflow.getArtifactName());
+    }
+
+    @Test
+    public void findByVnfResourceModelUUIDTest() throws Exception {
+        List<Workflow> workflows = workflowRepository.findWorkflowByModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
+
+        Assert.assertTrue(workflows != null);
+        Assert.assertTrue(workflows.size() != 0);
+
+        Assert.assertTrue("testingWorkflow".equals(workflows.get(0).getArtifactName()));
     }
 
 }
