@@ -23,9 +23,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.onap.so.bpmn.buildingblock.OofHomingV2;
 import org.onap.so.bpmn.buildingblock.SniroHomingV2;
 import org.onap.so.bpmn.common.data.TestDataSetup;
 import org.onap.so.client.appc.ApplicationControllerAction;
+import org.onap.so.client.oof.OofClient;
 import org.onap.so.client.orchestration.SDNOHealthCheckResources;
 import org.onap.so.client.sdnc.SDNCClient;
 import org.onap.so.client.sniro.SniroClient;
@@ -62,6 +64,12 @@ public abstract class BaseIntegrationTest extends TestDataSetup {
 
     @SpyBean
     protected SniroClient sniroClient;
+
+    @SpyBean
+    protected OofHomingV2 oofHoming;
+
+    @SpyBean
+    protected OofClient oofClient;
 
     @MockBean
     protected ApplicationControllerAction appCClient;

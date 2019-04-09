@@ -46,7 +46,7 @@ public class OofRequest implements Serializable {
     private PlacementInfo placementInformation;
 
     @JsonProperty("licenseInfo")
-    private String licenseInformation;
+    private LicenseInfo licenseInformation;
 
 
     public RequestInfo getRequestInformation() {
@@ -73,11 +73,11 @@ public class OofRequest implements Serializable {
         this.placementInformation = placementInformation;
     }
 
-    public String getLicenseInformation() {
+    public LicenseInfo getLicenseInformation() {
         return licenseInformation;
     }
 
-    public void setLicenseInformation(String licenseInformation) {
+    public void setLicenseInformation(LicenseInfo licenseInformation) {
         this.licenseInformation = licenseInformation;
     }
 
