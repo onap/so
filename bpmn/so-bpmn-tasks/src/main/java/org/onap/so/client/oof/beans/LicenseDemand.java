@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2018 Intel Corp.  All rights reserved.
+ * Copyright (C) 2019 Intel Corp.  All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import java.io.Serializable;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"resourceModuleName", "serviceResourceId", "tenantId", "resourceModelInfo"})
-@JsonRootName("placementDemand")
-public class PlacementDemand implements Serializable {
+@JsonRootName("licenseDemand")
+public class LicenseDemand implements Serializable {
 
     private static final long serialVersionUID = -759180997599143791L;
 

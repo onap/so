@@ -1,0 +1,61 @@
+{
+  "requestInfo" : {
+    "transactionId" : "requestId",
+    "requestId" : "requestId",
+    "callbackUrl" : "http://localhost:28080/mso/WorkflowMesssage/OofResponse/requestId",
+    "sourceId" : "mso",
+    "requestType" : "create",
+    "numSolutions" : 1,
+    "optimizers" : [ "placement" ],
+    "timeout" : 1800
+  },
+  "serviceInfo" : {
+    "serviceInstanceId" : "serviceInstanceId",
+    "serviceName" : "serviceName",
+    "modelInfo" : {
+      "modelType" : "modelType-Service",
+      "modelInvariantId" : "modelInvariantId-Service",
+      "modelVersionId" : "modelVersionId-Service",
+      "modelName" : "modelName-Service",
+      "modelVersion" : "modelVersion-Service",
+      "modelCustomizationName" : "modelCustomizationName-Service"
+    }
+  },
+  "placementInfo" : {
+    "requestParameters" : {
+      "customerLatitude" : "customerLatitude",
+      "customerLongitude" : "customerLongitude",
+      "customerName" : "customerName"
+    },
+    "subscriberInfo" : {
+      "globalSubscriberId" : "globalSubscriberId",
+      "subscriberName" : "subscriberName"
+    },
+    "placementDemands" : [ {
+      "serviceResourceId" : "testProxyId1",
+      "resourceModuleName" : "testProxyInstanceName1",
+      "resourceModelInfo" : {
+        "modelName" : "testProxyModelName1",
+        "modelVersionId" : "testProxyModelUuid1",
+        "modelVersion" : "testProxyModelVersion1",
+        "modelInvariantId" : "testProxyModelInvariantUuid1"
+      }
+    }, {
+      "serviceResourceId" : "testProxyId2",
+      "resourceModuleName" : "testProxyInstanceName2",
+      "resourceModelInfo" : {
+        "modelName" : "testProxyModelName2",
+        "modelVersionId" : "testProxyModelUuid2",
+        "modelVersion" : "testProxyModelVersion2",
+        "modelInvariantId" : "testProxyModelInvariantUuid2"
+      },
+      "requiredCandidates" : [ {
+        "identifierType" : "vnfId",
+        "identifiers" : [ "testVnfId" ]
+      } ]
+    } ]
+  },
+  "licenseInfo" : {
+    "licenseDemands" : [ ]
+  }
+}

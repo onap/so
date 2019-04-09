@@ -27,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.onap.so.BaseIntegrationTest;
 import org.onap.so.client.exception.BadResponseException;
+import org.onap.so.client.oof.beans.LicenseInfo;
 import org.onap.so.client.oof.beans.ModelInfo;
 import org.onap.so.client.oof.beans.OofRequest;
 import org.onap.so.client.oof.beans.OofRequestParameters;
@@ -36,6 +37,7 @@ import org.onap.so.client.oof.beans.RequestInfo;
 import org.onap.so.client.oof.beans.ResourceModelInfo;
 import org.onap.so.client.oof.beans.ServiceInfo;
 import org.onap.so.client.oof.beans.SubscriberInfo;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.ArrayList;
@@ -114,7 +116,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
         oofRequest.setRequestInformation(requestInfo);
         oofRequest.setPlacementInformation(placementInfo);
         oofRequest.setServiceInformation(serviceInfo);
-        oofRequest.setLicenseInformation("");
+        oofRequest.setLicenseInformation(new LicenseInfo());
 
         wireMockServer.stubFor(post(urlEqualTo("/api/oof/v1/placement")).willReturn(
                 aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
@@ -122,7 +124,7 @@ public class OofClientTestIT extends BaseIntegrationTest {
         client.postDemands(oofRequest);
 
         String oofRequestOutput = oofRequest.toJsonString();
-        assertEquals("{\n" + "  \"requestInfo\" : {\n" + "    \"transactionId\" : \"transactionId\",\n"
+        JSONAssert.assertEquals("{\n" + "  \"requestInfo\" : {\n" + "    \"transactionId\" : \"transactionId\",\n"
                 + "    \"requestId\" : \"requestId\",\n" + "    \"callbackUrl\" : \"callBackUrl\",\n"
                 + "    \"sourceId\" : \"sourceId\",\n" + "    \"requestType\" : \"requestType\",\n"
                 + "    \"numSolutions\" : 1,\n" + "    \"optimizers\" : [ \"optimizer1\", \"optimizer2\" ],\n"
@@ -147,7 +149,8 @@ public class OofClientTestIT extends BaseIntegrationTest {
                 + "        \"modelInvariantId\" : \"invarianteId\",\n" + "        \"modelVersionId\" : \"versionId\",\n"
                 + "        \"modelName\" : \"modelName\",\n" + "        \"modelVersion\" : \"version\",\n"
                 + "        \"modelCustomizationName\" : \"modelCustomizationName\"\n" + "      }\n" + "    } ]\n"
-                + "  },\n" + "  \"licenseInfo\" : \"\"\n" + "}", oofRequestOutput);
+                + "  },\n" + "  \"licenseInfo\" : { \n" + "    \"licenseDemands\" : [ ]\n" + "}\n" + "}",
+                oofRequestOutput, false);
     }
 
     @Test
