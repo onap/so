@@ -2,7 +2,7 @@
  * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
- * Copyright (C) 2017 - 2018 AT&T Intellectual Property. All rights reserved.
+ * Copyright (C) 2019 Intel Corp. All rights reserved.
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
 package org.onap.so.bpmn.buildingblock;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import java.util.ArrayList;
 import org.json.JSONArray;
@@ -38,7 +39,6 @@ import org.onap.so.bpmn.servicedecomposition.bbobjects.VpnBondingLink;
 import org.onap.so.bpmn.servicedecomposition.entities.GeneralBuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.License;
 import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestContext;
-import org.onap.so.bpmn.servicedecomposition.generalobjects.RequestParameters;
 import org.onap.so.bpmn.servicedecomposition.homingobjects.Candidate;
 import org.onap.so.bpmn.servicedecomposition.homingobjects.CandidateType;
 import org.onap.so.bpmn.servicedecomposition.homingobjects.SolutionCandidates;
@@ -49,13 +49,14 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.client.oof.OofClient;
 import org.onap.so.client.oof.OofValidator;
+import org.onap.so.client.oof.beans.LicenseDemand;
+import org.onap.so.client.oof.beans.LicenseInfo;
 import org.onap.so.client.oof.beans.ModelInfo;
 import org.onap.so.client.oof.beans.OofRequest;
 import org.onap.so.client.oof.beans.OofRequestParameters;
 import org.onap.so.client.oof.beans.PlacementDemand;
 import org.onap.so.client.oof.beans.PlacementInfo;
 import org.onap.so.client.oof.beans.RequestInfo;
-import org.onap.so.client.oof.beans.ResourceModelInfo;
 import org.onap.so.client.oof.beans.ServiceInfo;
 import org.onap.so.client.oof.beans.SubscriberInfo;
 import org.onap.so.db.catalog.beans.OrchestrationStatus;
@@ -85,7 +86,7 @@ public class OofHomingV2 {
     @Autowired
     private Environment env;
     @Autowired
-    private OofClient client;
+    private OofClient oofClient;
     @Autowired
     private OofValidator oofValidator;
     @Autowired
@@ -98,7 +99,6 @@ public class OofHomingV2 {
     private static final String RESOURCE_MODULE_NAME = "resourceModuleName";
     private static final String RESOURCE_MODEL_INFO = "resourceModelInfo";
     private static final String IDENTIFIER_TYPE = "identifierType";
-    private static final String INVENTORY_TYPE = "inventoryType";
     private static final String SOLUTIONS = "solutions";
     private static final String RESOURCE_MISSING_DATA = "Resource does not contain: ";
     private static final String SERVICE_MISSING_DATA = "Service Instance does not contain: ";
@@ -111,12 +111,11 @@ public class OofHomingV2 {
      * @param execution
      */
     public void callOof(BuildingBlockExecution execution) {
-        logger.trace("Started Sniro Homing Call Sniro");
+        logger.trace("Started Oof Homing Call Oof");
         try {
             GeneralBuildingBlock bb = execution.getGeneralBuildingBlock();
 
             RequestContext requestContext = bb.getRequestContext();
-            RequestParameters requestParams = requestContext.getRequestParameters();
             String requestId = requestContext.getMsoRequestId();
 
             ServiceInstance serviceInstance = bb.getCustomer().getServiceSubscription().getServiceInstances().get(0);
@@ -127,28 +126,24 @@ public class OofHomingV2 {
                 timeout = env.getProperty("oof.timeout", "PT30M");
             }
 
-            OofRequest request = new OofRequest();
+            OofRequest oofRequest = new OofRequest();
 
             RequestInfo requestInfo = (RequestInfo) buildRequestInfo(requestId, timeout);
             request.setRequestInformation(requestInfo);
 
             ServiceInfo serviceInfo = buildServiceInfo(serviceInstance);
-            request.setServiceInformation(serviceInfo);
+            oofRequest.setServiceInformation(serviceInfo);
 
-            PlacementInfo placementInfo = buildPlacementInfo(customer, requestParams);
+            PlacementInfo placementInfo = buildPlacementInfo(customer);
 
-            ArrayList<PlacementDemand> placementDemands = buildPlacementDemands(serviceInstance);
-            placementInfo.setPlacementDemands(placementDemands);
-            request.setPlacementInformation(placementInfo);
+            placementInfo = buildPlacementDemands(serviceInstance, placementInfo);
+            oofRequest.setPlacementInformation(placementInfo);
 
-            JSONObject licenseInfo = new JSONObject();
+            LicenseInfo licenseInfo = buildLicenseInfo(serviceInstance);
+            oofRequest.setLicenseInformation(licenseInfo);
 
-            JSONArray licenseDemands = buildLicenseDemands(serviceInstance);
-            licenseInfo.put("licenseDemands", licenseDemands);
-            request.setLicenseInformation(licenseInfo.toString());
-
-            if (placementDemands.size() > 0 || licenseDemands.length() > 0) {
-                client.postDemands(request);
+            if (!placementInfo.getPlacementDemands().isEmpty() || !licenseInfo.getLicenseDemands().isEmpty()) {
+                oofClient.postDemands(oofRequest);
             } else {
                 logger.debug(SERVICE_MISSING_DATA + " resources eligible for homing or licensing");
                 throw new BpmnError(UNPROCESSABLE,
@@ -162,12 +157,15 @@ public class OofHomingV2 {
 
             logger.trace("Completed Oof Homing Call Oof");
         } catch (BpmnError e) {
+            logger.debug(" Error - while preparing oof request: " + e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
         } catch (BadResponseException e) {
+            logger.debug(" Error - while preparing oof request: " + e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
         } catch (Exception e) {
-            exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL,
-                    "Internal Error - occurred while preparing oof request: " + e.getMessage());
+            logger.debug(" Error - while preparing oof request: " + e.getStackTrace());
+            exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while "
+                    + "preparing oof request: " + e + "   Stack:" + ExceptionUtils.getFullStackTrace(e));
         }
     }
 
@@ -240,6 +238,10 @@ public class OofHomingV2 {
             requestInfo.setSourceId("mso");
             requestInfo.setRequestType("create");
             requestInfo.setTimeout(timeoutSeconds);
+            requestInfo.setNumSolutions(1);
+            ArrayList optimizers = new ArrayList();
+            optimizers.add("placement");
+            requestInfo.setOptimizers(optimizers);
         } else {
             throw new BpmnError(UNPROCESSABLE, "Request Context does not contain: requestId");
         }
@@ -270,7 +272,7 @@ public class OofHomingV2 {
      * Builds initial section of placement info for the homing/licensing request
      *
      */
-    private PlacementInfo buildPlacementInfo(Customer customer, RequestParameters requestParams) {
+    private PlacementInfo buildPlacementInfo(Customer customer) {
         PlacementInfo placementInfo = new PlacementInfo();
         if (customer != null) {
             logger.debug("Adding subscriber to placement information");
@@ -279,22 +281,11 @@ public class OofHomingV2 {
             subscriberInfo.setSubscriberName(customer.getSubscriberName());
             subscriberInfo.setSubscriberCommonSiteId(customer.getSubscriberCommonSiteId());
             placementInfo.setSubscriberInfo(subscriberInfo);
-            if (requestParams != null) {
-                logger.debug("Adding request parameters to placement information");
-                OofRequestParameters oofRequestParams = new OofRequestParameters();
-                for (Map requestParam : requestParams.getUserParams()) {
-                    if (requestParam.containsKey("customerLatitude")) {
-                        oofRequestParams.setCustomerLatitude(requestParam.get("customerLatitude").toString());
-                    }
-                    if (requestParam.containsKey("customerLongitude")) {
-                        oofRequestParams.setCustomerLongitude(requestParam.get("customerLongitude").toString());
-                    }
-                    if (requestParam.containsKey("customerName")) {
-                        oofRequestParams.setCustomerName(requestParam.get("customerName").toString());
-                    }
-                }
-                placementInfo.setRequestParameters(oofRequestParams);
-            }
+            OofRequestParameters oofRequestParams = new OofRequestParameters();
+            oofRequestParams.setCustomerLatitude(customer.getCustomerLatitude());
+            oofRequestParams.setCustomerLongitude(customer.getCustomerLongitude());
+            oofRequestParams.setCustomerName(customer.getSubscriberName());
+            placementInfo.setRequestParameters(oofRequestParams);
         } else {
             throw new BpmnError(UNPROCESSABLE, SERVICE_MISSING_DATA + "customer");
         }
@@ -306,9 +297,8 @@ public class OofHomingV2 {
      * Builds the placement demand list for the homing/licensing request
      *
      */
-    private ArrayList<PlacementDemand> buildPlacementDemands(ServiceInstance serviceInstance) {
+    private PlacementInfo buildPlacementDemands(ServiceInstance serviceInstance, PlacementInfo placementInfo) {
         logger.trace("Building placement information demands");
-        ArrayList<PlacementDemand> placementDemands = new ArrayList();
 
         List<AllottedResource> allottedResourceList = serviceInstance.getAllottedResources();
         if (!allottedResourceList.isEmpty()) {
@@ -319,7 +309,7 @@ public class OofHomingV2 {
                 }
                 PlacementDemand demand = buildDemand(ar.getId(), ar.getModelInfoAllottedResource());
                 // addCandidates(ar, demand);
-                placementDemands.add(demand);
+                placementInfo.getPlacementDemands().add(demand);
             }
         }
         List<VpnBondingLink> vpnBondingLinkList = serviceInstance.getVpnBondingLinks();
@@ -333,42 +323,43 @@ public class OofHomingV2 {
                     }
                     PlacementDemand demand = buildDemand(sp.getId(), sp.getModelInfoServiceProxy());
                     // addCandidates(sp, demand);
-                    placementDemands.add(demand);
+                    placementInfo.getPlacementDemands().add(demand);
                 }
             }
         }
-        return placementDemands;
+        return placementInfo;
     }
 
     /**
      * Builds the license demand list for the homing/licensing request
      *
      */
-    private JSONArray buildLicenseDemands(ServiceInstance serviceInstance) {
+    private LicenseInfo buildLicenseInfo(ServiceInstance serviceInstance) {
         logger.trace("Building license information");
-        JSONArray licenseDemands = new JSONArray();
+        LicenseInfo licenseInfo = new LicenseInfo();
         List<GenericVnf> vnfList = serviceInstance.getVnfs();
         if (!vnfList.isEmpty()) {
             logger.debug("Adding vnfs to license demands list");
             for (GenericVnf vnf : vnfList) {
-                JSONObject demand = buildLicenseDemand(vnf.getVnfId(), vnf.getModelInfoGenericVnf());
-                licenseDemands.put(demand);
+                LicenseDemand demand = buildLicenseDemand(vnf.getVnfId(), vnf.getModelInfoGenericVnf());
+                licenseInfo.getLicenseDemands().add(demand);
             }
         }
-        return licenseDemands;
+        return licenseInfo;
     }
 
     /**
      * Builds a single license demand object
      *
      */
-    private JSONObject buildLicenseDemand(String id, ModelInfoMetadata metadata) {
+    private LicenseDemand buildLicenseDemand(String id, ModelInfoMetadata metadata) {
         logger.debug("Building demand for service or resource: " + id);
-        JSONObject demand = new JSONObject();
+        LicenseDemand demand = new LicenseDemand();
         if (isNotBlank(id) && isNotBlank(metadata.getModelInstanceName())) {
-            demand.put(SERVICE_RESOURCE_ID, id);
-            demand.put(RESOURCE_MODULE_NAME, metadata.getModelInstanceName());
-            demand.put(RESOURCE_MODEL_INFO, buildModelInfo(metadata));
+
+            demand.setServiceResourceId(id);
+            demand.setResourceModuleName(metadata.getModelInstanceName());
+            demand.setResourceModelInfo(buildModelInfo(metadata));
         } else {
             throw new BpmnError(UNPROCESSABLE, RESOURCE_MISSING_DATA + "modelInstanceName");
         }
@@ -385,7 +376,7 @@ public class OofHomingV2 {
         if (isNotBlank(id) && isNotBlank(metadata.getModelInstanceName())) {
             placementDemand.setServiceResourceId(id);
             placementDemand.setResourceModuleName(metadata.getModelInstanceName());
-            placementDemand.setResourceModelInfo((ResourceModelInfo) buildModelInfo(metadata));
+            placementDemand.setResourceModelInfo(buildModelInfo(metadata));
         } else {
             throw new BpmnError(UNPROCESSABLE, RESOURCE_MISSING_DATA + "modelInstanceName");
         }
@@ -525,11 +516,11 @@ public class OofHomingV2 {
         JSONArray assignments = placement.getJSONArray("assignmentInfo");
         Map<String, String> assignmentsMap = jsonUtils.entryArrayToMap(assignments.toString(), "key", "value");
         solutionInfo.setRehome(Boolean.parseBoolean(assignmentsMap.get("isRehome")));
-        String type = placement.getString(INVENTORY_TYPE);
+        String type = identifierType;
 
         ServiceInstance si = new ServiceInstance();
         CloudRegion cloud = setCloud(assignmentsMap);
-        if (type.equals("service")) {
+        if (type.equals("serviceInstanceId")) {
             if (identifierType.equals(CandidateType.SERVICE_INSTANCE_ID.toString())) {
                 solutionInfo.setHomed(true);
                 si.setServiceInstanceId(identifierValue);
@@ -556,7 +547,7 @@ public class OofHomingV2 {
                 logger.debug(invalidMessage + IDENTIFIER_TYPE);
                 throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
             }
-        } else if (type.equals("cloud")) {
+        } else if (type.equals("cloudRegionId")) {
             if (identifierType.equals(CandidateType.CLOUD_REGION_ID.toString())) {
                 logger.debug("Resources has been homed to a cloud region");
                 cloud.setLcpCloudRegionId(identifierValue);
@@ -567,9 +558,6 @@ public class OofHomingV2 {
                 logger.debug(invalidMessage + IDENTIFIER_TYPE);
                 throw new BpmnError(UNPROCESSABLE, invalidMessage + IDENTIFIER_TYPE);
             }
-        } else {
-            logger.debug(invalidMessage + INVENTORY_TYPE);
-            throw new BpmnError(UNPROCESSABLE, invalidMessage + INVENTORY_TYPE);
         }
         si.setSolutionInfo(solutionInfo);
         return si;

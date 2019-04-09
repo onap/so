@@ -39,7 +39,7 @@ public class PlacementInfo implements Serializable {
     @JsonProperty("subscriberInfo")
     private SubscriberInfo subscriberInfo;
     @JsonProperty("placementDemands")
-    private ArrayList<PlacementDemand> placementDemands = null;
+    private ArrayList<PlacementDemand> placementDemands = new ArrayList<>();
 
     @JsonProperty("requestParameters")
     public OofRequestParameters getRequestParameters() {

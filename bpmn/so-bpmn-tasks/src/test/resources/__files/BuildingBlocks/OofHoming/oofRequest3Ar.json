@@ -1,0 +1,67 @@
+{
+  "requestInfo" : {
+    "transactionId" : "requestId",
+    "requestId" : "requestId",
+    "callbackUrl" : "http://localhost:28080/mso/WorkflowMesssage/OofResponse/requestId",
+    "sourceId" : "mso",
+    "requestType" : "create",
+    "numSolutions" : 1,
+    "optimizers" : [ "placement" ],
+    "timeout" : 1800
+  },
+  "serviceInfo" : {
+    "serviceInstanceId" : "testServiceInstanceId1",
+    "serviceName" : "testServiceType1",
+    "modelInfo" : {
+      "modelInvariantId" : "testModelInvariantUUID1",
+      "modelVersionId" : "testModelUUID1",
+      "modelName" : "testModelName1",
+      "modelVersion" : "testModelVersion1"
+    }
+  },
+  "placementInfo" : {
+    "requestParameters": {
+      "customerLatitude": "customerLatitude",
+      "customerLongitude": "customerLongitude",
+      "customerName": "testCustomerName"
+    },
+    "subscriberInfo": {
+      "globalSubscriberId" : "testCustomerId",
+      "subscriberName" : "testCustomerName"
+    },
+    "placementDemands": [
+      {
+        "serviceResourceId": "testAllottedResourceId1",
+        "resourceModuleName": "testAllottedModelInstanceName1",
+        "resourceModelInfo": {
+          "modelName": "testAllottedModelName1",
+          "modelVersionId": "testAllottedModelUuid1",
+          "modelVersion": "testAllottedModelVersion1",
+          "modelInvariantId": "testAllottedModelInvariantUuid1"
+        }
+      },
+      {
+        "serviceResourceId": "testAllottedResourceId2",
+        "resourceModuleName": "testAllottedModelInstanceName2",
+        "resourceModelInfo": {
+          "modelName": "testAllottedModelName2",
+          "modelVersionId": "testAllottedModelUuid2",
+          "modelVersion": "testAllottedModelVersion2",
+          "modelInvariantId": "testAllottedModelInvariantUuid2"
+        }
+      },
+      {
+        "serviceResourceId": "testAllottedResourceId3",
+        "resourceModuleName": "testAllottedModelInstanceName3",
+        "resourceModelInfo": {
+          "modelName": "testAllottedModelName3",
+          "modelVersionId": "testAllottedModelUuid3",
+          "modelVersion": "testAllottedModelVersion3",
+          "modelInvariantId": "testAllottedModelInvariantUuid3"
+        }
+      } ]
+  },
+  "licenseInfo" : {
+    "licenseDemands" : [ ]
+  }
+}
