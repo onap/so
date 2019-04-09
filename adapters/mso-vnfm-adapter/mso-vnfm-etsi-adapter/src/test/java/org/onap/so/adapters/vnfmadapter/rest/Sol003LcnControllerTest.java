@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.inject.Inject;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -49,6 +50,9 @@ import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource.OamIpAddressType;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.AccessInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs.ChangeTypeEnum;
@@ -101,6 +105,9 @@ public class Sol003LcnControllerTest {
     @Autowired
     private Sol003LcnContoller controller;
     private final Gson gson = new Gson();
+
+    @Inject
+    private AaiHelper aaiHelper;
 
     @Before
     public void setUp() throws Exception {
@@ -269,6 +276,7 @@ public class Sol003LcnControllerTest {
 
     private InlineResponse201 createVnfInstance() {
         final InlineResponse201 vnfInstance = new InlineResponse201();
+        vnfInstance.setId("myTestVnfIdOnVnfm");
         final InlineResponse201LinksSelf selfLink = new InlineResponse201LinksSelf();
         selfLink.setHref("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm");
         final InlineResponse201Links VnfInstancelinks = new InlineResponse201Links();
@@ -288,6 +296,10 @@ public class Sol003LcnControllerTest {
         vimConnection.setAccessInfo(accessInfo);
         vimConnectionInfo.add(vimConnection);
         vnfInstance.setVimConnectionInfo(vimConnectionInfo);
+
+        final OamIpAddressSource oamIpAddressSource =
+                new OamIpAddressSource(OamIpAddressType.CONFIGURABLE_PROPERTY, "vnfIpAddress");
+        aaiHelper.setOamIpAddressSource("myTestVnfIdOnVnfm", oamIpAddressSource);
         return vnfInstance;
     }
 

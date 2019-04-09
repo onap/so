@@ -30,6 +30,8 @@ import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource.OamIpAddressType;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
@@ -93,9 +95,7 @@ public class NotificationHandler implements Runnable {
     private void handleVnfInstantiateCompleted() {
         final GenericVnf genericVnf =
                 aaiServiceProvider.invokeQueryGenericVnf(vnfInstance.getLinks().getSelf().getHref()).get(0);
-        final String ipAddress = getOamIpAddress(vnfInstance);
-        logger.debug("Updating " + genericVnf.getVnfId() + " with VNF OAM IP ADDRESS: " + ipAddress);
-        genericVnf.setIpv4OamAddress(ipAddress);
+        setOamIpAddress(genericVnf, vnfInstance);
         genericVnf.setOrchestrationStatus("Created");
 
         aaiServiceProvider.invokePutGenericVnf(genericVnf);
@@ -106,18 +106,24 @@ public class NotificationHandler implements Runnable {
         logger.debug("Finished handling notification for vnfm: " + vnfInstance.getId());
     }
 
-    private String getOamIpAddress(final InlineResponse201 vnfInstance) {
+    private void setOamIpAddress(final GenericVnf genericVnf, final InlineResponse201 vnfInstance) {
+        final OamIpAddressSource oamIpAddressSource = aaiHelper.getOamIpAddressSource(vnfInstance.getId());
+        if (oamIpAddressSource == null) {
+            logger.warn("No source indicated for OAM IP address, no value will be set in AAI");
+            return;
+        }
+        if (oamIpAddressSource.getType().equals(OamIpAddressType.LITERAL)) {
+            genericVnf.setIpv4OamAddress(oamIpAddressSource.getValue());
+        }
         try {
             logger.debug("ConfigurableProperties: " + vnfInstance.getVnfConfigurableProperties());
             if (vnfInstance.getVnfConfigurableProperties() == null) {
                 logger.warn("No ConfigurableProperties, cannot set OAM IP Address");
-                return null;
             }
             final JSONObject properties = new JSONObject((Map) vnfInstance.getVnfConfigurableProperties());
-            return properties.get("vnfIpAddress").toString();
+            genericVnf.setIpv4OamAddress(properties.get(oamIpAddressSource.getValue()).toString());
         } catch (final JSONException jsonException) {
             logger.error("Error getting vnfIpAddress", jsonException);
-            return null;
         }
     }
 

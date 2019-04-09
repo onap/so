@@ -21,6 +21,8 @@
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
@@ -49,6 +51,7 @@ public class AaiHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(AaiHelper.class);
     private final AaiServiceProvider aaiServiceProvider;
+    private final Map<String, OamIpAddressSource> mapOfVnfIdToOamIpAddressHolder = new HashMap<>();
 
     @Autowired
     public AaiHelper(final AaiServiceProvider aaiServiceProvider) {
@@ -221,6 +224,14 @@ public class AaiHelper {
                 + AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNF, vnfId).build().toString());
         relationship.getRelationshipData().add(createRelationshipData("generic-vnf.vnf-id", vnfId));
         return relationship;
+    }
+
+    public void setOamIpAddressSource(final String vnfId, final OamIpAddressSource oamIpAddressSource) {
+        mapOfVnfIdToOamIpAddressHolder.put(vnfId, oamIpAddressSource);
+    }
+
+    public OamIpAddressSource getOamIpAddressSource(final String vnfId) {
+        return mapOfVnfIdToOamIpAddressHolder.get(vnfId);
     }
 
 }

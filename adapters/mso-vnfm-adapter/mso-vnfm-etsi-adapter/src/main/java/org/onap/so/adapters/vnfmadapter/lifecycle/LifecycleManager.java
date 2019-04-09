@@ -21,10 +21,13 @@
 package org.onap.so.adapters.vnfmadapter.lifecycle;
 
 import com.google.common.base.Optional;
+import java.util.Map;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource;
+import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource.OamIpAddressType;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
@@ -83,6 +86,10 @@ public class LifecycleManager {
         }
 
         final String vnfIdInVnfm = sendCreateRequestToVnfm(genericVnf);
+
+        final OamIpAddressSource oamIpAddressSource = extractOamIpAddressSource(request);
+        aaiHelper.setOamIpAddressSource(vnfIdInVnfm, oamIpAddressSource);
+
         createNotificationSubscription(vnfm.getVnfmId(), vnfIdInVnfm);
         final String operationId = sendInstantiateRequestToVnfm(vnfm, genericVnf, request, vnfIdInAai, vnfIdInVnfm);
 
@@ -90,6 +97,19 @@ public class LifecycleManager {
         final CreateVnfResponse response = new CreateVnfResponse();
         response.setJobId(jobId);
         return response;
+    }
+
+    private OamIpAddressSource extractOamIpAddressSource(final CreateVnfRequest request) {
+        final Map<String, String> additionalParams = request.getAdditionalParams();
+        try {
+            final String sourceType = additionalParams.remove("oamIpAddressSourceType");
+            final String sourceValue = additionalParams.remove("oamIpAddressSourceValue");
+            final OamIpAddressType oamIpAddressType = OamIpAddressType.valueOf(sourceType.toUpperCase());
+            return new OamIpAddressSource(oamIpAddressType, sourceValue);
+        } catch (final NullPointerException | IllegalArgumentException exception) {
+            logger.debug("Additional Params not set for OAM IP address source", exception);
+            return null;
+        }
     }
 
     private void checkIfVnfAlreadyExistsInVnfm(final GenericVnf genericVnf) {
