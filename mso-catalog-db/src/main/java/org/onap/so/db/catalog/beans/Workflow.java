@@ -50,7 +50,7 @@ public class Workflow implements Serializable {
     private String operationName;
 
     @Column(name = "VERSION")
-    private Double version;
+    private String version;
 
     @Column(name = "DESCRIPTION")
     private String description;
@@ -122,11 +122,11 @@ public class Workflow implements Serializable {
         this.operationName = operationName;
     }
 
-    public Double getVersion() {
+    public String getVersion() {
         return version;
     }
 
-    public void setVersion(Double version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
