@@ -28,18 +28,24 @@ import org.camunda.bpm.application.PostDeploy;
 import org.camunda.bpm.application.PreUndeploy;
 import org.camunda.bpm.application.ProcessApplicationInfo;
 import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.repository.DeploymentBuilder;
 import org.onap.so.bpmn.common.DefaultToShortClassNameBeanNameGenerator;
+import org.onap.so.db.catalog.beans.Workflow;
+import org.onap.so.db.catalog.data.repository.WorkflowRepository;
 import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -50,11 +56,17 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @SpringBootApplication
 @EnableAsync
+@EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
+@EntityScan({"org.onap.so.db.catalog.beans"})
 @ComponentScan(basePackages = {"org.onap"}, nameGenerator = DefaultToShortClassNameBeanNameGenerator.class,
         excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = SpringBootApplication.class)})
+
 public class MSOInfrastructureApplication {
 
     private static final Logger logger = LoggerFactory.getLogger(MSOInfrastructureApplication.class);
+
+    @Autowired
+    private WorkflowRepository workflowRepository;
 
     @Value("${mso.async.core-pool-size}")
     private int corePoolSize;
@@ -66,6 +78,7 @@ public class MSOInfrastructureApplication {
     private int queueCapacity;
 
     private static final String LOGS_DIR = "logs_dir";
+    private static final String BPMN_SUFFIX = ".bpmn";
 
 
     private static void setLogsDir() {
@@ -81,7 +94,10 @@ public class MSOInfrastructureApplication {
     }
 
     @PostDeploy
-    public void postDeploy(ProcessEngine processEngineInstance) {}
+    public void postDeploy(ProcessEngine processEngineInstance) {
+        DeploymentBuilder deploymentBuilder = processEngineInstance.getRepositoryService().createDeployment();
+        deployCustomWorkflows(deploymentBuilder);
+    }
 
     @PreUndeploy
     public void cleanup(ProcessEngine processEngine, ProcessApplicationInfo processApplicationInfo,
@@ -98,5 +114,26 @@ public class MSOInfrastructureApplication {
         executor.setThreadNamePrefix("Camunda-");
         executor.initialize();
         return executor;
+    }
+
+    public void deployCustomWorkflows(DeploymentBuilder deploymentBuilder) {
+        if (workflowRepository == null) {
+            return;
+        }
+        List<Workflow> workflows = workflowRepository.findAll();
+        if (workflows != null && workflows.size() != 0) {
+            for (Workflow workflow : workflows) {
+                String workflowName = workflow.getName();
+                String workflowBody = workflow.getBody();
+                if (!workflowName.endsWith(BPMN_SUFFIX)) {
+                    workflowName += BPMN_SUFFIX;
+                }
+                if (workflowBody != null) {
+                    logger.info("{} {}", "Deploying custom workflow", workflowName);
+                    deploymentBuilder.addString(workflowName, workflowBody);
+                }
+            }
+            deploymentBuilder.deploy();
+        }
     }
 }
