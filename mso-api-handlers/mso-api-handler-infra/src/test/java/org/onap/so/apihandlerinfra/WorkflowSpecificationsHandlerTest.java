@@ -20,61 +20,238 @@
 
 package org.onap.so.apihandlerinfra;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlMatching;
 import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.json.JSONException;
 import org.junit.Test;
+import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowInputParameter;
 import org.onap.so.apihandlerinfra.workflowspecificationbeans.WorkflowSpecifications;
+import org.onap.so.db.catalog.beans.ActivitySpec;
+import org.onap.so.db.catalog.beans.ActivitySpecUserParameters;
+import org.onap.so.db.catalog.beans.UserParameters;
+import org.onap.so.db.catalog.beans.Workflow;
+import org.onap.so.db.catalog.beans.WorkflowActivitySpecSequence;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ResourceUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class WorkflowSpecificationsHandlerTest extends BaseTest {
-
+public class WorkflowSpecificationsHandlerTest extends BaseTest{
+    @Autowired
+    WorkflowSpecificationsHandler workflowSpecificationsHandler;
+    
+    @Value("${wiremock.server.port}")
+    private String wiremockPort;
+    
     private final String basePath = "onap/so/infra/workflowSpecifications/v1/workflows";
-
+    
     @Test
-    public void getTasksTestByOriginalRequestId()
-            throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException {
-
+    public void queryWorkflowSpecifications_Test_Success() throws ParseException, JSONException, JsonParseException, JsonMappingException, IOException{
+        
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", MediaType.APPLICATION_JSON);
         headers.set("Content-Type", MediaType.APPLICATION_JSON);
-        HttpEntity<String> entity = new HttpEntity<String>(null, headers);
-
+        HttpEntity<String> entity = new HttpEntity<String>(null, headers);        
+    
+        wireMockServer.stubFor(get(urlMatching("/workflow/search/findWorkflowByModelUUID[?]vnfResourceModelUUID=b5fa707a-f55a-11e7-a796-005056856d52"))
+                    .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                            .withBody(getWiremockResponseForCatalogdb("WorkflowSpecificationsQuery_Response.json"))
+                            .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        
+        wireMockServer.stubFor(get(urlMatching("/workflow/1/workflowActivitySpecSequence"))
+                .willReturn(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
+                        .withBody(getWiremockResponseForCatalogdb("WorkflowActivitySpecSequence_Response.json"))
+                        .withStatus(org.apache.http.HttpStatus.SC_OK)));
+        
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(createURLWithPort(basePath))
                 .queryParam("vnfModelVersionId", "b5fa707a-f55a-11e7-a796-005056856d52");
-
-        ResponseEntity<String> response =
-                restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, String.class);
-
-        ObjectMapper mapper = new ObjectMapper();
-
+        
+        ResponseEntity<String> response = restTemplate.exchange(
+                builder.toUriString(),
+                HttpMethod.GET, entity, String.class);
+        
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+    
+        ObjectMapper mapper = new ObjectMapper();        
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        WorkflowSpecifications expectedResponse = mapper.readValue(
-                new String(Files.readAllBytes(Paths.get("src/test/resources/__files/WorkflowSpecifications.json"))),
-                WorkflowSpecifications.class);
+                    
+        WorkflowSpecifications expectedResponse = mapper.readValue(new String(Files.readAllBytes(Paths.get("src/test/resources/__files/catalogdb/WorkflowSpecifications.json"))), WorkflowSpecifications.class);
+        WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
 
         assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
-        WorkflowSpecifications realResponse = mapper.readValue(response.getBody(), WorkflowSpecifications.class);
-        assertThat(realResponse, sameBeanAs(expectedResponse));
+        assertThat(expectedResponse, sameBeanAs(realResponse));    
         assertEquals("application/json", response.getHeaders().get(HttpHeaders.CONTENT_TYPE).get(0));
         assertEquals("0", response.getHeaders().get("X-MinorVersion").get(0));
         assertEquals("0", response.getHeaders().get("X-PatchVersion").get(0));
         assertEquals("1.0.0", response.getHeaders().get("X-LatestVersion").get(0));
+    }
+
+    @Test
+    public void mapWorkflowsToWorkflowSpecifications_Test_Success() throws Exception {
+        List<Workflow> workflows = new ArrayList<Workflow>();
+        Workflow workflow = new Workflow();
+        workflow.setArtifactUUID("ab6478e4-ea33-3346-ac12-ab121484a333");
+        workflow.setArtifactName("inPlaceSoftwareUpdate-1_0.bpmn");
+        workflow.setVersion(1.0);
+        workflow.setDescription("xyz xyz");
+        workflow.setName("inPlaceSoftwareUpdate");
+        workflow.setOperationName("inPlaceSoftwareUpdate");
+        workflow.setSource("sdc");
+        workflow.setResourceTarget("vnf");
+        
+        UserParameters userParameter1 = new UserParameters();
+        userParameter1.setLabel("Operations Timeout");
+        userParameter1.setType("text");
+        userParameter1.setIsRequried(true);
+        userParameter1.setMaxLength(50);        
+        userParameter1.setAllowableChars("someRegEx");
+        userParameter1.setName("operations_timeout");
+        userParameter1.setPayloadLocation("userParams");
+        
+        UserParameters userParameter2 = new UserParameters();
+        userParameter2.setLabel("Existing Software Version");
+        userParameter2.setType("text");
+        userParameter2.setIsRequried(true);
+        userParameter2.setMaxLength(50);        
+        userParameter2.setAllowableChars("someRegEx");
+        userParameter2.setName("existing_software_version");
+        userParameter2.setPayloadLocation("userParams");
+        
+        UserParameters userParameter3 = new UserParameters();
+        userParameter3.setLabel("Cloud Owner");
+        userParameter3.setType("text");
+        userParameter3.setIsRequried(true);
+        userParameter3.setMaxLength(7);        
+        userParameter3.setAllowableChars("someRegEx");
+        userParameter3.setName("cloudOwner");
+        userParameter3.setPayloadLocation("cloudConfiguration");
+        
+        UserParameters userParameter4 = new UserParameters();
+        userParameter4.setLabel("Tenant/Project ID");
+        userParameter4.setType("text");
+        userParameter4.setIsRequried(true);
+        userParameter4.setMaxLength(36);        
+        userParameter4.setAllowableChars("someRegEx");
+        userParameter4.setName("tenantId");
+        userParameter4.setPayloadLocation("cloudConfiguration");
+        
+        UserParameters userParameter5 = new UserParameters();
+        userParameter5.setLabel("New Software Version");
+        userParameter5.setType("text");
+        userParameter5.setIsRequried(true);
+        userParameter5.setMaxLength(50);        
+        userParameter5.setAllowableChars("someRegEx");
+        userParameter5.setName("new_software_version");
+        userParameter5.setPayloadLocation("userParams");
+        
+        UserParameters userParameter6 = new UserParameters();
+        userParameter6.setLabel("Cloud Region ID");
+        userParameter6.setType("text");
+        userParameter6.setIsRequried(true);
+        userParameter6.setMaxLength(7);        
+        userParameter6.setAllowableChars("someRegEx");
+        userParameter6.setName("lcpCloudRegionId");
+        userParameter6.setPayloadLocation("cloudConfiguration");    
+        
+        
+        List<ActivitySpecUserParameters> activitySpecUserParameters = new ArrayList<ActivitySpecUserParameters>();
+        
+        ActivitySpecUserParameters activitySpecUserParameter1 = new ActivitySpecUserParameters();
+        activitySpecUserParameter1.setUserParameters(userParameter1);
+        activitySpecUserParameters.add(activitySpecUserParameter1);
+        
+        ActivitySpecUserParameters activitySpecUserParameter2 = new ActivitySpecUserParameters();
+        activitySpecUserParameter2.setUserParameters(userParameter2);
+        activitySpecUserParameters.add(activitySpecUserParameter2);
+        
+        ActivitySpecUserParameters activitySpecUserParameter3 = new ActivitySpecUserParameters();
+        activitySpecUserParameter3.setUserParameters(userParameter3);
+        activitySpecUserParameters.add(activitySpecUserParameter3);    
+        
+        
+        ActivitySpecUserParameters activitySpecUserParameter4 = new ActivitySpecUserParameters();
+        activitySpecUserParameter4.setUserParameters(userParameter4);
+        activitySpecUserParameters.add(activitySpecUserParameter4);
+        
+        ActivitySpecUserParameters activitySpecUserParameter5 = new ActivitySpecUserParameters();
+        activitySpecUserParameter5.setUserParameters(userParameter5);
+        activitySpecUserParameters.add(activitySpecUserParameter5);
+        
+        ActivitySpecUserParameters activitySpecUserParameter6 = new ActivitySpecUserParameters();
+        activitySpecUserParameter6.setUserParameters(userParameter6);
+        activitySpecUserParameters.add(activitySpecUserParameter6);        
+        
+        List<WorkflowActivitySpecSequence> workflowActivitySpecSequences = new ArrayList<WorkflowActivitySpecSequence>();
+        
+        ActivitySpec activitySpec1 = new ActivitySpec();
+        activitySpec1.setName("VNFQuiesceTrafficActivity");
+        activitySpec1.setDescription("Activity to QuiesceTraffic on VNF");
+        activitySpec1.setActivitySpecUserParameters(activitySpecUserParameters);
+        WorkflowActivitySpecSequence workflowActivitySpecSequence1 = new WorkflowActivitySpecSequence();
+        workflowActivitySpecSequence1.setActivitySpec(activitySpec1);    
+        workflowActivitySpecSequences.add(workflowActivitySpecSequence1);
+        
+        ActivitySpec activitySpec2 = new ActivitySpec();
+        activitySpec2.setName("VNFHealthCheckActivity");
+        activitySpec2.setDescription("Activity to HealthCheck VNF");
+        activitySpec2.setActivitySpecUserParameters(activitySpecUserParameters);
+        WorkflowActivitySpecSequence workflowActivitySpecSequence2 = new WorkflowActivitySpecSequence();
+        workflowActivitySpecSequence2.setActivitySpec(activitySpec2);
+        workflowActivitySpecSequences.add(workflowActivitySpecSequence2);
+        
+        ActivitySpec activitySpec3 = new ActivitySpec();
+        activitySpec3.setName("FlowCompleteActivity");
+        activitySpec3.setDescription("Activity to Complete the BPMN Flow");
+        activitySpec3.setActivitySpecUserParameters(activitySpecUserParameters);
+        WorkflowActivitySpecSequence workflowActivitySpecSequence3 = new WorkflowActivitySpecSequence();
+        workflowActivitySpecSequence3.setActivitySpec(activitySpec3);
+        workflowActivitySpecSequences.add(workflowActivitySpecSequence3);
+        
+        workflow.setWorkflowActivitySpecSequence(workflowActivitySpecSequences);
+        workflows.add(workflow);    
+        
+        WorkflowSpecifications workflowSpecifications = workflowSpecificationsHandler.mapWorkflowsToWorkflowSpecifications(workflows);
+        ObjectMapper mapper = new ObjectMapper();
+        
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        String workflowSpecificationsJson = mapper.writeValueAsString(workflowSpecifications);
+        WorkflowSpecifications expectedResult = mapper.readValue(new String(Files.readAllBytes(Paths.get("src/test/resources/__files/catalogdb/WorkflowSpecifications.json"))), WorkflowSpecifications.class);
+        String expectedResultJson = mapper.writeValueAsString(expectedResult);
+    
+        JSONAssert.assertEquals(expectedResultJson, workflowSpecificationsJson, false);
+        assertThat(expectedResult, sameBeanAs(workflowSpecifications).ignoring(WorkflowInputParameter.class));        
+    }
+    
+    private String getWiremockResponseForCatalogdb(String file) {
+        try {
+            File resource= ResourceUtils.getFile("classpath:__files/catalogdb/"+file);
+            return new String(Files.readAllBytes(resource.toPath())).replaceAll("localhost:8090","localhost:"+wiremockPort);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

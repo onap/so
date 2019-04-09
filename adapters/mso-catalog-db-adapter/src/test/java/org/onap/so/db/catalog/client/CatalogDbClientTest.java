@@ -658,4 +658,19 @@ public class CatalogDbClientTest extends CatalogDbAdapterBaseTest {
         Assert.assertNull(workflow);
     }
 
+    @Test
+    public void getWorkflowByModelUUID_validUuid_expectedOutput() {
+        List<Workflow> workflows = client.findWorkflowByModelUUID("ff2ae348-214a-11e7-93ae-92361f002671");
+        assertTrue(workflows != null);
+        assertTrue(workflows.size() != 0);
+
+        assertEquals("testingWorkflow", workflows.get(0).getArtifactName());
+    }
+
+    @Test
+    public void getWorkflowByModelUUID_invalidUuid_nullOutput() {
+        Workflow workflow = client.findWorkflowByArtifactUUID(UUID.randomUUID().toString());
+        Assert.assertNull(workflow);
+    }
+
 }
