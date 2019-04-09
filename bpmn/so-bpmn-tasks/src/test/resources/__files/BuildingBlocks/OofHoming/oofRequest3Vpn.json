@@ -1,0 +1,91 @@
+{
+  "requestInfo" : {
+    "transactionId" : "requestId",
+    "requestId" : "requestId",
+    "callbackUrl" : "http://localhost:28080/mso/WorkflowMesssage/OofResponse/requestId",
+    "sourceId" : "mso",
+    "requestType" : "create",
+    "numSolutions" : 1,
+    "optimizers" : [ "placement" ],
+    "timeout" : 1800
+  },
+  "serviceInfo" : {
+    "serviceInstanceId" : "testServiceInstanceId1",
+    "serviceName" : "testServiceType1",
+    "modelInfo":{
+      "modelInvariantId":"testModelInvariantUUID1",
+      "modelVersionId":"testModelUUID1",
+      "modelName":"testModelName1",
+      "modelVersion":"testModelVersion1"
+    }
+  },
+  "placementInfo" : {
+    "requestParameters" : {
+      "customerLatitude" : "customerLatitude",
+      "customerLongitude" : "customerLongitude",
+      "customerName" : "testCustomerName"
+    },
+    "subscriberInfo" : {
+      "globalSubscriberId" : "testCustomerId",
+      "subscriberName" : "testCustomerName"
+    },
+    "placementDemands" : [ {
+      "resourceModuleName" : "testProxyInstanceName1",
+      "serviceResourceId" : "testProxyId1",
+      "resourceModelInfo" : {
+        "modelInvariantId" : "testProxyModelInvariantUuid1",
+        "modelVersionId" : "testProxyModelUuid1",
+        "modelName" : "testProxyModelName1",
+        "modelVersion" : "testProxyModelVersion1"
+      }
+    }, {
+      "resourceModuleName" : "testProxyInstanceName2",
+      "serviceResourceId" : "testProxyId2",
+      "resourceModelInfo" : {
+        "modelInvariantId" : "testProxyModelInvariantUuid2",
+        "modelVersionId" : "testProxyModelUuid2",
+        "modelName" : "testProxyModelName2",
+        "modelVersion" : "testProxyModelVersion2"
+      }
+    }, {
+      "resourceModuleName" : "testProxyInstanceName1",
+      "serviceResourceId" : "testProxyId1",
+      "resourceModelInfo" : {
+        "modelInvariantId" : "testProxyModelInvariantUuid1",
+        "modelVersionId" : "testProxyModelUuid1",
+        "modelName" : "testProxyModelName1",
+        "modelVersion" : "testProxyModelVersion1"
+      }
+    }, {
+      "resourceModuleName" : "testProxyInstanceName2",
+      "serviceResourceId" : "testProxyId2",
+      "resourceModelInfo" : {
+        "modelInvariantId" : "testProxyModelInvariantUuid2",
+        "modelVersionId" : "testProxyModelUuid2",
+        "modelName" : "testProxyModelName2",
+        "modelVersion" : "testProxyModelVersion2"
+      }
+    }, {
+      "resourceModuleName" : "testProxyInstanceName1",
+      "serviceResourceId" : "testProxyId1",
+      "resourceModelInfo" : {
+        "modelInvariantId" : "testProxyModelInvariantUuid1",
+        "modelVersionId" : "testProxyModelUuid1",
+        "modelName" : "testProxyModelName1",
+        "modelVersion" : "testProxyModelVersion1"
+      }
+    }, {
+      "resourceModuleName" : "testProxyInstanceName2",
+      "serviceResourceId" : "testProxyId2",
+      "resourceModelInfo" : {
+        "modelInvariantId" : "testProxyModelInvariantUuid2",
+        "modelVersionId" : "testProxyModelUuid2",
+        "modelName" : "testProxyModelName2",
+        "modelVersion" : "testProxyModelVersion2"
+      }
+    } ]
+  },
+  "licenseInfo" : {
+    "licenseDemands" : [ ]
+  }
+}
