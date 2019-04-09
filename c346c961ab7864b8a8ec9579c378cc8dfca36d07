@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "73ac741b_b30dd4f7",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/R__MacroData.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-09T16:49:35Z",
+      "side": 1,
+      "message": "please move your activity_spec work to its own repeatable migration",
+      "revId": "c346c961ab7864b8a8ec9579c378cc8dfca36d07",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
