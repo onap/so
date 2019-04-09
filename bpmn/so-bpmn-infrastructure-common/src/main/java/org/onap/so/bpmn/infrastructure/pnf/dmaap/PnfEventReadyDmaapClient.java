@@ -35,9 +35,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -52,6 +54,9 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     private int topicListenerDelayInSeconds;
     private volatile ScheduledThreadPoolExecutor executor;
     private volatile boolean dmaapThreadListenerIsRunning;
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     public PnfEventReadyDmaapClient(Environment env) {
@@ -133,13 +138,8 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         }
 
         private void informAboutPnfReadyIfPnfCorrelationIdFound(String pnfCorrelationId) {
-            Runnable runnable = unregister(pnfCorrelationId);
-            if (runnable != null) {
-                logger.debug("dmaap listener gets pnf ready event for pnfCorrelationId: {}", pnfCorrelationId);
-                //runnable.run();
-                runnable = null;
-            }
+            PnfNotificationEvent pnfNotificationEvent = new PnfNotificationEvent(this, pnfCorrelationId);
+            applicationEventPublisher.publishEvent(pnfNotificationEvent);
         }
     }
-
 }
