@@ -1,0 +1,19 @@
+{
+     "id": "147d9468-4646-11e9-80af-fa163e169afd",
+     "vnfInstanceName": "MME85_8.EricssonMMEVSPV2_0",
+     "vnfInstanceDescription": "2f3e21dd-99ba-45b1-b4da-1f71283c46f6",
+     "vnfdId": "sgsn-mme_onapmme01_cxp9025898_4r85d01",
+     "vnfProvider": "Ericsson",
+     "vnfProductName": "SGSN-MME",
+     "vnfSoftwareVersion": "1.24 (CXS101289_R85D01)",
+     "vnfdVersion": "onapmme01_cxp9025898_4r85d01",
+     "vnfPkgId": null,
+     "vnfConfigurableProperties": null,
+     "vimConnectionInfo": null,
+     "instantiationState": "NOT_INSTANTIATED",
+     "instantiatedVnfInfo": null,
+     "metadata": null,
+     "extensions": null,
+     "links": null
+
+}

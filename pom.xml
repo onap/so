@@ -32,6 +32,7 @@
     <module>cloudify-client</module>
     <module>cxf-logging</module>
     <module>so-monitoring</module>
+    <module>vnfm-simulator</module>
     <module>packages</module>
   </modules>
   <properties>
@@ -228,7 +229,6 @@
           <skip />
         </configuration>
       </plugin>
-
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
