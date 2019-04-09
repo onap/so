@@ -296,7 +296,7 @@ public class MsoVnfAdapterImplTest extends BaseRestTestUtils {
         Map<String, Object> map = new HashMap<>();
         map.put("key1", "value1");
         instance.createVfModule("mtn13", "CloudOwner", "88a6ca3ee0394ade9403f075db23167e", "vnf", "1", "", vnfName, "",
-                "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", "88a6ca3ee0394ade9403f075db23167e", map,
+                "VFMOD", "volumeGroupHeatStackId", "baseVfHeatStackId", "9b339a61-69ca-465f-86b8-1c72c582b8e8", map,
                 Boolean.FALSE, Boolean.TRUE, Boolean.FALSE, msoRequest, new Holder<>(),
                 new Holder<Map<String, String>>(), new Holder<VnfRollback>());
     }

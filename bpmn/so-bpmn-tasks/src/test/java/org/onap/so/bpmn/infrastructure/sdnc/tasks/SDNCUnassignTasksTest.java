@@ -22,7 +22,6 @@ package org.onap.so.bpmn.infrastructure.sdnc.tasks;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -95,8 +94,6 @@ public class SDNCUnassignTasksTest extends BaseTaskTest {
         assertEquals(SDNCTopology.SERVICE, sdncRequest.getTopology());
     }
 
-
-
     @Test
     public void unassignServiceInstanceExceptionTest() throws Exception {
         expectedException.expect(BpmnError.class);
@@ -114,8 +111,6 @@ public class SDNCUnassignTasksTest extends BaseTaskTest {
         SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
         assertEquals(SDNCTopology.VFMODULE, sdncRequest.getTopology());
     }
-
-
 
     @Test
     public void unassignVfModuleExceptionTest() throws Exception {
@@ -135,7 +130,6 @@ public class SDNCUnassignTasksTest extends BaseTaskTest {
         SDNCRequest sdncRequest = execution.getVariable("SDNCRequest");
         assertEquals(SDNCTopology.VNF, sdncRequest.getTopology());
     }
-
 
     @Test
     public void unassignVnfExceptionTest() throws Exception {
