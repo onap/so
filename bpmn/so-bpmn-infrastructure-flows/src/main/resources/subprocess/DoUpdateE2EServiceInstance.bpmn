@@ -186,6 +186,7 @@ dcsi.preProcessAAIPUT(execution)]]></bpmn2:script>
         <camunda:in source="operationType" target="operationType" />
         <camunda:in source="operationId" target="operationId" />
         <camunda:in source="serviceDecomposition_Original" target="serviceDecomposition" />
+        <camunda:in source="uuiRequest-del" target="uuiRequest-del" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_0ur34hv</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0w4t4ao</bpmn2:outgoing>

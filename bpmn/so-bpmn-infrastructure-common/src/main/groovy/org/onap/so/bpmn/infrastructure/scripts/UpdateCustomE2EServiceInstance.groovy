@@ -189,6 +189,7 @@ public class UpdateCustomE2EServiceInstance extends AbstractServiceTaskProcessor
 			JSONObject ob = new JSONObject(wrapper.getJson())
 			JSONArray ar = ob.getJSONObject("relationship-list").getJSONArray("relationship")
 
+			execution.setVariable("serviceInstanceData-original", si.get())
 			execution.setVariable("serviceRelationShip", ar.toString())
 
 
