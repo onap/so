@@ -22,10 +22,6 @@ package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
 import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +30,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.AccessInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.InterfaceInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.VimCredentials;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201VimConnections;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
@@ -53,6 +50,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 /**
  * Provides helper methods for interactions with VNFM.
@@ -198,5 +199,26 @@ public class VnfmHelper {
         authentication.paramsBasic(basicAuthParams);
         return authentication;
     }
+
+    /**
+     * Get the VIM connections for a tenant
+     *
+     * @param tenant the tenant
+     * @return the VIM connections
+     */
+    public InlineResponse201VimConnections getVimConnections(final Tenant tenant) {
+        final EsrSystemInfo esrSystemInfo =
+                aaiServiceProvider.invokeGetCloudRegionEsrSystemInfoList(tenant.getCloudOwner(), tenant.getRegionName())
+                        .getEsrSystemInfo().iterator().next();
+
+        final InlineResponse201VimConnections vimConnection = new InlineResponse201VimConnections();
+        vimConnection.setId(createVimId(tenant.getCloudOwner(), tenant.getRegionName()));
+        vimConnection.setVimId(vimConnection.getId());
+        vimConnection.setVimType(esrSystemInfo.getType());
+        vimConnection.setInterfaceInfo(getInterfaceInfo(esrSystemInfo.getServiceUrl()));
+        vimConnection.setAccessInfo(getAccessInfo(esrSystemInfo, tenant.getTenantId()));
+        return vimConnection;
+    }
+
 
 }

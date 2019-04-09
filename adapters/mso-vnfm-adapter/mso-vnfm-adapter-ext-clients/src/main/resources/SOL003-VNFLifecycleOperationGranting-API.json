@@ -1,0 +1,2774 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.1.1",
+    "title": "SOL003 - VNF Lifecycle Operation Granting interface",
+    "description": "SOL003 - VNF Lifecycle Operation Granting interface\n\nIMPORTANT: Please note that this file might be not aligned to the current version of the ETSI Group Specification it refers to. In case of discrepancies the published ETSI Group Specification takes precedence.\n\nIn clause 4.3.2 of ETSI GS NFV-SOL 003 v2.4.1, an attribute-based filtering mechanism is defined. This mechanism is currently not included in the corresponding OpenAPI design for this GS version. Changes to the attribute-based filtering mechanism are being considered in v2.5.1 of this GS for inclusion in the corresponding future ETSI NFV OpenAPI design.\nPlease report bugs to https://forge.etsi.org/bugzilla/buglist.cgi?component=Nfv-Openapis&list_id=61&product=NFV&resolution=\n",
+    "license": {
+      "name": "ETSI Forge copyright notice",
+      "url": "https://forge.etsi.org/etsi-forge-copyright-notice.txt"
+    }
+  },
+  "externalDocs": {
+    "description": "ETSI GS NFV-SOL 003 V2.4.1",
+    "url": "http://www.etsi.org/deliver/etsi_gs/NFV-SOL/001_099/003/02.04.01_60/gs_NFV-SOL003v020401p.pdf"
+  },
+  "basePath": "/grant/v1",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/grants": {
+      "post": {
+        "description": "Grant Lifecycle Operation\n\nThe POST method requests a grant for a particular VNF lifecycle operation.\n",
+        "parameters": [
+          {
+            "name": "GrantRequest",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "description": "This type represents a grant request.\n",
+              "type": "object",
+              "required": [
+                "vnfInstanceId",
+                "vnfLcmOpOccId",
+                "vnfdId",
+                "operation",
+                "isAutomaticInvocation",
+                "_links"
+              ],
+              "properties": {
+                "vnfInstanceId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "vnfLcmOpOccId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "vnfdId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "flavourId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "operation": {
+                  "description": "Value | Description ------|------------ INSTANTIATE | Represents the \"Instantiate VNF\" LCM operation.    SCALE | Represents the \"Scale VNF\" LCM operation. SCALE_TO_LEVEL | Represents the \"Scale VNF to Level\" LCM operation. CHANGE_FLAVOUR | Represents the \"Change VNF Flavour\" LCM operation. TERMINATE | Represents the \"Terminate VNF\" LCM operation. HEAL | Represents the \"Heal VNF\" LCM operation. OPERATE | Represents the \"Operate VNF\" LCM operation. CHANGE_EXT_CONN | Represents the \"Change external VNF connectivity\" LCM operation. MODIFY_INFO | Represents the \"Modify VNF Information\" LCM operation.\n",
+                  "type": "string",
+                  "enum": [
+                    "INSTANTIATE",
+                    "SCALE",
+                    "SCALE_TO_LEVEL",
+                    "CHANGE_FLAVOUR",
+                    "TERMINATE",
+                    "HEAL",
+                    "OPERATE",
+                    "CHANGE_EXT_CONN",
+                    "MODIFY_INFO"
+                  ]
+                },
+                "isAutomaticInvocation": {
+                  "description": "Set to true if this VNF LCM operation occurrence has been triggered by an automated procedure inside the VNFM  (i.e. ScaleVnf / ScaleVnfToLevel triggered by auto-scale, or HealVnf triggered by auto-heal).  Set to false otherwise.\n",
+                  "type": "boolean"
+                },
+                "instantiationLevelId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "addResources": {
+                  "description": "List of resource definitions in the VNFD for resources to be added by the LCM operation which is related to this grant request, with one entry per resource. If the granting request is for InstantiateVNF, either instantiationLevel or addResources shall be present.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information of an existing or proposed resource used by the VNF.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Type of the resource definition referenced. Permitted values: * COMPUTE * VL * STORAGE * LINKPORT\n",
+                        "type": "string",
+                        "enum": [
+                          "COMPUTE",
+                          "VL",
+                          "STORAGE",
+                          "LINKPORT"
+                        ]
+                      },
+                      "vduId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "resourceTemplateId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "resource": {
+                        "required": [
+                          "vimConnectionId",
+                          "resourceId"
+                        ],
+                        "type": "object",
+                        "description": "This type represents the information that allows addressing a virtualised resource that is used by a VNF instance. Information about the resource is available from the VIM.\n",
+                        "properties": {
+                          "vimConnectionId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceProviderId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceId": {
+                            "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                            "type": "string"
+                          },
+                          "vimLevelResourceType": {
+                            "description": "Type of the resource in the scope of the VIM or the resource provider.\n",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "tempResources": {
+                  "description": "List of resource definitions in the VNFD for resources to be temporarily instantiated during the runtime of the LCM operation which is related to this grant request, with one entry per resource. The NFVO will assume that the VNFM will be responsible to both allocate and release the temporary resource during the runtime of the LCM operation. This means, the resource can be allocated and consumed after the \"start\" notification for the LCM operation is sent by the VNFM, and the resource will be released before the \"result\" notification of the VNF LCM operation is sent by the VNFM.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information of an existing or proposed resource used by the VNF.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Type of the resource definition referenced. Permitted values: * COMPUTE * VL * STORAGE * LINKPORT\n",
+                        "type": "string",
+                        "enum": [
+                          "COMPUTE",
+                          "VL",
+                          "STORAGE",
+                          "LINKPORT"
+                        ]
+                      },
+                      "vduId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "resourceTemplateId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "resource": {
+                        "required": [
+                          "vimConnectionId",
+                          "resourceId"
+                        ],
+                        "type": "object",
+                        "description": "This type represents the information that allows addressing a virtualised resource that is used by a VNF instance. Information about the resource is available from the VIM.\n",
+                        "properties": {
+                          "vimConnectionId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceProviderId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceId": {
+                            "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                            "type": "string"
+                          },
+                          "vimLevelResourceType": {
+                            "description": "Type of the resource in the scope of the VIM or the resource provider.\n",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "removeResources": {
+                  "description": "Provides the definitions of resources to be removed by the LCM operation which is related to this grant request, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information of an existing or proposed resource used by the VNF.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Type of the resource definition referenced. Permitted values: * COMPUTE * VL * STORAGE * LINKPORT\n",
+                        "type": "string",
+                        "enum": [
+                          "COMPUTE",
+                          "VL",
+                          "STORAGE",
+                          "LINKPORT"
+                        ]
+                      },
+                      "vduId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "resourceTemplateId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "resource": {
+                        "required": [
+                          "vimConnectionId",
+                          "resourceId"
+                        ],
+                        "type": "object",
+                        "description": "This type represents the information that allows addressing a virtualised resource that is used by a VNF instance. Information about the resource is available from the VIM.\n",
+                        "properties": {
+                          "vimConnectionId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceProviderId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceId": {
+                            "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                            "type": "string"
+                          },
+                          "vimLevelResourceType": {
+                            "description": "Type of the resource in the scope of the VIM or the resource provider.\n",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "updateResources": {
+                  "description": "Provides the definitions of resources to be modified by the LCM operation which is related to this grant request, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information of an existing or proposed resource used by the VNF.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "type"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "type": {
+                        "description": "Type of the resource definition referenced. Permitted values: * COMPUTE * VL * STORAGE * LINKPORT\n",
+                        "type": "string",
+                        "enum": [
+                          "COMPUTE",
+                          "VL",
+                          "STORAGE",
+                          "LINKPORT"
+                        ]
+                      },
+                      "vduId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "resourceTemplateId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "resource": {
+                        "required": [
+                          "vimConnectionId",
+                          "resourceId"
+                        ],
+                        "type": "object",
+                        "description": "This type represents the information that allows addressing a virtualised resource that is used by a VNF instance. Information about the resource is available from the VIM.\n",
+                        "properties": {
+                          "vimConnectionId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceProviderId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceId": {
+                            "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                            "type": "string"
+                          },
+                          "vimLevelResourceType": {
+                            "description": "Type of the resource in the scope of the VIM or the resource provider.\n",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "placementConstraints": {
+                  "description": "Placement constraints that the VNFM may send to the NFVO in order to influence the resource placement decision. If sent, the NFVO shall take the constraints into consideration when making resource placement decisions, and shall reject the grant if they cannot be honoured. The affinity/anti-affinity rules defined in the VNFD , and the placement constraints in the GrantVnfLifecycleOperation as defined in this clause should be conflict-free. In case of conflicts, the placement constraints in the GrantVnfLifecycleOperation shall take precedence. Passing constraints allows the VNFM or the lifecycle management scripts to influence resource placement decisions by the NFVO to ensure VNF properties such as performance or fault tolerance.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information regarding a resource placement constraint. A set of such constraints may be sent by the VNFM to the NFVO to influence the resource placement decisions made by the NFVO as part of the granting process. A placement constraint defines a condition to the placement of new resources, considering other new resources as well as existing resources. EXAMPLE: The following rules influence the placement of a set of resources such that they are placed in the same Network Function Virtualisation Infrastructure Point of Presence (NFVI-PoP) but in different resource zones: {type=\"affinity\"; scope=\"NFVI_POP\"; {resource1,resource2}} {type=\"anti-affinity\"; scope=\"ZONE\"; {resource1,resource2}}\n",
+                    "type": "object",
+                    "required": [
+                      "affinityOrAntiAffinity",
+                      "scope",
+                      "resource"
+                    ],
+                    "properties": {
+                      "affinityOrAntiAffinity": {
+                        "description": "The type of the constraint. Permitted values: * AFFINITY * ANTI_AFFINITY\n",
+                        "type": "string",
+                        "enum": [
+                          "AFFINITY",
+                          "ANTI_AFFINITY"
+                        ]
+                      },
+                      "scope": {
+                        "description": "The scope of the placement constraint indicating the category of the \"place\" where the constraint applies. Permitted values: * NFVI_POP * ZONE * ZONE_GROUP * NFVI_NODE\n",
+                        "type": "string",
+                        "enum": [
+                          "NFVI_POP",
+                          "ZONE",
+                          "ZONE_GROUP",
+                          "NFVI_NODE"
+                        ]
+                      },
+                      "resource": {
+                        "description": "References to resources in the constraint rule.\n",
+                        "type": "array",
+                        "items": {
+                          "description": "This type references a resource either by its VIM-level identifier for existing resources, or by the identifier of a \"ResourceDefinition\" structure in the \"GrantRequest\" structure for new resources.\n",
+                          "type": "object",
+                          "required": [
+                            "idType",
+                            "resourceId"
+                          ],
+                          "properties": {
+                            "idType": {
+                              "description": "The type of the identifier. Permitted values: * RES_MGMT: Resource-management-level identifier; this identifier is  managed by the VIM in the direct mode of VNF-related resource\n  management, and is managed by the NFVO in the indirect mode)\n* GRANT: Reference to the identifier of a \"ResourceDefinition\" structure in the \"GrantRequest\" structure.\n",
+                              "type": "string",
+                              "enum": [
+                                "RES_MGMT",
+                                "GRANT"
+                              ]
+                            },
+                            "resourceId": {
+                              "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                              "type": "string"
+                            },
+                            "vimConnectionId": {
+                              "description": "An identifier with the intention of being globally unique.\n",
+                              "type": "string"
+                            },
+                            "resourceProviderId": {
+                              "description": "An identifier with the intention of being globally unique.\n",
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "vimConstraints": {
+                  "description": "Used by the VNFM to require that multiple resources are managed through the same VIM connection. If sent, the NFVO shall take the constraints into consideration when making VIM selection decisions, and shall reject the grant if they cannot be honoured. This attribute shall be supported if VNF-related Resource Management in direct mode is applicable. The applicability and further details of this attribute for indirect mode are left for future specification.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information regarding a VIM selection constraint. A set of such constraints may be sent by the VNFM to the NFVO to influence the VIM selection decisions made by the NFVO as part of the granting process.\n",
+                    "type": "object",
+                    "required": [
+                      "resource"
+                    ],
+                    "properties": {
+                      "sameResourceGroup": {
+                        "description": "If present and set to true, this signals that the constraint applies not only to the same VIM connection, but also to the same infrastructure resource group.\n",
+                        "type": "boolean"
+                      },
+                      "resource": {
+                        "description": "References to resources in the constraint rule. The NFVO shall ensure that all resources in this list are managed through the same VIM connection. If \"sameResourceGroup\" is set to true, the NFVO shall further ensure that all resources in this list are part of the same infrastructure resource group in that VIM connection.\n",
+                        "type": "array",
+                        "items": {
+                          "description": "This type references a resource either by its VIM-level identifier for existing resources, or by the identifier of a \"ResourceDefinition\" structure in the \"GrantRequest\" structure for new resources.\n",
+                          "type": "object",
+                          "required": [
+                            "idType",
+                            "resourceId"
+                          ],
+                          "properties": {
+                            "idType": {
+                              "description": "The type of the identifier. Permitted values: * RES_MGMT: Resource-management-level identifier; this identifier is  managed by the VIM in the direct mode of VNF-related resource\n  management, and is managed by the NFVO in the indirect mode)\n* GRANT: Reference to the identifier of a \"ResourceDefinition\" structure in the \"GrantRequest\" structure.\n",
+                              "type": "string",
+                              "enum": [
+                                "RES_MGMT",
+                                "GRANT"
+                              ]
+                            },
+                            "resourceId": {
+                              "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                              "type": "string"
+                            },
+                            "vimConnectionId": {
+                              "description": "An identifier with the intention of being globally unique.\n",
+                              "type": "string"
+                            },
+                            "resourceProviderId": {
+                              "description": "An identifier with the intention of being globally unique.\n",
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "additionalParams": {
+                  "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                  "type": "object"
+                },
+                "_links": {
+                  "description": "Links to resources related to this request.\n",
+                  "type": "object",
+                  "required": [
+                    "vnfLcmOpOcc",
+                    "vnfInstance"
+                  ],
+                  "properties": {
+                    "vnfLcmOpOcc": {
+                      "description": "This type represents a link to a resource.\n",
+                      "type": "object",
+                      "required": [
+                        "href"
+                      ],
+                      "properties": {
+                        "href": {
+                          "description": "URI of the referenced resource.\n",
+                          "type": "string",
+                          "format": "url"
+                        }
+                      }
+                    },
+                    "vnfInstance": {
+                      "description": "This type represents a link to a resource.\n",
+                      "type": "object",
+                      "required": [
+                        "href"
+                      ],
+                      "properties": {
+                        "href": {
+                          "description": "URI of the referenced resource.\n",
+                          "type": "string",
+                          "format": "url"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "name": "Accept",
+            "description": "Content-Types that are acceptable for the response. Reference: IETF RFC 7231\n",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Content-Type",
+            "description": "The MIME type of the body of the request. Reference: IETF RFC 7231\n",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "description": "The authorization token for the request. Reference: IETF RFC 7235\n",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created\nThe grant was created successfully (synchronous mode). A representation of the created \"Individual grant\" resource shall be returned in the response body. The HTTP response shall include a \"Location\" HTTP header that indicates the URI of the \"Individual grant\" resource just created.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "Location": {
+                "description": "The resource URI of the created VNF instance",
+                "type": "string",
+                "format": "url"
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            },
+            "schema": {
+              "description": "This type represents a grant.\n",
+              "type": "object",
+              "required": [
+                "id",
+                "vnfInstanceId",
+                "vnfLcmOpOccId",
+                "_links"
+              ],
+              "properties": {
+                "id": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "vnfInstanceId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "vnfLcmOpOccId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "vimConnections": {
+                  "description": "Provides information regarding VIM connections that are approved to be used by the VNFM to allocate resources, and provides parameters of these VIM connections. The VNFM shall update the \" vimConnectionInfo\" attribute of the \"VnfInstance\" structure by adding unknown entries received in this attribute. This attribute is not intended for the modification of VimConnection entries passed earlier; for that, the VnfInfoModificationRequest structure shall be used. This attribute shall only be supported when VNF-related Resource Management in direct mode is applicable. In direct mode, this parameter shall be absent if the VIM information was configured to the VNFM in another way, present otherwise. This interface allows to signal the use of multiple VIMs per VNF. However, due to the partial support of this feature in the present release, it is recommended in the present document that the number of entries in the \"vims\" attribute in the Grant is not greater than 1.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type represents parameters to connect to a VIM for managing the resources of a VNF instance. This structure is used to convey VIM-related parameters over the Or-Vnfm interface. Additional parameters for a VIM may be configured into the VNFM by means outside the scope of the present document, and bound to the identifier of that VIM.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "vimType"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimType": {
+                        "description": "Discriminator for the different types of the VIM information. The value of this attribute determines the structure of the \"interfaceInfo\" and \"accessInfo\" attributes, based on the type of the VIM. The set of permitted values is expected to change over time as new types or versions of VIMs become available. The ETSI NFV registry of VIM-related information provides access to information about VimConnectionInfo definitions for various VIM types. The structure of the registry is defined in Annex C of SOL003.\n",
+                        "type": "string"
+                      },
+                      "interfaceInfo": {
+                        "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                        "type": "object"
+                      },
+                      "accessInfo": {
+                        "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                        "type": "object"
+                      },
+                      "extra": {
+                        "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                        "type": "object"
+                      }
+                    }
+                  }
+                },
+                "zones": {
+                  "description": "Identifies resource zones where the resources are approved to be allocated by the VNFM.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information regarding a resource zone.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "zoneId"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "zoneGroups": {
+                  "description": "Information about groups of resource zones that are related and that the NFVO has chosen to fulfil a zoneGroup constraint in the GrantVnfLifecycleOperation request. This information confirms that the NFVO has honoured the zoneGroup constraints that were passed as part of \"placementConstraints\" in the GrantRequest.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information regarding a resource zone group. A resource zone group is a group of one or more related resource zones which can be used in resource placement constraints. To fulfil such constraint, the NFVO may decide to place a resource into any zone that belongs to a particular group. NOTE: A resource zone group can be used to support overflow from one resource zone into another, in case a particular deployment supports only non-elastic resource zones.\n",
+                    "type": "object",
+                    "required": [
+                      "zoneId"
+                    ],
+                    "properties": {
+                      "zoneId": {
+                        "description": "References of identifiers of \"ZoneInfo\" structures, each of which provides information about a resource zone that belongs to this group.\n",
+                        "type": "array",
+                        "items": {
+                          "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "computeReservationId": {
+                  "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                  "type": "string"
+                },
+                "networkReservationId": {
+                  "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                  "type": "string"
+                },
+                "storageReservationId": {
+                  "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                  "type": "string"
+                },
+                "addResources": {
+                  "description": "List of resources that are approved to be added, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type contains information about a Compute, storage or network resource whose addition/update/deletion was granted.\n",
+                    "type": "object",
+                    "required": [
+                      "resourceDefinitionId"
+                    ],
+                    "properties": {
+                      "resourceDefinitionId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "reservationId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "resourceGroupId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "tempResources": {
+                  "description": "List of resources that are approved to be temporarily instantiated during the runtime of the lifecycle operation, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type contains information about a Compute, storage or network resource whose addition/update/deletion was granted.\n",
+                    "type": "object",
+                    "required": [
+                      "resourceDefinitionId"
+                    ],
+                    "properties": {
+                      "resourceDefinitionId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "reservationId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "resourceGroupId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "removeResources": {
+                  "description": "List of resources that are approved to be removed, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type contains information about a Compute, storage or network resource whose addition/update/deletion was granted.\n",
+                    "type": "object",
+                    "required": [
+                      "resourceDefinitionId"
+                    ],
+                    "properties": {
+                      "resourceDefinitionId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "reservationId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "resourceGroupId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "updateResources": {
+                  "description": "List of resources that are approved to be modified, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type contains information about a Compute, storage or network resource whose addition/update/deletion was granted.\n",
+                    "type": "object",
+                    "required": [
+                      "resourceDefinitionId"
+                    ],
+                    "properties": {
+                      "resourceDefinitionId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "reservationId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "resourceGroupId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "vimAssets": {
+                  "description": "Information about assets for the VNF that are managed by the NFVO in the VIM, such as software images and virtualised compute resource flavours. This attribute is not intended for the modification of vimAssets entries passed earlier. Modification of VIM assets during the lifetime of a VNF instance is not necessary, since it is expected that all applicable assets have been on boarded into the VIM before the VNF is instantiated.\n",
+                  "type": "object",
+                  "properties": {
+                    "computeResourceFlavours": {
+                      "description": "Mappings between virtual compute descriptors defined in the VNFD and compute resource flavours managed in the VIM.\n",
+                      "type": "array",
+                      "items": {
+                        "description": "If the VIM requires the use of virtual compute resource flavours during compute resource instantiation, it is assumed that such flavours are selected or created by the NFVO based on the information in the virtual compute descriptor defined in the VNFD. This type defines the mapping between a virtual compute descriptor in the VNFD and the corresponding compute resource flavour managed by the NFVO in the VIM.\n",
+                        "type": "object",
+                        "required": [
+                          "vnfdVirtualComputeDescId",
+                          "vimFlavourId"
+                        ],
+                        "properties": {
+                          "vimConnectionId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceProviderId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "vnfdVirtualComputeDescId": {
+                            "description": "An identifier that is unique within a VNF descriptor.\n",
+                            "type": "string"
+                          },
+                          "vimFlavourId": {
+                            "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "softwareImages": {
+                      "description": "Mappings between software images defined in the VNFD and software images managed in the VIM.\n",
+                      "type": "array",
+                      "items": {
+                        "description": "This type contains a mapping between a software image definition the VNFD and the corresponding software image managed by the NFVO in the VIM which is needed during compute resource instantiation.\n",
+                        "type": "object",
+                        "required": [
+                          "vnfdSoftwareImageId",
+                          "vimSoftwareImageId"
+                        ],
+                        "properties": {
+                          "vimConnectionId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceProviderId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "vnfdSoftwareImageId": {
+                            "description": "An identifier that is unique within a VNF descriptor.\n",
+                            "type": "string"
+                          },
+                          "vimSoftwareImageId": {
+                            "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "extVirtualLinks": {
+                  "description": "Information about external VLs to connect the VNF to. External and/or externally-managed internal VLs can be passed in VNF lifecycle management operation requests such as InstantiateVnf or ChangeVnfFlavor, and/or in the grant response. The NFVO may choose to override in the grant response external and/or externally-managed VL instances that have been passed previously in the associated VNF lifecycle management request, if the lifecycle management request has originated from the NFVO itself.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type represents an external VL.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "resourceId",
+                      "extCps"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      },
+                      "extCps": {
+                        "description": "External CPs of the VNF to be connected to this external VL.\n",
+                        "type": "array",
+                        "items": {
+                          "description": "This type represents configuration information for external CPs created from a CPD.\n",
+                          "type": "object",
+                          "required": [
+                            "cpdId"
+                          ],
+                          "properties": {
+                            "cpdId": {
+                              "description": "An identifier that is unique within a VNF descriptor.\n",
+                              "type": "string"
+                            },
+                            "cpConfig": {
+                              "description": "List of instance data that need to be configured on the CP instances created from the respective CPD.\n",
+                              "type": "array",
+                              "items": {
+                                "description": "This type represents an externally provided link port or network address information per instance of an external connection point. In case a link port is provided, the VNFM shall use that link port when connecting the external CP to the external VL. In a link port is not provided, the VNFM shall create a link port on the external VL, and use that link port to connect the external CP to the external VL.\n",
+                                "type": "object",
+                                "properties": {
+                                  "cpInstanceId": {
+                                    "description": "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n",
+                                    "type": "string"
+                                  },
+                                  "linkPortId": {
+                                    "description": "An identifier with the intention of being globally unique.\n",
+                                    "type": "string"
+                                  },
+                                  "cpProtocolData": {
+                                    "description": "Parameters for configuring the network protocols on the link port that connects the CP to a VL.  The following conditions apply to the attributes \"linkPortId\" and \"cpProtocolData\":  * The \"linkPortId\" and \"cpProtocolData\" attributes shall both be  absent for the deletion of an existing external CP instance\n  addressed by cpInstanceId. \n* At least one of these attributes shall be present for a  to-be-created external CP instance or an existing external\n  CP instance.\n* If the \"linkPortId\" attribute is absent, the VNFM shall create a  link port.\n* If the \"cpProtocolData\" attribute is absent, the \"linkPortId\"  attribute shall be provided referencing a pre-created link port,\n  and the VNFM can use means outside the scope of the present\n  document to obtain the pre-configured address information for the\n  connection point from the resource representing the link port.\n* If both \"cpProtocolData\" and \"linkportId\" are provided, the API  consumer shall ensure that the cpProtocolData can be used with the\n  pre-created link port referenced by \"linkPortId\".\n",
+                                    "type": "array",
+                                    "items": {
+                                      "description": "This type represents network protocol data.\n",
+                                      "type": "object",
+                                      "required": [
+                                        "layerProtocol"
+                                      ],
+                                      "properties": {
+                                        "layerProtocol": {
+                                          "description": "Identifier of layer(s) and protocol(s). This attribute allows to signal the addition of further types of layer and protocol in future versions of the present document in a backwards-compatible way. In the current version of the present document, only IP over Ethernet is supported.\n",
+                                          "type": "string",
+                                          "enum": [
+                                            "IP_OVER_ETHERNET"
+                                          ]
+                                        },
+                                        "ipOverEthernet": {
+                                          "description": "This type represents network address data for IP over Ethernet.\n",
+                                          "type": "object",
+                                          "properties": {
+                                            "macAddress": {
+                                              "description": "A MAC address. Representation: string that consists of groups of two hexadecimal digits, separated by hyphens or colons.\n",
+                                              "type": "string",
+                                              "format": "MAC"
+                                            },
+                                            "ipAddresses": {
+                                              "description": "List of IP addresses to assign to the CP instance. Each entry represents IP address data for fixed or dynamic IP address assignment per subnet. If this attribute is not present, no IP address shall be assigned.\n",
+                                              "type": "array",
+                                              "items": {
+                                                "type": "object",
+                                                "required": [
+                                                  "type"
+                                                ],
+                                                "properties": {
+                                                  "type": {
+                                                    "description": "The type of the IP addresses. Permitted values: IPV4, IPV6.\n",
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "IPV4",
+                                                      "IPV6"
+                                                    ]
+                                                  },
+                                                  "fixedAddresses": {
+                                                    "description": "Fixed addresses to assign (from the subnet defined by \"subnetId\" if provided). Exactly one of \"fixedAddresses\", \"numDynamicAddresses\" or \"ipAddressRange\" shall be present.\n",
+                                                    "type": "array",
+                                                    "items": {
+                                                      "description": "An IPV4 or IPV6 address. Representation: In case of an IPV4 address, string that consists of four decimal integers separated by dots, each integer ranging from 0 to 255. In case of an IPV6 address, string that  consists of groups of zero to four hexadecimal digits, separated by colons.\n",
+                                                      "type": "string",
+                                                      "format": "IP"
+                                                    }
+                                                  },
+                                                  "numDynamicAddresses": {
+                                                    "description": "Number of dynamic addresses to assign (from the subnet defined by \"subnetId\" if provided). Exactly one of \"fixedAddresses\", \"numDynamicAddresses\" or \"ipAddressRange\" shall be present.\n",
+                                                    "type": "integer"
+                                                  },
+                                                  "addressRange": {
+                                                    "description": "An IP address range to be used, e.g. in case of egress connections. In case this attribute is present, IP addresses from the range will be used.\n",
+                                                    "type": "object",
+                                                    "required": [
+                                                      "minAddress",
+                                                      "maxAddress"
+                                                    ],
+                                                    "properties": {
+                                                      "minAddress": {
+                                                        "description": "An IPV4 or IPV6 address. Representation: In case of an IPV4 address, string that consists of four decimal integers separated by dots, each integer ranging from 0 to 255. In case of an IPV6 address, string that  consists of groups of zero to four hexadecimal digits, separated by colons.\n",
+                                                        "type": "string",
+                                                        "format": "IP"
+                                                      },
+                                                      "maxAddress": {
+                                                        "description": "An IPV4 or IPV6 address. Representation: In case of an IPV4 address, string that consists of four decimal integers separated by dots, each integer ranging from 0 to 255. In case of an IPV6 address, string that  consists of groups of zero to four hexadecimal digits, separated by colons.\n",
+                                                        "type": "string",
+                                                        "format": "IP"
+                                                      }
+                                                    }
+                                                  },
+                                                  "subnetId": {
+                                                    "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "extLinkPorts": {
+                        "description": "Externally provided link ports to be used to connect external connection points to this external VL. If this attribute is not present, the VNFM shall create the link ports on the external VL.\n",
+                        "type": "array",
+                        "items": {
+                          "description": "This type represents an externally provided link port to be used to connect an external connection point to an external VL.\n",
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "resourceHandle"
+                          ],
+                          "properties": {
+                            "id": {
+                              "description": "An identifier with the intention of being globally unique.\n",
+                              "type": "string"
+                            },
+                            "resourceHandle": {
+                              "required": [
+                                "vimConnectionId",
+                                "resourceId"
+                              ],
+                              "type": "object",
+                              "description": "This type represents the information that allows addressing a virtualised resource that is used by a VNF instance. Information about the resource is available from the VIM.\n",
+                              "properties": {
+                                "vimConnectionId": {
+                                  "description": "An identifier with the intention of being globally unique.\n",
+                                  "type": "string"
+                                },
+                                "resourceProviderId": {
+                                  "description": "An identifier with the intention of being globally unique.\n",
+                                  "type": "string"
+                                },
+                                "resourceId": {
+                                  "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                                  "type": "string"
+                                },
+                                "vimLevelResourceType": {
+                                  "description": "Type of the resource in the scope of the VIM or the resource provider.\n",
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "extManagedVirtualLinks": {
+                  "description": "Information about internal VLs that are managed by other entities than the VNFM. The indication of externally-managed internal VLs is needed in case networks have been pre-configured for use with certain VNFs, for instance to ensure that these networks have certain properties such as security or acceleration features, or to address particular network topologies. The present document assumes that externally-managed internal VLs are managed by the NFVO and created towards the VIM. External and/or externally-managed internal VLs can be passed in VNF lifecycle management operation requests such as InstantiateVnf or ChangeVnfFlavor, and/or in the grant response. The NFVO may choose to override in the grant response external and/or externally-managed VL instances that have been passed previously in the associated VNF lifecycle management request, if the lifecycle management request has originated from the NFVO itself.\n",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "virtualLinkDescId",
+                      "resourceId"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "virtualLinkDescId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "additionalParams": {
+                  "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                  "type": "object"
+                },
+                "_links": {
+                  "description": "Links to resources related to this resource.\n",
+                  "type": "object",
+                  "required": [
+                    "self",
+                    "vnfLcmOpOcc",
+                    "vnfInstance"
+                  ],
+                  "properties": {
+                    "self": {
+                      "description": "This type represents a link to a resource.\n",
+                      "type": "object",
+                      "required": [
+                        "href"
+                      ],
+                      "properties": {
+                        "href": {
+                          "description": "URI of the referenced resource.\n",
+                          "type": "string",
+                          "format": "url"
+                        }
+                      }
+                    },
+                    "vnfLcmOpOcc": {
+                      "description": "This type represents a link to a resource.\n",
+                      "type": "object",
+                      "required": [
+                        "href"
+                      ],
+                      "properties": {
+                        "href": {
+                          "description": "URI of the referenced resource.\n",
+                          "type": "string",
+                          "format": "url"
+                        }
+                      }
+                    },
+                    "vnfInstance": {
+                      "description": "This type represents a link to a resource.\n",
+                      "type": "object",
+                      "required": [
+                        "href"
+                      ],
+                      "properties": {
+                        "href": {
+                          "description": "URI of the referenced resource.\n",
+                          "type": "string",
+                          "format": "url"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted\nThe request was accepted for processing, but the processing has not been completed. It is expected to take some time to create the grant (asynchronous mode). The response body shall be empty. The HTTP response shall include a \"Location\" HTTP header that indicates the URI of the \"Individual grant\" resource that will be created once the granting decision has been made.\n",
+            "headers": {
+              "Location": {
+                "description": "The resource URI of the created VNF instance",
+                "type": "string",
+                "format": "url"
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or a syntactically incorrect payload body), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\n ---\n\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n ---\n\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code.The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden\nThe grant was rejected. A ProblemDetails structure shall be included in the response to provide more details about the rejection in the \"details\" attribute.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request, or is not willing to disclose that one exists, it shall respond with this response code.  The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the source of the problem, e.g. a wrong resource URI variable.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed\nIf a particular HTTP method is not supported for a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable\nIf the \"Accept\" HTTP header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "416": {
+            "description": "Requested Range Not Satisfiable\nThis code is returned if the requested byte range in the Range HTTP header is not present in the requested resource.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity\nIf the payload body of a request contains syntactically correct data (e.g. well-formed JSON) but the data cannot be processed (e.g. because it fails validation against a schema), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem. NOTE 2: This error response code is only applicable for methods that have a request body.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond withthis response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 [13] for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/grants/{grantId}": {
+      "parameters": [
+        {
+          "name": "grantId",
+          "description": "Identifier of the grant. This identifier can be retrieved from the resource referenced by the \"Location\" HTTP header in the response to a POST request granting a new VNF lifecycle operation. It can also be retrieved from the \"id\" attribute in the payload body of that response.\n",
+          "in": "path",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "get": {
+        "description": "Grant Lifecycle Operation\n\nThe GET method retrieves information about a specific grant by reading an individual grant resource.\n",
+        "parameters": [
+          {
+            "name": "Accept",
+            "description": "Content-Types that are acceptable for the response. Reference: IETF RFC 7231\n",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "Authorization",
+            "description": "The authorization token for the request. Reference: IETF RFC 7235\n",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK\nThe grant was read successfully. A representation of the \"individual grant\" resource shall be returned in the response body.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            },
+            "schema": {
+              "description": "This type represents a grant.\n",
+              "type": "object",
+              "required": [
+                "id",
+                "vnfInstanceId",
+                "vnfLcmOpOccId",
+                "_links"
+              ],
+              "properties": {
+                "id": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "vnfInstanceId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "vnfLcmOpOccId": {
+                  "description": "An identifier with the intention of being globally unique.\n",
+                  "type": "string"
+                },
+                "vimConnections": {
+                  "description": "Provides information regarding VIM connections that are approved to be used by the VNFM to allocate resources, and provides parameters of these VIM connections. The VNFM shall update the \" vimConnectionInfo\" attribute of the \"VnfInstance\" structure by adding unknown entries received in this attribute. This attribute is not intended for the modification of VimConnection entries passed earlier; for that, the VnfInfoModificationRequest structure shall be used. This attribute shall only be supported when VNF-related Resource Management in direct mode is applicable. In direct mode, this parameter shall be absent if the VIM information was configured to the VNFM in another way, present otherwise. This interface allows to signal the use of multiple VIMs per VNF. However, due to the partial support of this feature in the present release, it is recommended in the present document that the number of entries in the \"vims\" attribute in the Grant is not greater than 1.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type represents parameters to connect to a VIM for managing the resources of a VNF instance. This structure is used to convey VIM-related parameters over the Or-Vnfm interface. Additional parameters for a VIM may be configured into the VNFM by means outside the scope of the present document, and bound to the identifier of that VIM.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "vimType"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimType": {
+                        "description": "Discriminator for the different types of the VIM information. The value of this attribute determines the structure of the \"interfaceInfo\" and \"accessInfo\" attributes, based on the type of the VIM. The set of permitted values is expected to change over time as new types or versions of VIMs become available. The ETSI NFV registry of VIM-related information provides access to information about VimConnectionInfo definitions for various VIM types. The structure of the registry is defined in Annex C of SOL003.\n",
+                        "type": "string"
+                      },
+                      "interfaceInfo": {
+                        "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                        "type": "object"
+                      },
+                      "accessInfo": {
+                        "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                        "type": "object"
+                      },
+                      "extra": {
+                        "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                        "type": "object"
+                      }
+                    }
+                  }
+                },
+                "zones": {
+                  "description": "Identifies resource zones where the resources are approved to be allocated by the VNFM.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information regarding a resource zone.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "zoneId"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "zoneGroups": {
+                  "description": "Information about groups of resource zones that are related and that the NFVO has chosen to fulfil a zoneGroup constraint in the GrantVnfLifecycleOperation request. This information confirms that the NFVO has honoured the zoneGroup constraints that were passed as part of \"placementConstraints\" in the GrantRequest.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type provides information regarding a resource zone group. A resource zone group is a group of one or more related resource zones which can be used in resource placement constraints. To fulfil such constraint, the NFVO may decide to place a resource into any zone that belongs to a particular group. NOTE: A resource zone group can be used to support overflow from one resource zone into another, in case a particular deployment supports only non-elastic resource zones.\n",
+                    "type": "object",
+                    "required": [
+                      "zoneId"
+                    ],
+                    "properties": {
+                      "zoneId": {
+                        "description": "References of identifiers of \"ZoneInfo\" structures, each of which provides information about a resource zone that belongs to this group.\n",
+                        "type": "array",
+                        "items": {
+                          "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "computeReservationId": {
+                  "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                  "type": "string"
+                },
+                "networkReservationId": {
+                  "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                  "type": "string"
+                },
+                "storageReservationId": {
+                  "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                  "type": "string"
+                },
+                "addResources": {
+                  "description": "List of resources that are approved to be added, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type contains information about a Compute, storage or network resource whose addition/update/deletion was granted.\n",
+                    "type": "object",
+                    "required": [
+                      "resourceDefinitionId"
+                    ],
+                    "properties": {
+                      "resourceDefinitionId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "reservationId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "resourceGroupId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "tempResources": {
+                  "description": "List of resources that are approved to be temporarily instantiated during the runtime of the lifecycle operation, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type contains information about a Compute, storage or network resource whose addition/update/deletion was granted.\n",
+                    "type": "object",
+                    "required": [
+                      "resourceDefinitionId"
+                    ],
+                    "properties": {
+                      "resourceDefinitionId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "reservationId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "resourceGroupId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "removeResources": {
+                  "description": "List of resources that are approved to be removed, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type contains information about a Compute, storage or network resource whose addition/update/deletion was granted.\n",
+                    "type": "object",
+                    "required": [
+                      "resourceDefinitionId"
+                    ],
+                    "properties": {
+                      "resourceDefinitionId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "reservationId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "resourceGroupId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "updateResources": {
+                  "description": "List of resources that are approved to be modified, with one entry per resource.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type contains information about a Compute, storage or network resource whose addition/update/deletion was granted.\n",
+                    "type": "object",
+                    "required": [
+                      "resourceDefinitionId"
+                    ],
+                    "properties": {
+                      "resourceDefinitionId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "reservationId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "zoneId": {
+                        "description": "An identifier that is unique within a limited local scope other than above listed identifiers, such as within a complex data structure or within a request-response pair. Representation: string of variable length.\n",
+                        "type": "string"
+                      },
+                      "resourceGroupId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "vimAssets": {
+                  "description": "Information about assets for the VNF that are managed by the NFVO in the VIM, such as software images and virtualised compute resource flavours. This attribute is not intended for the modification of vimAssets entries passed earlier. Modification of VIM assets during the lifetime of a VNF instance is not necessary, since it is expected that all applicable assets have been on boarded into the VIM before the VNF is instantiated.\n",
+                  "type": "object",
+                  "properties": {
+                    "computeResourceFlavours": {
+                      "description": "Mappings between virtual compute descriptors defined in the VNFD and compute resource flavours managed in the VIM.\n",
+                      "type": "array",
+                      "items": {
+                        "description": "If the VIM requires the use of virtual compute resource flavours during compute resource instantiation, it is assumed that such flavours are selected or created by the NFVO based on the information in the virtual compute descriptor defined in the VNFD. This type defines the mapping between a virtual compute descriptor in the VNFD and the corresponding compute resource flavour managed by the NFVO in the VIM.\n",
+                        "type": "object",
+                        "required": [
+                          "vnfdVirtualComputeDescId",
+                          "vimFlavourId"
+                        ],
+                        "properties": {
+                          "vimConnectionId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceProviderId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "vnfdVirtualComputeDescId": {
+                            "description": "An identifier that is unique within a VNF descriptor.\n",
+                            "type": "string"
+                          },
+                          "vimFlavourId": {
+                            "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "softwareImages": {
+                      "description": "Mappings between software images defined in the VNFD and software images managed in the VIM.\n",
+                      "type": "array",
+                      "items": {
+                        "description": "This type contains a mapping between a software image definition the VNFD and the corresponding software image managed by the NFVO in the VIM which is needed during compute resource instantiation.\n",
+                        "type": "object",
+                        "required": [
+                          "vnfdSoftwareImageId",
+                          "vimSoftwareImageId"
+                        ],
+                        "properties": {
+                          "vimConnectionId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "resourceProviderId": {
+                            "description": "An identifier with the intention of being globally unique.\n",
+                            "type": "string"
+                          },
+                          "vnfdSoftwareImageId": {
+                            "description": "An identifier that is unique within a VNF descriptor.\n",
+                            "type": "string"
+                          },
+                          "vimSoftwareImageId": {
+                            "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "extVirtualLinks": {
+                  "description": "Information about external VLs to connect the VNF to. External and/or externally-managed internal VLs can be passed in VNF lifecycle management operation requests such as InstantiateVnf or ChangeVnfFlavor, and/or in the grant response. The NFVO may choose to override in the grant response external and/or externally-managed VL instances that have been passed previously in the associated VNF lifecycle management request, if the lifecycle management request has originated from the NFVO itself.\n",
+                  "type": "array",
+                  "items": {
+                    "description": "This type represents an external VL.\n",
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "resourceId",
+                      "extCps"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      },
+                      "extCps": {
+                        "description": "External CPs of the VNF to be connected to this external VL.\n",
+                        "type": "array",
+                        "items": {
+                          "description": "This type represents configuration information for external CPs created from a CPD.\n",
+                          "type": "object",
+                          "required": [
+                            "cpdId"
+                          ],
+                          "properties": {
+                            "cpdId": {
+                              "description": "An identifier that is unique within a VNF descriptor.\n",
+                              "type": "string"
+                            },
+                            "cpConfig": {
+                              "description": "List of instance data that need to be configured on the CP instances created from the respective CPD.\n",
+                              "type": "array",
+                              "items": {
+                                "description": "This type represents an externally provided link port or network address information per instance of an external connection point. In case a link port is provided, the VNFM shall use that link port when connecting the external CP to the external VL. In a link port is not provided, the VNFM shall create a link port on the external VL, and use that link port to connect the external CP to the external VL.\n",
+                                "type": "object",
+                                "properties": {
+                                  "cpInstanceId": {
+                                    "description": "An identifier that is unique for the respective type within a VNF instance, but may not be globally unique.\n",
+                                    "type": "string"
+                                  },
+                                  "linkPortId": {
+                                    "description": "An identifier with the intention of being globally unique.\n",
+                                    "type": "string"
+                                  },
+                                  "cpProtocolData": {
+                                    "description": "Parameters for configuring the network protocols on the link port that connects the CP to a VL.  The following conditions apply to the attributes \"linkPortId\" and \"cpProtocolData\":  * The \"linkPortId\" and \"cpProtocolData\" attributes shall both be  absent for the deletion of an existing external CP instance\n  addressed by cpInstanceId. \n* At least one of these attributes shall be present for a  to-be-created external CP instance or an existing external\n  CP instance.\n* If the \"linkPortId\" attribute is absent, the VNFM shall create a  link port.\n* If the \"cpProtocolData\" attribute is absent, the \"linkPortId\"  attribute shall be provided referencing a pre-created link port,\n  and the VNFM can use means outside the scope of the present\n  document to obtain the pre-configured address information for the\n  connection point from the resource representing the link port.\n* If both \"cpProtocolData\" and \"linkportId\" are provided, the API  consumer shall ensure that the cpProtocolData can be used with the\n  pre-created link port referenced by \"linkPortId\".\n",
+                                    "type": "array",
+                                    "items": {
+                                      "description": "This type represents network protocol data.\n",
+                                      "type": "object",
+                                      "required": [
+                                        "layerProtocol"
+                                      ],
+                                      "properties": {
+                                        "layerProtocol": {
+                                          "description": "Identifier of layer(s) and protocol(s). This attribute allows to signal the addition of further types of layer and protocol in future versions of the present document in a backwards-compatible way. In the current version of the present document, only IP over Ethernet is supported.\n",
+                                          "type": "string",
+                                          "enum": [
+                                            "IP_OVER_ETHERNET"
+                                          ]
+                                        },
+                                        "ipOverEthernet": {
+                                          "description": "This type represents network address data for IP over Ethernet.\n",
+                                          "type": "object",
+                                          "properties": {
+                                            "macAddress": {
+                                              "description": "A MAC address. Representation: string that consists of groups of two hexadecimal digits, separated by hyphens or colons.\n",
+                                              "type": "string",
+                                              "format": "MAC"
+                                            },
+                                            "ipAddresses": {
+                                              "description": "List of IP addresses to assign to the CP instance. Each entry represents IP address data for fixed or dynamic IP address assignment per subnet. If this attribute is not present, no IP address shall be assigned.\n",
+                                              "type": "array",
+                                              "items": {
+                                                "type": "object",
+                                                "required": [
+                                                  "type"
+                                                ],
+                                                "properties": {
+                                                  "type": {
+                                                    "description": "The type of the IP addresses. Permitted values: IPV4, IPV6.\n",
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "IPV4",
+                                                      "IPV6"
+                                                    ]
+                                                  },
+                                                  "fixedAddresses": {
+                                                    "description": "Fixed addresses to assign (from the subnet defined by \"subnetId\" if provided). Exactly one of \"fixedAddresses\", \"numDynamicAddresses\" or \"ipAddressRange\" shall be present.\n",
+                                                    "type": "array",
+                                                    "items": {
+                                                      "description": "An IPV4 or IPV6 address. Representation: In case of an IPV4 address, string that consists of four decimal integers separated by dots, each integer ranging from 0 to 255. In case of an IPV6 address, string that  consists of groups of zero to four hexadecimal digits, separated by colons.\n",
+                                                      "type": "string",
+                                                      "format": "IP"
+                                                    }
+                                                  },
+                                                  "numDynamicAddresses": {
+                                                    "description": "Number of dynamic addresses to assign (from the subnet defined by \"subnetId\" if provided). Exactly one of \"fixedAddresses\", \"numDynamicAddresses\" or \"ipAddressRange\" shall be present.\n",
+                                                    "type": "integer"
+                                                  },
+                                                  "addressRange": {
+                                                    "description": "An IP address range to be used, e.g. in case of egress connections. In case this attribute is present, IP addresses from the range will be used.\n",
+                                                    "type": "object",
+                                                    "required": [
+                                                      "minAddress",
+                                                      "maxAddress"
+                                                    ],
+                                                    "properties": {
+                                                      "minAddress": {
+                                                        "description": "An IPV4 or IPV6 address. Representation: In case of an IPV4 address, string that consists of four decimal integers separated by dots, each integer ranging from 0 to 255. In case of an IPV6 address, string that  consists of groups of zero to four hexadecimal digits, separated by colons.\n",
+                                                        "type": "string",
+                                                        "format": "IP"
+                                                      },
+                                                      "maxAddress": {
+                                                        "description": "An IPV4 or IPV6 address. Representation: In case of an IPV4 address, string that consists of four decimal integers separated by dots, each integer ranging from 0 to 255. In case of an IPV6 address, string that  consists of groups of zero to four hexadecimal digits, separated by colons.\n",
+                                                        "type": "string",
+                                                        "format": "IP"
+                                                      }
+                                                    }
+                                                  },
+                                                  "subnetId": {
+                                                    "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                                                    "type": "string"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      "extLinkPorts": {
+                        "description": "Externally provided link ports to be used to connect external connection points to this external VL. If this attribute is not present, the VNFM shall create the link ports on the external VL.\n",
+                        "type": "array",
+                        "items": {
+                          "description": "This type represents an externally provided link port to be used to connect an external connection point to an external VL.\n",
+                          "type": "object",
+                          "required": [
+                            "id",
+                            "resourceHandle"
+                          ],
+                          "properties": {
+                            "id": {
+                              "description": "An identifier with the intention of being globally unique.\n",
+                              "type": "string"
+                            },
+                            "resourceHandle": {
+                              "required": [
+                                "vimConnectionId",
+                                "resourceId"
+                              ],
+                              "type": "object",
+                              "description": "This type represents the information that allows addressing a virtualised resource that is used by a VNF instance. Information about the resource is available from the VIM.\n",
+                              "properties": {
+                                "vimConnectionId": {
+                                  "description": "An identifier with the intention of being globally unique.\n",
+                                  "type": "string"
+                                },
+                                "resourceProviderId": {
+                                  "description": "An identifier with the intention of being globally unique.\n",
+                                  "type": "string"
+                                },
+                                "resourceId": {
+                                  "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                                  "type": "string"
+                                },
+                                "vimLevelResourceType": {
+                                  "description": "Type of the resource in the scope of the VIM or the resource provider.\n",
+                                  "type": "string"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "extManagedVirtualLinks": {
+                  "description": "Information about internal VLs that are managed by other entities than the VNFM. The indication of externally-managed internal VLs is needed in case networks have been pre-configured for use with certain VNFs, for instance to ensure that these networks have certain properties such as security or acceleration features, or to address particular network topologies. The present document assumes that externally-managed internal VLs are managed by the NFVO and created towards the VIM. External and/or externally-managed internal VLs can be passed in VNF lifecycle management operation requests such as InstantiateVnf or ChangeVnfFlavor, and/or in the grant response. The NFVO may choose to override in the grant response external and/or externally-managed VL instances that have been passed previously in the associated VNF lifecycle management request, if the lifecycle management request has originated from the NFVO itself.\n",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "virtualLinkDescId",
+                      "resourceId"
+                    ],
+                    "properties": {
+                      "id": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "virtualLinkDescId": {
+                        "description": "An identifier that is unique within a VNF descriptor.\n",
+                        "type": "string"
+                      },
+                      "vimConnectionId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceProviderId": {
+                        "description": "An identifier with the intention of being globally unique.\n",
+                        "type": "string"
+                      },
+                      "resourceId": {
+                        "description": "An identifier maintained by the VIM or other resource provider. It is expected to be unique within the VIM instance.\n",
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "additionalParams": {
+                  "description": "This type represents a list of key-value pairs. The order of the pairs in the list is not significant. In JSON, a set of key- value pairs is represented as an object. It shall comply with the provisions  defined in clause 4 of IETF RFC 7159.\n",
+                  "type": "object"
+                },
+                "_links": {
+                  "description": "Links to resources related to this resource.\n",
+                  "type": "object",
+                  "required": [
+                    "self",
+                    "vnfLcmOpOcc",
+                    "vnfInstance"
+                  ],
+                  "properties": {
+                    "self": {
+                      "description": "This type represents a link to a resource.\n",
+                      "type": "object",
+                      "required": [
+                        "href"
+                      ],
+                      "properties": {
+                        "href": {
+                          "description": "URI of the referenced resource.\n",
+                          "type": "string",
+                          "format": "url"
+                        }
+                      }
+                    },
+                    "vnfLcmOpOcc": {
+                      "description": "This type represents a link to a resource.\n",
+                      "type": "object",
+                      "required": [
+                        "href"
+                      ],
+                      "properties": {
+                        "href": {
+                          "description": "URI of the referenced resource.\n",
+                          "type": "string",
+                          "format": "url"
+                        }
+                      }
+                    },
+                    "vnfInstance": {
+                      "description": "This type represents a link to a resource.\n",
+                      "type": "object",
+                      "required": [
+                        "href"
+                      ],
+                      "properties": {
+                        "href": {
+                          "description": "URI of the referenced resource.\n",
+                          "type": "string",
+                          "format": "url"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "Accepted\nThe process of creating the grant is ongoing, no grant is available yet. The response body shall be empty.\n",
+            "headers": {
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request\nIf the request is malformed or syntactically incorrect (e.g. if the request URI contains incorrect query parameters or a syntactically incorrect payload body), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem.\n ---\n\nIf the request contains a malformed access token, the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n ---\n\nIf there is an application error related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond with this response code.The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized\nIf the request contains no access token even though one is required, or if the request contains an authorization token that is invalid (e.g. expired or revoked), the API producer should respond with this response. The details of the error shall be returned in the WWW-Authenticate HTTP header, as defined in IETF RFC 6750 and IETF RFC 7235. The ProblemDetails structure may be provided.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden\nThe grant was rejected. A ProblemDetails structure shall be included in the response to provide more details about the rejection in the \"details\" attribute.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              },
+              "WWW-Authenticate": {
+                "description": "Challenge if the corresponding HTTP request has not provided authorization, or error details if the corresponding HTTP request has provided an invalid authorization token.\n",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 0
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found\nIf the API producer did not find a current representation for the resource addressed by the URI passed in the request, or is not willing to disclose that one exists, it shall respond with this response code.  The \"ProblemDetails\" structure may be provided, including in the \"detail\" attribute information about the source of the problem, e.g. a wrong resource URI variable.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method Not Allowed\nIf a particular HTTP method is not supported for a particular resource, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable\nIf the \"Accept\" HTTP header does not contain at least one name of a content type that is acceptable to the API producer, the API producer shall respond with this response code. The \"ProblemDetails\" structure may be omitted in that case.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "416": {
+            "description": "Requested Range Not Satisfiable\nThis code is returned if the requested byte range in the Range HTTP header is not present in the requested resource.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity\nIf the payload body of a request contains syntactically correct data (e.g. well-formed JSON) but the data cannot be processed (e.g. because it fails validation against a schema), the API producer shall respond with this response code. The \"ProblemDetails\" structure shall be provided, and should include in the \"detail\" attribute more information about the source of the problem. NOTE 2: This error response code is only applicable for methods that have a request body.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error\nIf there is an application error not related to the client's input that cannot be easily mapped to any other HTTP response code (\"catch all error\"), the API producer shall respond withthis response code. The \"ProblemDetails\" structure shall be provided, and shall include in the \"detail\" attribute more information about the source of the problem.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable\nIf the API producer encounters an internal overload situation of itself or of a system it relies on, it should respond with this response code, following the provisions in IETF RFC 7231 [13] for the use of the \"Retry-After\" HTTP header and for the alternative to refuse the connection. The \"ProblemDetails\" structure may be omitted.\n",
+            "headers": {
+              "Content-Type": {
+                "description": "The MIME type of the body of the response.",
+                "type": "string",
+                "maximum": 1,
+                "minimum": 1
+              }
+            },
+            "schema": {
+              "description": "The definition of the general \"ProblemDetails\" data structure from IETF RFC 7807 [19] is reproduced inthis structure. Compared to the general framework defined in IETF RFC 7807 [19], the \"status\" and \"detail\" attributes are mandated to be included by the present document, to ensure that the response contains additional textual information about an error. IETF RFC 7807 [19] foresees extensibility of the \"ProblemDetails\" type. It is possible that particular APIs in the present document, or particular implementations, define extensions to define additional attributes that provide more information about the error. The description column only provides some explanation of the meaning to Facilitate understanding of the design. For a full description, see IETF RFC 7807 [19].\n",
+              "type": "object",
+              "required": [
+                "status",
+                "detail"
+              ],
+              "properties": {
+                "type": {
+                  "description": "A URI reference according to IETF RFC 3986 [5] that identifies the problem type. It is encouraged that the URI provides human-readable documentation for the problem (e.g. using HTML) when dereferenced. When this member is not present, its value is assumed to be \"about:blank\".\n",
+                  "type": "string",
+                  "format": "URI"
+                },
+                "title": {
+                  "description": "A short, human-readable summary of the problem type. It should not change from occurrence to occurrence of the problem, except for purposes of localization. If type is given and other than \"about:blank\", this attribute shall also be provided. A short, human-readable summary of the problem type.  It SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization (e.g., using proactive content negotiation; see [RFC7231], Section 3.4).\n",
+                  "type": "string"
+                },
+                "status": {
+                  "description": "The HTTP status code for this occurrence of the problem. The HTTP status code ([RFC7231], Section 6) generated by the origin server for this occurrence of the problem.\n",
+                  "type": "integer"
+                },
+                "detail": {
+                  "description": "A human-readable explanation specific to this occurrence of the problem.\n",
+                  "type": "string"
+                },
+                "instance": {
+                  "description": "A URI reference that identifies the specific occurrence of the problem. It may yield further information if dereferenced.\n",
+                  "type": "string",
+                  "format": "URI"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

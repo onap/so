@@ -25,8 +25,8 @@ import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.vnfmadapter.v1.model.Tenant;
 
 /**
  * Provides methods for invoking REST calls to AAI.

@@ -31,13 +31,14 @@ import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
-import org.onap.aai.domain.yang.Tenant;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.TenantNotFoundException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.vnfmadapter.v1.model.Tenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,8 +125,11 @@ public class AaiHelper {
         final String cloudOwner = getRelationshipKey(relationship, "cloud-region.cloud-owner");
         final String cloudRegion = getRelationshipKey(relationship, "cloud-region.cloud-region-id");
         final String tenantId = getRelationshipKey(relationship, "tenant.tenant-id");
-        return cloudOwner == null || cloudRegion == null || tenantId == null ? null
-                : aaiServiceProvider.invokeGetTenant(cloudOwner, cloudRegion, tenantId);
+        if (cloudOwner == null || cloudRegion == null || tenantId == null) {
+            throw new TenantNotFoundException("No matching Tenant found in AAI. VNFID: " + vnf.getVnfId());
+        } else {
+            return new Tenant().cloudOwner(cloudOwner).regionName(cloudRegion).tenantId(tenantId);
+        }
     }
 
     private Relationship getRelationship(final GenericVnf vnf, final String relationshipRelatedToValue) {
@@ -233,5 +237,4 @@ public class AaiHelper {
     public OamIpAddressSource getOamIpAddressSource(final String vnfId) {
         return mapOfVnfIdToOamIpAddressHolder.get(vnfId);
     }
-
 }

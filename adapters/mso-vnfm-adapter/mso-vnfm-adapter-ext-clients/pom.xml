@@ -15,6 +15,9 @@
         <okhttp-version>2.7.5</okhttp-version>
         <gson-fire-version>1.8.2</gson-fire-version>
         <threetenbp-version>1.3.5</threetenbp-version>
+        <retrofit2-version>2.4.0</retrofit2-version>
+        <okhttp3-version>3.14.0</okhttp3-version>
+        <oltu-version>1.0.1</oltu-version>
     </properties>
     <name>mso-vnfm-adapter-ext-clients</name>
     <description>Clients for the vnfm adpater to use towards REST endpoints which are external to the VNFM adapter/</description>
@@ -68,6 +71,27 @@
                             </configOptions>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>sol003-vnf-grant-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${basedir}/src/main/resources/SOL003-VNFLifecycleOperationGranting-API.json
+                            </inputSpec>
+                            <language>java</language>
+                            <library>retrofit2</library>
+                            <output>${project.build.directory}/generated-sources/sol003-vnf-grant</output>
+                            <generateApis>false</generateApis>
+                            <modelPackage>org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model</modelPackage>
+                            <configOptions>
+                                <generateSupportingFiles>false</generateSupportingFiles>
+                                <sourceFolder>src/gen/java/main</sourceFolder>
+                                <withXml>true</withXml>
+                                <useRxJava2>true</useRxJava2>
+                            </configOptions>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
@@ -103,5 +127,108 @@
             <artifactId>threetenbp</artifactId>
             <version>${threetenbp-version}</version>
         </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <!-- the test code is generated into the main source code :( -->
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-gson</artifactId>
+            <version>${retrofit2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>${retrofit2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-scalars</artifactId>
+            <version>${retrofit2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>adapter-rxjava2</artifactId>
+            <version>${retrofit2-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>${okhttp3-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>${okhttp-version}</version>
+        </dependency>
+
+        <!--    Will clean these dependencies before commit    From here-->
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.client</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.common</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.client</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.httpclient4</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.dynamicreg.client</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.dynamicreg.common</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.authzserver</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.resourceserver</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.resourceserver-filter</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.dynamicreg.server</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.oltu.oauth2</groupId>
+            <artifactId>org.apache.oltu.oauth2.jwt</artifactId>
+            <version>${oltu-version}</version>
+        </dependency>
+        <!--        To here-->
+
+
+
     </dependencies>
 </project>
