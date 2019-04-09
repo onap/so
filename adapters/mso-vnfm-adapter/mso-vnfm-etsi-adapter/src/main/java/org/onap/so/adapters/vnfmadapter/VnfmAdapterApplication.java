@@ -20,11 +20,11 @@
 
 package org.onap.so.adapters.vnfmadapter;
 
-import static org.slf4j.LoggerFactory.getLogger;
 import org.onap.so.adapters.vnfmadapter.rest.VnfmAdapterController;
 import org.slf4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * The spring boot application for the VNFM (Virtual Network Function Manager) Adapter.

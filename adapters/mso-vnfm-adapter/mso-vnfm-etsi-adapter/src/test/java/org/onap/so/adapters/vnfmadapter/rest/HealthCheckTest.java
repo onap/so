@@ -20,8 +20,6 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
-import static org.junit.Assert.assertEquals;
-import java.net.URI;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
@@ -33,6 +31,8 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
+import java.net.URI;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)

@@ -20,18 +20,7 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import org.onap.aai.domain.yang.EsrSystemInfo;
-import org.onap.aai.domain.yang.EsrSystemInfoList;
-import org.onap.aai.domain.yang.EsrVnfm;
-import org.onap.aai.domain.yang.EsrVnfmList;
-import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.Relationship;
-import org.onap.aai.domain.yang.RelationshipData;
-import org.onap.aai.domain.yang.RelationshipList;
-import org.onap.aai.domain.yang.Vserver;
+import org.onap.aai.domain.yang.*;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.TenantNotFoundException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
@@ -43,6 +32,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides helper methods for interactions with AAI.
@@ -72,7 +64,6 @@ public class AaiHelper {
         final RelationshipList vnfmRelationshiplist = vnf.getRelationshipList();
         vnfmRelationshiplist.getRelationship().add(createRelationshipToVnfm(vnfmId));
 
-        aaiServiceProvider.invokePutGenericVnf(vnf);
     }
 
     private Relationship createRelationshipToVnfm(final String vnfmId) {
@@ -236,5 +227,29 @@ public class AaiHelper {
 
     public OamIpAddressSource getOamIpAddressSource(final String vnfId) {
         return mapOfVnfIdToOamIpAddressHolder.get(vnfId);
+    }
+
+    /**
+     * Add a relationship to the given tenant to the given VNF.
+     *
+     * @param vnf the generic vnf
+     * @param tenant the Tenant
+     */
+
+    public void addRelationshipFromGenericVnfToTenant(final GenericVnf vnf, final Tenant tenant) {
+        if (vnf.getRelationshipList() == null) {
+            vnf.setRelationshipList(new RelationshipList());
+        }
+        final RelationshipList vnfmRelationshiplist = vnf.getRelationshipList();
+        vnfmRelationshiplist.getRelationship().add(createRelationshipToTenant(tenant));
+    }
+
+    private Relationship createRelationshipToTenant(final Tenant tenant) {
+        final Relationship relationship = new Relationship();
+        relationship.setRelatedTo("tenant");
+        relationship.setRelatedLink("/aai/" + AAIVersion.LATEST + AAIUriFactory.createResourceUri(AAIObjectType.TENANT,
+                tenant.getCloudOwner(), tenant.getRegionName(), tenant.getTenantId()).build().toString());
+        relationship.getRelationshipData().add(createRelationshipData("tenant.tenant-id", tenant.getTenantId()));
+        return relationship;
     }
 }

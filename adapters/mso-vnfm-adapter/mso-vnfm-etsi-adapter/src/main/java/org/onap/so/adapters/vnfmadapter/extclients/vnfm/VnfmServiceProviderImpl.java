@@ -21,12 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.*;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmRequestFailureException;
 import org.onap.so.rest.service.HttpRestServiceProvider;
 import org.slf4j.Logger;
@@ -140,6 +135,19 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     public Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId) {
         final String url = urlProvider.getOperationUrl(vnfmId, operationId);
         return httpServiceProvider.get(url, InlineResponse200.class);
+    }
+
+    @Override
+    public Optional<InlineResponse201> createVnf(final String vnfmId, final CreateVnfRequest createVnfRequest) {
+        final String url = urlProvider.getCreationUrl(vnfmId);
+        try {
+            return httpServiceProvider.post(createVnfRequest, url, InlineResponse201.class);
+        } catch (final Exception exception) {
+            final String errorMessage =
+                    "Create request to vnfm:" + vnfmId + " resulted in exception" + createVnfRequest;
+            logger.error(errorMessage, exception);
+            throw new VnfmRequestFailureException(errorMessage, exception);
+        }
     }
 
 }

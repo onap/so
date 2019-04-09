@@ -20,27 +20,19 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
-import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
-import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.AccessInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.InterfaceInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.VimCredentials;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201VimConnections;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.*;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthentication.AuthTypeEnum;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsAuthenticationParamsBasic;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilter.NotificationTypesEnum;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilterVnfInstanceSubscriptionFilter;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.VnfInstancesvnfInstanceIdinstantiateExtVirtualLinks;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.VnfInstancesvnfInstanceIdinstantiateVimConnectionInfo;
 import org.onap.so.security.WebSecurityConfig;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.ExternalVirtualLink;
@@ -50,10 +42,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
+import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
 
 /**
  * Provides helper methods for interactions with VNFM.
@@ -81,10 +74,10 @@ public class VnfmHelper {
      * @param tenant the tenant the request is to be fulfilled on
      * @param createVnfRequest the request received by the VNFM adapter
      */
-    public InstantiateVnfRequest createInstantiateRequest(final Tenant tenant,
-            final CreateVnfRequest createVnfRequest) {
+    public InstantiateVnfRequest createInstantiateRequest(final Tenant tenant, final CreateVnfRequest createVnfRequest,
+            final String flavourId) {
         final InstantiateVnfRequest instantiateVnfRequest = new InstantiateVnfRequest();
-        instantiateVnfRequest.setFlavourId(getFlavourId());
+        instantiateVnfRequest.setFlavourId(flavourId);
         instantiateVnfRequest.setVimConnectionInfo(getVimConnectionInfos(tenant));
         instantiateVnfRequest
                 .setAdditionalParams(getAdditionalParametersAsJsonObject(createVnfRequest.getAdditionalParams()));
@@ -170,7 +163,6 @@ public class VnfmHelper {
      * Create a {@link LccnSubscriptionRequest} to send in an notification subscription request to a VNFM.
      *
      * @param the ID of the VNF notifications are required for
-     *
      * @return the request
      */
     public LccnSubscriptionRequest createNotificationSubscriptionRequest(final String vnfId) {

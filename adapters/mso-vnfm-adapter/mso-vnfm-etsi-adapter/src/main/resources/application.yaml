@@ -14,15 +14,21 @@
 server:
   port: 9092
   tomcat:
-      max-threads: 50
-      
+    max-threads: 50
+
 mso:
   key: 07a7159d3bf51a0e53be7a8f89699be7
-  
+
 aai:
   auth: 2A11B07DB6214A839394AA1EC5844695F5114FC407FF5422625FB00175A3DCB8A1FF745F22867EFA72D5369D599BBD88DA8BED4233CF5586
   version: v15
   endpoint: https://aai.onap:8443
+
+sdc:
+  username: sdcUser
+  password: sdcPassword
+  key: adadadadad
+  endpoint: http://sdc.onap/1234A
 
 #Actuator
 management:
