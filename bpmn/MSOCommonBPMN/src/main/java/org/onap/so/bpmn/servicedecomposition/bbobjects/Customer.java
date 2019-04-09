@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Id;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -46,6 +47,10 @@ public class Customer implements Serializable, ShallowCopy<Customer> {
     private String subscriberCommonSiteId;
     @JsonProperty("service-subscription")
     private ServiceSubscription serviceSubscription;
+    @JsonProperty("customer-latitude")
+    private String customerLatitude;
+    @JsonProperty("customer-longitude")
+    private String customerLongitude;
     @JsonProperty("vpn-bindings")
     private List<VpnBinding> vpnBindings = new ArrayList<>();
 
@@ -87,6 +92,22 @@ public class Customer implements Serializable, ShallowCopy<Customer> {
 
     public void setServiceSubscription(ServiceSubscription serviceSubscription) {
         this.serviceSubscription = serviceSubscription;
+    }
+
+    public String getCustomerLatitude() {
+        return customerLatitude;
+    }
+
+    public void setCustomerLatitude(String customerLatitude) {
+        this.customerLatitude = customerLatitude;
+    }
+
+    public String getCustomerLongitude() {
+        return customerLongitude;
+    }
+
+    public void setCustomerLongitude(String customerLongitude) {
+        this.customerLongitude = customerLongitude;
     }
 
     public List<VpnBinding> getVpnBindings() {
