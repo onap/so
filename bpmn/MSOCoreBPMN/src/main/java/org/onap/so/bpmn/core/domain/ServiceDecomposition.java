@@ -54,7 +54,6 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
     private String serviceRole;
     private ServiceInstance serviceInstance;
     private Request request;
-    private Customer customer;
     private String callbackURN;
     private String sdncVersion;
     @JsonProperty("project")
@@ -215,14 +214,6 @@ public class ServiceDecomposition extends JsonWrapper implements Serializable {
 
     public void setRequest(Request request) {
         this.request = request;
-    }
-
-    public Customer getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
     }
 
     public String getCallbackURN() {

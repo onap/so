@@ -89,7 +89,7 @@ public class CamundaClientTest {
         environment.setProperty("mso.camundaUR", "yourValue1");
         environment.setProperty("mso.camundaAuth",
                 "E8E19DD16CC90D2E458E8FF9A884CC0452F8F3EB8E321F96038DE38D5C1B0B02DFAE00B88E2CF6E2A4101AB2C011FC161212EE");
-        environment.setProperty("org.onap.so.adapters.network.encryptionKey", "aa3871669d893c7fb8abbcda31b88b4f");
+        environment.setProperty("mso.msoKey", "aa3871669d893c7fb8abbcda31b88b4f");
 
 
         RequestClientFactory reqClientFactory = new RequestClientFactory();
