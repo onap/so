@@ -20,24 +20,14 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
-import java.util.Optional;
+import com.google.gson.Gson;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.hamcrest.MockitoHamcrest;
-import org.onap.aai.domain.yang.EsrSystemInfo;
-import org.onap.aai.domain.yang.EsrSystemInfoList;
-import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.Relationship;
-import org.onap.aai.domain.yang.RelationshipData;
-import org.onap.aai.domain.yang.RelationshipList;
+import org.onap.aai.domain.yang.*;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantRequest;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantRequest.OperationEnum;
@@ -59,7 +49,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import com.google.gson.Gson;
+import java.util.Optional;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)

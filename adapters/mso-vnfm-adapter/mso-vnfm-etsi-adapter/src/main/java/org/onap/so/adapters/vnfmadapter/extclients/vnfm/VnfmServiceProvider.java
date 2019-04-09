@@ -21,12 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.*;
 
 /**
  * Provides methods for invoking REST calls to a VNFM.
@@ -85,5 +80,14 @@ public interface VnfmServiceProvider {
      * @return the operation from the VNFM
      */
     Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId);
+
+    /**
+     * Invoke a create request to a VNFM
+     *
+     * @param vnfmId the id of the VNFM in AAI
+     * @param createVnfRequest the parameters for creating a VNF
+     * @return the newly created VNF
+     */
+    Optional<InlineResponse201> createVnf(final String vnfmId, final CreateVnfRequest createVnfRequest);
 
 }

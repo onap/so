@@ -20,12 +20,7 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
-import java.util.List;
-import org.onap.aai.domain.yang.EsrSystemInfoList;
-import org.onap.aai.domain.yang.EsrVnfm;
-import org.onap.aai.domain.yang.EsrVnfmList;
-import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.Vserver;
+import org.onap.aai.domain.yang.*;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.vnfmadapter.v1.model.Tenant;
@@ -33,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 @Service
 public class AaiServiceProviderImpl implements AaiServiceProvider {

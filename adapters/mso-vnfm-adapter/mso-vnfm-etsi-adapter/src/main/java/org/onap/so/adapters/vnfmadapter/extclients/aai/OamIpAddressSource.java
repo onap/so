@@ -20,8 +20,6 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
-import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource.OamIpAddressType;
-
 /**
  * Represents the source of the value to use as the AAI OAM IP address of a VNF
  */

@@ -20,21 +20,7 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import com.google.gson.Gson;
-import java.net.URI;
-import java.util.Optional;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -42,28 +28,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.hamcrest.MockitoHamcrest;
-import org.onap.aai.domain.yang.EsrSystemInfo;
-import org.onap.aai.domain.yang.EsrSystemInfoList;
-import org.onap.aai.domain.yang.EsrVnfm;
-import org.onap.aai.domain.yang.EsrVnfmList;
-import org.onap.aai.domain.yang.GenericVnf;
-import org.onap.aai.domain.yang.Relationship;
-import org.onap.aai.domain.yang.RelationshipData;
-import org.onap.aai.domain.yang.RelationshipList;
+import org.onap.aai.domain.yang.*;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.SdcPackageProvider;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.*;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
-import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
-import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
-import org.onap.vnfmadapter.v1.model.OperationEnum;
-import org.onap.vnfmadapter.v1.model.OperationStateEnum;
-import org.onap.vnfmadapter.v1.model.QueryJobResponse;
 import org.onap.vnfmadapter.v1.model.Tenant;
+import org.onap.vnfmadapter.v1.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -82,6 +56,16 @@ import org.springframework.web.client.RestTemplate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZoneOffset;
+import java.net.URI;
+import java.util.Optional;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -107,6 +91,9 @@ public class VnfmAdapterControllerTest {
     @MockBean
     AAIResourcesClient aaiResourcesClient;
 
+    @MockBean
+    SdcPackageProvider sdcPackageProvider;
+
     @Autowired
     VnfmAdapterController controller;
     Gson gson = new Gson();
@@ -128,11 +115,16 @@ public class VnfmAdapterControllerTest {
         final String expectedsubscriptionRequest =
                 "{\"filter\":{\"vnfInstanceSubscriptionFilter\":{\"vnfInstanceIds\":[\"vnfId\"]},\"notificationTypes\":[\"VnfLcmOperationOccurrenceNotification\"]},\"callbackUri\":\"https://so-vnfm-adapter.onap:30406/so/vnfm-adapter/v1/lcn/VnfLcmOperationOccurrenceNotification\",\"authentication\":{\"authType\":[\"BASIC\"],\"paramsBasic\":{\"userName\":\"vnfm\",\"password\":\"$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke\"}}}";
         final InlineResponse2001 subscriptionResponse = new InlineResponse2001();
+
+        final InlineResponse201 createResponse = createCreateResponse();
+        mockRestServer.expect(requestTo("http://vnfm2:8080/vnf_instances"))
+                .andRespond(withSuccess(gson.toJson(createResponse), MediaType.APPLICATION_JSON));
+
         mockRestServer.expect(requestTo("http://vnfm2:8080/subscriptions"))
                 .andExpect(content().json(expectedsubscriptionRequest))
                 .andRespond(withSuccess(gson.toJson(subscriptionResponse), MediaType.APPLICATION_JSON));
 
-        mockRestServer.expect(requestTo("http://dummy.value/until/create/implememted/vnfId/instantiate"))
+        mockRestServer.expect(requestTo("http://vnfm2:8080/vnf_instances/vnfId/instantiate"))
                 .andRespond(withStatus(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON)
                         .location(new URI("http://vnfm2:8080/vnf_lcm_op_occs/123456")));
 
@@ -163,12 +155,20 @@ public class VnfmAdapterControllerTest {
         assertEquals("/network/generic-vnfs/generic-vnf/myTestVnfId", uriArgument.getValue().build().toString());
 
         assertEquals("myTestVnfId", genericVnfArgument.getValue().getVnfId());
-        assertEquals(1, genericVnfArgument.getValue().getRelationshipList().getRelationship().size());
-        final Relationship createdRelationship =
+        assertEquals(2, genericVnfArgument.getValue().getRelationshipList().getRelationship().size());
+        final Relationship vnfmRelationship =
                 genericVnfArgument.getValue().getRelationshipList().getRelationship().get(0);
-        assertEquals("esr-vnfm", createdRelationship.getRelatedTo());
-        assertEquals("tosca.relationships.DependsOn", createdRelationship.getRelationshipLabel());
-        assertEquals("/aai/v15/external-system/esr-vnfm-list/esr-vnfm/vnfm2", createdRelationship.getRelatedLink());
+        assertEquals("esr-vnfm", vnfmRelationship.getRelatedTo());
+        assertEquals("tosca.relationships.DependsOn", vnfmRelationship.getRelationshipLabel());
+        assertEquals("/aai/v15/external-system/esr-vnfm-list/esr-vnfm/vnfm2", vnfmRelationship.getRelatedLink());
+
+        final Relationship tenantRelationship =
+                genericVnfArgument.getValue().getRelationshipList().getRelationship().get(1);
+        assertEquals("tenant", tenantRelationship.getRelatedTo());
+        assertEquals(
+                "/aai/v15/cloud-infrastructure/cloud-regions/cloud-region/myTestCloudOwner/myTestRegion/tenants/tenant/myTestTenantId",
+                tenantRelationship.getRelatedLink());
+
 
         // check the job status
 
@@ -223,9 +223,13 @@ public class VnfmAdapterControllerTest {
         setUpVnfmsInMockAai();
         setUpVimInMockAai();
 
+        final InlineResponse201 createResponse = createCreateResponse();
+        mockRestServer.expect(requestTo("http://vnfm2:8080/vnf_instances"))
+                .andRespond(withSuccess(gson.toJson(createResponse), MediaType.APPLICATION_JSON));
+
         mockRestServer.expect(requestTo("http://vnfm2:8080/subscriptions")).andRespond(withBadRequest());
 
-        mockRestServer.expect(requestTo("http://dummy.value/until/create/implememted/vnfId/instantiate"))
+        mockRestServer.expect(requestTo("http://vnfm2:8080/vnf_instances/vnfId/instantiate"))
                 .andRespond(withStatus(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON)
                         .location(new URI("http://vnfm2:8080/vnf_lcm_op_occs/123456")));
 
@@ -468,6 +472,19 @@ public class VnfmAdapterControllerTest {
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher("/cloud-infrastructure/cloud-regions/cloud-region/"
                         + CLOUD_OWNER + "/" + REGION + "/esr-system-info-list")));
     }
+
+    private InlineResponse201 createCreateResponse() {
+        final InlineResponse201 createResponse = new InlineResponse201();
+        createResponse.setVnfdId("myTestVnfd");
+        final InlineResponse201Links links = new InlineResponse201Links();
+        final InlineResponse201LinksSelf self = new InlineResponse201LinksSelf();
+        self.setHref("http://vnfm2:8080/vnf_instances/vnfId");
+        links.setSelf(self);
+        createResponse.setLinks(links);
+        createResponse.setId("vnfId");
+        return createResponse;
+    }
+
 
     private class AaiResourceUriMatcher extends BaseMatcher<AAIResourceUri> {
 
