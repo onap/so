@@ -20,8 +20,6 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
-import static org.slf4j.LoggerFactory.getLogger;
-import java.net.URI;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
@@ -30,6 +28,8 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
+import java.net.URI;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Provides URLs for REST calls to a VNFM.
@@ -68,7 +68,15 @@ public class VnfmUrlProvider {
     public String getSubscriptionsUrl(final String vnfmId) {
         final String url =
                 UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("/subscriptions").build().toString();
-        logger.debug("getOperationUrl:" + url);
+        logger.debug("getSubscriptionUrl:" + url);
+
+        return url;
+    }
+
+    public String getCreationUrl(final String vnfmId) {
+        final String url =
+                UriComponentsBuilder.fromUri(getBaseUri(vnfmId)).pathSegment("/vnf_instances").build().toString();
+        logger.debug("getCreationUrl:" + url);
 
         return url;
     }

@@ -21,9 +21,9 @@
 package org.onap.so.adapters.vnfmadapter.lifecycle;
 
 import com.google.common.base.Optional;
-import java.util.Map;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.so.adapters.vnfmadapter.extclients.SdcPackageProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource;
@@ -38,6 +38,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfReques
 import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfNotFoundException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;
+import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmRequestFailureException;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.CreateVnfResponse;
 import org.onap.vnfmadapter.v1.model.DeleteVnfResponse;
@@ -45,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import java.util.Map;
 
 /**
  * Manages lifecycle operations towards the VNFMs.
@@ -57,15 +59,18 @@ public class LifecycleManager {
     private final AaiHelper aaiHelper;
     private final VnfmHelper vnfmHelper;
     private final JobManager jobManager;
+    private final SdcPackageProvider packageProvider;
 
     @Autowired
     LifecycleManager(final AaiServiceProvider aaiServiceProvider, final AaiHelper aaiHelper,
-            final VnfmHelper vnfmHelper, final VnfmServiceProvider vnfmServiceProvider, final JobManager jobManager) {
+            final VnfmHelper vnfmHelper, final VnfmServiceProvider vnfmServiceProvider, final JobManager jobManager,
+            SdcPackageProvider packageProvider) {
         this.aaiServiceProvider = aaiServiceProvider;
         this.vnfmServiceProvider = vnfmServiceProvider;
         this.aaiHelper = aaiHelper;
         this.vnfmHelper = vnfmHelper;
         this.jobManager = jobManager;
+        this.packageProvider = packageProvider;
     }
 
     /**
@@ -84,8 +89,11 @@ public class LifecycleManager {
             vnfm = aaiHelper.selectVnfm(genericVnf);
             aaiHelper.addRelationshipFromGenericVnfToVnfm(genericVnf, vnfm.getVnfmId());
         }
-
-        final String vnfIdInVnfm = sendCreateRequestToVnfm(genericVnf);
+        aaiHelper.addRelationshipFromGenericVnfToTenant(genericVnf, request.getTenant());
+        InlineResponse201 vnfmResponse = sendCreateRequestToVnfm(request, genericVnf, vnfIdInAai, vnfm.getVnfmId());
+        genericVnf.setSelflink(vnfmResponse.getLinks().getSelf().getHref());
+        aaiServiceProvider.invokePutGenericVnf(genericVnf);
+        final String vnfIdInVnfm = vnfmResponse.getId();
 
         final OamIpAddressSource oamIpAddressSource = extractOamIpAddressSource(request);
         aaiHelper.setOamIpAddressSource(vnfIdInVnfm, oamIpAddressSource);
@@ -127,10 +135,26 @@ public class LifecycleManager {
         }
     }
 
-    private String sendCreateRequestToVnfm(final GenericVnf genericVnf) {
-        // TODO call create request
-        genericVnf.setSelflink("http://dummy.value/until/create/implememted/vnfId");
-        return "vnfId";
+    private InlineResponse201 sendCreateRequestToVnfm(CreateVnfRequest aaiRequest, GenericVnf genericVnf,
+            String vnfIdInAai, String vnfmId) {
+        logger.debug("Sending a create request to SVNFM " + aaiRequest);
+        org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest vnfmRequest =
+                new org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest();
+
+        String vnfdId = packageProvider.getVnfdId(genericVnf.getModelVersionId());
+        vnfmRequest.setVnfdId(vnfdId);
+        vnfmRequest.setVnfInstanceName(aaiRequest.getName().replaceAll(" ", "_"));
+        vnfmRequest.setVnfInstanceDescription(vnfIdInAai);
+
+        Optional<InlineResponse201> optionalResponse = vnfmServiceProvider.createVnf(vnfmId, vnfmRequest);
+
+        try {
+            return optionalResponse.get();
+        } catch (final Exception exception) {
+            final String errorMessage = "Unable to return response from VNFM";
+            logger.error(errorMessage, exception);
+            throw new VnfmRequestFailureException(errorMessage, exception);
+        }
     }
 
     private void createNotificationSubscription(final String vnfmId, final String vnfId) {
@@ -148,7 +172,8 @@ public class LifecycleManager {
             final CreateVnfRequest createVnfRequest, final String vnfIdInAai, final String vnfIdInVnfm) {
 
         final InstantiateVnfRequest instantiateVnfRequest =
-                vnfmHelper.createInstantiateRequest(createVnfRequest.getTenant(), createVnfRequest);
+                vnfmHelper.createInstantiateRequest(createVnfRequest.getTenant(), createVnfRequest,
+                        packageProvider.getFlavourId(genericVnf.getModelVersionId()));
         final String jobId = vnfmServiceProvider.instantiateVnf(genericVnf.getSelflink(), instantiateVnfRequest);
 
         logger.info("Instantiate VNF request successfully sent to " + genericVnf.getSelflink());

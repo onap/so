@@ -20,12 +20,12 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.onap.so.client.aai.AAIProperties;
 import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.spring.SpringContextHelper;
 import org.springframework.context.ApplicationContext;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class AaiPropertiesImpl implements AAIProperties {
 

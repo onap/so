@@ -20,25 +20,7 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import com.google.gson.Gson;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import javax.inject.Inject;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -54,13 +36,8 @@ import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.OamIpAddressSource.OamIpAddressType;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.AccessInfo;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.*;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs.ChangeTypeEnum;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationComputeResource;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationLinks;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationLinksVnfInstance;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfIdentifierCreationNotification;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification.OperationEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.VnfLcmOperationOccurrenceNotification.OperationStateEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
@@ -82,6 +59,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+import javax.inject.Inject;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)

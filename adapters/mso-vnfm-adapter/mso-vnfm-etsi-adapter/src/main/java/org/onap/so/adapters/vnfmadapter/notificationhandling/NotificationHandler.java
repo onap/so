@@ -20,10 +20,6 @@
 
 package org.onap.so.adapters.vnfmadapter.notificationhandling;
 
-import static org.slf4j.LoggerFactory.getLogger;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.onap.aai.domain.yang.GenericVnf;
@@ -40,6 +36,10 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201VimConnectionInfo;
 import org.onap.so.adapters.vnfmadapter.jobmanagement.JobManager;
 import org.slf4j.Logger;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Performs updates to AAI based on a received notification. The updates are executed in a separate thread so as the
