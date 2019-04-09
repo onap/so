@@ -190,6 +190,7 @@ public class CatalogDbClient {
     private String findServiceByServiceInstanceId = "/findServiceByServiceInstanceId";
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
     private String findWorkflowByArtifactUUID = "/findByArtifactUUID";
+    private String findWorkflowByModelUUID = "/findWorkflowByModelUUID";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -330,6 +331,7 @@ public class CatalogDbClient {
                 endpoint + PNF_RESOURCE_CUSTOMIZATION + SEARCH + findPnfResourceCustomizationByModelUuid;
 
         findWorkflowByArtifactUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByArtifactUUID;
+        findWorkflowByModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByModelUUID;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
@@ -863,13 +865,18 @@ public class CatalogDbClient {
         if (fabricConfigs != null && !fabricConfigs.isEmpty() && fabricConfigs.size() == 1) {
             logger.debug("Found Fabric Configuration: {}", fabricConfigs.get(0));
             return fabricConfigs.get(0);
-        } else
-            throw new EntityNotFoundException(
-                    "Unable to find CvnfcConfigurationCustomization ModelCustomizationUUID:" + cvnfcCustomizationUuid);
+        }else throw new EntityNotFoundException("Unable to find CvnfcConfigurationCustomization ModelCustomizationUUID:"+cvnfcCustomizationUuid);
+    }
+    
+    public Workflow findWorkflowByArtifactUUID (String artifactUUID) {
+    	return this.getSingleResource(workflowClient,getUri(UriBuilder
+                .fromUri(findWorkflowByArtifactUUID)
+                .queryParam(ARTIFACT_UUID, artifactUUID).build().toString()));                
     }
 
-    public Workflow findWorkflowByArtifactUUID(String artifactUUID) {
-        return this.getSingleResource(workflowClient, getUri(UriBuilder.fromUri(findWorkflowByArtifactUUID)
-                .queryParam(ARTIFACT_UUID, artifactUUID).build().toString()));
+    public List<Workflow> findWorkflowByModelUUID (String vnfResourceModelUUID) {
+    	return this.getMultipleResources(workflowClient,getUri(UriBuilder
+                .fromUri(findWorkflowByModelUUID)
+                .queryParam(VNF_RESOURCE_MODEL_UUID, vnfResourceModelUUID).build().toString()));                
     }
 }
