@@ -67,7 +67,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterAsyncImpl.class);
 
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.network.bpelauth";
-    private static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
+    private static final String ENCRYPTION_KEY_PROP = "mso.msoKey";
     private static final String NETWORK_EXCEPTION_MSG = "Got a NetworkException on createNetwork: ";
     private static final String CREATE_NETWORK_ERROR_LOGMSG = "{} {} Error sending createNetwork notification {} ";
     private static final String FAULT_INFO_ERROR_LOGMSG = "{} {} Exception - fault info ";

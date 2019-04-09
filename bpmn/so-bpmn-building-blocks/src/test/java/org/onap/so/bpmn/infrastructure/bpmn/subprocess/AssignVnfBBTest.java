@@ -39,9 +39,8 @@ public class AssignVnfBBTest extends BaseBPMNTest {
         assertThat(pi).isNotNull();
         assertThat(pi).isStarted().hasPassedInOrder("Start_AssignVnfBB", "Task_CreateVnf",
                 "ServiceTask_ConnectVnfToCloudRegion", "ServiceTask_ConnectVnfToTenant", "Task_createPlatform",
-                "Task_createLineOfBusiness", "Task_createInstanceGroups", "Task_callHoming",
-                "Task_SDNCAdapterVnfTopologyAssign", "CallActivity_sdncAssign",
-                "Task_UpdateVnfOrchestrationStatusAssigned", "End_AssignVnfBB");
+                "Task_createLineOfBusiness", "Task_createInstanceGroups", "Task_callHoming", "Task_SDNCCreateRequest",
+                "CallActivity_SDNCAssignVnf", "Task_UpdateVnfOrchestrationStatusAssigned", "End_AssignVnfBB");
         assertThat(pi).isEnded();
     }
 
