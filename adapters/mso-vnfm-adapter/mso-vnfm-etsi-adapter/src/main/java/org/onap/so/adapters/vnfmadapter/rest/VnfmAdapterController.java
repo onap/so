@@ -150,7 +150,6 @@ public class VnfmAdapterController {
         }
     }
 
-
     private void setLoggingMDCs(final String requestId, final String partnerName, final String invocationId) {
         MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, requestId);
         MDC.put(ONAPLogConstants.MDCs.PARTNER_NAME, partnerName);

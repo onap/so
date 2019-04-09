@@ -80,7 +80,6 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
         return locationHeader.substring(locationHeader.lastIndexOf("/") + 1);
     }
 
-
     @Override
     public InlineResponse2001 subscribeForNotifications(final String vnfmId,
             final LccnSubscriptionRequest subscriptionRequest) {
@@ -136,7 +135,6 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
                     "Delete request to " + vnfSelfLink + " return status code: " + response.getStatusCode());
         }
     }
-
 
     @Override
     public Optional<InlineResponse200> getOperation(final String vnfmId, final String operationId) {

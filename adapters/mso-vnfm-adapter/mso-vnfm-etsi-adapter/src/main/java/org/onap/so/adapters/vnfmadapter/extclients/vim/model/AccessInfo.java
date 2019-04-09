@@ -81,7 +81,6 @@ public class AccessInfo {
         return Objects.hash(projectId, projectName, domainName, credentials);
     }
 
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -104,6 +103,5 @@ public class AccessInfo {
         }
         return o.toString().replace("\n", "\n    ");
     }
-
 
 }

@@ -79,7 +79,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -323,6 +322,5 @@ public class Sol003LcnControllerTest {
         public void describeTo(final Description description) {}
 
     }
-
 
 }

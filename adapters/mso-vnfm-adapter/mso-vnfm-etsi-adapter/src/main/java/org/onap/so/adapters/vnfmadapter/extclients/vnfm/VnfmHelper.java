@@ -166,8 +166,7 @@ public class VnfmHelper {
     }
 
     /**
-     * Create a {@link LccnSubscriptionRequest} to send in an notification subscription request to a
-     * VNFM.
+     * Create a {@link LccnSubscriptionRequest} to send in an notification subscription request to a VNFM.
      *
      * @param the ID of the VNF notifications are required for
      *

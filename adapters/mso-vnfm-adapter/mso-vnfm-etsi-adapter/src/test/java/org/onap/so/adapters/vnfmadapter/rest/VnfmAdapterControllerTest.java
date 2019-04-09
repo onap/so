@@ -83,7 +83,6 @@ import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZoneOffset;
 
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -136,7 +135,6 @@ public class VnfmAdapterControllerTest {
         mockRestServer.expect(requestTo("http://dummy.value/until/create/implememted/vnfId/instantiate"))
                 .andRespond(withStatus(HttpStatus.ACCEPTED).contentType(MediaType.APPLICATION_JSON)
                         .location(new URI("http://vnfm2:8080/vnf_lcm_op_occs/123456")));
-
 
         final InlineResponse200 firstOperationQueryResponse = createOperationQueryResponse(
                 org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum.INSTANTIATE,
@@ -271,13 +269,11 @@ public class VnfmAdapterControllerTest {
         mockRestServer.expect(requestTo("http://vnfm:8080/vnf_lcm_op_occs/1234567"))
                 .andRespond(withSuccess(gson.toJson(firstOperationQueryResponse), MediaType.APPLICATION_JSON));
 
-
         final InlineResponse200 secondOperationQueryReponse = createOperationQueryResponse(
                 org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationEnum.TERMINATE,
                 org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200.OperationStateEnum.COMPLETED);
         mockRestServer.expect(requestTo("http://vnfm:8080/vnf_lcm_op_occs/1234567"))
                 .andRespond(withSuccess(gson.toJson(secondOperationQueryReponse), MediaType.APPLICATION_JSON));
-
 
         final RequestEntity<Void> request = RequestEntity
                 .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
@@ -288,7 +284,6 @@ public class VnfmAdapterControllerTest {
         assertEquals(202, deleteVnfResponse.getStatusCode().value());
         assertNotNull(deleteVnfResponse.getBody().getJobId());
 
-
         final EsrSystemInfo esrSystemInfo = new EsrSystemInfo();
         esrSystemInfo.setServiceUrl("http://vnfm:8080");
         esrSystemInfo.setType("vnfmType");
@@ -298,7 +293,6 @@ public class VnfmAdapterControllerTest {
 
         doReturn(Optional.of(esrSystemInfoList)).when(aaiResourcesClient).get(eq(EsrSystemInfoList.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher("/external-system/esr-vnfm-list/esr-vnfm/...")));
-
 
         final ResponseEntity<QueryJobResponse> firstJobQueryResponse =
                 controller.jobQuery(deleteVnfResponse.getBody().getJobId(), "", "so", "1213");
@@ -355,7 +349,6 @@ public class VnfmAdapterControllerTest {
 
         mockRestServer.expect(requestTo("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm/terminate"))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST).contentType(MediaType.APPLICATION_JSON));
-
 
         final RequestEntity<Void> request = RequestEntity
                 .delete(new URI("http://localhost:" + port + "/so/vnfm-adapter/v1/vnfs/myTestVnfId"))
@@ -500,6 +493,5 @@ public class VnfmAdapterControllerTest {
         public void describeTo(final Description description) {}
 
     }
-
 
 }

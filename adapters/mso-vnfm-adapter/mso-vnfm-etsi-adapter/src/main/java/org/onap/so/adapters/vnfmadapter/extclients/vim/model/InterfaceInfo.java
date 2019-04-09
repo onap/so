@@ -51,7 +51,6 @@ public class InterfaceInfo {
         return Objects.hash(identityEndPoint);
     }
 
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -71,6 +70,5 @@ public class InterfaceInfo {
         }
         return o.toString().replace("\n", "\n    ");
     }
-
 
 }

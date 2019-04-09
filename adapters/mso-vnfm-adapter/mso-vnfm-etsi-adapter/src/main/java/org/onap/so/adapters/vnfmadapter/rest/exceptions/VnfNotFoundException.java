@@ -36,4 +36,3 @@ public class VnfNotFoundException extends RuntimeException {
     }
 
 }
-

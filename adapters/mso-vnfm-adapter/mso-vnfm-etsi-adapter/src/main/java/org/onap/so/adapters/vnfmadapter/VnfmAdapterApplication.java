@@ -39,7 +39,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class VnfmAdapterApplication {
     private static final Logger logger = getLogger(VnfmAdapterApplication.class);
 
-
     /**
      * Entry point for the Spring boot application
      *

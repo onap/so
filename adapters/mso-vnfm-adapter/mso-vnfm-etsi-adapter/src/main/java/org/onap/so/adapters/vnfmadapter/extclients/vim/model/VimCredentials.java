@@ -62,7 +62,6 @@ public class VimCredentials {
         return Objects.hash(username, password);
     }
 
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
