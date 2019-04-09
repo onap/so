@@ -46,7 +46,7 @@ public class ActivitySpec implements Serializable {
 
     @BusinessKey
     @Column(name = "VERSION")
-    private Double version;
+    private String version;
 
     @Column(name = "CREATION_TIMESTAMP", updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -90,11 +90,11 @@ public class ActivitySpec implements Serializable {
     }
 
 
-    public Double getVersion() {
+    public String getVersion() {
         return version;
     }
 
-    public void setVersion(Double version) {
+    public void setVersion(String version) {
         this.version = version;
     }
 
