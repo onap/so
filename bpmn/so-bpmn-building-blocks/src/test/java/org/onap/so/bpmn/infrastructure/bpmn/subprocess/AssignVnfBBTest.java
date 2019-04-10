@@ -33,7 +33,7 @@ import org.onap.so.bpmn.common.BuildingBlockExecution;
 public class AssignVnfBBTest extends BaseBPMNTest {
     @Test
     public void sunnyDayAssignVnfBBTest() throws InterruptedException, IOException {
-        variables.put("callHoming", true);
+        variables.put("homing", true);
         mockSubprocess("SDNCHandler", "My Mock Process Name", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("AssignVnfBB", variables);
         assertThat(pi).isNotNull();
