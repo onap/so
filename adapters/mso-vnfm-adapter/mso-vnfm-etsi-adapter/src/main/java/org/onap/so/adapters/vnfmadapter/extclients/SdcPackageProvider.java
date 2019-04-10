@@ -2,6 +2,8 @@
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
+ *  Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -125,8 +127,7 @@ public class SdcPackageProvider {
 
     private byte[] getPackage(String csarId) {
         final String SERVICE_NAME = "vnfm-adapter";
-        try {
-            CloseableHttpClient client = HttpClients.createDefault();
+        try(CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet httpget = new HttpGet(format(GET_PACKAGE_URL, baseUrl, csarId));
             httpget.setHeader(ACCEPT, APPLICATION_OCTET_STREAM_VALUE);
             httpget.setHeader("X-ECOMP-InstanceID", SERVICE_NAME);
@@ -140,7 +141,6 @@ public class SdcPackageProvider {
             HttpEntity entity = response.getEntity();
             InputStream is = entity.getContent();
             byte[] bytes = toByteArray(is);
-            client.close();
             return bytes;
         } catch (Exception e) {
             throw abortOperation("Unable to download " + csarId + " package from SDC", e);
