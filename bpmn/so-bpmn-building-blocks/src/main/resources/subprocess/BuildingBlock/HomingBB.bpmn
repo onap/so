@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="_vwRmIBsREeeIQtzUKIjH4g" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.7.1" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="_vwRmIBsREeeIQtzUKIjH4g" targetNamespace="http://camunda.org/schema/1.0/bpmn" exporter="Camunda Modeler" exporterVersion="1.11.3" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
   <bpmn2:process id="HomingBB" name="HomingBB" isExecutable="true">
     <bpmn2:startEvent id="start">
-      <bpmn2:outgoing>SequenceFlow_1x9usa6</bpmn2:outgoing>
+      <bpmn2:outgoing>SequenceFlow_0jtjlbu</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_1x9usa6" sourceRef="start" targetRef="sniroOofCheck" />
     <bpmn2:subProcess id="bpmnErrorSubprocess" name="Error Handling Subprocess" triggeredByEvent="true">
       <bpmn2:endEvent id="endBpmnError">
         <bpmn2:incoming>SequenceFlow_1rf4vs8</bpmn2:incoming>
@@ -43,7 +42,7 @@ ex.processJavaException(execution)]]></bpmn2:script>
       <bpmn2:sequenceFlow id="SequenceFlow_0kamg53" name="" sourceRef="startJavaError" targetRef="processJavaException" />
       <bpmn2:sequenceFlow id="SequenceFlow_1o7154s" name="" sourceRef="processJavaException" targetRef="endJavaError" />
     </bpmn2:subProcess>
-    <bpmn2:callActivity id="receiveAsyncCallback" name="Receive Async Callback" calledElement="ReceiveWorkflowMessage" camunda:modelerTemplate="receiveWorkflowMessage">
+    <bpmn2:callActivity id="receiveAsyncCallback" name="Receive Async Callback" camunda:modelerTemplate="receiveWorkflowMessage" calledElement="ReceiveWorkflowMessage">
       <bpmn2:extensionElements>
         <camunda:in source="true" target="isDebugLogEnabled" />
         <camunda:out source="WorkflowException" target="WorkflowException" />
@@ -52,278 +51,145 @@ ex.processJavaException(execution)]]></bpmn2:script>
         <camunda:in source="asyncTimeout" target="RCVWFMSG_timeout" />
         <camunda:out source="WorkflowResponse" target="asyncResponse" />
       </bpmn2:extensionElements>
-      <bpmn2:incoming>SequenceFlow_1qbnm82</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1fipbmk</bpmn2:outgoing>
+      <bpmn2:incoming>SequenceFlow_0qrwjzu</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_03cy5y5</bpmn2:outgoing>
     </bpmn2:callActivity>
-    <bpmn2:sequenceFlow id="SequenceFlow_1fipbmk" sourceRef="receiveAsyncCallback" targetRef="sniroOofCheck2" />
-    <bpmn2:sequenceFlow id="SequenceFlow_01apjvo" sourceRef="processSniroSolution" targetRef="ExclusiveGateway_1kvzxpb" />
     <bpmn2:endEvent id="end">
-      <bpmn2:incoming>SequenceFlow_1urt5i6</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_138xgla</bpmn2:incoming>
       <bpmn2:terminateEventDefinition />
     </bpmn2:endEvent>
-    <bpmn2:sequenceFlow id="SequenceFlow_0lc15i7" sourceRef="callSniro" targetRef="ExclusiveGateway_1ckp059" />
-    <bpmn2:sequenceFlow id="SequenceFlow_1dtador" name="Sniro" sourceRef="sniroOofCheck" targetRef="callSniro" />
-    <bpmn2:sequenceFlow id="SequenceFlow_1qbnm82" sourceRef="ExclusiveGateway_1ckp059" targetRef="receiveAsyncCallback" />
-    <bpmn2:sequenceFlow id="SequenceFlow_08k112s" name="Sniro" sourceRef="sniroOofCheck2" targetRef="processSniroSolution" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0m6nhqg" name="Oof" sourceRef="sniroOofCheck" targetRef="callOof">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${execution.getVariable("homingService") == "oof"}]]></bpmn2:conditionExpression>
-    </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="SequenceFlow_0kvax6n" sourceRef="callOof" targetRef="ExclusiveGateway_1ckp059" />
-    <bpmn2:sequenceFlow id="SequenceFlow_0oixz4g" name="Oof" sourceRef="sniroOofCheck2" targetRef="processOofSolution">
-      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression"><![CDATA[${execution.getVariable("homingService") == "oof"}]]></bpmn2:conditionExpression>
-    </bpmn2:sequenceFlow>
-    <bpmn2:sequenceFlow id="SequenceFlow_0ph4paa" sourceRef="processOofSolution" targetRef="ExclusiveGateway_1kvzxpb" />
-    <bpmn2:sequenceFlow id="SequenceFlow_1urt5i6" sourceRef="ExclusiveGateway_1kvzxpb" targetRef="end" />
-    <bpmn2:serviceTask id="callSniro" name="&#10;SNIRO&#10;Post&#10;(demands)&#10;" camunda:expression="${SniroHoming.callSniro(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn2:incoming>SequenceFlow_1dtador</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0lc15i7</bpmn2:outgoing>
+    <bpmn2:serviceTask id="callHoming" name="Homing&#10;Post&#10;(Send demand)&#10;" camunda:expression="${HomingV2.callHoming(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
+      <bpmn2:incoming>SequenceFlow_0jtjlbu</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_0qrwjzu</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="processSniroSolution" name="&#10;Process&#10;Solution&#10;" camunda:expression="${SniroHoming.processSolution(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)), asyncResponse)}">
-      <bpmn2:incoming>SequenceFlow_08k112s</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_01apjvo</bpmn2:outgoing>
+    <bpmn2:serviceTask id="processOofSolution" name="Homing&#10;Process&#10;Solution&#10;" camunda:expression="${HomingV2.processSolution(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)), asyncResponse)}">
+      <bpmn2:incoming>SequenceFlow_03cy5y5</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_138xgla</bpmn2:outgoing>
     </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="callOof" name="&#10;OOF&#10;Post&#10;(demands)&#10;" camunda:expression="${OofHoming.callSniro(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)))}">
-      <bpmn2:incoming>SequenceFlow_0m6nhqg</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0kvax6n</bpmn2:outgoing>
-    </bpmn2:serviceTask>
-    <bpmn2:serviceTask id="processOofSolution" name="&#10;Process&#10;Solution&#10;" camunda:expression="${OofHoming.processSolution(InjectExecution.execute(execution, execution.getVariable(&#34;gBuildingBlockExecution&#34;)), asyncResponse)}">
-      <bpmn2:incoming>SequenceFlow_0oixz4g</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_0ph4paa</bpmn2:outgoing>
-    </bpmn2:serviceTask>
-    <bpmn2:inclusiveGateway id="sniroOofCheck" name="Homing&#10;Service?&#10;" default="SequenceFlow_1dtador">
-      <bpmn2:incoming>SequenceFlow_1x9usa6</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1dtador</bpmn2:outgoing>
-      <bpmn2:outgoing>SequenceFlow_0m6nhqg</bpmn2:outgoing>
-    </bpmn2:inclusiveGateway>
-    <bpmn2:inclusiveGateway id="ExclusiveGateway_1ckp059">
-      <bpmn2:incoming>SequenceFlow_0lc15i7</bpmn2:incoming>
-      <bpmn2:incoming>SequenceFlow_0kvax6n</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1qbnm82</bpmn2:outgoing>
-    </bpmn2:inclusiveGateway>
-    <bpmn2:inclusiveGateway id="sniroOofCheck2" name="Homing&#10;Service?" default="SequenceFlow_08k112s">
-      <bpmn2:incoming>SequenceFlow_1fipbmk</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_08k112s</bpmn2:outgoing>
-      <bpmn2:outgoing>SequenceFlow_0oixz4g</bpmn2:outgoing>
-    </bpmn2:inclusiveGateway>
-    <bpmn2:inclusiveGateway id="ExclusiveGateway_1kvzxpb">
-      <bpmn2:incoming>SequenceFlow_01apjvo</bpmn2:incoming>
-      <bpmn2:incoming>SequenceFlow_0ph4paa</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_1urt5i6</bpmn2:outgoing>
-    </bpmn2:inclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_0jtjlbu" sourceRef="start" targetRef="callHoming" />
+    <bpmn2:sequenceFlow id="SequenceFlow_0qrwjzu" sourceRef="callHoming" targetRef="receiveAsyncCallback" />
+    <bpmn2:sequenceFlow id="SequenceFlow_03cy5y5" sourceRef="receiveAsyncCallback" targetRef="processOofSolution" />
+    <bpmn2:sequenceFlow id="SequenceFlow_138xgla" sourceRef="processOofSolution" targetRef="end" />
   </bpmn2:process>
   <bpmn2:error id="Error_10hit0u" name="MSO Workflow Exception" errorCode="MSOWorkflowException" />
   <bpmn2:error id="Error_1lwpypa" name="Java Lang Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="HomingBB">
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="start">
-        <dc:Bounds x="135" y="275" width="36" height="36" />
+        <dc:Bounds x="153" y="275" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="108" y="311" width="90" height="20" />
+          <dc:Bounds x="126" y="311" width="90" height="20" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1x9usa6_di" bpmnElement="SequenceFlow_1x9usa6">
-        <di:waypoint xsi:type="dc:Point" x="171" y="293" />
-        <di:waypoint xsi:type="dc:Point" x="291" y="293" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="186" y="278" width="90" height="0" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="SubProcess_16p12qo_di" bpmnElement="bpmnErrorSubprocess" isExpanded="true">
-        <dc:Bounds x="254" y="496" width="409" height="168" />
+        <dc:Bounds x="312" y="405" width="409" height="168" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_12gjiy8_di" bpmnElement="javaExceptionSubProcess" isExpanded="true">
-        <dc:Bounds x="284" y="679" width="350" height="159" />
+        <dc:Bounds x="342" y="588" width="350" height="159" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_07tjq3v_di" bpmnElement="endBpmnError">
-        <dc:Bounds x="579" y="570" width="36" height="36" />
+        <dc:Bounds x="637" y="479" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="552" y="611" width="90" height="0" />
+          <dc:Bounds x="610" y="520" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1qiitb2_di" bpmnElement="startBpmnError">
-        <dc:Bounds x="299" y="570" width="36" height="36" />
+        <dc:Bounds x="357" y="479" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="272" y="611" width="90" height="0" />
+          <dc:Bounds x="330" y="520" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_03hs6s9_di" bpmnElement="processMsoWorkflowException">
-        <dc:Bounds x="406" y="548" width="100" height="80" />
+        <dc:Bounds x="464" y="457" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ScriptTask_19gqykh_di" bpmnElement="processJavaException">
-        <dc:Bounds x="410" y="727" width="100" height="80" />
+        <dc:Bounds x="468" y="636" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_1fbpeuw_di" bpmnElement="startJavaError">
-        <dc:Bounds x="318" y="749" width="36" height="36" />
+        <dc:Bounds x="376" y="658" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="291" y="790" width="90" height="0" />
+          <dc:Bounds x="349" y="699" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_0jbvnr0_di" bpmnElement="endJavaError">
-        <dc:Bounds x="567" y="749" width="36" height="36" />
+        <dc:Bounds x="625" y="658" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="540" y="790" width="90" height="0" />
+          <dc:Bounds x="598" y="699" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_1rf4vs8_di" bpmnElement="SequenceFlow_1rf4vs8">
-        <di:waypoint xsi:type="dc:Point" x="506" y="588" />
-        <di:waypoint xsi:type="dc:Point" x="579" y="588" />
+        <di:waypoint xsi:type="dc:Point" x="564" y="497" />
+        <di:waypoint xsi:type="dc:Point" x="637" y="497" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="498" y="573" width="90" height="0" />
+          <dc:Bounds x="556" y="482" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_00nlh7l_di" bpmnElement="SequenceFlow_00nlh7l">
-        <di:waypoint xsi:type="dc:Point" x="335" y="588" />
-        <di:waypoint xsi:type="dc:Point" x="363" y="588" />
-        <di:waypoint xsi:type="dc:Point" x="363" y="588" />
-        <di:waypoint xsi:type="dc:Point" x="406" y="588" />
+        <di:waypoint xsi:type="dc:Point" x="393" y="497" />
+        <di:waypoint xsi:type="dc:Point" x="421" y="497" />
+        <di:waypoint xsi:type="dc:Point" x="421" y="497" />
+        <di:waypoint xsi:type="dc:Point" x="464" y="497" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="333" y="588" width="90" height="0" />
+          <dc:Bounds x="391" y="497" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_0kamg53_di" bpmnElement="SequenceFlow_0kamg53">
-        <di:waypoint xsi:type="dc:Point" x="354" y="767" />
-        <di:waypoint xsi:type="dc:Point" x="410" y="767" />
+        <di:waypoint xsi:type="dc:Point" x="412" y="676" />
+        <di:waypoint xsi:type="dc:Point" x="468" y="676" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="337" y="752" width="90" height="0" />
+          <dc:Bounds x="395" y="661" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SequenceFlow_1o7154s_di" bpmnElement="SequenceFlow_1o7154s">
-        <di:waypoint xsi:type="dc:Point" x="510" y="767" />
-        <di:waypoint xsi:type="dc:Point" x="567" y="767" />
+        <di:waypoint xsi:type="dc:Point" x="568" y="676" />
+        <di:waypoint xsi:type="dc:Point" x="625" y="676" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="494" y="752" width="90" height="0" />
+          <dc:Bounds x="552" y="661" width="90" height="0" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="CallActivity_031b5m3_di" bpmnElement="receiveAsyncCallback">
-        <dc:Bounds x="547" y="253" width="100" height="80" />
+        <dc:Bounds x="464" y="253" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_1fipbmk_di" bpmnElement="SequenceFlow_1fipbmk">
-        <di:waypoint xsi:type="dc:Point" x="647" y="293" />
-        <di:waypoint xsi:type="dc:Point" x="677" y="293" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="617" y="272" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_01apjvo_di" bpmnElement="SequenceFlow_01apjvo">
-        <di:waypoint xsi:type="dc:Point" x="847" y="214" />
-        <di:waypoint xsi:type="dc:Point" x="885" y="214" />
-        <di:waypoint xsi:type="dc:Point" x="885" y="268" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="821" y="193" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="EndEvent_07i1a5x_di" bpmnElement="end">
-        <dc:Bounds x="1034" y="275" width="36" height="36" />
+        <dc:Bounds x="837" y="275" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1006" y="315" width="90" height="12" />
+          <dc:Bounds x="809" y="315" width="90" height="12" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SequenceFlow_0lc15i7_di" bpmnElement="SequenceFlow_0lc15i7">
-        <di:waypoint xsi:type="dc:Point" x="462" y="214" />
-        <di:waypoint xsi:type="dc:Point" x="500" y="214" />
-        <di:waypoint xsi:type="dc:Point" x="500" y="267" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="436" y="193" width="90" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1dtador_di" bpmnElement="SequenceFlow_1dtador">
-        <di:waypoint xsi:type="dc:Point" x="316" y="268" />
-        <di:waypoint xsi:type="dc:Point" x="316" y="214" />
-        <di:waypoint xsi:type="dc:Point" x="362" y="214" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="322.2567567567568" y="221" width="25" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1qbnm82_di" bpmnElement="SequenceFlow_1qbnm82">
-        <di:waypoint xsi:type="dc:Point" x="525" y="292" />
-        <di:waypoint xsi:type="dc:Point" x="547" y="292" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="536" y="271" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_08k112s_di" bpmnElement="SequenceFlow_08k112s">
-        <di:waypoint xsi:type="dc:Point" x="702" y="268" />
-        <di:waypoint xsi:type="dc:Point" x="702" y="214" />
-        <di:waypoint xsi:type="dc:Point" x="747" y="214" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="707.7837837837837" y="221" width="25" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0m6nhqg_di" bpmnElement="SequenceFlow_0m6nhqg">
-        <di:waypoint xsi:type="dc:Point" x="316" y="318" />
-        <di:waypoint xsi:type="dc:Point" x="316" y="368" />
-        <di:waypoint xsi:type="dc:Point" x="362" y="368" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="323" y="344" width="19" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0kvax6n_di" bpmnElement="SequenceFlow_0kvax6n">
-        <di:waypoint xsi:type="dc:Point" x="462" y="368" />
-        <di:waypoint xsi:type="dc:Point" x="500" y="368" />
-        <di:waypoint xsi:type="dc:Point" x="500" y="317" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="481" y="347" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0oixz4g_di" bpmnElement="SequenceFlow_0oixz4g">
-        <di:waypoint xsi:type="dc:Point" x="702" y="318" />
-        <di:waypoint xsi:type="dc:Point" x="702" y="368" />
-        <di:waypoint xsi:type="dc:Point" x="747" y="368" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="708.3513513513514" y="345" width="19" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_0ph4paa_di" bpmnElement="SequenceFlow_0ph4paa">
-        <di:waypoint xsi:type="dc:Point" x="847" y="368" />
-        <di:waypoint xsi:type="dc:Point" x="885" y="368" />
-        <di:waypoint xsi:type="dc:Point" x="885" y="318" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="866" y="347" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SequenceFlow_1urt5i6_di" bpmnElement="SequenceFlow_1urt5i6">
-        <di:waypoint xsi:type="dc:Point" x="910" y="293" />
-        <di:waypoint xsi:type="dc:Point" x="1034" y="293" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="972" y="272" width="0" height="12" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="ServiceTask_0388svf_di" bpmnElement="callSniro">
-        <dc:Bounds x="362" y="174" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_1o0vjzl_di" bpmnElement="processSniroSolution">
-        <dc:Bounds x="747" y="174" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="ServiceTask_0rcv8sl_di" bpmnElement="callOof">
-        <dc:Bounds x="362" y="328" width="100" height="80" />
+      <bpmndi:BPMNShape id="ServiceTask_0rcv8sl_di" bpmnElement="callHoming">
+        <dc:Bounds x="292" y="253" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="ServiceTask_0fs2fyg_di" bpmnElement="processOofSolution">
-        <dc:Bounds x="747" y="328" width="100" height="80" />
+        <dc:Bounds x="649" y="253" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="InclusiveGateway_0ssv6eg_di" bpmnElement="sniroOofCheck">
-        <dc:Bounds x="291" y="268" width="50" height="50" />
+      <bpmndi:BPMNEdge id="SequenceFlow_0jtjlbu_di" bpmnElement="SequenceFlow_0jtjlbu">
+        <di:waypoint xsi:type="dc:Point" x="189" y="293" />
+        <di:waypoint xsi:type="dc:Point" x="292" y="293" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="344" y="283" width="43" height="36" />
+          <dc:Bounds x="240.5" y="272" width="0" height="12" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="InclusiveGateway_0pf91to_di" bpmnElement="ExclusiveGateway_1ckp059">
-        <dc:Bounds x="475" y="267" width="50" height="50" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0qrwjzu_di" bpmnElement="SequenceFlow_0qrwjzu">
+        <di:waypoint xsi:type="dc:Point" x="392" y="293" />
+        <di:waypoint xsi:type="dc:Point" x="464" y="293" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="500" y="321" width="0" height="12" />
+          <dc:Bounds x="428" y="272" width="0" height="12" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="InclusiveGateway_17vx4ua_di" bpmnElement="sniroOofCheck2">
-        <dc:Bounds x="677" y="268" width="50" height="50" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_03cy5y5_di" bpmnElement="SequenceFlow_03cy5y5">
+        <di:waypoint xsi:type="dc:Point" x="564" y="293" />
+        <di:waypoint xsi:type="dc:Point" x="649" y="293" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="730" y="281" width="43" height="24" />
+          <dc:Bounds x="606.5" y="272" width="0" height="12" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="InclusiveGateway_1610p1j_di" bpmnElement="ExclusiveGateway_1kvzxpb">
-        <dc:Bounds x="860" y="268" width="50" height="50" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_138xgla_di" bpmnElement="SequenceFlow_138xgla">
+        <di:waypoint xsi:type="dc:Point" x="749" y="293" />
+        <di:waypoint xsi:type="dc:Point" x="837" y="293" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="885" y="322" width="0" height="12" />
+          <dc:Bounds x="793" y="272" width="0" height="12" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn2:definitions>
