@@ -35,9 +35,9 @@ public class VnfmAdapterCreationNotification implements Runnable {
             Thread.sleep(10000);
         } catch (final InterruptedException e) {
             e.printStackTrace();
+            Thread.currentThread().interrupt();
         }
         System.out.println("Call to VNFM Adapter-Create");
-        Thread.currentThread().interrupt();
     }
 
 }
