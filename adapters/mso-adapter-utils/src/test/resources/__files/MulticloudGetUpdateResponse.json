@@ -1,0 +1,8 @@
+{
+    "template_type": "heat",
+    "workload_id": "TEST-workload",
+    "workload_status": "UPDATE_COMPLETE",
+    "workload_status_reason": {
+        "stack": {}
+    }
+}
