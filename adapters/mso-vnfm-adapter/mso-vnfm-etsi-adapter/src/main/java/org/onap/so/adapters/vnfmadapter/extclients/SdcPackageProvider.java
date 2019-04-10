@@ -2,6 +2,8 @@
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
+ *  Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -34,21 +36,30 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.yaml.snakeyaml.Yaml;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+
 import static com.google.common.base.Splitter.on;
 import static com.google.common.collect.Iterables.filter;
 import static com.google.common.io.ByteStreams.toByteArray;
 import static java.lang.String.format;
 import static org.apache.http.HttpHeaders.ACCEPT;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
-import static org.onap.so.adapters.vnfmadapter.NvfmAdapterUtils.*;
+import static org.onap.so.adapters.vnfmadapter.NvfmAdapterUtils.abortOperation;
+import static org.onap.so.adapters.vnfmadapter.NvfmAdapterUtils.child;
+import static org.onap.so.adapters.vnfmadapter.NvfmAdapterUtils.childElement;
+import static org.onap.so.adapters.vnfmadapter.NvfmAdapterUtils.children;
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 
@@ -108,7 +119,7 @@ public class SdcPackageProvider {
     }
 
     private String getValueFromNodeTypeDefinition(final JsonObject root, final String nodeTypeName,
-            final String propertyName) {
+        final String propertyName) {
         final JsonObject nodeTypes = child(root, "node_types");
         final JsonObject nodeType = child(nodeTypes, nodeTypeName);
 
@@ -125,8 +136,7 @@ public class SdcPackageProvider {
 
     private byte[] getPackage(String csarId) {
         final String SERVICE_NAME = "vnfm-adapter";
-        try {
-            CloseableHttpClient client = HttpClients.createDefault();
+        try (CloseableHttpClient client = HttpClients.createDefault()) {
             HttpGet httpget = new HttpGet(format(GET_PACKAGE_URL, baseUrl, csarId));
             httpget.setHeader(ACCEPT, APPLICATION_OCTET_STREAM_VALUE);
             httpget.setHeader("X-ECOMP-InstanceID", SERVICE_NAME);
@@ -140,7 +150,6 @@ public class SdcPackageProvider {
             HttpEntity entity = response.getEntity();
             InputStream is = entity.getContent();
             byte[] bytes = toByteArray(is);
-            client.close();
             return bytes;
         } catch (Exception e) {
             throw abortOperation("Unable to download " + csarId + " package from SDC", e);
@@ -153,7 +162,7 @@ public class SdcPackageProvider {
             String toscaMetadata = new String(getFileInZip(stream, pathIterator.next().toString()).toByteArray());
             if (!toscaMetadata.isEmpty()) {
                 String toscaVnfdLine =
-                        filter(on("\n").split(toscaMetadata), line -> line.contains(TOSCA_VNFD_KEY)).iterator().next();
+                    filter(on("\n").split(toscaMetadata), line -> line.contains(TOSCA_VNFD_KEY)).iterator().next();
                 return toscaVnfdLine.replace(TOSCA_VNFD_KEY + ":", "").trim();
             }
         }
