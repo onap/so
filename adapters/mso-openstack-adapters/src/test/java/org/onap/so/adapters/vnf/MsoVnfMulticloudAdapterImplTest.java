@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -138,9 +139,9 @@ public class MsoVnfMulticloudAdapterImplTest extends BaseRestTestUtils {
         msoRequest.setServiceInstanceId("12345");
 
         wireMockServer.stubFor(
-                get(urlPathEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload/vfname")).willReturn(aResponse()
+                get(urlEqualTo("/api/multicloud/v1/CloudOwner/MTN13/infra_workload?name=vfname")).willReturn(aResponse()
                         // .withHeader()
-                        .withBodyFile("MulticloudResponse_Stack.json").withStatus(HttpStatus.SC_OK)));
+                        .withBodyFile("MulticloudGetStackExists.json").withStatus(HttpStatus.SC_OK)));
 
         try {
             instance.createVfModule("MTN13", "CloudOwner", "123", "vf", "v1", "genericVnfId", "vfname", "vfModuleId",
