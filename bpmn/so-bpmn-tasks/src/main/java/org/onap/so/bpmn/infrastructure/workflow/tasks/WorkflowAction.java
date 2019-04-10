@@ -63,6 +63,7 @@ import org.onap.so.db.catalog.beans.CollectionResourceCustomization;
 import org.onap.so.db.catalog.beans.CollectionResourceInstanceGroupCustomization;
 import org.onap.so.db.catalog.beans.CvnfcCustomization;
 import org.onap.so.db.catalog.beans.VfModuleCustomization;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
 import org.onap.so.db.catalog.beans.macro.NorthBoundRequest;
 import org.onap.so.db.catalog.beans.macro.OrchestrationFlow;
@@ -70,8 +71,6 @@ import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.serviceinstancebeans.ModelInfo;
 import org.onap.so.serviceinstancebeans.ModelType;
 import org.onap.so.serviceinstancebeans.Networks;
-import org.onap.so.serviceinstancebeans.RelatedInstance;
-import org.onap.so.serviceinstancebeans.RelatedInstanceList;
 import org.onap.so.serviceinstancebeans.RequestDetails;
 import org.onap.so.serviceinstancebeans.Service;
 import org.onap.so.serviceinstancebeans.ServiceInstancesRequest;
@@ -118,6 +117,7 @@ public class WorkflowAction {
     private static final String G_SERVICE_TYPE = "serviceType";
     private static final String SERVICE_TYPE_TRANSPORT = "TRANSPORT";
     private static final Logger logger = LoggerFactory.getLogger(WorkflowAction.class);
+    public static boolean skipConfigFlag = true;
 
     @Autowired
     protected BBInputSetup bbInputSetup;
@@ -302,6 +302,69 @@ public class WorkflowAction {
                     orchFlows = queryNorthBoundRequestCatalogDb(execution, requestAction, resourceType, aLaCarte,
                             cloudOwner, serviceType);
                 }
+                
+                OrchestrationFlow orchFlow = new OrchestrationFlow();
+				List<OrchestrationFlow> orchFlows2 = new ArrayList<>();
+				if (!aLaCarte && !skipConfigFlag) {
+					if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(ASSIGNINSTANCE)) {
+
+						orchFlow.setAction("Service-Macro-Assign");
+						orchFlow.setFlowName("ConfigAssignVnfBB");
+						orchFlow.setFlowVersion(1.0);
+						orchFlow.setSequenceNumber(6);
+						// orchFlow.setNorthBoundRequest(northBoundRequest);
+						// orchFlow.setId(id);
+						for (int i = 0; i < orchFlows.size(); i++) {
+							orchFlows2.add(orchFlows.get(i));
+						}
+						orchFlows2.add(orchFlow);
+					} else if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase(CREATEINSTANCE)) {
+
+						orchFlow.setAction("Service-Macro-Create");
+						orchFlow.setFlowName("ConfigAssignVnfBB");
+						orchFlow.setFlowVersion(1.0);
+						orchFlow.setSequenceNumber(7);
+
+						OrchestrationFlow orchFlow2 = new OrchestrationFlow();
+						orchFlow2.setAction("Service-Macro-Create");
+						orchFlow2.setFlowName("ConfigDeployVnfBB");
+						orchFlow2.setFlowVersion(1.0);
+						orchFlow2.setSequenceNumber(15);
+
+						for (int i = 0; i < orchFlows.size() + 2; i++) {
+							if (i == 6) {
+								orchFlows2.add(orchFlow);
+							} else if (i == 14) {
+								orchFlows2.add(orchFlow2);
+							} else if (i > 6 && i < 14) {
+								orchFlows2.add(orchFlows.get(i - 1));
+							} else if (i > 14) {
+								orchFlows2.add(orchFlows.get(i - 2));
+							} else if (i < 6) {
+								orchFlows2.add(orchFlows.get(i));
+							}
+						}
+					} else if (resourceType == WorkflowType.SERVICE && requestAction.equalsIgnoreCase("activateInstance")) {
+						orchFlow.setAction("Service-Macro-Activate");
+						orchFlow.setFlowName("ConfigDeployVnfBB");
+						orchFlow.setFlowVersion(1.0);
+						orchFlow.setSequenceNumber(7);
+						for (int i = 0; i < orchFlows.size() + 1; i++) {
+							if (i == 6) {
+								orchFlows2.add(orchFlow);
+							} else if (i < 6) {
+								orchFlows2.add(orchFlows.get(i));
+							} else if (i > 6) {
+								orchFlows2.add(orchFlows.get(i - 1));
+							}
+						}
+					}
+				} else {
+					for (int i = 0; i < orchFlows.size(); i++) {
+						orchFlows2.add(orchFlows.get(i));
+					}
+				}
+                
                 flowsToExecute =
                         buildExecuteBuildingBlockList(orchFlows, resourceCounter, requestId, apiVersion, resourceId,
                                 resourceType, requestAction, aLaCarte, vnfType, workflowResourceIds, requestDetails);
@@ -721,6 +784,11 @@ public class WorkflowAction {
                 for (org.onap.so.bpmn.servicedecomposition.bbobjects.GenericVnf vnf : serviceInstanceMSO.getVnfs()) {
                     aaiResourceIds.add(new Pair<WorkflowType, String>(WorkflowType.VNF, vnf.getVnfId()));
                     resourceCounter.add(new Resource(WorkflowType.VNF, vnf.getVnfId(), false));
+                    
+                    if (skipConfigFlag && null != vnf.isSkipPostInstConf()) {
+						skipConfigFlag = vnf.isSkipPostInstConf();
+					}
+                    
                     if (vnf.getVfModules() != null) {
                         for (VfModule vfModule : vnf.getVfModules()) {
                             aaiResourceIds.add(
@@ -863,9 +931,15 @@ public class WorkflowAction {
                             resourceCounter.add(new Resource(WorkflowType.VNF,
                                     vnf.getModelInfo().getModelCustomizationId(), false));
                             foundRelated = true;
-                            if (vnf.getModelInfo() != null && vnf.getModelInfo().getModelCustomizationUuid() != null) {
-                                vnfCustomizationUUID = vnf.getModelInfo().getModelCustomizationUuid();
-                            }
+                            if(vnf.getModelInfo()!=null && vnf.getModelInfo().getModelCustomizationUuid()!=null){
+								vnfCustomizationUUID = vnf.getModelInfo().getModelCustomizationUuid();
+								if (skipConfigFlag) {
+									VnfResourceCustomization vrc = catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(vnfCustomizationUUID);
+									if (null != vrc) {
+										skipConfigFlag = vrc.isSkipPostInstConf();
+									}
+								}
+							}
                             if (vnf.getVfModules() != null) {
                                 for (VfModules vfModule : vnf.getVfModules()) {
                                     VfModuleCustomization vfModuleCustomization =
