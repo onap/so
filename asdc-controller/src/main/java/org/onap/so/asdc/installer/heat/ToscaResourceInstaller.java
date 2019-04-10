@@ -249,9 +249,10 @@ public class ToscaResourceInstaller {
 
     protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
 
-    public boolean isResourceAlreadyDeployed(VfResourceStructure vfResourceStruct) throws ArtifactInstallerException {
+    public boolean isResourceAlreadyDeployed(ResourceStructure vfResourceStruct, boolean serviceDeployed)
+            throws ArtifactInstallerException {
         boolean status = false;
-        VfResourceStructure vfResourceStructure = vfResourceStruct;
+        ResourceStructure vfResourceStructure = vfResourceStruct;
         try {
             status = vfResourceStructure.isDeployedSuccessfully();
         } catch (RuntimeException e) {
@@ -260,7 +261,7 @@ public class ToscaResourceInstaller {
         try {
             Service existingService =
                     serviceRepo.findOneByModelUUID(vfResourceStructure.getNotification().getServiceUUID());
-            if (existingService != null)
+            if (existingService != null && serviceDeployed == false)
                 status = true;
             if (status) {
                 logger.info(vfResourceStructure.getResourceInstance().getResourceInstanceName(),

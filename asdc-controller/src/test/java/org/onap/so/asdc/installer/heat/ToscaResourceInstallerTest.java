@@ -131,7 +131,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn("resourceCustomizationUUID").when(resourceInstance).getResourceCustomizationUUID();
         doReturn("resourceName").when(resourceInstance).getResourceName();
 
-        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure);
+        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure, false);
 
         WatchdogComponentDistributionStatus actualWatchdogComponentDistributionStatus = getWatchdogCDStatusWithName(
                 watchdogCDStatusRepository.findByDistributionId(notificationData.getDistributionID()), MSO);
@@ -156,7 +156,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
         doReturn("resourceCustomizationUUID").when(resourceInstance).getResourceCustomizationUUID();
         doReturn("resourceName").when(resourceInstance).getResourceName();
 
-        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure);
+        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure, false);
 
         verify(vfResourceStructure, times(3)).getResourceInstance();
         verify(vfResourceStructure, times(4)).getNotification();
@@ -166,7 +166,7 @@ public class ToscaResourceInstallerTest extends BaseTest {
     public void isResourceAlreadyDeployedExceptionTest() throws ArtifactInstallerException {
         expectedException.expect(ArtifactInstallerException.class);
 
-        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure);
+        toscaInstaller.isResourceAlreadyDeployed(vfResourceStructure, false);
     }
 
     @Test

@@ -1,5 +1,5 @@
 /*-
-d * ============LICENSE_START=======================================================
+ * ============LICENSE_START=======================================================
  * ONAP - SO
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
@@ -250,9 +250,11 @@ public class ASDCController {
         this.changeControllerStatus(ASDCControllerStatus.STOPPED);
     }
 
-    private boolean checkResourceAlreadyDeployed(VfResourceStructure resource) throws ArtifactInstallerException {
+    protected boolean checkResourceAlreadyDeployed(ResourceStructure resource, boolean serviceDeployed)
+            throws ArtifactInstallerException {
 
-        if (toscaInstaller.isResourceAlreadyDeployed(resource)) {
+
+        if (toscaInstaller.isResourceAlreadyDeployed(resource, serviceDeployed)) {
             logger.info("{} {} {} {}", MessageEnum.ASDC_ARTIFACT_ALREADY_EXIST.toString(),
                     resource.getResourceInstance().getResourceInstanceName(),
                     resource.getResourceInstance().getResourceUUID(), resource.getResourceInstance().getResourceName());
@@ -656,6 +658,7 @@ public class ASDCController {
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure(msoConfigPath);
         boolean deploySuccessful = true;
         String errorMessage = null;
+        boolean serviceDeployed = false;
 
         try {
             this.processCsarServiceArtifacts(iNotif, toscaResourceStructure);
@@ -686,12 +689,45 @@ public class ASDCController {
                     resourceStructure.setResourceType(ResourceType.OTHER);
                 }
 
-                for (IArtifactInfo artifact : resource.getArtifacts()) {
-                    IDistributionClientDownloadResult resultArtifact =
-                            this.downloadTheArtifact(artifact, iNotif.getDistributionID());
-                    if (resultArtifact != null) {
-                        resourceStructure.addArtifactToStructure(distributionClient, artifact, resultArtifact);
+                try {
+
+                    if (!this.checkResourceAlreadyDeployed(resourceStructure, serviceDeployed)) {
+
+                        logger.debug("Processing Resource Type: " + resourceType + " and Model UUID: "
+                                + resourceStructure.getResourceInstance().getResourceUUID());
+
+                        if ("VF".equals(resourceType) && !"Allotted Resource".equalsIgnoreCase(category)) {
+
+                            for (IArtifactInfo artifact : resource.getArtifacts()) {
+                                IDistributionClientDownloadResult resultArtifact =
+                                        this.downloadTheArtifact(artifact, iNotif.getDistributionID());
+                                if (resultArtifact != null) {
+
+                                    if (ASDCConfiguration.VF_MODULES_METADATA.equals(artifact.getArtifactType())) {
+                                        logger.debug("VF_MODULE_ARTIFACT: "
+                                                + new String(resultArtifact.getArtifactPayload(), "UTF-8"));
+                                        logger.debug(ASDCNotificationLogging
+                                                .dumpVfModuleMetaDataList(((VfResourceStructure) resourceStructure)
+                                                        .decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
+                                    }
+                                    resourceStructure.addArtifactToStructure(distributionClient, artifact,
+                                            resultArtifact);
+                                }
+                            }
+
+                            // Deploy VF resource and artifacts
+                            logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
+
+
+                            this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+                            serviceDeployed = true;
+                        }
                     }
+
+                } catch (ArtifactInstallerException e) {
+                    deploySuccessful = false;
+                    errorMessage = e.getMessage();
+                    logger.error("Exception occurred", e);
                 }
 
                 // Deploy VF resource and artifacts
