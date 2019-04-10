@@ -741,3 +741,12 @@ insert into pnf_resource_customization_to_service(service_model_uuid, resource_m
 
 insert into workflow(artifact_uuid, artifact_name, name, operation_name, version, description, body, resource_target, source) values
 ('5b0c4322-643d-4c9f-b184-4516049e99b1', 'testingWorkflow', 'testingWorkflow', 'create', 1, 'Test Workflow', null, 'vnf', 'sdc');
+
+insert into vnf_resource_to_workflow(vnf_resource_model_uuid, workflow_id) values
+('ff2ae348-214a-11e7-93ae-92361f002671', '1');
+
+insert into activity_spec(name, description, version) values
+('testActivity1', 'Test Activity 1', 1);
+
+insert into workflow_activity_spec_sequence(workflow_id, activity_spec_id, seq_no) values
+(1, 1, 1);
