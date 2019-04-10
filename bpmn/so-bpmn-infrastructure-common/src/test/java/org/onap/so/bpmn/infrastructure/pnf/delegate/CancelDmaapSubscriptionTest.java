@@ -22,22 +22,30 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.junit.Test;
+import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEvent;
+import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEventHandler;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CancelDmaapSubscriptionTest {
+
+    private static final String TEST_PNF_CORRELATION_ID = "testPnfCorrelationId";
 
     @Test
     public void shouldCancelSubscription() throws Exception {
         // given
         CancelDmaapSubscription delegate = new CancelDmaapSubscription();
         DmaapClientTestImpl dmaapClientTest = new DmaapClientTestImpl();
+        PnfNotificationEventHandler pnfNotificationEventHandler = mock(PnfNotificationEventHandler.class);
         delegate.setDmaapClient(dmaapClientTest);
+        delegate.setPnfNotificationEventHandler(pnfNotificationEventHandler);
         DelegateExecution delegateExecution = mock(DelegateExecution.class);
         when(delegateExecution.getVariable(eq(ExecutionVariableNames.PNF_CORRELATION_ID)))
-                .thenReturn("testPnfCorrelationId");
+                .thenReturn(TEST_PNF_CORRELATION_ID);
         when(delegateExecution.getProcessBusinessKey()).thenReturn("testBusinessKey");
         dmaapClientTest.registerForUpdate("testPnfCorrelationId", () -> {
         });
@@ -45,5 +53,6 @@ public class CancelDmaapSubscriptionTest {
         delegate.execute(delegateExecution);
         // then
         assertThat(dmaapClientTest.haveRegisteredConsumer()).isFalse();
+        verify(pnfNotificationEventHandler).unregisterPnf(eq(TEST_PNF_CORRELATION_ID));
     }
 }

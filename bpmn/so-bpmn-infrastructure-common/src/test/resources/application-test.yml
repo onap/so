@@ -216,10 +216,18 @@ sdno:
       subscriber:
         topic: com.att.sdno.test-health-diagnostic-v02
       username: testuser
+# PnfEventReadyDmaapClient
 pnf:
   dmaap:
-    host:
-    port:
+    host: localhost
+    port: ${wiremock.server.port}
+    protocol: http
+    uriPathPrefix: events
+    topicName: pnfReady
+    consumerGroup: consumerGroup
+    consumerId: consumerId
+    topicListenerDelayInSeconds: 5
+    notificationEnable: true
 sniro:
   conductor:
     host: http://localhost:30253

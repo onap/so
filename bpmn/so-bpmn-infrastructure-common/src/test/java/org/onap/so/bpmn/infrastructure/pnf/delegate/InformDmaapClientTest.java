@@ -27,20 +27,21 @@ import org.camunda.bpm.engine.runtime.MessageCorrelationBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
-import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEvent;
+import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEventHandler;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 public class InformDmaapClientTest {
-
     @Before
     public void setUp() throws Exception {
         informDmaapClient = new InformDmaapClient();
         dmaapClientTest = new DmaapClientTestImpl();
         informDmaapClient.setDmaapClient(dmaapClientTest);
         delegateExecution = mockDelegateExecution();
+        pnfNotificationEventHandler = new PnfNotificationEventHandler();
+        informDmaapClient.setPnfNotificationEventHandler(pnfNotificationEventHandler);
     }
 
     private InformDmaapClient informDmaapClient;
@@ -50,6 +51,8 @@ public class InformDmaapClientTest {
     private DelegateExecution delegateExecution;
 
     private MessageCorrelationBuilder messageCorrelationBuilder;
+
+    private PnfNotificationEventHandler pnfNotificationEventHandler;
 
     @Test
     public void shouldSendListenerToDmaapClient() throws Exception {
@@ -68,19 +71,6 @@ public class InformDmaapClientTest {
         dmaapClientTest.getInformConsumer().run();
         // then
         assertThat(dmaapClientTest.getPnfCorrelationId()).isEqualTo("testPnfCorrelationId");
-        InOrder inOrder = inOrder(messageCorrelationBuilder);
-        inOrder.verify(messageCorrelationBuilder).processInstanceBusinessKey("testBusinessKey");
-        inOrder.verify(messageCorrelationBuilder).correlateWithResult();
-    }
-
-    @Test
-    public void onApplicationEvent_validPnfNotificationEvent_expectedOutput() {
-
-        PnfNotificationEvent pnfNotificationEvent = new PnfNotificationEvent(this, "testPnfCorrelationId");
-
-        informDmaapClient.execute(delegateExecution);
-        informDmaapClient.onApplicationEvent(pnfNotificationEvent);
-
         InOrder inOrder = inOrder(messageCorrelationBuilder);
         inOrder.verify(messageCorrelationBuilder).processInstanceBusinessKey("testBusinessKey");
         inOrder.verify(messageCorrelationBuilder).correlateWithResult();

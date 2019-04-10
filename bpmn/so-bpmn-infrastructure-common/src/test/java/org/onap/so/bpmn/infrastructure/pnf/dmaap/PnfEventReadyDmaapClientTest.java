@@ -25,7 +25,6 @@ package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -35,6 +34,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -49,7 +49,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEvent;
@@ -99,7 +98,8 @@ public class PnfEventReadyDmaapClientTest {
         when(env.getProperty(eq("pnf.dmaap.consumerGroup"))).thenReturn(CONSUMER_GROUP);
         when(env.getProperty(eq("pnf.dmaap.topicListenerDelayInSeconds"), eq(Integer.class)))
                 .thenReturn(TOPIC_LISTENER_DELAY_IN_SECONDS);
-        testedObject = new PnfEventReadyDmaapClient(env, applicationEventPublisher);
+        when(env.getProperty(eq("pnf.dmaap.notificationEnable"), eq(Boolean.class))).thenReturn(false);
+        testedObject = new PnfEventReadyDmaapClient(env);
         testedObjectInnerClassThread = testedObject.new DmaapTopicListenerThread();
         httpClientMock = mock(HttpClient.class);
         threadMockToNotifyCamundaFlow = mock(Runnable.class);
@@ -131,10 +131,7 @@ public class PnfEventReadyDmaapClientTest {
         assertEquals(captor1.getValue().getURI().getPath(),
                 "/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
 
-        /**
-         * Two PNF returned from HTTP request.
-         */
-        verify(applicationEventPublisher, times(2)).publishEvent(any(PnfNotificationEvent.class));
+        verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
     }
 
@@ -167,6 +164,34 @@ public class PnfEventReadyDmaapClientTest {
         when(httpClientMock.execute(any(HttpGet.class)))
                 .thenReturn(createResponse(JSON_EXAMPLE_WITH_NO_PNF_CORRELATION_ID));
         testedObjectInnerClassThread.run();
+        verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
+    }
+
+    @Test
+    public void inform_pnfCorrelationIdIsFoundAndNotificationEnabled_notifyAboutPnfReady() throws Exception {
+        when(env.getProperty(eq("pnf.dmaap.notificationEnable"), eq(Boolean.class))).thenReturn(true);
+        testedObject = new PnfEventReadyDmaapClient(env);
+        testedObjectInnerClassThread = testedObject.new DmaapTopicListenerThread();
+        testedObject.setApplicationEventPublisher(applicationEventPublisher);
+        setPrivateField();
+        when(httpClientMock.execute(any(HttpGet.class)))
+                .thenReturn(createResponse(String.format(JSON_EXAMPLE_WITH_PNF_CORRELATION_ID, PNF_CORRELATION_ID)));
+        testedObjectInnerClassThread.run();
+        ArgumentCaptor<HttpGet> captor1 = ArgumentCaptor.forClass(HttpGet.class);
+        verify(httpClientMock).execute(captor1.capture());
+
+        assertEquals(captor1.getValue().getURI().getHost(), HOST);
+        assertEquals(captor1.getValue().getURI().getPort(), Integer.valueOf(PORT).intValue());
+        assertEquals(captor1.getValue().getURI().getScheme(), PROTOCOL);
+        assertEquals(captor1.getValue().getURI().getPath(),
+                "/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
+
+        ArgumentCaptor<PnfNotificationEvent> captor2 = ArgumentCaptor.forClass(PnfNotificationEvent.class);
+        verify(applicationEventPublisher, times(2)).publishEvent(captor2.capture());
+        List<PnfNotificationEvent> pnfNotificationEvents = captor2.getAllValues();
+        assertEquals(PNF_CORRELATION_ID, pnfNotificationEvents.get(0).getPnfCorrelationId());
+        assertEquals("corr", pnfNotificationEvents.get(1).getPnfCorrelationId());
+
         verifyZeroInteractions(threadMockToNotifyCamundaFlow, executorMock);
     }
 
