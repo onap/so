@@ -1,0 +1,23 @@
+{
+  "name": "VNFQuiesceTrafficActivity",
+  "description": "Activity to QuiesceTraffic on VNF",
+  "categoryList": [
+    "VNF"
+  ],
+  "inputs": [
+    {
+      "name": "parameter1",
+      "type": "string"
+    },
+    {
+      "name": "parameter2",
+      "type": "string"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "parameter3",
+      "type": "string"
+    }
+  ]
+}

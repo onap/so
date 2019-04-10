@@ -1,0 +1,41 @@
+{  
+    "name": "VNFQuiesceTrafficActivity",
+    "description": "Activity to QuiesceTraffic on VNF",
+    "version": null,
+    "created": null,
+    "workflowActivitySpecSequence": null,
+    "activitySpecActivitySpecCategories": [
+    	{
+   			"activitySpecCategories": {
+    			"name": "VNF"
+    		}
+    	}
+    ],
+    "activitySpecActivitySpecParameters": [
+      {        
+        "activitySpecParameters": {
+          "name": "parameter1",
+          "type": "string",
+          "direction": "input",
+          "description": "Parameter 1"          
+        }
+      },
+      {        
+        "activitySpecParameters": {
+          "name": "parameter2",
+          "type": "string",
+          "direction": "input",
+          "description": "Parameter 2"          
+        }
+      },
+      {        
+        "activitySpecParameters": {
+          "name": "parameter3",
+          "type": "string",
+          "direction": "output",
+          "description": "Parameter 3"          
+        }
+      }      
+   ]
+  
+}
