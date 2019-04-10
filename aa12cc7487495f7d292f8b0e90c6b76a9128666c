@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd27422d_ae8f4fae",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 137
+      },
+      "writtenOn": "2019-04-10T17:24:00Z",
+      "side": 1,
+      "message": "I don\u0027t understand this logic? where do this numbers come from\nSame above and bellow - also, I think you can create constant for the strings that you re-use",
+      "range": {
+        "startLine": 334,
+        "startChar": 2,
+        "endLine": 346,
+        "endChar": 25
+      },
+      "revId": "aa12cc7487495f7d292f8b0e90c6b76a9128666c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
