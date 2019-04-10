@@ -359,22 +359,7 @@ public class VnfAdapterRest {
                     vfModuleStackId.value = "479D3D8B-6360-47BC-AB75-21CC91981484";
                     outputs.value = VolumeAdapterRest.testMap();
                 } else {
-                    // vnfAdapter.createVnf (createReq.getCloudSiteId(),
-                    // createReq.getTenantId(),
-                    // createReq.getVnfType(),
-                    // createReq.getVnfVersion(),
-                    // createReq.getVfModuleName(),
-                    // createReq.getRequestType(),
-                    // createReq.getVolumeGroupStackId(),
-                    // createReq.getVfModuleParams(),
-                    // createReq.getFailIfExists(),
-                    // createReq.getBackout(),
-                    // createReq.getMsoRequest(),
-                    // vfModuleStackId,
-                    // outputs,
-                    // vnfRollback);
                     vnfAdapter.createVfModule(req.getCloudSiteId(), req.getCloudOwner(), req.getTenantId(),
-                            // req.getVnfType(),
                             completeVnfVfModuleType, req.getVnfVersion(), req.getVnfId(), req.getVfModuleName(),
                             req.getVfModuleId(), req.getRequestType(), req.getVolumeGroupStackId(),
                             req.getBaseVfModuleStackId(), req.getModelCustomizationUuid(), req.getVfModuleParams(),
