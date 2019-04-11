@@ -22,6 +22,30 @@
       "revId": "2aa56678b48362d87ae1eadfb9ab20737f83c3c6",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7b2c1e77_2e93d0ae",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClientTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-11T15:27:58Z",
+      "side": 0,
+      "message": "Done",
+      "parentUuid": "66d9a0c1_5a82df72",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 43
+      },
+      "revId": "2aa56678b48362d87ae1eadfb9ab20737f83c3c6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
