@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "2e468bdf_b62f9e74",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClientTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-04-11T13:55:23Z",
+      "side": 1,
+      "message": "test class should be reverted, not deleted",
+      "revId": "e46f651abb72328d4f9d9dc1663978d65e73983c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
