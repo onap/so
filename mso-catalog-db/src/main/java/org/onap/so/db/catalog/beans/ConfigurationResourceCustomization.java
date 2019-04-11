@@ -27,6 +27,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -52,8 +54,12 @@ public class ConfigurationResourceCustomization implements Serializable {
      */
     private static final long serialVersionUID = 1230671937560638856L;
 
-    @BusinessKey
     @Id
+    @BusinessKey
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     @Column(name = "MODEL_CUSTOMIZATION_UUID")
     private String modelCustomizationUUID;
 
@@ -77,16 +83,28 @@ public class ConfigurationResourceCustomization implements Serializable {
     private String serviceProxyResourceCustomizationUUID;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID")
+    @JoinColumn(name = "CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_ID")
     private ConfigurationResourceCustomization configResourceCustomization;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "CONFIGURATION_MODEL_UUID")
     private ConfigurationResource configurationResource;
 
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "SERVICE_MODEL_UUID")
+    private Service service;
+
     @PrePersist
     protected void onCreate() {
         this.created = new Date();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getModelCustomizationUUID() {
@@ -141,6 +159,7 @@ public class ConfigurationResourceCustomization implements Serializable {
         this.serviceProxyResourceCustomizationUUID = serviceProxyResourceCustomizationUUID;
     }
 
+
     @LinkedResource
     public ConfigurationResourceCustomization getConfigResourceCustomization() {
         return configResourceCustomization;
@@ -159,14 +178,22 @@ public class ConfigurationResourceCustomization implements Serializable {
         this.configurationResource = configurationResource;
     }
 
+    public Service getService() {
+        return service;
+    }
+
+    public void setService(Service service) {
+        this.service = service;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+        return new ToStringBuilder(this).append("id", id).append("modelCustomizationUUID", modelCustomizationUUID)
                 .append("modelInstanceName", modelInstanceName).append("nfFunction", nfFunction)
                 .append("nfType", nfType).append("nfRole", nfRole).append("created", created)
                 // .append("serviceProxyResourceCustomization", serviceProxyResourceCustomization)
                 .append("configResourceCustomization", configResourceCustomization)
-                .append("configurationResource", configurationResource).toString();
+                .append("configurationResource", configurationResource).append("service", service).toString();
     }
 
     @Override
@@ -175,12 +202,12 @@ public class ConfigurationResourceCustomization implements Serializable {
             return false;
         }
         ConfigurationResourceCustomization castOther = (ConfigurationResourceCustomization) other;
-        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+        return new EqualsBuilder().append(id, castOther.id).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
+        return new HashCodeBuilder().append(id).toHashCode();
     }
 
 }
