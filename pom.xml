@@ -224,7 +224,8 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-deploy-plugin</artifactId>
-        <version>2.8</version> <!-- This version supports the "deployAtEnd" parameter -->
+        <version>2.8</version>
+        <!-- This version supports the "deployAtEnd" parameter -->
         <configuration>
           <skip />
         </configuration>
@@ -458,7 +459,7 @@
               <sourceDirectory>${project.basedir}</sourceDirectory>
               <configXmlFile>${base-path}/project-configs/code-tools/pom-format.properties</configXmlFile>
               <includes>
-                <include>${project.basedir}/pom.xml</include>
+                <include>pom.xml</include>
               </includes>
             </configuration>
           </execution>
@@ -480,8 +481,8 @@
             <configuration>
               <skip>${format.skipValidate}</skip>
               <configFile>${base-path}/project-configs/code-tools/pom-format.properties</configFile>
-               <includes>
-                <include>${project.basedir}/pom.xml</include>
+              <includes>
+                <include>pom.xml</include>
               </includes>
             </configuration>
           </execution>
@@ -505,11 +506,15 @@
             <skip>${docker.skip}</skip>
             <skipBuild>${docker.skip.build}</skipBuild>
             <skipPush>${docker.skip.push}</skipPush>
-            <dockerHost>${docker.newHost}</dockerHost> <!-- 1. Update address to your local docker VM. 2. Add IP to your NO_PROXY environment variable -->
-            <certPath>${docker.host.cert.path}</certPath><!-- Add -Ddocker.host.cert.pat="path to your local certs directory" 
+            <dockerHost>${docker.newHost}</dockerHost>
+            <!-- 1. Update address to your local docker VM. 2. Add IP to your NO_PROXY environment variable -->
+            <certPath>${docker.host.cert.path}</certPath>
+            <!-- Add -Ddocker.host.cert.pat="path to your local certs directory" 
               to maven build command -->
-            <pushRegistry>${dockerPushRepo}</pushRegistry> <!-- Update .m2/settings.xml Add server id settings.dockerRepository, username, and password -->
-            <pullRegistry>${dockerPullRepo}</pullRegistry> <!-- If docker repo is not public. Update .m2/settings.xml Add server id settings.dockerRepository, username, and password -->
+            <pushRegistry>${dockerPushRepo}</pushRegistry>
+            <!-- Update .m2/settings.xml Add server id settings.dockerRepository, username, and password -->
+            <pullRegistry>${dockerPullRepo}</pullRegistry>
+            <!-- If docker repo is not public. Update .m2/settings.xml Add server id settings.dockerRepository, username, and password -->
             <images>
               <image>
                 <alias>service</alias>
