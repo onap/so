@@ -70,6 +70,7 @@ public class AAIObjectPlurals implements GraphInventoryObjectPlurals, Serializab
             new AAIObjectPlurals(AAIObjectType.VSERVER.uriTemplate(), "/l-interfaces", "l-interface");
     public static final AAIObjectPlurals SUB_L_INTERFACE =
             new AAIObjectPlurals(AAIObjectType.L_INTERFACE.uriTemplate(), "/l-interfaces", "l-interface");
+    public static final AAIObjectPlurals PNF = new AAIObjectPlurals(AAINamespaceConstants.NETWORK, "/pnfs", "pnfs");
 
     private final String uriTemplate;
     private final String partialUri;
