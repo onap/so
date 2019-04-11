@@ -32,7 +32,7 @@ public abstract class CatalogQuery {
     protected static Logger logger = LoggerFactory.getLogger(CatalogQuery.class);
     private static final boolean IS_EMBED = true;
 
-    public abstract String JSON2(boolean isArray, boolean isEmbed);
+    public abstract String json2(boolean isArray, boolean isEmbed);
 
     protected void put(Map<String, String> valueMap, String key, String value) {
         valueMap.put(key, value == null ? "null" : '"' + value + '"');
@@ -84,7 +84,7 @@ public abstract class CatalogQuery {
             case "v1":
                 return smartToJSON();
             case "v2":
-                return JSON2(isArray, !IS_EMBED);
+                return json2(isArray, !IS_EMBED);
             default:
                 return "invalid version: " + version;
         }

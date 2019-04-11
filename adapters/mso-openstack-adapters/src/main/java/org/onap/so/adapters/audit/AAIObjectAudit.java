@@ -2,7 +2,6 @@ package org.onap.so.adapters.audit;
 
 import java.io.Serializable;
 import java.net.URI;
-import org.onap.so.client.aai.AAIObjectType;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class AAIObjectAudit implements Serializable {
