@@ -553,21 +553,22 @@ public class ServicePluginFactory {
 
         // Now we need to query terminal points from SP resourcemgr system.
         List<Object> locationTerminalPointList = queryTerminalPointsFromServiceProviderSystem(srcLocation, dstLocation);
-        Map<String, Object> tpInfoMap = (Map<String, Object>) locationTerminalPointList.get(0);
+        if (locationTerminalPointList != null) {
+            Map<String, Object> tpInfoMap = (Map<String, Object>) locationTerminalPointList.get(0);
 
-        serviceRequestInputs.put("inner-src-access-provider-id", tpInfoMap.get("access-provider-id"));
-        serviceRequestInputs.put("inner-src-access-client-id", tpInfoMap.get("access-client-id"));
-        serviceRequestInputs.put("inner-src-access-topology-id", tpInfoMap.get("access-topology-id"));
-        serviceRequestInputs.put("inner-src-access-node-id", tpInfoMap.get("access-node-id"));
-        serviceRequestInputs.put("inner-src-access-ltp-id", tpInfoMap.get("access-ltp-id"));
-        tpInfoMap = (Map<String, Object>) locationTerminalPointList.get(1);
+            serviceRequestInputs.put("inner-src-access-provider-id", tpInfoMap.get("access-provider-id"));
+            serviceRequestInputs.put("inner-src-access-client-id", tpInfoMap.get("access-client-id"));
+            serviceRequestInputs.put("inner-src-access-topology-id", tpInfoMap.get("access-topology-id"));
+            serviceRequestInputs.put("inner-src-access-node-id", tpInfoMap.get("access-node-id"));
+            serviceRequestInputs.put("inner-src-access-ltp-id", tpInfoMap.get("access-ltp-id"));
+            tpInfoMap = (Map<String, Object>) locationTerminalPointList.get(1);
 
-        serviceRequestInputs.put("inner-dst-access-provider-id", tpInfoMap.get("access-provider-id"));
-        serviceRequestInputs.put("inner-dst-access-client-id", tpInfoMap.get("access-client-id"));
-        serviceRequestInputs.put("inner-dst-access-topology-id", tpInfoMap.get("access-topology-id"));
-        serviceRequestInputs.put("inner-dst-access-node-id", tpInfoMap.get("access-node-id"));
-        serviceRequestInputs.put("inner-dst-access-ltp-id", tpInfoMap.get("access-ltp-id"));
-
+            serviceRequestInputs.put("inner-dst-access-provider-id", tpInfoMap.get("access-provider-id"));
+            serviceRequestInputs.put("inner-dst-access-client-id", tpInfoMap.get("access-client-id"));
+            serviceRequestInputs.put("inner-dst-access-topology-id", tpInfoMap.get("access-topology-id"));
+            serviceRequestInputs.put("inner-dst-access-node-id", tpInfoMap.get("access-node-id"));
+            serviceRequestInputs.put("inner-dst-access-ltp-id", tpInfoMap.get("access-ltp-id"));
+        }
         String newRequest = getJsonString(uuiObject);
         return newRequest;
     }
