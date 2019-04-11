@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "8cd80fe5_b0391818",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-11T09:08:43Z",
+      "side": 1,
+      "message": "Why is this moved to separate setter?",
+      "range": {
+        "startLine": 62,
+        "startChar": 0,
+        "endLine": 65,
+        "endChar": 5
+      },
+      "revId": "4b4dcaf3c2391d7ae7c89074a96120e3dac34b57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0910b2e8_25db58fb",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-11T09:08:43Z",
+      "side": 1,
+      "message": "So this flag is used to use different code in production and different code in integration test? That\u0027s outrageous! We shouldn\u0027t have test code in production!",
+      "range": {
+        "startLine": 145,
+        "startChar": 0,
+        "endLine": 154,
+        "endChar": 13
+      },
+      "revId": "4b4dcaf3c2391d7ae7c89074a96120e3dac34b57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "17534def_1ffe9e3c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClientTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-11T09:08:43Z",
+      "side": 1,
+      "message": "Why times(2)? This particular Pnf is registered only once - json that is send indeed have 2 pnf registration, but only one is relevant, other one have different correlationId and should be ignored.\n\nThis also shows that this class will inform all waiting workflows when any pnf is registered, not the one with correct correlationId. This implementation is broken.",
+      "range": {
+        "startLine": 190,
+        "startChar": 8,
+        "endLine": 190,
+        "endChar": 84
+      },
+      "revId": "4b4dcaf3c2391d7ae7c89074a96120e3dac34b57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
