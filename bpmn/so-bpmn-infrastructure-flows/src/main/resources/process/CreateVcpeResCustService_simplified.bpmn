@@ -431,6 +431,7 @@ CreateVcpeResCustService.postProcessServiceInstanceCreate(execution)</bpmn2:scri
         <camunda:out source="WorkflowException" target="WorkflowException" />
         <camunda:in source="serviceModelInfo" target="serviceModelInfo" />
         <camunda:in source="msoRequestId" target="msoRequestId" />
+        <camunda:in businessKey="#{execution.processBusinessKey}" />
       </bpmn2:extensionElements>
       <bpmn2:incoming>SequenceFlow_050kuu1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_0ti37h1</bpmn2:outgoing>

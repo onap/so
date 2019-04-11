@@ -22,6 +22,7 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
+import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEventHandler;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,15 +31,22 @@ import org.springframework.stereotype.Component;
 public class CancelDmaapSubscription implements JavaDelegate {
 
     private DmaapClient dmaapClient;
+    private PnfNotificationEventHandler pnfNotificationEventHandler;
 
     @Override
     public void execute(DelegateExecution execution) {
         String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
         dmaapClient.unregister(pnfCorrelationId);
+        pnfNotificationEventHandler.unregisterPnf(pnfCorrelationId);
     }
 
     @Autowired
     public void setDmaapClient(DmaapClient dmaapClient) {
         this.dmaapClient = dmaapClient;
+    }
+
+    @Autowired
+    public void setPnfNotificationEventHandler(PnfNotificationEventHandler pnfNotificationEventHandler) {
+        this.pnfNotificationEventHandler = pnfNotificationEventHandler;
     }
 }

@@ -144,6 +144,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
     }
 
     private void checkConfigAssign(ExecutionServiceInput executionServiceInput) {
+
+        logger.info("Checking the configAssign request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**
@@ -173,6 +175,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
     }
 
     private void checkConfigDeploy(ExecutionServiceInput executionServiceInput) {
+
+        logger.info("Checking the configDeploy request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**

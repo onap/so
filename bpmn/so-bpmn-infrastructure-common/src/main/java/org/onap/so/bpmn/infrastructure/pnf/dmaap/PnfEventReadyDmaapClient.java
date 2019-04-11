@@ -55,11 +55,17 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
     private volatile ScheduledThreadPoolExecutor executor;
     private volatile boolean dmaapThreadListenerIsRunning;
 
+    private Boolean useNotification;
+
     private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
-    public PnfEventReadyDmaapClient(Environment env, ApplicationEventPublisher applicationEventPublisher) {
+    public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.applicationEventPublisher = applicationEventPublisher;
+    }
+
+    @Autowired
+    public PnfEventReadyDmaapClient(Environment env) {
         httpClient = HttpClientBuilder.create().build();
         pnfCorrelationIdToThreadMap = new ConcurrentHashMap<>();
         topicListenerDelayInSeconds = env.getProperty("pnf.dmaap.topicListenerDelayInSeconds", Integer.class);
@@ -69,6 +75,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
                 .port(env.getProperty("pnf.dmaap.port", Integer.class)).path(env.getProperty("pnf.dmaap.topicName"))
                 .path(env.getProperty("pnf.dmaap.consumerGroup")).path(env.getProperty("pnf.dmaap.consumerId"))
                 .build());
+        useNotification = env.getProperty("pnf.dmaap.notificationEnable", Boolean.class);
     }
 
     @Override
@@ -135,9 +142,17 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
         }
 
         private void informAboutPnfReadyIfPnfCorrelationIdFound(String pnfCorrelationId) {
-            unregister(pnfCorrelationId);
-            PnfNotificationEvent pnfNotificationEvent = new PnfNotificationEvent(this, pnfCorrelationId);
-            applicationEventPublisher.publishEvent(pnfNotificationEvent);
+            if (useNotification) {
+                PnfNotificationEvent pnfNotificationEvent = new PnfNotificationEvent(this, pnfCorrelationId);
+                applicationEventPublisher.publishEvent(pnfNotificationEvent);
+            } else {
+                Runnable runnable = unregister(pnfCorrelationId);
+                if (runnable != null) {
+                    logger.debug("dmaap listener gets pnf ready event for pnfCorrelationId: {}", pnfCorrelationId);
+                    runnable.run();
+                }
+            }
+
         }
     }
 }

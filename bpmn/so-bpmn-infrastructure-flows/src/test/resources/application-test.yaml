@@ -217,6 +217,8 @@ pnf:
     consumerGroup: consumerGroup
     consumerId: consumerId
     topicListenerDelayInSeconds: 5
+    notificationEnable: true
+
 # CDSProcessingClient
 cds:
   endpoint: localhost
