@@ -150,13 +150,14 @@
   <dependencies>
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
-      <artifactId>camunda-bpm-spring-boot-starter</artifactId>
-      <version>${camunda.springboot.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.camunda.bpm.springboot</groupId>
       <artifactId>camunda-bpm-spring-boot-starter-rest</artifactId>
       <version>${camunda.springboot.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.camunda.bpmn</groupId>
+            <artifactId>camunda-engine-rest-core</artifactId>
+          </exclusion>
+        </exclusions>
     </dependency>
     <dependency>
       <groupId>org.camunda.bpm.springboot</groupId>
