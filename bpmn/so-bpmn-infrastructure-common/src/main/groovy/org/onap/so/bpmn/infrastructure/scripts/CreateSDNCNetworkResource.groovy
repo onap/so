@@ -29,6 +29,10 @@ import org.json.JSONObject
 import org.json.XML
 import org.onap.aai.domain.yang.ServiceInstance
 import org.onap.aai.domain.yang.ServiceInstances
+import org.onap.aai.domain.yang.v13.Metadata
+import org.onap.aai.domain.yang.v13.Metadatum
+import org.onap.aai.domain.yang.v13.Pnf
+import org.onap.aai.domain.yang.v13.Pnfs
 import org.onap.so.bpmn.common.recipe.ResourceInput
 import org.onap.so.bpmn.common.resource.ResourceRequestBuilder
 import org.onap.so.bpmn.common.scripts.AaiUtil
@@ -39,6 +43,7 @@ import org.onap.so.bpmn.core.json.JsonUtils
 import org.onap.so.bpmn.core.UrnPropertiesReader
 import org.onap.so.client.aai.AAIObjectPlurals
 import org.onap.so.client.aai.AAIResourcesClient
+import org.onap.so.client.aai.AAIObjectType
 import org.onap.so.client.aai.entities.uri.AAIResourceUri
 import org.onap.so.client.aai.entities.uri.AAIUriFactory
 import org.slf4j.Logger
@@ -147,6 +152,16 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                     execution.setVariable("isActivateRequired", "true")
                     break
 
+                case ~/[\w\s\W]*OLT[\w\s\W]*/ :
+                    operationType = "AccessConnectivity"
+                    execution.setVariable("isActivateRequired", "false")
+                    break
+
+                case ~/[\w\s\W]*EdgeInternetProfile[\w\s\W]*/ :
+                    operationType = "InternetProfile"
+                    execution.setVariable("isActivateRequired", "false")
+                    break
+
                 default:
                     break
             }
@@ -183,6 +198,20 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         return  new JSONObject(paramMap).toString();
     }
 
+    private List<Metadatum> getMetaDatum(String customerId,
+                                         String serviceType, String serId) {
+        logger.debug("Enter getPnfInstance")
+        AAIResourcesClient client = new AAIResourcesClient()
+
+        // think how AAI queried for PNF name using the name
+        AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE_METADATA,
+                customerId, serviceType, serId)
+        logger.debug("uri for pnf get:" + uri.toString())
+
+        Metadata metadata = client.get(uri).asBean(Metadata.class).get()
+        return metadata.getMetadatum()
+    }
+
     /**
      * This method updates the resource input by collecting required info from AAI
      * @param execution
@@ -191,7 +220,66 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
 
+
+        def resourceInputTmp = execution.getVariable(Prefix + "resourceInput")
+        String serInput = jsonUtil.getJsonValue(resourceInputTmp, "requestsInputs")
+
         switch (modelName) {
+            case ~/[\w\s\W]*OLT[\w\s\W]*/ :
+                // get the required properties and update in resource input
+
+                def resourceInput = resourceInputObj.getResourceParameters()
+                String incomingRequest = resourceInputObj.getRequestsInputs()
+                String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
+                String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
+                String cvlan = "10"
+                String svlan = "100"
+                String accessId = "AC9.0234.0337"
+                String manufacturer = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.ont_ont_manufacturer")
+                String ontsn = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.ont_ont_serial_num")
+
+                String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.CVLAN", cvlan)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.SVLAN", svlan)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.accessID", accessId)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ONTSN", ontsn)
+
+                msoLogger.debug("old resource input:" + resourceInputObj.toString())
+                resourceInputObj.setResourceParameters(uResourceInput)
+                execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
+                msoLogger.debug("new resource Input :" + resourceInputObj.toString())
+                break
+
+            case ~/[\w\s\W]*EdgeInternetProfile[\w\s\W]*/ :
+                // get the required properties and update in resource input
+                def resourceInput = resourceInputObj.getResourceParameters()
+                String incomingRequest = resourceInputObj.getRequestsInputs()
+                String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
+                String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
+                JSONObject inputParameters = new JSONObject(requestInputs)
+
+                String cvlan = "100"
+                String svlan = "1000"
+                String manufacturer = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.ont_ont_manufacturer")
+                String accessId = "AC9.0234.0337"
+                String ontsn = jsonUtil.getJsonValue(serInput,
+                        "service.parameters.requestInputs.ont_ont_serial_num")
+
+                String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.c_vlan", cvlan)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.s_vlan", svlan)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_access_id", accessId)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ont_sn", ontsn)
+                msoLogger.debug("old resource input:" + resourceInputObj.toString())
+                resourceInputObj.setResourceParameters(uResourceInput)
+                execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
+                msoLogger.debug("new resource Input :" + resourceInputObj.toString())
+                break
+
+
             case ~/[\w\s\W]*SOTNConnectivity[\w\s\W]*/:
 
                 def resourceInput = resourceInputObj.getResourceParameters()
