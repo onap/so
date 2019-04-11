@@ -749,7 +749,7 @@ public class BBInputSetup implements JavaDelegate {
                 instanceGroup.setModelInfoInstanceGroup(
                         this.mapperLayer.mapCatalogInstanceGroupToInstanceGroup(null, catalogInstanceGroup));
                 instanceGroup.getModelInfoInstanceGroup().setFunction(vnfcInstanceGroupCust.getFunction());
-                instanceGroup.setDescription(vnfcInstanceGroupCust.getDescription());
+                instanceGroup.getModelInfoInstanceGroup().setDescription(vnfcInstanceGroupCust.getDescription());
                 genericVnf.getInstanceGroups().add(instanceGroup);
             }
         }
