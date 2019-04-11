@@ -27,7 +27,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.onap.sdc.api.notification.IArtifactInfo;
 import org.onap.sdc.api.notification.IResourceInstance;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ResourceInfoImpl implements IResourceInstance {
     public ResourceInfoImpl() {}
 

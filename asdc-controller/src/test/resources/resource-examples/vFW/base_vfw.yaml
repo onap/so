@@ -1,0 +1,491 @@
+##########################################################################
+#
+#==================LICENSE_START==========================================
+#
+#
+# Copyright (c) 2017 AT&T Intellectual Property. All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+#==================LICENSE_END============================================
+#
+# ECOMP is a trademark and service mark of AT&T Intellectual Property.
+#
+##########################################################################
+
+heat_template_version: 2013-05-23
+
+description: Heat template that deploys vFirewall demo app for ONAP
+
+##############
+#            #
+# PARAMETERS #
+#            #
+##############
+
+parameters:
+  vfw_image_name:
+    type: string
+    label: Image name or ID
+    description: Image to be used for compute instance
+  vfw_flavor_name:
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used
+  vpg_image_name:
+    type: string
+    label: Image name or ID
+    description: Image to be used for compute instance
+  vpg_flavor_name:
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used
+  vsn_image_name:
+    type: string
+    label: Image name or ID
+    description: Image to be used for compute instance
+  vsn_flavor_name:
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used
+  public_net_id:
+    type: string
+    label: Public network name or ID
+    description: Public network that enables remote connection to VNF
+  unprotected_private_net_id:
+    type: string
+    label: Unprotected private network name or ID
+    description: Private network that connects vPacketGenerator with vFirewall
+  protected_private_net_id:
+    type: string
+    label: Protected private network name or ID
+    description: Private network that connects vFirewall with vSink
+  onap_private_net_id:
+    type: string
+    label: ONAP management network name or ID
+    description: Private network that connects ONAP components and the VNF
+  onap_private_subnet_id:
+    type: string
+    label: ONAP management sub-network name or ID
+    description: Private sub-network that connects ONAP components and the VNF
+  unprotected_private_net_cidr:
+    type: string
+    label: Unprotected private network CIDR
+    description: The CIDR of the unprotected private network
+  protected_private_net_cidr:
+    type: string
+    label: Protected private network CIDR
+    description: The CIDR of the protected private network
+  onap_private_net_cidr:
+    type: string
+    label: ONAP private network CIDR
+    description: The CIDR of the protected private network
+  vfw_int_unprotected_private_ip_0:
+    type: string
+    label: vFirewall private IP address towards the unprotected network
+    description: Private IP address that is assigned to the vFirewall to communicate with the vPacketGenerator
+  vfw_int_protected_private_ip_0:
+    type: string
+    label: vFirewall private IP address towards the protected network
+    description: Private IP address that is assigned to the vFirewall to communicate with the vSink
+  vfw_onap_private_ip_0:
+    type: string
+    label: vFirewall private IP address towards the ONAP management network
+    description: Private IP address that is assigned to the vFirewall to communicate with ONAP components
+  vfw_int_protected_private_floating_ip:
+    type: string
+    label: same value as vpg_int_unprotected_private_ip_0  
+    description: IP to inform OpenStack to enable vfw protected private port to allow packets coming from the packet generator
+  vpg_int_unprotected_private_ip_0:
+    type: string
+    label: vPacketGenerator private IP address towards the unprotected network
+    description: Private IP address that is assigned to the vPacketGenerator to communicate with the vFirewall
+  vpg_onap_private_ip_0:
+    type: string
+    label: vPacketGenerator private IP address towards the ONAP management network
+    description: Private IP address that is assigned to the vPacketGenerator to communicate with ONAP components
+  vsn_int_protected_private_ip_0:
+    type: string
+    label: vSink private IP address towards the protected network
+    description: Private IP address that is assigned to the vSink to communicate with the vFirewall
+  vsn_onap_private_ip_0:
+    type: string
+    label: vSink private IP address towards the ONAP management network
+    description: Private IP address that is assigned to the vSink to communicate with ONAP components
+  vfw_name_0:
+    type: string
+    label: vFirewall name
+    description: Name of the vFirewall
+  vpg_name_0:
+    type: string
+    label: vPacketGenerator name
+    description: Name of the vPacketGenerator
+  vsn_name_0:
+    type: string
+    label: vSink name
+    description: Name of the vSink
+  vnf_id:
+    type: string
+    label: VNF ID
+    description: The VNF ID is provided by ONAP
+  vnf_name:
+    type: string
+    label: VNF NAME
+    description: The VNF NAME is provided by ONAP
+  vf_module_id:
+    type: string
+    label: vFirewall module ID
+    description: The vFirewall Module ID is provided by ONAP
+  dcae_collector_ip:
+    type: string
+    label: DCAE collector IP address
+    description: IP address of the DCAE collector
+  dcae_collector_port:
+    type: string
+    label: DCAE collector port
+    description: Port of the DCAE collector
+  key_name:
+    type: string
+    label: Key pair name
+    description: Public/Private key pair name
+  pub_key:
+    type: string
+    label: Public key
+    description: Public key to be installed on the compute instance
+  install_script_version:
+    type: string
+    label: Installation script version number
+    description: Version number of the scripts that install the vFW demo app
+  demo_artifacts_version:
+    type: string
+    label: Artifacts version used in demo vnfs
+    description: Artifacts (jar, tar.gz) version used in demo vnfs
+  nexus_artifact_repo:
+    type: string
+    description: Root URL for the Nexus repository for Maven artifacts.
+  cloud_env:
+    type: string
+    label: Cloud environment
+    description: Cloud environment (e.g., openstack, rackspace)
+  sec_group:
+    type: string
+    description: ONAP Security Group
+
+#############
+#           #
+# RESOURCES #
+#           #
+#############
+
+resources:
+  random-str:
+    type: OS::Heat::RandomString
+    properties:
+      length: 4
+
+  my_keypair:
+    type: OS::Nova::KeyPair
+    properties:
+      name:
+        str_replace:
+          template: vnfname_base_rand
+          params:
+            base: { get_param: key_name }
+            rand: { get_resource: random-str }
+            vnfname: { get_param: vnf_name }
+      public_key: { get_param: pub_key }
+      save_private_key: false
+
+  # NETWORK_ROLE: unprotected_private
+  # NETWORK_TYPE: internal
+  int_unprotected_private_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        str_replace:
+          template: vnfname_netid
+          params:
+            netid: { get_param: unprotected_private_net_id }
+            vnfname: { get_param: vnf_name }
+
+  # NETWORK_ROLE: protected_private
+  # NETWORK_TYPE: internal
+  int_protected_private_network:
+    type: OS::Neutron::Net
+    properties:
+      name:
+        str_replace:
+          template: vnfname_netid
+          params:
+            netid: { get_param: protected_private_net_id }
+            vnfname: { get_param: vnf_name }
+
+  # NETWORK_ROLE: unprotected_private
+  # NETWORK_TYPE: internal
+  int_unprotected_private_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: int_unprotected_private_network }
+      cidr: { get_param: unprotected_private_net_cidr }
+
+  # NETWORK_ROLE: protected_private
+  # NETWORK_TYPE: internal
+  int_protected_private_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network: { get_resource: int_protected_private_network }
+      cidr: { get_param: protected_private_net_cidr }
+
+  ### Virtual Firewall instantiation ###
+
+  # VM_TYPE: vfw
+  # NETWORK_ROLE: protected_private
+  # NETWORK_TYPE: internal
+  vfw_0_int_unprotected_private_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: int_unprotected_private_network }
+      fixed_ips: [{"subnet": { get_resource: int_unprotected_private_subnet }, "ip_address": { get_param: vfw_int_unprotected_private_ip_0 }}]
+      security_groups:
+      - { get_param: sec_group }
+
+  # VM_TYPE: vfw
+  # NETWORK_ROLE: protected_private
+  # NETWORK_TYPE: internal
+  vfw_0_int_protected_private_port_0:
+    type: OS::Neutron::Port
+    properties:
+      allowed_address_pairs: [{ "ip_address": { get_param: vfw_int_protected_private_floating_ip }}]
+      network: { get_resource: int_protected_private_network }
+      fixed_ips: [{"subnet": { get_resource: int_protected_private_subnet }, "ip_address": { get_param: vfw_int_protected_private_ip_0 }}]
+      security_groups:
+      - { get_param: sec_group }
+
+  # VM_TYPE: vfw
+  # NETWORK_ROLE: onap_private
+  # NETWORK_TYPE: external
+  vfw_0_onap_private_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: onap_private_net_id }
+      fixed_ips: [{"subnet": { get_param: onap_private_subnet_id }, "ip_address": { get_param: vfw_onap_private_ip_0 }}]
+      security_groups:
+      - { get_param: sec_group }
+
+  # VM_TYPE: vfw
+  vfw_server_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vfw_image_name }
+      flavor: { get_param: vfw_flavor_name }
+      name: { get_param: vfw_name_0 }
+      key_name: { get_resource: my_keypair }
+      networks:
+        - network: { get_param: public_net_id }
+        - port: { get_resource: vfw_0_int_unprotected_private_port_0 }
+        - port: { get_resource: vfw_0_int_protected_private_port_0 }
+        - port: { get_resource: vfw_0_onap_private_port_0 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+        vnf_name: { get_param: vnf_name }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __dcae_collector_ip__ : { get_param: dcae_collector_ip }
+            __dcae_collector_port__ : { get_param: dcae_collector_port }
+            __demo_artifacts_version__ : { get_param: demo_artifacts_version }
+            __install_script_version__ : { get_param: install_script_version }
+            __vfw_private_ip_0__ : { get_param: vfw_int_unprotected_private_ip_0 }
+            __vfw_private_ip_1__ : { get_param: vfw_int_protected_private_ip_0 }
+            __vfw_private_ip_2__ : { get_param: vfw_onap_private_ip_0 }
+            __unprotected_private_net_cidr__ : { get_param: unprotected_private_net_cidr }
+            __protected_private_net_cidr__ : { get_param: protected_private_net_cidr }
+            __onap_private_net_cidr__ : { get_param: onap_private_net_cidr }
+            __cloud_env__ : { get_param: cloud_env }
+            __nexus_artifact_repo__: { get_param: nexus_artifact_repo }
+          template: |
+            #!/bin/bash
+
+            # Create configuration files
+            mkdir /opt/config
+            echo "__dcae_collector_ip__" > /opt/config/dcae_collector_ip.txt
+            echo "__dcae_collector_port__" > /opt/config/dcae_collector_port.txt
+            echo "__demo_artifacts_version__" > /opt/config/demo_artifacts_version.txt
+            echo "__install_script_version__" > /opt/config/install_script_version.txt
+            echo "__vfw_private_ip_0__" > /opt/config/vfw_private_ip_0.txt
+            echo "__vfw_private_ip_1__" > /opt/config/vfw_private_ip_1.txt
+            echo "__vfw_private_ip_2__" > /opt/config/vfw_private_ip_2.txt
+            echo "__unprotected_private_net_cidr__" > /opt/config/unprotected_private_net_cidr.txt
+            echo "__protected_private_net_cidr__" > /opt/config/protected_private_net_cidr.txt
+            echo "__onap_private_net_cidr__" > /opt/config/onap_private_net_cidr.txt
+            echo "__cloud_env__" > /opt/config/cloud_env.txt
+            echo "__nexus_artifact_repo__" > /opt/config/nexus_artifact_repo.txt
+
+            # Download and run install script
+            apt-get update
+            apt-get -y install unzip
+            if [[ "__install_script_version__" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+            curl -k -L "__nexus_artifact_repo__/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vfw&a=vfw-scripts&e=zip&v=__install_script_version__" -o /opt/vfw-scripts-__install_script_version__.zip
+            unzip -j /opt/vfw-scripts-__install_script_version__.zip -d /opt v_firewall_install.sh
+            cd /opt
+            chmod +x v_firewall_install.sh
+            ./v_firewall_install.sh
+
+
+  ### Virtual Packet Generator instantiation ###
+
+  vpg_0_int_unprotected_private_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: int_unprotected_private_network }
+      fixed_ips: [{"subnet": { get_resource: int_unprotected_private_subnet }, "ip_address": { get_param: vpg_int_unprotected_private_ip_0 }}]
+      security_groups:
+      - { get_param: sec_group }
+
+  vpg_0_onap_private_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: onap_private_net_id }
+      fixed_ips: [{"subnet": { get_param: onap_private_subnet_id }, "ip_address": { get_param: vpg_onap_private_ip_0 }}]
+      security_groups:
+      - { get_param: sec_group }
+
+  vpg_server_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vpg_image_name }
+      flavor: { get_param: vpg_flavor_name }
+      name: { get_param: vpg_name_0 }
+      key_name: { get_resource: my_keypair }
+      networks:
+        - network: { get_param: public_net_id }
+        - port: { get_resource: vpg_0_int_unprotected_private_port_0 }
+        - port: { get_resource: vpg_0_onap_private_port_0 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+        vnf_name: { get_param: vnf_name }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __fw_ipaddr__: { get_param: vfw_int_unprotected_private_ip_0 }
+            __protected_net_cidr__: { get_param: protected_private_net_cidr }
+            __sink_ipaddr__: { get_param: vsn_int_protected_private_ip_0 }
+            __demo_artifacts_version__ : { get_param: demo_artifacts_version }
+            __install_script_version__ : { get_param: install_script_version }
+            __vpg_private_ip_0__ : { get_param: vpg_int_unprotected_private_ip_0 }
+            __vpg_private_ip_1__ : { get_param: vpg_onap_private_ip_0 }
+            __unprotected_private_net_cidr__ : { get_param: unprotected_private_net_cidr }
+            __onap_private_net_cidr__ : { get_param: onap_private_net_cidr }
+            __cloud_env__ : { get_param: cloud_env }
+            __nexus_artifact_repo__: { get_param: nexus_artifact_repo }
+          template: |
+            #!/bin/bash
+
+            # Create configuration files
+            mkdir /opt/config
+            echo "__fw_ipaddr__" > /opt/config/fw_ipaddr.txt
+            echo "__protected_net_cidr__" > /opt/config/protected_net_cidr.txt
+            echo "__sink_ipaddr__" > /opt/config/sink_ipaddr.txt
+            echo "__demo_artifacts_version__" > /opt/config/demo_artifacts_version.txt
+            echo "__install_script_version__" > /opt/config/install_script_version.txt
+            echo "__vpg_private_ip_0__" > /opt/config/vpg_private_ip_0.txt
+            echo "__vpg_private_ip_1__" > /opt/config/vpg_private_ip_1.txt
+            echo "__unprotected_private_net_cidr__" > /opt/config/unprotected_private_net_cidr.txt
+            echo "__onap_private_net_cidr__" > /opt/config/onap_private_net_cidr.txt
+            echo "__cloud_env__" > /opt/config/cloud_env.txt
+            echo "__nexus_artifact_repo__" > /opt/config/nexus_artifact_repo.txt
+
+            # Download and run install script
+            apt-get update
+            apt-get -y install unzip
+            if [[ "__install_script_version__" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+            curl -k -L "__nexus_artifact_repo__/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vfw&a=vfw-scripts&e=zip&v=__install_script_version__" -o /opt/vfw-scripts-__install_script_version__.zip
+            unzip -j /opt/vfw-scripts-__install_script_version__.zip -d /opt v_packetgen_install.sh
+            cd /opt
+            chmod +x v_packetgen_install.sh
+            ./v_packetgen_install.sh
+
+
+  ### Virtual Sink instantiation ###
+
+  vsn_0_int_protected_private_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_resource: int_protected_private_network }
+      fixed_ips: [{"subnet": { get_resource: int_protected_private_subnet }, "ip_address": { get_param: vsn_int_protected_private_ip_0 }}]
+      security_groups:
+      - { get_param: sec_group }
+
+  vsn_0_onap_private_port_0:
+    type: OS::Neutron::Port
+    properties:
+      network: { get_param: onap_private_net_id }
+      fixed_ips: [{"subnet": { get_param: onap_private_subnet_id }, "ip_address": { get_param: vsn_onap_private_ip_0 }}]
+      security_groups:
+      - { get_param: sec_group }
+
+  vsn_server_0:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: vsn_image_name }
+      flavor: { get_param: vsn_flavor_name }
+      name: { get_param: vsn_name_0 }
+      key_name: { get_resource: my_keypair }
+      networks:
+        - network: { get_param: public_net_id }
+        - port: { get_resource: vsn_0_int_protected_private_port_0 }
+        - port: { get_resource: vsn_0_onap_private_port_0 }
+      metadata:
+        vnf_id: { get_param: vnf_id }
+        vf_module_id: { get_param: vf_module_id }
+        vnf_name: { get_param: vnf_name }
+      user_data_format: RAW
+      user_data:
+        str_replace:
+          params:
+            __protected_net_gw__: { get_param: vfw_int_protected_private_ip_0 }
+            __unprotected_net__: { get_param: unprotected_private_net_cidr }
+            __install_script_version__ : { get_param: install_script_version }
+            __vsn_private_ip_0__ : { get_param: vsn_int_protected_private_ip_0 }
+            __vsn_private_ip_1__ : { get_param: vsn_onap_private_ip_0 }
+            __protected_private_net_cidr__ : { get_param: protected_private_net_cidr }
+            __onap_private_net_cidr__ : { get_param: onap_private_net_cidr }
+            __cloud_env__ : { get_param: cloud_env }
+            __nexus_artifact_repo__: { get_param: nexus_artifact_repo }
+          template: |
+            #!/bin/bash
+
+            # Create configuration files
+            mkdir /opt/config
+            echo "__protected_net_gw__" > /opt/config/protected_net_gw.txt
+            echo "__unprotected_net__" > /opt/config/unprotected_net.txt
+            echo "__install_script_version__" > /opt/config/install_script_version.txt
+            echo "__vsn_private_ip_0__" > /opt/config/vsn_private_ip_0.txt
+            echo "__vsn_private_ip_1__" > /opt/config/vsn_private_ip_1.txt
+            echo "__protected_private_net_cidr__" > /opt/config/protected_private_net_cidr.txt
+            echo "__onap_private_net_cidr__" > /opt/config/onap_private_net_cidr.txt
+            echo "__cloud_env__" > /opt/config/cloud_env.txt
+            echo "__nexus_artifact_repo__" > /opt/config/nexus_artifact_repo.txt
+
+            # Download and run install script
+            apt-get update
+            apt-get -y install unzip
+            if [[ "__install_script_version__" =~ "SNAPSHOT" ]]; then REPO=snapshots; else REPO=releases; fi
+            curl -k -L "__nexus_artifact_repo__/service/local/artifact/maven/redirect?r=${REPO}&g=org.onap.demo.vnf.vfw&a=vfw-scripts&e=zip&v=__install_script_version__" -o /opt/vfw-scripts-__install_script_version__.zip
+            unzip -j /opt/vfw-scripts-__install_script_version__.zip -d /opt v_sink_install.sh
+            cd /opt
+            chmod +x v_sink_install.sh
+            ./v_sink_install.sh

@@ -1,0 +1,25 @@
+[
+  {
+    "vfModuleModelName": "Vfw1f52feb05502..base_vfw..module-0",
+    "vfModuleModelInvariantUUID": "062e75f9-ccbd-4946-8d31-92118efac741",
+    "vfModuleModelVersion": "1",
+    "vfModuleModelUUID": "3f99a421-abd0-4e5e-a9e4-3b9b8464ddb6",
+    "vfModuleModelCustomizationUUID": "12c7bf93-9021-41cf-8c65-86856cfab11d",
+    "isBase": true,
+    "artifacts": [
+      "4f0b1b88-09ab-43b9-9506-57de3c69433a",
+      "005bc362-b40f-4c54-82bc-2716147f9c3a"
+    ],
+    "properties": {
+      "min_vf_module_instances": "1",
+      "vf_module_label": "base_vfw",
+      "max_vf_module_instances": "1",
+      "vfc_list": "",
+      "vf_module_description": "",
+      "vf_module_type": "Base",
+      "availability_zone_count": "",
+      "volume_group": "false",
+      "initial_count": "1"
+    }
+  }
+]

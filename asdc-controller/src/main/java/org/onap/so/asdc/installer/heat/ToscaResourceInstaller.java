@@ -261,7 +261,7 @@ public class ToscaResourceInstaller {
         try {
             Service existingService =
                     serviceRepo.findOneByModelUUID(vfResourceStructure.getNotification().getServiceUUID());
-            if (existingService != null && serviceDeployed == false)
+            if (existingService != null && !serviceDeployed)
                 status = true;
             if (status) {
                 logger.info(vfResourceStructure.getResourceInstance().getResourceInstanceName(),
@@ -387,12 +387,11 @@ public class ToscaResourceInstaller {
         List<ASDCElementInfo> artifactListForLogging = new ArrayList<>();
         try {
             createToscaCsar(toscaResourceStruct);
-            Service service = createService(toscaResourceStruct, vfResourceStruct);
+            createService(toscaResourceStruct, vfResourceStruct);
+            Service service = toscaResourceStruct.getCatalogService();
             List<NodeTemplate> vfNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
 
-
             for (NodeTemplate nodeTemplate : vfNodeTemplatesList) {
-
                 Metadata metadata = nodeTemplate.getMetaData();
                 String serviceType = toscaResourceStruct.getCatalogService().getServiceType();
                 String vfCustomizationCategory = toscaResourceStruct.getSdcCsarHelper()
@@ -402,7 +401,6 @@ public class ToscaResourceInstaller {
             }
 
             processResourceSequence(toscaResourceStruct, service);
-            processVFResources(toscaResourceStruct, service, vfResourceStructure);
             List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
             processAllottedResources(toscaResourceStruct, service, allottedResourceList);
             processNetworks(toscaResourceStruct, service);
@@ -410,7 +408,7 @@ public class ToscaResourceInstaller {
             processNetworkCollections(toscaResourceStruct, service);
             // Process Service Proxy & Configuration
             processServiceProxyAndConfiguration(toscaResourceStruct, service);
-
+            logger.info("Saving Service: {} ", service.getModelName());
             serviceRepo.save(service);
 
             WatchdogComponentDistributionStatus status = new WatchdogComponentDistributionStatus(
@@ -763,48 +761,6 @@ public class ToscaResourceInstaller {
     }
 
 
-    protected void processVFResources(ToscaResourceStructure toscaResourceStruct, Service service,
-            VfResourceStructure vfResourceStructure) throws Exception {
-        logger.debug("processVFResources");
-
-        List<NodeTemplate> vfNodeTemplatesList = toscaResourceStruct.getSdcCsarHelper().getServiceVfList();
-        // String servicecategory = toscaResourceStruct.getCatalogService().getCategory();
-        // String serviceType = toscaResourceStruct.getCatalogService().getServiceType();
-
-        for (NodeTemplate nodeTemplate : vfNodeTemplatesList) {
-            Metadata metadata = nodeTemplate.getMetaData();
-            String vfCustomizationCategory = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CATEGORY);
-            logger.debug("VF Category is : " + vfCustomizationCategory);
-
-            // Do not treat Allotted Resources as VNF resources
-            if (ALLOTTED_RESOURCE.equalsIgnoreCase(vfCustomizationCategory)) {
-                continue;
-            }
-
-            String vfCustomizationUUID = metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID);
-            logger.debug("VFCustomizationUUID=" + vfCustomizationUUID);
-
-            IResourceInstance vfNotificationResource = vfResourceStructure.getResourceInstance();
-
-            // Make sure the VF ResourceCustomizationUUID from the notification and tosca
-            // customizations match before comparing their VF Modules UUID's
-            logger.debug("Checking if Notification VF ResourceCustomizationUUID: "
-                    + vfNotificationResource.getResourceCustomizationUUID() + " matches Tosca VF Customization UUID: "
-                    + vfCustomizationUUID);
-
-            if (vfCustomizationUUID.equals(vfNotificationResource.getResourceCustomizationUUID())) {
-                logger.debug("vfCustomizationUUID: " + vfCustomizationUUID
-                        + " matches vfNotificationResource CustomizationUUID");
-
-                processVfModules(toscaResourceStruct, vfResourceStructure, service, nodeTemplate, metadata,
-                        vfCustomizationCategory);
-            } else {
-                logger.debug("Notification VF ResourceCustomizationUUID: "
-                        + vfNotificationResource.getResourceCustomizationUUID() + " doesn't match "
-                        + "Tosca VF Customization UUID: " + vfCustomizationUUID);
-            }
-        }
-    }
 
     /**
      * This is used to process the PNF specific resource, including resource and resource_customization.

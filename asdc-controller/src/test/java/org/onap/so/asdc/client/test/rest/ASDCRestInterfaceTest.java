@@ -42,6 +42,7 @@ import org.onap.so.asdc.client.test.emulators.DistributionClientEmulator;
 import org.onap.so.asdc.client.test.emulators.NotificationDataImpl;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
+import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.data.repository.AllottedResourceRepository;
 import org.onap.so.db.catalog.data.repository.NetworkResourceRepository;
 import org.onap.so.db.catalog.data.repository.ServiceRepository;
@@ -136,6 +137,42 @@ public class ASDCRestInterfaceTest extends BaseTest {
 
         assertThat(actualResponse, sameBeanAs(expectedService).ignoring("0x1.created")
                 .ignoring("0x1.allotedResourceCustomization.created"));
+    }
+
+    @Test
+    @Transactional
+    public void test_VFW_Distrobution() throws Exception {
+
+        wireMockServer.stubFor(post(urlPathMatching("/aai/.*"))
+                .willReturn(aResponse().withStatus(200).withHeader("Content-Type", "application/json")));
+
+        ObjectMapper mapper = new ObjectMapper();
+        NotificationDataImpl request = mapper.readValue(
+                new File("src/test/resources/resource-examples/vFW/notification.json"), NotificationDataImpl.class);
+        headers.add("resource-location", "src/test/resources/resource-examples/vFW/");
+        HttpEntity<NotificationDataImpl> entity = new HttpEntity<NotificationDataImpl>(request, headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("test/treatNotification/v1"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatusCode().value());
+
+        Service expectedService = new Service();
+        expectedService.setDescription("catalog service description");
+        expectedService.setModelInvariantUUID("3164f9ff-d7e7-4813-ab32-6be7e1cacb18");
+        expectedService.setModelName("vFW 2019-04-10 21:53:05");
+        expectedService.setModelUUID("e16e4ed9-3429-423a-bc3c-1389ae91491c");
+        expectedService.setModelVersion("1.0");
+
+
+
+        Service actualService = serviceRepo.findOneByModelUUID("e16e4ed9-3429-423a-bc3c-1389ae91491c");
+
+
+        if (actualService == null)
+            throw new Exception("No Allotted Resource Written to database");
+
+        assertEquals(expectedService.getModelName(), actualService.getModelName());
     }
 
     @Test

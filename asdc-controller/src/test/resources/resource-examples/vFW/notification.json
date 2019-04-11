@@ -1,0 +1,80 @@
+{
+  "distributionID": "3d1c9f3c-550e-41c3-bfb6-800f8274a40c", 
+  "resources": [
+    {
+      "artifacts": [
+        {
+          "artifactChecksum": "NDg0ZDJjYTIzNDhlZmFkZjRjMzM5MTkzOGFhZTU5ZjI=", 
+          "artifactDescription": "Auto-generated VF Modules information artifact", 
+          "artifactName": "vfw1f52feb055020_modules.json", 
+          "artifactTimeout": 120, 
+          "artifactType": "VF_MODULES_METADATA", 
+          "artifactURL": "vfw1f52feb055020_modules.json", 
+          "artifactUUID": "7ff1c5cb-8ca1-43b1-8f97-05c0d8c879ec", 
+          "artifactVersion": "1", 
+          "relatedArtifactsInfo": []
+        }, 
+        {
+          "artifactChecksum": "MDQyYTIxMTlhZDdlMzdiNjBjNjdjZTFhMWE0NThmMzc=", 
+          "artifactDescription": "created from csar", 
+          "artifactName": "base_vfw.yaml", 
+          "artifactTimeout": 120, 
+          "artifactType": "HEAT", 
+          "artifactURL": "base_vfw.yaml", 
+          "artifactUUID": "4f0b1b88-09ab-43b9-9506-57de3c69433a", 
+          "artifactVersion": "2", 
+          "generatedArtifact": {
+            "artifactChecksum": "MjQ2YWIxOTY2M2E0ZjAzMTI4NjVkNWZkZGRmM2VmMGI=", 
+            "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+            "artifactName": "base_vfw.env", 
+            "artifactTimeout": 120, 
+            "artifactType": "HEAT_ENV", 
+            "artifactURL": "base_vfw.env", 
+            "artifactUUID": "005bc362-b40f-4c54-82bc-2716147f9c3a", 
+            "artifactVersion": "2", 
+            "generatedFromUUID": "4f0b1b88-09ab-43b9-9506-57de3c69433a"
+          }, 
+          "relatedArtifactsInfo": []
+        }, 
+        {
+          "artifactChecksum": "MjQ2YWIxOTY2M2E0ZjAzMTI4NjVkNWZkZGRmM2VmMGI=", 
+          "artifactDescription": "Auto-generated HEAT Environment deployment artifact", 
+          "artifactName": "base_vfw.env", 
+          "artifactTimeout": 120, 
+          "artifactType": "HEAT_ENV", 
+          "artifactURL": "base_vfw.env", 
+          "artifactUUID": "005bc362-b40f-4c54-82bc-2716147f9c3a", 
+          "artifactVersion": "2", 
+          "relatedArtifactsInfo": []
+        }
+      ], 
+      "category": "Generic", 
+      "resourceType": "VF", 
+      "resourceCustomizationUUID": "0451bf8d-49e1-4f7f-960f-2e24f27c9f42", 
+      "resourceInstanceName": "vFW 1f52feb0-5502 0", 
+      "resourceInvariantUUID": "459f18ec-aaee-40d1-8fae-60fec2aae37f", 
+      "resourceName": "vFW 1f52feb0-5502", 
+      "resourceUUID": "1b1346cb-bf0b-4097-9d1b-5a041c536897", 
+      "resourceVersion": "1.0", 
+      "subcategory": "Abstract"
+    }
+  ], 
+  "serviceArtifacts": [
+    {
+      "artifactChecksum": "YWNkZTJmYmVmYTg0NTdjMzg0MjVjZTliOTRiYTQ5YjM=", 
+      "artifactDescription": "TOSCA definition package of the asset", 
+      "artifactName": "service-Vfw20190410215305-csar.csar", 
+      "artifactTimeout": 0, 
+      "artifactType": "TOSCA_CSAR", 
+      "artifactURL": "service-Vfw.csar", 
+      "artifactUUID": "f4fcb0ba-40d3-46d2-819e-3b69eda88fcf",
+      "artifactVersion": "1"
+    }
+  ], 
+  "serviceDescription": "catalog service description", 
+  "serviceInvariantUUID": "3164f9ff-d7e7-4813-ab32-6be7e1cacb18", 
+  "serviceName": "vFW 2019-04-10 21:53:05", 
+  "serviceUUID": "e16e4ed9-3429-423a-bc3c-1389ae91491c", 
+  "serviceVersion": "1.0", 
+  "workloadContext": "Production"
+}

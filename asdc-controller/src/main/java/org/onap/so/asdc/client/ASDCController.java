@@ -655,6 +655,7 @@ public class ASDCController {
         // For each artifact, create a structure describing the VFModule in a ordered flat level
         ResourceStructure resourceStructure = null;
         String msoConfigPath = getMsoConfigPath();
+        boolean hasVFResource = false;
         ToscaResourceStructure toscaResourceStructure = new ToscaResourceStructure(msoConfigPath);
         boolean deploySuccessful = true;
         String errorMessage = null;
@@ -697,7 +698,7 @@ public class ASDCController {
                                 + resourceStructure.getResourceInstance().getResourceUUID());
 
                         if ("VF".equals(resourceType) && !"Allotted Resource".equalsIgnoreCase(category)) {
-
+                            hasVFResource = true;
                             for (IArtifactInfo artifact : resource.getArtifacts()) {
                                 IDistributionClientDownloadResult resultArtifact =
                                         this.downloadTheArtifact(artifact, iNotif.getDistributionID());
@@ -730,16 +731,19 @@ public class ASDCController {
                     logger.error("Exception occurred", e);
                 }
 
-                // Deploy VF resource and artifacts
-                logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
-                try {
-                    this.deployResourceStructure(resourceStructure, toscaResourceStructure);
-                } catch (ArtifactInstallerException e) {
-                    deploySuccessful = false;
-                    errorMessage = e.getMessage();
-                    logger.error("Exception occurred", e);
-                }
+                if (!hasVFResource) {
 
+                    logger.debug("No resources found for Service: " + iNotif.getServiceUUID());
+
+                    logger.debug("Preparing to deploy Service: {}", iNotif.getServiceUUID());
+                    try {
+                        this.deployResourceStructure(resourceStructure, toscaResourceStructure);
+                    } catch (ArtifactInstallerException e) {
+                        deploySuccessful = false;
+                        errorMessage = e.getMessage();
+                        logger.error("Exception occurred", e);
+                    }
+                }
                 this.sendCsarDeployNotification(iNotif, resourceStructure, toscaResourceStructure, deploySuccessful,
                         errorMessage);
             }
