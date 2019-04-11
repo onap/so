@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "46b74073_db598453",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClient.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-11T09:33:28Z",
+      "side": 1,
+      "message": "Why would we want to use different one? User shouldn\u0027t care about implementation details to be set in configuration.\n\nAlso this creates super-complicated API for simple task. Instead of simply registering in dmaap client you must register in 2 different places (or read config and register in correct one).",
+      "parentUuid": "e0490068_0744bfda",
+      "range": {
+        "startLine": 145,
+        "startChar": 0,
+        "endLine": 154,
+        "endChar": 13
+      },
+      "revId": "4b4dcaf3c2391d7ae7c89074a96120e3dac34b57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "17534def_1ffe9e3c",
         "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClientTest.java",
         "patchSetId": 2
@@ -131,6 +155,30 @@
       "side": 1,
       "message": "Please take a look at PnfNotificationEventHandler, it will decide which pnfCorrelationId is of interested. This class PnfEventReadyDmaapClient just publish whatever pnfCorrelationId is received.",
       "parentUuid": "17534def_1ffe9e3c",
+      "range": {
+        "startLine": 190,
+        "startChar": 8,
+        "endLine": 190,
+        "endChar": 84
+      },
+      "revId": "4b4dcaf3c2391d7ae7c89074a96120e3dac34b57",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0638ca29_e910fae0",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/test/java/org/onap/so/bpmn/infrastructure/pnf/dmaap/PnfEventReadyDmaapClientTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-11T09:33:28Z",
+      "side": 1,
+      "message": "I just noticed it. I stand corrected.\n\nHowever it\u0027s quite counter-intuitive that this class does two different things depending on configuration - that\u0027s violation of Single Responsibility Principle.",
+      "parentUuid": "d23bc37c_48387178",
       "range": {
         "startLine": 190,
         "startChar": 8,
