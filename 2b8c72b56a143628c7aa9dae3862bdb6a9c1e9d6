@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "f7308a71_66fc8753",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-11T14:17:54Z",
+      "side": 1,
+      "message": "remove catch and make test method throw Exception",
+      "range": {
+        "startLine": 128,
+        "startChar": 0,
+        "endLine": 134,
+        "endChar": 9
+      },
+      "revId": "2b8c72b56a143628c7aa9dae3862bdb6a9c1e9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "d6fdeb58_9cc3cea0",
         "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
         "patchSetId": 5
