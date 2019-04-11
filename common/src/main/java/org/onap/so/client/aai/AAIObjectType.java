@@ -119,6 +119,10 @@ public class AAIObjectType implements GraphInventoryObjectType, Serializable {
             new AAIObjectType(AAINamespaceConstants.CLOUD_INFRASTRUCTURE, Pserver.class);
     public static final AAIObjectType SERVICE_SUBSCRIPTION =
             new AAIObjectType(AAIObjectType.CUSTOMER.uriTemplate(), ServiceSubscription.class);
+
+    public static final AAIObjectType SERVICE_INSTANCE_METADATA = new AAIObjectType(
+            AAIObjectType.SERVICE_INSTANCE + "/metadata", org.onap.aai.domain.yang.v13.Metadata.class);
+
     public static final AAIObjectType SERVICE_INSTANCE =
             new AAIObjectType(AAIObjectType.SERVICE_SUBSCRIPTION.uriTemplate(), ServiceInstance.class);
     public static final AAIObjectType PROJECT = new AAIObjectType(AAINamespaceConstants.BUSINESS, Project.class);
