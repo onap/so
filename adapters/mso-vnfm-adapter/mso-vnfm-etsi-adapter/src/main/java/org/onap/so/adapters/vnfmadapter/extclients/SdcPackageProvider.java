@@ -64,7 +64,7 @@ import static org.springframework.http.MediaType.APPLICATION_OCTET_STREAM_VALUE;
 @Component
 public class SdcPackageProvider {
     private static final String GET_PACKAGE_URL = "%s/catalog/resources/%s/toscaModel";
-    @Value("sdc.toscametapath:TOSCA-Metadata/TOSCA.meta")
+    @Value("${sdc.toscametapath:TOSCA-Metadata/TOSCA.meta}")
     private List<String> toscaMetaPaths;
     private final String TOSCA_VNFD_KEY = "Entry-Definitions";
     private static Logger logger = getLogger(SdcPackageProvider.class);

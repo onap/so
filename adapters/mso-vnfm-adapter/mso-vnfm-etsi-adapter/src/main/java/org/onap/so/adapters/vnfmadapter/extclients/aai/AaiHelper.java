@@ -20,7 +20,15 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
-import org.onap.aai.domain.yang.*;
+import org.onap.aai.domain.yang.EsrSystemInfo;
+import org.onap.aai.domain.yang.EsrSystemInfoList;
+import org.onap.aai.domain.yang.EsrVnfm;
+import org.onap.aai.domain.yang.EsrVnfmList;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Relationship;
+import org.onap.aai.domain.yang.RelationshipData;
+import org.onap.aai.domain.yang.RelationshipList;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model.LcnVnfLcmOperationOccurrenceNotificationAffectedVnfcs;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.TenantNotFoundException;
 import org.onap.so.adapters.vnfmadapter.rest.exceptions.VnfmNotFoundException;

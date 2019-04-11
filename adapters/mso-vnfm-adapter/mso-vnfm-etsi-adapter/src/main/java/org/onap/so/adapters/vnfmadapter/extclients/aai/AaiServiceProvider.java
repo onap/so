@@ -20,7 +20,11 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
-import org.onap.aai.domain.yang.*;
+import org.onap.aai.domain.yang.EsrSystemInfoList;
+import org.onap.aai.domain.yang.EsrVnfm;
+import org.onap.aai.domain.yang.EsrVnfmList;
+import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.vnfmadapter.v1.model.Tenant;
 import java.util.List;
 
@@ -93,7 +97,7 @@ public interface AaiServiceProvider {
      * @param cloudOwner the cloud owner
      * @param cloudRegion the cloud region
      * @param tenantId the ID of the tenant
-     * @param vserver the ID of the vserver
+     * @param vserverId the ID of the vserver
      * @return
      */
     void invokeDeleteVserver(final String cloudOwner, final String cloudRegion, final String tenantId,

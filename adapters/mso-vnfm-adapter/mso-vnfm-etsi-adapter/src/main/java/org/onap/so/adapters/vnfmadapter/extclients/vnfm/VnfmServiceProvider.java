@@ -21,7 +21,13 @@
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
 import com.google.common.base.Optional;
-import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.*;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.TerminateVnfRequest;
 
 /**
  * Provides methods for invoking REST calls to a VNFM.
