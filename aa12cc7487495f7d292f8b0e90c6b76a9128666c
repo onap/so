@@ -22,6 +22,30 @@
       "revId": "aa12cc7487495f7d292f8b0e90c6b76a9128666c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "75e91f6c_bf279235",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-04-11T05:55:08Z",
+      "side": 1,
+      "message": "I would prefer to do change in DB and WorkflowActionBBTasks.java, this code i have committed in patch 4. However as per Steve\u0027s comments on patch 4, DB changes are not recommended and to have backward compatibility of the code,  instead of editing the existing flow in orchestration flow table, I am reading the data from orchestration table and appending custom flows to the list based on the SkipConfig flag retrieved from TOSCA.",
+      "parentUuid": "bd27422d_ae8f4fae",
+      "range": {
+        "startLine": 334,
+        "startChar": 2,
+        "endLine": 346,
+        "endChar": 25
+      },
+      "revId": "aa12cc7487495f7d292f8b0e90c6b76a9128666c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
