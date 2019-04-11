@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d6fdeb58_9cc3cea0",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-11T13:57:55Z",
+      "side": 1,
+      "message": "Actually this trenary operator can be skipped:\n\nreturn runtime.... \u003d\u003d null;",
+      "range": {
+        "startLine": 138,
+        "startChar": 8,
+        "endLine": 139,
+        "endChar": 35
+      },
+      "revId": "2b8c72b56a143628c7aa9dae3862bdb6a9c1e9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "925784c2_6d2d11cc",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-11T13:57:55Z",
+      "side": 1,
+      "message": "I think all those .matches() should be .isEqualTo()",
+      "range": {
+        "startLine": 168,
+        "startChar": 13,
+        "endLine": 168,
+        "endChar": 20
+      },
+      "revId": "2b8c72b56a143628c7aa9dae3862bdb6a9c1e9d6",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
