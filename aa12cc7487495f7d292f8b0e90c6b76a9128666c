@@ -46,6 +46,30 @@
       "revId": "aa12cc7487495f7d292f8b0e90c6b76a9128666c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "15478169_3f0f0174",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-11T11:43:35Z",
+      "side": 1,
+      "message": "I am not following why you need to use the numbering sequences?  If you wanted to modify DB that would be fine as long as its backwards compatible.  I gave you the choice of solution.  You could insert it to the database then add additional logic to \"remove\" it from execution if the flag is not set.  Either way you have to do dynamic manipulation of the list with your current design choice.",
+      "parentUuid": "75e91f6c_bf279235",
+      "range": {
+        "startLine": 334,
+        "startChar": 2,
+        "endLine": 346,
+        "endChar": 25
+      },
+      "revId": "aa12cc7487495f7d292f8b0e90c6b76a9128666c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
