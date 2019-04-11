@@ -36,6 +36,7 @@ import java.util.UUID;
 import org.camunda.bpm.engine.runtime.Execution;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.ActionIdentifiers;
 import org.onap.ccsdk.cds.controllerblueprints.common.api.CommonHeader;
@@ -51,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Basic Integration test for createVcpeResCustService_Simplified.bpmn workflow.
  */
+@Ignore
 public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
@@ -144,6 +146,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
     }
 
     private void checkConfigAssign(ExecutionServiceInput executionServiceInput) {
+
+        logger.info("Checking the configAssign request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**
@@ -173,6 +177,8 @@ public class CreateVcpeResCustServiceSimplifiedTest extends BaseBPMNTest {
     }
 
     private void checkConfigDeploy(ExecutionServiceInput executionServiceInput) {
+
+        logger.info("Checking the configDeploy request");
         ActionIdentifiers actionIdentifiers = executionServiceInput.getActionIdentifiers();
 
         /**
