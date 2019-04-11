@@ -347,8 +347,9 @@ public class Create3rdONAPE2EServiceInstance extends AbstractServiceTaskProcesso
 		logger.info(" ***** Started prepare3rdONAPRequest *****")
 
 		String sppartnerUrl = execution.getVariable(Prefix + "SppartnerUrl")
-		String extAPIPath = sppartnerUrl + '/serviceOrder'
+		String extAPIPath = UrnPropertiesReader.getVariable("extapi.endpoint", execution) + '/serviceOrder'
 		execution.setVariable("ExternalAPIURL", extAPIPath)
+		execution.setVariable("SPPartnerUrl",sppartnerUrl)
 
 		// ExternalAPI message format
 		String externalId = execution.getVariable("resourceName")
