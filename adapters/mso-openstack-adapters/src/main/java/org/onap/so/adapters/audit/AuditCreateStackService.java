@@ -27,14 +27,11 @@ import java.util.Map;
 import java.util.Optional;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
-import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.audit.beans.AuditInventory;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -47,7 +44,7 @@ public class AuditCreateStackService extends AbstractAuditService {
     public HeatStackAudit heatStackAudit;
 
     @Autowired
-    public Environment env;
+    public Environment environment;
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
         AuditInventory auditInventory = externalTask.getVariable("auditInventory");

@@ -29,23 +29,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ContrailSubnetHostRoutes {
 
     @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes_route")
-    private List<ContrailSubnetHostRoute> host_routes = new ArrayList<ContrailSubnetHostRoute>();
+    private List<ContrailSubnetHostRoute> hostRoutes = new ArrayList<>();
 
     public ContrailSubnetHostRoutes() {}
 
     public List<ContrailSubnetHostRoute> getHost_routes() {
-        return host_routes;
+        return hostRoutes;
     }
 
     public void setHost_routes(List<ContrailSubnetHostRoute> host_routes) {
-        this.host_routes = host_routes;
+        this.hostRoutes = host_routes;
     }
 
     @Override
     public String toString() {
         StringBuilder buf = new StringBuilder();
-        if (host_routes != null) {
-            for (ContrailSubnetHostRoute hr : host_routes) {
+        if (hostRoutes != null) {
+            for (ContrailSubnetHostRoute hr : hostRoutes) {
                 buf.append(hr.toString());
             }
         }

@@ -54,6 +54,8 @@ public class HeatStackAudit {
 
     protected static final Logger logger = LoggerFactory.getLogger(HeatStackAudit.class);
 
+    private static final String exceptionMsg = "Error finding Path from Self Link";
+
     @Autowired
     protected MsoHeatUtils heat;
 
@@ -110,10 +112,10 @@ public class HeatStackAudit {
                     processNestedResourceGroup(cloudRegion, tenantId, vServersWithLInterface,
                             nestedResourceGroupResources);
                 } else
-                    throw new Exception("Error finding Path from Self Link");
+                    throw new Exception(exceptionMsg);
             } catch (Exception e) {
                 logger.error("Error Parsing Link to obtain Path", e);
-                throw new Exception("Error finding Path from Self Link");
+                throw new Exception(exceptionMsg);
             }
         }
     }
@@ -143,7 +145,7 @@ public class HeatStackAudit {
                 addSubInterfaceToVserver(vServersWithLInterface, subinterfaceStack, subinterfaceResources);
             }
         } else
-            throw new Exception("Error finding Path from Self Link");
+            throw new Exception(exceptionMsg);
 
     }
 
