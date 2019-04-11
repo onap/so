@@ -70,6 +70,30 @@
       "revId": "aa12cc7487495f7d292f8b0e90c6b76a9128666c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d90fc4af_db33de92",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowAction.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 346,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-11T11:46:42Z",
+      "side": 1,
+      "message": "We have similar logic that manipulates the list, all we do is call:\n flowsToExecute.add(assignConfigBB);\n                    flowsToExecute.add(activateConfigBB);\n\nI had pointed you toward this method of where we had done this previously",
+      "parentUuid": "15478169_3f0f0174",
+      "range": {
+        "startLine": 334,
+        "startChar": 2,
+        "endLine": 346,
+        "endChar": 25
+      },
+      "revId": "aa12cc7487495f7d292f8b0e90c6b76a9128666c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
