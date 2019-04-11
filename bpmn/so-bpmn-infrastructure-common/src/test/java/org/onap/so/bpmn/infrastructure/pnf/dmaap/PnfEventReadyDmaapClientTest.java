@@ -23,12 +23,10 @@
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -49,12 +47,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEvent;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.PnfEventReadyDmaapClient.DmaapTopicListenerThread;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.Environment;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -85,9 +80,6 @@ public class PnfEventReadyDmaapClientTest {
     private Runnable threadMockToNotifyCamundaFlow;
     private ScheduledThreadPoolExecutor executorMock;
 
-    @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
-
     @Before
     public void init() throws NoSuchFieldException, IllegalAccessException {
         when(env.getProperty(eq("pnf.dmaap.port"), eq(Integer.class))).thenReturn(PORT);
@@ -99,7 +91,7 @@ public class PnfEventReadyDmaapClientTest {
         when(env.getProperty(eq("pnf.dmaap.consumerGroup"))).thenReturn(CONSUMER_GROUP);
         when(env.getProperty(eq("pnf.dmaap.topicListenerDelayInSeconds"), eq(Integer.class)))
                 .thenReturn(TOPIC_LISTENER_DELAY_IN_SECONDS);
-        testedObject = new PnfEventReadyDmaapClient(env, applicationEventPublisher);
+        testedObject = new PnfEventReadyDmaapClient(env);
         testedObjectInnerClassThread = testedObject.new DmaapTopicListenerThread();
         httpClientMock = mock(HttpClient.class);
         threadMockToNotifyCamundaFlow = mock(Runnable.class);
@@ -131,10 +123,7 @@ public class PnfEventReadyDmaapClientTest {
         assertEquals(captor1.getValue().getURI().getPath(),
                 "/" + URI_PATH_PREFIX + "/" + EVENT_TOPIC_TEST + "/" + CONSUMER_GROUP + "/" + CONSUMER_ID + "");
 
-        /**
-         * Two PNF returned from HTTP request.
-         */
-        verify(applicationEventPublisher, times(2)).publishEvent(any(PnfNotificationEvent.class));
+        verify(threadMockToNotifyCamundaFlow).run();
         verify(executorMock).shutdown();
     }
 
