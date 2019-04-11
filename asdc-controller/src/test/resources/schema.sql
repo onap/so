@@ -1,7 +1,6 @@
 
 --------START Catalog DB SCHEMA --------
 use catalogdb;
-
 set foreign_key_checks=0;
 DROP TABLE IF EXISTS `allotted_resource`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -1170,7 +1169,7 @@ CREATE TABLE `vnfc_instance_group_customization` (
 set foreign_key_checks=1;
 
 CREATE TABLE IF NOT EXISTS `pnf_resource` (
-  `ORCHESTRATION_MODE` varchar(20) NOT NULL DEFAULT 'HEAT',
+  `ORCHESTRATION_MODE` varchar(20) DEFAULT NULL,
   `DESCRIPTION` varchar(1200) DEFAULT NULL,
   `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `MODEL_UUID` varchar(200) NOT NULL,
@@ -1207,6 +1206,170 @@ CREATE TABLE IF NOT EXISTS `pnf_resource_customization_to_service` (
   `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
   PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `workflow` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `ARTIFACT_UUID` varchar(200) NOT NULL,
+  `ARTIFACT_NAME` varchar(200) NOT NULL,
+  `NAME` varchar(200) NOT NULL,
+  `OPERATION_NAME` varchar(200) DEFAULT NULL,
+  `VERSION` double NOT NULL,
+  `DESCRIPTION` varchar(1200) DEFAULT NULL,
+  `BODY` longtext DEFAULT NULL,
+  `RESOURCE_TARGET` varchar(200) NOT NULL,
+  `SOURCE` varchar(200) NOT NULL,
+  `TIMEOUT_MINUTES` int(11) DEFAULT NULL,
+  `ARTIFACT_CHECKSUM` varchar(200) DEFAULT 'MANUAL RECORD',
+  `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `UK_workflow` (`ARTIFACT_UUID`,`NAME`,`VERSION`,`SOURCE`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `vnf_resource_to_workflow` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `VNF_RESOURCE_MODEL_UUID` varchar(200) NOT NULL,
+  `WORKFLOW_ID` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE KEY `UK_vnf_resource_to_workflow` (`VNF_RESOURCE_MODEL_UUID`,`WORKFLOW_ID`),
+  KEY `fk_vnf_resource_to_workflow__workflow1_idx` (`WORKFLOW_ID`),
+  KEY `fk_vnf_resource_to_workflow__vnf_res_mod_uuid_idx` (`VNF_RESOURCE_MODEL_UUID`),
+  CONSTRAINT `fk_vnf_resource_to_workflow__vnf_resource1` FOREIGN KEY (`VNF_RESOURCE_MODEL_UUID`) REFERENCES `vnf_resource` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_vnf_resource_to_workflow__workflow1` FOREIGN KEY (`WORKFLOW_ID`) REFERENCES `workflow` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE IF NOT EXISTS `activity_spec` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `NAME` VARCHAR(200) NOT NULL,
+  `DESCRIPTION` VARCHAR(1200) NOT NULL,
+  `VERSION` DOUBLE NOT NULL,
+  `CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `UK_activity_spec` (`NAME` ASC, `VERSION` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE TABLE IF NOT EXISTS `user_parameters` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `NAME` VARCHAR(200) NOT NULL,
+  `PAYLOAD_LOCATION` VARCHAR(500) NULL,
+  `LABEL` VARCHAR(200) NOT NULL,
+  `TYPE` VARCHAR(200) NOT NULL,
+  `DESCRIPTION` VARCHAR(1200) NULL,
+  `IS_REQUIRED` TINYINT(1) NOT NULL,
+  `MAX_LENGTH` INT(11) NULL,
+  `ALLOWABLE_CHARS` VARCHAR(200) NULL,
+  `CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `UK_user_parameters` (`NAME` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE TABLE IF NOT EXISTS `workflow_activity_spec_sequence` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `WORKFLOW_ID` INT(11) NOT NULL,
+  `ACTIVITY_SPEC_ID` INT(11) NOT NULL,
+  `SEQ_NO` INT(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `UK_workflow_activity_spec_sequence` (`WORKFLOW_ID` ASC, `ACTIVITY_SPEC_ID` ASC, `SEQ_NO` ASC),
+  INDEX `fk_workflow_activity_spec_sequence__activity_spec_idx` (`ACTIVITY_SPEC_ID` ASC),
+  INDEX `fk_workflow_activity_spec_sequence__workflow_actifact_uuid_idx` (`WORKFLOW_ID` ASC),
+  CONSTRAINT `fk_workflow_activity_spec_sequence__activity_spec1`
+    FOREIGN KEY (`ACTIVITY_SPEC_ID`)
+    REFERENCES `activity_spec` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_workflow_activity_spec_sequence__workflow1`
+    FOREIGN KEY (`WORKFLOW_ID`)
+    REFERENCES `workflow` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE TABLE IF NOT EXISTS `activity_spec_parameters` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `NAME` VARCHAR(200) NOT NULL,
+  `TYPE` VARCHAR(200) NOT NULL,
+  `DIRECTION` VARCHAR(200) NULL,
+  `DESCRIPTION` VARCHAR(1200) NULL,
+  `CREATION_TIMESTAMP` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `UK_activity_spec_parameters` (`NAME` ASC, `DIRECTION` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE TABLE IF NOT EXISTS `activity_spec_categories` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `NAME` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `UK_activity_spec_categories` (`NAME` ASC))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE TABLE IF NOT EXISTS `activity_spec_to_activity_spec_categories` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `ACTIVITY_SPEC_ID` INT(11) NOT NULL,
+  `ACTIVITY_SPEC_CATEGORIES_ID` INT(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `UK_activity_spec_to_activity_spec_categories` (`ACTIVITY_SPEC_ID` ASC, `ACTIVITY_SPEC_CATEGORIES_ID` ASC),
+  INDEX `fk_activity_spec_to_activity_spec_categories__activity_spec_idx` (`ACTIVITY_SPEC_CATEGORIES_ID` ASC),
+  INDEX `fk_activity_spec_to_activity_spec_categories__activity_spec_idx1` (`ACTIVITY_SPEC_ID` ASC),
+  CONSTRAINT `fk_activity_spec_to_activity_spec_categories__activity_spec1`
+    FOREIGN KEY (`ACTIVITY_SPEC_ID`)
+    REFERENCES `activity_spec` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_activity_spec_to_activity_spec_categories__activity_spec_c1`
+    FOREIGN KEY (`ACTIVITY_SPEC_CATEGORIES_ID`)
+    REFERENCES `activity_spec_categories` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE TABLE IF NOT EXISTS `activity_spec_to_activity_spec_parameters` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `ACTIVITY_SPEC_ID` INT(11) NOT NULL,
+  `ACTIVITY_SPEC_PARAMETERS_ID` INT(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  INDEX `fk_activity_spec_to_activity_spec_params__act_sp_param_id_idx` (`ACTIVITY_SPEC_PARAMETERS_ID` ASC),
+  UNIQUE INDEX `UK_activity_spec_to_activity_spec_parameters` (`ACTIVITY_SPEC_ID` ASC, `ACTIVITY_SPEC_PARAMETERS_ID` ASC),
+  INDEX `fk_activity_spec_to_activity_spec_parameters__act_spec_id_idx` (`ACTIVITY_SPEC_ID` ASC),
+  CONSTRAINT `fk_activity_spec_to_activity_spec_parameters__activity_spec_1`
+    FOREIGN KEY (`ACTIVITY_SPEC_ID`)
+    REFERENCES `activity_spec` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_activity_spec_to_activity_spec_parameters__activ_spec_param1`
+    FOREIGN KEY (`ACTIVITY_SPEC_PARAMETERS_ID`)
+    REFERENCES `activity_spec_parameters` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+CREATE TABLE IF NOT EXISTS `activity_spec_to_user_parameters` (
+  `ID` INT(11) NOT NULL AUTO_INCREMENT,
+  `ACTIVITY_SPEC_ID` INT(11) NOT NULL,
+  `USER_PARAMETERS_ID` INT(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  UNIQUE INDEX `UK_activity_spec_to_user_parameters` (`ACTIVITY_SPEC_ID` ASC, `USER_PARAMETERS_ID` ASC),
+  INDEX `fk_activity_spec_to_user_parameters__user_parameters1_idx` (`USER_PARAMETERS_ID` ASC),
+  INDEX `fk_activity_spec_to_user_parameters__activity_spec1_idx` (`ACTIVITY_SPEC_ID` ASC),
+  CONSTRAINT `fk_activity_spec_to_user_parameters__activity_spec1`
+    FOREIGN KEY (`ACTIVITY_SPEC_ID`)
+    REFERENCES `activity_spec` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_activity_spec_to_user_parameters__user_parameters1`
+    FOREIGN KEY (`USER_PARAMETERS_ID`)
+    REFERENCES `user_parameters` (`ID`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
+
 
 --------START Request DB SCHEMA --------
 CREATE DATABASE requestdb;
@@ -1477,3 +1640,7 @@ create table if not exists model (
 	CONSTRAINT uk1_model UNIQUE (`MODEL_TYPE`, `MODEL_VERSION_ID`),
 	FOREIGN KEY (`RECIPE`) REFERENCES `model_recipe` (`MODEL_ID`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+

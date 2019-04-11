@@ -23,9 +23,11 @@ package org.onap.so.asdc.client.test.emulators;
 import java.util.ArrayList;
 import java.util.List;
 import org.onap.sdc.api.notification.IArtifactInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ArtifactInfoImpl implements IArtifactInfo {
 
     private String artifactName;
