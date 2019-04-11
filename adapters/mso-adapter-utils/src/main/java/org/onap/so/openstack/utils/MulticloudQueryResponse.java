@@ -25,10 +25,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonPropertyOrder({"template_type", "workload_id", "workload_status"})
+@JsonPropertyOrder({"template_type", "workload_id", "workload_status", "workload_status_reason"})
 public class MulticloudQueryResponse implements Serializable {
     private final static long serialVersionUID = -5215028275577848311L;
 
@@ -38,13 +39,17 @@ public class MulticloudQueryResponse implements Serializable {
     private String workloadId;
     @JsonProperty("workload_status")
     private String workloadStatus;
+    @JsonProperty("workload_status_reason")
+    private JsonNode workloadStatusReason;
 
     @JsonCreator
     public MulticloudQueryResponse(@JsonProperty("template_type") String templateType,
-            @JsonProperty("workload_id") String workloadId, @JsonProperty("workload_status") String workloadStatus) {
+            @JsonProperty("workload_id") String workloadId, @JsonProperty("workload_status") String workloadStatus,
+            @JsonProperty("workload_status_reason") JsonNode workloadStatusReason) {
         this.templateType = templateType;
         this.workloadId = workloadId;
         this.workloadStatus = workloadStatus;
+        this.workloadStatusReason = workloadStatusReason;
     }
 
     @JsonProperty("template_type")
@@ -77,9 +82,20 @@ public class MulticloudQueryResponse implements Serializable {
         this.workloadStatus = workloadStatus;
     }
 
+    @JsonProperty("workload_status_reason")
+    public JsonNode getWorkloadStatusReason() {
+        return workloadStatusReason;
+    }
+
+    @JsonProperty("workload_status_reason")
+    public void setWorkloadStatus(JsonNode workloadStatusReason) {
+        this.workloadStatusReason = workloadStatusReason;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("templateType", templateType).append("workloadId", workloadId)
-                .append("workloadStatus", workloadStatus).toString();
+                .append("workloadStatus", workloadStatus).append("workloadStatusReason", workloadStatusReason)
+                .toString();
     }
 }

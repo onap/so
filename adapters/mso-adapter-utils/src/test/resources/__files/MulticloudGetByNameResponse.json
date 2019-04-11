@@ -1,0 +1,34 @@
+{
+    "template_type": "heat",
+    "workload_id": "TEST-workload",
+    "workload_status": "GET_COMPLETE",
+    "workload_status_reason": {
+        "stacks": [
+            {
+                "id": "TEST-workload",
+                "links" : [
+                    {
+                        "href" : "port",
+                        "rel" : "self"
+                    }
+                ],
+                "stack_name": "TEST-stack",
+                "stack_status": "CREATE_COMPLETE",
+                "creation_time": "2019-03-21T03:17:32Z",
+                "description": "Sample stack response",
+                "stack_owner": "stack_Owner",
+                "capabilities": [],
+                "parameters": {
+                    "OS::project_id": "0e148b76ee8c42f78d37013bf6b7b1ae",
+                    "apt_proxy": "10.12.5.2:8000",
+                    "etcd_vm_flavor": "m1.medium",
+                    "docker_version": "17.03.2",
+                    "portal_hostname": "portal.api.simpledemo.onap.org",
+                    "docker_proxy": "10.12.5.2:5000",
+                    "kubectl_version": "1.11.5",
+                    "use_ramdisk": "false"
+                }
+            }
+        ]
+    }
+}
