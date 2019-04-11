@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0e914208_20cf7ed0",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-04-11T15:19:54Z",
+      "side": 1,
+      "message": "pi.isEnded does not mean exactly that process instance is ended. Here you have info:\n\nhttps://groups.google.com/forum/#!topic/camunda-bpm-users/d0qntahqqXI\n\nplease use the method that I sent you in mail",
+      "revId": "e6df32457f49f26d08dcb2b7575b0e38438da777",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
