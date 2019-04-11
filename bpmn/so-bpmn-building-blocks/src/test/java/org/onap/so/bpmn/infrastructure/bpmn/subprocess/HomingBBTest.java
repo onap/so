@@ -25,12 +25,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.onap.so.bpmn.BaseBPMNTest;
-import org.onap.so.bpmn.buildingblock.SniroHomingV2;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 
 public class HomingBBTest extends BaseBPMNTest {
@@ -40,28 +37,28 @@ public class HomingBBTest extends BaseBPMNTest {
         mockSubprocess("ReceiveWorkflowMessage", "Mock ReceiveWorkflowMessage", "GenericStub");
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassedInOrder("start", "sniroOofCheck", "callSniro", "ExclusiveGateway_1ckp059",
-                "receiveAsyncCallback", "sniroOofCheck2", "processSniroSolution", "ExclusiveGateway_1kvzxpb", "end");
+        assertThat(pi).isStarted().hasPassedInOrder("start", "callHoming", "receiveAsyncCallback",
+                "processHomingSolution", "end");
         assertThat(pi).isEnded();
     }
 
     @Test
     public void testHomingV2_error_bpmnError() {
-        doThrow(new BpmnError("MSOWorkflowException")).when(sniroHoming).callSniro(any(BuildingBlockExecution.class));
+        doThrow(new BpmnError("MSOWorkflowException")).when(homing).callHoming(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassed("start", "sniroOofCheck", "startBpmnError", "bpmnErrorSubprocess",
+        assertThat(pi).isStarted().hasPassed("start", "callHoming", "startBpmnError", "bpmnErrorSubprocess",
                 "processMsoWorkflowException", "endBpmnError").hasNotPassed("callReceiveAsync");
         assertThat(pi).isEnded();
     }
 
     @Test
     public void testHomingV2_error_javaException() {
-        doThrow(new RuntimeException("Test")).when(sniroHoming).callSniro(any(BuildingBlockExecution.class));
+        doThrow(new RuntimeException("Test")).when(homing).callHoming(any(BuildingBlockExecution.class));
         ProcessInstance pi = runtimeService.startProcessInstanceByKey("HomingBB", variables);
         assertThat(pi).isNotNull();
-        assertThat(pi).isStarted().hasPassed("start", "sniroOofCheck", "callSniro", "startJavaError",
-                "processJavaException", "javaExceptionSubProcess", "endJavaError").hasNotPassed("callReceiveAsync");
+        assertThat(pi).isStarted().hasPassed("start", "callHoming", "startJavaError", "processJavaException",
+                "javaExceptionSubProcess", "endJavaError").hasNotPassed("callReceiveAsync");
         assertThat(pi).isEnded();
     }
 

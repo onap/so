@@ -34,7 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.onap.so.TestApplication;
-import org.onap.so.bpmn.buildingblock.SniroHomingV2;
+import org.onap.so.bpmn.buildingblock.HomingV2;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.common.validation.BuildingBlockValidatorRunner;
 import org.onap.so.bpmn.infrastructure.aai.tasks.AAICommonTasks;
@@ -230,7 +230,7 @@ public abstract class BaseBPMNTest {
     protected SDNCClient sdncClient;
 
     @MockBean
-    protected SniroHomingV2 sniroHoming;
+    protected HomingV2 homing;
 
     @MockBean
     protected NamingServiceDeleteTasks namingServiceDeleteTasks;
