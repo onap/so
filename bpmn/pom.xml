@@ -1,96 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
+  <parent>
     <groupId>org.onap.so</groupId>
     <artifactId>so</artifactId>
     <version>1.4.0-SNAPSHOT</version>
-	</parent>
+  </parent>
 
-	<artifactId>bpmn</artifactId>
-	<name>BPMN Subsystem</name>
-	<description>BPMN Subsystem for MSO</description>
-	<packaging>pom</packaging>
+  <artifactId>bpmn</artifactId>
+  <name>BPMN Subsystem</name>
+  <description>BPMN Subsystem for MSO</description>
+  <packaging>pom</packaging>
 
-	<properties>
-		<camunda.version>7.10.0</camunda.version>
-		<camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
-		<camunda.bpm.webapp.artifact>camunda-webapp-jboss-standalone</camunda.bpm.webapp.artifact>
-		<h2.version>1.4.196</h2.version>
-		<groovy.version>2.4.8</groovy.version>
-		<saxon.version>9.5.1-8</saxon.version>
-		<xmlunit.version>2.4.0</xmlunit.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<sdnc.northbound.version>1.5.1-SNAPSHOT</sdnc.northbound.version>
-	</properties>
+  <properties>
+    <camunda.version>7.10.0</camunda.version>
+    <camunda.bpm.assert.version>1.2</camunda.bpm.assert.version>
+    <camunda.bpm.webapp.artifact>camunda-webapp-jboss-standalone</camunda.bpm.webapp.artifact>
+    <h2.version>1.4.196</h2.version>
+    <groovy.version>2.4.8</groovy.version>
+    <saxon.version>9.5.1-8</saxon.version>
+    <xmlunit.version>2.4.0</xmlunit.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <sdnc.northbound.version>1.5.1-SNAPSHOT</sdnc.northbound.version>
+  </properties>
 
-	<modules>
-		<module>MSOCoreBPMN</module>
+  <modules>
+    <module>MSOCoreBPMN</module>
 
-		<module>MSOCommonBPMN</module>
-		<module>so-bpmn-infrastructure-common</module>
-		<module>so-bpmn-tasks</module>
-		<module>so-bpmn-building-blocks</module>
-		<module>so-bpmn-infrastructure-flows</module>
-		<module>mso-infrastructure-bpmn</module>
-	</modules>
+    <module>MSOCommonBPMN</module>
+    <module>so-bpmn-infrastructure-common</module>
+    <module>so-bpmn-tasks</module>
+    <module>so-bpmn-building-blocks</module>
+    <module>so-bpmn-infrastructure-flows</module>
+    <module>mso-infrastructure-bpmn</module>
+  </modules>
 
-	<!-- Define artifact versions for child modules -->
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.codehaus.groovy</groupId>
-				<artifactId>groovy-all</artifactId>
-				<version>${groovy.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>net.sf.saxon</groupId>
-				<artifactId>Saxon-HE</artifactId>
-				<version>${saxon.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.xmlunit</groupId>
-				<artifactId>xmlunit-core</artifactId>
-				<version>${xmlunit.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>javax.activation</groupId>
-				<artifactId>activation</artifactId>
-				<version>1.1.1</version>
-				<scope>compile</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.assertj</groupId>
-				<artifactId>assertj-core</artifactId>
-				<version>3.11.1</version>
-				<scope>test</scope>
-			</dependency>
-			<dependency>
-				<groupId>org.camunda.bpm.extension.mockito</groupId>
-				<artifactId>camunda-bpm-mockito</artifactId>
-				<version>4.0.0</version>
-				<scope>test</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+  <!-- Define artifact versions for child modules -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>${groovy.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>net.sf.saxon</groupId>
+        <artifactId>Saxon-HE</artifactId>
+        <version>${saxon.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.xmlunit</groupId>
+        <artifactId>xmlunit-core</artifactId>
+        <version>${xmlunit.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>javax.activation</groupId>
+        <artifactId>activation</artifactId>
+        <version>1.1.1</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>3.11.1</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.camunda.bpm.extension.mockito</groupId>
+        <artifactId>camunda-bpm-mockito</artifactId>
+        <version>4.0.0</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-			<optional>true</optional>
-		</dependency>
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
 
 </project>
