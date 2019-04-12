@@ -21,12 +21,26 @@
 package org.onap.so.db.catalog.data.repository;
 
 import java.util.List;
+import org.junit.Assert;
+import org.junit.Test;
+import org.onap.so.db.catalog.BaseTest;
 import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.rest.core.annotation.RepositoryRestResource;
+import org.onap.so.db.catalog.exceptions.NoEntityFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
-@RepositoryRestResource(collectionResourceRel = "vnfcInstanceGroupCustomization",
-        path = "vnfcInstanceGroupCustomization")
-public interface VnfcInstanceGroupCustomizationRepository
-        extends JpaRepository<VnfcInstanceGroupCustomization, Integer> {
+public class VnfcInstanceGroupCustomizationRepositoryTest extends BaseTest {
+    @Autowired
+    private VnfcInstanceGroupCustomizationRepository vnfcInstanceGroupCustomizationRepository;
+
+    @Test
+    public void findAllTest() throws Exception {
+        List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizationList =
+                vnfcInstanceGroupCustomizationRepository.findAll();
+        Assert.assertFalse(CollectionUtils.isEmpty(vnfcInstanceGroupCustomizationList));
+
+        VnfcInstanceGroupCustomization vnfcInstanceGroupCustomization = vnfcInstanceGroupCustomizationRepository
+                .findById(1450).orElseThrow(() -> new NoEntityFoundException("Cannot Find Operation"));
+        Assert.assertTrue(vnfcInstanceGroupCustomization.getFunction().equalsIgnoreCase("FUNCTION"));
+    }
 }
