@@ -37,6 +37,7 @@ import org.onap.so.bpmn.servicedecomposition.tasks.BBInputSetupUtils;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.exception.ExceptionBuilder;
 import org.onap.so.db.catalog.beans.CvnfcConfigurationCustomization;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.catalog.client.CatalogDbClient;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.onap.so.db.request.client.RequestsDbClient;
@@ -83,6 +84,20 @@ public class WorkflowActionBBTasks {
         execution.setVariable("MacroRollback", false);
         int currentSequence = (int) execution.getVariable(G_CURRENT_SEQUENCE);
         ExecuteBuildingBlock ebb = flowsToExecute.get(currentSequence);
+        
+        if (ebb.getBuildingBlock().getBpmnFlowName().equals("ConfigAssignVnfBB")
+                || ebb.getBuildingBlock().getBpmnFlowName().equals("ConfigDeployVnfBB")) {
+            String vnfId = ebb.getWorkflowResourceIds().getVnfId();
+            String vnfCustomizationUUID = bbInputSetupUtils.getAAIGenericVnf(vnfId).getModelCustomizationId();
+            VnfResourceCustomization vrc =
+                    catalogDbClient.getVnfResourceCustomizationByModelCustomizationUUID(vnfCustomizationUUID);
+            boolean skipConfigVNF = vrc.isSkipPostInstConf();
+            if (skipConfigVNF) {
+                currentSequence++;
+                ebb = flowsToExecute.get(currentSequence);
+            }
+        }
+        
         boolean homing = (boolean) execution.getVariable("homing");
         boolean calledHoming = (boolean) execution.getVariable("calledHoming");
         if (homing && !calledHoming) {

@@ -40,10 +40,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.core.env.Environment;
 
@@ -90,7 +93,24 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("calledHoming", false);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
         ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
+        
+        BuildingBlock buildingBlock = new BuildingBlock();
+        buildingBlock.setBpmnFlowName("ConfigAssignVnfBB");
+        ebb.setBuildingBlock(buildingBlock);
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+        String vnfId = "123456";
+        String vnfCustomizationUUID = "1234567";
+        workflowResourceIds.setVnfId(vnfId);
+        ebb.setWorkflowResourceIds(workflowResourceIds);
         flowsToExecute.add(ebb);
+
+        VnfResourceCustomization vrc = new VnfResourceCustomization();
+        vrc.setSkipPostInstConf(false);
+        GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setModelCustomizationId(vnfCustomizationUUID);
+        doReturn(vrc).when(catalogDbClient).getVnfResourceCustomizationByModelCustomizationUUID(vnfCustomizationUUID);
+        doReturn(genericVnf).when(bbSetupUtils).getAAIGenericVnf(vnfId);
+        
         execution.setVariable("flowsToExecute", flowsToExecute);
         workflowActionBBTasks.selectBB(execution);
         boolean success = (boolean) execution.getVariable("completed");
@@ -110,7 +130,25 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
         ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
         ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
+        
+        BuildingBlock buildingBlock = new BuildingBlock();
+        buildingBlock.setBpmnFlowName("ConfigDeployVnfBB");
+        ebb.setBuildingBlock(buildingBlock);
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+        String vnfId = "123456";
+        String vnfCustomizationUUID = "1234567";
+        workflowResourceIds.setVnfId(vnfId);
+        ebb.setWorkflowResourceIds(workflowResourceIds);
+
         flowsToExecute.add(ebb);
+
+        VnfResourceCustomization vrc = new VnfResourceCustomization();
+        vrc.setSkipPostInstConf(false);
+        GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setModelCustomizationId(vnfCustomizationUUID);
+        doReturn(vrc).when(catalogDbClient).getVnfResourceCustomizationByModelCustomizationUUID(vnfCustomizationUUID);
+        doReturn(genericVnf).when(bbSetupUtils).getAAIGenericVnf(vnfId);
+        
         flowsToExecute.add(ebb2);
         execution.setVariable("flowsToExecute", flowsToExecute);
         workflowActionBBTasks.selectBB(execution);
