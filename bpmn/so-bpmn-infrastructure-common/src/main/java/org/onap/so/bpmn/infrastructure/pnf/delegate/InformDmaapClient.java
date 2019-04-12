@@ -23,40 +23,30 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.onap.so.bpmn.infrastructure.pnf.PnfNotificationEvent;
+import org.camunda.bpm.engine.runtime.Execution;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class InformDmaapClient implements JavaDelegate, ApplicationListener<PnfNotificationEvent> {
+public class InformDmaapClient implements JavaDelegate {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
     private DmaapClient dmaapClient;
-    private DelegateExecution execution;
 
     @Override
     public void execute(DelegateExecution execution) {
         String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
         RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
+        String processBusinessKey = execution.getProcessBusinessKey();
         dmaapClient.registerForUpdate(pnfCorrelationId, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
-                .processInstanceBusinessKey(execution.getProcessBusinessKey()).correlateWithResult());
-        this.execution = execution;
+                .processInstanceBusinessKey(processBusinessKey).correlateWithResult());
     }
 
     @Autowired
     public void setDmaapClient(DmaapClient dmaapClient) {
         this.dmaapClient = dmaapClient;
-    }
-
-    @Override
-    public void onApplicationEvent(PnfNotificationEvent event) {
-        logger.info("Received application event for pnfCorrelationId: {}", event.getPnfCorrelationId());
-        RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
-        runtimeService.createMessageCorrelation("WorkflowMessage")
-                .processInstanceBusinessKey(execution.getProcessBusinessKey()).correlateWithResult();
     }
 }
