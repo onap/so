@@ -30,6 +30,8 @@ import static org.mockito.Mockito.when;
 import org.camunda.bpm.engine.ProcessEngineServices;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.camunda.bpm.engine.runtime.Execution;
+import org.camunda.bpm.engine.runtime.ExecutionQuery;
 import org.camunda.bpm.engine.runtime.MessageCorrelationBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,6 +88,13 @@ public class InformDmaapClientTest {
         messageCorrelationBuilder = mock(MessageCorrelationBuilder.class);
         when(runtimeService.createMessageCorrelation(any())).thenReturn(messageCorrelationBuilder);
         when(messageCorrelationBuilder.processInstanceBusinessKey(any())).thenReturn(messageCorrelationBuilder);
+
+        ExecutionQuery executionQuery = mock(ExecutionQuery.class);
+        when(runtimeService.createExecutionQuery()).thenReturn(executionQuery);
+        when(executionQuery.messageEventSubscriptionName("WorkflowMessage")).thenReturn(executionQuery);
+        when(executionQuery.processInstanceBusinessKey(any())).thenReturn(executionQuery);
+        Execution execution = mock(Execution.class);
+        when(executionQuery.singleResult()).thenReturn(execution);
         return delegateExecution;
     }
 }
