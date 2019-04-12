@@ -33,9 +33,8 @@ import javax.ws.rs.client.ClientBuilder;
 public abstract class RestClientSSL extends RestClient {
 
     private static final String TRUE = "true";
-    public static final String SSL_KEY_STORE_KEY = "javax.net.ssl.keyStore";
-    public static final String SSL_KEY_STORE_PASSWORD_KEY = "javax.net.ssl.keyStorePassword";
-    public static final String MSO_LOAD_SSL_CLIENT_KEYSTORE_KEY = "mso.load.ssl.client.keystore";
+    private static final String SSL_KEY_STORE_KEY = "javax.net.ssl.keyStore";
+    private static final String MSO_LOAD_SSL_CLIENT_KEYSTORE_KEY = "mso.load.ssl.client.keystore";
 
 
     protected RestClientSSL(RestProperties props, Optional<URI> path) {
@@ -55,8 +54,7 @@ public abstract class RestClientSSL extends RestClient {
             if (loadSSLKeyStore != null && loadSSLKeyStore.equalsIgnoreCase(TRUE)) {
                 KeyStore ks = getKeyStore();
                 if (ks != null) {
-                    client = ClientBuilder.newBuilder()
-                            .keyStore(ks, System.getProperty(RestClientSSL.SSL_KEY_STORE_PASSWORD_KEY)).build();
+                    client = ClientBuilder.newBuilder().keyStore(ks, getSSlKeyStorePassword()).build();
                     logger.info("RestClientSSL not using default SSL context - setting keystore here.");
                     return client;
                 }
@@ -72,7 +70,7 @@ public abstract class RestClientSSL extends RestClient {
 
     private KeyStore getKeyStore() {
         KeyStore ks = null;
-        char[] password = System.getProperty(RestClientSSL.SSL_KEY_STORE_PASSWORD_KEY).toCharArray();
+        char[] password = getSSlKeyStorePassword().toCharArray();
         try (FileInputStream fis = new FileInputStream(
                 Paths.get(System.getProperty(RestClientSSL.SSL_KEY_STORE_KEY)).normalize().toString())) {
             ks = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -83,5 +81,9 @@ public abstract class RestClientSSL extends RestClient {
         }
 
         return ks;
+    }
+
+    private String getSSlKeyStorePassword() {
+        return System.getProperty("javax.net.ssl.keyStorePassword");
     }
 }

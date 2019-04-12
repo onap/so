@@ -47,24 +47,6 @@ public class ASDCConfiguration implements IConfiguration {
 
     private String asdcControllerName;
 
-    public static final String MSO_PROP_ASDC = "MSO_PROP_ASDC";
-    public static final String PARAMETER_PATTERN = "asdc-connections";
-    public static final String MSG_BUS_ADDRESS_ATTRIBUTE_NAME = "messageBusAddress";
-    public static final String WATCHDOG_TIMEOUT_NAME = "watchDogTimeout";
-
-    public static final String CONSUMER_GROUP_ATTRIBUTE_NAME = "consumerGroup";
-    public static final String CONSUMER_ID_ATTRIBUTE_NAME = "consumerId";
-    public static final String ENVIRONMENT_NAME_ATTRIBUTE_NAME = "environmentName";
-    public static final String PASSWORD_ATTRIBUTE_NAME = "password";
-    public static final String POLLING_INTERVAL_ATTRIBUTE_NAME = "pollingInterval";
-    public static final String RELEVANT_ARTIFACT_TYPES_ATTRIBUTE_NAME = "relevantArtifactTypes";
-    public static final String USER_ATTRIBUTE_NAME = "user";
-    public static final String ASDC_ADDRESS_ATTRIBUTE_NAME = "asdcAddress";
-    public static final String POLLING_TIMEOUT_ATTRIBUTE_NAME = "pollingTimeout";
-    public static final String ACTIVATE_SERVER_TLS_AUTH = "activateServerTLSAuth";
-    public static final String KEY_STORE_PASSWORD = "keyStorePassword";
-    public static final String KEY_STORE_PATH = "keyStorePath";
-
     public static final String HEAT = "HEAT";
     public static final String HEAT_ARTIFACT = "HEAT_ARTIFACT";
     public static final String HEAT_ENV = "HEAT_ENV";
