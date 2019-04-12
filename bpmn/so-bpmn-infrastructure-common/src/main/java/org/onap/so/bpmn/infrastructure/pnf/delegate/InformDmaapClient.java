@@ -23,7 +23,6 @@ package org.onap.so.bpmn.infrastructure.pnf.delegate;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
-import org.camunda.bpm.engine.runtime.Execution;
 import org.onap.so.bpmn.infrastructure.pnf.dmaap.DmaapClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +32,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class InformDmaapClient implements JavaDelegate {
 
+    private final static int MAX_AMOUNT_OF_QUERIES_TO_CAMUNDA = 10;
+    private final static int WAIT_FOR_NEXT_QUERY_TO_CAMUNDA_IN_MS = 1_000;
+
     private Logger logger = LoggerFactory.getLogger(getClass());
     private DmaapClient dmaapClient;
 
@@ -41,8 +43,32 @@ public class InformDmaapClient implements JavaDelegate {
         String pnfCorrelationId = (String) execution.getVariable(ExecutionVariableNames.PNF_CORRELATION_ID);
         RuntimeService runtimeService = execution.getProcessEngineServices().getRuntimeService();
         String processBusinessKey = execution.getProcessBusinessKey();
-        dmaapClient.registerForUpdate(pnfCorrelationId, () -> runtimeService.createMessageCorrelation("WorkflowMessage")
-                .processInstanceBusinessKey(processBusinessKey).correlateWithResult());
+        dmaapClient.registerForUpdate(pnfCorrelationId, () -> {
+            waitForWorkflow(runtimeService, processBusinessKey);
+            runtimeService.createMessageCorrelation("WorkflowMessage").processInstanceBusinessKey(processBusinessKey)
+                    .correlateWithResult();
+        });
+    }
+
+    private void waitForWorkflow(RuntimeService runtimeService, String processBusinessKey) {
+        int counter = 0;
+        while (!isWorkflowWaitingForMessage(runtimeService, processBusinessKey)) {
+            counter++;
+            if (counter > MAX_AMOUNT_OF_QUERIES_TO_CAMUNDA) {
+                logger.error("Maximum wait for camunda reached. Aboting correlating message.");
+                throw new RuntimeException("Timeout while waiting for workflow to proceed");
+            }
+            try {
+                Thread.sleep(WAIT_FOR_NEXT_QUERY_TO_CAMUNDA_IN_MS);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    private boolean isWorkflowWaitingForMessage(RuntimeService runtimeService, String processBusinessKey) {
+        return runtimeService.createExecutionQuery().messageEventSubscriptionName("WorkflowMessage")
+                .processInstanceBusinessKey(processBusinessKey).singleResult() != null;
     }
 
     @Autowired
