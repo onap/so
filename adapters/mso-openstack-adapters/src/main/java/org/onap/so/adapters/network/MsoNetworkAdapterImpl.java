@@ -88,7 +88,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String NETWORK_ID = "network_id";
     private static final String NETWORK_FQDN = "network_fqdn";
     private static final String CREATE_NETWORK_CONTEXT = "CreateNetwork";
-    private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static final String NEUTRON_MODE = "NEUTRON";
 
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterImpl.class);
@@ -132,10 +131,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
     @Override
     public void createNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
-            String networkName, String physicalNetworkName, List<Integer> vlans, String shared, String external,
-            Boolean failIfExists, Boolean backout, List<Subnet> subnets, Map<String, String> networkParams,
-            MsoRequest msoRequest, Holder<String> networkId, Holder<String> neutronNetworkId,
-            Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback) throws NetworkException {
+                              String networkName, String physicalNetworkName, List<Integer> vlans, String shared, String external,
+                              Boolean failIfExists, Boolean backout, List<Subnet> subnets, Map<String, String> networkParams,
+                              MsoRequest msoRequest, Holder<String> networkId, Holder<String> neutronNetworkId,
+                              Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback) throws NetworkException {
         Holder<String> networkFqdn = new Holder<>();
         createNetwork(cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkName, physicalNetworkName,
                 vlans, null, shared, external, failIfExists, backout, subnets, null, null, msoRequest, networkId,
@@ -144,11 +143,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
     @Override
     public void createNetworkContrail(String cloudSiteId, String tenantId, String networkType,
-            String modelCustomizationUuid, String networkName, List<RouteTarget> routeTargets, String shared,
-            String external, Boolean failIfExists, Boolean backout, List<Subnet> subnets,
-            Map<String, String> networkParams, List<String> policyFqdns, List<String> routeTableFqdns,
-            MsoRequest msoRequest, Holder<String> networkId, Holder<String> neutronNetworkId,
-            Holder<String> networkFqdn, Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback)
+                                      String modelCustomizationUuid, String networkName, List<RouteTarget> routeTargets, String shared,
+                                      String external, Boolean failIfExists, Boolean backout, List<Subnet> subnets,
+                                      Map<String, String> networkParams, List<String> policyFqdns, List<String> routeTableFqdns,
+                                      MsoRequest msoRequest, Holder<String> networkId, Holder<String> neutronNetworkId,
+                                      Holder<String> networkFqdn, Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback)
             throws NetworkException {
         createNetwork(cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkName, null, null, routeTargets,
                 shared, external, failIfExists, backout, subnets, policyFqdns, routeTableFqdns, msoRequest, networkId,
@@ -179,11 +178,11 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      */
 
     private void createNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
-            String networkName, String physicalNetworkName, List<Integer> vlans, List<RouteTarget> routeTargets,
-            String shared, String external, Boolean failIfExists, Boolean backout, List<Subnet> subnets,
-            List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest, Holder<String> networkId,
-            Holder<String> neutronNetworkId, Holder<String> networkFqdn, Holder<Map<String, String>> subnetIdMap,
-            Holder<NetworkRollback> rollback) throws NetworkException {
+                               String networkName, String physicalNetworkName, List<Integer> vlans, List<RouteTarget> routeTargets,
+                               String shared, String external, Boolean failIfExists, Boolean backout, List<Subnet> subnets,
+                               List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest, Holder<String> networkId,
+                               Holder<String> neutronNetworkId, Holder<String> networkFqdn, Holder<Map<String, String>> subnetIdMap,
+                               Holder<NetworkRollback> rollback) throws NetworkException {
         logger.debug("*** CREATE Network: {} of type {} in {}/{}", networkName, networkType, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
@@ -222,7 +221,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             // See if the Network already exists (by name)
             NetworkInfo netInfo = null;
-            long queryNetworkStarttime = System.currentTimeMillis();
             try {
                 netInfo = neutron.queryNetwork(networkName, tenantId, cloudSiteId);
             } catch (MsoException me) {
@@ -254,7 +252,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 return;
             }
 
-            long createNetworkStarttime = System.currentTimeMillis();
             try {
                 netInfo = neutron.createNetwork(cloudSiteId, tenantId, neutronNetworkType, networkName,
                         physicalNetworkName, vlans);
@@ -296,9 +293,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             template = template.replaceAll("\r\n", "\n");
 
             boolean aic3template = false;
-            String aic3nw = AIC3_NW;
 
-            aic3nw = environment.getProperty(AIC3_NW_PROPERTY, AIC3_NW);
+            String aic3nw = environment.getProperty(AIC3_NW_PROPERTY, AIC3_NW);
 
             if (template.contains(aic3nw))
                 aic3template = true;
@@ -306,7 +302,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // First, look up to see if the Network already exists (by name).
             // For HEAT orchestration of networks, the stack name will always match the network name
             StackInfo heatStack = null;
-            long queryNetworkStarttime = System.currentTimeMillis();
             try {
                 heatStack = heat.queryStack(cloudSiteId, "CloudOwner", tenantId, networkName);
             } catch (MsoException me) {
@@ -474,9 +469,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
     @Override
     public void updateNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
-            String networkId, String networkName, String physicalNetworkName, List<Integer> vlans, String shared,
-            String external, List<Subnet> subnets, Map<String, String> networkParams, MsoRequest msoRequest,
-            Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback) throws NetworkException {
+                              String networkId, String networkName, String physicalNetworkName, List<Integer> vlans, String shared,
+                              String external, List<Subnet> subnets, Map<String, String> networkParams, MsoRequest msoRequest,
+                              Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback) throws NetworkException {
         updateNetwork(cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkId, networkName,
                 physicalNetworkName, vlans, null, shared, external, subnets, null, null, msoRequest, subnetIdMap,
                 rollback);
@@ -485,10 +480,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
     @Override
     public void updateNetworkContrail(String cloudSiteId, String tenantId, String networkType,
-            String modelCustomizationUuid, String networkId, String networkName, List<RouteTarget> routeTargets,
-            String shared, String external, List<Subnet> subnets, Map<String, String> networkParams,
-            List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest,
-            Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback) throws NetworkException {
+                                      String modelCustomizationUuid, String networkId, String networkName, List<RouteTarget> routeTargets,
+                                      String shared, String external, List<Subnet> subnets, Map<String, String> networkParams,
+                                      List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest,
+                                      Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback) throws NetworkException {
         updateNetwork(cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkId, networkName, null, null,
                 routeTargets, shared, external, subnets, policyFqdns, routeTableFqdns, msoRequest, subnetIdMap,
                 rollback);
@@ -515,10 +510,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      * a subsequent operation.
      */
     private void updateNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
-            String networkId, String networkName, String physicalNetworkName, List<Integer> vlans,
-            List<RouteTarget> routeTargets, String shared, String external, List<Subnet> subnets,
-            List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest,
-            Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback) throws NetworkException {
+                               String networkId, String networkName, String physicalNetworkName, List<Integer> vlans,
+                               List<RouteTarget> routeTargets, String shared, String external, List<Subnet> subnets,
+                               List<String> policyFqdns, List<String> routeTableFqdns, MsoRequest msoRequest,
+                               Holder<Map<String, String>> subnetIdMap, Holder<NetworkRollback> rollback) throws NetworkException {
 
         logger.debug("***UPDATE Network adapter with Network: {} of type {} in {}/{}", networkName, networkType,
                 cloudSiteId, tenantId);
@@ -556,7 +551,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // Verify that the Network exists
             // For Neutron-based orchestration, the networkId is the Neutron Network UUID.
             NetworkInfo netInfo = null;
-            long queryNetworkStarttime = System.currentTimeMillis();
             try {
                 netInfo = neutron.queryNetwork(networkId, tenantId, cloudSiteId);
             } catch (MsoException me) {
@@ -574,7 +568,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 // Does not exist. Throw an exception (can't update a non-existent network)
                 throw new NetworkException(error, MsoExceptionCategory.USERDATA);
             }
-            long updateNetworkStarttime = System.currentTimeMillis();
             try {
                 netInfo = neutron.updateNetwork(cloudSiteId, tenantId, networkId, neutronNetworkType,
                         physicalNetworkName, vlans);
@@ -600,7 +593,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // First, look up to see that the Network already exists.
             // For Heat-based orchestration, the networkId is the network Stack ID.
             StackInfo heatStack = null;
-            long queryStackStarttime = System.currentTimeMillis();
             try {
                 heatStack = heat.queryStack(cloudSiteId, "CloudOwner", tenantId, networkName);
             } catch (MsoException me) {
@@ -655,9 +647,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             template = template.replaceAll("\r\n", "\n");
 
             boolean aic3template = false;
-            String aic3nw = AIC3_NW;
 
-            aic3nw = environment.getProperty(AIC3_NW_PROPERTY, AIC3_NW);
+            String aic3nw = environment.getProperty(AIC3_NW_PROPERTY, AIC3_NW);
 
             if (template.contains(aic3nw))
                 aic3template = true;
@@ -718,7 +709,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
             // Update the network stack
             // Ignore MsoStackNotFound exception because we already checked.
-            long updateStackStarttime = System.currentTimeMillis();
             try {
                 heatStack = heatWithUpdate.updateStack(cloudSiteId, "CloudOwner", tenantId, networkId, template,
                         stackParams, true, heatTemplate.getTimeoutMinutes());
@@ -772,8 +762,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     }
 
     private NetworkResource networkCheck(long startTime, String networkType, String modelCustomizationUuid,
-            String networkName, String physicalNetworkName, List<Integer> vlans, List<RouteTarget> routeTargets,
-            String cloudSiteId, CloudSite cloudSite) throws NetworkException {
+                                         String networkName, String physicalNetworkName, List<Integer> vlans, List<RouteTarget> routeTargets,
+                                         String cloudSiteId, CloudSite cloudSite) throws NetworkException {
         // Retrieve the Network Resource definition
         NetworkResource networkResource = null;
         NetworkResourceCustomization networkCust = null;
@@ -826,7 +816,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 // >=
                 // min
                 && (aicV.isTheSameVersion(networkResource.getAicVersionMax())
-                        || !(aicV.isMoreRecentThan(networkResource.getAicVersionMax())))) // aic <= max
+                || !(aicV.isMoreRecentThan(networkResource.getAicVersionMax())))) // aic <= max
         {
             logger.debug("Network Type:{} VersionMin:{} VersionMax:{} supported on Cloud:{} with AIC_Version:{}",
                     networkType, networkResource.getAicVersionMin(), networkResource.getAicVersionMax(), cloudSiteId,
@@ -855,8 +845,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
     @Override
     public void queryNetwork(String cloudSiteId, String tenantId, String networkNameOrId, MsoRequest msoRequest,
-            Holder<Boolean> networkExists, Holder<String> networkId, Holder<String> neutronNetworkId,
-            Holder<NetworkStatus> status, Holder<List<Integer>> vlans, Holder<Map<String, String>> subnetIdMap)
+                             Holder<Boolean> networkExists, Holder<String> networkId, Holder<String> neutronNetworkId,
+                             Holder<NetworkStatus> status, Holder<List<Integer>> vlans, Holder<Map<String, String>> subnetIdMap)
             throws NetworkException {
         queryNetwork(cloudSiteId, tenantId, networkNameOrId, msoRequest, networkExists, networkId, neutronNetworkId,
                 status, vlans, null, subnetIdMap);
@@ -864,9 +854,9 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
 
     @Override
     public void queryNetworkContrail(String cloudSiteId, String tenantId, String networkNameOrId, MsoRequest msoRequest,
-            Holder<Boolean> networkExists, Holder<String> networkId, Holder<String> neutronNetworkId,
-            Holder<NetworkStatus> status, Holder<List<RouteTarget>> routeTargets,
-            Holder<Map<String, String>> subnetIdMap) throws NetworkException {
+                                     Holder<Boolean> networkExists, Holder<String> networkId, Holder<String> neutronNetworkId,
+                                     Holder<NetworkStatus> status, Holder<List<RouteTarget>> routeTargets,
+                                     Holder<Map<String, String>> subnetIdMap) throws NetworkException {
         queryNetwork(cloudSiteId, tenantId, networkNameOrId, msoRequest, networkExists, networkId, neutronNetworkId,
                 status, null, routeTargets, subnetIdMap);
     }
@@ -877,14 +867,13 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      * are first searched based on the provided network name/id. If none is found, the Neutron is directly queried.
      */
     private void queryNetwork(String cloudSiteId, String tenantId, String networkNameOrId, MsoRequest msoRequest,
-            Holder<Boolean> networkExists, Holder<String> networkId, Holder<String> neutronNetworkId,
-            Holder<NetworkStatus> status, Holder<List<Integer>> vlans, Holder<List<RouteTarget>> routeTargets,
-            Holder<Map<String, String>> subnetIdMap) throws NetworkException {
+                              Holder<Boolean> networkExists, Holder<String> networkId, Holder<String> neutronNetworkId,
+                              Holder<NetworkStatus> status, Holder<List<Integer>> vlans, Holder<List<RouteTarget>> routeTargets,
+                              Holder<Map<String, String>> subnetIdMap) throws NetworkException {
 
         logger.debug("*** QUERY Network with Network: {} in {}/{}", networkNameOrId, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
         if (commonUtils.isNullOrEmpty(cloudSiteId) || commonUtils.isNullOrEmpty(tenantId)
                 || commonUtils.isNullOrEmpty(networkNameOrId)) {
@@ -910,7 +899,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         String neutronId;
         // Try Heat first, since networks may be named the same as the Heat stack
         StackInfo heatStack = null;
-        long queryStackStarttime = System.currentTimeMillis();
         try {
             heatStack = heat.queryStack(cloudSiteId, "CloudOwner", tenantId, networkNameOrId);
         } catch (MsoException me) {
@@ -952,7 +940,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         // Query directly against the Neutron Network for the details
         // no RouteTargets available for ContrailV2 in neutron net-show
         // networkId is heatStackId
-        long queryNetworkStarttime = System.currentTimeMillis();
         try {
             NetworkInfo netInfo = neutron.queryNetwork(neutronId, tenantId, cloudSiteId);
             if (netInfo != null) {
@@ -1006,7 +993,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      */
     @Override
     public void deleteNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
-            String networkId, MsoRequest msoRequest, Holder<Boolean> networkDeleted) throws NetworkException {
+                              String networkId, MsoRequest msoRequest, Holder<Boolean> networkDeleted) throws NetworkException {
 
         logger.debug("*** DELETE Network adapter with Network: {} in {}/{}", networkId, cloudSiteId, tenantId);
 
@@ -1045,7 +1032,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         if (NEUTRON_MODE.equals(mode)) {
 
             // Use MsoNeutronUtils for all NEUTRON commands
-            long deleteNetworkStarttime = System.currentTimeMillis();
             try {
                 // The deleteNetwork function in MsoNeutronUtils returns success if the network
                 // was not found. So don't bother to query first.
@@ -1058,7 +1044,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                 throw new NetworkException(me);
             }
         } else { // DEFAULT to ("HEAT".equals (mode))
-            long deleteStackStarttime = System.currentTimeMillis();
 
             try {
                 // The deleteStack function in MsoHeatUtils returns NOTFOUND if the stack was not found or if the stack
@@ -1146,7 +1131,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     throw new NetworkException(me);
                 }
             } else { // DEFAULT to if ("HEAT".equals (mode))
-                long deleteStackStarttime = System.currentTimeMillis();
                 try {
                     // The deleteStack function in MsoHeatUtils returns success if the stack
                     // was not found. So don't bother to query first.
@@ -1165,7 +1149,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     }
 
     private String validateNetworkParams(NetworkType neutronNetworkType, String networkName, String physicalNetwork,
-            List<Integer> vlans, List<RouteTarget> routeTargets) {
+                                         List<Integer> vlans, List<RouteTarget> routeTargets) {
         String sep = "";
         StringBuilder missing = new StringBuilder();
         if (commonUtils.isNullOrEmpty(networkName)) {
@@ -1187,8 +1171,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     }
 
     private Map<String, Object> populateNetworkParams(NetworkType neutronNetworkType, String networkName,
-            String physicalNetwork, List<Integer> vlans, List<RouteTarget> routeTargets, String shared, String external,
-            boolean aic3template) {
+                                                      String physicalNetwork, List<Integer> vlans, List<RouteTarget> routeTargets, String shared, String external,
+                                                      boolean aic3template) {
         // Build the common set of HEAT template parameters
         Map<String, Object> stackParams = new HashMap<>();
         stackParams.put("network_name", networkName);
@@ -1227,10 +1211,10 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
                     String routeTarget = rt.getRouteTarget();
                     String routeTargetRole = rt.getRouteTargetRole();
                     logger.debug("Checking for an actually null route target: {}", rt);
-                    if (routeTarget == null || routeTarget.equals("") || routeTarget.equalsIgnoreCase("null"))
+                    if (routeTarget == null || "".equals(routeTarget) || "null".equalsIgnoreCase(routeTarget))
                         rtIsNull = true;
-                    if (routeTargetRole == null || routeTargetRole.equals("")
-                            || routeTargetRole.equalsIgnoreCase("null"))
+                    if (routeTargetRole == null || "".equals(routeTargetRole)
+                            || "null".equalsIgnoreCase(routeTargetRole))
                         rtIsNull = true;
                 } else {
                     rtIsNull = true;
@@ -1414,7 +1398,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
          * make these optional + "      ip_version: %ipversion%\n" + "      enable_dhcp: %enabledhcp%\n" +
          * "      gateway_ip: %gatewayip%\n" + "      allocation_pools:\n" + "       - start: %poolstart%\n" +
          * "         end: %poolend%\n";
-         * 
+         *
          */
 
         String outputTempl = "  subnet_id_%subnetId%:\n" + "    description: Openstack subnet identifier\n"
