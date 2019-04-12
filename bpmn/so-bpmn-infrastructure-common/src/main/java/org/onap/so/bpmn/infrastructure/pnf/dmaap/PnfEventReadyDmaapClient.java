@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import javax.ws.rs.core.UriBuilder;
@@ -45,6 +47,9 @@ import org.springframework.stereotype.Component;
 public class PnfEventReadyDmaapClient implements DmaapClient {
 
     private static final Logger logger = LoggerFactory.getLogger(PnfEventReadyDmaapClient.class);
+    private static final int INFORMING_THREADS_NUMBER = 4;
+
+    private final ExecutorService informingExecutor = Executors.newFixedThreadPool(INFORMING_THREADS_NUMBER);
 
     private HttpClient httpClient;
     private Map<String, Runnable> pnfCorrelationIdToThreadMap;
@@ -133,7 +138,7 @@ public class PnfEventReadyDmaapClient implements DmaapClient {
             Runnable runnable = unregister(pnfCorrelationId);
             if (runnable != null) {
                 logger.debug("dmaap listener gets pnf ready event for pnfCorrelationId: {}", pnfCorrelationId);
-                runnable.run();
+                informingExecutor.submit(runnable);
             }
         }
     }
