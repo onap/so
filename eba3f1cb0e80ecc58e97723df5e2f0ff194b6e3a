@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e310eaad_372b631b",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.8__AddConfiguration_VNF_MacroData.sql",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-12T14:00:11Z",
+      "side": 1,
+      "message": "You must use the repeatable macro script this data will just get wiped out.",
+      "revId": "eba3f1cb0e80ecc58e97723df5e2f0ff194b6e3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b81d4e57_36eec9d3",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasks.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 63
+      },
+      "writtenOn": "2019-04-12T14:00:11Z",
+      "side": 1,
+      "message": "This is not really a safe query as the customization uuid is not unique any more, you should query with a combination of service and then customization uuid if you want to go directly.",
+      "revId": "eba3f1cb0e80ecc58e97723df5e2f0ff194b6e3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
