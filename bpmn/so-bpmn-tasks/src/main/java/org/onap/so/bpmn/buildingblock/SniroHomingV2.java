@@ -531,7 +531,7 @@ public class SniroHomingV2 {
             si.setServiceInstanceId(identifierValue);
             si.setOrchestrationStatus(OrchestrationStatus.CREATED);
             cloud.setLcpCloudRegionId(assignmentsMap.get("cloudRegionId"));
-            if (assignmentsMap.containsKey("vnfHostName")) {
+            if (assignmentsMap.containsKey("vnfHostName") && !assignmentsMap.get("vnfHostName").isEmpty()) {
                 logger.debug("Resources has been homed to a vnf");
                 GenericVnf vnf = setVnf(assignmentsMap);
                 vnf.setCloudRegion(cloud);
