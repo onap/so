@@ -28,10 +28,12 @@ import javax.transaction.Transactional;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
+import org.onap.so.db.request.client.RequestsDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
@@ -51,6 +53,9 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 public abstract class BaseTest {
     protected Logger logger = LoggerFactory.getLogger(BaseTest.class);
     protected TestRestTemplate restTemplate = new TestRestTemplate("test", "test");
+
+    @SpyBean
+    protected RequestsDbClient requestsDbClient;
 
     @Autowired
     protected Environment env;

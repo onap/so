@@ -55,6 +55,7 @@ import javax.ws.rs.core.Response;
 import org.apache.http.HttpStatus;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
 import org.onap.so.db.catalog.beans.Service;
 import org.onap.so.db.catalog.beans.ServiceRecipe;
@@ -124,6 +125,7 @@ public class ServiceInstancesTest extends BaseTest {
         }
         wireMockServer.stubFor(post(urlMatching(".*/infraActiveRequests.*")).willReturn(aResponse()
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON).withStatus(HttpStatus.SC_OK)));
+        Mockito.doReturn(null).when(requestsDbClient).getInfraActiveRequestbyRequestId(Mockito.any());
     }
 
     public String inputStream(String JsonInput) throws IOException {
