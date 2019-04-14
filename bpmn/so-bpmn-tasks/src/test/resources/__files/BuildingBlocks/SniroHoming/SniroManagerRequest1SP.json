@@ -1,0 +1,46 @@
+{
+  "requestInfo" : {
+    "transactionId" : "testRequestId",
+    "requestId" : "testRequestId",
+    "callbackUrl" : "http://localhost:28080/mso/WorkflowMesssage/SNIROResponse/testRequestId",
+    "sourceId" : "mso",
+    "requestType" : "create",
+    "timeout" : 1800
+  },
+  "serviceInfo" : {
+    "modelInfo" : {
+      "modelName" : "testModelName1",
+      "modelVersionId" : "testModelUUID1",
+      "modelVersion" : "testModelVersion1",
+      "modelInvariantId" : "testModelInvariantUUID1"
+    },
+    "serviceRole" : "testServiceRole1",
+    "serviceInstanceId" : "testServiceInstanceId1",
+    "serviceName" : "testServiceType1"
+  },
+  "placementInfo" : {
+    "subscriberInfo" : {
+      "globalSubscriberId" : "testCustomerId",
+      "subscriberName" : "testCustomerName"
+    },
+    "placementDemands" : [ {
+      "serviceResourceId" : "testProxyId1",
+      "resourceModuleName" : "testProxyInstanceName1",
+      "resourceModelInfo" : {
+        "modelName" : "testProxyModelName1",
+        "modelVersionId" : "testProxyModelUuid1",
+        "modelVersion" : "testProxyModelVersion1",
+        "modelInvariantId" : "testProxyModelInvariantUuid1"
+      },
+      "requiredCandidates" : [ {
+        "identifierType" : "cloudRegionId",
+        "identifiers" : [ "testCloudRegionId" ],
+        "cloudOwner" : "att"
+      } ]
+    } ],
+    "requestParameters" : {"subscriptionServiceType":"testSubscriptionServiceType","aLaCarte":false}
+  },
+  "licenseInfo" : {
+    "licenseDemands" : [ ]
+  }
+}
