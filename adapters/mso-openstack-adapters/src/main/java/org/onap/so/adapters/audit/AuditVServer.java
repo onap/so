@@ -91,8 +91,6 @@ public class AuditVServer extends AbstractAudit {
             lInterfaceAudit.setDoesObjectExist(true);
             lInterface.setInterfaceName(lInterface.getInterfaceName());
         }
-        LInterface lInterfaceShallow = new LInterface();
-        BeanUtils.copyProperties(lInterface, lInterfaceShallow, "LInterfaces");
         lInterfaceAudit.setAaiObject(lInterface);
         lInterfaceAudit.setResourceURI(linterfaceURI.build());
         lInterfaceAudit.setAaiObjectType(AAIObjectType.L_INTERFACE.typeName());
