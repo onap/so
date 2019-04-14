@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,6 +38,8 @@ public class Demand implements Serializable {
     private List<Candidate> requiredCandidates;
     @JsonProperty("excludedCandidates")
     private List<Candidate> excludedCandidates;
+    @JsonProperty("existingCandidates")
+    private List<Candidate> existingCandidates;
 
 
     public List<Candidate> getRequiredCandidates() {
@@ -78,6 +80,14 @@ public class Demand implements Serializable {
 
     public void setModelInfo(ModelInfo modelInfo) {
         this.modelInfo = modelInfo;
+    }
+
+    public List<Candidate> getExistingCandidates() {
+        return existingCandidates;
+    }
+
+    public void setExistingCandidates(List<Candidate> existingCandidates) {
+        this.existingCandidates = existingCandidates;
     }
 
 }

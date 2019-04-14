@@ -78,6 +78,8 @@ public class ServiceInstance implements Serializable, ShallowCopy<ServiceInstanc
     private ModelInfoServiceInstance modelInfoServiceInstance;
     @JsonProperty("instance-groups")
     private List<InstanceGroup> instanceGroups = new ArrayList<>();
+    @JsonProperty("service-proxies")
+    private List<ServiceProxy> serviceProxies = new ArrayList<ServiceProxy>();
 
     public List<GenericVnf> getVnfs() {
         return vnfs;
@@ -209,6 +211,10 @@ public class ServiceInstance implements Serializable, ShallowCopy<ServiceInstanc
 
     public void setInstanceGroups(List<InstanceGroup> instanceGroups) {
         this.instanceGroups = instanceGroups;
+    }
+
+    public List<ServiceProxy> getServiceProxies() {
+        return serviceProxies;
     }
 
     @Override
