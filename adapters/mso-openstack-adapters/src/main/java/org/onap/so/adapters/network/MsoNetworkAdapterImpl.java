@@ -26,6 +26,7 @@ package org.onap.so.adapters.network;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.jws.WebService;
 import javax.xml.ws.Holder;
+
 import org.onap.so.adapters.network.beans.ContrailPolicyRef;
 import org.onap.so.adapters.network.beans.ContrailPolicyRefSeq;
 import org.onap.so.adapters.network.beans.ContrailSubnet;
@@ -127,7 +129,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      *
      * @see MsoNetworkAdapterImpl#MsoNetworkAdapterImpl(MsoPropertiesFactory)
      */
-    public MsoNetworkAdapterImpl() {}
+    public MsoNetworkAdapterImpl() {
+    }
 
     @Override
     public void createNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
@@ -157,21 +160,21 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     /**
      * This is the "Create Network" web service implementation. It will create a new Network of the requested type in
      * the specified cloud and tenant. The tenant must exist at the time this service is called.
-     *
+     * <p>
      * If a network with the same name already exists, this can be considered a success or failure, depending on the
      * value of the 'failIfExists' parameter.
-     *
+     * <p>
      * There will be a pre-defined set of network types defined in the MSO Catalog. All such networks will have a
      * similar configuration, based on the allowable Openstack networking definitions. This includes basic networks,
      * provider networks (with a single VLAN), and multi-provider networks (one or more VLANs)
-     *
+     * <p>
      * Initially, all provider networks must be "vlan" type, and multiple segments in a multi-provider network must be
      * multiple VLANs on the same physical network.
-     *
+     * <p>
      * This service supports two modes of Network creation/update: - via Heat Templates - via Neutron API The network
      * orchestration mode for each network type is declared in its catalog definition. All Heat-based templates must
      * support some subset of the same input parameters: network_name, physical_network, vlan(s).
-     *
+     * <p>
      * The method returns the network ID and a NetworkRollback object. This latter object can be passed as-is to the
      * rollbackNetwork operation to undo everything that was created. This is useful if a network is successfully
      * created but the orchestration fails on a subsequent operation.
@@ -493,18 +496,18 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      * This is the "Update Network" web service implementation. It will update an existing Network of the requested type
      * in the specified cloud and tenant. The typical use will be to replace the VLANs with the supplied list (to add or
      * remove a VLAN), but other properties may be updated as well.
-     *
+     * <p>
      * There will be a pre-defined set of network types defined in the MSO Catalog. All such networks will have a
      * similar configuration, based on the allowable Openstack networking definitions. This includes basic networks,
      * provider networks (with a single VLAN), and multi-provider networks (one or more VLANs).
-     *
+     * <p>
      * Initially, all provider networks must currently be "vlan" type, and multi-provider networks must be multiple
      * VLANs on the same physical network.
-     *
+     * <p>
      * This service supports two modes of Network update: - via Heat Templates - via Neutron API The network
      * orchestration mode for each network type is declared in its catalog definition. All Heat-based templates must
      * support some subset of the same input parameters: network_name, physical_network, vlan, segments.
-     *
+     * <p>
      * The method returns a NetworkRollback object. This object can be passed as-is to the rollbackNetwork operation to
      * undo everything that was updated. This is useful if a network is successfully updated but orchestration fails on
      * a subsequent operation.
@@ -536,7 +539,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
             // Set the detailed error as the Exception 'message'
             throw new NetworkException(error, MsoExceptionCategory.USERDATA);
         }
-
 
 
         NetworkResource networkResource = networkCheck(startTime, networkType, modelCustomizationUuid, networkName,
@@ -979,15 +981,15 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     /**
      * This is the "Delete Network" web service implementation. It will delete a Network in the specified cloud and
      * tenant.
-     *
+     * <p>
      * If the network is not found, it is treated as a success.
-     *
+     * <p>
      * This service supports two modes of Network creation/update/delete: - via Heat Templates - via Neutron API The
      * network orchestration mode for each network type is declared in its catalog definition.
-     *
+     * <p>
      * For Heat-based orchestration, the networkId should be the stack ID. For Neutron-based orchestration, the
      * networkId should be the Neutron network UUID.
-     *
+     * <p>
      * The method returns nothing on success. Rollback is not possible for delete commands, so any failure on delete
      * will require manual fallout in the client.
      */
@@ -1074,7 +1076,7 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      * This web service endpoint will rollback a previous Create VNF operation. A rollback object is returned to the
      * client in a successful creation response. The client can pass that object as-is back to the rollbackVnf operation
      * to undo the creation.
-     *
+     * <p>
      * The rollback includes removing the VNF and deleting the tenant if the tenant did not exist prior to the VNF
      * creation.
      */
@@ -1261,7 +1263,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
         }
         return stackParams;
     }
-
 
 
     /**
