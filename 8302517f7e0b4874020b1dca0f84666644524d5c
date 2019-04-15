@@ -34,6 +34,42 @@
       "revId": "8302517f7e0b4874020b1dca0f84666644524d5c",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d985be69_c342e4b0",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/VnfCustomizationRepository.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-04-15T14:23:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6d88abe8_e8dab626",
+      "revId": "8302517f7e0b4874020b1dca0f84666644524d5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5e7f8e47_026dee80",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/data/repository/VnfCustomizationRepository.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-04-15T14:23:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "36461d45_2643406a",
+      "revId": "8302517f7e0b4874020b1dca0f84666644524d5c",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
