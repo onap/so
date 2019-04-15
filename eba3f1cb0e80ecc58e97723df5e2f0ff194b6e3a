@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "da705338_02cd026c",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.8__AddConfiguration_VNF_MacroData.sql",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-04-15T10:05:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e310eaad_372b631b",
+      "revId": "eba3f1cb0e80ecc58e97723df5e2f0ff194b6e3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "b81d4e57_36eec9d3",
         "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasks.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-12T14:00:11Z",
       "side": 1,
       "message": "This is not really a safe query as the customization uuid is not unique any more, you should query with a combination of service and then customization uuid if you want to go directly.",
+      "revId": "eba3f1cb0e80ecc58e97723df5e2f0ff194b6e3a",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bd3bdc01_26a40f2b",
+        "filename": "bpmn/so-bpmn-tasks/src/main/java/org/onap/so/bpmn/infrastructure/workflow/tasks/WorkflowActionBBTasks.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 4695
+      },
+      "writtenOn": "2019-04-15T10:05:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "b81d4e57_36eec9d3",
       "revId": "eba3f1cb0e80ecc58e97723df5e2f0ff194b6e3a",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
