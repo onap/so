@@ -44,15 +44,4 @@ public class HeatBridgeUtils {
         }
         return Optional.empty();
     }
-
-    public static Optional<String> getMatchingPhysicalNetworkName(final String pserverPinterfaceName) {
-        if (pserverPinterfaceName.contains(COMPUTE_SIDE_DEDICATED_SRIOV_PREFIX)) {
-            return Optional.of(
-                    pserverPinterfaceName.replace(COMPUTE_SIDE_DEDICATED_SRIOV_PREFIX, OS_SIDE_DEDICATED_SRIOV_PREFIX));
-        } else if (pserverPinterfaceName.contains(COMPUTE_SIDE_SHARED_SRIOV_PREFIX)) {
-            return Optional
-                    .of(pserverPinterfaceName.replace(COMPUTE_SIDE_SHARED_SRIOV_PREFIX, OS_SIDE_SHARED_SRIOV_PREFIX));
-        }
-        return Optional.empty();
-    }
 }
