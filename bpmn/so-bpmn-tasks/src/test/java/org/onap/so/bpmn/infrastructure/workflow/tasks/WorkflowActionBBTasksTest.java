@@ -40,10 +40,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.bpmn.BaseTaskTest;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.bpmn.servicedecomposition.entities.BuildingBlock;
 import org.onap.so.bpmn.servicedecomposition.entities.ExecuteBuildingBlock;
+import org.onap.so.bpmn.servicedecomposition.entities.WorkflowResourceIds;
+import org.onap.so.db.catalog.beans.VnfResourceCustomization;
 import org.onap.so.db.request.beans.InfraActiveRequests;
 import org.springframework.core.env.Environment;
 
@@ -90,7 +93,30 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         execution.setVariable("calledHoming", false);
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
         ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
+
+        String vnfCustomizationUUID = "1234567";
+        String serviceInstanceId = "1234567";
+        BuildingBlock buildingBlock = new BuildingBlock();
+        buildingBlock.setBpmnFlowName("ConfigAssignVnfBB");
+        buildingBlock.setKey(vnfCustomizationUUID);
+        ebb.setBuildingBlock(buildingBlock);
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+        workflowResourceIds.setServiceInstanceId(serviceInstanceId);
+        ebb.setWorkflowResourceIds(workflowResourceIds);
         flowsToExecute.add(ebb);
+
+        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
+        VnfResourceCustomization vrc = new VnfResourceCustomization();
+        vrc.setSkipPostInstConf(false);
+        vrc.setModelCustomizationUUID(vnfCustomizationUUID);
+        vnfResourceCustomizations.add(vrc);
+        GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setModelCustomizationId(vnfCustomizationUUID);
+        doReturn(vnfResourceCustomizations).when(catalogDbClient)
+                .getVnfResourceCustomizationByModelUuid(serviceInstanceId);
+        doReturn(vrc).when(catalogDbClient).findVnfResourceCustomizationInList(vnfCustomizationUUID,
+                vnfResourceCustomizations);
+
         execution.setVariable("flowsToExecute", flowsToExecute);
         workflowActionBBTasks.selectBB(execution);
         boolean success = (boolean) execution.getVariable("completed");
@@ -110,7 +136,30 @@ public class WorkflowActionBBTasksTest extends BaseTaskTest {
         List<ExecuteBuildingBlock> flowsToExecute = new ArrayList();
         ExecuteBuildingBlock ebb = new ExecuteBuildingBlock();
         ExecuteBuildingBlock ebb2 = new ExecuteBuildingBlock();
+
+        String vnfCustomizationUUID = "1234567";
+        String serviceInstanceId = "1234567";
+        BuildingBlock buildingBlock = new BuildingBlock();
+        buildingBlock.setBpmnFlowName("ConfigDeployVnfBB");
+        buildingBlock.setKey(vnfCustomizationUUID);
+        ebb.setBuildingBlock(buildingBlock);
+        WorkflowResourceIds workflowResourceIds = new WorkflowResourceIds();
+        workflowResourceIds.setServiceInstanceId(serviceInstanceId);
+        ebb.setWorkflowResourceIds(workflowResourceIds);
         flowsToExecute.add(ebb);
+
+        List<VnfResourceCustomization> vnfResourceCustomizations = new ArrayList();
+        VnfResourceCustomization vrc = new VnfResourceCustomization();
+        vrc.setSkipPostInstConf(false);
+        vrc.setModelCustomizationUUID(vnfCustomizationUUID);
+        vnfResourceCustomizations.add(vrc);
+        GenericVnf genericVnf = new GenericVnf();
+        genericVnf.setModelCustomizationId(vnfCustomizationUUID);
+        doReturn(vnfResourceCustomizations).when(catalogDbClient)
+                .getVnfResourceCustomizationByModelUuid(serviceInstanceId);
+        doReturn(vrc).when(catalogDbClient).findVnfResourceCustomizationInList(vnfCustomizationUUID,
+                vnfResourceCustomizations);
+
         flowsToExecute.add(ebb2);
         execution.setVariable("flowsToExecute", flowsToExecute);
         workflowActionBBTasks.selectBB(execution);

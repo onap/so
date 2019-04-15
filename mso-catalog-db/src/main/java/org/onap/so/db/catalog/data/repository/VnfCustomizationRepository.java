@@ -40,4 +40,17 @@ public interface VnfCustomizationRepository extends JpaRepository<VnfResourceCus
             @Param("MODEL_INSTANCE_NAME") String modelInstanceName,
             @Param("VNF_RESOURCE_MODEL_UUID") String vnfResourceModelUUID);
 
+    /**
+     * Used to fetch the @{link VnfResourceCustomization} by the Model UUID.
+     *
+     * This operation is required by {@link org.onap.so.db.catalog.client.CatalogDbClient} to provide
+     * VnfResourceCustomization based on model UUID without projection.
+     *
+     * @param serviceModelUuid model UUID
+     * @return List of VnfResourceCustomization
+     */
+    @Query(value = "select * from vnf_resource_customization where SERVICE_MODEL_UUID = ?1", nativeQuery = true)
+    List<VnfResourceCustomization> findVnfResourceCustomizationByModelUuid(
+            @Param("SERVICE_MODEL_UUID") String serviceModelUuid);
+
 }
