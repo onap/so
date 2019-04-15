@@ -191,6 +191,7 @@ public class CatalogDbClient {
     private String findPnfResourceCustomizationByModelUuid = "/findPnfResourceCustomizationByModelUuid";
     private String findWorkflowByArtifactUUID = "/findByArtifactUUID";
     private String findWorkflowByModelUUID = "/findWorkflowByModelUUID";
+    private String findVnfResourceCustomizationByModelUuid = "/findVnfResourceCustomizationByModelUuid";
 
     private String serviceURI;
     private String vfModuleURI;
@@ -332,6 +333,9 @@ public class CatalogDbClient {
 
         findWorkflowByArtifactUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByArtifactUUID;
         findWorkflowByModelUUID = endpoint + WORKFLOW + SEARCH + findWorkflowByModelUUID;
+
+        findVnfResourceCustomizationByModelUuid =
+                endpoint + VNF_RESOURCE_CUSTOMIZATION + SEARCH + findVnfResourceCustomizationByModelUuid;
 
         serviceURI = endpoint + SERVICE + URI_SEPARATOR;
         vfModuleURI = endpoint + VFMODULE + URI_SEPARATOR;
@@ -501,6 +505,12 @@ public class CatalogDbClient {
         } else {
             return null;
         }
+    }
+
+    public List<VnfResourceCustomization> getVnfResourceCustomizationByModelUuid(String modelUuid) {
+        return this.getMultipleResources(vnfResourceCustomizationClient,
+                getUri(UriBuilder.fromUri(findVnfResourceCustomizationByModelUuid)
+                        .queryParam("SERVICE_MODEL_UUID", modelUuid).build().toString()));
     }
 
     public PnfResource getPnfResourceByModelUUID(String modelUUID) {
@@ -816,7 +826,7 @@ public class CatalogDbClient {
         return vfModuleCust.getCvnfcCustomization().stream().collect(Collectors.toList());
     }
 
-    private VnfResourceCustomization findVnfResourceCustomizationInList(String vnfCustomizationUUID,
+    public VnfResourceCustomization findVnfResourceCustomizationInList(String vnfCustomizationUUID,
             List<VnfResourceCustomization> vnfResourceCusts) {
         List<VnfResourceCustomization> filtered = vnfResourceCusts.stream()
                 .filter(vnfCustRes -> vnfCustomizationUUID.equals(vnfCustRes.getModelCustomizationUUID()))
