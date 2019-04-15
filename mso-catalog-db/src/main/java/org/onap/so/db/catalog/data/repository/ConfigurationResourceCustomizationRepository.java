@@ -26,6 +26,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 @RepositoryRestResource(collectionResourceRel = "configurationResourceCustomization",
         path = "configurationResourceCustomization")
 public interface ConfigurationResourceCustomizationRepository
-        extends JpaRepository<ConfigurationResourceCustomization, String> {
+        extends JpaRepository<ConfigurationResourceCustomization, Integer> {
 
 }
