@@ -280,6 +280,7 @@ DROP TABLE IF EXISTS `configuration_customization`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `configuration_customization` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
   `MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
   `MODEL_INSTANCE_NAME` varchar(200) NOT NULL,
   `CONFIGURATION_TYPE` varchar(200) DEFAULT NULL,
@@ -288,27 +289,18 @@ CREATE TABLE `configuration_customization` (
   `CREATION_TIMESTAMP` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `CONFIGURATION_MODEL_UUID` varchar(200) NOT NULL,
   `SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID` varchar(200) DEFAULT NULL,
-  `CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID` varchar(200) DEFAULT NULL,
-  PRIMARY KEY (`MODEL_CUSTOMIZATION_UUID`),
-  KEY `fk_configuration_customization__configuration_idx` (`CONFIGURATION_MODEL_UUID`),
-  KEY `fk_configuration_customization__service_proxy_customization_idx` (`SERVICE_PROXY_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID`),
-  KEY `fk_configuration_customization__configuration_customization_idx` (`CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID`),
-  CONSTRAINT `fk_configuration_customization__configuration_customization1` FOREIGN KEY (`CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_UUID`) REFERENCES `configuration_customization` (`MODEL_CUSTOMIZATION_UUID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_configuration_resource_customization__configuration_resour1` FOREIGN KEY (`CONFIGURATION_MODEL_UUID`) REFERENCES `configuration` (`MODEL_UUID`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `configuration_customization_to_service`
---
-
-DROP TABLE IF EXISTS `configuration_customization_to_service`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `configuration_customization_to_service` (
-  `SERVICE_MODEL_UUID` varchar(200) NOT NULL,
-  `RESOURCE_MODEL_CUSTOMIZATION_UUID` varchar(200) NOT NULL,
-  PRIMARY KEY (`SERVICE_MODEL_UUID`,`RESOURCE_MODEL_CUSTOMIZATION_UUID`)
+  `CONFIGURATION_CUSTOMIZATION_MODEL_CUSTOMIZATION_ID` int(11) DEFAULT NULL,
+  `SERVICE_MODEL_UUID` varchar(200),
+   PRIMARY KEY (`ID`),
+   KEY `fk_configuration_customization__configuration_idx` (`CONFIGURATION_MODEL_UUID`),
+   KEY `fk_configuration_customization__service_idx` (`SERVICE_MODEL_UUID`),
+   UNIQUE KEY `uk_configuration_customization`  (`MODEL_CUSTOMIZATION_UUID` ASC, `SERVICE_MODEL_UUID` ASC),
+   CONSTRAINT `fk_configuration_customization__configuration1` FOREIGN KEY (`CONFIGURATION_MODEL_UUID`)
+        REFERENCES `configuration` (`MODEL_UUID`)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+   CONSTRAINT `fk_configuration_customization__service1` FOREIGN KEY (`SERVICE_MODEL_UUID`)
+        REFERENCES `service` (`MODEL_UUID`)
+        ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.hibernate.StaleObjectStateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.onap.sdc.api.notification.IArtifactInfo;
@@ -55,7 +56,6 @@ import org.onap.sdc.toscaparser.api.Property;
 import org.onap.sdc.toscaparser.api.RequirementAssignment;
 import org.onap.sdc.toscaparser.api.RequirementAssignments;
 import org.onap.sdc.toscaparser.api.elements.Metadata;
-import org.onap.sdc.toscaparser.api.elements.StatefulEntityType;
 import org.onap.sdc.toscaparser.api.functions.GetInput;
 import org.onap.sdc.toscaparser.api.parameters.Input;
 import org.onap.sdc.utils.DistributionStatusEnum;
@@ -122,7 +122,6 @@ import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleRepository;
-import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.VnfcCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
@@ -308,6 +307,7 @@ public class ToscaResourceInstaller {
         }
     }
 
+
     @Transactional(rollbackFor = {ArtifactInstallerException.class})
     public void installTheResource(ToscaResourceStructure toscaResourceStruct, ResourceStructure resourceStruct)
             throws ArtifactInstallerException {
@@ -408,8 +408,10 @@ public class ToscaResourceInstaller {
             processNetworkCollections(toscaResourceStruct, service);
             // Process Service Proxy & Configuration
             processServiceProxyAndConfiguration(toscaResourceStruct, service);
+
             logger.info("Saving Service: {} ", service.getModelName());
-            serviceRepo.save(service);
+            service = serviceRepo.save(service);
+            correlateConfigCustomResources(service);
 
             WatchdogComponentDistributionStatus status = new WatchdogComponentDistributionStatus(
                     vfResourceStruct.getNotification().getDistributionID(), MSO);
@@ -637,7 +639,8 @@ public class ToscaResourceInstaller {
     }
 
     protected ConfigurationResourceCustomization getConfigurationResourceCustomization(NodeTemplate nodeTemplate,
-            ToscaResourceStructure toscaResourceStructure, ServiceProxyResourceCustomization spResourceCustomization) {
+            ToscaResourceStructure toscaResourceStructure, ServiceProxyResourceCustomization spResourceCustomization,
+            Service service) {
         Metadata metadata = nodeTemplate.getMetaData();
 
         ConfigurationResource configResource = getConfigurationResource(nodeTemplate);
@@ -660,30 +663,14 @@ public class ToscaResourceInstaller {
                 .setServiceProxyResourceCustomizationUUID(spResourceCustomization.getModelCustomizationUUID());
 
         configCustomizationResource.setConfigurationResource(configResource);
+        configCustomizationResource.setService(service);
         configResourceCustomizationSet.add(configCustomizationResource);
 
         configResource.setConfigurationResourceCustomization(configResourceCustomizationSet);
+
         return configCustomizationResource;
     }
 
-
-    protected Optional<ConfigurationResourceCustomization> getVnrNodeTemplate(
-            List<NodeTemplate> configurationNodeTemplatesList, ToscaResourceStructure toscaResourceStructure,
-            ServiceProxyResourceCustomization spResourceCustomization) {
-        Optional<ConfigurationResourceCustomization> configurationResourceCust = Optional.empty();
-        for (NodeTemplate nodeTemplate : configurationNodeTemplatesList) {
-            StatefulEntityType entityType = nodeTemplate.getTypeDefinition();
-            String type = entityType.getType();
-
-            if (VLAN_NETWORK_RECEPTOR.equals(type)) {
-                configurationResourceCust = Optional.of(getConfigurationResourceCustomization(nodeTemplate,
-                        toscaResourceStructure, spResourceCustomization));
-                break;
-            }
-        }
-
-        return configurationResourceCust;
-    }
 
     protected void processServiceProxyAndConfiguration(ToscaResourceStructure toscaResourceStruct, Service service) {
 
@@ -703,8 +690,6 @@ public class ToscaResourceInstaller {
             for (NodeTemplate spNode : serviceProxyResourceList) {
                 serviceProxy = createServiceProxy(spNode, service, toscaResourceStruct);
                 serviceProxyList.add(serviceProxy);
-                Optional<ConfigurationResourceCustomization> vnrResourceCustomization =
-                        getVnrNodeTemplate(configurationNodeTemplatesList, toscaResourceStruct, serviceProxy);
 
                 for (NodeTemplate configNode : configurationNodeTemplatesList) {
 
@@ -712,19 +697,21 @@ public class ToscaResourceInstaller {
                             toscaResourceStruct.getSdcCsarHelper().getRequirementsOf(configNode).getAll();
                     for (RequirementAssignment requirement : requirementsList) {
                         if (requirement.getNodeTemplateName().equals(spNode.getName())) {
-                            ConfigurationResourceCustomization configurationResource = createConfiguration(configNode,
-                                    toscaResourceStruct, serviceProxy, vnrResourceCustomization);
+                            ConfigurationResourceCustomization configurationResource =
+                                    createConfiguration(configNode, toscaResourceStruct, serviceProxy, service);
 
-                            Optional<ConfigurationResourceCustomization> matchingObject = configurationResourceList
-                                    .stream()
-                                    .filter(configurationResourceCustomization -> configNode.getMetaData()
-                                            .getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)
-                                            .equals(configurationResource.getModelCustomizationUUID()))
-                                    .findFirst();
+                            Optional<ConfigurationResourceCustomization> matchingObject =
+                                    configurationResourceList.stream()
+                                            .filter(configurationResourceCustomization -> configNode.getMetaData()
+                                                    .getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID)
+                                                    .equals(configurationResource.getModelCustomizationUUID()))
+                                            .filter(configurationResourceCustomization -> configurationResourceCustomization
+                                                    .getModelInstanceName()
+                                                    .equals(configurationResource.getModelInstanceName()))
+                                            .findFirst();
                             if (!matchingObject.isPresent()) {
                                 configurationResourceList.add(configurationResource);
                             }
-
                             break;
                         }
                     }
@@ -735,6 +722,37 @@ public class ToscaResourceInstaller {
 
         service.setConfigurationCustomizations(configurationResourceList);
         service.setServiceProxyCustomizations(serviceProxyList);
+    }
+
+    /*
+     * ConfigurationResourceCustomization objects have their IDs auto incremented in the database. Unless we know their
+     * IDs we cannot possibly associate their related records. So these ConfigResourceCustomizations are persisted first
+     * and subsequently correlated.
+     */
+
+    protected void correlateConfigCustomResources(Service service) {
+        /* Assuming that we have only one pair of VRF-VNR */
+        ConfigurationResourceCustomization vrfConfigCustomResource = null;
+        ConfigurationResourceCustomization vnrConfigCustomResource = null;
+        List<ConfigurationResourceCustomization> configCustomList = service.getConfigurationCustomizations();
+        for (ConfigurationResourceCustomization configResource : configCustomList) {
+            String nodeType = configResource.getConfigurationResource().getToscaNodeType();
+            if (NODES_VRF_ENTRY.equalsIgnoreCase(nodeType)) {
+                vrfConfigCustomResource = configResource;
+            } else if (VLAN_NETWORK_RECEPTOR.equalsIgnoreCase(nodeType)) {
+                vnrConfigCustomResource = configResource;
+            }
+        }
+
+        if (vrfConfigCustomResource != null) {
+            vrfConfigCustomResource.setConfigResourceCustomization(vnrConfigCustomResource);
+            configCustomizationRepo.save(vrfConfigCustomResource);
+
+        }
+        if (vnrConfigCustomResource != null) {
+            vnrConfigCustomResource.setConfigResourceCustomization(vrfConfigCustomResource);
+            configCustomizationRepo.save(vnrConfigCustomResource);
+        }
     }
 
     protected void processNetworkCollections(ToscaResourceStructure toscaResourceStruct, Service service) {
@@ -1229,21 +1247,14 @@ public class ToscaResourceInstaller {
 
     protected ConfigurationResourceCustomization createConfiguration(NodeTemplate nodeTemplate,
             ToscaResourceStructure toscaResourceStructure, ServiceProxyResourceCustomization spResourceCustomization,
-            Optional<ConfigurationResourceCustomization> vnrResourceCustomization) {
+            Service service) {
 
-        ConfigurationResourceCustomization configCustomizationResource =
-                getConfigurationResourceCustomization(nodeTemplate, toscaResourceStructure, spResourceCustomization);
+        ConfigurationResourceCustomization configCustomizationResource = getConfigurationResourceCustomization(
+                nodeTemplate, toscaResourceStructure, spResourceCustomization, service);
 
         ConfigurationResource configResource = getConfigurationResource(nodeTemplate);
 
         Set<ConfigurationResourceCustomization> configResourceCustomizationSet = new HashSet<>();
-
-        StatefulEntityType entityType = nodeTemplate.getTypeDefinition();
-        String type = entityType.getType();
-
-        if (NODES_VRF_ENTRY.equals(type)) {
-            configCustomizationResource.setConfigResourceCustomization(vnrResourceCustomization.orElse(null));
-        }
 
         configCustomizationResource.setConfigurationResource(configResource);
 
@@ -1352,6 +1363,7 @@ public class ToscaResourceInstaller {
             networkResourceCustomization.setNetworkResource(networkResource);
 
             networkCustomizationRepo.saveAndFlush(networkResourceCustomization);
+
 
         } else if (networkResourceCustomization == null) {
             networkResourceCustomization =

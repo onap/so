@@ -119,9 +119,7 @@ public class Service implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
     private List<ServiceProxyResourceCustomization> serviceProxyCustomizations;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "configuration_customization_to_service", joinColumns = @JoinColumn(name = "SERVICE_MODEL_UUID"),
-            inverseJoinColumns = @JoinColumn(name = "RESOURCE_MODEL_CUSTOMIZATION_UUID"))
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "service")
     private List<ConfigurationResourceCustomization> configurationCustomizations;
 
     @OneToMany(cascade = CascadeType.ALL)
