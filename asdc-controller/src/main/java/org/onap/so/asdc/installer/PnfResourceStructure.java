@@ -39,6 +39,12 @@ public class PnfResourceStructure extends ResourceStructure {
     }
 
     @Override
+    public void addWorkflowArtifactToStructure(IArtifactInfo artifactinfo,
+            IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
+
+    }
+
+    @Override
     public void prepareInstall() throws ArtifactInstallerException {
 
     }

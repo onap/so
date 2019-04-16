@@ -1,0 +1,76 @@
+{
+  "distributionID": "48cc0f04-1d42-4fb4-a5ab-9fa62f8d64c1",
+  "serviceName": "TestParentService",
+  "serviceVersion": "1.0",
+  "serviceUUID": "2f55da47-c58a-453e-909f-172c94765fba",
+  "serviceDescription": "TestParentService",
+  "serviceInvariantUUID": "13b817ae-6388-40cf-9261-1619b607f1de",
+  "resources": [
+    {
+      "resourceInstanceName": "TestVF 0",
+      "resourceName": "TestVF",
+      "resourceVersion": "1.0",
+      "resoucreType": "VF",
+      "resourceUUID": "5185253e-4bef-4eb4-bbf9-8c328c787ebd",
+      "resourceInvariantUUID": "ea8264db-3e24-4324-87cc-12c6903ed43d",
+      "resourceCustomizationUUID": "a959a3cb-4988-435c-9cb7-5a40ef2ef2ac",
+      "category": "Allotted Resource",
+      "subcategory": "Contrail Route",
+      "artifacts": [
+        {
+          "artifactName": "TestWF2-1_0.bpmn",
+          "artifactType": "WORKFLOW",
+          "artifactURL": "/sdc/v1/catalog/services/Testparentservice/1.0/resourceInstances/testvf0/artifacts/TestWF2-1_0.bpmn",
+          "artifactChecksum": "ZjUzNjg1NDMyMTc4MWJmZjFlNDcyOGQ0Zjc1YWQwYzQ\u003d",
+          "artifactDescription": "Workflow Artifact Description",
+          "artifactTimeout": 120,
+          "artifactUUID": "a90f8eaa-7c20-422f-8c81-aacbca6fb9e7",
+          "artifactVersion": "1"
+        },
+        {
+          "artifactName": "TestWF-1_0.bpmn",
+          "artifactType": "WORKFLOW",
+          "artifactURL": "/sdc/v1/catalog/services/Testparentservice/1.0/resourceInstances/testvf0/artifacts/TestWF-1_0.bpmn",
+          "artifactChecksum": "YzA4NDY3M2E3Njk3Y2FjMmViZjRlODIzNTY1NDY3MDY\u003d",
+          "artifactDescription": "Workflow Artifact Description",
+          "artifactTimeout": 120,
+          "artifactUUID": "f27066a1-c3a7-4672-b02e-1251b74b7b71",
+          "artifactVersion": "1"
+        },
+        {
+          "artifactName": "TestWF-2_0.bpmn",
+          "artifactType": "WORKFLOW",
+          "artifactURL": "/sdc/v1/catalog/services/Testparentservice/1.0/resourceInstances/testvf0/artifacts/TestWF-2_0.bpmn",
+          "artifactChecksum": "MTE0MDA2ZGNjZmY3YWEyNzNlNjUwZDQ2OGU4YTM5ZjU\u003d",
+          "artifactDescription": "Workflow Artifact Description",
+          "artifactTimeout": 120,
+          "artifactUUID": "f51d2203-d1f5-43f1-9492-e59d12facb8f",
+          "artifactVersion": "1"
+        }
+      ]
+    }
+  ],
+  "serviceArtifacts": [
+    {
+      "artifactName": "service-Testparentservice-template.yml",
+      "artifactType": "TOSCA_TEMPLATE",
+      "artifactURL": "/sdc/v1/catalog/services/Testparentservice/1.0/artifacts/service-Testparentservice-template.yml",
+      "artifactChecksum": "YWZlYWMwMjNkODBlYTI2MzZlNjg3YzEzODZiNzNkNTg\u003d",
+      "artifactDescription": "TOSCA representation of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "8ec96c3f-d527-48bd-8dc5-1e7682bda676",
+      "artifactVersion": "1"
+    },
+    {
+      "artifactName": "service-Testparentservice-csar.csar",
+      "artifactType": "TOSCA_CSAR",
+      "artifactURL": "service-Testparentservice-csar.csar",
+      "artifactChecksum": "MTc4OWU0MGRhOTE4OGZiM2JiMjM3YmI3NzI2YWZjNjI\u003d",
+      "artifactDescription": "TOSCA definition package of the asset",
+      "artifactTimeout": 0,
+      "artifactUUID": "8dac522d-8e00-4794-819e-88e559ebc170",
+      "artifactVersion": "1"
+    }
+  ],
+  "workloadContext": "Production"
+}
