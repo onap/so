@@ -58,7 +58,7 @@ public class BpmnInstaller {
     protected static final Logger logger = LoggerFactory.getLogger(BpmnInstaller.class);
     private static final String BPMN_SUFFIX = ".bpmn";
     private static final String CAMUNDA_URL = "mso.camundaURL";
-    private static final String CREATE_DEPLOYMENT_PATH = "/sobpmnengine/deployment/create";
+    private static final String CREATE_DEPLOYMENT_PATH = "sobpmnengine/deployment/create";
 
     @Autowired
     private Environment env;
@@ -78,7 +78,7 @@ public class BpmnInstaller {
                         Path p = Paths.get(name);
                         String fileName = p.getFileName().toString();
                         extractBpmnFileFromCsar(csarFile, fileName);
-                        HttpResponse response = sendDeploymentRequest(fileName);
+                        HttpResponse response = sendDeploymentRequest(fileName, "");
                         logger.debug("Response status line: {}", response.getStatusLine());
                         logger.debug("Response entity: {}", response.getEntity().toString());
                         if (response.getStatusLine().getStatusCode() != 200) {
@@ -125,21 +125,21 @@ public class BpmnInstaller {
         return workflowsInCsar;
     }
 
-    protected HttpResponse sendDeploymentRequest(String bpmnFileName) throws Exception {
+    protected HttpResponse sendDeploymentRequest(String bpmnFileName, String version) throws Exception {
         HttpClient client = HttpClientBuilder.create().build();
         URI deploymentUri = new URI(this.env.getProperty(CAMUNDA_URL) + CREATE_DEPLOYMENT_PATH);
         HttpPost post = new HttpPost(deploymentUri);
         RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(1000000).setConnectTimeout(1000)
                 .setConnectionRequestTimeout(1000).build();
         post.setConfig(requestConfig);
-        HttpEntity requestEntity = buildMimeMultipart(bpmnFileName);
+        HttpEntity requestEntity = buildMimeMultipart(bpmnFileName, version);
         post.setEntity(requestEntity);
         return client.execute(post);
     }
 
-    protected HttpEntity buildMimeMultipart(String bpmnFileName) throws Exception {
+    protected HttpEntity buildMimeMultipart(String bpmnFileName, String version) throws Exception {
         FileInputStream bpmnFileStream = new FileInputStream(
-                Paths.get(System.getProperty("mso.config.path"), "ASDC", bpmnFileName).normalize().toString());
+                Paths.get(System.getProperty("mso.config.path"), "ASDC", version, bpmnFileName).normalize().toString());
 
         byte[] bytesToSend = IOUtils.toByteArray(bpmnFileStream);
         HttpEntity requestEntity =

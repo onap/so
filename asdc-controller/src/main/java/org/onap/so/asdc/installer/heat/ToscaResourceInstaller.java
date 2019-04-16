@@ -70,6 +70,7 @@ import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfModuleArtifact;
 import org.onap.so.asdc.installer.VfModuleStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
+import org.onap.so.asdc.installer.bpmn.WorkflowResource;
 import org.onap.so.asdc.util.YamlEditor;
 import org.onap.so.db.catalog.beans.AllottedResource;
 import org.onap.so.db.catalog.beans.AllottedResourceCustomization;
@@ -246,6 +247,9 @@ public class ToscaResourceInstaller {
     @Autowired
     protected PnfCustomizationRepository pnfCustomizationRepository;
 
+    @Autowired
+    protected WorkflowResource workflowResource;
+
     protected static final Logger logger = LoggerFactory.getLogger(ToscaResourceInstaller.class);
 
     public boolean isResourceAlreadyDeployed(ResourceStructure vfResourceStruct, boolean serviceDeployed)
@@ -400,6 +404,7 @@ public class ToscaResourceInstaller {
                         vfCustomizationCategory);
             }
 
+            workflowResource.processWorkflows(vfResourceStructure);
             processResourceSequence(toscaResourceStruct, service);
             List<NodeTemplate> allottedResourceList = toscaResourceStruct.getSdcCsarHelper().getAllottedResources();
             processAllottedResources(toscaResourceStruct, service, allottedResourceList);

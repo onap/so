@@ -55,7 +55,7 @@ public class ASDCConfiguration implements IConfiguration {
     public static final String HEAT_VOL = "HEAT_VOL";
     public static final String OTHER = "OTHER";
     public static final String TOSCA_CSAR = "TOSCA_CSAR";
-    public static final String WORKFLOWS = "Workflows";
+    public static final String WORKFLOW = "WORKFLOW";
     public static final String VF_MODULES_METADATA = "VF_MODULES_METADATA";
 
     private static final String[] SUPPORTED_ARTIFACT_TYPES =
