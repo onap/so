@@ -20,16 +20,24 @@
 
 package org.onap.so.asdc;
 
+import javax.annotation.PostConstruct;
+import org.onap.so.asdc.activity.DeployActivitySpecs;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication(scanBasePackages = {"org.onap.so"})
 @EnableScheduling
+@EnableJpaRepositories("org.onap.so.db.catalog.data.repository")
 public class Application {
 
     private static final String MSO_CONFIG_PATH = "mso.config.path";
     private static final String LOGS_DIR = "logs_dir";
+
+    @Autowired
+    DeployActivitySpecs deployActivitySpecs;
 
     private static void setLogsDir() {
         if (System.getProperty(LOGS_DIR) == null) {
@@ -40,6 +48,15 @@ public class Application {
     private static void setConfigPath() {
         if (System.getProperty(MSO_CONFIG_PATH) == null)
             System.getProperties().setProperty(MSO_CONFIG_PATH, ".");
+    }
+
+    @PostConstruct
+    private void deployActivities() {
+        try {
+            deployActivitySpecs.deployActivities();
+        } catch (Exception e) {
+        }
+
     }
 
     public static void main(String[] args) {
