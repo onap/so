@@ -16,6 +16,24 @@
       "revId": "3d680a79d093fb684fde352fb1c9590f1296aaa4",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "d4fc9ba8_d6964e16",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-16T14:26:01Z",
+      "side": 1,
+      "message": "Sorry, forgot to set review to Draft. I changed this value to see if with more time test executes properly.\n\nAbout test times it\u0027s quite weird: 10 minutes is not enough for Jenkins to execute this test, but on my computer test runs 8s (actually slightly less than 2 minutes including setup and teardown).",
+      "parentUuid": "d7a7bd38_ef1654f3",
+      "revId": "3d680a79d093fb684fde352fb1c9590f1296aaa4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
