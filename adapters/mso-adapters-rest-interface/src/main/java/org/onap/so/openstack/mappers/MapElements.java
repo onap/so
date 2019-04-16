@@ -20,9 +20,16 @@
 
 package org.onap.so.openstack.mappers;
 
+import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class MapElements {
+    private static final Logger logger = LoggerFactory.getLogger(MapElements.class);
     @XmlElement
     public String key;
     @XmlElement
@@ -32,6 +39,21 @@ public class MapElements {
 
     public MapElements(String key, Object value) {
         this.key = key;
-        this.value = value;
+        // this is required to handle marshalling raw json
+        // always write values as strings for XML
+        if (value != null) {
+            if (value instanceof List || value instanceof Map) {
+                try {
+                    this.value = new ObjectMapper().writeValueAsString(value);
+                } catch (JsonProcessingException e) {
+                    logger.warn("could not marshal value to json, calling toString");
+                    this.value = value.toString();
+                }
+            } else {
+                this.value = value;
+            }
+        } else {
+            this.value = value;
+        }
     }
 }
