@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "d7a7bd38_ef1654f3",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 5014
+      },
+      "writtenOn": "2019-04-16T14:10:21Z",
+      "side": 1,
+      "message": "600_000(ms) is right as 10minutes.",
+      "revId": "3d680a79d093fb684fde352fb1c9590f1296aaa4",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
