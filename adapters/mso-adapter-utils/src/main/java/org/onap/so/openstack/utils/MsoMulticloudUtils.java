@@ -28,9 +28,7 @@ import com.woorea.openstack.heat.model.CreateStackParam;
 import com.woorea.openstack.heat.model.Stack;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import javax.ws.rs.core.Response;
@@ -64,6 +62,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import com.google.common.collect.ImmutableSet;
 
 @Component
 public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
@@ -75,8 +74,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
     public static final String VF_MODULE_ID = "vf_module_id";
     public static final String TEMPLATE_TYPE = "template_type";
     public static final String MULTICLOUD_QUERY_BODY_NULL = "multicloudQueryBody is null";
-    public static final List<String> MULTICLOUD_INPUTS =
-            Arrays.asList(OOF_DIRECTIVES, SDNC_DIRECTIVES, USER_DIRECTIVES, TEMPLATE_TYPE);
+    public static final ImmutableSet<String> MULTICLOUD_INPUTS =
+            ImmutableSet.of(OOF_DIRECTIVES, SDNC_DIRECTIVES, USER_DIRECTIVES, TEMPLATE_TYPE);
 
     private static final Logger logger = LoggerFactory.getLogger(MsoMulticloudUtils.class);
 
