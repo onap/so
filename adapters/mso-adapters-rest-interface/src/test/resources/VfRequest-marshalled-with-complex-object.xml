@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<createVfModuleRequest>
+    <failIfExists>false</failIfExists>
+    <backout>true</backout>
+    <vfModuleParams>
+        <entry>
+            <key>test array</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">["a","b","c"]</value>
+        </entry>
+        <entry>
+            <key>test-null</key>
+        </entry>
+    </vfModuleParams>
+    <msoRequest/>
+</createVfModuleRequest>

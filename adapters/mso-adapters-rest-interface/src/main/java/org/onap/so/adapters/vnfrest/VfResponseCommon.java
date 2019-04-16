@@ -24,6 +24,8 @@ package org.onap.so.adapters.vnfrest;
 
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -71,7 +73,7 @@ public abstract class VfResponseCommon {
     public String toXmlString() {
         try {
             ByteArrayOutputStream bs = new ByteArrayOutputStream();
-            JAXBContext context = JAXBContext.newInstance(this.getClass());
+            JAXBContext context = JAXBContext.newInstance(this.getClass(), ArrayList.class, HashMap.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true); // pretty print XML
             marshaller.marshal(this, bs);
