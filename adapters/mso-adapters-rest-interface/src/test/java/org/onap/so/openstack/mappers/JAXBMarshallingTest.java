@@ -24,17 +24,19 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import org.junit.Test;
 import org.onap.so.adapters.vnfrest.CreateVfModuleRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 public class JAXBMarshallingTest {
 
 
     @Test
-    public void xmlMarshalTest() throws IOException, JAXBException {
+    public void xmlUnMarshalTest() throws IOException, JAXBException {
         JAXBContext context = JAXBContext.newInstance(CreateVfModuleRequest.class);
 
         CreateVfModuleRequest request = (CreateVfModuleRequest) context.createUnmarshaller().unmarshal(
@@ -43,6 +45,20 @@ public class JAXBMarshallingTest {
         assertEquals("ubuntu-16-04-cloud-amd64", request.getVfModuleParams().get("vcpe_image_name"));
         assertEquals("10.2.0.0/24", request.getVfModuleParams().get("cpe_public_net_cidr"));
         assertEquals("", request.getVfModuleParams().get("workload_context"));
+        assertEquals("[\"a\",\"b\",\"c\"]", request.getVfModuleParams().get("raw-json-param"));
+    }
+
+    @Test
+    public void xmlMarshalTest() throws IOException, JAXBException {
+
+        CreateVfModuleRequest request = new CreateVfModuleRequest();
+        request.getVfModuleParams().put("test-null", null);
+        request.getVfModuleParams().put("test array", Arrays.asList("a", "b", "c"));
+
+        assertEquals("documents are equal",
+                new String(Files
+                        .readAllBytes(Paths.get("src/test/resources/VfRequest-marshalled-with-complex-object.xml"))),
+                request.toXmlString());
 
     }
 
