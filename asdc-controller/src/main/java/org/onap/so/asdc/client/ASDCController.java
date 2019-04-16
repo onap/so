@@ -47,6 +47,7 @@ import org.onap.sdc.api.results.IDistributionClientResult;
 import org.onap.sdc.impl.DistributionClientFactory;
 import org.onap.sdc.utils.DistributionActionResultEnum;
 import org.onap.sdc.utils.DistributionStatusEnum;
+import org.onap.so.asdc.activity.DeployActivitySpecs;
 import org.onap.so.asdc.client.exceptions.ASDCControllerException;
 import org.onap.so.asdc.client.exceptions.ASDCDownloadException;
 import org.onap.so.asdc.client.exceptions.ASDCParametersException;
@@ -57,7 +58,6 @@ import org.onap.so.asdc.installer.ResourceStructure;
 import org.onap.so.asdc.installer.ResourceType;
 import org.onap.so.asdc.installer.ToscaResourceStructure;
 import org.onap.so.asdc.installer.VfResourceStructure;
-import org.onap.so.asdc.installer.bpmn.BpmnInstaller;
 import org.onap.so.asdc.installer.heat.ToscaResourceInstaller;
 import org.onap.so.asdc.tenantIsolation.DistributionStatus;
 import org.onap.so.asdc.tenantIsolation.WatchdogDistribution;
@@ -89,9 +89,6 @@ public class ASDCController {
     private ToscaResourceInstaller toscaInstaller;
 
     @Autowired
-    private BpmnInstaller bpmnInstaller;
-
-    @Autowired
     private WatchdogDistributionStatusRepository wdsRepo;
 
     @Autowired
@@ -109,6 +106,9 @@ public class ASDCController {
 
     @Autowired
     private WatchdogDistribution wd;
+
+    @Autowired
+    DeployActivitySpecs deployActivitySpecs;
 
     public int getNbOfNotificationsOngoing() {
         return nbOfNotificationsOngoing;
@@ -668,9 +668,6 @@ public class ASDCController {
                     msoConfigPath + "/ASDC/" + iArtifact.getArtifactVersion() + "/" + iArtifact.getArtifactName();
             File csarFile = new File(filePath);
             String csarFilePath = csarFile.getAbsolutePath();
-            if (bpmnInstaller.containsWorkflows(csarFilePath)) {
-                bpmnInstaller.installBpmn(csarFilePath);
-            }
 
             for (IResourceInstance resource : iNotif.getResources()) {
 
@@ -679,7 +676,7 @@ public class ASDCController {
 
                 logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
 
-                if ("VF".equals(resourceType) && !"Allotted Resource".equalsIgnoreCase(category)) {
+                if ("VF".equals(resourceType)) {
                     resourceStructure = new VfResourceStructure(iNotif, resource);
                 } else if ("PNF".equals(resourceType)) {
                     resourceStructure = new PnfResourceStructure(iNotif, resource);
@@ -697,7 +694,7 @@ public class ASDCController {
                         logger.debug("Processing Resource Type: " + resourceType + " and Model UUID: "
                                 + resourceStructure.getResourceInstance().getResourceUUID());
 
-                        if ("VF".equals(resourceType) && !"Allotted Resource".equalsIgnoreCase(category)) {
+                        if ("VF".equals(resourceType)) {
                             hasVFResource = true;
                             for (IArtifactInfo artifact : resource.getArtifacts()) {
                                 IDistributionClientDownloadResult resultArtifact =
@@ -711,8 +708,15 @@ public class ASDCController {
                                                 .dumpVfModuleMetaDataList(((VfResourceStructure) resourceStructure)
                                                         .decodeVfModuleArtifact(resultArtifact.getArtifactPayload())));
                                     }
-                                    resourceStructure.addArtifactToStructure(distributionClient, artifact,
-                                            resultArtifact);
+                                    if (!ASDCConfiguration.WORKFLOW.equals(artifact.getArtifactType())) {
+                                        resourceStructure.addArtifactToStructure(distributionClient, artifact,
+                                                resultArtifact);
+                                    } else {
+                                        writeArtifactToFile(artifact, resultArtifact);
+                                        logger.debug(
+                                                "Adding workflow artifact to structure: " + artifact.getArtifactName());
+                                        resourceStructure.addWorkflowArtifactToStructure(artifact, resultArtifact);
+                                    }
                                 }
                             }
 
@@ -801,7 +805,7 @@ public class ASDCController {
                             "processCsarServiceArtifacts", ErrorCode.BusinessProcesssError.getValue(),
                             "Exception in processCsarServiceArtifacts", e);
                 }
-            } else if (artifact.getArtifactType().equals(ASDCConfiguration.WORKFLOWS)) {
+            } else if (artifact.getArtifactType().equals(ASDCConfiguration.WORKFLOW)) {
 
                 try {
 

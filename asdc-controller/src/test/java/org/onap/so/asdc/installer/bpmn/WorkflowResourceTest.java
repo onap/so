@@ -23,8 +23,7 @@
 package org.onap.so.asdc.installer.bpmn;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -38,6 +37,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import javax.transaction.Transactional;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -52,65 +52,58 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.onap.sdc.api.notification.IArtifactInfo;
 
 @Transactional
-public class BpmnInstallerTest {
+public class WorkflowResourceTest {
 
-    private BpmnInstaller bpmnInstaller = new BpmnInstaller();
+    private WorkflowResource workflowResource = new WorkflowResource();
 
     private static final String TEST_CSAR = "src/test/resources/resource-examples/WorkflowBpmn/service-CxSvc-csar.csar";
     private Path tempDirectoryPath;
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
-    @Before
-    public void init() throws Exception {
-        System.setProperty("mso.config.path", folder.getRoot().toString());
-        // we need to have this directory created for InstallBPMN test success
-        tempDirectoryPath = Paths.get(folder.getRoot().toString(), "ASDC");
-        Files.createDirectories(tempDirectoryPath);
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        System.clearProperty("mso.config.path");
+    @Test
+    public void getActivityNameList_Test() throws Exception {
+        String bpmnContent = new String(Files
+                .readAllBytes(Paths.get("src/test/resources/resource-examples/WorkflowBpmn/TestBpmnFromSDC.bpmn")));
+        List<String> activityNames = workflowResource.getActivityNameList(bpmnContent);
+        assertEquals("VNFSetInMaintFlagActivity", activityNames.get(0));
     }
 
     @Test
-    public void buildMimeMultiPart_Test() throws Exception {
-        Path tempFilePath = Paths.get(tempDirectoryPath.toAbsolutePath().toString(), "TestBB.bpmn");
-        Files.createFile(tempFilePath);
-        HttpEntity entity = bpmnInstaller.buildMimeMultipart("TestBB.bpmn", "");
-        String mimeMultipartBodyFilePath = "src/test/resources" + "/mime-multipart-body.txt";
-
-        File mimeMultipartBody = new File(mimeMultipartBodyFilePath);
-        InputStream expectedContent = new FileInputStream(mimeMultipartBody);
-
-        assertThat(IOUtils.contentEquals(expectedContent, entity.getContent()));
-
-        IOUtils.closeQuietly(expectedContent);
+    public void getWorkflowNameStandard_Test() {
+        String workflowName = workflowResource.getWorkflowNameFromArtifactName("TestWF2-1_0.bpmn");
+        assertEquals("TestWF2", workflowName);
     }
 
     @Test
-    public void installBpmn_Test() throws Exception {
-        BpmnInstaller bpmnInstallerSpy = spy(bpmnInstaller);
-        HttpResponse response = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, ""));
-        HttpClient httpClient = mock(HttpClient.class);
-        doReturn(response).when(httpClient).execute(any(HttpPost.class));
-        bpmnInstallerSpy.installBpmn(TEST_CSAR);
-        verify(bpmnInstallerSpy, times(1)).sendDeploymentRequest(anyString(), anyString());
+    public void getWorkflowNameNoVersion_Test() {
+        String workflowName = workflowResource.getWorkflowNameFromArtifactName("TestWF2.bpmn");
+        assertEquals("TestWF2", workflowName);
     }
 
     @Test
-    public void containsWorkflowsSuccess() {
-        boolean result = bpmnInstaller.containsWorkflows(TEST_CSAR);
-        assertTrue(result);
+    public void getWorkflowNameNoSuffix_Test() {
+        String workflowName = workflowResource.getWorkflowNameFromArtifactName("TestWF2-1_0");
+        assertEquals("TestWF2", workflowName);
     }
 
     @Test
-    public void containsWorkflowsFailure() {
-        boolean result = bpmnInstaller.containsWorkflows("DOESNOTEXIST.csar");
-        assertFalse(result);
+    public void getWorkflowVersionStandard_Test() {
+        Double workflowVersion = workflowResource.getWorkflowVersionFromArtifactName("TestWF2-1_0.bpmn");
+        assertTrue(workflowVersion == 1.0);
     }
+
+    @Test
+    public void getWorkflowVersionNoVersion_Test() {
+        Double workflowVersion = workflowResource.getWorkflowVersionFromArtifactName("TestWF2.bpmn");
+        assertNull(workflowVersion);
+    }
+
+    @Test
+    public void getWorkflowVersionNoSuffix_Test() {
+        Double workflowVersion = workflowResource.getWorkflowVersionFromArtifactName("TestWF2-1_0");
+        assertTrue(workflowVersion == 1.0);
+    }
+
 }

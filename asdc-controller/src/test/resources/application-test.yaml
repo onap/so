@@ -66,6 +66,7 @@ mso:
     db:
       spring:
         endpoint: "http://localhost:"
+  camundaURL: http://localhost:${wiremock.server.port}/        
   db:
     auth: Basic YnBlbDptc28tZGItMTUwNyE=
   site-name: siteName

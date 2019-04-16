@@ -68,10 +68,16 @@ public abstract class ResourceStructure {
      */
     protected final Map<String, VfModuleArtifact> artifactsMapByUUID;
 
+    /**
+     * The list of workflow artifacts existing in this resource
+     */
+    protected final Map<String, WorkflowArtifact> workflowArtifactsMapByUUID;
+
     public ResourceStructure(INotificationData notificationData, IResourceInstance resourceInstance) {
         this.notificationData = notificationData;
         this.resourceInstance = resourceInstance;
         artifactsMapByUUID = new HashMap<>();
+        workflowArtifactsMapByUUID = new HashMap<>();
     }
 
     /**
@@ -83,6 +89,9 @@ public abstract class ResourceStructure {
      * @throws UnsupportedEncodingException
      */
     public abstract void addArtifactToStructure(IDistributionClient distributionClient, IArtifactInfo artifactinfo,
+            IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException;
+
+    public abstract void addWorkflowArtifactToStructure(IArtifactInfo artifactinfo,
             IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException;
 
     /**
@@ -142,6 +151,10 @@ public abstract class ResourceStructure {
 
     public Map<String, VfModuleArtifact> getArtifactsMapByUUID() {
         return artifactsMapByUUID;
+    }
+
+    public Map<String, WorkflowArtifact> getWorkflowArtifactsMapByUUID() {
+        return workflowArtifactsMapByUUID;
     }
 
 }

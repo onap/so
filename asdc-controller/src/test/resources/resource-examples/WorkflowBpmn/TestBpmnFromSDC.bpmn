@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="customWorkflowtest1" name="TestBpmnFromSDC" isExecutable="true">
+    <bpmn2:extensionElements>
+      <camunda:inputOutput />
+    </bpmn2:extensionElements>
+    <bpmn2:startEvent id="StartEvent_0wtabee">
+      <bpmn2:outgoing>SequenceFlow_1v7ptqz</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:serviceTask id="Task_1kxbei4" name="VNFSetInMaintFlagActivity" implementation="activity:VNFSetInMaintFlagActivity" camunda:expression="${ExecuteActivity.execute(execution)}">
+      <bpmn2:extensionElements>
+        <camunda:inputOutput />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>SequenceFlow_1v7ptqz</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_16i7mid</bpmn2:outgoing>
+    </bpmn2:serviceTask>
+    <bpmn2:intermediateThrowEvent id="IntermediateThrowEvent_0tgyvzw">
+      <bpmn2:incoming>SequenceFlow_16i7mid</bpmn2:incoming>
+    </bpmn2:intermediateThrowEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_16i7mid" sourceRef="Task_1kxbei4" targetRef="IntermediateThrowEvent_0tgyvzw" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1v7ptqz" sourceRef="StartEvent_0wtabee" targetRef="Task_1kxbei4" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="customWorkflowtest1">
+      <bpmndi:BPMNShape id="StartEvent_0wtabee_di" bpmnElement="StartEvent_0wtabee">
+        <dc:Bounds x="256" y="134" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1cgg6ym_di" bpmnElement="Task_1kxbei4" bioc:fill="white">
+        <dc:Bounds x="386" y="112" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="IntermediateThrowEvent_0tgyvzw_di" bpmnElement="IntermediateThrowEvent_0tgyvzw">
+        <dc:Bounds x="536" y="134" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_16i7mid_di" bpmnElement="SequenceFlow_16i7mid">
+        <di:waypoint x="486" y="152" />
+        <di:waypoint x="536" y="152" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1v7ptqz_di" bpmnElement="SequenceFlow_1v7ptqz">
+        <di:waypoint x="292" y="152" />
+        <di:waypoint x="386" y="152" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

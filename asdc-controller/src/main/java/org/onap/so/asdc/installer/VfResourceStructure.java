@@ -98,6 +98,12 @@ public class VfResourceStructure extends ResourceStructure {
         }
     }
 
+    public void addWorkflowArtifactToStructure(IArtifactInfo artifactinfo,
+            IDistributionClientDownloadResult clientResult) throws UnsupportedEncodingException {
+        WorkflowArtifact workflowArtifact = new WorkflowArtifact(artifactinfo, clientResult);
+        workflowArtifactsMapByUUID.put(artifactinfo.getArtifactUUID(), workflowArtifact);
+    }
+
     protected void addArtifactByType(IArtifactInfo artifactinfo, IDistributionClientDownloadResult clientResult,
             VfModuleArtifact vfModuleArtifact) throws UnsupportedEncodingException {
 
