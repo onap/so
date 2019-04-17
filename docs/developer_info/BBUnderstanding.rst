@@ -2,13 +2,6 @@
 .. http://creativecommons.org/licenses/by/4.0
 .. Copyright 2018 Huawei Technologies Co., Ltd.
 
-Developer Information
-======================
+Building Block Understanding
+============================
 
-.. toctree::
-   :maxdepth: 1
-
-   Install_Configure_SO.rst
-   architecture.rst
-   FAQs.rst
-   
