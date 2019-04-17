@@ -25,15 +25,7 @@ package org.onap.so.asdc.installer.heat;
 
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import org.hibernate.StaleObjectStateException;
 import org.hibernate.exception.ConstraintViolationException;
@@ -142,6 +134,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.util.CollectionUtils;
 
 @Component
 public class ToscaResourceInstaller {
@@ -983,6 +976,14 @@ public class ToscaResourceInstaller {
                     vnfcInstanceGroupCustomizationRepo.saveAndFlush(vnfcInstanceGroupCustomization);
                 }
 
+                List<String>seqResult =
+                        processVNFCGroupSequence(toscaResourceStruct, groupList);
+                if(!CollectionUtils.isEmpty(seqResult))
+                {
+                    String resultStr = seqResult.stream().collect(Collectors.joining(","));
+                    vnfResource.setVnfcGroupOrder(resultStr);
+                    logger.debug("vnfcGroupOrder result for service uuid(" + service.getModelUUID() + ") : " + resultStr);
+                }
 
                 service.getVnfCustomizations().add(vnfResource);
             } else {
@@ -991,6 +992,100 @@ public class ToscaResourceInstaller {
                         + "Tosca VF Customization UUID: " + vfCustomizationUUID);
             }
         }
+    }
+
+    private List<String> processVNFCGroupSequence(ToscaResourceStructure toscaResourceStructure, List<Group> groupList)
+    {
+        if(CollectionUtils.isEmpty(groupList))
+        {
+            return Collections.emptyList();
+        }
+
+        ISdcCsarHelper iSdcCsarHelper = toscaResourceStructure.getSdcCsarHelper();
+        List<String> strSequence = new ArrayList<>(groupList.size());
+        List<Group> tempGroupList = new ArrayList<>(groupList.size());
+        List<NodeTemplate> nodes = new ArrayList<>();
+        tempGroupList.addAll(groupList);
+
+        for (Group group : groupList)
+        {
+            List<NodeTemplate> nodeList = group.getMemberNodes();
+            boolean hasRequirements = false;
+            for (NodeTemplate node : nodeList)
+            {
+                RequirementAssignments requirements = iSdcCsarHelper.getRequirementsOf(node);
+                if (requirements != null && requirements.getAll() != null && !requirements.getAll().isEmpty())
+                {
+                    hasRequirements = true;
+                    break;
+                }
+            }
+
+            if(!hasRequirements)
+            {
+                strSequence.add(group.getName());
+                tempGroupList.remove(group);
+                nodes.addAll(nodeList);
+            }
+        }
+
+        getVNFCGroupSequenceList(strSequence, tempGroupList, nodes, iSdcCsarHelper);
+
+        return strSequence;
+
+    }
+
+    private void getVNFCGroupSequenceList(List<String> strSequence, List<Group> groupList, List<NodeTemplate> nodes, ISdcCsarHelper iSdcCsarHelper)
+    {
+        if(CollectionUtils.isEmpty(groupList))
+        {
+            return;
+        }
+
+        List<Group> tempGroupList = new ArrayList<>();
+        tempGroupList.addAll(groupList);
+
+        for(Group group : groupList)
+        {
+            ArrayList<NodeTemplate> members = group.getMemberNodes();
+            for (NodeTemplate memberNode : members)
+            {
+                boolean isAllExists = true;
+                RequirementAssignments requirements =iSdcCsarHelper.getRequirementsOf(memberNode);
+                if (requirements == null || requirements.getAll() == null || requirements.getAll().isEmpty())
+                {
+                    continue;
+                }
+                List<RequirementAssignment> rqaList = requirements.getAll();
+                for(RequirementAssignment rqa: rqaList)
+                {
+                    String name = rqa.getNodeTemplateName();
+                    for(NodeTemplate node : nodes)
+                    {
+                        if(name.equals(node.getName()))
+                        {
+                            break;
+                        }
+                    }
+
+                    isAllExists = false;
+                    break;
+                }
+
+                if(isAllExists)
+                {
+                    strSequence.add(group.getName());
+                    tempGroupList.remove(group);
+                    nodes.addAll(group.getMemberNodes());
+                }
+            }
+
+            if(tempGroupList.size() != 0 && tempGroupList.size()< groupList.size())
+            {
+                getVNFCGroupSequenceList(strSequence, tempGroupList, nodes, iSdcCsarHelper);
+            }
+        }
+
     }
 
     public void processWatchdog(String distributionId, String servideUUID, Optional<String> distributionNotification,
@@ -1703,10 +1798,37 @@ public class ToscaResourceInstaller {
         vfcInstanceGroupCustom.setFunction(toscaResourceStructure.getSdcCsarHelper()
                 .getNodeTemplatePropertyLeafValue(vnfcNodeTemplate, getInputName));
         vfcInstanceGroupCustom.setInstanceGroup(vfcInstanceGroup);
+        vfcInstanceGroupCustom.setVnfResourceCust(vnfResourceCustomization);
+        createVFCInstanceGroupMembers(vfcInstanceGroupCustom, group);
 
 
         return vfcInstanceGroupCustom;
 
+    }
+
+    private void createVFCInstanceGroupMembers(VnfcInstanceGroupCustomization vfcInstanceGroupCustom, Group group)
+    {
+        List<NodeTemplate> members = group.getMemberNodes();
+        if(!CollectionUtils.isEmpty(members))
+        {
+            for(NodeTemplate vfcTemplate : members)
+            {
+                VnfcCustomization vnfcCustomization = new VnfcCustomization();
+
+                Metadata metadata = vfcTemplate.getMetaData();
+                vnfcCustomization.setModelCustomizationUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_CUSTOMIZATIONUUID));
+                vnfcCustomization.setModelInstanceName(vfcTemplate.getName());
+                vnfcCustomization.setModelUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
+                vnfcCustomization.setModelInvariantUUID(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_INVARIANTUUID));
+                vnfcCustomization.setModelVersion(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_VERSION));
+                vnfcCustomization.setModelName(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_NAME));
+                vnfcCustomization.setToscaNodeType(testNull(vfcTemplate.getType()));
+                vnfcCustomization.setDescription(testNull(metadata.getValue(SdcPropertyNames.PROPERTY_NAME_DESCRIPTION)));
+                vnfcCustomization.setVnfcInstanceGroupCust(vfcInstanceGroupCustom);
+
+                vfcInstanceGroupCustom.getVnfcCustomizations().add(vnfcCustomization);
+            }
+        }
     }
 
     protected VfModuleCustomization createVFModuleResource(Group group, NodeTemplate vfTemplate,

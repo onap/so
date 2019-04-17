@@ -23,20 +23,14 @@ package org.onap.so.db.catalog.beans;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.openpojo.business.annotation.BusinessKey;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import uk.co.blackpepper.bowman.annotation.LinkedResource;
 
 @Entity
 @Table(name = "vnfc_customization")
@@ -77,6 +71,10 @@ public class VnfcCustomization implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "vnfcCustomization")
     private List<CvnfcCustomization> cvnfcCustomization;
+
+	@ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+	@JoinColumn(name = "VNF_RESOURCE_CUSTOMIZATION_MODEL_UUID")
+	private VnfcInstanceGroupCustomization vnfcInstanceGroupCust;
 
     @Override
     public boolean equals(final Object other) {
@@ -186,4 +184,12 @@ public class VnfcCustomization implements Serializable {
     public void setCvnfcCustomization(List<CvnfcCustomization> cvnfcCustomization) {
         this.cvnfcCustomization = cvnfcCustomization;
     }
+	@LinkedResource
+	public VnfcInstanceGroupCustomization getVnfcInstanceGroupCust() {
+		return vnfcInstanceGroupCust;
+	}
+
+	public void setVnfcInstanceGroupCust(VnfcInstanceGroupCustomization vnfcInstanceGroupCust) {
+		this.vnfcInstanceGroupCust = vnfcInstanceGroupCust;
+	}
 }

@@ -22,20 +22,9 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import java.util.List;
+import javax.persistence.*;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -76,6 +65,9 @@ public class VnfcInstanceGroupCustomization implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "vnfcInstanceGroupCust")
+	private List<VnfcCustomization> vnfcCustomizations;
+	
     @Override
     public boolean equals(final Object other) {
         if (!(other instanceof VnfcInstanceGroupCustomization)) {
@@ -150,4 +142,12 @@ public class VnfcInstanceGroupCustomization implements Serializable {
     public void setInstanceGroup(InstanceGroup instanceGroup) {
         this.instanceGroup = instanceGroup;
     }
+	@LinkedResource
+	public List<VnfcCustomization> getVnfcCustomizations() {
+		return vnfcCustomizations;
+	}
+
+	public void setVnfcCustomizations(List<VnfcCustomization> vnfcCustomizations) {
+		this.vnfcCustomizations = vnfcCustomizations;
+	}
 }

@@ -115,7 +115,8 @@ public class QueryServiceVnfs extends CatalogQuery {
             put(valueMap, "NF_ROLE", o.getNfRole());
             put(valueMap, "NF_NAMING_CODE", o.getNfNamingCode());
             put(valueMap, "MULTI_STEP_DESIGN", o.getMultiStageDesign());
-            put(valueMap, "RESOURCE_INPUT", o.getResourceInput());
+		    put(valueMap, "RESOURCE_INPUT",     o.getResourceInput());
+			put(valueMap, "VNFC_GROUP_ORDER", o.getVnfcGroupOrder());
 
             String subitem = new QueryVfModule(vrNull ? null : o.getVfModuleCustomizations()).JSON2(true, true);
             valueMap.put("_VFMODULES_", subitem.replaceAll("(?m)^", "\t\t"));
