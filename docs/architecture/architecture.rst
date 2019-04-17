@@ -101,6 +101,14 @@ SO Sub-Components
    * Service statistic
    * Service Process Instance Rendering and Detail
 
+**SO VNFM Adapter**
+
+  Support external SVNFMs through SOL003 APIs
+   * Create, Instantiate, Terminate and Delete VNF, including Granting, Subscription and Lifecycle Notifications
+   * Tracking capability which VNFM instance has handled with which VNF instance
+   * BPMN Building Block workflows and Java-based recipes for VNF LCM
+   * VNFM Simulator for validating SO VNFM Adapter NBI and SBI for integration testing
+
 Third Party and Open Source
 ---------------------------
 
