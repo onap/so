@@ -22,8 +22,8 @@ package org.onap.so.client.oof;
 
 
 import org.camunda.bpm.engine.delegate.BpmnError;
-import org.onap.so.bpmn.common.baseclient.BaseClient;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.client.BaseClient;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.oof.beans.OofProperties;
 import org.onap.so.client.oof.beans.OofRequest;
