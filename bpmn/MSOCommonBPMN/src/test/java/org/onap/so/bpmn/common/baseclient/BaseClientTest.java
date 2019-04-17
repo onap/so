@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.ws.rs.core.UriBuilder;
 import org.junit.Test;
 import org.onap.so.BaseTest;
+import org.onap.so.client.BaseClient;
 import org.springframework.core.ParameterizedTypeReference;
 import wiremock.org.apache.http.entity.ContentType;
 

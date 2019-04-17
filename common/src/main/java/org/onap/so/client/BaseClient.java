@@ -18,7 +18,7 @@
  * ============LICENSE_END=========================================================
  */
 
-package org.onap.so.bpmn.common.baseclient;
+package org.onap.so.client;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-// TODO move to common location
 public class BaseClient<I, O> {
 
     private HttpHeaders httpHeader;
