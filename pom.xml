@@ -501,7 +501,7 @@
         <plugin>
           <groupId>io.fabric8</groupId>
           <artifactId>fabric8-maven-plugin</artifactId>
-          <version>3.5.33</version>
+          <version>4.0.0-M2</version>
           <configuration>
             <skip>${docker.skip}</skip>
             <skipBuild>${docker.skip.build}</skipBuild>
