@@ -33,12 +33,12 @@ public class ContrailSubnetHostRoutes {
 
     public ContrailSubnetHostRoutes() {}
 
-    public List<ContrailSubnetHostRoute> getHost_routes() {
+    public List<ContrailSubnetHostRoute> getHostRoutes() {
         return hostRoutes;
     }
 
-    public void setHost_routes(List<ContrailSubnetHostRoute> host_routes) {
-        this.hostRoutes = host_routes;
+    public void setHostRoutes(List<ContrailSubnetHostRoute> hostRoutes) {
+        this.hostRoutes = hostRoutes;
     }
 
     @Override

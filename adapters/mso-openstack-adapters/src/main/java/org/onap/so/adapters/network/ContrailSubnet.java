@@ -66,7 +66,7 @@ public class ContrailSubnet {
     private List<ContrailSubnetPool> allocationPools = new ArrayList<>();
 
     @JsonProperty("network_ipam_refs_data_ipam_subnets_host_routes")
-    private final ContrailSubnetHostRoutes host_routes = new ContrailSubnetHostRoutes();
+    private final ContrailSubnetHostRoutes hostRoutes = new ContrailSubnetHostRoutes();
 
     public ContrailSubnet() {
         super();
@@ -173,7 +173,7 @@ public class ContrailSubnet {
                 }
             }
             if (inputSubnet.getHostRoutes() != null) {
-                List<ContrailSubnetHostRoute> hrList = host_routes.getHost_routes();
+                List<ContrailSubnetHostRoute> hrList = hostRoutes.getHostRoutes();
                 for (HostRoute hr : inputSubnet.getHostRoutes()) {
                     if (!msoCommonUtils.isNullOrEmpty(hr.getPrefix())
                             || !msoCommonUtils.isNullOrEmpty(hr.getNextHop())) {

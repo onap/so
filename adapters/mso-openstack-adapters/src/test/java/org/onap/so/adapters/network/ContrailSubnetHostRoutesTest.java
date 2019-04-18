@@ -27,8 +27,8 @@ public class ContrailSubnetHostRoutesTest {
 
     @Test
     public void testContrailSubnetHostRoutes() {
-        cshr.setHost_routes(host_routes);
-        assertEquals(cshr.getHost_routes(), host_routes);
+        cshr.setHostRoutes(host_routes);
+        assertEquals(cshr.getHostRoutes(), host_routes);
         assert (cshr.toString() != null);
     }
 }
