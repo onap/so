@@ -22,7 +22,6 @@ package org.onap.so.adapters.inventory.create;
 
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.onap.aai.domain.yang.LInterface;
 import org.onap.so.adapters.audit.AAIObjectAudit;
 import org.onap.so.adapters.audit.AAIObjectAuditList;
 import org.onap.so.client.aai.AAIObjectType;
