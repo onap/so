@@ -2,6 +2,8 @@
  * ============LICENSE_START=======================================================
  *  Copyright (C) 2019 Nordix Foundation.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -20,8 +22,7 @@
 
 package org.onap.so.bpmn.infrastructure.adapter.vnfm.tasks;
 
-import static com.google.common.collect.Sets.newHashSet;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 import org.onap.vnfmadapter.v1.model.OperationStateEnum;
 import org.onap.vnfmadapter.v1.model.OperationStatusRetrievalStatusEnum;
 
@@ -51,11 +52,11 @@ public class Constants {
     public static final String PRELOAD_VNFS_URL = "/restconf/config/VNF-API:preload-vnfs/vnf-preload-list/";
 
 
-    public static final Set<OperationStateEnum> OPERATION_FINISHED_STATES =
-            newHashSet(OperationStateEnum.COMPLETED, OperationStateEnum.FAILED, OperationStateEnum.ROLLED_BACK);
+    public static final ImmutableSet<OperationStateEnum> OPERATION_FINISHED_STATES =
+            ImmutableSet.of(OperationStateEnum.COMPLETED, OperationStateEnum.FAILED, OperationStateEnum.ROLLED_BACK);
 
-    public static final Set<OperationStatusRetrievalStatusEnum> OPERATION_RETRIEVAL_STATES = newHashSet(
-            OperationStatusRetrievalStatusEnum.STATUS_FOUND, OperationStatusRetrievalStatusEnum.WAITING_FOR_STATUS);
+    public static final ImmutableSet<OperationStatusRetrievalStatusEnum> OPERATION_RETRIEVAL_STATES = ImmutableSet
+            .of(OperationStatusRetrievalStatusEnum.STATUS_FOUND, OperationStatusRetrievalStatusEnum.WAITING_FOR_STATUS);
 
     public static final String OPERATION_STATUS_PARAM_NAME = "operationStatus";
 
