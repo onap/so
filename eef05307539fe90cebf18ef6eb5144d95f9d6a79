@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "263ef8b9_9517b54e",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-app",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-04-18T08:32:26Z",
+      "side": 1,
+      "message": "Is there a reason to cancel onap/so/base-image:1.0 image as a base image?",
+      "revId": "eef05307539fe90cebf18ef6eb5144d95f9d6a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "514c7141_b3e7a67c",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-app",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-04-18T08:32:26Z",
+      "side": 1,
+      "message": "apk update will keep APKINDEX.tar.gz and one should clean it up manuially. It\u0027s better to use --no-cache option:\napk --no-cache upgrade",
+      "range": {
+        "startLine": 11,
+        "startChar": 0,
+        "endLine": 11,
+        "endChar": 29
+      },
+      "revId": "eef05307539fe90cebf18ef6eb5144d95f9d6a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "acc51e65_b4f14e4c",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-app",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5040
+      },
+      "writtenOn": "2019-04-18T08:32:26Z",
+      "side": 1,
+      "message": "these 4 COPY can be squashed into one according to https://docs.docker.com/engine/reference/builder/#copy",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 24,
+        "endChar": 29
+      },
+      "revId": "eef05307539fe90cebf18ef6eb5144d95f9d6a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
