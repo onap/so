@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "e594678c_ce24bf40",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/VnfcCustomization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-04-18T10:59:35Z",
+      "side": 1,
+      "message": "please remove * import",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 25
+      },
+      "revId": "d8d6820cf8b7b079a965d6d4838671e4c155e237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3026abaa_5e1fef95",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/VnfcCustomization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-04-18T10:59:35Z",
+      "side": 1,
+      "message": "please remove tab char",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 77,
+        "endChar": 1
+      },
+      "revId": "d8d6820cf8b7b079a965d6d4838671e4c155e237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "416a5614_a9d05eb3",
+        "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/VnfcInstanceGroupCustomization.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-04-18T10:59:35Z",
+      "side": 1,
+      "message": "please remove * import.",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 26,
+        "endChar": 27
+      },
+      "revId": "d8d6820cf8b7b079a965d6d4838671e4c155e237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
