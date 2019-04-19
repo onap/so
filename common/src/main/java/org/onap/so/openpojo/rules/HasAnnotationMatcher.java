@@ -22,7 +22,6 @@ package org.onap.so.openpojo.rules;
 
 import static org.hamcrest.CoreMatchers.anything;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeDiagnosingMatcher;

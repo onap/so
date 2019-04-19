@@ -22,11 +22,9 @@ package org.onap.so.client.grm;
 
 
 import java.net.URI;
-import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
 import org.onap.so.client.RestClient;
-import org.onap.so.client.RestProperties;
 import org.onap.so.utils.TargetEntity;
 
 public class GRMRestClient extends RestClient {

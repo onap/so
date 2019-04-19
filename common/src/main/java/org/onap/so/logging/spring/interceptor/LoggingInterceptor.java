@@ -30,7 +30,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Providers;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
-import org.onap.so.logger.LogConstants;
 import org.onap.so.logging.jaxrs.filter.MDCSetup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

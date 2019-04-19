@@ -23,7 +23,6 @@ package org.onap.so.serviceinstancebeans;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @JsonInclude(Include.NON_DEFAULT)
 public class GetOrchestrationResponse {
