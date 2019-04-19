@@ -20,10 +20,6 @@ import javax.annotation.Nonnull;
 
 public class HeatBridgeUtils {
 
-    private HeatBridgeUtils() {
-        throw new IllegalStateException("Trying to instantiate a utility class.");
-    }
-
     /**
      * IaaS naming convention for compute/p-interface to openstack/physical-network name mapping
      */
@@ -31,6 +27,10 @@ public class HeatBridgeUtils {
     private static final String OS_SIDE_DEDICATED_SRIOV_PREFIX = "dedicated-";
     private static final String COMPUTE_SIDE_SHARED_SRIOV_PREFIX = "sriov-s-";
     private static final String COMPUTE_SIDE_DEDICATED_SRIOV_PREFIX = "sriov-d-";
+    
+    private HeatBridgeUtils() {
+        throw new IllegalStateException("Trying to instantiate a utility class.");
+    }
 
     public static Optional<String> getMatchingPserverPifName(@Nonnull final String physicalNetworkName) {
         Preconditions.checkState(!Strings.isNullOrEmpty(physicalNetworkName),
