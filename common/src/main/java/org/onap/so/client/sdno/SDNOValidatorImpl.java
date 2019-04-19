@@ -28,7 +28,6 @@ import javax.ws.rs.NotFoundException;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
-import org.onap.so.client.aai.AAIVersion;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.dmaap.DmaapConsumer;

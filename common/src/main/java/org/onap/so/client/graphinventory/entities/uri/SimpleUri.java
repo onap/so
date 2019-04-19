@@ -44,8 +44,8 @@ public class SimpleUri implements GraphInventoryResourceUri, Serializable {
     private static final long serialVersionUID = -337701171277616439L;
 
     protected transient UriBuilder internalURI;
-    protected final static String relationshipAPI = "/relationship-list/relationship";
-    protected final static String relatedTo = "/related-to";
+    protected static final String relationshipAPI = "/relationship-list/relationship";
+    protected static final String relatedTo = "/related-to";
     protected final Object[] values;
     protected final GraphInventoryObjectType type;
     protected final GraphInventoryObjectPlurals pluralType;
