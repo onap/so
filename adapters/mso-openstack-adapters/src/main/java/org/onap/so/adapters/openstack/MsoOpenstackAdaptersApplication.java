@@ -22,7 +22,6 @@ package org.onap.so.adapters.openstack;
 
 import java.util.concurrent.Executor;
 import org.onap.so.logging.jaxrs.filter.MDCTaskDecorator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
