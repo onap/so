@@ -71,6 +71,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     private static final String NETWORK_EXCEPTION_MSG = "Got a NetworkException on createNetwork: ";
     private static final String CREATE_NETWORK_ERROR_LOGMSG = "{} {} Error sending createNetwork notification {} ";
     private static final String FAULT_INFO_ERROR_LOGMSG = "{} {} Exception - fault info ";
+    private static final String SHARED = "shared";
 
     @Autowired
     private Environment environment;
@@ -127,11 +128,11 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         HashMap<String, String> params = (HashMap<String, String>) networkParams;
         if (params == null)
-            params = new HashMap<String, String>();
+            params = new HashMap<>();
         String shared = null;
         String external = null;
-        if (params.containsKey("shared"))
-            shared = params.get("shared");
+        if (params.containsKey(SHARED))
+            shared = params.get(SHARED);
         if (params.containsKey("external"))
             external = params.get("external");
 
@@ -211,11 +212,11 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
 
         HashMap<String, String> params = (HashMap<String, String>) networkParams;
         if (params == null)
-            params = new HashMap<String, String>();
+            params = new HashMap<>();
         String shared = null;
         String external = null;
-        if (params.containsKey("shared"))
-            shared = params.get("shared");
+        if (params.containsKey(SHARED))
+            shared = params.get(SHARED);
         if (params.containsKey("external"))
             external = params.get("external");
 
