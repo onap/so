@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "22d16a37_b976a924",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/java/org/onap/so/adapters/catalogdb/catalogrest/QueryServiceVnfs.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-04-19T10:55:35Z",
+      "side": 1,
+      "message": "this need to be added to Template as well.",
+      "range": {
+        "startLine": 119,
+        "startChar": 3,
+        "endLine": 119,
+        "endChar": 60
+      },
+      "revId": "9284a12ce59edfefd5f7b7a2a22bfdea6c1603b0",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
