@@ -34,15 +34,6 @@ public class CustomQuery {
     private String query;
     private String gremlin;
 
-    public String getGremlin() {
-        return gremlin;
-    }
-
-    public void setGremlin(String gremlin) {
-        this.gremlin = gremlin;
-    }
-
-
     public CustomQuery(List<AAIResourceUri> start) {
         this.setStart(start);
     }
@@ -53,6 +44,14 @@ public class CustomQuery {
     }
 
     public CustomQuery(String gremlin) throws UnsupportedEncodingException {
+        this.gremlin = gremlin;
+    }
+
+    public String getGremlin() {
+        return gremlin;
+    }
+
+    public void setGremlin(String gremlin) {
         this.gremlin = gremlin;
     }
 
