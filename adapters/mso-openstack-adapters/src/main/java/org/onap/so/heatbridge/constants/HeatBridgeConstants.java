@@ -14,10 +14,6 @@ package org.onap.so.heatbridge.constants;
 
 public class HeatBridgeConstants {
 
-    private HeatBridgeConstants() {
-        throw new IllegalStateException("Trying to instantiate a constants class.");
-    }
-
     /**
      * Openstack related constants
      */
@@ -70,4 +66,9 @@ public class HeatBridgeConstants {
     public static final String KEY_MSO_REQUEST_ID = "msoRequestId";
     public static final String KEY_SO_WORKFLOW_EXCEPTION = "WorkflowException";
     public static final String KEY_PROCESS_STATUS_MSG = "processStatusMsg";
+
+    private HeatBridgeConstants() {
+        throw new IllegalStateException("Trying to instantiate a constants class.");
+    }
+
 }
