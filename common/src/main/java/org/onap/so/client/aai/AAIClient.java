@@ -25,7 +25,6 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.RestClient;
 import org.onap.so.client.graphinventory.GraphInventoryClient;
-import org.onap.so.client.graphinventory.GraphInventoryVersion;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryUri;
 import org.onap.so.client.graphinventory.exceptions.GraphInventoryUriComputationException;
 import org.slf4j.Logger;
