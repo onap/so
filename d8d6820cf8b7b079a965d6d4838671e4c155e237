@@ -25,6 +25,29 @@
     },
     {
       "key": {
+        "uuid": "c9e0069d_465ae8b8",
+        "filename": "asdc-controller/src/main/java/org/onap/so/asdc/installer/heat/ToscaResourceInstaller.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1816,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-04-19T10:00:55Z",
+      "side": 1,
+      "message": "Should it require to create vnf_component also ??",
+      "range": {
+        "startLine": 1816,
+        "startChar": 16,
+        "endLine": 1816,
+        "endChar": 33
+      },
+      "revId": "d8d6820cf8b7b079a965d6d4838671e4c155e237",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "e594678c_ce24bf40",
         "filename": "mso-catalog-db/src/main/java/org/onap/so/db/catalog/beans/VnfcCustomization.java",
         "patchSetId": 1
