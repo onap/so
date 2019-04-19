@@ -122,7 +122,6 @@ import org.onap.so.db.catalog.data.repository.ServiceRepository;
 import org.onap.so.db.catalog.data.repository.TempNetworkHeatTemplateRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VFModuleRepository;
-import org.onap.so.db.catalog.data.repository.VnfCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfResourceRepository;
 import org.onap.so.db.catalog.data.repository.VnfcCustomizationRepository;
 import org.onap.so.db.catalog.data.repository.VnfcInstanceGroupCustomizationRepository;
@@ -2167,19 +2166,24 @@ public class ToscaResourceInstaller {
     }
 
     protected VnfResourceCustomization createVnfResource(NodeTemplate vfNodeTemplate,
-            ToscaResourceStructure toscaResourceStructure, Service service) {
+            ToscaResourceStructure toscaResourceStructure, Service service) throws ArtifactInstallerException {
         VnfResourceCustomization vnfResourceCustomization = null;
         if (vnfResourceCustomization == null) {
             VnfResource vnfResource = findExistingVnfResource(service,
                     vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 
-            if (vnfResource == null)
+            if (vnfResource == null) {
                 vnfResource = createVnfResource(vfNodeTemplate);
+            }
 
             vnfResourceCustomization =
                     createVnfResourceCustomization(vfNodeTemplate, toscaResourceStructure, vnfResource);
             vnfResourceCustomization.setVnfResources(vnfResource);
             vnfResourceCustomization.setService(service);
+
+            // setting resource input for vnf customization
+            vnfResourceCustomization.setResourceInput(
+                    getResourceInput(toscaResourceStructure, vnfResourceCustomization.getModelCustomizationUUID()));
             vnfResource.getVnfResourceCustomizations().add(vnfResourceCustomization);
 
         }
