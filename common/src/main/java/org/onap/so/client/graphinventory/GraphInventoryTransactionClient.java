@@ -27,8 +27,6 @@ import java.util.Optional;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
 import org.onap.aai.domain.yang.Relationship;
-import org.onap.so.client.aai.AAIVersion;
-import org.onap.so.client.aai.entities.singletransaction.SingleTransactionRequest;
 import org.onap.so.client.graphinventory.entities.GraphInventoryEdgeLabel;
 import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
 import org.onap.so.client.graphinventory.exceptions.BulkProcessFailed;
