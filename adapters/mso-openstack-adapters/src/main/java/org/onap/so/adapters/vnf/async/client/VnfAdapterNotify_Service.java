@@ -37,9 +37,9 @@ import javax.xml.ws.WebServiceFeature;
         wsdlLocation = "/VnfAdapterNotify.wsdl")
 public class VnfAdapterNotify_Service extends Service {
 
-    private final static URL VNFADAPTERNOTIFY_WSDL_LOCATION;
-    private final static WebServiceException VNFADAPTERNOTIFY_EXCEPTION;
-    private final static QName VNFADAPTERNOTIFY_QNAME = new QName("http://org.onap.so/vnfNotify", "vnfAdapterNotify");
+    private static final URL VNFADAPTERNOTIFY_WSDL_LOCATION;
+    private static final WebServiceException VNFADAPTERNOTIFY_EXCEPTION;
+    private static final QName VNFADAPTERNOTIFY_QNAME = new QName("http://org.onap.so/vnfNotify", "vnfAdapterNotify");
 
     static {
         VNFADAPTERNOTIFY_WSDL_LOCATION = org.onap.so.adapters.vnf.async.client.VnfAdapterNotify_Service.class
@@ -53,11 +53,11 @@ public class VnfAdapterNotify_Service extends Service {
     }
 
     public VnfAdapterNotify_Service() {
-        super(__getWsdlLocation(), VNFADAPTERNOTIFY_QNAME);
+        super(getWsdlLocation(), VNFADAPTERNOTIFY_QNAME);
     }
 
     public VnfAdapterNotify_Service(WebServiceFeature... features) {
-        super(__getWsdlLocation(), VNFADAPTERNOTIFY_QNAME, features);
+        super(getWsdlLocation(), VNFADAPTERNOTIFY_QNAME, features);
     }
 
     public VnfAdapterNotify_Service(URL wsdlLocation) {
@@ -98,7 +98,7 @@ public class VnfAdapterNotify_Service extends Service {
                 VnfAdapterNotify.class, features);
     }
 
-    private static URL __getWsdlLocation() {
+    private static URL getWsdlLocation() {
         if (VNFADAPTERNOTIFY_EXCEPTION != null) {
             throw VNFADAPTERNOTIFY_EXCEPTION;
         }
