@@ -25,9 +25,7 @@ import javax.ws.rs.core.UriBuilder;
 import org.onap.so.client.aai.AAIObjectPlurals;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.graphinventory.Format;
-import org.onap.so.client.graphinventory.GraphInventoryObjectType;
 import org.onap.so.client.graphinventory.entities.uri.Depth;
-import org.onap.so.client.graphinventory.entities.uri.GraphInventoryResourceUri;
 import org.onap.so.client.graphinventory.entities.uri.SimpleUri;
 
 public class AAISimpleUri extends SimpleUri implements AAIResourceUri {
