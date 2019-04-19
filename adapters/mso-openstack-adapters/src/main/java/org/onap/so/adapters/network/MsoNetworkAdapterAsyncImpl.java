@@ -72,6 +72,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     private static final String CREATE_NETWORK_ERROR_LOGMSG = "{} {} Error sending createNetwork notification {} ";
     private static final String FAULT_INFO_ERROR_LOGMSG = "{} {} Exception - fault info ";
     private static final String SHARED = "shared";
+    private static final String EXTERNAL = "external";
 
     @Autowired
     private Environment environment;
@@ -133,8 +134,8 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         String external = null;
         if (params.containsKey(SHARED))
             shared = params.get(SHARED);
-        if (params.containsKey("external"))
-            external = params.get("external");
+        if (params.containsKey(EXTERNAL))
+            external = params.get(EXTERNAL);
 
         try {
             networkAdapter.createNetwork(cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkName,
@@ -217,8 +218,8 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
         String external = null;
         if (params.containsKey(SHARED))
             shared = params.get(SHARED);
-        if (params.containsKey("external"))
-            external = params.get("external");
+        if (params.containsKey(EXTERNAL))
+            external = params.get(EXTERNAL);
 
         try {
             networkAdapter.updateNetwork(cloudSiteId, tenantId, networkType, modelCustomizationUuid, networkId,
@@ -269,7 +270,7 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
             MsoRequest msoRequest, String notificationUrl) {
 
         logger.debug("Async Query Network {} in {}/{}", networkNameOrId, cloudSiteId, tenantId);
-        String errorCreateNetworkMessage = "{} {} Error sending createNetwork notification {} ";
+        String errorCreateNetworkMessage = CREATE_NETWORK_ERROR_LOGMSG;
 
         // Use the synchronous method to perform the actual Create
 
