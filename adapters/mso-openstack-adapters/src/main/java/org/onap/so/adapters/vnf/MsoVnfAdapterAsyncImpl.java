@@ -65,6 +65,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.vnf.bpelauth";
     private static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
     private static final String UPDATE_VNFA = "{} UpdateVnfA";
+    private static final String EXCEPTION_UPDATEVNF_NOTIFICATION = "{} {} Exception sending updateVnf notification ";
 
     @Autowired
     private Environment environment;
@@ -188,7 +189,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             vnfAdapter.updateVnf(cloudSiteId, cloudOwner, tenantId, vnfType, vnfVersion, vnfName, requestType,
                     volumeGroupHeatStackId, inputs, msoRequest, outputs, vnfRollback);
         } catch (VnfException e) {
-            logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_UPDATE_VNF_ERR,
+            logger.error(EXCEPTION_UPDATEVNF_NOTIFICATION, MessageEnum.RA_UPDATE_VNF_ERR,
                     ErrorCode.BusinessProcesssError.getValue(), e);
             org.onap.so.adapters.vnf.async.client.MsoExceptionCategory exCat = null;
             String eMsg = null;
@@ -205,7 +206,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                 VnfAdapterNotify notifyPort = getNotifyEP(notificationUrl);
                 notifyPort.updateVnfNotification(messageId, false, exCat, eMsg, null, null);
             } catch (Exception e1) {
-                logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
+                logger.error(EXCEPTION_UPDATEVNF_NOTIFICATION, MessageEnum.RA_SEND_VNF_NOTIF_ERR,
                         ErrorCode.BusinessProcesssError.getValue(), e1);
             }
             logger.info(UPDATE_VNFA, MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
@@ -218,7 +219,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             notifyPort.updateVnfNotification(messageId, true, null, null, copyUpdateOutputs(outputs),
                     copyVrb(vnfRollback));
         } catch (Exception e) {
-            logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
+            logger.error(EXCEPTION_UPDATEVNF_NOTIFICATION, MessageEnum.RA_SEND_VNF_NOTIF_ERR,
                     ErrorCode.BusinessProcesssError.getValue(), e);
         }
         logger.info(UPDATE_VNFA, MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
