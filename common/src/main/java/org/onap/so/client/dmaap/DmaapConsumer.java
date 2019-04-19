@@ -28,6 +28,7 @@ import org.onap.so.client.dmaap.exceptions.ExceededMaximumPollingTime;
 import org.onap.so.client.dmaap.rest.RestConsumer;
 
 public abstract class DmaapConsumer extends DmaapClient {
+    static final int MAX_ELAPSED_TIME = 180000;
 
     public DmaapConsumer() throws IOException {
         super("dmaap/default-consumer.properties");
@@ -125,7 +126,7 @@ public abstract class DmaapConsumer extends DmaapClient {
      * time in milliseconds
      */
     public int getMaximumElapsedTime() {
-        return 180000;
+        return MAX_ELAPSED_TIME;
     }
 
 
