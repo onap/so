@@ -310,7 +310,7 @@ public class QueryVnfNotification {
          */
         public List<QueryVnfNotification.Outputs.Entry> getEntry() {
             if (entry == null) {
-                entry = new ArrayList<QueryVnfNotification.Outputs.Entry>();
+                entry = new ArrayList<>();
             }
             return this.entry;
         }
