@@ -42,11 +42,11 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private static final String URL = "http://org.onap.so/vnfNotify";
-    private final static QName _QueryVnfNotification_QNAME = new QName(URL, "queryVnfNotification");
-    private final static QName _RollbackVnfNotification_QNAME = new QName(URL, "rollbackVnfNotification");
-    private final static QName _CreateVnfNotification_QNAME = new QName(URL, "createVnfNotification");
-    private final static QName _DeleteVnfNotification_QNAME = new QName(URL, "deleteVnfNotification");
-    private final static QName _UpdateVnfNotification_QNAME = new QName(URL, "updateVnfNotification");
+    private static final QName _QueryVnfNotification_QNAME = new QName(URL, "queryVnfNotification");
+    private static final QName _RollbackVnfNotification_QNAME = new QName(URL, "rollbackVnfNotification");
+    private static final QName _CreateVnfNotification_QNAME = new QName(URL, "createVnfNotification");
+    private static final QName _DeleteVnfNotification_QNAME = new QName(URL, "deleteVnfNotification");
+    private static final QName _UpdateVnfNotification_QNAME = new QName(URL, "updateVnfNotification");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
@@ -165,7 +165,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = URL, name = "queryVnfNotification")
     public JAXBElement<QueryVnfNotification> createQueryVnfNotification(QueryVnfNotification value) {
-        return new JAXBElement<QueryVnfNotification>(_QueryVnfNotification_QNAME, QueryVnfNotification.class, null,
+        return new JAXBElement<>(_QueryVnfNotification_QNAME, QueryVnfNotification.class, null,
                 value);
     }
 
@@ -175,7 +175,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = URL, name = "rollbackVnfNotification")
     public JAXBElement<RollbackVnfNotification> createRollbackVnfNotification(RollbackVnfNotification value) {
-        return new JAXBElement<RollbackVnfNotification>(_RollbackVnfNotification_QNAME, RollbackVnfNotification.class,
+        return new JAXBElement<>(_RollbackVnfNotification_QNAME, RollbackVnfNotification.class,
                 null, value);
     }
 
@@ -185,7 +185,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = URL, name = "createVnfNotification")
     public JAXBElement<CreateVnfNotification> createCreateVnfNotification(CreateVnfNotification value) {
-        return new JAXBElement<CreateVnfNotification>(_CreateVnfNotification_QNAME, CreateVnfNotification.class, null,
+        return new JAXBElement<>(_CreateVnfNotification_QNAME, CreateVnfNotification.class, null,
                 value);
     }
 
@@ -195,7 +195,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = URL, name = "deleteVnfNotification")
     public JAXBElement<DeleteVnfNotification> createDeleteVnfNotification(DeleteVnfNotification value) {
-        return new JAXBElement<DeleteVnfNotification>(_DeleteVnfNotification_QNAME, DeleteVnfNotification.class, null,
+        return new JAXBElement<>(_DeleteVnfNotification_QNAME, DeleteVnfNotification.class, null,
                 value);
     }
 
@@ -205,7 +205,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = URL, name = "updateVnfNotification")
     public JAXBElement<UpdateVnfNotification> createUpdateVnfNotification(UpdateVnfNotification value) {
-        return new JAXBElement<UpdateVnfNotification>(_UpdateVnfNotification_QNAME, UpdateVnfNotification.class, null,
+        return new JAXBElement<>(_UpdateVnfNotification_QNAME, UpdateVnfNotification.class, null,
                 value);
     }
 
