@@ -56,9 +56,9 @@ public class DSLNodeKey implements QueryStep {
         result.append("('").append(keyName).append("', ");
         List<String> temp = new ArrayList<>();
         for (String item : values) {
-            if (item.equals("null")) {
+            if ("null".equals(item)) {
                 temp.add(String.format("' %s '", item));
-            } else if (item.equals("")) {
+            } else if ("".equals(item)) {
                 temp.add("' '");
             } else {
                 temp.add(String.format("'%s'", item));
