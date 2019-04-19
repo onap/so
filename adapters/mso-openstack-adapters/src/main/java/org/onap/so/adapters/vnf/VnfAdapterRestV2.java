@@ -82,6 +82,7 @@ public class VnfAdapterRestV2 {
     private static Logger logger = LoggerFactory.getLogger(VnfAdapterRestV2.class);
     private static final String TESTING_KEYWORD = "___TESTING___";
     private static final String RESP = ", resp=";
+    private static final String BRACKETS = "{} {} {} {}";
 
     @Autowired
     private VnfAdapterRestUtils vnfAdapterRestUtils;
@@ -134,7 +135,7 @@ public class VnfAdapterRestV2 {
                 t1.start();
             } catch (Exception e) {
                 // problem handling delete, send generic failure as sync resp to caller
-                logger.error("{} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), "deleteVfModule",
+                logger.error(BRACKETS, MessageEnum.RA_DELETE_VNF_ERR.toString(), "deleteVfModule",
                         ErrorCode.BusinessProcesssError.getValue(), "Exception in deleteVfModule", e);
                 return Response.serverError().build();
             }
@@ -178,7 +179,7 @@ public class VnfAdapterRestV2 {
         public void run() {
             try {
                 String cloudsite = req.getCloudSiteId();
-                Holder<Map<String, String>> outputs = new Holder<Map<String, String>>();
+                Holder<Map<String, String>> outputs = new Holder<>();
                 if (cloudsite != null && !cloudsite.equals(TESTING_KEYWORD)) {
                     // vnfAdapter.deleteVnf (req.getCloudSiteId(), req.getTenantId(), req.getVfModuleStackId(),
                     // req.getMsoRequest());
@@ -237,10 +238,10 @@ public class VnfAdapterRestV2 {
         try {
             int respStatus = HttpStatus.SC_OK;
             QueryVfModuleResponse qryResp = new QueryVfModuleResponse(aaiVnfId, aaiVfModuleId, null, null, null);
-            Holder<Boolean> vnfExists = new Holder<Boolean>();
-            Holder<String> vfModuleId = new Holder<String>();
-            Holder<VnfStatus> status = new Holder<VnfStatus>();
-            Holder<Map<String, String>> outputs = new Holder<Map<String, String>>();
+            Holder<Boolean> vnfExists = new Holder<>();
+            Holder<String> vfModuleId = new Holder<>();
+            Holder<VnfStatus> status = new Holder<>();
+            Holder<Map<String, String>> outputs = new Holder<>();
 
             // Support different Adapter Implementations
             MsoVnfAdapter adapter = vnfAdapterRestUtils.getVnfAdapterImpl(mode, cloudSiteId);
@@ -308,7 +309,7 @@ public class VnfAdapterRestV2 {
                 t1.start();
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
-                logger.error("{} {} {} {}", MessageEnum.RA_CREATE_VNF_ERR.toString(), "createVfModule",
+                logger.error(BRACKETS, MessageEnum.RA_CREATE_VNF_ERR.toString(), "createVfModule",
                         ErrorCode.BusinessProcesssError.getValue(), "Exception - createVfModule", e);
                 return Response.serverError().build();
             }
@@ -353,9 +354,9 @@ public class VnfAdapterRestV2 {
             logger.debug("CreateVfModuleTask start");
             try {
                 // Synchronous Web Service Outputs
-                Holder<String> vfModuleStackId = new Holder<String>();
-                Holder<Map<String, String>> outputs = new Holder<Map<String, String>>();
-                Holder<VnfRollback> vnfRollback = new Holder<VnfRollback>();
+                Holder<String> vfModuleStackId = new Holder<>();
+                Holder<Map<String, String>> outputs = new Holder<>();
+                Holder<VnfRollback> vnfRollback = new Holder<>();
                 String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
                 logger.debug("completeVnfVfModuleType=" + completeVnfVfModuleType);
 
@@ -423,7 +424,7 @@ public class VnfAdapterRestV2 {
                 t1.start();
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
-                logger.error("{} {} {} {}", MessageEnum.RA_UPDATE_VNF_ERR.toString(), "updateVfModule",
+                logger.error(BRACKETS, MessageEnum.RA_UPDATE_VNF_ERR.toString(), "updateVfModule",
                         ErrorCode.BusinessProcesssError.getValue(), "Exception - updateVfModule", e);
                 return Response.serverError().build();
             }
@@ -469,9 +470,9 @@ public class VnfAdapterRestV2 {
                 // MsoVnfAdapter vnfAdapter = new MsoVnfAdapterImpl (msoPropertiesFactory, cloudConfigFactory);
 
                 // Synchronous Web Service Outputs
-                Holder<String> vfModuleStackId = new Holder<String>();
-                Holder<Map<String, String>> outputs = new Holder<Map<String, String>>();
-                Holder<VnfRollback> vnfRollback = new Holder<VnfRollback>();
+                Holder<String> vfModuleStackId = new Holder<>();
+                Holder<Map<String, String>> outputs = new Holder<>();
+                Holder<VnfRollback> vnfRollback = new Holder<>();
                 String completeVnfVfModuleType = req.getVnfType() + "::" + req.getVfModuleType();
                 logger.debug("in updateVf - completeVnfVfModuleType=" + completeVnfVfModuleType);
 
@@ -535,7 +536,7 @@ public class VnfAdapterRestV2 {
                 t1.start();
             } catch (Exception e) {
                 // problem handling create, send generic failure as sync resp to caller
-                logger.error("{} {} {} {}", MessageEnum.RA_ROLLBACK_VNF_ERR.toString(), "rollbackVfModule",
+                logger.error(BRACKETS, MessageEnum.RA_ROLLBACK_VNF_ERR.toString(), "rollbackVfModule",
                         ErrorCode.BusinessProcesssError.getValue(), "Exception - rollbackVfModule", e);
                 return Response.serverError().build();
             }
