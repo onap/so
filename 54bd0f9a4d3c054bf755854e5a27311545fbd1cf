@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b1b8d4a_4031944c",
+        "filename": "bpmn/so-bpmn-infrastructure-common/src/main/java/org/onap/so/bpmn/infrastructure/pnf/delegate/InformDmaapClient.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 2789
+      },
+      "writtenOn": "2019-04-19T10:38:56Z",
+      "side": 1,
+      "message": "add logger message informing that exception is thrown during waiting for workflow",
+      "revId": "54bd0f9a4d3c054bf755854e5a27311545fbd1cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
