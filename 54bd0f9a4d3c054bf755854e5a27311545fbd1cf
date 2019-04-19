@@ -16,6 +16,23 @@
       "revId": "54bd0f9a4d3c054bf755854e5a27311545fbd1cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "82a0d9b2_1f08e3fc",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-04-19T11:16:00Z",
+      "side": 1,
+      "message": "Avoid more than 2 + for String,  instead use string buffer/builder",
+      "revId": "54bd0f9a4d3c054bf755854e5a27311545fbd1cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
