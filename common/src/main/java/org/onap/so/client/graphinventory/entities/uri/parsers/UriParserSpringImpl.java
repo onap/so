@@ -20,7 +20,6 @@
 
 package org.onap.so.client.graphinventory.entities.uri.parsers;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
