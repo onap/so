@@ -79,12 +79,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
     private static Logger logger = LoggerFactory.getLogger(MsoVnfCloudifyAdapterImpl.class);
 
-    private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
-    private static final String VNF_ADAPTER_SERVICE_NAME = "MSO-BPMN:MSO-VnfAdapter.";
-    private static final String LOG_REPLY_NAME = "MSO-VnfAdapter:MSO-BPMN.";
     private static final String CHECK_REQD_PARAMS = "org.onap.so.adapters.vnf.checkRequiredParameters";
-    private static final String ADD_GET_FILES_ON_VOLUME_REQ = "org.onap.so.adapters.vnf.addGetFilesOnVolumeReq";
-    private static final String CLOUDIFY_RESPONSE_SUCCESS = "Successfully received response from Cloudify";
     private static final String CLOUDIFY = "Cloudify";
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
@@ -105,20 +100,20 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     protected MsoCloudifyUtils cloudifyUtils;
 
     /**
+     * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
+     *
+     * @see MsoVnfCloudifyAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
+     */
+    public MsoVnfCloudifyAdapterImpl() {
+
+    }
+
+    /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
     @Override
     public void healthCheck() {
         logger.debug("Health check call in VNF Cloudify Adapter");
-    }
-
-    /**
-     * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
-     * 
-     * @see MsoVnfCloudifyAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
-     */
-    public MsoVnfCloudifyAdapterImpl() {
-
     }
 
     /**
