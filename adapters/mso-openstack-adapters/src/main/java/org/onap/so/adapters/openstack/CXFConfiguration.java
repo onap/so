@@ -89,7 +89,7 @@ public class CXFConfiguration {
     }
 
     @Bean
-    public ServletRegistrationBean SoapDispatcherServlet() {
+    public ServletRegistrationBean soapDispatcherServlet() {
         ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(new CXFServlet(), "/services/*");
         servletRegistrationBean.setName("services");
         return servletRegistrationBean;
@@ -149,7 +149,7 @@ public class CXFConfiguration {
     }
 
     @Bean
-    public Endpoint VnfAsyncAdapterEndpoint() {
+    public Endpoint vnfAsyncAdapterEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfAdapterAsyncImpl);
         endpoint.publish("/VnfAsyncAdapter");
         endpoint.setWsdlLocation("VnfAsyncAdapter.wsdl");
@@ -160,7 +160,7 @@ public class CXFConfiguration {
     }
 
     @Bean
-    public Endpoint VnfCloudAdapterEndpoint() {
+    public Endpoint vnfCloudAdapterEndpoint() {
         EndpointImpl endpoint = new EndpointImpl(springBus(), vnfCloudifyAdapterImpl);
         endpoint.publish("/VnfCloudifyAdapterImpl");
         endpoint.setWsdlLocation("VnfCloudifyAdapterImpl.wsdl");
