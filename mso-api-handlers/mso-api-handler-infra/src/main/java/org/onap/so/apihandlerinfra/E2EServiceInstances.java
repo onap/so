@@ -928,21 +928,14 @@ public class E2EServiceInstances {
         // subscriptionServiceType
         requestParameters.setSubscriptionServiceType("MOG");
 
-        // Userparams
-        // List<E2EUserParam> userParams;
-        // userParams =
-        // e2eSir.getService().getParameters().getRequestParameters().getUserParams();
+
         List<Map<String, Object>> userParamList = new ArrayList<>();
         Map<String, Object> userParamMap = new HashMap<>();
         // complete json request updated in the camunda
         userParamMap.put("UUIRequest", requestJSON);
         userParamMap.put("ServiceInstanceName", e2eSir.getService().getName());
 
-        // Map<String, String> userParamMap3 = null;
-        // for (E2EUserParam userp : userParams) {
-        // userParamMap.put(userp.getName(), userp.getValue());
-        //
-        // }
+
         userParamList.add(userParamMap);
         requestParameters.setUserParams(userParamList);
 
