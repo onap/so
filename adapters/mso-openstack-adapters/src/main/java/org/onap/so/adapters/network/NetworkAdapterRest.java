@@ -86,7 +86,7 @@ public class NetworkAdapterRest {
 
     private static final Logger logger = LoggerFactory.getLogger(NetworkAdapterRest.class);
     private static final String TESTING_KEYWORD = "___TESTING___";
-    private String EXCEPTION = "Exception:";
+    private String exceptionMsg = "Exception:";
 
     @Autowired
     private MsoNetworkAdapterImpl adapter;
@@ -233,7 +233,7 @@ public class NetworkAdapterRest {
                         rollback.value.getNetworkStackId(), networkFqdn.value, rollback.value.getNetworkCreated(),
                         subnetIdMap.value, rollback.value, req.getMessageId());
             } catch (NetworkException e) {
-                logger.debug(EXCEPTION, e);
+                logger.debug(exceptionMsg, e);
                 eresp = new CreateNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
             }
             if (!req.isSynchronous()) {
@@ -328,7 +328,7 @@ public class NetworkAdapterRest {
                 }
                 response = new DeleteNetworkResponse(req.getNetworkId(), networkDeleted.value, req.getMessageId());
             } catch (NetworkException e) {
-                logger.debug(EXCEPTION, e);
+                logger.debug(exceptionMsg, e);
                 eresp = new DeleteNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
             }
             if (!req.isSynchronous()) {
@@ -467,7 +467,7 @@ public class NetworkAdapterRest {
                 adapter.rollbackNetwork(nwr);
                 response = new RollbackNetworkResponse(true, req.getMessageId());
             } catch (NetworkException e) {
-                logger.debug(EXCEPTION, e);
+                logger.debug(exceptionMsg, e);
                 eresp = new RollbackNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true,
                         req.getMessageId());
             }
@@ -614,7 +614,7 @@ public class NetworkAdapterRest {
                                                                                // an update
                         subnetIdMap.value, req.getMessageId());
             } catch (NetworkException e) {
-                logger.debug(EXCEPTION, e);
+                logger.debug(exceptionMsg, e);
                 eresp = new UpdateNetworkError(e.getMessage(), MsoExceptionCategory.INTERNAL, true, req.getMessageId());
             }
             if (!req.isSynchronous()) {
