@@ -33,6 +33,24 @@
       "revId": "54bd0f9a4d3c054bf755854e5a27311545fbd1cf",
       "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "45e196b9_e66211c4",
+        "filename": "bpmn/so-bpmn-infrastructure-flows/src/test/java/org/onap/so/bpmn/infrastructure/process/CreateVcpeResCustServiceSimplifiedTest.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 2795
+      },
+      "writtenOn": "2019-04-19T12:44:20Z",
+      "side": 1,
+      "message": "There\u0027s no need - from java documentation: https://docs.oracle.com/javase/specs/jls/se8/html/jls-15.html#jls-15.18.1\n\n\"An implementation may choose to perform conversion and concatenation in one step to avoid creating and then discarding an intermediate String object. To increase the performance of repeated string concatenation, a Java compiler may use the StringBuffer class or a similar technique to reduce the number of intermediate String objects that are created by evaluation of an expression.\"\n\nThat\u0027s what\u0027s compilator\u0027s doing. That\u0027s not the case when string concatenation is happening inside the loop - but here directly using StringBuilder would only decrease readability.",
+      "parentUuid": "82a0d9b2_1f08e3fc",
+      "revId": "54bd0f9a4d3c054bf755854e5a27311545fbd1cf",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
     }
   ]
 }
