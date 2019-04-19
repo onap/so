@@ -64,6 +64,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
 
     private static final String BPEL_AUTH_PROP = "org.onap.so.adapters.vnf.bpelauth";
     private static final String ENCRYPTION_KEY_PROP = "org.onap.so.adapters.network.encryptionKey";
+    private static final String UPDATE_VNFA = "{} UpdateVnfA";
 
     @Autowired
     private Environment environment;
@@ -173,7 +174,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             String vnfName, String requestType, String volumeGroupHeatStackId, Map<String, Object> inputs,
             String messageId, MsoRequest msoRequest, String notificationUrl) {
 
-        logger.info("{} UpdateVnfA", MessageEnum.RA_ASYNC_UPDATE_VNF);
+        logger.info(UPDATE_VNFA, MessageEnum.RA_ASYNC_UPDATE_VNF);
 
         // Use the synchronous method to perform the actual Create
         MsoVnfAdapter vnfAdapter = vnfImpl;
@@ -207,7 +208,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
                 logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
                         ErrorCode.BusinessProcesssError.getValue(), e1);
             }
-            logger.info("{} UpdateVnfA", MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
+            logger.info(UPDATE_VNFA, MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
             return;
         }
         logger.debug("Async Update VNF: {} VnfId:{}", vnfName, vnfId.value);
@@ -220,7 +221,7 @@ public class MsoVnfAdapterAsyncImpl implements MsoVnfAdapterAsync {
             logger.error("{} {} Exception sending updateVnf notification ", MessageEnum.RA_SEND_VNF_NOTIF_ERR,
                     ErrorCode.BusinessProcesssError.getValue(), e);
         }
-        logger.info("{} UpdateVnfA", MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
+        logger.info(UPDATE_VNFA, MessageEnum.RA_ASYNC_UPDATE_VNF_COMPLETE);
         return;
     }
 
