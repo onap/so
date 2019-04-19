@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "227a4a6c_2bf77a54",
+        "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-app",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 4609
+      },
+      "writtenOn": "2019-04-19T05:20:21Z",
+      "side": 1,
+      "message": "There is no onap/so/base-image:1.0 for Arm.\nSo I changed it.",
+      "parentUuid": "263ef8b9_9517b54e",
+      "revId": "eef05307539fe90cebf18ef6eb5144d95f9d6a79",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "514c7141_b3e7a67c",
         "filename": "packages/docker/src/main/docker/docker-files/Dockerfile.so-app",
         "patchSetId": 2
