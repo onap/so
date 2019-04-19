@@ -83,6 +83,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
     private static final String CLOUDIFY = "Cloudify";
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static final String BRACKETS = "{} {} {} {} {} {} {} {} {}";
 
     @Autowired
     protected CloudConfig cloudConfig;
@@ -190,7 +191,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             me.addContext("QueryVNF");
             String error = "Query VNF (Cloudify): " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                     + ": " + me;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudOwner,
+            logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudOwner,
                     cloudSiteId, tenantId, CLOUDIFY, "QueryVNF", ErrorCode.DataError.getValue(),
                     "Exception - queryDeployment", me);
             logger.debug(error);
@@ -281,7 +282,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             me.addContext("RollbackVNF");
             String error = "Rollback VF Module: " + vfModuleId + " in " + cloudOwner + "/" + cloudSiteId + "/"
                     + tenantId + ": " + me;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), vfModuleId, cloudOwner,
+            logger.error(BRACKETS, MessageEnum.RA_DELETE_VNF_ERR.toString(), vfModuleId, cloudOwner,
                     cloudSiteId, tenantId, CLOUDIFY, "DeleteDeployment", ErrorCode.DataError.getValue(),
                     "Exception - DeleteDeployment", me);
             logger.debug(error);
@@ -647,7 +648,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 if (failIfExists != null && failIfExists) {
                     String error = "Create VF: Deployment " + vfModuleName + " already exists in " + cloudOwner + "/"
                             + cloudSiteId + "/" + tenantId;
-                    logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(),
+                    logger.error(BRACKETS, MessageEnum.RA_VNF_ALREADY_EXIST.toString(),
                             vfModuleName, cloudOwner, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment",
                             ErrorCode.DataError.getValue(), "Deployment " + vfModuleName + " already exists");
                     logger.debug(error);
@@ -668,7 +669,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and has status "
                         + status.toString() + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                         + "; please wait for it to complete, or fix manually.";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                logger.error(BRACKETS, MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
                         cloudOwner, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", ErrorCode.DataError.getValue(),
                         "Deployment " + vfModuleName + " already exists");
                 logger.debug(error);
@@ -677,7 +678,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 // fail - it exists and is in a FAILED state
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and is in FAILED state in "
                         + cloudOwner + "/" + cloudSiteId + "/" + tenantId + "; requires manual intervention.";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                logger.error(BRACKETS, MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
                         cloudOwner, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", ErrorCode.DataError.getValue(),
                         "Deployment " + vfModuleName + " already " + "exists and is in FAILED state");
                 logger.debug(error);
@@ -687,7 +688,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VF: Deployment " + vfModuleName + " already exists and has status "
                         + status.toString() + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                         + "; requires manual intervention.";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                logger.error(BRACKETS, MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
                         cloudOwner, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", ErrorCode.DataError.getValue(),
                         "Deployment " + vfModuleName + " already " + "exists and is in " + status.toString()
                                 + " state");
@@ -698,7 +699,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 String error = "Create VF: Deployment " + vfModuleName + " already exists with unexpected status "
                         + status.toString() + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId
                         + "; requires manual intervention.";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
+                logger.error(BRACKETS, MessageEnum.RA_VNF_ALREADY_EXIST.toString(), vfModuleName,
                         cloudOwner, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment", ErrorCode.DataError.getValue(),
                         "Deployment " + vfModuleName + " already " + "exists and is in an unknown state");
                 logger.debug(error);
@@ -721,7 +722,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 // Failed to query the Volume GroupDeployment due to a cloudify exception.
                 String error = "Create VF Module: Query Volume Group " + volumeGroupId + " in " + cloudOwner + "/"
                         + cloudSiteId + "/" + tenantId + ": " + me;
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId,
+                logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId,
                         cloudOwner, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment(volume)",
                         ErrorCode.DataError.getValue(), "Exception - queryDeployment(volume)", me);
                 logger.debug(error);
@@ -733,7 +734,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             if (volumeDeployment == null || volumeDeployment.getStatus() == DeploymentStatus.NOTFOUND) {
                 String error = "Create VFModule: Attached Volume Group DOES NOT EXIST " + volumeGroupId + " in "
                         + cloudSiteId + "/" + tenantId + " USER ERROR";
-                logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId,
+                logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), volumeGroupId,
                         cloudSiteId, tenantId, error, CLOUDIFY, "queryDeployment(volume)",
                         ErrorCode.BusinessProcesssError.getValue(),
                         "Create VFModule: Attached Volume Group DOES NOT EXIST");
@@ -771,7 +772,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                     // Failed to query the Volume GroupDeployment due to a cloudify exception.
                     String error = "Create VF Module: Query Base " + baseVfModuleId + " in " + cloudOwner + "/"
                             + cloudSiteId + "/" + tenantId + ": " + me;
-                    logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId,
+                    logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId,
                             cloudOwner, cloudSiteId, tenantId, CLOUDIFY, "queryDeployment(Base)",
                             ErrorCode.DataError.getValue(), "Exception - queryDeployment(Base)", me);
                     logger.debug(error);
@@ -783,7 +784,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
                 if (baseDeployment == null || baseDeployment.getStatus() == DeploymentStatus.NOTFOUND) {
                     String error = "Create VFModule: Base Module DOES NOT EXIST " + baseVfModuleId + " in "
                             + cloudSiteId + "/" + tenantId + " USER ERROR";
-                    logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId,
+                    logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), baseVfModuleId,
                             cloudSiteId, tenantId, error, CLOUDIFY, "queryDeployment(Base)",
                             ErrorCode.BusinessProcesssError.getValue(),
                             "Create VFModule: Base " + "Module DOES NOT EXIST");
@@ -1108,7 +1109,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             me.addContext("DeleteVFModule");
             String error = "Delete VFModule: Query to get outputs: " + vnfName + " in " + cloudOwner + "/" + cloudSiteId
                     + "/" + tenantId + ": " + me;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudOwner,
+            logger.error(BRACKETS, MessageEnum.RA_QUERY_VNF_ERR.toString(), vnfName, cloudOwner,
                     cloudSiteId, tenantId, CLOUDIFY, "QueryDeployment", ErrorCode.DataError.getValue(),
                     "Exception - QueryDeployment", me);
             logger.debug(error);
@@ -1130,7 +1131,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             // Convert to a generic VnfException
             String error =
                     "Delete VF: " + vnfName + " in " + cloudOwner + "/" + cloudSiteId + "/" + tenantId + ": " + me;
-            logger.error("{} {} {} {} {} {} {} {} {}", MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudOwner,
+            logger.error(BRACKETS, MessageEnum.RA_DELETE_VNF_ERR.toString(), vnfName, cloudOwner,
                     cloudSiteId, tenantId, "DeleteDeployment", "DeleteDeployment", ErrorCode.DataError.getValue(),
                     "Exception - DeleteDeployment: " + me.getMessage());
             logger.debug(error);
