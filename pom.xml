@@ -443,6 +443,7 @@
             <goals>
               <goal>format</goal>
             </goals>
+            <phase>process-sources</phase>
             <configuration>
               <skip>${format.skipExecute}</skip>
               <configFile>${base-path}/project-configs/code-tools/onap-eclipse-format.xml</configFile>
@@ -453,6 +454,7 @@
             <goals>
               <goal>format</goal>
             </goals>
+            <phase>process-sources</phase>
             <configuration>
               <skip>${format.skipExecute}</skip>
               <sourceDirectory>${project.basedir}</sourceDirectory>
