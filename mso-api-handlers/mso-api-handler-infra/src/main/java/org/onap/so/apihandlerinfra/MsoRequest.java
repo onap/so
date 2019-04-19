@@ -574,7 +574,7 @@ public class MsoRequest {
             throws JsonGenerationException, JsonMappingException, IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(Include.NON_NULL);
-        // mapper.configure(Feature.WRAP_ROOT_VALUE, true);
+
         logger.debug("building sir from object {}", sir);
         String requestJSON = mapper.writeValueAsString(sir);
 
@@ -636,7 +636,7 @@ public class MsoRequest {
     public String getVfModuleType(ServiceInstancesRequest sir, String requestScope, Actions action, int reqVersion) {
 
         String serviceInstanceType = null;
-        String networkType = null;
+
         String vnfType = null;
         String vfModuleType = null;
         String vfModuleModelName = null;
@@ -800,6 +800,7 @@ public class MsoRequest {
             selfLinkUrl = Optional.of(new URL(aUrl.getProtocol(), aUrl.getHost(), aUrl.getPort(), selfLinkPath));
         } catch (Exception e) {
             selfLinkUrl = Optional.empty(); // ignore
+            logger.info(e.getMessage());
         }
         return selfLinkUrl;
     }
