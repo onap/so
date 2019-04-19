@@ -88,7 +88,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     private static final String NETWORK_ID = "network_id";
     private static final String NETWORK_FQDN = "network_fqdn";
     private static final String CREATE_NETWORK_CONTEXT = "CreateNetwork";
-    private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static final String NEUTRON_MODE = "NEUTRON";
 
     private static final Logger logger = LoggerFactory.getLogger(MsoNetworkAdapterImpl.class);
@@ -115,6 +114,8 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
     @Autowired
     private NetworkResourceRepository networkResourceRepo;
 
+    public MsoNetworkAdapterImpl() {}
+
     /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
@@ -128,7 +129,6 @@ public class MsoNetworkAdapterImpl implements MsoNetworkAdapter {
      *
      * @see MsoNetworkAdapterImpl#MsoNetworkAdapterImpl(MsoPropertiesFactory)
      */
-    public MsoNetworkAdapterImpl() {}
 
     @Override
     public void createNetwork(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
