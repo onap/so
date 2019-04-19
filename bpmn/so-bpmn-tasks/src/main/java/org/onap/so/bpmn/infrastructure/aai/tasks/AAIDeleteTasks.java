@@ -9,9 +9,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,8 +58,8 @@ import org.springframework.stereotype.Component;
 public class AAIDeleteTasks {
     private static final Logger logger = LoggerFactory.getLogger(AAIDeleteTasks.class);
 
-    private static String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
-    private static String NETWORK_POLICY_FQDN_PARAM = "network-policy-fqdn";
+    private static String contrailNetworkPolicyFqdnList = "contrailNetworkPolicyFqdnList";
+    private static String networkPolicyFqdnParam = "network-policy-fqdn";
 
     @Autowired
     private ExceptionBuilder exceptionUtil;
@@ -176,15 +176,15 @@ public class AAIDeleteTasks {
 
     public void deleteNetworkPolicies(BuildingBlockExecution execution) {
         try {
-            String fqdns = execution.getVariable(CONTRAIL_NETWORK_POLICY_FQDN_LIST);
+            String fqdns = execution.getVariable(contrailNetworkPolicyFqdnList);
             if (fqdns != null && !fqdns.isEmpty()) {
-                String fqdnList[] = fqdns.split(",");
+                String[] fqdnList = fqdns.split(",");
                 int fqdnCount = fqdnList.length;
                 if (fqdnCount > 0) {
                     for (int i = 0; i < fqdnCount; i++) {
                         String fqdn = fqdnList[i];
                         AAIResourceUri uri = AAIUriFactory.createResourceUri(AAIObjectPlurals.NETWORK_POLICY);
-                        uri.queryParam(NETWORK_POLICY_FQDN_PARAM, fqdn);
+                        uri.queryParam(networkPolicyFqdnParam, fqdn);
                         Optional<NetworkPolicies> oNetPolicies = aaiNetworkResources.getNetworkPolicies(uri);
                         if (oNetPolicies.isPresent()) {
                             NetworkPolicies networkPolicies = oNetPolicies.get();
