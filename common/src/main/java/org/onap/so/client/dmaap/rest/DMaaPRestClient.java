@@ -23,7 +23,6 @@ package org.onap.so.client.dmaap.rest;
 import java.net.URL;
 import java.util.Map;
 import org.onap.so.client.RestClient;
-import org.onap.so.utils.CryptoUtils;
 import org.onap.so.utils.TargetEntity;
 
 public class DMaaPRestClient extends RestClient {
