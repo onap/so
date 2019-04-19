@@ -57,11 +57,11 @@ public class NetworkAdapterNotify_Service extends Service {
     }
 
     public NetworkAdapterNotify_Service() {
-        super(__getWsdlLocation(), NETWORKADAPTERNOTIFY_QNAME);
+        super(getWsdlLocation(), NETWORKADAPTERNOTIFY_QNAME);
     }
 
     public NetworkAdapterNotify_Service(WebServiceFeature... features) {
-        super(__getWsdlLocation(), NETWORKADAPTERNOTIFY_QNAME, features);
+        super(getWsdlLocation(), NETWORKADAPTERNOTIFY_QNAME, features);
     }
 
     public NetworkAdapterNotify_Service(URL wsdlLocation) {
@@ -100,7 +100,7 @@ public class NetworkAdapterNotify_Service extends Service {
         return super.getPort(new QName(URL, "MsoNetworkAdapterAsyncImplPort"), NetworkAdapterNotify.class, features);
     }
 
-    private static URL __getWsdlLocation() {
+    private static URL getWsdlLocation() {
         if (NETWORKADAPTERNOTIFY_EXCEPTION != null) {
             throw NETWORKADAPTERNOTIFY_EXCEPTION;
         }
