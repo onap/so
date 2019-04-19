@@ -2140,19 +2140,24 @@ public class ToscaResourceInstaller {
     }
 
     protected VnfResourceCustomization createVnfResource(NodeTemplate vfNodeTemplate,
-            ToscaResourceStructure toscaResourceStructure, Service service) {
+            ToscaResourceStructure toscaResourceStructure, Service service) throws ArtifactInstallerException {
         VnfResourceCustomization vnfResourceCustomization = null;
         if (vnfResourceCustomization == null) {
             VnfResource vnfResource = findExistingVnfResource(service,
                     vfNodeTemplate.getMetaData().getValue(SdcPropertyNames.PROPERTY_NAME_UUID));
 
-            if (vnfResource == null)
+            if (vnfResource == null) {
                 vnfResource = createVnfResource(vfNodeTemplate);
+            }
 
             vnfResourceCustomization =
                     createVnfResourceCustomization(vfNodeTemplate, toscaResourceStructure, vnfResource);
             vnfResourceCustomization.setVnfResources(vnfResource);
             vnfResourceCustomization.setService(service);
+
+            // setting resource input for vnf customization
+            vnfResourceCustomization.setResourceInput(
+                    getResourceInput(toscaResourceStructure, vnfResourceCustomization.getModelCustomizationUUID()));
             vnfResource.getVnfResourceCustomizations().add(vnfResourceCustomization);
 
         }
