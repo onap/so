@@ -68,7 +68,6 @@ import org.onap.so.logger.ErrorCode;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.VnfRollback;
 import org.onap.so.openstack.beans.VnfStatus;
-import org.onap.so.openstack.exceptions.MsoCloudSiteNotFound;
 import org.onap.so.openstack.exceptions.MsoException;
 import org.onap.so.openstack.exceptions.MsoExceptionCategory;
 import org.onap.so.openstack.utils.MsoHeatEnvironmentEntry;
@@ -91,7 +90,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
 
-    private static final String MSO_CONFIGURATION_ERROR = "MsoConfigurationError";
     private static Logger logger = LoggerFactory.getLogger(MsoVnfPluginAdapterImpl.class);
 
     private static final String CHECK_REQD_PARAMS = "org.onap.so.adapters.vnf.checkRequiredParameters";
@@ -122,20 +120,20 @@ public class MsoVnfPluginAdapterImpl implements MsoVnfAdapter {
     protected VfModuleCustomizationToVduMapper vduMapper;
 
     /**
+     * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
+     *
+     * @see MsoVnfPluginAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
+     */
+    public MsoVnfPluginAdapterImpl() {
+
+    }
+
+    /**
      * Health Check web method. Does nothing but return to show the adapter is deployed.
      */
     @Override
     public void healthCheck() {
         logger.debug("Health check call in VNF Plugin Adapter");
-    }
-
-    /**
-     * DO NOT use that constructor to instantiate this class, the msoPropertiesfactory will be NULL.
-     * 
-     * @see MsoVnfPluginAdapterImpl#MsoVnfAdapterImpl(MsoPropertiesFactory, CloudConfigFactory)
-     */
-    public MsoVnfPluginAdapterImpl() {
-
     }
 
     /**
