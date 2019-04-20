@@ -43,8 +43,8 @@ public class SDNO implements Serializable {
     @JsonProperty("body")
     private Body body;
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
-    private final static long serialVersionUID = -5303297382564282650L;
+    private Map<String, Object> additionalProperties = new HashMap<>();
+    private static final long serialVersionUID = -5303297382564282650L;
 
     @JsonProperty("operation")
     public String getOperation() {
