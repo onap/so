@@ -25,8 +25,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.onap.so.db.catalog.beans.InstanceGroup;
+import org.onap.so.db.catalog.beans.VFCInstanceGroup;
 import org.onap.so.db.catalog.beans.VnfResourceCustomization;
+import org.onap.so.db.catalog.beans.VnfcInstanceGroupCustomization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +49,7 @@ public class QueryServiceVnfs extends CatalogQuery {
             + "\t\"nfFunction\"           	: <NF_FUNCTION>,\n" + "\t\"nfType\"              		: <NF_TYPE>,\n"
             + "\t\"nfRole\"              		: <NF_ROLE>,\n" + "\t\"nfNamingCode\"         	: <NF_NAMING_CODE>,\n"
             + "\t\"multiStageDesign\"         : <MULTI_STEP_DESIGN>,\n"
-            + "\t\"resourceInput\"            : <RESOURCE_INPUT>,\n" + "<_VFMODULES_>\n" + "\t}";
+            + "\t\"resourceInput\"            : <RESOURCE_INPUT>,\n" + "<_VFMODULES_>\n" + "<_GROUPS_>\n" + "\t}";
 
     public QueryServiceVnfs() {
         super();
@@ -119,6 +123,17 @@ public class QueryServiceVnfs extends CatalogQuery {
 
             String subitem = new QueryVfModule(vrNull ? null : o.getVfModuleCustomizations()).JSON2(true, true);
             valueMap.put("_VFMODULES_", subitem.replaceAll("(?m)^", "\t\t"));
+
+            List<VnfcInstanceGroupCustomization> vnfcInstanceGroupCustomizations =
+                    o.getVnfcInstanceGroupCustomizations();
+            List<VFCInstanceGroup> instanceGroups = new ArrayList();
+
+            for (VnfcInstanceGroupCustomization customization : vnfcInstanceGroupCustomizations) {
+                instanceGroups.add((VFCInstanceGroup) customization.getInstanceGroup());
+            }
+
+            String grpSubItem = new QueryGroups(vrNull ? null : vnfcInstanceGroupCustomizations).JSON2(true, true);
+            valueMap.put("_GROUPS_", grpSubItem.replaceAll("(?m)^", "\t\t"));
 
             sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";
