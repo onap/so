@@ -42,7 +42,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCVnfResources {
-    private static final Logger logger = LoggerFactory.getLogger(SDNCVnfResources.class);
 
     @Autowired
     private VnfTopologyOperationRequestMapper sdncRM;
