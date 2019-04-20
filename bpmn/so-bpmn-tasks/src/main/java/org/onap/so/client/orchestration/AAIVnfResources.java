@@ -43,7 +43,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIVnfResources {
-    private static final Logger logger = LoggerFactory.getLogger(AAIVnfResources.class);
 
     @Autowired
     private InjectionHelper injectionHelper;

@@ -21,7 +21,6 @@
 package org.onap.so.client.orchestration;
 
 import java.util.Optional;
-import javax.ws.rs.NotFoundException;
 import org.onap.aai.domain.yang.VpnBindings;
 import org.onap.so.bpmn.common.InjectionHelper;
 import org.onap.so.bpmn.servicedecomposition.bbobjects.Customer;
