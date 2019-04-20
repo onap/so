@@ -40,7 +40,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIVfModuleResources {
-    private static final Logger logger = LoggerFactory.getLogger(AAIVfModuleResources.class);
 
     @Autowired
     private InjectionHelper injectionHelper;
@@ -97,8 +96,8 @@ public class AAIVfModuleResources {
     public void changeAssignVfModule(VfModule vfModule, GenericVnf vnf) {
         AAIResourceUri vfModuleURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.VF_MODULE, vnf.getVnfId(), vfModule.getVfModuleId());
-        org.onap.aai.domain.yang.VfModule AAIVfModule = aaiObjectMapper.mapVfModule(vfModule);
-        injectionHelper.getAaiClient().update(vfModuleURI, AAIVfModule);
+        org.onap.aai.domain.yang.VfModule aaiVfModule = aaiObjectMapper.mapVfModule(vfModule);
+        injectionHelper.getAaiClient().update(vfModuleURI, aaiVfModule);
     }
 
     public void connectVfModuleToVolumeGroup(GenericVnf vnf, VfModule vfModule, VolumeGroup volumeGroup,
