@@ -73,9 +73,9 @@ public class EqualsAndHashCodeTester implements Tester {
                 boolean hasEquals = false;
                 boolean hasHashcode = false;
                 for (Method method : methods) {
-                    if (method.getName().equals("equals")) {
+                    if ("equals".equals(method.getName())) {
                         hasEquals = true;
-                    } else if (method.getName().equals("hashCode")) {
+                    } else if ("hashCode".equals(method.getName())) {
                         hasHashcode = true;
                     }
                 }
@@ -114,7 +114,7 @@ public class EqualsAndHashCodeTester implements Tester {
             Affirm.affirmTrue("HashCode test failed for [" + classInstanceOne.getClass().getName() + "]",
                     classInstanceOne.hashCode() == classInstanceTwo.hashCode());
 
-            Affirm.affirmFalse("Expected false for comparison of two unlike objects", classInstanceOne.equals("test"));
+            Affirm.affirmFalse("Expected false for comparison of two unlike objects", "test".equals(classInstanceOne));
         }
     }
 
