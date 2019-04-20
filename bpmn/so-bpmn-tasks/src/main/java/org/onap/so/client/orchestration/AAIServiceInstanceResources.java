@@ -61,9 +61,9 @@ public class AAIServiceInstanceResources {
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, customer.getGlobalCustomerId(),
                         customer.getServiceSubscription().getServiceType(), serviceInstance.getServiceInstanceId());
         serviceInstance.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
-        org.onap.aai.domain.yang.ServiceInstance AAIServiceInstance =
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance =
                 aaiObjectMapper.mapServiceInstance(serviceInstance);
-        injectionHelper.getAaiClient().createIfNotExists(serviceInstanceURI, Optional.of(AAIServiceInstance));
+        injectionHelper.getAaiClient().createIfNotExists(serviceInstanceURI, Optional.of(aaiServiceInstance));
     }
 
     /**
@@ -87,24 +87,24 @@ public class AAIServiceInstanceResources {
 
     public void createProject(Project project) {
         AAIResourceUri projectURI = AAIUriFactory.createResourceUri(AAIObjectType.PROJECT, project.getProjectName());
-        org.onap.aai.domain.yang.Project AAIProject = aaiObjectMapper.mapProject(project);
-        injectionHelper.getAaiClient().createIfNotExists(projectURI, Optional.of(AAIProject));
+        org.onap.aai.domain.yang.Project aaiProject = aaiObjectMapper.mapProject(project);
+        injectionHelper.getAaiClient().createIfNotExists(projectURI, Optional.of(aaiProject));
     }
 
     public void createProjectandConnectServiceInstance(Project project, ServiceInstance serviceInstance) {
         AAIResourceUri projectURI = AAIUriFactory.createResourceUri(AAIObjectType.PROJECT, project.getProjectName());
         AAIResourceUri serviceInstanceURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
-        org.onap.aai.domain.yang.Project AAIProject = aaiObjectMapper.mapProject(project);
-        injectionHelper.getAaiClient().createIfNotExists(projectURI, Optional.of(AAIProject)).connect(projectURI,
+        org.onap.aai.domain.yang.Project aaiProject = aaiObjectMapper.mapProject(project);
+        injectionHelper.getAaiClient().createIfNotExists(projectURI, Optional.of(aaiProject)).connect(projectURI,
                 serviceInstanceURI);
     }
 
     public void createOwningEntity(OwningEntity owningEntity) {
         AAIResourceUri owningEntityURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY, owningEntity.getOwningEntityId());
-        org.onap.aai.domain.yang.OwningEntity AAIOwningEntity = aaiObjectMapper.mapOwningEntity(owningEntity);
-        injectionHelper.getAaiClient().createIfNotExists(owningEntityURI, Optional.of(AAIOwningEntity));
+        org.onap.aai.domain.yang.OwningEntity aaiOwningEntity = aaiObjectMapper.mapOwningEntity(owningEntity);
+        injectionHelper.getAaiClient().createIfNotExists(owningEntityURI, Optional.of(aaiOwningEntity));
     }
 
     public boolean existsOwningEntity(OwningEntity owningEntity) {
@@ -134,8 +134,8 @@ public class AAIServiceInstanceResources {
                 AAIUriFactory.createResourceUri(AAIObjectType.OWNING_ENTITY, owningEntity.getOwningEntityId());
         AAIResourceUri serviceInstanceURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
-        org.onap.aai.domain.yang.OwningEntity AAIOwningEntity = aaiObjectMapper.mapOwningEntity(owningEntity);
-        injectionHelper.getAaiClient().createIfNotExists(owningEntityURI, Optional.of(AAIOwningEntity))
+        org.onap.aai.domain.yang.OwningEntity aaiOwningEntity = aaiObjectMapper.mapOwningEntity(owningEntity);
+        injectionHelper.getAaiClient().createIfNotExists(owningEntityURI, Optional.of(aaiOwningEntity))
                 .connect(owningEntityURI, serviceInstanceURI);
     }
 
@@ -152,9 +152,9 @@ public class AAIServiceInstanceResources {
     public void updateServiceInstance(ServiceInstance serviceInstance) {
         AAIResourceUri serviceInstanceURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.SERVICE_INSTANCE, serviceInstance.getServiceInstanceId());
-        org.onap.aai.domain.yang.ServiceInstance AAIServiceInstance =
+        org.onap.aai.domain.yang.ServiceInstance aaiServiceInstance =
                 aaiObjectMapper.mapServiceInstance(serviceInstance);
-        injectionHelper.getAaiClient().update(serviceInstanceURI, AAIServiceInstance);
+        injectionHelper.getAaiClient().update(serviceInstanceURI, aaiServiceInstance);
     }
 
 
