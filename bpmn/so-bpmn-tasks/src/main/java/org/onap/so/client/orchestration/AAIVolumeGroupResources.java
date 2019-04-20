@@ -38,7 +38,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AAIVolumeGroupResources {
-    private static final Logger logger = LoggerFactory.getLogger(AAIVolumeGroupResources.class);
 
     @Autowired
     private InjectionHelper injectionHelper;
