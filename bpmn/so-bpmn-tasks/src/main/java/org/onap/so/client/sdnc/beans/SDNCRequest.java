@@ -21,7 +21,6 @@
 package org.onap.so.client.sdnc.beans;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.UUID;
 import org.onap.so.client.sdnc.endpoint.SDNCTopology;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
