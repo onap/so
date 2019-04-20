@@ -39,7 +39,8 @@ public class VnfAdapterNotify_Service extends Service {
 
     private static final URL VNFADAPTERNOTIFY_WSDL_LOCATION;
     private static final WebServiceException VNFADAPTERNOTIFY_EXCEPTION;
-    private static final QName VNFADAPTERNOTIFY_QNAME = new QName("http://org.onap.so/vnfNotify", "vnfAdapterNotify");
+    private static final String VNF_NOTIFY_URL = "http://org.onap.so/vnfNotify";
+    private static final QName VNFADAPTERNOTIFY_QNAME = new QName(VNF_NOTIFY_URL, "vnfAdapterNotify");
 
     static {
         VNFADAPTERNOTIFY_WSDL_LOCATION = org.onap.so.adapters.vnf.async.client.VnfAdapterNotify_Service.class
@@ -82,7 +83,7 @@ public class VnfAdapterNotify_Service extends Service {
      */
     @WebEndpoint(name = "MsoVnfAdapterAsyncImplPort")
     public VnfAdapterNotify getMsoVnfAdapterAsyncImplPort() {
-        return super.getPort(new QName("http://org.onap.so/vnfNotify", "MsoVnfAdapterAsyncImplPort"),
+        return super.getPort(new QName(VNF_NOTIFY_URL, "MsoVnfAdapterAsyncImplPort"),
                 VnfAdapterNotify.class);
     }
 
@@ -94,7 +95,7 @@ public class VnfAdapterNotify_Service extends Service {
      */
     @WebEndpoint(name = "MsoVnfAdapterAsyncImplPort")
     public VnfAdapterNotify getMsoVnfAdapterAsyncImplPort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://org.onap.so/vnfNotify", "MsoVnfAdapterAsyncImplPort"),
+        return super.getPort(new QName(VNF_NOTIFY_URL, "MsoVnfAdapterAsyncImplPort"),
                 VnfAdapterNotify.class, features);
     }
 
