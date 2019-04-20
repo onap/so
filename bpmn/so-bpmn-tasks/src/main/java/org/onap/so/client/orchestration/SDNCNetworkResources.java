@@ -39,7 +39,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCNetworkResources {
-    private static final Logger logger = LoggerFactory.getLogger(SDNCNetworkResources.class);
 
     @Autowired
     private NetworkTopologyOperationRequestMapper sdncRM;
