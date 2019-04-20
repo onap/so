@@ -84,6 +84,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
     private static final String BRACKETS = "{} {} {} {} {} {} {} {} {}";
+    private static final String OPENSTACK = "OpenStack";
 
     @Autowired
     protected CloudConfig cloudConfig;
@@ -241,7 +242,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         long startTime = System.currentTimeMillis();
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
-            logger.info("{} {} {}", MessageEnum.RA_ROLLBACK_NULL.toString(), "OpenStack", "rollbackVnf");
+            logger.info("{} {} {}", MessageEnum.RA_ROLLBACK_NULL.toString(), OPENSTACK, "rollbackVnf");
             return;
         }
 
@@ -607,7 +608,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             String error = "VNF Resource type: " + vnfResource.getModelName() + ", ModelUuid="
                     + vnfResource.getModelUUID() + " VersionMin=" + vnfMin + " VersionMax:" + vnfMax
                     + " NOT supported on Cloud: " + cloudSiteId + " with AIC_Version:" + cloudSite.getCloudVersion();
-            logger.error("{} {} {} {} {}", MessageEnum.RA_CONFIG_EXC.toString(), error, "OpenStack",
+            logger.error("{} {} {} {} {}", MessageEnum.RA_CONFIG_EXC.toString(), error, OPENSTACK,
                     ErrorCode.BusinessProcesssError.getValue(), "Exception - setVersion");
             logger.debug(error);
             throw new VnfException(error, MsoExceptionCategory.USERDATA);
@@ -819,7 +820,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
             String error = "UpdateVF: No Heat Template ID defined in catalog database for " + vfModuleType
                     + ", reqType=" + requestType;
             logger.error("{} {} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Template ID",
-                    vfModuleType, "OpenStack", ErrorCode.DataError.getValue(), error);
+                    vfModuleType, OPENSTACK, ErrorCode.DataError.getValue(), error);
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
         } else {
             logger.debug("Got HEAT Template from DB: {}", heatTemplate.getHeatTemplate());
@@ -828,7 +829,7 @@ public class MsoVnfCloudifyAdapterImpl implements MsoVnfAdapter {
         if (heatEnvironment == null) {
             String error = "Update VNF: undefined Heat Environment. VF=" + vfModuleType;
             logger.error("{} {} {} {} {}", MessageEnum.RA_VNF_UNKNOWN_PARAM.toString(), "Heat Environment ID",
-                    "OpenStack", ErrorCode.DataError.getValue(), error);
+                    OPENSTACK, ErrorCode.DataError.getValue(), error);
             // Alarm on this error, configuration must be fixed
             throw new VnfException(error, MsoExceptionCategory.INTERNAL);
         } else {
