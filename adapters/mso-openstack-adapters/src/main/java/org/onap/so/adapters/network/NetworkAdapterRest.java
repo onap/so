@@ -87,6 +87,7 @@ public class NetworkAdapterRest {
     private static final Logger logger = LoggerFactory.getLogger(NetworkAdapterRest.class);
     private static final String TESTING_KEYWORD = "___TESTING___";
     private String exceptionMsg = "Exception:";
+    private static final String SHARED = "shared";
 
     @Autowired
     private MsoNetworkAdapterImpl adapter;
@@ -170,7 +171,7 @@ public class NetworkAdapterRest {
 
                 HashMap<String, String> params = (HashMap<String, String>) req.getNetworkParams();
                 if (params == null) {
-                    params = new HashMap<String, String>();
+                    params = new HashMap<>();
                 }
                 String shared = null;
                 String external = null;
@@ -192,8 +193,8 @@ public class NetworkAdapterRest {
                         ctn = new ContrailNetwork();
                         req.setContrailNetwork(ctn);
                     }
-                    if (params.containsKey("shared")) {
-                        shared = params.get("shared");
+                    if (params.containsKey(SHARED)) {
+                        shared = params.get(SHARED);
                     } else {
                         if (ctn.getShared() != null) {
                             shared = ctn.getShared();
@@ -218,8 +219,8 @@ public class NetworkAdapterRest {
                         pvn = new ProviderVlanNetwork();
                         req.setProviderVlanNetwork(pvn);
                     }
-                    if (params.containsKey("shared"))
-                        shared = params.get("shared");
+                    if (params.containsKey(SHARED))
+                        shared = params.get(SHARED);
                     if (params.containsKey("external"))
                         external = params.get("external");
                     adapter.createNetwork(req.getCloudSiteId(), req.getTenantId(), req.getNetworkType(),
@@ -573,8 +574,8 @@ public class NetworkAdapterRest {
                         ctn = new ContrailNetwork();
                         req.setContrailNetwork(ctn);
                     }
-                    if (params.containsKey("shared")) {
-                        shared = params.get("shared");
+                    if (params.containsKey(SHARED)) {
+                        shared = params.get(SHARED);
                     } else {
                         if (ctn.getShared() != null) {
                             shared = ctn.getShared();
@@ -598,8 +599,8 @@ public class NetworkAdapterRest {
                         pvn = new ProviderVlanNetwork();
                         req.setProviderVlanNetwork(pvn);
                     }
-                    if (params.containsKey("shared")) {
-                        shared = params.get("shared");
+                    if (params.containsKey(SHARED)) {
+                        shared = params.get(SHARED);
                     }
                     if (params.containsKey("external")) {
                         external = params.get("external");
