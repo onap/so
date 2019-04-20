@@ -40,7 +40,7 @@ public class SniroConductorRequest implements Serializable {
     private static final Logger logger = LoggerFactory.getLogger(SniroConductorRequest.class);
 
     @JsonProperty("release-locks")
-    private List<Resource> resources = new ArrayList<Resource>();
+    private List<Resource> resources = new ArrayList<>();
 
 
     public List<Resource> getResources() {

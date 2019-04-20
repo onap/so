@@ -37,7 +37,7 @@ public class PlacementInfo implements Serializable {
     @JsonProperty("subscriberInfo")
     private SubscriberInfo subscriberInfo;
     @JsonProperty("placementDemands")
-    private List<Demand> demands = new ArrayList<Demand>();
+    private List<Demand> demands = new ArrayList<>();
     @JsonRawValue
     @JsonProperty("requestParameters")
     private String requestParameters;

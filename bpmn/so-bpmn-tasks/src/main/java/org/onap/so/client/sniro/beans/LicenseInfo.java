@@ -30,7 +30,7 @@ public class LicenseInfo implements Serializable {
     private static final long serialVersionUID = 6878164369491185856L;
 
     @JsonProperty("licenseDemands")
-    private List<Demand> demands = new ArrayList<Demand>();
+    private List<Demand> demands = new ArrayList<>();
 
 
     public List<Demand> getDemands() {
