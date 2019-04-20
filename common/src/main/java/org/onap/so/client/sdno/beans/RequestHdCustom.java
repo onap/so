@@ -49,7 +49,7 @@ public class RequestHdCustom implements Serializable {
     @JsonProperty("send-detailed-cmd-response")
     private String sendDetailedCmdResponse = "false";
     @JsonProperty("aai-param-list")
-    private List<AAIParamList> aaiParamList = new ArrayList<AAIParamList>();
+    private List<AAIParamList> aaiParamList = new ArrayList<>();
 
     /**
      * No args constructor for use in serialization

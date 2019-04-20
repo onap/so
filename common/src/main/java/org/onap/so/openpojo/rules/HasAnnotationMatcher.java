@@ -64,6 +64,6 @@ public class HasAnnotationMatcher<T extends PojoField> extends TypeSafeDiagnosin
 
     public static <T extends PojoField> Matcher<T> hasAnnotation(final Class<? extends Annotation> annotationType,
             final Matcher<? super T> annotationMatcher) {
-        return new HasAnnotationMatcher<T>(annotationType, annotationMatcher);
+        return new HasAnnotationMatcher<>(annotationType, annotationMatcher);
     }
 }

@@ -78,6 +78,6 @@ public class HasAnnotationPropertyWithValueMatcher<T extends PojoField> extends 
 
     public static <T extends PojoField> Matcher<T> hasAnnotationPropertyWithValue(Class<? extends Annotation> clazz,
             String attribute, final Matcher<?> annotationMatcher) {
-        return new HasAnnotationPropertyWithValueMatcher<T>(clazz, attribute, annotationMatcher);
+        return new HasAnnotationPropertyWithValueMatcher<>(clazz, attribute, annotationMatcher);
     }
 }
