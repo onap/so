@@ -22,6 +22,7 @@ package org.onap.so.db.catalog.beans;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,6 +33,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -65,6 +67,9 @@ public class VnfcInstanceGroupCustomization implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "INSTANCE_GROUP_MODEL_UUID")
     private InstanceGroup instanceGroup;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "vnfcInstanceGroupCustomization")
+    private List<VnfcCustomization> vnfcCustomizations;
 
     @Column(name = "FUNCTION")
     private String function;
@@ -149,5 +154,13 @@ public class VnfcInstanceGroupCustomization implements Serializable {
 
     public void setInstanceGroup(InstanceGroup instanceGroup) {
         this.instanceGroup = instanceGroup;
+    }
+
+    public List<VnfcCustomization> getVnfcCustomizations() {
+        return vnfcCustomizations;
+    }
+
+    public void setVnfcCustomizations(List<VnfcCustomization> vnfcCustomizations) {
+        this.vnfcCustomizations = vnfcCustomizations;
     }
 }
