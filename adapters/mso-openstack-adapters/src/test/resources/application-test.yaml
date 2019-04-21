@@ -92,7 +92,7 @@ spring:
     generate-ddl: false
     show-sql: false
     hibernate:      
-      ddl-auto: none
+      ddl-auto: validate
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   security:
     usercredentials:
@@ -105,7 +105,6 @@ mariaDB4j:
   dataDir: 
   port: 3308
   databaseName: catalogdb
-
 
 #Actuator
 management:
@@ -121,3 +120,20 @@ management:
       prometheus:
         enabled: true # Whether exporting of metrics to Prometheus is enabled.
         step: 1m # Step size (i.e. reporting frequency) to use.  
+
+appc:
+  client:
+    key: iaEMAfjsVsZnraBP
+    response:
+      timeout: '120000'
+    secret: wcivUjsjXzmGFBfxMmyJu9dz
+    poolMembers: localhost
+    service: ueb
+    topic:
+      read:
+        name: APPC-TEST-AMDOCS2
+        timeout: '120000'
+      write: APPC-TEST-AMDOCS1-DEV3
+      sdnc:
+        read: SDNC-LCM-READ
+        write: SDNC-LCM-WRITE

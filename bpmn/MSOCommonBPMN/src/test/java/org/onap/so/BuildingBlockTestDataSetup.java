@@ -325,6 +325,7 @@ public class BuildingBlockTestDataSetup {
             gBBInput.setCustomer(buildCustomer());
         }
         gBBInput.getCustomer().getServiceSubscription().getServiceInstances().add(serviceInstance);
+        gBBInput.setServiceInstance(serviceInstance);
         lookupKeyMap.put(ResourceKey.SERVICE_INSTANCE_ID, serviceInstance.getServiceInstanceId());
 
         return serviceInstance;

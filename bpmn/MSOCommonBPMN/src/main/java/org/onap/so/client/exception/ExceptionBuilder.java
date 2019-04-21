@@ -22,20 +22,39 @@
 
 package org.onap.so.client.exception;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.camunda.bpm.engine.delegate.BpmnError;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
+import org.onap.aai.domain.yang.LInterface;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.bpmn.common.BuildingBlockExecution;
 import org.onap.so.bpmn.common.DelegateExecutionImpl;
 import org.onap.so.bpmn.core.WorkflowException;
 import org.onap.so.logger.ErrorCode;
+import org.onap.so.bpmn.servicedecomposition.bbobjects.VfModule;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
 import org.onap.so.logger.MessageEnum;
+import org.onap.so.objects.audit.AAIObjectAudit;
+import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+
 @Component
 public class ExceptionBuilder {
     private static final Logger logger = LoggerFactory.getLogger(ExceptionBuilder.class);
+
+
+    protected ExtractPojosForBB getExtractPojosForBB() {
+        return new ExtractPojosForBB();
+    }
 
     public void buildAndThrowWorkflowException(BuildingBlockExecution execution, int errorCode, Exception exception) {
         String msg = "Exception in %s.%s ";
@@ -131,5 +150,64 @@ public class ExceptionBuilder {
         }
         return execution.getProcessEngineServices().getRepositoryService()
                 .getProcessDefinition(execution.getProcessDefinitionId()).getKey();
+    }
+
+    public void processAuditException(DelegateExecutionImpl execution) {
+        logger.info("Building a WorkflowException for Subflow");
+
+        StringBuilder errorMessage = new StringBuilder();
+        String processKey = getProcessKey(execution.getDelegateExecution());
+        try {
+            ExtractPojosForBB extractPojosForBB = getExtractPojosForBB();
+            VfModule module = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
+            String cloudRegionId = execution.getGeneralBuildingBlock().getCloudRegion().getLcpCloudRegionId();
+
+            GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
+            String auditListString = (String) execution.getVariable("auditInventoryResult");
+            AAIObjectAuditList auditList =
+                    objectMapper.getMapper().readValue(auditListString, AAIObjectAuditList.class);
+
+            errorMessage = errorMessage.append(auditList.getAuditType() + " VF-Module " + module.getVfModuleId()
+                    + " failed due to incomplete A&AI vserver inventory population after stack "
+                    + auditList.getHeatStackName() + " was successfully " + auditList.getAuditType()
+                    + "d in cloud region " + cloudRegionId + ". MSO Audit indicates that AIC RO did not "
+                    + auditList.getAuditType() + " ");
+
+            Stream<AAIObjectAudit> vServerLInterfaceAuditStream = auditList.getAuditList().stream()
+                    .filter(auditObject -> auditObject.getAaiObjectType().equals(AAIObjectType.VSERVER.typeName())
+                            || auditObject.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName()));
+            List<AAIObjectAudit> filteredAuditStream =
+                    vServerLInterfaceAuditStream.filter(a -> !a.isDoesObjectExist()).collect(Collectors.toList());
+
+            for (AAIObjectAudit object : filteredAuditStream) {
+                if (object.getAaiObjectType().equals(AAIObjectType.L_INTERFACE.typeName())) {
+                    LInterface li = objectMapper.getMapper().convertValue(object.getAaiObject(), LInterface.class);
+                    errorMessage = errorMessage
+                            .append(AAIObjectType.L_INTERFACE.typeName() + " " + li.getInterfaceId() + ", ");
+                } else {
+                    Vserver vs = objectMapper.getMapper().convertValue(object.getAaiObject(), Vserver.class);
+                    errorMessage =
+                            errorMessage.append(AAIObjectType.VSERVER.typeName() + " " + vs.getVserverId() + ", ");
+                }
+            }
+
+            if (errorMessage.length() > 0) {
+                errorMessage.setLength(errorMessage.length() - 2);
+                errorMessage = errorMessage.append(" in AAI. ");
+            }
+
+        } catch (IOException | BBObjectNotFoundException e) {
+            errorMessage = errorMessage.append("process objects in AAI. ");
+        }
+
+        errorMessage.append(
+                "Recommendation - Wait for nightly RO Audit to run and fix the data issue and resume vf-module creation in VID. If problem persists then report problem to AIC/RO Ops.");
+
+        WorkflowException exception = new WorkflowException(processKey, 400, errorMessage.toString());
+        execution.setVariable("WorkflowException", exception);
+        execution.setVariable("WorkflowExceptionErrorMessage", errorMessage);
+        logger.info("Outgoing WorkflowException is {}", exception);
+        logger.info("Throwing MSOWorkflowException");
+        throw new BpmnError("MSOWorkflowException");
     }
 }

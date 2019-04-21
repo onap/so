@@ -7,9 +7,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,16 +21,65 @@
 package org.onap.so.client.exception;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import org.camunda.bpm.engine.delegate.BpmnError;
+import org.junit.Before;
 import org.junit.Test;
-import org.onap.so.bpmn.mock.FileUtil;
+import org.mockito.ArgumentMatchers;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.BaseTest;
+import org.onap.so.bpmn.common.DelegateExecutionImpl;
+import org.onap.so.bpmn.core.WorkflowException;
+import org.onap.so.bpmn.mock.FileUtil;
+import org.onap.so.bpmn.servicedecomposition.entities.ResourceKey;
+import org.onap.so.bpmn.servicedecomposition.tasks.ExtractPojosForBB;
+import org.onap.so.client.aai.AAIObjectType;
+import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.so.objects.audit.AAIObjectAudit;
+import org.onap.so.objects.audit.AAIObjectAuditList;
+import org.springframework.beans.BeanUtils;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 public class ExceptionBuilderTest extends BaseTest {
 
     private static final String RESOURCE_PATH = "__files/";
     private static final String VALID_ERROR_MESSAGE = "{test error message}";
+
+    @Mock
+    protected ExtractPojosForBB extractPojosForBB;
+
+    @Spy
+    @InjectMocks
+    private ExceptionBuilder exceptionBuilder = new ExceptionBuilder();
+
+    GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
+
+    @Before
+    public void before() throws BBObjectNotFoundException, JsonProcessingException {
+        setCloudRegion();
+        when(extractPojosForBB.extractByKey(any(), ArgumentMatchers.eq(ResourceKey.VF_MODULE_ID)))
+                .thenReturn(buildVfModule());
+        AAIObjectAuditList auditList = new AAIObjectAuditList();
+        auditList.setAuditType("create");
+        auditList.setHeatStackName("testStackName");
+        AAIObjectAudit vserver = new AAIObjectAudit();
+        vserver.setAaiObjectType(AAIObjectType.VSERVER.typeName());
+        vserver.setDoesObjectExist(false);
+        Vserver vs = new Vserver();
+        vs.setVserverId("testVServerId");
+        Vserver vServerShallow = new Vserver();
+        BeanUtils.copyProperties(vs, vServerShallow, "LInterfaces");
+        vserver.setAaiObject(vServerShallow);
+        auditList.getAuditList().add(vserver);
+
+        execution.setVariable("auditInventoryResult", objectMapper.getMapper().writeValueAsString(auditList));
+    }
 
 
     @Test
@@ -77,4 +126,20 @@ public class ExceptionBuilderTest extends BaseTest {
             assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
         }
     }
+
+    @Test
+    public void processAuditExceptionTest() {
+        try {
+            Mockito.doReturn(extractPojosForBB).when(exceptionBuilder).getExtractPojosForBB();
+            exceptionBuilder.processAuditException((DelegateExecutionImpl) execution);
+        } catch (BpmnError bpmnException) {
+            assertEquals("MSOWorkflowException", bpmnException.getErrorCode());
+            WorkflowException we = execution.getVariable("WorkflowException");
+            assertNotNull(we);
+            assertEquals(
+                    "create VF-Module testVfModuleId1 failed due to incomplete A&AI vserver inventory population after stack testStackName was successfully created in cloud region testLcpCloudRegionId. MSO Audit indicates that AIC RO did not create vserver testVServerId in AAI. Recommendation - Wait for nightly RO Audit to run and fix the data issue and resume vf-module creation in VID. If problem persists then report problem to AIC/RO Ops.",
+                    we.getErrorMessage());
+        }
+    }
+
 }

@@ -22,11 +22,11 @@ package org.onap.so.adapters.inventory.create;
 
 import java.util.Optional;
 import java.util.stream.Stream;
-import org.onap.so.adapters.audit.AAIObjectAudit;
-import org.onap.so.adapters.audit.AAIObjectAuditList;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.AAIResourcesClient;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
+import org.onap.so.objects.audit.AAIObjectAudit;
+import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.springframework.stereotype.Component;
 
 @Component
