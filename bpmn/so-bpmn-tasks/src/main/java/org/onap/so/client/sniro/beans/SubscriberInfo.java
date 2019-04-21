@@ -22,7 +22,6 @@ package org.onap.so.client.sniro.beans;
 
 import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 @JsonRootName("subscriberInfo")
