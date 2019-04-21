@@ -23,8 +23,6 @@ package org.onap.so.apihandlerinfra;
 
 public class Constants {
 
-    private Constants() {}
-
     public static final String REQUEST_ID_PATH = "/{request-id}";
 
     public static final String STATUS_SUCCESS = "SUCCESS";
@@ -49,5 +47,7 @@ public class Constants {
     public final static String SERVICE_INSTANCE_PATH = "/serviceInstances";
     public final static String SERVICE_INSTANTIATION_PATH = "/serviceInstantiation";
     public final static String ORCHESTRATION_REQUESTS_PATH = "/orchestrationRequests";
+
+    private Constants() {}
 
 }
