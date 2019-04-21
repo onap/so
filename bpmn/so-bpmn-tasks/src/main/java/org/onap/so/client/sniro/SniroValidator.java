@@ -49,7 +49,7 @@ public class SniroValidator {
             JSONObject jsonResponse = new JSONObject(response);
             if (jsonResponse.has("requestStatus")) {
                 String status = jsonResponse.getString("requestStatus");
-                if (status.equals("accepted")) {
+                if ("accepted".equals(status)) {
                     logger.debug("Sniro Managers synchronous response indicates accepted");
                 } else {
                     String message = jsonResponse.getString("statusMessage");
@@ -111,7 +111,7 @@ public class SniroValidator {
         if (!response.isEmpty()) {
             String status = (String) response.get("status");
             if (isNotBlank(status)) {
-                if (status.equals("success")) {
+                if ("success".equals(status)) {
                     logger.debug("Sniro Conductors synchronous response indicates success");
                 } else {
                     String message = (String) response.get("message");
