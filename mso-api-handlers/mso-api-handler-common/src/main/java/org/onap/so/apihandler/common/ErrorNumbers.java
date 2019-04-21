@@ -22,8 +22,6 @@ package org.onap.so.apihandler.common;
 
 public final class ErrorNumbers {
 
-    private ErrorNumbers() {}
-
     public static final String REQUEST_FAILED_SCHEMA_VALIDATION = "1000";
     public static final String RECIPE_DOES_NOT_EXIST = "1010";
     public static final String VFMODULE_TYPE_DOES_NOT_EXIST = "1011";
@@ -72,5 +70,7 @@ public final class ErrorNumbers {
     public static final String SVC_BAD_PARAMETER = "SVC0002";
     public static final String SVC_NO_SERVER_RESOURCES = "SVC1000";
     public static final String SVC_DETAILED_SERVICE_ERROR = "SVC2000";
+
+    private ErrorNumbers() {}
 
 }
