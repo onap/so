@@ -39,8 +39,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class SDNCClient {
 
-    private static final Logger logger = LoggerFactory.getLogger(SDNCClient.class);
-
     @Autowired
     private SDNCProperties properties;
     @Autowired

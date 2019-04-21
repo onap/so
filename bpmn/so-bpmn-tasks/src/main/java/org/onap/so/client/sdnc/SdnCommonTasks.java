@@ -52,6 +52,7 @@ public class SdnCommonTasks {
     private static final String SDNC_CODE_NOT_0_OR_IN_200_299 = "Error from SDNC: %s";
     private static final String COULD_NOT_CONVERT_SDNC_POJO_TO_JSON =
             "ERROR: Could not convert SDNC pojo to json string.";
+    private static final String BRACKETS = "{} {} {} {} {}";
 
     /***
      * 
@@ -66,8 +67,8 @@ public class SdnCommonTasks {
         try {
             jsonRequest = objMapper.writerWithDefaultPrettyPrinter().writeValueAsString(request);
         } catch (JsonProcessingException e) {
-            logger.error("{} {} {} {} {}", MessageEnum.JAXB_EXCEPTION.toString(), COULD_NOT_CONVERT_SDNC_POJO_TO_JSON,
-                    "BPMN", ErrorCode.DataError.getValue(), e.getMessage());
+            logger.error(BRACKETS, MessageEnum.JAXB_EXCEPTION.toString(), COULD_NOT_CONVERT_SDNC_POJO_TO_JSON, "BPMN",
+                    ErrorCode.DataError.getValue(), e.getMessage());
             throw new MapperException(COULD_NOT_CONVERT_SDNC_POJO_TO_JSON);
         }
         jsonRequest = "{\"input\":" + jsonRequest + "}";
@@ -84,7 +85,7 @@ public class SdnCommonTasks {
         HttpHeaders httpHeader = new HttpHeaders();
         httpHeader.set("Authorization", auth);
         httpHeader.setContentType(MediaType.APPLICATION_JSON);
-        List<MediaType> acceptMediaTypes = new ArrayList<MediaType>();
+        List<MediaType> acceptMediaTypes = new ArrayList<>();
         acceptMediaTypes.add(MediaType.APPLICATION_JSON);
         httpHeader.setAccept(acceptMediaTypes);
         return httpHeader;
@@ -98,7 +99,7 @@ public class SdnCommonTasks {
      */
     public String validateSDNResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
         if (CollectionUtils.isEmpty(output)) {
-            logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
+            logger.error(BRACKETS, MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
                     ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
             throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
         }
@@ -125,7 +126,7 @@ public class SdnCommonTasks {
             return jsonResponse;
         } else {
             String errorMessage = String.format(SDNC_CODE_NOT_0_OR_IN_200_299, responseMessage);
-            logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), errorMessage, "BPMN",
+            logger.error(BRACKETS, MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), errorMessage, "BPMN",
                     ErrorCode.DataError.getValue(), errorMessage);
             throw new BadResponseException(errorMessage);
         }
@@ -139,7 +140,7 @@ public class SdnCommonTasks {
      */
     public String validateSDNGetResponse(LinkedHashMap<String, Object> output) throws BadResponseException {
         if (CollectionUtils.isEmpty(output)) {
-            logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
+            logger.error(BRACKETS, MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), NO_RESPONSE_FROM_SDNC, "BPMN",
                     ErrorCode.UnknownError.getValue(), NO_RESPONSE_FROM_SDNC);
             throw new BadResponseException(NO_RESPONSE_FROM_SDNC);
         }
@@ -149,7 +150,7 @@ public class SdnCommonTasks {
         try {
             stringOutput = objMapper.writeValueAsString(output);
         } catch (Exception e) {
-            logger.error("{} {} {} {} {}", MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), BAD_RESPONSE_FROM_SDNC, "BPMN",
+            logger.error(BRACKETS, MessageEnum.RA_RESPONSE_FROM_SDNC.toString(), BAD_RESPONSE_FROM_SDNC, "BPMN",
                     ErrorCode.UnknownError.getValue(), BAD_RESPONSE_FROM_SDNC);
             throw new BadResponseException(BAD_RESPONSE_FROM_SDNC);
         }
