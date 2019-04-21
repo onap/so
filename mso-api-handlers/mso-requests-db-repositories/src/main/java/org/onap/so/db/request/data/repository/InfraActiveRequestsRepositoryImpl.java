@@ -89,6 +89,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
     protected static final String REQUEST_ID = "requestId";
     protected static final String REQUESTOR_ID = "requestorId";
     protected static final String ACTION = "action";
+    protected static final String OPENV = "operationalEnvironment";
 
     private static final List<String> VALID_COLUMNS =
             Arrays.asList(REQUEST_ID, SERVICE_INSTANCE_ID, SERVICE_INSTANCE_NAME, ACTION, REQUEST_STATUS);
@@ -173,13 +174,13 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                 predicates.add(cb.equal(tableRoot.get(NETWORK_INSTANCE_NAME), instanceName));
             } else if (requestScope.equals("configuration")) {
                 predicates.add(cb.equal(tableRoot.get(CONFIGURATION_INSTANCE_NAME), instanceName));
-            } else if (requestScope.equals("operationalEnvironment")) {
+            } else if (requestScope.equals(OPENV)) {
                 predicates.add(cb.equal(tableRoot.get(OPERATIONAL_ENV_NAME), instanceName));
             }
 
         } else {
             if (instanceIdMap != null) {
-                if ("service".equals(requestScope) && instanceIdMap.get("serviceInstanceId") != null) {
+                if ("service".equals(requestScope) && instanceIdMap.get(SERVICE_INSTANCE_ID) != null) {
                     predicates
                             .add(cb.equal(tableRoot.get(SERVICE_INSTANCE_ID), instanceIdMap.get("serviceInstanceId")));
                 }
@@ -208,8 +209,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
                             instanceIdMap.get("configurationInstanceId")));
                 }
 
-                if (requestScope.equals("operationalEnvironment")
-                        && instanceIdMap.get("operationalEnvironmentId") != null) {
+                if (requestScope.equals(OPENV) && instanceIdMap.get("operationalEnvironmentId") != null) {
                     predicates.add(
                             cb.equal(tableRoot.get(OPERATIONAL_ENV_ID), instanceIdMap.get("operationalEnvironmentId")));
                 }
@@ -336,7 +336,7 @@ public class InfraActiveRequestsRepositoryImpl implements InfraActiveRequestsRep
         // as the same requestorId can also match on different API methods
         final String resourceType = orchestrationMap.get("resourceType");
         if (resourceType == null) {
-            predicates.add(cb.equal(tableRoot.get("requestScope"), "operationalEnvironment"));
+            predicates.add(cb.equal(tableRoot.get("requestScope"), OPENV));
         }
 
         for (final Map.Entry<String, String> entry : orchestrationMap.entrySet()) {
