@@ -39,6 +39,8 @@ public class CamundaResponse {
     private String processInstanceID;
     @JsonProperty("variables")
     private String variables;
+    
+    public CamundaResponse() {}
 
     public String getProcessInstanceID() {
         return processInstanceID;
@@ -55,8 +57,6 @@ public class CamundaResponse {
     public void setVariables(String variables) {
         this.variables = variables;
     }
-
-    public CamundaResponse() {}
 
     public String getResponse() {
         return response;
