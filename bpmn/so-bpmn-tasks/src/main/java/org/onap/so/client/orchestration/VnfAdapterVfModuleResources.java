@@ -40,7 +40,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VnfAdapterVfModuleResources {
-    private static final Logger logger = LoggerFactory.getLogger(VnfAdapterVfModuleResources.class);
 
     @Autowired
     private VnfAdapterVfModuleObjectMapper vnfAdapterVfModuleObjectMapper;
