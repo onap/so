@@ -984,7 +984,8 @@ public class ToscaResourceInstaller {
                 }
 
 
-                service.getVnfCustomizations().add(vnfResource);
+                // add this vnfResource with existing vnfResource for this service
+                addVnfCustomization(service, vnfResource);
             } else {
                 logger.debug("Notification VF ResourceCustomizationUUID: "
                         + vfNotificationResource.getResourceCustomizationUUID() + " doesn't match "
@@ -2438,6 +2439,19 @@ public class ToscaResourceInstaller {
         }
 
         return inputName;
+    }
+
+    // this method add provided vnfCustomization to service with
+    // existing customization available in db.
+    private void addVnfCustomization(Service service, VnfResourceCustomization vnfResourceCustomization) {
+        List<Service> services = serviceRepo.findByModelUUID(service.getModelUUID());
+        if (services.size() > 0) {
+            // service exist in db
+            Service existingService = services.get(0);
+            List<VnfResourceCustomization> vnfCustomizations = existingService.getVnfCustomizations();
+            vnfCustomizations.forEach(e -> service.getVnfCustomizations().add(e));
+        }
+        service.getVnfCustomizations().add(vnfResourceCustomization);
     }
 
 
