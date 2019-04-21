@@ -43,6 +43,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.onap.aai.domain.yang.LInterface;
 import org.onap.aai.domain.yang.LInterfaces;
 import org.onap.aai.domain.yang.Vserver;
+import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.onap.so.openstack.utils.MsoHeatUtils;
 import org.onap.so.openstack.utils.MsoNeutronUtils;
 import org.skyscreamer.jsonassert.JSONAssert;

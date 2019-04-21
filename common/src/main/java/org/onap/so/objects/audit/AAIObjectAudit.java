@@ -1,4 +1,4 @@
-package org.onap.so.adapters.audit;
+package org.onap.so.objects.audit;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -7,7 +7,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 public class AAIObjectAudit implements Serializable {
 
     /**
-     * 
+     *
      */
     private static final long serialVersionUID = -4560928512855386021L;
     private boolean doesObjectExist = false;
@@ -52,4 +52,5 @@ public class AAIObjectAudit implements Serializable {
     public void setResourceURI(URI resourceURI) {
         this.resourceURI = resourceURI;
     }
+
 }
