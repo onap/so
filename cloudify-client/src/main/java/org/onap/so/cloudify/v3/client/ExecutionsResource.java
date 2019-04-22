@@ -33,6 +33,7 @@ import org.onap.so.cloudify.base.client.CloudifyRequest;
 public class ExecutionsResource {
 
     private final CloudifyClient client;
+    private static final String EXECUTIONS_PATH = "/api/v3/executions/";
 
     public ExecutionsResource(CloudifyClient client) {
         this.client = client;
@@ -76,7 +77,7 @@ public class ExecutionsResource {
 
     public class GetExecution extends CloudifyRequest<Execution> {
         public GetExecution(String id) {
-            super(client, HttpMethod.GET, "/api/v3/executions/" + id, null, Execution.class);
+            super(client, HttpMethod.GET, EXECUTIONS_PATH + id, null, Execution.class);
         }
     }
 
@@ -95,13 +96,13 @@ public class ExecutionsResource {
 
     public class UpdateExecution extends CloudifyRequest<Execution> {
         public UpdateExecution(String executionId, UpdateExecutionParams body) {
-            super(client, HttpMethod.PATCH, "/api/v3/executions/" + executionId, Entity.json(body), Execution.class);
+            super(client, HttpMethod.PATCH, EXECUTIONS_PATH + executionId, Entity.json(body), Execution.class);
         }
     }
 
     public class CancelExecution extends CloudifyRequest<Execution> {
         public CancelExecution(String executionId, CancelExecutionParams body) {
-            super(client, HttpMethod.POST, "/api/v3/executions/" + executionId, Entity.json(body), Execution.class);
+            super(client, HttpMethod.POST, EXECUTIONS_PATH + executionId, Entity.json(body), Execution.class);
         }
     }
 
