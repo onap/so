@@ -49,7 +49,7 @@ public class AAIConfigurationResources {
     public void createConfiguration(Configuration configuration) {
         AAIResourceUri configurationURI =
                 AAIUriFactory.createResourceUri(AAIObjectType.CONFIGURATION, configuration.getConfigurationId());
-        configuration.setOrchestrationStatus(OrchestrationStatus.ASSIGNED);
+        configuration.setOrchestrationStatus(OrchestrationStatus.INVENTORIED);
         org.onap.aai.domain.yang.Configuration aaiConfiguration = aaiObjectMapper.mapConfiguration(configuration);
         injectionHelper.getAaiClient().create(configurationURI, aaiConfiguration);
     }

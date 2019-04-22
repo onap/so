@@ -666,6 +666,18 @@ public class AAIUpdateTasksTest extends BaseTaskTest {
     }
 
     @Test
+    public void updateOrchestrationStatusAssignedFabricConfigurationTest() throws Exception {
+        gBBInput = execution.getGeneralBuildingBlock();
+        doNothing().when(aaiConfigurationResources).updateOrchestrationStatusConfiguration(configuration,
+                OrchestrationStatus.ASSIGNED);
+
+        aaiUpdateTasks.updateOrchestrationStatusAssignFabricConfiguration(execution);
+
+        verify(aaiConfigurationResources, times(1)).updateOrchestrationStatusConfiguration(configuration,
+                OrchestrationStatus.ASSIGNED);
+    }
+
+    @Test
     public void updateContrailServiceInstanceFqdnVfModuleTest() throws Exception {
         execution.setVariable("contrailServiceInstanceFqdn", "newContrailServiceInstanceFqdn");
         doNothing().when(aaiVfModuleResources).updateContrailServiceInstanceFqdnVfModule(vfModule, genericVnf);
