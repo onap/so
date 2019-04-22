@@ -47,7 +47,7 @@ public class ExtractPojosForBB {
         return extractByKey(execution, key, execution.getLookupMap().get(key));
     }
 
-    public <T> T extractByKey(BuildingBlockExecution execution, ResourceKey key, String value)
+    protected <T> T extractByKey(BuildingBlockExecution execution, ResourceKey key, String value)
             throws BBObjectNotFoundException {
 
         Optional<T> result = Optional.empty();
