@@ -31,6 +31,7 @@ import org.onap.so.cloudify.base.client.CloudifyRequest;
 public class BlueprintsResource {
 
     private final CloudifyClient client;
+    private static final String BLUEPRINTS_PATH = "/api/v3/blueprints/";
 
     public BlueprintsResource(CloudifyClient client) {
         this.client = client;
@@ -72,7 +73,7 @@ public class BlueprintsResource {
             // If a URL is provided, add it to the query string
             // If a Stream is provided, set it as the Entity body
             super(client, HttpMethod.PUT,
-                    "/api/v3/blueprints/" + blueprintId + "?application_file_name=" + mainFileName
+                    BLUEPRINTS_PATH + blueprintId + "?application_file_name=" + mainFileName
                             + ((blueprintUrl != null) ? "&blueprint_archive=" + blueprintUrl : ""),
                     ((blueprint != null) ? Entity.stream(blueprint) : null), Blueprint.class);
         }
@@ -80,13 +81,13 @@ public class BlueprintsResource {
 
     public class DeleteBlueprint extends CloudifyRequest<Blueprint> {
         public DeleteBlueprint(String blueprintId) {
-            super(client, HttpMethod.DELETE, "/api/v3/blueprints/" + blueprintId, null, Blueprint.class);
+            super(client, HttpMethod.DELETE, BLUEPRINTS_PATH + blueprintId, null, Blueprint.class);
         }
     }
 
     public class GetBlueprint extends CloudifyRequest<Blueprint> {
         public GetBlueprint(String id, String queryArgs) {
-            super(client, HttpMethod.GET, "/api/v3/blueprints/" + id + queryArgs, null, Blueprint.class);
+            super(client, HttpMethod.GET, BLUEPRINTS_PATH + id + queryArgs, null, Blueprint.class);
         }
     }
 
