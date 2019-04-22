@@ -37,6 +37,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.onap.so.audit.beans.AuditInventory;
+import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.springframework.core.env.Environment;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;

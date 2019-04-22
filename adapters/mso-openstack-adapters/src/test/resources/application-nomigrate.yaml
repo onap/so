@@ -113,3 +113,20 @@ management:
   endpoint:
     info:
       enabled: true
+
+appc:
+  client:
+    key: iaEMAfjsVsZnraBP
+    response:
+      timeout: '120000'
+    secret: wcivUjsjXzmGFBfxMmyJu9dz
+    poolMembers: localhost
+    service: ueb
+    topic:
+      read:
+        name: APPC-TEST-AMDOCS2
+        timeout: '120000'
+      write: APPC-TEST-AMDOCS1-DEV3
+      sdnc:
+        read: SDNC-LCM-READ
+        write: SDNC-LCM-WRITE

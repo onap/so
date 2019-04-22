@@ -3,6 +3,8 @@ package org.onap.so.adapters.audit;
 import java.util.Optional;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
+import org.onap.so.objects.audit.AAIObjectAudit;
+import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;

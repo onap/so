@@ -112,10 +112,6 @@ public class DelegateExecutionImpl implements BuildingBlockExecution, Serializab
         return this.get("flowToBeCalled");
     }
 
-    @JsonIgnore
-    public DelegateExecution getDelegateExecution() {
-        return this.execution;
-    }
 
     public void setDelegateExecution(final DelegateExecution execution) {
         this.execution = execution;
@@ -124,6 +120,11 @@ public class DelegateExecutionImpl implements BuildingBlockExecution, Serializab
                 execution.setVariable(key, value);
             }
         });
+    }
+
+    @JsonIgnore
+    public DelegateExecution getDelegateExecution() {
+        return this.execution;
     }
 
     @SuppressWarnings("unchecked")

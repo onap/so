@@ -28,6 +28,8 @@ import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIResourceUri;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
 import org.onap.so.client.graphinventory.GraphInventoryCommonObjectMapperProvider;
+import org.onap.so.objects.audit.AAIObjectAudit;
+import org.onap.so.objects.audit.AAIObjectAuditList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
