@@ -81,6 +81,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 @Component("OofHoming")
 public class OofHomingV2 {
 
+    public static final String ERROR_WHILE_PREPARING_OOF_REQUEST = " Error - while preparing oof request: ";
     private static final Logger logger = LoggerFactory.getLogger(OofHomingV2.class);
     private JsonUtils jsonUtils = new JsonUtils();
     @Autowired
@@ -91,13 +92,9 @@ public class OofHomingV2 {
     private OofValidator oofValidator;
     @Autowired
     private ExceptionBuilder exceptionUtil;
-    private static final String MODEL_NAME = "modelName";
     private static final String MODEL_INVARIANT_ID = "modelInvariantId";
     private static final String MODEL_VERSION_ID = "modelVersionId";
-    private static final String MODEL_VERSION = "modelVersion";
     private static final String SERVICE_RESOURCE_ID = "serviceResourceId";
-    private static final String RESOURCE_MODULE_NAME = "resourceModuleName";
-    private static final String RESOURCE_MODEL_INFO = "resourceModelInfo";
     private static final String IDENTIFIER_TYPE = "identifierType";
     private static final String SOLUTIONS = "solutions";
     private static final String RESOURCE_MISSING_DATA = "Resource does not contain: ";
@@ -128,7 +125,7 @@ public class OofHomingV2 {
 
             OofRequest oofRequest = new OofRequest();
 
-            RequestInfo requestInfo = (RequestInfo) buildRequestInfo(requestId, timeout);
+            RequestInfo requestInfo = buildRequestInfo(requestId, timeout);
             oofRequest.setRequestInformation(requestInfo);
 
             ServiceInfo serviceInfo = buildServiceInfo(serviceInstance);
@@ -157,13 +154,13 @@ public class OofHomingV2 {
 
             logger.trace("Completed Oof Homing Call Oof");
         } catch (BpmnError e) {
-            logger.debug(" Error - while preparing oof request: " + e.getStackTrace());
+            logger.debug(ERROR_WHILE_PREPARING_OOF_REQUEST + e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(e.getErrorCode()), e.getMessage());
         } catch (BadResponseException e) {
-            logger.debug(" Error - while preparing oof request: " + e.getStackTrace());
+            logger.debug(ERROR_WHILE_PREPARING_OOF_REQUEST + e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, 400, e.getMessage());
         } catch (Exception e) {
-            logger.debug(" Error - while preparing oof request: " + e.getStackTrace());
+            logger.debug(ERROR_WHILE_PREPARING_OOF_REQUEST + e.getStackTrace());
             exceptionUtil.buildAndThrowWorkflowException(execution, INTERNAL, "Internal Error - occurred while "
                     + "preparing oof request: " + e + "   Stack:" + ExceptionUtils.getFullStackTrace(e));
         }
