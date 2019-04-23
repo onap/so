@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class VnfAdapterDeleteTasks {
-    private static final Logger logger = LoggerFactory.getLogger(VnfAdapterDeleteTasks.class);
+
     private static final String VNFREST_REQUEST = "VNFREST_Request";
 
     @Autowired
