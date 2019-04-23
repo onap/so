@@ -104,7 +104,7 @@ public class QueryServiceNetworks extends CatalogQuery {
             if (first)
                 sb.append("\n");
             first = false;
-            boolean nrNull = o.getNetworkResource() == null ? true : false;
+            boolean nrNull = o.getNetworkResource() == null;
             put(valueMap, "MODEL_NAME", nrNull ? null : o.getNetworkResource().getModelName());
             put(valueMap, "MODEL_UUID", nrNull ? null : o.getNetworkResource().getModelUUID());
             put(valueMap, "MODEL_INVARIANT_ID", nrNull ? null : o.getNetworkResource().getModelInvariantUUID());

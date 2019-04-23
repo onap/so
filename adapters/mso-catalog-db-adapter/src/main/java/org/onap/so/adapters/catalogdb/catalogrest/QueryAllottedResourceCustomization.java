@@ -104,7 +104,7 @@ public class QueryAllottedResourceCustomization extends CatalogQuery {
 
                 first = false;
 
-                boolean arNull = o.getAllottedResource() == null ? true : false;
+                boolean arNull = o.getAllottedResource() == null;
 
                 put(valueMap, "MODEL_NAME", arNull ? null : o.getAllottedResource().getModelName());
                 put(valueMap, "MODEL_UUID", arNull ? null : o.getAllottedResource().getModelUUID());

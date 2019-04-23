@@ -97,7 +97,7 @@ public class QueryVfModule extends CatalogQuery {
                 sb.append("\n");
             first = false;
 
-            boolean vfNull = o.getVfModule() == null ? true : false;
+            boolean vfNull = o.getVfModule() == null;
             boolean hasVolumeGroup = false;
             HeatEnvironment envt = o.getVolumeHeatEnv();
             if (envt != null) {
@@ -109,10 +109,10 @@ public class QueryVfModule extends CatalogQuery {
             put(valueMap, "MODEL_INVARIANT_ID", vfNull ? null : o.getVfModule().getModelInvariantUUID());
             put(valueMap, "MODEL_VERSION", vfNull ? null : o.getVfModule().getModelVersion());
             put(valueMap, "MODEL_CUSTOMIZATION_UUID", o.getModelCustomizationUUID());
-            put(valueMap, "IS_BASE", vfNull ? false : o.getVfModule().getIsBase() ? true : false);
+            put(valueMap, "IS_BASE", !vfNull && (o.getVfModule().getIsBase()));
             put(valueMap, "VF_MODULE_LABEL", o.getLabel());
             put(valueMap, "INITIAL_COUNT", o.getInitialCount());
-            put(valueMap, "HAS_VOLUME_GROUP", new Boolean(hasVolumeGroup));
+            put(valueMap, "HAS_VOLUME_GROUP", hasVolumeGroup);
 
             sb.append(sep).append(this.setTemplate(TEMPLATE, valueMap));
             sep = ",\n";

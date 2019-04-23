@@ -101,7 +101,7 @@ public class QueryServiceVnfs extends CatalogQuery {
                 sb.append("\n");
             first = false;
 
-            boolean vrNull = o.getVnfResources() == null ? true : false;
+            boolean vrNull = o.getVnfResources() == null;
 
             put(valueMap, "MODEL_NAME", vrNull ? null : o.getVnfResources().getModelName());
             put(valueMap, "MODEL_UUID", vrNull ? null : o.getVnfResources().getModelUUID());
