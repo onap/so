@@ -47,6 +47,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class AppcRunTasks {
     private static final Logger logger = LoggerFactory.getLogger(AppcRunTasks.class);
+    public static final String ROLLBACK_VNF_STOP = "rollbackVnfStop";
+    public static final String ROLLBACK_VNF_LOCK = "rollbackVnfLock";
+    public static final String ROLLBACK_QUIESCE_TRAFFIC = "rollbackQuiesceTraffic";
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -71,9 +74,9 @@ public class AppcRunTasks {
         execution.setVariable("actionHealthCheck", Action.HealthCheck);
         execution.setVariable("actionDistributeTraffic", Action.DistributeTraffic);
         execution.setVariable("actionDistributeTrafficCheck", Action.DistributeTrafficCheck);
-        execution.setVariable("rollbackVnfStop", false);
-        execution.setVariable("rollbackVnfLock", false);
-        execution.setVariable("rollbackQuiesceTraffic", false);
+        execution.setVariable(ROLLBACK_VNF_STOP, false);
+        execution.setVariable(ROLLBACK_VNF_LOCK, false);
+        execution.setVariable(ROLLBACK_QUIESCE_TRAFFIC, false);
     }
 
     public void runAppcCommand(BuildingBlockExecution execution, Action action) {
@@ -153,17 +156,17 @@ public class AppcRunTasks {
     protected void mapRollbackVariables(BuildingBlockExecution execution, Action action, String appcCode) {
         if (appcCode.equals("0") && action != null) {
             if (action.equals(Action.Lock)) {
-                execution.setVariable("rollbackVnfLock", true);
+                execution.setVariable(ROLLBACK_VNF_LOCK, true);
             } else if (action.equals(Action.Unlock)) {
-                execution.setVariable("rollbackVnfLock", false);
+                execution.setVariable(ROLLBACK_VNF_LOCK, false);
             } else if (action.equals(Action.Start)) {
-                execution.setVariable("rollbackVnfStop", false);
+                execution.setVariable(ROLLBACK_VNF_STOP, false);
             } else if (action.equals(Action.Stop)) {
-                execution.setVariable("rollbackVnfStop", true);
+                execution.setVariable(ROLLBACK_VNF_STOP, true);
             } else if (action.equals(Action.QuiesceTraffic)) {
-                execution.setVariable("rollbackQuiesceTraffic", true);
+                execution.setVariable(ROLLBACK_QUIESCE_TRAFFIC, true);
             } else if (action.equals(Action.ResumeTraffic)) {
-                execution.setVariable("rollbackQuiesceTraffic", false);
+                execution.setVariable(ROLLBACK_QUIESCE_TRAFFIC, false);
             }
         }
     }

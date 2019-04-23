@@ -42,6 +42,7 @@ import com.google.common.base.Optional;
 public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvider {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VnfmAdapterServiceProviderImpl.class);
+    public static final String RECEIVED_RESPONSE_WITHOUT_BODY = "Received response without body: {}";
 
     private final VnfmAdapterUrlProvider urlProvider;
     private final HttpRestServiceProvider httpServiceProvider;
@@ -69,7 +70,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
             }
 
             if (!response.hasBody()) {
-                LOGGER.error("Received response without body: {}", response);
+                LOGGER.error(RECEIVED_RESPONSE_WITHOUT_BODY, response);
                 return Optional.absent();
             }
 
@@ -107,7 +108,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
             }
 
             if (!response.hasBody()) {
-                LOGGER.error("Received response without body: {}", response);
+                LOGGER.error(RECEIVED_RESPONSE_WITHOUT_BODY, response);
                 return Optional.absent();
             }
             final DeleteVnfResponse deleteVnfResponse = response.getBody();
@@ -139,7 +140,7 @@ public class VnfmAdapterServiceProviderImpl implements VnfmAdapterServiceProvide
             }
 
             if (!response.hasBody()) {
-                LOGGER.error("Received response without body: {}", response);
+                LOGGER.error(RECEIVED_RESPONSE_WITHOUT_BODY, response);
                 return Optional.absent();
             }
             return Optional.of(response.getBody());
