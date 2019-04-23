@@ -44,33 +44,6 @@ import uk.co.blackpepper.bowman.annotation.LinkedResource;
 public class NetworkResourceCustomization implements Serializable {
     public static final long serialVersionUID = -1322322139926390329L;
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
-                .append("modelInstanceName", modelInstanceName).append("created", created)
-                .append("networkTechnology", networkTechnology).append("networkType", networkType)
-                .append("networkScope", networkScope).append("networkRole", networkRole)
-                .append("networkResource", networkResource).toString();
-    }
-
-    @Override
-    public boolean equals(final Object other) {
-        if (!(other instanceof NetworkResourceCustomization)) {
-            return false;
-        }
-        NetworkResourceCustomization castOther = (NetworkResourceCustomization) other;
-        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
-    }
-
-    public NetworkResourceCustomization() {
-        super();
-    }
-
     @BusinessKey
     @Id
     @Column(name = "MODEL_CUSTOMIZATION_UUID")
@@ -101,6 +74,10 @@ public class NetworkResourceCustomization implements Serializable {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "NETWORK_RESOURCE_MODEL_UUID")
     private NetworkResource networkResource = null;
+
+    public NetworkResourceCustomization() {
+        super();
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -174,5 +151,28 @@ public class NetworkResourceCustomization implements Serializable {
 
     public void setResourceInput(String resourceInput) {
         this.resourceInput = resourceInput;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("modelCustomizationUUID", modelCustomizationUUID)
+                .append("modelInstanceName", modelInstanceName).append("created", created)
+                .append("networkTechnology", networkTechnology).append("networkType", networkType)
+                .append("networkScope", networkScope).append("networkRole", networkRole)
+                .append("networkResource", networkResource).toString();
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (!(other instanceof NetworkResourceCustomization)) {
+            return false;
+        }
+        NetworkResourceCustomization castOther = (NetworkResourceCustomization) other;
+        return new EqualsBuilder().append(modelCustomizationUUID, castOther.modelCustomizationUUID).isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(modelCustomizationUUID).toHashCode();
     }
 }
