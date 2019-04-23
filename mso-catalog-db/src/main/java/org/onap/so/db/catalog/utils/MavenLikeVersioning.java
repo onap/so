@@ -90,8 +90,8 @@ public class MavenLikeVersioning implements Serializable {
     public boolean isTheSameVersion(String versionToCompare) {
         if (versionToCompare == null && this.version == null) {
             return true;
-        } else if (versionToCompare == null || versionToCompare.trim().equals("") || this.version == null
-                || this.version.trim().equals("")) {
+        } else if (versionToCompare == null || "".equals(versionToCompare.trim()) || this.version == null
+                || "".equals(this.version.trim())) {
             return false;
         }
         String[] currentVersionArray = this.version.split("\\.");
