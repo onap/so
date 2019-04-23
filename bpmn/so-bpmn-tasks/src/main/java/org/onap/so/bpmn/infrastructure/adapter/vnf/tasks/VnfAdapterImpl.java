@@ -63,6 +63,7 @@ public class VnfAdapterImpl {
     private static final String OAM_MANAGEMENT_V4_ADDRESS = "oamManagementV4Address";
     private static final String OAM_MANAGEMENT_V6_ADDRESS = "oamManagementV6Address";
     private static final String CONTRAIL_NETWORK_POLICY_FQDN_LIST = "contrailNetworkPolicyFqdnList";
+    public static final String HEAT_STACK_ID = "heatStackId";
 
     @Autowired
     private ExtractPojosForBB extractPojosForBB;
@@ -77,7 +78,7 @@ public class VnfAdapterImpl {
                     extractPojosForBB.extractByKey(execution, ResourceKey.SERVICE_INSTANCE_ID);
             execution.setVariable("mso-request-id", gBBInput.getRequestContext().getMsoRequestId());
             execution.setVariable("mso-service-instance-id", serviceInstance.getServiceInstanceId());
-            execution.setVariable("heatStackId", null);
+            execution.setVariable(HEAT_STACK_ID, null);
             execution.setVariable(CONTRAIL_SERVICE_INSTANCE_FQDN, null);
             execution.setVariable(OAM_MANAGEMENT_V4_ADDRESS, null);
             execution.setVariable(OAM_MANAGEMENT_V6_ADDRESS, null);
@@ -97,7 +98,7 @@ public class VnfAdapterImpl {
                     String heatStackId = ((CreateVfModuleResponse) vnfRestResponse).getVfModuleStackId();
                     if (!StringUtils.isEmpty(heatStackId)) {
                         vfModule.setHeatStackId(heatStackId);
-                        execution.setVariable("heatStackId", heatStackId);
+                        execution.setVariable(HEAT_STACK_ID, heatStackId);
                     }
                     Map<String, String> vfModuleOutputs =
                             ((CreateVfModuleResponse) vnfRestResponse).getVfModuleOutputs();
@@ -110,7 +111,7 @@ public class VnfAdapterImpl {
                     Boolean vfModuleDelete = ((DeleteVfModuleResponse) vnfRestResponse).getVfModuleDeleted();
                     if (null != vfModuleDelete && vfModuleDelete) {
                         vfModule.setHeatStackId(null);
-                        execution.setVariable("heatStackId", null);
+                        execution.setVariable(HEAT_STACK_ID, null);
                         Map<String, String> vfModuleOutputs =
                                 ((DeleteVfModuleResponse) vnfRestResponse).getVfModuleOutputs();
                         if (vfModuleOutputs != null) {
@@ -134,7 +135,7 @@ public class VnfAdapterImpl {
                     String heatStackId = ((CreateVolumeGroupResponse) vnfRestResponse).getVolumeGroupStackId();
                     if (!StringUtils.isEmpty(heatStackId)) {
                         volumeGroup.setHeatStackId(heatStackId);
-                        execution.setVariable("heatStackId", heatStackId);
+                        execution.setVariable(HEAT_STACK_ID, heatStackId);
                     } else {
                         exceptionUtil.buildAndThrowWorkflowException(execution, 7000,
                                 "HeatStackId is missing from create VolumeGroup Vnf Adapter response.");
@@ -144,7 +145,7 @@ public class VnfAdapterImpl {
                     Boolean volumeGroupDelete = ((DeleteVolumeGroupResponse) vnfRestResponse).getVolumeGroupDeleted();
                     if (null != volumeGroupDelete && volumeGroupDelete) {
                         volumeGroup.setHeatStackId(null);
-                        execution.setVariable("heatStackId", null);
+                        execution.setVariable(HEAT_STACK_ID, null);
                     }
                 }
             }
@@ -184,7 +185,7 @@ public class VnfAdapterImpl {
         try {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             GenericVnf genericVnf = extractPojosForBB.extractByKey(execution, ResourceKey.GENERIC_VNF_ID);
-            List<String> contrailNetworkPolicyFqdnList = new ArrayList<String>();
+            List<String> contrailNetworkPolicyFqdnList = new ArrayList<>();
             Iterator<String> keys = vfModuleOutputs.keySet().iterator();
             while (keys.hasNext()) {
                 String key = keys.next();
