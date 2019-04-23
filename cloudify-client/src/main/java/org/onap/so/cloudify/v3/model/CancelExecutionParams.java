@@ -30,8 +30,8 @@ public class CancelExecutionParams implements Serializable {
     @JsonProperty("action")
     private String action;
 
-    public final static String CANCEL_ACTION = "cancel";
-    public final static String FORCE_CANCEL_ACTION = "force-cancel";
+    public static final String CANCEL_ACTION = "cancel";
+    public static final String FORCE_CANCEL_ACTION = "force-cancel";
 
     public String getAction() {
         return action;
