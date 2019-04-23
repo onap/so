@@ -121,6 +121,9 @@ public class VnfResourceCustomization implements Serializable {
     @Column(name = "SKIP_POST_INSTANTIATION_CONFIGURATION")
     private Boolean skipPostInstConf;
 
+    @Column(name = "VNFCINSTANCEGROUP_ORDER")
+    private String vnfcInstanceGroupOrder;
+
     @Override
     public boolean equals(final Object other) {
         if (!(other instanceof VnfResourceCustomization)) {
@@ -148,6 +151,7 @@ public class VnfResourceCustomization implements Serializable {
                 .append("nfType", nfType).append("nfRole", nfRole).append("nfNamingCode", nfNamingCode)
                 .append("multiStageDesign", multiStageDesign).append("vnfResources", vnfResources)
                 .append("vfModuleCustomizations", vfModuleCustomizations)
+                .append("vnfcInstanceGroupOrder", vnfcInstanceGroupOrder)
                 .append("vnfcInstanceGroupCustomizations", vnfcInstanceGroupCustomizations).toString();
     }
 
@@ -323,5 +327,13 @@ public class VnfResourceCustomization implements Serializable {
 
     public void setSkipPostInstConf(Boolean skipPostInstConf) {
         this.skipPostInstConf = skipPostInstConf;
+    }
+
+    public String getVnfcInstanceGroupOrder() {
+        return vnfcInstanceGroupOrder;
+    }
+
+    public void setVnfcInstanceGroupOrder(String vnfcInstanceGroupOrder) {
+        this.vnfcInstanceGroupOrder = vnfcInstanceGroupOrder;
     }
 }
