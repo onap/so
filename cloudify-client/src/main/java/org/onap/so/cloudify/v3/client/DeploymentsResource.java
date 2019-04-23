@@ -32,6 +32,7 @@ import org.onap.so.cloudify.base.client.CloudifyRequest;
 public class DeploymentsResource {
 
     private final CloudifyClient client;
+    private static final String DEPLOYMENT_PATH = "/api/v3/deployments/";
 
     public DeploymentsResource(CloudifyClient client) {
         this.client = client;
@@ -59,25 +60,25 @@ public class DeploymentsResource {
 
     public class CreateDeployment extends CloudifyRequest<Deployment> {
         public CreateDeployment(String deploymentId, CreateDeploymentParams body) {
-            super(client, HttpMethod.PUT, "/api/v3/deployments/" + deploymentId, Entity.json(body), Deployment.class);
+            super(client, HttpMethod.PUT, DEPLOYMENT_PATH + deploymentId, Entity.json(body), Deployment.class);
         }
     }
 
     public class DeleteDeployment extends CloudifyRequest<Deployment> {
         public DeleteDeployment(String deploymentId) {
-            super(client, HttpMethod.DELETE, "/api/v3/deployments/" + deploymentId, null, Deployment.class);
+            super(client, HttpMethod.DELETE, DEPLOYMENT_PATH + deploymentId, null, Deployment.class);
         }
     }
 
     public class GetDeployment extends CloudifyRequest<Deployment> {
         public GetDeployment(String id) {
-            super(client, HttpMethod.GET, "/api/v3/deployments/" + id, null, Deployment.class);
+            super(client, HttpMethod.GET, DEPLOYMENT_PATH + id, null, Deployment.class);
         }
     }
 
     public class GetDeploymentOutputs extends CloudifyRequest<DeploymentOutputs> {
         public GetDeploymentOutputs(String id) {
-            super(client, HttpMethod.GET, "/api/v3/deployments/" + id + "/outputs", null, DeploymentOutputs.class);
+            super(client, HttpMethod.GET, DEPLOYMENT_PATH + id + "/outputs", null, DeploymentOutputs.class);
         }
     }
 
