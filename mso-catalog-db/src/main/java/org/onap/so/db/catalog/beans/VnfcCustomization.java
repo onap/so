@@ -70,6 +70,9 @@ public class VnfcCustomization implements Serializable {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "RESOURCE_INPUT")
+    private String resourceInput;
+
     @Column(name = "CREATION_TIMESTAMP", updatable = false)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     @Temporal(TemporalType.TIMESTAMP)
@@ -185,5 +188,13 @@ public class VnfcCustomization implements Serializable {
 
     public void setCvnfcCustomization(List<CvnfcCustomization> cvnfcCustomization) {
         this.cvnfcCustomization = cvnfcCustomization;
+    }
+
+    public String getResourceInput() {
+        return resourceInput;
+    }
+
+    public void setResourceInput(String resourceInput) {
+        this.resourceInput = resourceInput;
     }
 }
