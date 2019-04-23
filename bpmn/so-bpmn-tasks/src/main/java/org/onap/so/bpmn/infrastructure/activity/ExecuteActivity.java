@@ -85,7 +85,7 @@ public class ExecuteActivity implements JavaDelegate {
 
             Map<String, Object> variables = new HashMap<>();
             variables.put("buildingBlock", executeBuildingBlock);
-            variables.put("mso-request-id", requestId);
+            variables.put(G_REQUEST_ID, requestId);
             variables.put("retryCount", 1);
             variables.put("aLaCarte", true);
 

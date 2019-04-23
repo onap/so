@@ -47,7 +47,7 @@ import static org.apache.commons.lang3.StringUtils.*;
 
 @Component
 public class VnfAdapterCreateTasks {
-    private static final Logger logger = LoggerFactory.getLogger(VnfAdapterCreateTasks.class);
+    public static final String SDNCQUERY_RESPONSE = "SDNCQueryResponse_";
     private static final String VNFREST_REQUEST = "VNFREST_Request";
 
     @Autowired
@@ -73,7 +73,7 @@ public class VnfAdapterCreateTasks {
             try {
                 vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
                 if (vfModule.getSelflink() != null && !vfModule.getSelflink().isEmpty()) {
-                    sdncVfModuleQueryResponse = execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId());
+                    sdncVfModuleQueryResponse = execution.getVariable(SDNCQUERY_RESPONSE + vfModule.getVfModuleId());
                 } else {
                     throw new Exception("Vf Module " + vfModule.getVfModuleId()
                             + " exists in gBuildingBlock but does not have a selflink value");
@@ -109,8 +109,8 @@ public class VnfAdapterCreateTasks {
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
             RequestContext requestContext = gBBInput.getRequestContext();
             OrchestrationContext orchestrationContext = gBBInput.getOrchContext();
-            String sdncVfModuleQueryResponse = execution.getVariable("SDNCQueryResponse_" + vfModule.getVfModuleId());
-            String sdncVnfQueryResponse = execution.getVariable("SDNCQueryResponse_" + genericVnf.getVnfId());
+            String sdncVfModuleQueryResponse = execution.getVariable(SDNCQUERY_RESPONSE + vfModule.getVfModuleId());
+            String sdncVnfQueryResponse = execution.getVariable(SDNCQUERY_RESPONSE + genericVnf.getVnfId());
 
             CreateVfModuleRequest createVfModuleRequest = vnfAdapterVfModuleResources.createVfModuleRequest(
                     requestContext, cloudRegion, orchestrationContext, serviceInstance, genericVnf, vfModule,
