@@ -228,10 +228,8 @@ public class CatalogDbAdapterRest {
 
         try {
             if (networkModelCustomizationUuid != null && !"".equals(networkModelCustomizationUuid)) {
-                uuid = networkModelCustomizationUuid;
                 ret = networkCustomizationRepo.findByModelCustomizationUUID(networkModelCustomizationUuid);
             } else if (networkType != null && !"".equals(networkType)) {
-                uuid = networkType;
                 NetworkResource networkResources =
                         networkResourceRepo.findFirstByModelNameOrderByModelVersionDesc(networkType);
                 if (networkResources != null)
@@ -244,7 +242,6 @@ public class CatalogDbAdapterRest {
                     service = serviceRepo.findFirstByModelInvariantUUIDOrderByModelVersionDesc(uuid);
                 }
             } else if (serviceModelUuid != null && !"".equals(serviceModelUuid)) {
-                uuid = serviceModelUuid;
                 service = serviceRepo.findOneByModelUUID(serviceModelUuid);
             } else {
                 throw (new Exception(NO_MATCHING_PARAMETERS));

@@ -96,7 +96,7 @@ public class CreateInventoryTask {
     }
 
     private void setupMDC(ExternalTask externalTask) {
-        String msoRequestId = (String) externalTask.getVariable("mso-request-id");
+        String msoRequestId = externalTask.getVariable("mso-request-id");
         if (msoRequestId != null && !msoRequestId.isEmpty())
             MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
     }
