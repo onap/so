@@ -39,7 +39,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CreateNetwork {
 
-    private static final Logger logger = LoggerFactory.getLogger(CreateNetwork.class);
+
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired

@@ -45,6 +45,9 @@ import org.springframework.stereotype.Component;
 public class GenericVnfHealthCheck {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericVnfHealthCheck.class);
+    public static final String VNF_NAME = "vnfName";
+    public static final String OAM_IP_ADDRESS = "oamIpAddress";
+    public static final String VNF_HOST_IP_ADDRESS = "vnfHostIpAddress";
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired
@@ -71,9 +74,9 @@ public class GenericVnfHealthCheck {
             String controllerName = controllerSelectionReference.getControllerName();
 
             execution.setVariable("vnfId", vnfId);
-            execution.setVariable("vnfName", vnfName);
-            execution.setVariable("oamIpAddress", oamIpAddress);
-            execution.setVariable("vnfHostIpAddress", oamIpAddress);
+            execution.setVariable(VNF_NAME, vnfName);
+            execution.setVariable(OAM_IP_ADDRESS, oamIpAddress);
+            execution.setVariable(VNF_HOST_IP_ADDRESS, oamIpAddress);
             execution.setVariable("msoRequestId", gBBInput.getRequestContext().getMsoRequestId());
             execution.setVariable("action", actionCategory);
             execution.setVariable("controllerType", controllerName);
@@ -98,11 +101,11 @@ public class GenericVnfHealthCheck {
                 payload = Optional.of(pay);
             }
             String controllerType = execution.getVariable("controllerType");
-            HashMap<String, String> payloadInfo = new HashMap<String, String>();
-            payloadInfo.put("vnfName", execution.getVariable("vnfName"));
+            HashMap<String, String> payloadInfo = new HashMap<>();
+            payloadInfo.put(VNF_NAME, execution.getVariable(VNF_NAME));
             payloadInfo.put("vfModuleId", execution.getVariable("vfModuleId"));
-            payloadInfo.put("oamIpAddress", execution.getVariable("oamIpAddress"));
-            payloadInfo.put("vnfHostIpAddress", execution.getVariable("vnfHostIpAddress"));
+            payloadInfo.put(OAM_IP_ADDRESS, execution.getVariable(OAM_IP_ADDRESS));
+            payloadInfo.put(VNF_HOST_IP_ADDRESS, execution.getVariable(VNF_HOST_IP_ADDRESS));
 
             logger.debug("Running APP-C action: {}", action.toString());
             logger.debug("VNFID: {}", vnfId);
@@ -133,7 +136,7 @@ public class GenericVnfHealthCheck {
         logger.error("Error Message: " + appcMessage);
         logger.error("ERROR CODE: " + appcCode);
         logger.trace("End of runAppCommand ");
-        if (appcCode != null && !appcCode.equals("0")) {
+        if (appcCode != null && !("0").equals(appcCode)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
         }
     }
