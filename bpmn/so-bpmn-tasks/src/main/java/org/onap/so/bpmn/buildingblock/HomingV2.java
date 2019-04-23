@@ -55,7 +55,7 @@ public class HomingV2 {
     private boolean isOof(BuildingBlockExecution execution) {
         for (Map<String, Object> params : execution.getGeneralBuildingBlock().getRequestContext().getRequestParameters()
                 .getUserParams()) {
-            if (params.containsKey(HOMINGSOLUTION) && params.get(HOMINGSOLUTION).equals("oof")) {
+            if (params.containsKey(HOMINGSOLUTION) && ("oof").equals(params.get(HOMINGSOLUTION))) {
                 return true;
             }
         }
