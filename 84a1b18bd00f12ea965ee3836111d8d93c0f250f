@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bd45313c_cfbe6890",
+        "filename": "adapters/mso-catalog-db-adapter/src/main/resources/db/migration/V5.11__AddVnfResourceOrder.sql",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 879
+      },
+      "writtenOn": "2019-04-24T10:40:27Z",
+      "side": 1,
+      "message": "this should be added as new sql file. otherwise migration will fail.",
+      "range": {
+        "startLine": 6,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 33
+      },
+      "revId": "84a1b18bd00f12ea965ee3836111d8d93c0f250f",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
