@@ -54,6 +54,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class SDNCAssignTasks {
     private static final Logger logger = LoggerFactory.getLogger(SDNCAssignTasks.class);
+    public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCServiceInstanceResources sdncSIResources;
     @Autowired
@@ -79,7 +80,7 @@ public class SDNCAssignTasks {
             SDNCRequest sdncRequest = new SDNCRequest();
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.SERVICE);
-            execution.setVariable("SDNCRequest", sdncRequest);
+            execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -99,7 +100,7 @@ public class SDNCAssignTasks {
             SDNCRequest sdncRequest = new SDNCRequest();
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VNF);
-            execution.setVariable("SDNCRequest", sdncRequest);
+            execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -126,7 +127,7 @@ public class SDNCAssignTasks {
             SDNCRequest sdncRequest = new SDNCRequest();
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
-            execution.setVariable("SDNCRequest", sdncRequest);
+            execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -152,7 +153,7 @@ public class SDNCAssignTasks {
             SDNCRequest sdncRequest = new SDNCRequest();
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.NETWORK);
-            execution.setVariable("SDNCRequest", sdncRequest);
+            execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
