@@ -160,7 +160,7 @@ public class ConfigurationScaleOut {
         logger.error("Error Message: " + appcMessage);
         logger.error("ERROR CODE: " + appcCode);
         logger.trace("End of runAppCommand ");
-        if (appcCode != null && !appcCode.equals("0")) {
+        if (appcCode != null && !("0").equals(appcCode)) {
             exceptionUtil.buildAndThrowWorkflowException(execution, Integer.parseInt(appcCode), appcMessage);
         }
     }

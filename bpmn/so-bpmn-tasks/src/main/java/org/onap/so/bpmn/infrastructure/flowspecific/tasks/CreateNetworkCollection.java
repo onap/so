@@ -36,7 +36,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CreateNetworkCollection {
-    private static final Logger logger = LoggerFactory.getLogger(CreateNetworkCollection.class);
+
     @Autowired
     private ExceptionBuilder exceptionUtil;
     @Autowired

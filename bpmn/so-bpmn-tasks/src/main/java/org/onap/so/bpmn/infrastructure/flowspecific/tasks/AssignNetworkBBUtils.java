@@ -54,9 +54,9 @@ public class AssignNetworkBBUtils {
      * @return
      */
     public boolean networkFoundByName(BuildingBlockExecution execution) throws Exception {
-        boolean found = false;
+
         // TODO - populate logic after iTrack MSO-2143 implemented
-        return found;
+        return false;
     }
 
     /**
@@ -71,7 +71,7 @@ public class AssignNetworkBBUtils {
             CloudRegion cloudRegion = gBBInput.getCloudRegion();
             String cloudRegionSdnc;
             String cloudRegionPo = cloudRegion.getLcpCloudRegionId();
-            if (cloudRegion.getCloudRegionVersion().equalsIgnoreCase("2.5")) {
+            if ("2.5".equalsIgnoreCase(cloudRegion.getCloudRegionVersion())) {
                 cloudRegionSdnc = "AAIAIC25";
             } else {
                 cloudRegionSdnc = cloudRegionPo;

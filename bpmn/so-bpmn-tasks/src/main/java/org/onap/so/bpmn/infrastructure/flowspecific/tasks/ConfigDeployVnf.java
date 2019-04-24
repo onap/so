@@ -40,9 +40,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ConfigDeployVnf {
     private static final Logger logger = LoggerFactory.getLogger(ConfigDeployVnf.class);
-    private final static String ORIGINATOR_ID = "SO";
-    private final static String ACTION_NAME = "config-deploy";
-    private final static String MODE = "async";
+    private static final String ORIGINATOR_ID = "SO";
+    private static final String ACTION_NAME = "config-deploy";
+    private static final String MODE = "async";
 
     @Autowired
     private ExceptionBuilder exceptionUtil;

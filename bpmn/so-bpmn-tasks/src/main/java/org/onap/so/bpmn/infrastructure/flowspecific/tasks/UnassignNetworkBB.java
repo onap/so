@@ -38,11 +38,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class UnassignNetworkBB {
 
-    private static final Logger logger = LoggerFactory.getLogger(UnassignNetworkBB.class);
 
-    private static String MESSAGE_CANNOT_PERFORM_UNASSIGN =
+    private static String messageCannotPerformUnassign =
             "Cannot perform Unassign Network. Network is still related to ";
-    private static String MESSAGE_ERROR_ROLLBACK = " Rollback is not possible. Please restore data manually.";
+    private static String messageErrorRollback = " Rollback is not possible. Please restore data manually.";
 
     @Autowired
     private ExceptionBuilder exceptionUtil;
@@ -72,7 +71,7 @@ public class UnassignNetworkBB {
             Optional<org.onap.aai.domain.yang.L3Network> network =
                     aaiResultWrapper.asBean(org.onap.aai.domain.yang.L3Network.class);
             if (networkBBUtils.isRelationshipRelatedToExists(network, relatedToValue)) {
-                String msg = MESSAGE_CANNOT_PERFORM_UNASSIGN + relatedToValue;
+                String msg = messageCannotPerformUnassign + relatedToValue;
                 execution.setVariable("ErrorUnassignNetworkBB", msg);
                 exceptionUtil.buildAndThrowWorkflowException(execution, 7000, msg);
             }
@@ -109,7 +108,7 @@ public class UnassignNetworkBB {
         boolean isRollbackNeeded =
                 execution.getVariable("isRollbackNeeded") != null ? execution.getVariable("isRollbackNeeded") : false;
         if (isRollbackNeeded == true) {
-            msg = execution.getVariable("ErrorUnassignNetworkBB") + MESSAGE_ERROR_ROLLBACK;
+            msg = execution.getVariable("ErrorUnassignNetworkBB") + messageErrorRollback;
         } else {
             msg = execution.getVariable("ErrorUnassignNetworkBB");
         }
