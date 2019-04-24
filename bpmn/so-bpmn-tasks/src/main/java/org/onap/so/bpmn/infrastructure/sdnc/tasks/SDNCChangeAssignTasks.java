@@ -47,6 +47,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCChangeAssignTasks {
+    public static final String SDNC_REQUEST = "SDNCRequest";
     @Autowired
     private SDNCNetworkResources sdncNetworkResources;
     @Autowired
@@ -70,7 +71,7 @@ public class SDNCChangeAssignTasks {
             SDNCRequest sdncRequest = new SDNCRequest();
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.SERVICE);
-            execution.setVariable("SDNCRequest", sdncRequest);
+            execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -87,7 +88,7 @@ public class SDNCChangeAssignTasks {
             SDNCRequest sdncRequest = new SDNCRequest();
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VNF);
-            execution.setVariable("SDNCRequest", sdncRequest);
+            execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -104,7 +105,7 @@ public class SDNCChangeAssignTasks {
             SDNCRequest sdncRequest = new SDNCRequest();
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.NETWORK);
-            execution.setVariable("SDNCRequest", sdncRequest);
+            execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -125,7 +126,7 @@ public class SDNCChangeAssignTasks {
             SDNCRequest sdncRequest = new SDNCRequest();
             sdncRequest.setSDNCPayload(req);
             sdncRequest.setTopology(SDNCTopology.VFMODULE);
-            execution.setVariable("SDNCRequest", sdncRequest);
+            execution.setVariable(SDNC_REQUEST, sdncRequest);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
