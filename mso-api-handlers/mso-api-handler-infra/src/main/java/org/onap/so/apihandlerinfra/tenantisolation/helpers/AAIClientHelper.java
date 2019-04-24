@@ -42,7 +42,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AAIClientHelper {
 
-    private static Logger logger = LoggerFactory.getLogger(AAIClientHelper.class);
+
 
     /**
      * Get managing ECOMP Environment Info from A&AI
