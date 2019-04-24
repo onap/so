@@ -39,7 +39,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SDNCQueryTasks {
-    private static final Logger logger = LoggerFactory.getLogger(SDNCQueryTasks.class);
+
+    public static final String SDNCQUERY_RESPONSE = "SDNCQueryResponse_";
     @Autowired
     private SDNCVnfResources sdncVnfResources;
     @Autowired
@@ -61,7 +62,7 @@ public class SDNCQueryTasks {
                 genericVnf.setSelflink(selfLink);
             }
             String response = sdncVnfResources.queryVnf(genericVnf);
-            execution.setVariable("SDNCQueryResponse_" + genericVnf.getVnfId(), response);
+            execution.setVariable(SDNCQUERY_RESPONSE + genericVnf.getVnfId(), response);
         } catch (Exception ex) {
             exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
         }
@@ -82,7 +83,7 @@ public class SDNCQueryTasks {
             }
             if (vfModule.getSelflink() != null && !vfModule.getSelflink().isEmpty()) {
                 String response = sdncVfModuleResources.queryVfModule(vfModule);
-                execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), response);
+                execution.setVariable(SDNCQUERY_RESPONSE + vfModule.getVfModuleId(), response);
             } else {
                 throw new Exception("Vf Module " + vfModule.getVfModuleId()
                         + " exists in gBuildingBlock but does not have a selflink value");
@@ -97,7 +98,7 @@ public class SDNCQueryTasks {
             VfModule vfModule = extractPojosForBB.extractByKey(execution, ResourceKey.VF_MODULE_ID);
             if (vfModule.getSelflink() != null && !vfModule.getSelflink().isEmpty()) {
                 String response = sdncVfModuleResources.queryVfModule(vfModule);
-                execution.setVariable("SDNCQueryResponse_" + vfModule.getVfModuleId(), response);
+                execution.setVariable(SDNCQUERY_RESPONSE + vfModule.getVfModuleId(), response);
             } else {
                 throw new Exception("Vf Module " + vfModule.getVfModuleId()
                         + " exists in gBuildingBlock but does not have a selflink value");
