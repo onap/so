@@ -49,6 +49,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class CamundaClient extends RequestClient {
     private static Logger logger = LoggerFactory.getLogger(CamundaClient.class);
     private static final String CAMUNDA_URL_MESAGE = "Camunda url is: ";
+    private static final String CAMUNDA_RESPONSE = "Response is: {}";
+    private static final String AUTHORIZATION = "Authorization";
+    private static final String BASIC = "Basic";
 
     public CamundaClient() {
         super(CommonConstants.CAMUNDA);
@@ -71,7 +74,7 @@ public class CamundaClient extends RequestClient {
         setupHeaders(post);
 
         HttpResponse response = client.execute(post);
-        logger.debug("Response is: {}", response);
+        logger.debug(CAMUNDA_RESPONSE, response);
 
         return response;
     }
@@ -88,8 +91,8 @@ public class CamundaClient extends RequestClient {
                 String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH,
                         props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
                 if (userCredentials != null) {
-                    post.addHeader("Authorization",
-                            "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+                    post.addHeader(AUTHORIZATION,
+                            BASIC + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
                 }
             }
         }
@@ -111,8 +114,8 @@ public class CamundaClient extends RequestClient {
                 String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH,
                         props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
                 if (userCredentials != null) {
-                    post.addHeader("Authorization",
-                            "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+                    post.addHeader(AUTHORIZATION,
+                            BASIC + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
                 }
             }
         }
@@ -120,7 +123,7 @@ public class CamundaClient extends RequestClient {
 
         post.setEntity(input);
         HttpResponse response = client.execute(post);
-        logger.debug("Response is: {}", response);
+        logger.debug(CAMUNDA_RESPONSE, response);
 
         return response;
     }
@@ -151,15 +154,15 @@ public class CamundaClient extends RequestClient {
                 String userCredentials = getEncryptedPropValue(encryptedCredentials, CommonConstants.DEFAULT_BPEL_AUTH,
                         props.getProperty(CommonConstants.ENCRYPTION_KEY_PROP));
                 if (userCredentials != null) {
-                    post.addHeader("Authorization",
-                            "Basic " + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
+                    post.addHeader(AUTHORIZATION,
+                            BASIC + new String(DatatypeConverter.printBase64Binary(userCredentials.getBytes())));
                 }
             }
         }
 
         post.setEntity(input);
         HttpResponse response = client.execute(post);
-        logger.debug("Response is: {}", response);
+        logger.debug(CAMUNDA_RESPONSE, response);
 
         return response;
     }
