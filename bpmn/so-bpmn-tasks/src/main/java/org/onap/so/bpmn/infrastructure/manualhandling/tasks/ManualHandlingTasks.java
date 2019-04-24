@@ -23,6 +23,14 @@ public class ManualHandlingTasks {
 
     private static final String TASK_TYPE_PAUSE = "pause";
     private static final String TASK_TYPE_FALLOUT = "fallout";
+    public static final String VNF_TYPE = "vnfType";
+    public static final String SERVICE_TYPE = "serviceType";
+    public static final String MSO_REQUEST_ID = "msoRequestId";
+    public static final String REQUESTOR_ID = "requestorId";
+    public static final String ERROR_CODE = "errorCode";
+    public static final String VALID_RESPONSES = "validResponses";
+    public static final String DESCRIPTION = "description";
+    public static final String BPMN_EXCEPTION = "BPMN exception: ";
 
     @Autowired
     private ExceptionBuilder exceptionUtil;
@@ -37,39 +45,39 @@ public class ManualHandlingTasks {
             String taskId = task.getId();
             logger.debug("taskId is: " + taskId);
             String type = TASK_TYPE_FALLOUT;
-            String nfRole = (String) execution.getVariable("vnfType");
-            String subscriptionServiceType = (String) execution.getVariable("serviceType");
-            String originalRequestId = (String) execution.getVariable("msoRequestId");
-            String originalRequestorId = (String) execution.getVariable("requestorId");
+            String nfRole = (String) execution.getVariable(VNF_TYPE);
+            String subscriptionServiceType = (String) execution.getVariable(SERVICE_TYPE);
+            String originalRequestId = (String) execution.getVariable(MSO_REQUEST_ID);
+            String originalRequestorId = (String) execution.getVariable(REQUESTOR_ID);
             String description = "";
             String timeout = "";
             String errorSource = (String) execution.getVariable("failedActivity");
-            String errorCode = (String) execution.getVariable("errorCode");
+            String errorCode = (String) execution.getVariable(ERROR_CODE);
             String errorMessage = (String) execution.getVariable("errorText");
             String buildingBlockName = (String) execution.getVariable("currentActivity");
             String buildingBlockStep = (String) execution.getVariable("workStep");
-            String validResponses = (String) execution.getVariable("validResponses");
+            String validResponses = (String) execution.getVariable(VALID_RESPONSES);
 
-            Map<String, String> taskVariables = new HashMap<String, String>();
+            Map<String, String> taskVariables = new HashMap<>();
             taskVariables.put("type", type);
             taskVariables.put("nfRole", nfRole);
             taskVariables.put("subscriptionServiceType", subscriptionServiceType);
             taskVariables.put("originalRequestId", originalRequestId);
             taskVariables.put("originalRequestorId", originalRequestorId);
             taskVariables.put("errorSource", errorSource);
-            taskVariables.put("errorCode", errorCode);
+            taskVariables.put(ERROR_CODE, errorCode);
             taskVariables.put("errorMessage", errorMessage);
             taskVariables.put("buildingBlockName", buildingBlockName);
             taskVariables.put("buildingBlockStep", buildingBlockStep);
-            taskVariables.put("validResponses", validResponses);
+            taskVariables.put(VALID_RESPONSES, validResponses);
             taskVariables.put("tmeout", timeout);
-            taskVariables.put("description", description);
+            taskVariables.put(DESCRIPTION, description);
             TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
             taskService.setVariables(taskId, taskVariables);
             logger.debug("successfully created fallout task: " + taskId);
         } catch (BpmnError e) {
-            logger.debug("BPMN exception: " + e.getMessage());
+            logger.debug(BPMN_EXCEPTION + e.getMessage());
             throw e;
         } catch (Exception ex) {
             String msg = "Exception in setFalloutTaskVariables " + ex.getMessage();
@@ -86,39 +94,39 @@ public class ManualHandlingTasks {
             String taskId = task.getId();
             logger.debug("taskId is: " + taskId);
             String type = TASK_TYPE_PAUSE;
-            String nfRole = (String) execution.getVariable("vnfType");
-            String subscriptionServiceType = (String) execution.getVariable("serviceType");
-            String originalRequestId = (String) execution.getVariable("msoRequestId");
-            String originalRequestorId = (String) execution.getVariable("requestorId");
-            String description = (String) execution.getVariable("description");
+            String nfRole = (String) execution.getVariable(VNF_TYPE);
+            String subscriptionServiceType = (String) execution.getVariable(SERVICE_TYPE);
+            String originalRequestId = (String) execution.getVariable(MSO_REQUEST_ID);
+            String originalRequestorId = (String) execution.getVariable(REQUESTOR_ID);
+            String description = (String) execution.getVariable(DESCRIPTION);
             String timeout = (String) execution.getVariable("taskTimeout");
             String errorSource = "";
             String errorCode = "";
             String errorMessage = "";
             String buildingBlockName = "";
             String buildingBlockStep = "";
-            String validResponses = (String) execution.getVariable("validResponses");
+            String validResponses = (String) execution.getVariable(VALID_RESPONSES);
 
-            Map<String, String> taskVariables = new HashMap<String, String>();
+            Map<String, String> taskVariables = new HashMap<>();
             taskVariables.put("type", type);
             taskVariables.put("nfRole", nfRole);
-            taskVariables.put("description", description);
+            taskVariables.put(DESCRIPTION, description);
             taskVariables.put("timeout", timeout);
             taskVariables.put("subscriptionServiceType", subscriptionServiceType);
             taskVariables.put("originalRequestId", originalRequestId);
             taskVariables.put("originalRequestorId", originalRequestorId);
             taskVariables.put("errorSource", errorSource);
-            taskVariables.put("errorCode", errorCode);
+            taskVariables.put(ERROR_CODE, errorCode);
             taskVariables.put("errorMessage", errorMessage);
             taskVariables.put("buildingBlockName", buildingBlockName);
             taskVariables.put("buildingBlockStep", buildingBlockStep);
-            taskVariables.put("validResponses", validResponses);
+            taskVariables.put(VALID_RESPONSES, validResponses);
             TaskService taskService = execution.getProcessEngineServices().getTaskService();
 
             taskService.setVariables(taskId, taskVariables);
             logger.debug("successfully created pause task: " + taskId);
         } catch (BpmnError e) {
-            logger.debug("BPMN exception: " + e.getMessage());
+            logger.debug(BPMN_EXCEPTION + e.getMessage());
             throw e;
         } catch (Exception ex) {
             String msg = "Exception in setPauseTaskVariables " + ex.getMessage();
@@ -149,7 +157,7 @@ public class ManualHandlingTasks {
             execution.setVariable("responseValueTask", responseValueUppercaseStart);
 
         } catch (BpmnError e) {
-            logger.debug("BPMN exception: " + e.getMessage());
+            logger.debug(BPMN_EXCEPTION + e.getMessage());
             throw e;
         } catch (Exception ex) {
             String msg = "Exception in completeManualTask " + ex.getMessage();
@@ -164,15 +172,15 @@ public class ManualHandlingTasks {
         try {
             ExternalTicket ticket = new ExternalTicket();
 
-            ticket.setRequestId((String) execution.getVariable("msoRequestId"));
+            ticket.setRequestId((String) execution.getVariable(MSO_REQUEST_ID));
             ticket.setCurrentActivity((String) execution.getVariable("currentActivity"));
-            ticket.setNfRole((String) execution.getVariable("vnfType"));
-            ticket.setDescription((String) execution.getVariable("description"));
-            ticket.setSubscriptionServiceType((String) execution.getVariable("serviceType"));
-            ticket.setRequestorId((String) execution.getVariable("requestorId"));
+            ticket.setNfRole((String) execution.getVariable(VNF_TYPE));
+            ticket.setDescription((String) execution.getVariable(DESCRIPTION));
+            ticket.setSubscriptionServiceType((String) execution.getVariable(SERVICE_TYPE));
+            ticket.setRequestorId((String) execution.getVariable(REQUESTOR_ID));
             ticket.setTimeout((String) execution.getVariable("taskTimeout"));
             ticket.setErrorSource((String) execution.getVariable("failedActivity"));
-            ticket.setErrorCode((String) execution.getVariable("errorCode"));
+            ticket.setErrorCode((String) execution.getVariable(ERROR_CODE));
             ticket.setErrorMessage((String) execution.getVariable("errorText"));
             ticket.setWorkStep((String) execution.getVariable("workStep"));
 
@@ -191,7 +199,7 @@ public class ManualHandlingTasks {
 
     public void updateRequestDbStatus(DelegateExecution execution, String status) {
         try {
-            String requestId = (String) execution.getVariable("msoRequestId");
+            String requestId = (String) execution.getVariable(MSO_REQUEST_ID);
             InfraActiveRequests request = requestDbclient.getInfraActiveRequestbyRequestId(requestId);
 
             request.setRequestStatus(status);
