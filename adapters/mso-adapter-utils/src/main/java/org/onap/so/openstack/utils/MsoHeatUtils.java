@@ -100,6 +100,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     protected static final String HEAT_ERROR = "HeatError";
 
     protected static final String CREATE_STACK = "CreateStack";
+    public static final String FOUND = "Found: {}";
+    public static final String EXCEPTION_ROLLING_BACK_STACK =
+            "{} Create Stack: Nested exception rolling back stack: {} ";
+    public static final String IN_PROGRESS = "in_progress";
 
     // Fetch cloud configuration each time (may be cached in CloudConfig class)
     @Autowired
@@ -124,8 +128,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     private String deletePollIntervalProp = "org.onap.so.adapters.po.pollInterval";
     private String deletePollTimeoutProp = "org.onap.so.adapters.po.pollTimeout";
 
-    protected static final String createPollIntervalDefault = "15";
-    private static final String deletePollIntervalDefault = "15";
+    protected static final String CREATE_POLL_INTERVAL_DEFAULT = "15";
+    private static final String DELETE_POLL_INTERVAL_DEFAULT = "15";
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
@@ -226,11 +230,11 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         // Obtain the cloud site information where we will create the stack
         CloudSite cloudSite =
                 cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-        logger.debug("Found: {}", cloudSite);
+        logger.debug(FOUND, cloudSite);
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         // This could throw MsoTenantNotFound or MsoOpenstackException (both propagated)
         Heat heatClient = getHeatClient(cloudSite, tenantId);
-        logger.debug("Found: {}", heatClient);
+        logger.debug(FOUND, heatClient);
 
         logger.debug("Ready to Create Stack ({}) with input params: {}", heatTemplate, stackInputs);
 
@@ -276,7 +280,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             boolean backout, Heat heatClient, Stack heatStack, String canonicalName)
             throws MsoException, MsoOpenstackException {
         int createPollInterval =
-                Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
+                Integer.parseInt(this.environment.getProperty(createPollIntervalProp, CREATE_POLL_INTERVAL_DEFAULT));
         int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
         int deletePollInterval = createPollInterval;
         int deletePollTimeout = pollTimeout;
@@ -361,15 +365,14 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
                             } catch (Exception e3) {
                                 // Just log this one. We will report the original exception.
-                                logger.error("{} Create Stack: Nested exception rolling back stack: {} ",
-                                        MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(),
-                                        e3);
+                                logger.error(EXCEPTION_ROLLING_BACK_STACK, MessageEnum.RA_CREATE_STACK_ERR,
+                                        ErrorCode.BusinessProcesssError.getValue(), e3);
                             }
                         }
                     } catch (Exception e2) {
                         // Just log this one. We will report the original exception.
-                        logger.error("{} Create Stack: Nested exception rolling back stack: {} ",
-                                MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(), e2);
+                        logger.error(EXCEPTION_ROLLING_BACK_STACK, MessageEnum.RA_CREATE_STACK_ERR,
+                                ErrorCode.BusinessProcesssError.getValue(), e2);
                     }
                 }
 
@@ -465,8 +468,8 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                     }
                 } catch (Exception e2) {
                     // shouldn't happen - but handle
-                    logger.error("{} Create Stack: Nested exception rolling back stack: {} ",
-                            MessageEnum.RA_CREATE_STACK_ERR, ErrorCode.BusinessProcesssError.getValue(), e2);
+                    logger.error(EXCEPTION_ROLLING_BACK_STACK, MessageEnum.RA_CREATE_STACK_ERR,
+                            ErrorCode.BusinessProcesssError.getValue(), e2);
                 }
             }
             MsoOpenstackException me = new MsoOpenstackException(0, "", stackErrorStatusReason.toString());
@@ -494,14 +497,14 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         // Obtain the cloud site information where we will create the stack
         CloudSite cloudSite =
                 cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-        logger.debug("Found: {}", cloudSite.toString());
+        logger.debug(FOUND, cloudSite.toString());
 
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = null;
         try {
             heatClient = getHeatClient(cloudSite, tenantId);
             if (heatClient != null) {
-                logger.debug("Found: {}", heatClient.toString());
+                logger.debug(FOUND, heatClient.toString());
             }
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
@@ -553,14 +556,14 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
         // Obtain the cloud site information where we will create the stack
         CloudSite cloudSite =
                 cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
-        logger.debug("Found: {}", cloudSite.toString());
+        logger.debug(FOUND, cloudSite.toString());
 
         // Get a Heat client. They are cached between calls (keyed by tenantId:cloudId)
         Heat heatClient = null;
         try {
             heatClient = getHeatClient(cloudSite, tenantId);
             if (heatClient != null) {
-                logger.debug("Found: {}", heatClient.toString());
+                logger.debug(FOUND, heatClient.toString());
             }
         } catch (MsoTenantNotFound e) {
             // Tenant doesn't exist, so stack doesn't either
@@ -621,9 +624,9 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             // Set a timeout on polling
 
             int pollInterval = Integer
-                    .parseInt(this.environment.getProperty(deletePollIntervalProp, "" + deletePollIntervalDefault));
+                    .parseInt(this.environment.getProperty(deletePollIntervalProp, "" + DELETE_POLL_INTERVAL_DEFAULT));
             int pollTimeout = Integer
-                    .parseInt(this.environment.getProperty(deletePollTimeoutProp, "" + deletePollIntervalDefault));
+                    .parseInt(this.environment.getProperty(deletePollTimeoutProp, "" + DELETE_POLL_INTERVAL_DEFAULT));
 
             // When querying by canonical name, Openstack returns DELETE_COMPLETE status
             // instead of "404" (which would result from query by stack name).
@@ -805,14 +808,14 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
         // Obtain an MSO token for the tenant
         CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-        logger.debug("Found: {}", cloudIdentity.toString());
+        logger.debug(FOUND, cloudIdentity.toString());
         MsoTenantUtils tenantUtils =
                 tenantUtilsFactory.getTenantUtilsByServerType(cloudIdentity.getIdentityServerType());
         String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
         logger.debug("keystoneUrl={}", keystoneUrl);
         String heatUrl = null;
         String tokenId = null;
-        Calendar expiration = null;
+
         try {
             if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
                 Keystone keystoneTenantClient = new Keystone(keystoneUrl);
@@ -849,12 +852,12 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
                     throw new MsoAdapterException(error, e);
                 }
                 tokenId = access.getToken().getId();
-                expiration = access.getToken().getExpires();
+
             } else if (ServerType.KEYSTONE_V3.equals(cloudIdentity.getIdentityServerType())) {
                 try {
                     KeystoneAuthHolder holder = keystoneV3Authentication.getToken(cloudSite, tenantId, "orchestration");
                     tokenId = holder.getId();
-                    expiration = holder.getexpiration();
+
                     heatUrl = holder.getServiceUrl();
                 } catch (ServiceEndpointNotFoundException e) {
                     // This comes back for not found (probably an incorrect region ID)
@@ -1027,8 +1030,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
     private String convertNode(final JsonNode node) {
         try {
             final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
-            final String json = JSON_MAPPER.writeValueAsString(obj);
-            return json;
+            return JSON_MAPPER.writeValueAsString(obj);
         } catch (Exception e) {
             logger.debug("Error converting json to string {} ", e.getMessage(), e);
         }
@@ -1321,19 +1323,19 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
      * This helpful method added for Valet
      */
     public String getCloudSiteKeystoneUrl(String cloudSiteId) throws MsoCloudSiteNotFound {
-        String keystone_url = null;
+        String keystoneUrl = null;
         try {
             CloudSite cloudSite =
                     cloudConfig.getCloudSite(cloudSiteId).orElseThrow(() -> new MsoCloudSiteNotFound(cloudSiteId));
             CloudIdentity cloudIdentity = cloudSite.getIdentityService();
-            keystone_url = cloudIdentity.getIdentityUrl();
+            keystoneUrl = cloudIdentity.getIdentityUrl();
         } catch (Exception e) {
             throw new MsoCloudSiteNotFound(cloudSiteId);
         }
-        if (keystone_url == null || keystone_url.isEmpty()) {
+        if (keystoneUrl == null || keystoneUrl.isEmpty()) {
             throw new MsoCloudSiteNotFound(cloudSiteId);
         }
-        return keystone_url;
+        return keystoneUrl;
     }
 
     /*
@@ -1550,7 +1552,7 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
 
         if (heatStatus == HeatStatus.INIT || heatStatus == HeatStatus.BUILDING) {
             vduStatus.setState(VduStateType.INSTANTIATING);
-            vduStatus.setLastAction((new PluginAction("create", "in_progress", statusMessage)));
+            vduStatus.setLastAction((new PluginAction("create", IN_PROGRESS, statusMessage)));
         } else if (heatStatus == HeatStatus.NOTFOUND) {
             vduStatus.setState(VduStateType.NOTFOUND);
         } else if (heatStatus == HeatStatus.CREATED) {
@@ -1561,10 +1563,10 @@ public class MsoHeatUtils extends MsoCommonUtils implements VduPlugin {
             vduStatus.setLastAction((new PluginAction("update", "complete", statusMessage)));
         } else if (heatStatus == HeatStatus.UPDATING) {
             vduStatus.setState(VduStateType.UPDATING);
-            vduStatus.setLastAction((new PluginAction("update", "in_progress", statusMessage)));
+            vduStatus.setLastAction((new PluginAction("update", IN_PROGRESS, statusMessage)));
         } else if (heatStatus == HeatStatus.DELETING) {
             vduStatus.setState(VduStateType.DELETING);
-            vduStatus.setLastAction((new PluginAction("delete", "in_progress", statusMessage)));
+            vduStatus.setLastAction((new PluginAction("delete", IN_PROGRESS, statusMessage)));
         } else if (heatStatus == HeatStatus.FAILED) {
             vduStatus.setState(VduStateType.FAILED);
             vduStatus.setErrorMessage(stackInfo.getStatusMessage());

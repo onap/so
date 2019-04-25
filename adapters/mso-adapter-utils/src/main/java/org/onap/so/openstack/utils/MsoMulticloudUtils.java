@@ -467,7 +467,7 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
         }
 
         int updatePollInterval =
-                Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
+                Integer.parseInt(this.environment.getProperty(createPollIntervalProp, CREATE_POLL_INTERVAL_DEFAULT));
         int pollTimeout = (timeoutMinutes * 60) + updatePollInterval;
         boolean updateTimedOut = false;
         logger.debug("updatePollInterval=" + updatePollInterval + ", pollTimeout=" + pollTimeout);
@@ -535,8 +535,8 @@ public class MsoMulticloudUtils extends MsoHeatUtils implements VduPlugin {
             // Use the resource (template) timeout for Openstack (expressed in minutes)
             // and add one poll interval to give Openstack a chance to fail on its own.s
 
-            int createPollInterval =
-                    Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
+            int createPollInterval = Integer
+                    .parseInt(this.environment.getProperty(createPollIntervalProp, CREATE_POLL_INTERVAL_DEFAULT));
             int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
             // New 1610 - poll on delete if we rollback - use same values for now
             int deletePollInterval = createPollInterval;

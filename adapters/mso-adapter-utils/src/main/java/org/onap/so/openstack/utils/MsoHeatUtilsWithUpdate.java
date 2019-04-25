@@ -60,6 +60,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
     private static final Logger logger = LoggerFactory.getLogger(MsoHeatUtilsWithUpdate.class);
 
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
+    public static final String EXCEPTION = "Exception :";
 
     @Autowired
     private Environment environment;
@@ -221,8 +222,8 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
             // Set a time limit on overall polling.
             // Use the resource (template) timeout for Openstack (expressed in minutes)
             // and add one poll interval to give Openstack a chance to fail on its own.
-            int createPollInterval =
-                    Integer.parseInt(this.environment.getProperty(createPollIntervalProp, createPollIntervalDefault));
+            int createPollInterval = Integer
+                    .parseInt(this.environment.getProperty(createPollIntervalProp, CREATE_POLL_INTERVAL_DEFAULT));
             int pollTimeout = (timeoutMinutes * 60) + createPollInterval;
 
             boolean loopAgain = true;
@@ -335,7 +336,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                     String str = JSON_MAPPER.writeValueAsString(obj);
                     sb.append(str).append(" (a java.util.LinkedHashMap)");
                 } catch (Exception e) {
-                    logger.debug("Exception :", e);
+                    logger.debug(EXCEPTION, e);
                     sb.append("(a LinkedHashMap value that would not convert nicely)");
                 }
             } else if (obj instanceof Integer) {
@@ -343,7 +344,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                 try {
                     str = obj.toString() + " (an Integer)\n";
                 } catch (Exception e) {
-                    logger.debug("Exception :", e);
+                    logger.debug(EXCEPTION, e);
                     str = "(an Integer unable to call .toString() on)";
                 }
                 sb.append(str);
@@ -352,7 +353,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                 try {
                     str = obj.toString() + " (an ArrayList)";
                 } catch (Exception e) {
-                    logger.debug("Exception :", e);
+                    logger.debug(EXCEPTION, e);
                     str = "(an ArrayList unable to call .toString() on?)";
                 }
                 sb.append(str);
@@ -361,7 +362,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                 try {
                     str = obj.toString() + " (a Boolean)";
                 } catch (Exception e) {
-                    logger.debug("Exception :", e);
+                    logger.debug(EXCEPTION, e);
                     str = "(an Boolean unable to call .toString() on?)";
                 }
                 sb.append(str);
@@ -370,7 +371,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
                 try {
                     str = obj.toString() + " (unknown Object type)";
                 } catch (Exception e) {
-                    logger.debug("Exception :", e);
+                    logger.debug(EXCEPTION, e);
                     str = "(a value unable to call .toString() on?)";
                 }
                 sb.append(str);
@@ -384,8 +385,7 @@ public class MsoHeatUtilsWithUpdate extends MsoHeatUtils {
     private String convertNodeWithUpdate(final JsonNode node) {
         try {
             final Object obj = JSON_MAPPER.treeToValue(node, Object.class);
-            final String json = JSON_MAPPER.writeValueAsString(obj);
-            return json;
+            return JSON_MAPPER.writeValueAsString(obj);
         } catch (Exception e) {
             logger.debug("Error converting json to string {} ", e.getMessage(), e);
         }
