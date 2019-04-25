@@ -20,11 +20,13 @@
 
 package org.onap.so.adapters.vnfmadapter;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import org.onap.so.adapters.vnfmadapter.rest.VnfmAdapterController;
 import org.slf4j.Logger;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import static org.slf4j.LoggerFactory.getLogger;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 
 /**
  * The spring boot application for the VNFM (Virtual Network Function Manager) Adapter.
@@ -36,6 +38,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  *      SOL003 v2.5.1</a>
  */
 @SpringBootApplication(scanBasePackages = {"org.onap.so"})
+@EnableAutoConfiguration(exclude = {JacksonAutoConfiguration.class})
 public class VnfmAdapterApplication {
     private static final Logger logger = getLogger(VnfmAdapterApplication.class);
 

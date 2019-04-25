@@ -20,10 +20,16 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
+import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
+import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vim.model.AccessInfo;
@@ -40,7 +46,7 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilte
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.SubscriptionsFilterVnfInstanceSubscriptionFilter;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.VnfInstancesvnfInstanceIdinstantiateExtVirtualLinks;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.VnfInstancesvnfInstanceIdinstantiateVimConnectionInfo;
-import org.onap.so.security.WebSecurityConfig;
+import org.onap.so.utils.CryptoUtils;
 import org.onap.vnfmadapter.v1.model.CreateVnfRequest;
 import org.onap.vnfmadapter.v1.model.ExternalVirtualLink;
 import org.onap.vnfmadapter.v1.model.Tenant;
@@ -49,11 +55,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
-import static org.onap.so.adapters.vnfmadapter.Constants.OPERATION_NOTIFICATION_ENDPOINT;
 
 /**
  * Provides helper methods for interactions with VNFM.
@@ -64,15 +65,19 @@ public class VnfmHelper {
     private static final Logger logger = LoggerFactory.getLogger(VnfmHelper.class);
     private static final String SEPARATOR = "_";
     private final AaiServiceProvider aaiServiceProvider;
-    private final WebSecurityConfig webSecurityConfig;
 
     @Value("${vnfmadapter.endpoint}")
     private String vnfmAdapterEndoint;
 
+    @Value("${vnfmadapter.auth:E39823AAB2739CC654C4E92B52C05BC34149342D0A46451B00CA508C8EDC62242CE4E9DA9445D3C01A3F13}")
+    private String vnfmAdapterAuth;
+
+    @Value("${mso.key}")
+    private String msoEncryptionKey;
+
     @Autowired
-    public VnfmHelper(final AaiServiceProvider aaiServiceProvider, final WebSecurityConfig webSecurityConfig) {
+    public VnfmHelper(final AaiServiceProvider aaiServiceProvider) {
         this.aaiServiceProvider = aaiServiceProvider;
-        this.webSecurityConfig = webSecurityConfig;
     }
 
     /**
@@ -171,8 +176,10 @@ public class VnfmHelper {
      *
      * @param the ID of the VNF notifications are required for
      * @return the request
+     * @throws GeneralSecurityException
      */
-    public LccnSubscriptionRequest createNotificationSubscriptionRequest(final String vnfId) {
+    public LccnSubscriptionRequest createNotificationSubscriptionRequest(final String vnfId)
+            throws GeneralSecurityException {
         final LccnSubscriptionRequest lccnSubscriptionRequest = new LccnSubscriptionRequest();
         lccnSubscriptionRequest.setAuthentication(getSubscriptionsAuthentication());
         lccnSubscriptionRequest.setCallbackUri(vnfmAdapterEndoint + BASE_URL + OPERATION_NOTIFICATION_ENDPOINT);
@@ -186,12 +193,11 @@ public class VnfmHelper {
         return lccnSubscriptionRequest;
     }
 
-    private SubscriptionsAuthentication getSubscriptionsAuthentication() {
+    private SubscriptionsAuthentication getSubscriptionsAuthentication() throws GeneralSecurityException {
         final SubscriptionsAuthenticationParamsBasic basicAuthParams = new SubscriptionsAuthenticationParamsBasic();
-        basicAuthParams.setUserName("vnfm");
-        basicAuthParams.setPassword(webSecurityConfig.getUsercredentials().stream()
-                .filter(userCredentials -> "vnfm".equals(userCredentials.getUsername())).findFirst().get()
-                .getPassword());
+        final String[] decrypedAuth = CryptoUtils.decrypt(vnfmAdapterAuth, msoEncryptionKey).split(":");
+        basicAuthParams.setUserName(decrypedAuth[0]);
+        basicAuthParams.setPassword(decrypedAuth[1]);
 
         final SubscriptionsAuthentication authentication = new SubscriptionsAuthentication();
         authentication.addAuthTypeItem(AuthTypeEnum.BASIC);

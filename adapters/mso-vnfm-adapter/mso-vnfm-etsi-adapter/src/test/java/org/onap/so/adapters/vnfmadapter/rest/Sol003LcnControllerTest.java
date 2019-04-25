@@ -20,7 +20,25 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import com.google.gson.Gson;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import javax.inject.Inject;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -29,6 +47,7 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.hamcrest.MockitoHamcrest;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.adapters.vnfmadapter.VnfmAdapterApplication;
@@ -64,24 +83,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import javax.inject.Inject;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -166,9 +167,11 @@ public class Sol003LcnControllerTest {
                 .andRespond(withSuccess(gson.toJson(vnfInstance), MediaType.APPLICATION_JSON));
 
         final GenericVnf genericVnf = createGenericVnf("vnfmType1");
-        final List<GenericVnf> genericVnfs = new ArrayList<>();
-        genericVnfs.add(genericVnf);
-        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(List.class),
+        final List<GenericVnf> listOfGenericVnfs = new ArrayList<>();
+        listOfGenericVnfs.add(genericVnf);
+        final GenericVnfs genericVnfs = new GenericVnfs();
+        genericVnfs.getGenericVnf().addAll(listOfGenericVnfs);
+        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
 
@@ -176,23 +179,27 @@ public class Sol003LcnControllerTest {
                 controller.lcnVnfLcmOperationOccurrenceNotificationPost(vnfLcmOperationOccurrenceNotification);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 
-        final ArgumentCaptor<Object> bodyArgument = ArgumentCaptor.forClass(Object.class);
-        final ArgumentCaptor<AAIResourceUri> uriArgument = ArgumentCaptor.forClass(AAIResourceUri.class);
+        final ArgumentCaptor<Object> bodyArgument1 = ArgumentCaptor.forClass(Object.class);
+        final ArgumentCaptor<AAIResourceUri> uriArgument1 = ArgumentCaptor.forClass(AAIResourceUri.class);
 
-        verify(aaiResourcesClient, timeout(1000).times(2)).update(uriArgument.capture(), bodyArgument.capture());
+        verify(aaiResourcesClient, timeout(1000)).update(uriArgument1.capture(), bodyArgument1.capture());
 
         assertEquals("/network/generic-vnfs/generic-vnf/myTestVnfId",
-                uriArgument.getAllValues().get(0).build().toString());
-        final GenericVnf updatedGenericVnf = (GenericVnf) bodyArgument.getAllValues().get(0);
+                uriArgument1.getAllValues().get(0).build().toString());
+        final GenericVnf updatedGenericVnf = (GenericVnf) bodyArgument1.getAllValues().get(0);
         assertEquals("10.10.10.10", updatedGenericVnf.getIpv4OamAddress());
         assertEquals("Created", updatedGenericVnf.getOrchestrationStatus());
+
+        final ArgumentCaptor<Object> bodyArgument2 = ArgumentCaptor.forClass(Object.class);
+        final ArgumentCaptor<AAIResourceUri> uriArgument2 = ArgumentCaptor.forClass(AAIResourceUri.class);
+        verify(aaiResourcesClient, timeout(1000)).create(uriArgument2.capture(), bodyArgument2.capture());
 
         assertEquals(
                 "/cloud-infrastructure/cloud-regions/cloud-region/" + CLOUD_OWNER + "/" + REGION + "/tenants/tenant/"
                         + TENANT_ID + "/vservers/vserver/myVnfc1",
-                uriArgument.getAllValues().get(1).build().toString());
+                uriArgument2.getAllValues().get(0).build().toString());
 
-        final Vserver vserver = (Vserver) bodyArgument.getAllValues().get(1);
+        final Vserver vserver = (Vserver) bodyArgument2.getAllValues().get(0);
         assertEquals("myVnfc1", vserver.getVserverId());
         final Relationship relationship = vserver.getRelationshipList().getRelationship().get(0);
         assertEquals("generic-vnf", relationship.getRelatedTo());
@@ -218,9 +225,12 @@ public class Sol003LcnControllerTest {
 
         final GenericVnf genericVnf = createGenericVnf("vnfmType1");
         genericVnf.setSelflink("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm");
-        final List<GenericVnf> genericVnfs = new ArrayList<>();
-        genericVnfs.add(genericVnf);
-        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(List.class),
+        final List<GenericVnf> listOfGenericVnfs = new ArrayList<>();
+        listOfGenericVnfs.add(genericVnf);
+        final GenericVnfs genericVnfs = new GenericVnfs();
+        genericVnfs.getGenericVnf().addAll(listOfGenericVnfs);
+
+        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher(
                         "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
 
