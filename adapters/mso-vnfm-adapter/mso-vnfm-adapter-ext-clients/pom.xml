@@ -62,7 +62,6 @@
               <apiPackage>org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.api</apiPackage>
               <modelPackage>org.onap.so.adapters.vnfmadapter.extclients.vnfm.lcn.model</modelPackage>
               <configOptions>
-                <jackson>true</jackson>
                 <sourceFolder>src/gen/java/main</sourceFolder>
                 <withXml>true</withXml>
                 <useRxJava2>true</useRxJava2>
@@ -79,8 +78,9 @@
               <inputSpec>${basedir}/src/main/resources/SOL003-VNFLifecycleOperationGranting-API.json
                             </inputSpec>
               <language>java</language>
-              <library>retrofit2</library>
+              <library>okhttp-gson</library>
               <output>${project.build.directory}/generated-sources/sol003-vnf-grant</output>
+              <apiPackage>org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.api</apiPackage>
               <generateApis>false</generateApis>
               <modelPackage>org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model</modelPackage>
               <configOptions>
@@ -88,6 +88,7 @@
                 <sourceFolder>src/gen/java/main</sourceFolder>
                 <withXml>true</withXml>
                 <useRxJava2>true</useRxJava2>
+                <serializableModel>true</serializableModel>
               </configOptions>
             </configuration>
           </execution>

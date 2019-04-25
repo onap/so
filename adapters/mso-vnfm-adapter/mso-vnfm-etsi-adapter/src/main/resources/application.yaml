@@ -11,6 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+spring:
+  security:
+    usercredentials:
+      - username: test
+        password: '$2a$12$Zi3AuYcZoZO/gBQyUtST2.F5N6HqcTtaNci2Et.ufsQhski56srIu'
+        role: BPEL-Client
+      - username: vnfm
+        password: '$2a$10$Fh9ffgPw2vnmsghsRD3ZauBL1aKXebigbq3BB1RPWtE62UDILsjke'
+        role: BPEL-Client
+  http:
+    converters:
+    preferred-json-mapper: gson
+        
 server:
   port: 9092
   tomcat:
@@ -29,6 +42,9 @@ sdc:
   password: sdcPassword
   key: adadadadad
   endpoint: http://sdc.onap/1234A
+  
+vnfmadapter:
+  endpoint: http://so-vnfm-adapter.onap:9092
 
 #Actuator
 management:
