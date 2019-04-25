@@ -31,7 +31,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"href", "rel"})
 public class MulticloudCreateLinkResponse implements Serializable {
-    private final static long serialVersionUID = -5215028275577848311L;
+    private static final long serialVersionUID = -5215028275577848311L;
 
     @JsonProperty("href")
     private String href;

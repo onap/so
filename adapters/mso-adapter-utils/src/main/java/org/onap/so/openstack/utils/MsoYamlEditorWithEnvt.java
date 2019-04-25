@@ -40,6 +40,7 @@ import org.yaml.snakeyaml.Yaml;
 public class MsoYamlEditorWithEnvt {
 
     private static final Logger logger = LoggerFactory.getLogger(MsoYamlEditorWithEnvt.class);
+    public static final String EXCEPTION = "Exception:";
 
     private Map<String, Object> yml;
     private Yaml yaml = new Yaml();
@@ -68,7 +69,7 @@ public class MsoYamlEditorWithEnvt {
         try {
             resourceMap = (Map<String, Object>) yml.get("parameters");
         } catch (Exception e) {
-            logger.debug("Exception:", e);
+            logger.debug(EXCEPTION, e);
             return paramSet;
         }
         if (resourceMap == null) {
@@ -89,7 +90,7 @@ public class MsoYamlEditorWithEnvt {
                 try {
                     value = JSON_MAPPER.writeValueAsString(obj);
                 } catch (Exception e) {
-                    logger.debug("Exception:", e);
+                    logger.debug(EXCEPTION, e);
                     value = "_BAD_JSON_MAPPING";
                 }
             } else {
@@ -118,7 +119,7 @@ public class MsoYamlEditorWithEnvt {
             }
             return resourceList;
         } catch (Exception e) {
-            logger.debug("Exception:", e);
+            logger.debug(EXCEPTION, e);
         }
         return null;
     }
@@ -137,7 +138,7 @@ public class MsoYamlEditorWithEnvt {
             try {
                 value = resourceEntry.get("default");
             } catch (ClassCastException cce) {
-                logger.debug("Exception:", cce);
+                logger.debug(EXCEPTION, cce);
                 // This exception only - the value is an integer. For what we're doing
                 // here - we don't care - so set value to something - and it will
                 // get marked as not being required - which is correct.
