@@ -31,7 +31,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({"template_type", "workload_id", "workload_status", "workload_status_reason"})
 public class MulticloudQueryResponse implements Serializable {
-    private final static long serialVersionUID = -5215028275577848311L;
+    private static final long serialVersionUID = -5215028275577848311L;
 
     @JsonProperty("template_type")
     private String templateType;
