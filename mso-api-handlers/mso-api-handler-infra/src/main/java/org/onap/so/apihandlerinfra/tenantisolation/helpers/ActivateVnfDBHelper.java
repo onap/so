@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ActivateVnfDBHelper {
 
-    private static Logger logger = LoggerFactory.getLogger(ActivateVnfDBHelper.class);
+
 
     /**
      * Insert record to OperationalEnvServiceModelStatus table
