@@ -67,9 +67,6 @@ public class MsoCommonUtils {
 
     protected <T> T executeAndRecordOpenstackRequest(OpenStackRequest<T> request) {
 
-        int limit;
-
-        long start = System.currentTimeMillis();
         String requestType;
         if (request.getClass().getEnclosingClass() != null) {
             requestType =
