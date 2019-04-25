@@ -77,6 +77,8 @@ public class ASDCController {
 
     protected static final Logger logger = LoggerFactory.getLogger(ASDCController.class);
 
+    private static final String UNKNOWN = "Unknown";
+
     protected boolean isAsdcClientAutoManaged = false;
 
     protected String controllerName;
@@ -109,6 +111,25 @@ public class ASDCController {
 
     @Autowired
     DeployActivitySpecs deployActivitySpecs;
+
+    public ASDCController() {
+        this("");
+    }
+
+    public ASDCController(String controllerConfigName) {
+        isAsdcClientAutoManaged = true;
+        this.controllerName = controllerConfigName;
+    }
+
+    public ASDCController(String controllerConfigName, IDistributionClient asdcClient,
+            IVfResourceInstaller resourceinstaller) {
+        distributionClient = asdcClient;
+    }
+
+    public ASDCController(String controllerConfigName, IDistributionClient asdcClient) {
+        distributionClient = asdcClient;
+        this.controllerName = controllerConfigName;
+    }
 
     public int getNbOfNotificationsOngoing() {
         return nbOfNotificationsOngoing;
@@ -148,25 +169,6 @@ public class ASDCController {
 
     public ASDCControllerStatus getControllerStatus() {
         return this.controllerStatus;
-    }
-
-    public ASDCController() {
-        this("");
-    }
-
-    public ASDCController(String controllerConfigName) {
-        isAsdcClientAutoManaged = true;
-        this.controllerName = controllerConfigName;
-    }
-
-    public ASDCController(String controllerConfigName, IDistributionClient asdcClient,
-            IVfResourceInstaller resourceinstaller) {
-        distributionClient = asdcClient;
-    }
-
-    public ASDCController(String controllerConfigName, IDistributionClient asdcClient) {
-        distributionClient = asdcClient;
-        this.controllerName = controllerConfigName;
     }
 
     public String getControllerName() {
@@ -356,7 +358,7 @@ public class ASDCController {
         for (IArtifactInfo artifactInfo : resourceStructure.getResourceInstance().getArtifacts()) {
 
             if ((DistributionStatusEnum.DEPLOY_OK.equals(distribStatus)
-                    && !artifactInfo.getArtifactType().equalsIgnoreCase("OTHER")
+                    && !("OTHER").equalsIgnoreCase(artifactInfo.getArtifactType())
                     && !resourceStructure.isAlreadyDeployed())
                     // This could be NULL if the artifact is a VF module artifact, this won't be present in the MAP
                     && resourceStructure.getArtifactsMapByUUID().get(artifactInfo.getArtifactUUID()) != null
@@ -442,7 +444,7 @@ public class ASDCController {
                 status.name(), artifactURL, "ASDC", "sendASDCNotification");
         logger.debug(event);
 
-        String action = "";
+
         try {
             IDistributionStatusMessage message =
                     new DistributionStatusMessage(artifactURL, consumerID, distributionID, status, timestamp);
@@ -454,7 +456,7 @@ public class ASDCController {
                     } else {
                         this.distributionClient.sendDownloadStatus(message);
                     }
-                    action = "sendDownloadStatus";
+
                     break;
                 case DEPLOY:
                     if (errorReason != null) {
@@ -462,7 +464,7 @@ public class ASDCController {
                     } else {
                         this.distributionClient.sendDeploymentStatus(message);
                     }
-                    action = "sendDeploymentdStatus";
+
                     break;
                 default:
                     break;
@@ -667,12 +669,12 @@ public class ASDCController {
             String filePath =
                     msoConfigPath + "/ASDC/" + iArtifact.getArtifactVersion() + "/" + iArtifact.getArtifactName();
             File csarFile = new File(filePath);
-            String csarFilePath = csarFile.getAbsolutePath();
+
 
             for (IResourceInstance resource : iNotif.getResources()) {
 
                 String resourceType = resource.getResourceType();
-                String category = resource.getCategory();
+
 
                 logger.info("Processing Resource Type: {}, Model UUID: {}", resourceType, resource.getResourceUUID());
 
@@ -832,7 +834,7 @@ public class ASDCController {
         }
     }
 
-    private static final String UNKNOWN = "Unknown";
+
 
     /**
      * @return the address of the ASDC we are connected to.

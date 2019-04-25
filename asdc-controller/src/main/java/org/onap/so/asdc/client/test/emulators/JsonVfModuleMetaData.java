@@ -33,15 +33,15 @@ public class JsonVfModuleMetaData implements IVfModuleData {
     @JsonProperty("artifacts")
     private List<String> artifacts;
     @JsonProperty("properties")
-    // private List<Map<String, Object>> properties = new ArrayList<>();
+
     private Map<String, String> properties = new HashMap<>();
+
+    @JsonIgnore
+    private Map<String, Object> attributesMap = new HashMap<>();
 
     public Map<String, String> getProperties() {
         return properties;
     }
-
-    @JsonIgnore
-    private Map<String, Object> attributesMap = new HashMap<>();
 
     @Override
     public List<String> getArtifacts() {
