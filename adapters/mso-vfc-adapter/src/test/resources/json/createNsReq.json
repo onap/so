@@ -1,32 +1,56 @@
 {
-    "nsServiceName":"vIMS",
-    "nsServiceDescription":"vIMS NS",
+    "nsServiceName":"vcpe_e2e_vnf_test2",
+    "nsServiceDescription":"null",
+    "nsServiceModelUUID":"c9f0a95e-dea0-4698-96e5-5a79bc5a233d",
     "nsOperationKey":{
-        "globalSubscriberId":"9b9f02c0-298b-458a-bc9c-be3692e4f350",
-        "serviceType":"service",
-        "serviceId":"9b9f02c0-298b-458a-bc9c-be3692e4f351",
-        "operationId":"9b9f02c0-298b-458a-bc9c-be3692e4f352",
-        "nodeTemplateUUID":"9b9f02c0-298b-458a-bc9c-be3692e4f353"
+        "globalSubscriberId":"Demonstration",
+        "serviceType":"vCPE",
+        "serviceId":"996fadbb-e806-4a19-b0e5-3454ad6ac29e",
+        "operationId":"1f1dd6b2-b027-4008-a9df-3b6c8274fb24",
+        "nodeTemplateUUID":"4d3a835c-29c8-4a63-83a4-50de5f7ffe16"
     },
     "nsParameters":{
         "locationConstraints":[
             {
-                "vnfProfileId":"zte-CSCF-1.0",
                 "locationConstraints":{
-                    "vimId":"1"
-                }
+                    "vimId":"CloudOwner_regionOne"
+                },
+                "vnfProfileId":"b1bb0ce7-2222-4fa7-95ed-4840d70a1101"
+            },
+            {
+                "locationConstraints":{
+                    "vimId":"CloudOwner_regionOne"
+                },
+                "vnfProfileId":"0408f076-e6c0-4c82-9940-272fddbb82de"
+            },
+            {
+                "locationConstraints":{
+                    "vimId":"CloudOwner_regionOne"
+                },
+                "vnfProfileId":"b1bb0ce7-2222-4fa7-95ed-4840d70a1100"
+            },
+            {
+                "locationConstraints":{
+                    "vimId":"CloudOwner_regionOne"
+                },
+                "vnfProfileId":"b1bb0ce7-2222-4fa7-95ed-4840d70a1102"
+            },
+            {
+                "locationConstraints":{
+                    "vimId":"CloudOwner_regionOne"
+                },
+                "vnfProfileId":"3fca3543-07f5-492f-812c-ed462e4f94f4"
             }
         ],
         "additionalParamForNs":{
-            "externalDataNetworkName":"Flow_out_net",
-            "m6000_mng_ip":"192.168.20.2",
-            "externalCompanyFtpDataNetworkName":"Flow_out_net",
-            "externalPluginManageNetworkName":"plugin_net_2014",
-            "externalManageNetworkName":"mng_net_2017",
-            "sfc_data_network":"sfc_data_net_2016",
-            "NatIpRange":"210.1.1.10-210.1.1.20",
-            "location":"4050083f-465f-4838-af1e-47a545222ad0",
-            "sdncontroller":"9b9f02c0-298b-458a-bc9c-be3692e4f35e"
+            "orchestrator":"",
+            "nfvo":"b1bb0ce7-2222-4fa7-95ed-4840d70a1101",
+            "nf_naming":"true",
+            "multi_stage_design":"false",
+            "availability_zone_max_count":"1",
+            "xyz":"123",
+            "nsd0_providing_service_invariant_uuid":"12204a12-7da2-4ddf-8c2f-992a1a1acebf",
+            "nsd0_providing_service_uuid":"5791dbeb-19d4-43e8-bf44-5b327ccf6bca"
         }
     }
 }
