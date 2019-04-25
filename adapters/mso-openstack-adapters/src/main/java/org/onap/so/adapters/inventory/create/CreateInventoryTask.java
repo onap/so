@@ -20,7 +20,6 @@
 
 package org.onap.so.adapters.inventory.create;
 
-import java.io.IOException;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.onap.logging.ref.slf4j.ONAPLogConstants;
@@ -47,17 +46,16 @@ public class CreateInventoryTask {
     public Environment env;
 
     protected void executeExternalTask(ExternalTask externalTask, ExternalTaskService externalTaskService) {
+        setupMDC(externalTask);
         boolean success = true;
         String auditInventoryString = externalTask.getVariable("auditInventoryResult");
-        GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
         AAIObjectAuditList auditInventory = null;
         try {
+            GraphInventoryCommonObjectMapperProvider objectMapper = new GraphInventoryCommonObjectMapperProvider();
             auditInventory = objectMapper.getMapper().readValue(auditInventoryString, AAIObjectAuditList.class);
-        } catch (IOException e1) {
-            success = false;
+        } catch (Exception e) {
+            logger.error("Error Parsing Audit Results", e);
         }
-        setupMDC(externalTask);
-
         if (auditInventory != null) {
             try {
                 logger.info("Executing External Task Create Inventory, Retry Number: {} \n {}", auditInventory,
@@ -96,9 +94,13 @@ public class CreateInventoryTask {
     }
 
     private void setupMDC(ExternalTask externalTask) {
-        String msoRequestId = (String) externalTask.getVariable("mso-request-id");
-        if (msoRequestId != null && !msoRequestId.isEmpty())
-            MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
+        try {
+            String msoRequestId = (String) externalTask.getVariable("mso-request-id");
+            if (msoRequestId != null && !msoRequestId.isEmpty())
+                MDC.put(ONAPLogConstants.MDCs.REQUEST_ID, msoRequestId);
+        } catch (Exception e) {
+            logger.error("Error in setting up MDC", e);
+        }
     }
 
     protected long calculateRetryDelay(int currentRetries) {

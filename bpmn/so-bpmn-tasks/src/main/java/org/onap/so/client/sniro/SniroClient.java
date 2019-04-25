@@ -24,8 +24,8 @@ package org.onap.so.client.sniro;
 
 import java.util.LinkedHashMap;
 import org.camunda.bpm.engine.delegate.BpmnError;
-import org.onap.so.bpmn.common.baseclient.BaseClient;
 import org.onap.so.bpmn.core.UrnPropertiesReader;
+import org.onap.so.client.BaseClient;
 import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.ManagerProperties;
 import org.onap.so.client.sniro.beans.SniroConductorRequest;

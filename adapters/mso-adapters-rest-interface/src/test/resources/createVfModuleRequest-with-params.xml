@@ -1,4 +1,4 @@
-<createVfModuleRequest>
+  <createVfModuleRequest>
 	<cloudSiteId>RegionOne</cloudSiteId>
 	<cloudOwner>CloudOwner</cloudOwner>
 	<tenantId>09d8566ea45e43aa974cf447ed591d77</tenantId>
@@ -196,7 +196,10 @@
 			<key>vf_module_index</key>
 			<value>0</value>
 		</entry>
-
+        <entry>
+            <key>raw-json-param</key>
+            <value xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xsi:type="xs:string">["a","b","c"]</value>
+        </entry>
 	</vfModuleParams>
 	<msoRequest>
 		<requestId>11c8ec20-a1f8-4aa2-926f-e55d67a30f8b</requestId>
