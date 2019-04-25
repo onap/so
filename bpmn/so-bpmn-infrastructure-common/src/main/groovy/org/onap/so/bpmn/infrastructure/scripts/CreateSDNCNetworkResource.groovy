@@ -216,7 +216,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
      * This method updates the resource input by collecting required info from AAI
      * @param execution
      */
-    public void updateResourceInput(DelegateExecution execution) {
+    public ResourceInput updateResourceInput(DelegateExecution execution) {
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
 
@@ -235,6 +235,26 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String cvlan = "10"
                 String svlan = "100"
                 String accessId = "AC9.0234.0337"
+
+                List<Metadatum> metadatum = getMetaDatum(resourceInputObj.getGlobalSubscriberId(),
+                    resourceInputObj.getServiceType(),
+                    resourceInputObj.getServiceInstanceId())
+                for(Metadatum datum: metadatum) {
+                    if (datum.getMetaname().equalsIgnoreCase("cvlan")) {
+                        cvlan = datum.getMetaval()
+                    }
+
+                    if (datum.getMetaname().equalsIgnoreCase("svlan")) {
+                        svlan = datum.getMetaval()
+                    }
+
+                    if (datum.getMetaname().equalsIgnoreCase("accessId")) {
+                        accessId = datum.getMetaval()
+                    }
+                }
+
+                logger.debug("cvlan: "+cvlan+" | svlan: "+svlan+" | accessId: "+accessId)
+
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
                 String ontsn = jsonUtil.getJsonValue(serInput,
@@ -246,10 +266,10 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ONTSN", ontsn)
 
-                msoLogger.debug("old resource input:" + resourceInputObj.toString())
+                //msoLogger.debug("old resource input:" + resourceInputObj.toString())
                 resourceInputObj.setResourceParameters(uResourceInput)
                 execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
-                msoLogger.debug("new resource Input :" + resourceInputObj.toString())
+                //msoLogger.debug("new resource Input :" + resourceInputObj.toString())
                 break
 
             case ~/[\w\s\W]*EdgeInternetProfile[\w\s\W]*/ :
@@ -320,6 +340,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             default:
                 break
         }
+        return resourceInputObj
     }
 
     /**
