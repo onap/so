@@ -61,16 +61,16 @@ public class ActivateVnfStatusOperationalEnvironment {
     private OperationalEnvServiceModelStatus queryServiceModelResponse = null;
     private boolean isOverallSuccess = false;
 
-    private final int RETRY_COUNT_ZERO = 0;
-    private final String ERROR_REASON_ABORTED = "ABORTED";
-    private final String RECOVERY_ACTION_RETRY = "RETRY";
+    private static final int RETRY_COUNT_ZERO = 0;
+    private static final String ERROR_REASON_ABORTED = "ABORTED";
+    private static final String RECOVERY_ACTION_RETRY = "RETRY";
     private final String RECOVERY_ACTION_ABORT = "ABORT";
-    private final String RECOVERY_ACTION_SKIP = "SKIP";
+    private static final String RECOVERY_ACTION_SKIP = "SKIP";
     private final String DISTRIBUTION_STATUS_OK = DistributionStatus.DISTRIBUTION_COMPLETE_OK.toString();
     private final String DISTRIBUTION_STATUS_ERROR = DistributionStatus.DISTRIBUTION_COMPLETE_ERROR.toString();
-    private final String DISTRIBUTION_STATUS_SENT = "SENT";
+    private static final String DISTRIBUTION_STATUS_SENT = "SENT";
 
-    private final String MESSAGE_UNDEFINED_ID = "Undefined Error Message!";
+    private static final String MESSAGE_UNDEFINED_ID = "Undefined Error Message!";
 
     @Autowired
     private ActivateVnfDBHelper dbHelper;
@@ -188,7 +188,7 @@ public class ActivateVnfStatusOperationalEnvironment {
                         }
                     }
 
-                    sdcStatusValue = modifiedStatus;
+
                     OperationalEnvServiceModelStatus updateRetryCountZeroAndStatus =
                             dbHelper.updateRetryCountAndStatusInOperationalEnvServiceModelStatus(
                                     queryServiceModelResponse, modifiedStatus, RETRY_COUNT_ZERO);

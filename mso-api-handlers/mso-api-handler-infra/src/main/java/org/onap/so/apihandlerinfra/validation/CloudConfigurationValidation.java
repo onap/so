@@ -28,6 +28,9 @@ import org.onap.so.serviceinstancebeans.CloudConfiguration;
 import org.onap.so.serviceinstancebeans.ModelType;
 
 public class CloudConfigurationValidation implements ValidationRule {
+
+    private static final String Cloud_Configuration = "cloudConfiguration";
+
     public boolean empty(String s) {
         return (s == null || s.trim().isEmpty());
     }
@@ -46,31 +49,31 @@ public class CloudConfigurationValidation implements ValidationRule {
                         && !requestScope.equalsIgnoreCase(ModelType.configuration.name()))
                         && (action == Action.createInstance || action == Action.deleteInstance
                                 || action == Action.updateInstance)) {
-                    throw new ValidationException("cloudConfiguration");
+                    throw new ValidationException(Cloud_Configuration);
                 }
                 if ((requestScope.equalsIgnoreCase(ModelType.vnf.name())
                         || requestScope.equalsIgnoreCase(ModelType.vfModule.name()))
                         && action == Action.replaceInstance) {
-                    throw new ValidationException("cloudConfiguration");
+                    throw new ValidationException(Cloud_Configuration);
                 }
                 if (requestScope.equalsIgnoreCase(ModelType.configuration.name())
                         && (action == Action.enablePort || action == Action.disablePort
                                 || action == Action.activateInstance || action == Action.deactivateInstance)) {
-                    throw new ValidationException("cloudConfiguration");
+                    throw new ValidationException(Cloud_Configuration);
                 }
                 if (requestScope.equalsIgnoreCase(ModelType.vfModule.name())
                         && (action == Action.deactivateAndCloudDelete || action == Action.scaleOut)) {
-                    throw new ValidationException("cloudConfiguration");
+                    throw new ValidationException(Cloud_Configuration);
                 }
                 if (requestScope.equals(ModelType.vnf.name()) && action == Action.recreateInstance) {
-                    throw new ValidationException("cloudConfiguration", true);
+                    throw new ValidationException(Cloud_Configuration, true);
                 }
             }
         }
 
         if (cloudConfiguration == null && ((aLaCarteFlag != null && !aLaCarteFlag)
                 && requestScope.equalsIgnoreCase(ModelType.service.name()) && reqVersion < 5)) {
-            throw new ValidationException("cloudConfiguration");
+            throw new ValidationException(Cloud_Configuration);
         }
 
         if (cloudConfiguration != null) {

@@ -145,7 +145,7 @@ public class CreateVnfOperationalEnvironment {
             throws TenantIsolationException {
         List<ServiceEndPoint> endpointList = serviceEndPointList.getServiceEndPointList();
         logger.debug("Number of service endpoints from GRM: {}", endpointList.size());
-        List<ServiceEndPointRequest> serviceEndPointRequestList = new ArrayList<ServiceEndPointRequest>();
+        List<ServiceEndPointRequest> serviceEndPointRequestList = new ArrayList<>();
         for (ServiceEndPoint serviceEndpoint : endpointList) {
             serviceEndPointRequestList.add(buildServiceEndpoint(serviceEndpoint));
         }
