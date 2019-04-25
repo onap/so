@@ -38,8 +38,8 @@ public class MsoCloudifyWorkflowException extends MsoCloudifyException {
         super(0, "Workflow Exception",
                 "Workflow " + workflowId + " failed on deployment " + deploymentId + ": " + message);
         this.workflowStatus = workflowStatus;
-        if (workflowStatus.equals("pending") || workflowStatus.equals("started") || workflowStatus.equals("cancelling")
-                || workflowStatus.equals("force_cancelling")) {
+        if (("pending").equals(workflowStatus) || ("started").equals(workflowStatus)
+                || ("cancelling").equals(workflowStatus) || ("force_cancelling").equals(workflowStatus)) {
             workflowStillRunning = true;
         }
     }
