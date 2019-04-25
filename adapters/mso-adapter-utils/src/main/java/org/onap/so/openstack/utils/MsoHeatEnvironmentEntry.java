@@ -70,7 +70,7 @@ public class MsoHeatEnvironmentEntry {
             logger.debug("Exception:", e);
             this.valid = false;
             this.errorString = e.getMessage();
-            // e.printStackTrace();
+
         }
     }
 
@@ -173,7 +173,7 @@ public class MsoHeatEnvironmentEntry {
         // Basically give back the envt - but exclude the params that aren't in the HeatTemplate
 
         StringBuilder sb = new StringBuilder();
-        ArrayList<String> paramNameList = new ArrayList<String>(params.size());
+        ArrayList<String> paramNameList = new ArrayList<>(params.size());
         for (HeatTemplateParam htp : params) {
             paramNameList.add(htp.getParamName());
         }

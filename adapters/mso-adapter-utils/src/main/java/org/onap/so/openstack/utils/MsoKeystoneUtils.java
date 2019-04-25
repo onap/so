@@ -58,6 +58,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MsoKeystoneUtils extends MsoTenantUtils {
 
+    public static final String DELETE_TENANT = "Delete Tenant";
     private static Logger logger = LoggerFactory.getLogger(MsoKeystoneUtils.class);
 
     @Autowired
@@ -207,7 +208,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                 return null;
             }
 
-            Map<String, String> metadata = new HashMap<String, String>();
+            Map<String, String> metadata = new HashMap<>();
             if (cloudSite.getIdentityService().getTenantMetadata()) {
                 OpenStackRequest<Metadata> request = keystoneAdminClient.tenants().showMetadata(tenant.getId());
                 Metadata tenantMetadata = executeAndRecordOpenstackRequest(request);
@@ -252,7 +253,7 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
                 return null;
             }
 
-            Map<String, String> metadata = new HashMap<String, String>();
+            Map<String, String> metadata = new HashMap<>();
             if (cloudSite.getIdentityService().getTenantMetadata()) {
                 OpenStackRequest<Metadata> request = keystoneAdminClient.tenants().showMetadata(tenant.getId());
                 Metadata tenantMetadata = executeAndRecordOpenstackRequest(request);
@@ -304,10 +305,10 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
             logger.debug("Deleted Tenant {} ({})", tenant.getId(), tenant.getName());
         } catch (OpenStackBaseException e) {
             // Convert Keystone OpenStackResponseException to MsoOpenstackException
-            throw keystoneErrorToMsoException(e, "Delete Tenant");
+            throw keystoneErrorToMsoException(e, DELETE_TENANT);
         } catch (RuntimeException e) {
             // Catch-all
-            throw runtimeExceptionToMsoException(e, "DeleteTenant");
+            throw runtimeExceptionToMsoException(e, DELETE_TENANT);
         }
 
         return true;
@@ -354,10 +355,10 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
         } catch (OpenStackBaseException e) {
             // Note: It doesn't seem to matter if tenant doesn't exist, no exception is thrown.
             // Convert Keystone OpenStackResponseException to MsoOpenstackException
-            throw keystoneErrorToMsoException(e, "DeleteTenant");
+            throw keystoneErrorToMsoException(e, DELETE_TENANT);
         } catch (RuntimeException e) {
             // Catch-all
-            throw runtimeExceptionToMsoException(e, "DeleteTenant");
+            throw runtimeExceptionToMsoException(e, DELETE_TENANT);
         }
 
         return true;
@@ -379,7 +380,6 @@ public class MsoKeystoneUtils extends MsoTenantUtils {
     public Keystone getKeystoneAdminClient(CloudSite cloudSite) throws MsoException {
         CloudIdentity cloudIdentity = cloudSite.getIdentityService();
 
-        String cloudId = cloudIdentity.getId();
         String adminTenantName = cloudIdentity.getAdminTenant();
         String region = cloudSite.getRegionId();
 
