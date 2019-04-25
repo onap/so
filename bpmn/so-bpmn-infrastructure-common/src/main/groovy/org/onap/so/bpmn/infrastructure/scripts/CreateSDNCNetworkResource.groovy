@@ -216,7 +216,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
      * This method updates the resource input by collecting required info from AAI
      * @param execution
      */
-    public void updateResourceInput(DelegateExecution execution) {
+    public ResourceInput updateResourceInput(DelegateExecution execution) {
         ResourceInput resourceInputObj = ResourceRequestBuilder.getJsonObject(execution.getVariable(Prefix + "resourceInput"), ResourceInput.class)
         String modelName = resourceInputObj.getResourceModelInfo().getModelName()
 
@@ -232,9 +232,29 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String incomingRequest = resourceInputObj.getRequestsInputs()
                 String serviceParameters = JsonUtils.getJsonValue(incomingRequest, "service.parameters")
                 String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
-                String cvlan = "10"
-                String svlan = "100"
-                String accessId = "AC9.0234.0337"
+                String cvlan
+                String svlan
+                String remoteId
+
+                List<Metadatum> metadatum = getMetaDatum(resourceInputObj.getGlobalSubscriberId(),
+                    resourceInputObj.getServiceType(),
+                    resourceInputObj.getServiceInstanceId())
+                for(Metadatum datum: metadatum) {
+                    if (datum.getMetaname().equalsIgnoreCase("cvlan")) {
+                        cvlan = datum.getMetaval()
+                    }
+
+                    if (datum.getMetaname().equalsIgnoreCase("svlan")) {
+                        svlan = datum.getMetaval()
+                    }
+
+                    if (datum.getMetaname().equalsIgnoreCase("remoteId")) {
+                        remoteId = datum.getMetaval()
+                    }
+                }
+
+                logger.debug("cvlan: "+cvlan+" | svlan: "+svlan+" | remoteId: "+remoteId)
+
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
                 String ontsn = jsonUtil.getJsonValue(serInput,
@@ -242,14 +262,14 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
 
                 String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.CVLAN", cvlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.SVLAN", svlan)
-                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.accessID", accessId)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.accessID", remoteId)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ONTSN", ontsn)
 
-                msoLogger.debug("old resource input:" + resourceInputObj.toString())
+                logger.debug("old resource input:" + resourceInputObj.toString())
                 resourceInputObj.setResourceParameters(uResourceInput)
                 execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
-                msoLogger.debug("new resource Input :" + resourceInputObj.toString())
+                logger.debug("new resource Input :" + resourceInputObj.toString())
                 break
 
             case ~/[\w\s\W]*EdgeInternetProfile[\w\s\W]*/ :
@@ -260,23 +280,41 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
                 String requestInputs = JsonUtils.getJsonValue(serviceParameters, "requestInputs")
                 JSONObject inputParameters = new JSONObject(requestInputs)
 
-                String cvlan = "100"
-                String svlan = "1000"
+                String cvlan
+                String svlan
+                String remoteId
                 String manufacturer = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_manufacturer")
-                String accessId = "AC9.0234.0337"
+
                 String ontsn = jsonUtil.getJsonValue(serInput,
                         "service.parameters.requestInputs.ont_ont_serial_num")
+
+                List<Metadatum> metadatum = getMetaDatum(resourceInputObj.getGlobalSubscriberId(),
+                        resourceInputObj.getServiceType(),
+                        resourceInputObj.getServiceInstanceId())
+                for(Metadatum datum: metadatum) {
+                    if (datum.getMetaname().equalsIgnoreCase("cvlan")) {
+                        cvlan = datum.getMetaval()
+                    }
+
+                    if (datum.getMetaname().equalsIgnoreCase("svlan")) {
+                        svlan = datum.getMetaval()
+                    }
+
+                    if (datum.getMetaname().equalsIgnoreCase("remoteId")) {
+                        remoteId = datum.getMetaval()
+                    }
+                }
 
                 String uResourceInput = jsonUtil.addJsonValue(resourceInput, "requestInputs.c_vlan", cvlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.s_vlan", svlan)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.manufacturer", manufacturer)
-                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_access_id", accessId)
+                uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ip_access_id", remoteId)
                 uResourceInput = jsonUtil.addJsonValue(uResourceInput, "requestInputs.ont_sn", ontsn)
-                msoLogger.debug("old resource input:" + resourceInputObj.toString())
+                logger.debug("old resource input:" + resourceInputObj.toString())
                 resourceInputObj.setResourceParameters(uResourceInput)
                 execution.setVariable(Prefix + "resourceInput", resourceInputObj.toString())
-                msoLogger.debug("new resource Input :" + resourceInputObj.toString())
+                logger.debug("new resource Input :" + resourceInputObj.toString())
                 break
 
 
@@ -320,6 +358,7 @@ public class CreateSDNCNetworkResource extends AbstractServiceTaskProcessor {
             default:
                 break
         }
+        return resourceInputObj
     }
 
     /**

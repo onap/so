@@ -20,9 +20,13 @@
 
 package org.onap.so.bpmn.infrastructure.pnf.dmaap;
 
+import java.util.HashMap;
+import java.util.Optional;
+
 public interface DmaapClient {
 
-    void registerForUpdate(String pnfCorrelationId, Runnable informConsumer);
+    void registerForUpdate(String pnfCorrelationId, Runnable informConsumer,
+            Optional<HashMap<String, String>> updateInfo);
 
     Runnable unregister(String pnfCorrelationId);
 }
