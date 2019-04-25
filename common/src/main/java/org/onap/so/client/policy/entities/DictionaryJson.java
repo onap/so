@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 public class DictionaryJson {
 
     @JsonProperty("DictionaryDatas")
-    private List<DictionaryData> dictionaryDatas = new ArrayList<DictionaryData>();
+    private List<DictionaryData> dictionaryDatas = new ArrayList<>();
 
     @JsonProperty("DictionaryDatas")
     public List<DictionaryData> getDictionaryDatas() {
