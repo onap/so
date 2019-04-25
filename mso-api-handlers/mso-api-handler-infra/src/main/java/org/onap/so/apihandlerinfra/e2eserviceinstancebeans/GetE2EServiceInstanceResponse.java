@@ -29,13 +29,7 @@ public class GetE2EServiceInstanceResponse {
 
     protected OperationStatus operation;
 
-    // public OperationStatus getOperationStatus() {
-    // return operation;
-    // }
-    //
-    // public void setOperationStatus(OperationStatus requestDB) {
-    // this.operation = requestDB;
-    // }
+
 
     public OperationStatus getOperation() {
         return operation;
