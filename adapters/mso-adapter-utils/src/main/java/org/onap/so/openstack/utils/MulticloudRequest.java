@@ -33,7 +33,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
         "vf-module-model-customization-id", "oof_directives", "sdnc_directives", "user_directives", "template_type",
         "template_data"})
 public class MulticloudRequest implements Serializable {
-    private final static long serialVersionUID = -5215028275577848311L;
+    private static final long serialVersionUID = -5215028275577848311L;
 
     @JsonProperty("generic-vnf-id")
     private String genericVnfId;
