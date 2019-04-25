@@ -80,12 +80,8 @@ public class ResponseHandler {
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_VALIDATION_ERROR, ErrorCode.SchemaError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
-
-            ValidateException validateException =
-                    new ValidateException.Builder("IOException getting Camunda response body",
-                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-            throw validateException;
+            throw new ValidateException.Builder("IOException getting Camunda response body", HttpStatus.SC_BAD_REQUEST,
+                    ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
         }
 
         ObjectMapper mapper = new ObjectMapper();
@@ -96,11 +92,8 @@ public class ResponseHandler {
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_REQUEST_VALIDATION_ERROR, ErrorCode.SchemaError)
                             .errorSource(Constants.MSO_PROP_APIHANDLER_INFRA).build();
 
-
-            ValidateException validateException =
-                    new ValidateException.Builder("Cannot parse Camunda Response", HttpStatus.SC_BAD_REQUEST,
-                            ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
-            throw validateException;
+            throw new ValidateException.Builder("Cannot parse Camunda Response", HttpStatus.SC_BAD_REQUEST,
+                    ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
         }
         if (response != null) {
             responseBody = response.getResponse();
@@ -125,22 +118,16 @@ public class ResponseHandler {
         } catch (IOException e) {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
-            ValidateException validateException =
-                    new ValidateException.Builder("Could not convert BPEL response to string",
-                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-            throw validateException;
+
+            throw new ValidateException.Builder("Could not convert BPEL response to string", HttpStatus.SC_BAD_REQUEST,
+                    ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo).build();
         }
         if (status != HttpStatus.SC_ACCEPTED) {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER,
                     ErrorCode.BusinessProcesssError).targetEntity("BPEL").targetServiceName("parseBpel").build();
 
-
-            BPMNFailureException bpmnFailureException =
-                    new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
-                            .errorInfo(errorLoggerInfo).build();
-
-            throw bpmnFailureException;
+            throw new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
+                    .errorInfo(errorLoggerInfo).build();
         }
 
     }
@@ -157,24 +144,17 @@ public class ResponseHandler {
             ErrorLoggerInfo errorLoggerInfo =
                     new ErrorLoggerInfo.Builder(MessageEnum.APIH_GENERAL_EXCEPTION, ErrorCode.DataError).build();
 
-
-            ValidateException validateException =
-                    new ValidateException.Builder("Could not convert CamundaTask response to string",
-                            HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e)
-                                    .errorInfo(errorLoggerInfo).build();
-            throw validateException;
+            throw new ValidateException.Builder("Could not convert CamundaTask response to string",
+                    HttpStatus.SC_BAD_REQUEST, ErrorNumbers.SVC_BAD_PARAMETER).cause(e).errorInfo(errorLoggerInfo)
+                            .build();
         }
         if (status != HttpStatus.SC_NO_CONTENT && status != HttpStatus.SC_ACCEPTED) {
             ErrorLoggerInfo errorLoggerInfo = new ErrorLoggerInfo.Builder(MessageEnum.APIH_ERROR_FROM_BPEL_SERVER,
                     ErrorCode.BusinessProcesssError).targetEntity("CAMUNDATASK").targetServiceName("parseCamundaTask")
                             .build();
 
-
-            BPMNFailureException bpmnFailureException =
-                    new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
-                            .errorInfo(errorLoggerInfo).build();
-
-            throw bpmnFailureException;
+            throw new BPMNFailureException.Builder(String.valueOf(status), status, ErrorNumbers.ERROR_FROM_BPEL)
+                    .errorInfo(errorLoggerInfo).build();
         }
 
     }

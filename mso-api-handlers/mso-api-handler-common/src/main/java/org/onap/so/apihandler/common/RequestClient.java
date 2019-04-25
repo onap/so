@@ -79,8 +79,7 @@ public abstract class RequestClient {
 
     protected String decryptPropValue(String prop, String defaultValue, String encryptionKey) {
         try {
-            String result = CryptoUtils.decrypt(prop, encryptionKey);
-            return result;
+            return CryptoUtils.decrypt(prop, encryptionKey);
         } catch (GeneralSecurityException e) {
             logger.debug("Security exception", e);
         }
@@ -89,14 +88,10 @@ public abstract class RequestClient {
 
     protected String getEncryptedPropValue(String prop, String defaultValue, String encryptionKey) {
         try {
-            String result = CryptoUtils.decrypt(prop, encryptionKey);
-            return result;
+            return CryptoUtils.decrypt(prop, encryptionKey);
         } catch (GeneralSecurityException e) {
             logger.debug("Security exception", e);
         }
         return defaultValue;
     }
-
-
-
 }

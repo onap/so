@@ -41,12 +41,12 @@ public class Constants {
 
     public static final String A_LA_CARTE = "aLaCarte";
 
-    public final static String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
+    public static final String MSO_PROP_APIHANDLER_INFRA = "MSO_PROP_APIHANDLER_INFRA";
 
-    public final static String VNF_REQUEST_SCOPE = "vnf";
-    public final static String SERVICE_INSTANCE_PATH = "/serviceInstances";
-    public final static String SERVICE_INSTANTIATION_PATH = "/serviceInstantiation";
-    public final static String ORCHESTRATION_REQUESTS_PATH = "/orchestrationRequests";
+    public static final String VNF_REQUEST_SCOPE = "vnf";
+    public static final String SERVICE_INSTANCE_PATH = "/serviceInstances";
+    public static final String SERVICE_INSTANTIATION_PATH = "/serviceInstantiation";
+    public static final String ORCHESTRATION_REQUESTS_PATH = "/orchestrationRequests";
 
     private Constants() {}
 
