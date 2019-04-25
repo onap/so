@@ -6,6 +6,7 @@
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
  * Modifications Copyright (c) 2019 Samsung
+ * Modifications Copyright (c) 2019 IBM
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +67,6 @@ import org.onap.so.entity.MsoRequest;
 import org.onap.so.logger.ErrorCode;
 import org.onap.so.heatbridge.HeatBridgeApi;
 import org.onap.so.heatbridge.HeatBridgeImpl;
-import org.onap.so.heatbridge.openstack.api.OpenstackClient;
 import org.onap.so.logger.MessageEnum;
 import org.onap.so.openstack.beans.HeatStatus;
 import org.onap.so.openstack.beans.StackInfo;
@@ -189,7 +189,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
         String vfModuleId = "";
         // Create a hook here to catch shortcut createVf requests:
         if (requestType != null && requestType.startsWith("VFMOD")) {
-            logger.debug("Calling createVfModule from createVnf -- requestType=" + requestType);
+            logger.debug("Calling createVfModule from createVnf -- requestType={}", requestType);
             String newRequestType = requestType.substring(5);
             String vfVolGroupHeatStackId = "";
             String vfBaseHeatStackId = "";
@@ -251,13 +251,11 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             Holder<Boolean> vnfExists, Holder<String> vnfId, Holder<VnfStatus> status,
             Holder<Map<String, String>> outputs) throws VnfException {
 
-        logger.debug("Querying VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
+        logger.debug("Querying VNF {} in {}/{}", vnfName, cloudSiteId, tenantId);
 
         // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
-        StackInfo heatStack = null;
-        long subStartTime = System.currentTimeMillis();
+        StackInfo heatStack;
         try {
             heatStack = heat.queryStack(cloudSiteId, cloudOwner, tenantId, vnfName);
         } catch (MsoException me) {
@@ -310,14 +308,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             throws VnfException {
 
         logger.debug("Deleting VNF {} in {}", vnfName, cloudSiteId + "/" + tenantId);
-        // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
-        // Use the MsoHeatUtils to delete the stack. Set the polling flag to true.
-        // The possible outcomes of deleteStack are a StackInfo object with status
-        // of NOTFOUND (on success) or FAILED (on error). Also, MsoOpenstackException
-        // could be thrown.
-        long subStartTime = System.currentTimeMillis();
         try {
             heat.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, true);
         } catch (MsoException me) {
@@ -344,7 +335,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
      */
     @Override
     public void rollbackVnf(VnfRollback rollback) throws VnfException {
-        long startTime = System.currentTimeMillis();
         // rollback may be null (e.g. if stack already existed when Create was called)
         if (rollback == null) {
             logger.info(MessageEnum.RA_ROLLBACK_NULL.toString(), OPENSTACK, "rollbackVnf");
@@ -437,13 +427,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             logger.debug(" HeatBridgeMain.py returned {} with code {}", wait, p.exitValue());
             return wait && p.exitValue() == 0;
         } catch (IOException e) {
-            logger.debug(" HeatBridgeMain.py failed with IO Exception! " + e);
+            logger.debug(" HeatBridgeMain.py failed with IO Exception! {}", e);
             return false;
         } catch (RuntimeException e) {
-            logger.debug(" HeatBridgeMain.py failed during runtime!" + e);
+            logger.debug(" HeatBridgeMain.py failed during runtime! {}", e);
             return false;
         } catch (Exception e) {
-            logger.debug(" HeatBridgeMain.py failed for unknown reasons! " + e);
+            logger.debug(" HeatBridgeMain.py failed for unknown reasons! {}", e);
             return false;
         }
     }
@@ -461,7 +451,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             HeatBridgeApi heatBridgeClient =
                     new HeatBridgeImpl(new AAIResourcesClient(), cloudIdentity, cloudOwner, cloudSiteId, tenantId);
 
-            OpenstackClient openstackClient = heatBridgeClient.authenticate();
             List<Resource> stackResources = heatBridgeClient.queryNestedHeatStackResources(heatStackId);
 
             List<Server> osServers = heatBridgeClient.getAllOpenstackServers(stackResources);
@@ -590,7 +579,7 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                 useMCUuid = false;
                 mcu = "";
             } else {
-                logger.debug("Found modelCustomizationUuid! Will use that: " + mcu);
+                logger.debug("Found modelCustomizationUuid! Will use that: {}", mcu);
                 useMCUuid = true;
             }
         }
@@ -1277,7 +1266,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
             logger.debug("VF Module {} successfully created", vfModuleName);
             // call heatbridge
             heatbridge(heatStack, cloudOwner, cloudSiteId, tenantId, genericVnfName, vfModuleId);
-            return;
         } catch (Exception e) {
             logger.debug("unhandled exception in create VF", e);
             throw new VnfException("Exception during create VF " + e.getMessage());
@@ -1290,7 +1278,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         logger.debug("Deleting VF {} in ", vnfName, cloudOwner + "/" + cloudSiteId + "/" + tenantId);
         // Will capture execution time for metrics
-        long startTime = System.currentTimeMillis();
 
         // 1702 capture the output parameters on a delete
         // so we'll need to query first
@@ -1323,11 +1310,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                     msoRequest, failRequestOnValetFailure);
         }
 
-        // Use the MsoHeatUtils to delete the stack. Set the polling flag to true.
-        // The possible outcomes of deleteStack are a StackInfo object with status
-        // of NOTFOUND (on success) or FAILED (on error). Also, MsoOpenstackException
-        // could be thrown.
-        long subStartTime = System.currentTimeMillis();
         try {
             heat.deleteStack(tenantId, cloudOwner, cloudSiteId, vnfName, true);
         } catch (MsoException me) {
@@ -2033,7 +2015,6 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
 
         outputs.value = copyStringOutputs(heatStack.getOutputs());
         rollback.value = vfRollback;
-        return;
     }
 
     private String getVfModuleNameFromModuleStackId(String vfModuleStackId) {
@@ -2199,13 +2180,13 @@ public class MsoVnfAdapterImpl implements MsoVnfAdapter {
                         Map<String, Object> newInputs = vur.getParameters();
                         if (newInputs != null) {
                             Map<String, Object> oldGold = goldenInputs;
-                            logger.debug("parameters before being modified by valet:{}", oldGold.toString());
-                            goldenInputs = new HashMap<String, Object>();
+                            logger.debug("parameters before being modified by valet:{}", oldGold);
+                            goldenInputs = new HashMap<>();
                             for (String key : newInputs.keySet()) {
                                 goldenInputs.put(key, newInputs.get(key));
                             }
                             valetModifiedParamsHolder.value = goldenInputs;
-                            logger.debug("parameters after being modified by valet:{}", goldenInputs.toString());
+                            logger.debug("parameters after being modified by valet:{}", goldenInputs);
                             valetSucceeded = true;
                         }
                     } else {
