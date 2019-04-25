@@ -481,6 +481,16 @@ public class AAIUpdateTasks {
         }
     }
 
+    public void updateOrchestrationStatusAssignFabricConfiguration(BuildingBlockExecution execution) {
+        try {
+            Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
+            aaiConfigurationResources.updateOrchestrationStatusConfiguration(configuration,
+                    OrchestrationStatus.ASSIGNED);
+        } catch (Exception ex) {
+            exceptionUtil.buildAndThrowWorkflowException(execution, 7000, ex);
+        }
+    }
+
     public void updateOrchestrationStatusActivateFabricConfiguration(BuildingBlockExecution execution) {
         try {
             Configuration configuration = extractPojosForBB.extractByKey(execution, ResourceKey.CONFIGURATION_ID);
