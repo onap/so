@@ -341,7 +341,6 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
     public void deleteNetworkA(String cloudSiteId, String tenantId, String networkType, String modelCustomizationUuid,
             String networkId, String messageId, MsoRequest msoRequest, String notificationUrl) {
 
-        String serviceName = "DeleteNetworkA";
         logger.debug("Async Delete Network {} in {}/{}", networkId, cloudSiteId, tenantId);
 
         // Use the synchronous method to perform the actual Create
@@ -369,8 +368,8 @@ public class MsoNetworkAdapterAsyncImpl implements MsoNetworkAdapterAsync {
                 NetworkAdapterNotify notifyPort = getNotifyEP(notificationUrl);
                 notifyPort.deleteNetworkNotification(messageId, false, exCat, eMsg, null);
             } catch (Exception e1) {
-                logger.error("{} {} Error sending createNetwork notification {} ",
-                        MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC, ErrorCode.DataError.getValue(), e1.getMessage(), e1);
+                logger.error(CREATE_NETWORK_ERROR_LOGMSG, MessageEnum.RA_CREATE_NETWORK_NOTIF_EXC,
+                        ErrorCode.DataError.getValue(), e1.getMessage(), e1);
 
             }
             return;

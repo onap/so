@@ -28,8 +28,6 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.onap.so.entity.MsoRequest;
 import org.onap.so.openstack.beans.Subnet;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 
