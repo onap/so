@@ -21,7 +21,7 @@
 
 package org.onap.so.apihandlerinfra.e2eserviceinstancebeans;
 
-import java.sql.Timestamp;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_DEFAULT)
