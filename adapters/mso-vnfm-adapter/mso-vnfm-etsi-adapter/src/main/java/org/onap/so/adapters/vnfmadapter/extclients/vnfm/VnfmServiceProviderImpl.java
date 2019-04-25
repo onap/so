@@ -84,10 +84,12 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     @Override
     public InlineResponse2001 subscribeForNotifications(final String vnfmId,
             final LccnSubscriptionRequest subscriptionRequest) {
+        logger.info("Subscribing for notifications {}", subscriptionRequest);
         final String url = urlProvider.getSubscriptionsUrl(vnfmId);
         ResponseEntity<InlineResponse2001> response = null;
         try {
             response = httpServiceProvider.postHttpRequest(subscriptionRequest, url, InlineResponse2001.class);
+            logger.info("Subscribing for notifications response {}", response);
         } catch (final Exception exception) {
             final String errorMessage =
                     "Subscription to VNFM " + vnfmId + " resulted in exception" + subscriptionRequest;
@@ -146,6 +148,7 @@ public class VnfmServiceProviderImpl implements VnfmServiceProvider {
     @Override
     public Optional<InlineResponse201> createVnf(final String vnfmId, final CreateVnfRequest createVnfRequest) {
         final String url = urlProvider.getCreationUrl(vnfmId);
+        logger.debug("Sending create request {} to : {}", createVnfRequest, url);
         try {
             return httpServiceProvider.post(createVnfRequest, url, InlineResponse201.class);
         } catch (final Exception exception) {
