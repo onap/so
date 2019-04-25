@@ -1,0 +1,10 @@
+{
+  "nfvoId":"6ee79fe2-9579-475a-9bb9-20cf4358a19e",
+  "name":"external_nfvo",
+  "api-root":"xyz",
+  "vendor":"vz",
+  "version":"v1.0",
+  "url":"http://sample.com/",
+  "userName":"admin",
+  "password":"sacjnasnc"
+}
