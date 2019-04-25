@@ -334,6 +334,18 @@ public class SniroHomingV2 {
                 }
             }
         }
+        List<ServiceProxy> serviceProxies = serviceInstance.getServiceProxies();
+        if (!serviceProxies.isEmpty()) {
+            logger.debug("Adding service proxies to placement demands list");
+            for (ServiceProxy sp : serviceProxies) {
+                if (isBlank(sp.getId())) {
+                    sp.setId(UUID.randomUUID().toString());
+                }
+                Demand demand = buildDemand(sp.getId(), sp.getModelInfoServiceProxy());
+                addCandidates(sp, demand);
+                placementDemands.add(demand);
+            }
+        }
         return placementDemands;
     }
 
@@ -400,6 +412,7 @@ public class SniroHomingV2 {
     private void addCandidates(SolutionCandidates candidates, Demand demand) {
         List<Candidate> required = candidates.getRequiredCandidates();
         List<Candidate> excluded = candidates.getExcludedCandidates();
+        List<Candidate> existing = candidates.getExistingCandidates();
         if (!required.isEmpty()) {
             List<org.onap.so.client.sniro.beans.Candidate> cans =
                     new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
@@ -424,7 +437,18 @@ public class SniroHomingV2 {
             }
             demand.setExcludedCandidates(cans);
         }
-        // TODO support existing candidates
+        if (!existing.isEmpty()) {
+            List<org.onap.so.client.sniro.beans.Candidate> cans =
+                    new ArrayList<org.onap.so.client.sniro.beans.Candidate>();
+            for (Candidate c : existing) {
+                org.onap.so.client.sniro.beans.Candidate can = new org.onap.so.client.sniro.beans.Candidate();
+                can.setIdentifierType(c.getIdentifierType());
+                can.setIdentifiers(c.getIdentifiers());
+                can.setCloudOwner(c.getCloudOwner());
+                cans.add(can);
+            }
+            demand.setExistingCandidates(cans);
+        }
     }
 
     /**
@@ -462,6 +486,7 @@ public class SniroHomingV2 {
         List<VpnBondingLink> links = serviceInstance.getVpnBondingLinks();
         List<AllottedResource> allottes = serviceInstance.getAllottedResources();
         List<GenericVnf> vnfs = serviceInstance.getVnfs();
+        List<ServiceProxy> serviceProxies = serviceInstance.getServiceProxies();
 
         logger.debug("Processing placement solution " + i + 1);
         for (int p = 0; p < placements.length(); p++) {
@@ -499,6 +524,12 @@ public class SniroHomingV2 {
                         ServiceInstance si = setSolution(solutionInfo, placement);
                         serviceInstance.setSolutionInfo(si.getSolutionInfo());
                         serviceInstance.getVnfs().add(si.getVnfs().get(0));
+                        break search;
+                    }
+                }
+                for (ServiceProxy proxy : serviceProxies) {
+                    if (placement.getString(SERVICE_RESOURCE_ID).equals(proxy.getId())) {
+                        proxy.setServiceInstance(setSolution(solutionInfo, placement));
                         break search;
                     }
                 }

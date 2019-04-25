@@ -23,7 +23,7 @@ package org.onap.so.bpmn.infrastructure.flowspecific.tasks;
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.isA;
@@ -53,6 +53,7 @@ import org.onap.so.client.exception.BadResponseException;
 import org.onap.so.client.sniro.beans.SniroManagerRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.shazam.shazamcrest.matcher.Matchers.sameBeanAs;
 
 public class SniroHomingV2IT extends BaseIntegrationTest {
 
@@ -105,6 +106,18 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
         serviceInstance.getAllottedResources().add(setAllottedResource("1"));
         serviceInstance.getAllottedResources().add(setAllottedResource("2"));
         serviceInstance.getAllottedResources().add(setAllottedResource("3"));
+    }
+
+    public void beforeServiceProxy() {
+        ServiceProxy sp = setServiceProxy("1", "infrastructure");
+        Candidate requiredCandidate = new Candidate();
+        requiredCandidate.setIdentifierType(CandidateType.CLOUD_REGION_ID);
+        List<String> c = new ArrayList<String>();
+        c.add("testCloudRegionId");
+        requiredCandidate.setCloudOwner("att");
+        requiredCandidate.setIdentifiers(c);
+        sp.addRequiredCandidates(requiredCandidate);
+        serviceInstance.getServiceProxies().add(sp);
     }
 
     public void beforeVnf() {
@@ -189,6 +202,23 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
         sniroHoming.callSniro(execution);
 
         verify(sniroClient, times(1)).postDemands(isA(SniroManagerRequest.class));
+    }
+
+    @Test
+    public void testCallSniro_success_1ServiceProxy() throws JsonProcessingException, BadResponseException {
+        beforeServiceProxy();
+
+        wireMockServer.stubFor(post(urlEqualTo("/sniro/api/placement/v2")).willReturn(
+                aResponse().withStatus(200).withHeader("Content-Type", "application/json").withBody(mockResponse)));
+
+        sniroHoming.callSniro(execution);
+
+        String request = readResourceFile(RESOURCE_PATH + "SniroManagerRequest1SP.json");
+        request = request.replace("28080", wireMockPort);
+
+        ArgumentCaptor<SniroManagerRequest> argument = ArgumentCaptor.forClass(SniroManagerRequest.class);
+        verify(sniroClient, times(1)).postDemands(argument.capture());
+        assertEquals(request, argument.getValue().toJsonString());
     }
 
     @Test(expected = Test.None.class)
@@ -563,9 +593,56 @@ public class SniroHomingV2IT extends BaseIntegrationTest {
         assertEquals(2, vnf.getLicense().getLicenseKeyGroupUuids().size());
         assertEquals("f1d563e8-e714-4393-8f99-cc480144a05e", vnf.getLicense().getEntitlementPoolUuids().get(0));
         assertEquals("s1d563e8-e714-4393-8f99-cc480144a05e", vnf.getLicense().getLicenseKeyGroupUuids().get(0));
-
-
     }
+
+    @Test
+    public void testProcessSolution_success_1ServiceProxy_1Solutions() {
+        beforeServiceProxy();
+
+        JSONObject asyncResponse = new JSONObject();
+        asyncResponse.put("transactionId", "testRequestId").put("requestId", "testRequestId").put("requestState",
+                "completed");
+        JSONArray solution1 = new JSONArray();
+        solution1
+                .put(new JSONObject()
+                        .put("serviceResourceId", "testProxyId1").put(
+                                "solution",
+                                new JSONObject()
+                                        .put("identifierType", "serviceInstanceId")
+                                        .put("identifiers", new JSONArray().put("testServiceInstanceId1")))
+                        .put("assignmentInfo",
+                                new JSONArray().put(new JSONObject().put("key", "isRehome").put("value", "False"))
+                                        .put(new JSONObject().put("key", "cloudOwner").put("value", ""))
+                                        .put(new JSONObject().put("key", "aicClli").put("value", "testAicClli1"))
+                                        .put(new JSONObject().put("key", "aicVersion").put("value", "3"))
+                                        .put(new JSONObject().put("key", "cloudRegionId").put("value", ""))
+                                        .put(new JSONObject().put("key", "primaryPnfName").put("value",
+                                                "testPrimaryPnfName"))
+                                        .put(new JSONObject().put("key", "secondaryPnfName").put("value",
+                                                "testSecondaryPnfName"))));
+
+        asyncResponse.put("solutions", new JSONObject().put("placementSolutions", new JSONArray().put(solution1))
+                .put("licenseSolutions", new JSONArray()));
+
+        sniroHoming.processSolution(execution, asyncResponse.toString());
+
+        ServiceInstance si =
+                execution.getGeneralBuildingBlock().getCustomer().getServiceSubscription().getServiceInstances().get(0);
+
+        ServiceProxy sp = si.getServiceProxies().get(0);
+        assertNotNull(sp);
+        assertNotNull(sp.getServiceInstance());
+
+        assertEquals("testServiceInstanceId1", sp.getServiceInstance().getServiceInstanceId());
+        assertNotNull(sp.getServiceInstance().getSolutionInfo());
+
+        assertFalse(sp.getServiceInstance().getPnfs().isEmpty());
+        assertEquals("testPrimaryPnfName", sp.getServiceInstance().getPnfs().get(0).getPnfName());
+        assertEquals("primary", sp.getServiceInstance().getPnfs().get(0).getRole());
+        assertEquals("testSecondaryPnfName", sp.getServiceInstance().getPnfs().get(1).getPnfName());
+        assertEquals("secondary", sp.getServiceInstance().getPnfs().get(1).getRole());
+    }
+
 
     @Test(expected = BpmnError.class)
     public void testCallSniro_error_0Resources() throws BadResponseException, JsonProcessingException {
