@@ -29,51 +29,59 @@ import org.onap.so.utils.UUIDChecker;
 
 public class InstanceIdMapValidation implements ValidationRule {
 
+    private static final String Service_InstanceId = "serviceInstanceId";
+    private static final String Vnf_InstanceId = "vnfInstanceId";
+    private static final String vfModule_InstanceId = "vfModuleInstanceId";
+
+    private static final String volume_Group_InstanceId = "volumeGroupInstanceId";
+    private static final String Network_Instance_Id = "networkInstanceId";
+    private static final String Configuration_Instance_Id = "configurationInstanceId";
+
     @Override
     public ValidationInformation validate(ValidationInformation info) throws ValidationException {
         HashMap<String, String> instanceIdMap = info.getInstanceIdMap();
         ServiceInstancesRequest sir = info.getSir();
         if (instanceIdMap != null) {
-            if (instanceIdMap.get("serviceInstanceId") != null) {
-                if (!UUIDChecker.isValidUUID(instanceIdMap.get("serviceInstanceId"))) {
-                    throw new ValidationException("serviceInstanceId");
+            if (instanceIdMap.get(Service_InstanceId) != null) {
+                if (!UUIDChecker.isValidUUID(instanceIdMap.get(Service_InstanceId))) {
+                    throw new ValidationException(Service_InstanceId);
                 }
-                sir.setServiceInstanceId(instanceIdMap.get("serviceInstanceId"));
+                sir.setServiceInstanceId(instanceIdMap.get(Service_InstanceId));
             }
 
-            if (instanceIdMap.get("vnfInstanceId") != null) {
-                if (!UUIDChecker.isValidUUID(instanceIdMap.get("vnfInstanceId"))) {
-                    throw new ValidationException("vnfInstanceId");
+            if (instanceIdMap.get(Vnf_InstanceId) != null) {
+                if (!UUIDChecker.isValidUUID(instanceIdMap.get(Vnf_InstanceId))) {
+                    throw new ValidationException(Vnf_InstanceId);
                 }
-                sir.setVnfInstanceId(instanceIdMap.get("vnfInstanceId"));
+                sir.setVnfInstanceId(instanceIdMap.get(Vnf_InstanceId));
             }
 
-            if (instanceIdMap.get("vfModuleInstanceId") != null) {
-                if (!UUIDChecker.isValidUUID(instanceIdMap.get("vfModuleInstanceId"))) {
-                    throw new ValidationException("vfModuleInstanceId");
+            if (instanceIdMap.get(vfModule_InstanceId) != null) {
+                if (!UUIDChecker.isValidUUID(instanceIdMap.get(vfModule_InstanceId))) {
+                    throw new ValidationException(vfModule_InstanceId);
                 }
-                sir.setVfModuleInstanceId(instanceIdMap.get("vfModuleInstanceId"));
+                sir.setVfModuleInstanceId(instanceIdMap.get(vfModule_InstanceId));
             }
 
-            if (instanceIdMap.get("volumeGroupInstanceId") != null) {
-                if (!UUIDChecker.isValidUUID(instanceIdMap.get("volumeGroupInstanceId"))) {
-                    throw new ValidationException("volumeGroupInstanceId");
+            if (instanceIdMap.get(volume_Group_InstanceId) != null) {
+                if (!UUIDChecker.isValidUUID(instanceIdMap.get(volume_Group_InstanceId))) {
+                    throw new ValidationException(volume_Group_InstanceId);
                 }
-                sir.setVolumeGroupInstanceId(instanceIdMap.get("volumeGroupInstanceId"));
+                sir.setVolumeGroupInstanceId(instanceIdMap.get(volume_Group_InstanceId));
             }
 
-            if (instanceIdMap.get("networkInstanceId") != null) {
-                if (!UUIDChecker.isValidUUID(instanceIdMap.get("networkInstanceId"))) {
-                    throw new ValidationException("networkInstanceId");
+            if (instanceIdMap.get(Network_Instance_Id) != null) {
+                if (!UUIDChecker.isValidUUID(instanceIdMap.get(Network_Instance_Id))) {
+                    throw new ValidationException(Network_Instance_Id);
                 }
-                sir.setNetworkInstanceId(instanceIdMap.get("networkInstanceId"));
+                sir.setNetworkInstanceId(instanceIdMap.get(Network_Instance_Id));
             }
 
-            if (instanceIdMap.get("configurationInstanceId") != null) {
-                if (!UUIDChecker.isValidUUID(instanceIdMap.get("configurationInstanceId"))) {
-                    throw new ValidationException("configurationInstanceId");
+            if (instanceIdMap.get(Configuration_Instance_Id) != null) {
+                if (!UUIDChecker.isValidUUID(instanceIdMap.get(Configuration_Instance_Id))) {
+                    throw new ValidationException(Configuration_Instance_Id);
                 }
-                sir.setConfigurationId(instanceIdMap.get("configurationInstanceId"));
+                sir.setConfigurationId(instanceIdMap.get(Configuration_Instance_Id));
             }
 
             if (instanceIdMap.get(CommonConstants.INSTANCE_GROUP_INSTANCE_ID) != null) {
