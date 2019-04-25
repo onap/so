@@ -5,7 +5,7 @@
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * Copyright (C) 2017 Huawei Technologies Co., Ltd. All rights reserved.
  * ================================================================================
- * Modifications Copyright (C) 2018 IBM.
+ * Modifications Copyright (C) 2019 IBM.
  * Modifications Copyright (c) 2019 Samsung
  * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -77,13 +77,12 @@ public class SDNCRestClient {
     private static Logger logger = LoggerFactory.getLogger(SDNCRestClient.class);
 
     private static final String EXCEPTION_MSG = "Exception while evaluate xpath";
-    private static final String MSO_INTERNAL_ERROR = "MsoInternalError";
     private static final String CAMUNDA = "Camunda";
 
     @Async
     public void executeRequest(SDNCAdapterRequest bpelRequest) {
 
-        logger.debug("BPEL Request:" + bpelRequest.toString());
+        logger.debug("BPEL Request: {}", bpelRequest);
 
         // Added delay to allow completion of create request to SDNC
         // before executing activate of create request.
@@ -96,8 +95,6 @@ public class SDNCRestClient {
             Thread.currentThread().interrupt();
         }
 
-        String action = bpelRequest.getRequestHeader().getSvcAction();
-        String operation = bpelRequest.getRequestHeader().getSvcOperation();
         String bpelReqId = bpelRequest.getRequestHeader().getRequestId();
         String callbackUrl = bpelRequest.getRequestHeader().getCallbackUrl();
 
@@ -118,12 +115,9 @@ public class SDNCRestClient {
             Document reqDoc = node.getOwnerDocument();
             sdncReqBody = Utils.genSdncPutReq(reqDoc, rt);
         }
-        long sdncStartTime = System.currentTimeMillis();
         SDNCResponse sdncResp = getSdncResp(sdncReqBody, rt);
         logger.debug("Got the SDNC Response: {}", sdncResp.getSdncRespXml());
-        long bpelStartTime = System.currentTimeMillis();
         sendRespToBpel(callbackUrl, sdncResp);
-        return;
     }
 
     public SDNCResponse getSdncResp(String sdncReqBody, RequestTunables rt) {
@@ -288,7 +282,6 @@ public class SDNCRestClient {
             try {
                 wsdlUrl = new URL(bpelUrl);
             } catch (MalformedURLException e1) {
-                error = "Caught exception initializing Callback wsdl " + e1.getMessage();
                 logger.error("{} {} {} {}", MessageEnum.RA_INIT_CALLBACK_WSDL_ERR.toString(), CAMUNDA,
                         ErrorCode.DataError.getValue(), "Exception initializing Callback wsdl", e1);
 
@@ -317,7 +310,6 @@ public class SDNCRestClient {
                 reqCtx.put(MessageContext.HTTP_REQUEST_HEADERS, headers);
                 headers.put("Authorization", Collections.singletonList(basicAuth));
             } catch (Exception e2) {
-                error = "Unable to set authorization in callback request " + e2.getMessage();
                 logger.error("{} {} {} {}", MessageEnum.RA_SET_CALLBACK_AUTH_EXC.toString(), CAMUNDA,
                         ErrorCode.BusinessProcesssError.getValue(),
                         "Exception - Unable to set authorization in callback request", e2);
@@ -333,6 +325,5 @@ public class SDNCRestClient {
                     MessageEnum.RA_CALLBACK_BPEL_EXC.toString(), error, e);
         }
         logger.info(MessageEnum.RA_CALLBACK_BPEL_COMPLETE.name(), CAMUNDA);
-        return;
     }
 }
