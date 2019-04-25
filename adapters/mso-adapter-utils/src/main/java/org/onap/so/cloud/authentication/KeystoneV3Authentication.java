@@ -72,9 +72,7 @@ public class KeystoneV3Authentication {
 
         OpenStackRequest<Token> v3Request = keystoneTenantClient.tokens().authenticate(v3Credentials);
 
-        KeystoneAuthHolder holder = makeRequest(v3Request, type, region);
-
-        return holder;
+        return makeRequest(v3Request, type, region);
     }
 
     protected KeystoneAuthHolder makeRequest(OpenStackRequest<Token> v3Request, String type, String region) {

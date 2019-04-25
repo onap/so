@@ -72,22 +72,22 @@ public final class DeploymentInfoBuilder {
             this.errorMessage = execution.getError();
 
             // Compute the status based on the last workflow
-            if (lastAction.equals("install")) {
-                if (actionStatus.equals("terminated")) {
+            if (("install").equals(lastAction)) {
+                if (("terminated").equals(actionStatus)) {
                     this.deploymentStatus = DeploymentStatus.INSTALLED;
-                } else if (actionStatus.equals("failed")) {
+                } else if (("failed").equals(actionStatus)) {
                     this.deploymentStatus = DeploymentStatus.FAILED;
-                } else if (actionStatus.equals("started") || actionStatus.equals("pending")) {
+                } else if (("started").equals(actionStatus) || ("pending").equals(actionStatus)) {
                     this.deploymentStatus = DeploymentStatus.INSTALLING;
                 } else {
                     this.deploymentStatus = DeploymentStatus.UNKNOWN;
                 }
-            } else if (lastAction.equals("uninstall")) {
-                if (actionStatus.equals("terminated")) {
+            } else if (("uninstall").equals(lastAction)) {
+                if (("terminated").equals(actionStatus)) {
                     this.deploymentStatus = DeploymentStatus.CREATED;
-                } else if (actionStatus.equals("failed")) {
+                } else if (("failed").equals(actionStatus)) {
                     this.deploymentStatus = DeploymentStatus.FAILED;
-                } else if (actionStatus.equals("started") || actionStatus.equals("pending")) {
+                } else if (("started").equals(actionStatus) || ("pending").equals(actionStatus)) {
                     this.deploymentStatus = DeploymentStatus.UNINSTALLING;
                 } else {
                     this.deploymentStatus = DeploymentStatus.UNKNOWN;
