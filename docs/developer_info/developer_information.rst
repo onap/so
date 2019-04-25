@@ -13,6 +13,7 @@ SO Developer Information
    Working_with_SO_Docker.rst
    Camunda_Cockpit_Community_Edition.rst
    Camunda_Cockpit_Enterprise_Edition.rst
+   FAQs.rst
 .. developer_info_Project_Structure.rst
 .. developer_info_Main_Process_Flows.rst
 .. developer_info_Subprocess_Process_Flows.rst
