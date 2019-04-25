@@ -91,7 +91,7 @@ public class DeployActivitySpecs {
         if (activitySpecActivitySpecCategories == null || activitySpecActivitySpecCategories.size() == 0) {
             return;
         }
-        List<String> categoryList = new ArrayList<String>();
+        List<String> categoryList = new ArrayList<>();
         for (ActivitySpecActivitySpecCategories activitySpecCat : activitySpecActivitySpecCategories) {
             if (activitySpecCat != null) {
                 if (activitySpecCat.getActivitySpecCategories() != null) {
@@ -107,8 +107,8 @@ public class DeployActivitySpecs {
         if (activitySpecActivitySpecParameters == null || activitySpecActivitySpecParameters.size() == 0) {
             return;
         }
-        List<Input> inputs = new ArrayList<Input>();
-        List<Output> outputs = new ArrayList<Output>();
+        List<Input> inputs = new ArrayList<>();
+        List<Output> outputs = new ArrayList<>();
         for (ActivitySpecActivitySpecParameters activitySpecParam : activitySpecActivitySpecParameters) {
             if (activitySpecParam != null) {
                 if (activitySpecParam.getActivitySpecParameters() != null) {
