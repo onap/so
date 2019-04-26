@@ -10,5 +10,5 @@ Developer Information
 
    Install_Configure_SO.rst
    architecture.rst
-   FAQs.rst
+
    

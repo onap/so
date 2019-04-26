@@ -12,4 +12,4 @@ ONAP SO
    architecture/architecture.rst
    api/offered_consumed_apis.rst
    developer_info/developer_information.rst
-   release_notes/release-notes.rst
+   release-notes.rst
