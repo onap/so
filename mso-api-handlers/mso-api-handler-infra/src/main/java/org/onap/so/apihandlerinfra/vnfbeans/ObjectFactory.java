@@ -49,8 +49,7 @@ import javax.xml.namespace.QName;
 public class ObjectFactory {
 
     private final static QName _VnfParams_QNAME = new QName("http://org.onap/so/infra/vnf-request/v1", "vnf-params");
-    private final static QName _NetworkParams_QNAME =
-            new QName("http://org.onap/so/infra/vnf-request/v1", "network-params");
+
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package:
