@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonRootName;
  * Encapsulates VNF resource data set
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 @JsonRootName("vnfResource")
 public class VnfResource extends Resource {
 
@@ -59,7 +60,7 @@ public class VnfResource extends Resource {
     private String multiStageDesign;
     private String orchestrationStatus;
 
-    @JsonIgnore
+    @JsonProperty("resourceInput")
     private String resourceInput;
 
     /*
