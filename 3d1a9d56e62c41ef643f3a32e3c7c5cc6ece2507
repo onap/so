@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "80f0faac_dd969ce2",
+        "filename": "adapters/mso-adapter-utils/src/main/java/org/onap/so/cloudify/utils/MsoCloudifyUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 897
+      },
+      "writtenOn": "2019-04-26T06:26:13Z",
+      "side": 1,
+      "message": "Use is empty than equals(\"\")",
+      "revId": "3d1a9d56e62c41ef643f3a32e3c7c5cc6ece2507",
+      "serverId": "14b4e41f-c4e3-4fb9-9955-6a9b5656895a",
+      "unresolved": false
+    }
+  ]
+}
