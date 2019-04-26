@@ -22,7 +22,6 @@ package org.onap.so.bpmn.core.domain;
 
 import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
 /**
@@ -33,14 +32,6 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 public class AllottedResource extends Resource {
 
     private static final long serialVersionUID = 1L;
-
-    /*
-     * set resourceType for this object
-     */
-    public AllottedResource() {
-        resourceType = ResourceType.ALLOTTED_RESOURCE;
-        setResourceId(UUID.randomUUID().toString());
-    }
 
     /*
      * fields specific to Allotted Resource resource type
@@ -58,6 +49,14 @@ public class AllottedResource extends Resource {
 
     @JsonIgnore
     private String resourceInput;
+
+    /*
+     * set resourceType for this object
+     */
+    public AllottedResource() {
+        resourceType = ResourceType.ALLOTTED_RESOURCE;
+        setResourceId(UUID.randomUUID().toString());
+    }
 
     /*
      * GET and SET

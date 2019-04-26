@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ResponseBuilder implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
+    private static final String WORKFLOWEXCEPTION = "WorkflowException";
     private static final Logger logger = LoggerFactory.getLogger(ResponseBuilder.class);
 
     /**
@@ -61,7 +62,7 @@ public class ResponseBuilder implements java.io.Serializable {
         logger.debug("processKey=" + processKey);
 
         // See if there"s already a WorkflowException object in the execution.
-        WorkflowException theException = (WorkflowException) execution.getVariable("WorkflowException");
+        WorkflowException theException = (WorkflowException) execution.getVariable(WORKFLOWEXCEPTION);
 
         if (theException != null) {
             logger.debug("Exited " + method + " - propagated " + theException);
@@ -138,7 +139,7 @@ public class ResponseBuilder implements java.io.Serializable {
             // Create a new WorkflowException object
 
             theException = new WorkflowException(processKey, intResponseCode, errorResponse);
-            execution.setVariable("WorkflowException", theException);
+            execution.setVariable(WORKFLOWEXCEPTION, theException);
             logger.debug("Exited " + method + " - created " + theException);
             return theException;
         }
@@ -163,7 +164,7 @@ public class ResponseBuilder implements java.io.Serializable {
 
         Object theResponse = null;
 
-        WorkflowException theException = (WorkflowException) execution.getVariable("WorkflowException");
+        WorkflowException theException = (WorkflowException) execution.getVariable(WORKFLOWEXCEPTION);
         String errorResponse = trimString(execution.getVariable(prefix + "ErrorResponse"), null);
         String responseCode = trimString(execution.getVariable(prefix + "ResponseCode"), null);
 
@@ -222,7 +223,7 @@ public class ResponseBuilder implements java.io.Serializable {
         }
 
         String s = String.valueOf(object).trim();
-        return s.equals("") ? emptyStringValue : s;
+        return "".equals(s) ? emptyStringValue : s;
     }
 
     /**
