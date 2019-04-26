@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 @JsonInclude(Include.NON_NULL)
 public abstract class JsonWrapper implements Serializable {
+    private static final String EXCEPTION = "Exception :";
 
     private static final Logger logger = LoggerFactory.getLogger(JsonWrapper.class);
 
@@ -63,7 +64,7 @@ public abstract class JsonWrapper implements Serializable {
             jsonString = ow.writeValueAsString(this);
         } catch (Exception e) {
 
-            logger.debug("Exception :", e);
+            logger.debug(EXCEPTION, e);
         }
         return jsonString;
     }
@@ -76,14 +77,10 @@ public abstract class JsonWrapper implements Serializable {
         JSONObject json = new JSONObject();
         try {
             json = new JSONObject(mapper.writeValueAsString(this));
-        } catch (JsonGenerationException e) {
-            logger.debug("Exception :", e);
-        } catch (JsonMappingException e) {
-            logger.debug("Exception :", e);
-        } catch (JSONException e) {
-            logger.debug("Exception :", e);
+        } catch (JsonGenerationException | JsonMappingException | JSONException e) {
+            logger.debug(EXCEPTION, e);
         } catch (IOException e) {
-            logger.debug("Exception :", e);
+            logger.debug(EXCEPTION, e);
         }
         return json;
     }
@@ -95,12 +92,10 @@ public abstract class JsonWrapper implements Serializable {
         String jsonString = "";
         try {
             jsonString = mapper.writeValueAsString(list);
-        } catch (JsonGenerationException e) {
-            logger.debug("Exception :", e);
-        } catch (JsonMappingException e) {
-            logger.debug("Exception :", e);
+        } catch (JsonGenerationException | JsonMappingException e) {
+            logger.debug(EXCEPTION, e);
         } catch (IOException e) {
-            logger.debug("Exception :", e);
+            logger.debug(EXCEPTION, e);
         }
         return jsonString;
     }
@@ -118,7 +113,7 @@ public abstract class JsonWrapper implements Serializable {
             jsonString = ow.writeValueAsString(this);
         } catch (Exception e) {
 
-            logger.debug("Exception :", e);
+            logger.debug(EXCEPTION, e);
         }
         return jsonString;
     }
