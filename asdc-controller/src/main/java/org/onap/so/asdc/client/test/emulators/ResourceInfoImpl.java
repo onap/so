@@ -31,7 +31,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ResourceInfoImpl implements IResourceInstance {
-    public ResourceInfoImpl() {}
 
     private String resourceInstanceName;
     private String resourceCustomizationUUID;
@@ -43,6 +42,8 @@ public class ResourceInfoImpl implements IResourceInstance {
     private String category;
     private String subcategory;
     private List<ArtifactInfoImpl> artifacts;
+
+    public ResourceInfoImpl() {}
 
     private ResourceInfoImpl(IResourceInstance resourceInstance) {
         resourceInstanceName = resourceInstance.getResourceInstanceName();
@@ -58,7 +59,7 @@ public class ResourceInfoImpl implements IResourceInstance {
     }
 
     public static List<ResourceInfoImpl> convertToJsonContainer(List<IResourceInstance> resources) {
-        List<ResourceInfoImpl> buildResources = new ArrayList<ResourceInfoImpl>();
+        List<ResourceInfoImpl> buildResources = new ArrayList<>();
         if (resources != null) {
             for (IResourceInstance resourceInstance : resources) {
                 buildResources.add(new ResourceInfoImpl(resourceInstance));
@@ -114,7 +115,7 @@ public class ResourceInfoImpl implements IResourceInstance {
 
     @Override
     public List<IArtifactInfo> getArtifacts() {
-        List<IArtifactInfo> temp = new ArrayList<IArtifactInfo>();
+        List<IArtifactInfo> temp = new ArrayList<>();
         if (artifacts != null) {
             temp.addAll(artifacts);
         }
