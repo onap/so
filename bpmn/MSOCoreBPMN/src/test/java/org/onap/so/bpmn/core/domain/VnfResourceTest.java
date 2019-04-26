@@ -16,6 +16,8 @@ package org.onap.so.bpmn.core.domain;
 
 import static org.junit.Assert.*;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +25,7 @@ import org.junit.Test;
 
 public class VnfResourceTest {
 
+    private static final String RESOURCE_PATH = "src/test/resources/json-examples/";
     private final static String ALL_VF_MODULES_JSON =
             "{\"ArrayList\":[{\"resourceType\":\"MODULE\",\"resourceInstance\":{},\"homingSolution\":{\"license\":{},\"rehome\":false},\"vfModuleName\":\"vfModuleName\",\"vfModuleType\":\"vfModuleType\",\"heatStackId\":\"heatStackId\",\"hasVolumeGroup\":true,\"isBase\":true,\"vfModuleLabel\":\"vfModuleLabel\",\"initialCount\":0},{\"resourceType\":\"MODULE\",\"resourceInstance\":{},\"homingSolution\":{\"license\":{},\"rehome\":false},\"vfModuleName\":\"vfModuleName\",\"vfModuleType\":\"vfModuleType\",\"heatStackId\":\"heatStackId\",\"hasVolumeGroup\":true,\"isBase\":true,\"vfModuleLabel\":\"vfModuleLabel\",\"initialCount\":0}]}";
 
