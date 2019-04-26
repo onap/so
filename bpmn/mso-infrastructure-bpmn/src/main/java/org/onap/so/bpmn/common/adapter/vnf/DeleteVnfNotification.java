@@ -4,6 +4,8 @@
  * ================================================================================
  * Copyright (C) 2017 AT&T Intellectual Property. All rights reserved.
  * ================================================================================
+ * Modifications Copyright (c) 2019 Samsung
+ * ================================================================================
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -159,13 +161,5 @@ public class DeleteVnfNotification {
         }
         return deleteVnfNotification;
     }
-
-    /*
-     * public String toString() { StringWriter writer = new StringWriter(); try { JAXBContext context = JAXBContext
-     * .newInstance(DeleteVnfNotification.class); Marshaller m = context.createMarshaller();
-     * m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE); m.marshal(this, writer);
-     * //System.out.println("toString() - " + writer.getBuffer().toString()); return writer.getBuffer().toString(); }
-     * catch (JAXBException e) { //System.out.println("JAXBException - " + e.getStackTrace()); return ""; } }
-     */
 
 }
