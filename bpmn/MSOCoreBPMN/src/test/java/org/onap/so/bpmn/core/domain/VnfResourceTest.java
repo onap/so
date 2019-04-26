@@ -58,6 +58,19 @@ public class VnfResourceTest {
         VnfResource vnfResource = objectMapper.readValue(jsonStr, VnfResource.class);
 
         assertTrue(vnfResource != null);
+        assertEquals("sample", vnfResource.getResourceInput());
+        assertEquals("home", vnfResource.getVnfHostname());
+    }
+
+    @Test
+    public void vnfResourceMapperTestNoResourceInput() throws IOException {
+        String jsonStr = "{\"vnfHostname\": \"home\"}";
+        ObjectMapper objectMapper = new ObjectMapper();
+        VnfResource vnfResource = objectMapper.readValue(jsonStr, VnfResource.class);
+
+        assertTrue(vnfResource != null);
+        assertEquals(null, vnfResource.getResourceInput());
+        assertEquals("home", vnfResource.getVnfHostname());
     }
 
     @Test
