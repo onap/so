@@ -20,6 +20,9 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.aai;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
@@ -40,9 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Provides helper methods for interactions with AAI.
@@ -257,7 +257,12 @@ public class AaiHelper {
         relationship.setRelatedTo("tenant");
         relationship.setRelatedLink("/aai/" + AAIVersion.LATEST + AAIUriFactory.createResourceUri(AAIObjectType.TENANT,
                 tenant.getCloudOwner(), tenant.getRegionName(), tenant.getTenantId()).build().toString());
+        relationship.getRelationshipData()
+                .add(createRelationshipData("cloud-region.cloud-owner", tenant.getCloudOwner()));
+        relationship.getRelationshipData()
+                .add(createRelationshipData("cloud-region.cloud-region-id", tenant.getRegionName()));
         relationship.getRelationshipData().add(createRelationshipData("tenant.tenant-id", tenant.getTenantId()));
         return relationship;
     }
+
 }

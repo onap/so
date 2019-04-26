@@ -20,6 +20,8 @@
 
 package org.onap.so.adapters.vnfmadapter.extclients.vnfm;
 
+import static org.slf4j.LoggerFactory.getLogger;
+import java.net.URI;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
@@ -28,8 +30,6 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
-import java.net.URI;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Provides URLs for REST calls to a VNFM.

@@ -24,6 +24,7 @@ import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.so.client.aai.AAIObjectType;
 import org.onap.so.client.aai.entities.uri.AAIUriFactory;
@@ -32,7 +33,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class AaiServiceProviderImpl implements AaiServiceProvider {
@@ -56,9 +56,9 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     }
 
     @Override
-    public List<GenericVnf> invokeQueryGenericVnf(final String selfLink) {
+    public GenericVnfs invokeQueryGenericVnf(final String selfLink) {
         return aaiClientProvider.getAaiClient()
-                .get(List.class,
+                .get(GenericVnfs.class,
                         AAIUriFactory.createResourceUri(AAIObjectType.GENERIC_VNFS).queryParam("selflink", selfLink))
                 .orElseGet(() -> {
                     logger.debug("No vnf found in AAI with selflink: {}", selfLink);
@@ -104,7 +104,7 @@ public class AaiServiceProviderImpl implements AaiServiceProvider {
     @Override
     public void invokePutVserver(final String cloudOwner, final String cloudRegion, final String tenant,
             final Vserver vserver) {
-        aaiClientProvider.getAaiClient().update(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
+        aaiClientProvider.getAaiClient().create(AAIUriFactory.createResourceUri(AAIObjectType.VSERVER, cloudOwner,
                 cloudRegion, tenant, vserver.getVserverId()), vserver);
     }
 

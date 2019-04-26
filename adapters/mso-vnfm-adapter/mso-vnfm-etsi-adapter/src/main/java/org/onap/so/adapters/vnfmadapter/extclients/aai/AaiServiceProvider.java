@@ -24,9 +24,9 @@ import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.EsrVnfmList;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Vserver;
 import org.onap.vnfmadapter.v1.model.Tenant;
-import java.util.List;
 
 /**
  * Provides methods for invoking REST calls to AAI.
@@ -47,7 +47,7 @@ public interface AaiServiceProvider {
      * @param selfLink the selfLink
      * @return the matching generic vnfs
      */
-    List<GenericVnf> invokeQueryGenericVnf(final String selfLink);
+    GenericVnfs invokeQueryGenericVnf(final String selfLink);
 
     /**
      * Invoke a GET request for the VNFMs.

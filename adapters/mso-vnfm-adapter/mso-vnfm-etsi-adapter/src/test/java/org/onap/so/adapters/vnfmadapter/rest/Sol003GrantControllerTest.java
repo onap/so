@@ -20,7 +20,14 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
-import com.google.gson.Gson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Before;
@@ -30,6 +37,7 @@ import org.mockito.hamcrest.MockitoHamcrest;
 import org.onap.aai.domain.yang.EsrSystemInfo;
 import org.onap.aai.domain.yang.EsrSystemInfoList;
 import org.onap.aai.domain.yang.GenericVnf;
+import org.onap.aai.domain.yang.GenericVnfs;
 import org.onap.aai.domain.yang.Relationship;
 import org.onap.aai.domain.yang.RelationshipData;
 import org.onap.aai.domain.yang.RelationshipList;
@@ -38,6 +46,8 @@ import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantRequest
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantRequest.OperationEnum;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsAddResources;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsAddResources.TypeEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsLinks;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.GrantsLinksVnfLcmOpOcc;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.grant.model.InlineResponse201VimConnections;
 import org.onap.so.client.aai.AAIResourcesClient;
@@ -54,12 +64,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import java.util.Optional;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.onap.so.client.RestTemplateConfig.CONFIGURABLE_REST_TEMPLATE;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = VnfmAdapterApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -84,7 +88,6 @@ public class Sol003GrantControllerTest {
 
     @Autowired
     private Sol003GrantController controller;
-    private final Gson gson = new Gson();
 
     @Before
     public void setUp() throws Exception {
@@ -94,17 +97,17 @@ public class Sol003GrantControllerTest {
 
     @Test
     public void grantRequest_ValidRequestInstantiate_GrantApproved() {
-        GrantRequest grantRequest = createGrantRequest("INSTANTIATE");
+        final GrantRequest grantRequest = createGrantRequest("INSTANTIATE");
         setUpGenericVnfWithVnfmRelationshipInMockAai("vnfmType", "vnfm1");
         final ResponseEntity<InlineResponse201> response = controller.grantsPost(grantRequest);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(1, response.getBody().getAddResources().size());
 
         assertEquals(vimConnectionId, response.getBody().getAddResources().get(0).getVimConnectionId());
-        assertEquals("myTestVnfId", response.getBody().getVnfInstanceId());
+        assertEquals("myTestVnfIdOnVnfm", response.getBody().getVnfInstanceId());
         assertEquals("123456", response.getBody().getVnfLcmOpOccId());
 
-        InlineResponse201VimConnections vimConnections = response.getBody().getVimConnections().get(0);
+        final InlineResponse201VimConnections vimConnections = response.getBody().getVimConnections().get(0);
         assertEquals(vimConnectionId, vimConnections.getVimId());
         assertEquals("OPENSTACK", vimConnections.getVimType());
         assertNotNull(vimConnections.getAccessInfo());
@@ -120,17 +123,17 @@ public class Sol003GrantControllerTest {
 
     @Test
     public void grantRequest_ValidRequestTerminate_GrantApproved() {
-        GrantRequest grantRequest = createGrantRequest("TERMINATE");
+        final GrantRequest grantRequest = createGrantRequest("TERMINATE");
         setUpGenericVnfWithVnfmRelationshipInMockAai("vnfmType", "vnfm1");
         final ResponseEntity<InlineResponse201> response = controller.grantsPost(grantRequest);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(1, response.getBody().getAddResources().size());
         assertEquals(vimConnectionId, response.getBody().getAddResources().get(0).getVimConnectionId());
-        assertEquals("myTestVnfId", response.getBody().getVnfInstanceId());
+        assertEquals("myTestVnfIdOnVnfm", response.getBody().getVnfInstanceId());
         assertEquals("123456", response.getBody().getVnfLcmOpOccId());
 
-        InlineResponse201VimConnections vimConnections = response.getBody().getVimConnections().get(0);
+        final InlineResponse201VimConnections vimConnections = response.getBody().getVimConnections().get(0);
         assertEquals(vimConnectionId, vimConnections.getVimId());
         assertEquals("OPENSTACK", vimConnections.getVimType());
         assertNotNull(vimConnections.getAccessInfo());
@@ -139,19 +142,21 @@ public class Sol003GrantControllerTest {
 
     }
 
-    private GrantRequest createGrantRequest(String operation) {
-        GrantRequest grantRequest = new GrantRequest();
-        grantRequest.setVnfInstanceId("myTestVnfId");
+    private GrantRequest createGrantRequest(final String operation) {
+        final GrantRequest grantRequest = new GrantRequest();
+        grantRequest.setVnfInstanceId("myTestVnfIdOnVnfm");
         grantRequest.setVnfLcmOpOccId("123456");
+        grantRequest.links(new GrantsLinks()
+                .vnfInstance(new GrantsLinksVnfLcmOpOcc().href("http://vnfm:8080/vnfs/myTestVnfIdOnVnfm")));
         if (operation == "INSTANTIATE") {
             grantRequest.setOperation(OperationEnum.INSTANTIATE);
-            GrantsAddResources resource = new GrantsAddResources();
+            final GrantsAddResources resource = new GrantsAddResources();
             resource.setId("123");
             resource.setType(TypeEnum.COMPUTE);
             grantRequest.addAddResourcesItem(resource);
         } else if (operation == "TERMINATE") {
             grantRequest.setOperation(OperationEnum.TERMINATE);
-            GrantsAddResources resource = new GrantsAddResources();
+            final GrantsAddResources resource = new GrantsAddResources();
             resource.setId("123");
             resource.setType(TypeEnum.COMPUTE);
             grantRequest.addRemoveResourcesItem(resource);
@@ -210,6 +215,14 @@ public class Sol003GrantControllerTest {
 
         doReturn(Optional.of(genericVnf)).when(aaiResourcesClient).get(eq(GenericVnf.class),
                 MockitoHamcrest.argThat(new AaiResourceUriMatcher("/network/generic-vnfs/generic-vnf/myTestVnfId")));
+
+        final List<GenericVnf> listOfGenericVnfs = new ArrayList<>();
+        listOfGenericVnfs.add(genericVnf);
+        final GenericVnfs genericVnfs = new GenericVnfs();
+        genericVnfs.getGenericVnf().addAll(listOfGenericVnfs);
+        doReturn(Optional.of(genericVnfs)).when(aaiResourcesClient).get(eq(GenericVnfs.class),
+                MockitoHamcrest.argThat(new AaiResourceUriMatcher(
+                        "/network/generic-vnfs?selflink=http%3A%2F%2Fvnfm%3A8080%2Fvnfs%2FmyTestVnfIdOnVnfm")));
     }
 
     private class AaiResourceUriMatcher extends BaseMatcher<AAIResourceUri> {

@@ -21,6 +21,7 @@
 package org.onap.so.adapters.vnfmadapter.lifecycle;
 
 import com.google.common.base.Optional;
+import java.util.Map;
 import org.onap.aai.domain.yang.EsrVnfm;
 import org.onap.aai.domain.yang.GenericVnf;
 import org.onap.so.adapters.vnfmadapter.extclients.SdcPackageProvider;
@@ -46,7 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import java.util.Map;
 
 /**
  * Manages lifecycle operations towards the VNFMs.
@@ -64,7 +64,7 @@ public class LifecycleManager {
     @Autowired
     LifecycleManager(final AaiServiceProvider aaiServiceProvider, final AaiHelper aaiHelper,
             final VnfmHelper vnfmHelper, final VnfmServiceProvider vnfmServiceProvider, final JobManager jobManager,
-            SdcPackageProvider packageProvider) {
+            final SdcPackageProvider packageProvider) {
         this.aaiServiceProvider = aaiServiceProvider;
         this.vnfmServiceProvider = vnfmServiceProvider;
         this.aaiHelper = aaiHelper;
@@ -90,7 +90,11 @@ public class LifecycleManager {
             aaiHelper.addRelationshipFromGenericVnfToVnfm(genericVnf, vnfm.getVnfmId());
         }
         aaiHelper.addRelationshipFromGenericVnfToTenant(genericVnf, request.getTenant());
-        InlineResponse201 vnfmResponse = sendCreateRequestToVnfm(request, genericVnf, vnfIdInAai, vnfm.getVnfmId());
+        final InlineResponse201 vnfmResponse =
+                sendCreateRequestToVnfm(request, genericVnf, vnfIdInAai, vnfm.getVnfmId());
+
+        logger.info("Create response: {}", vnfmResponse);
+
         genericVnf.setSelflink(vnfmResponse.getLinks().getSelf().getHref());
         aaiServiceProvider.invokePutGenericVnf(genericVnf);
         final String vnfIdInVnfm = vnfmResponse.getId();
@@ -135,18 +139,18 @@ public class LifecycleManager {
         }
     }
 
-    private InlineResponse201 sendCreateRequestToVnfm(CreateVnfRequest aaiRequest, GenericVnf genericVnf,
-            String vnfIdInAai, String vnfmId) {
+    private InlineResponse201 sendCreateRequestToVnfm(final CreateVnfRequest aaiRequest, final GenericVnf genericVnf,
+            final String vnfIdInAai, final String vnfmId) {
         logger.debug("Sending a create request to SVNFM " + aaiRequest);
-        org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest vnfmRequest =
+        final org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest vnfmRequest =
                 new org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest();
 
-        String vnfdId = packageProvider.getVnfdId(genericVnf.getModelVersionId());
+        final String vnfdId = packageProvider.getVnfdId(genericVnf.getModelVersionId());
         vnfmRequest.setVnfdId(vnfdId);
         vnfmRequest.setVnfInstanceName(aaiRequest.getName().replaceAll(" ", "_"));
         vnfmRequest.setVnfInstanceDescription(vnfIdInAai);
 
-        Optional<InlineResponse201> optionalResponse = vnfmServiceProvider.createVnf(vnfmId, vnfmRequest);
+        final Optional<InlineResponse201> optionalResponse = vnfmServiceProvider.createVnf(vnfmId, vnfmRequest);
 
         try {
             return optionalResponse.get();

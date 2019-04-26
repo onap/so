@@ -20,6 +20,11 @@
 
 package org.onap.so.adapters.vnfmadapter.rest;
 
+import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import javax.ws.rs.core.MediaType;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiHelper;
 import org.onap.so.adapters.vnfmadapter.extclients.aai.AaiServiceProvider;
 import org.onap.so.adapters.vnfmadapter.extclients.vnfm.VnfmHelper;
@@ -36,15 +41,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import javax.ws.rs.core.MediaType;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import static org.onap.so.adapters.vnfmadapter.Constants.BASE_URL;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping(value = BASE_URL, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
@@ -52,9 +52,6 @@ public class Sol003GrantController {
 
     private static final String SEPARATOR = "_";
     private static final String VIM_TYPE = "OPENSTACK";
-    private static final String CLOUD_OWNER = "myTestCloudOwner";
-    private static final String REGION = "myTestRegion";
-    private static final String TENANT_ID = "myTestTenantId";
     private static final Logger logger = LoggerFactory.getLogger(Sol003GrantController.class);
     public final AaiServiceProvider aaiServiceProvider;
     public final AaiHelper aaiHelper;
@@ -71,7 +68,7 @@ public class Sol003GrantController {
     @GetMapping(value = "/grants/{grantId}")
     public ResponseEntity<InlineResponse201> grantsGrantIdGet(@PathVariable("grantId") final String grantId) {
         logger.info("Get grant received from VNFM, grant id: " + grantId);
-        return new ResponseEntity<InlineResponse201>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @PostMapping(value = "/grants")
@@ -80,7 +77,7 @@ public class Sol003GrantController {
 
         final InlineResponse201 grantResponse = createGrantResponse(grantRequest);
         logger.info("Grant request returning to VNFM: " + grantResponse);
-        return new ResponseEntity<InlineResponse201>(grantResponse, HttpStatus.CREATED);
+        return new ResponseEntity<>(grantResponse, HttpStatus.CREATED);
     }
 
     private InlineResponse201 createGrantResponse(final GrantRequest grantRequest) {
@@ -88,8 +85,9 @@ public class Sol003GrantController {
         grantResponse.setId(UUID.randomUUID().toString());
         grantResponse.setVnfInstanceId(grantRequest.getVnfInstanceId());
         grantResponse.setVnfLcmOpOccId(grantRequest.getVnfLcmOpOccId());
-        final Tenant tenant =
-                aaiHelper.getAssignedTenant(aaiServiceProvider.invokeGetGenericVnf((grantRequest.getVnfInstanceId())));
+        final String vnfSelfLink = grantRequest.getLinks().getVnfInstance().getHref();
+        final Tenant tenant = aaiHelper
+                .getAssignedTenant(aaiServiceProvider.invokeQueryGenericVnf(vnfSelfLink).getGenericVnf().get(0));
 
         String vimConnectionId = "";
         final InlineResponse201VimConnections vimConnection = vnfmHelper.getVimConnections(tenant);
@@ -104,14 +102,6 @@ public class Sol003GrantController {
         return grantResponse;
     }
 
-    private InlineResponse201VimConnections getVimConnectionsItem(final Tenant tenant) {
-        final InlineResponse201VimConnections vimConnection = new InlineResponse201VimConnections();
-        vimConnection.setId(createVimConnectionId(tenant.getCloudOwner(), tenant.getRegionName()));
-        vimConnection.setVimId(vimConnection.getId());
-        vimConnection.setVimType(VIM_TYPE);
-        return vimConnection;
-    }
-
     private List<InlineResponse201AddResources> getResources(final List<GrantsAddResources> requestResources,
             final String vimId) {
         final List<InlineResponse201AddResources> resources = new ArrayList<>();
@@ -122,9 +112,5 @@ public class Sol003GrantController {
             resources.add(responseResource);
         }
         return resources;
-    }
-
-    private String createVimConnectionId(String cloudOwner, String cloudRegionId) {
-        return cloudOwner + SEPARATOR + cloudRegionId;
     }
 }

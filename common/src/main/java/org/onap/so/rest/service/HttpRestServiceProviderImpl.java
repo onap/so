@@ -96,7 +96,7 @@ public class HttpRestServiceProviderImpl implements HttpRestServiceProvider {
 
     private <T> Optional<T> createOptional(final ResponseEntity<T> response, final String url,
             final HttpMethod httpMethod) {
-        if (!response.getStatusCode().equals(HttpStatus.OK)) {
+        if (!response.getStatusCode().equals(HttpStatus.OK) && !response.getStatusCode().equals(HttpStatus.CREATED)) {
             final String message = "Unable to invoke HTTP " + httpMethod + " using URL: " + url + ", Response Code: "
                     + response.getStatusCode();
             LOGGER.error(message);
