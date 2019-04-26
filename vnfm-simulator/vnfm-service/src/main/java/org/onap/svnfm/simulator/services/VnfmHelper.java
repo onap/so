@@ -22,30 +22,36 @@ package org.onap.svnfm.simulator.services;
 
 import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.beanutils.BeanUtils;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201.InstantiationStateEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201Links;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201LinksSelf;
+import org.onap.svnfm.simulator.config.ApplicationConfig;
 import org.onap.svnfm.simulator.constants.Constant;
 import org.onap.svnfm.simulator.model.VnfInstance;
-import org.onap.vnfm.v1.model.CreateVnfRequest;
-import org.onap.vnfm.v1.model.InlineResponse201;
-import org.onap.vnfm.v1.model.InlineResponse201.InstantiationStateEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * 
+ *
  * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
  * @author Ronan Kenny (ronan.kenny@est.tech)
  */
 @Component
 public class VnfmHelper {
 
+    @Autowired
+    private ApplicationConfig applicationConfig;
+
     /**
-     * 
+     *
      * @param createVNFRequest
      * @return vnfInstance
      */
-    public VnfInstance createVnfInstance(final CreateVnfRequest createVNFRequest) {
+    public VnfInstance createVnfInstance(final CreateVnfRequest createVNFRequest, final String id) {
         final VnfInstance vnfInstance = new VnfInstance();
-        final String vnfId = createVNFRequest.getVnfdId();
-        vnfInstance.setId(vnfId);
+        vnfInstance.setId(id);
         vnfInstance.setVnfInstanceName(createVNFRequest.getVnfInstanceName());
         vnfInstance.setVnfInstanceDescription(createVNFRequest.getVnfInstanceDescription());
         vnfInstance.setVnfdId(createVNFRequest.getVnfdId());
@@ -55,7 +61,7 @@ public class VnfmHelper {
     }
 
     /**
-     * 
+     *
      * @param vnfInstance
      * @return inlineResponse201
      * @throws IllegalAccessException
@@ -68,6 +74,21 @@ public class VnfmHelper {
         inlineResponse201.setVnfdVersion(Constant.VNFD_VERSION);
         inlineResponse201.setVnfSoftwareVersion(Constant.VNF_SOFTWARE_VERSION);
         inlineResponse201.setInstantiationState(InstantiationStateEnum.NOT_INSTANTIATED);
+        inlineResponse201.setVnfConfigurableProperties(Constant.VNF_CONFIG_PROPERTIES);
+        addAdditionalPRopertyInlineResponse201(inlineResponse201);
         return inlineResponse201;
+    }
+
+    private void addAdditionalPRopertyInlineResponse201(final InlineResponse201 inlineResponse201) {
+        final InlineResponse201LinksSelf VnfInstancesLinksSelf = new InlineResponse201LinksSelf();
+        VnfInstancesLinksSelf
+                .setHref(applicationConfig.getBaseUrl() + "/vnflcm/v1/vnf_instances/" + inlineResponse201.getId());
+        final InlineResponse201LinksSelf VnfInstancesLinksSelfInstantiate = new InlineResponse201LinksSelf();
+        VnfInstancesLinksSelfInstantiate.setHref(applicationConfig.getBaseUrl() + "/vnflcm/v1/vnf_instances/"
+                + inlineResponse201.getId() + "/instantiate");
+        final InlineResponse201Links inlineResponse201Links = new InlineResponse201Links();
+        inlineResponse201Links.setSelf(VnfInstancesLinksSelf);
+        inlineResponse201Links.setInstantiate(VnfInstancesLinksSelfInstantiate);
+        inlineResponse201.setLinks(inlineResponse201Links);
     }
 }
