@@ -21,7 +21,7 @@ package org.onap.so.bpmn.core.domain;
 
 import java.util.UUID;
 
-public class VnfcResource extends Resource{
+public class VnfcResource extends Resource {
 
     public VnfcResource() {
         resourceType = ResourceType.VNFC;

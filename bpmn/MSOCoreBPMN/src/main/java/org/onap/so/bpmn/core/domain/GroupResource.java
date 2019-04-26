@@ -20,7 +20,6 @@
 package org.onap.so.bpmn.core.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -33,5 +32,13 @@ public class GroupResource extends Resource {
     public GroupResource() {
         resourceType = ResourceType.GROUP;
         setResourceId(UUID.randomUUID().toString());
+    }
+
+    public List<VnfcResource> getVnfcs() {
+        return vnfcs;
+    }
+
+    public void setVnfcs(List<VnfcResource> vnfcs) {
+        this.vnfcs = vnfcs;
     }
 }
