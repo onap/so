@@ -373,7 +373,7 @@ public class MsoNeutronUtils extends MsoCommonUtils {
         final String keystoneUrl = tenantUtils.getKeystoneUrl(cloudId, cloudIdentity);
         String neutronUrl = null;
         String tokenId = null;
-        Calendar expiration = null;
+
         try {
             if (ServerType.KEYSTONE.equals(cloudIdentity.getIdentityServerType())) {
                 Keystone keystoneTenantClient = new Keystone(keystoneUrl);
@@ -396,12 +396,12 @@ public class MsoNeutronUtils extends MsoCommonUtils {
                     throw new MsoAdapterException(error, e);
                 }
                 tokenId = access.getToken().getId();
-                expiration = access.getToken().getExpires();
+
             } else if (ServerType.KEYSTONE_V3.equals(cloudIdentity.getIdentityServerType())) {
                 try {
                     KeystoneAuthHolder holder = keystoneV3Authentication.getToken(cloudSite, tenantId, "network");
                     tokenId = holder.getId();
-                    expiration = holder.getexpiration();
+
                     neutronUrl = holder.getServiceUrl();
                     if (!neutronUrl.endsWith("/")) {
                         neutronUrl += "/v2.0/";
