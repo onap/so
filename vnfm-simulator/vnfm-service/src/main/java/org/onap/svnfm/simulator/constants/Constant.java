@@ -27,9 +27,13 @@ package org.onap.svnfm.simulator.constants;
  */
 public class Constant {
 
+    public static final String BASE_URL = "/vnflcm/v1";
     public static final String VNF_PROVIDER = "XYZ";
-    public static final String VNF_PROVIDER_NAME = "SGSN-MME";
+    public static final String VNF_PROVIDER_NAME = "vCPE";
     public static final String VNF_SOFTWARE_VERSION = "1.24";
-    public static final String VNFD_VERSION = "onapmme01_cxp9025898_4r85d01";
+    public static final String VNFD_VERSION = "onapvcpe01_cxp9025898_4r85d01";
     public static final String VNF_NOT_INSTANTIATED = "NOT_INSTANTIATED";
+    public static final String VNF_CONFIG_PROPERTIES =
+            "{\"isAutoScaleEnabled\": \"true\",\"isAutoHealingEnabled\": \"true\"}";
+    public static final String IN_LINE_RESPONSE_201_CACHE = "inlineResponse201";
 }

@@ -20,27 +20,29 @@
 
 package org.onap.svnfm.simulator.config;
 
-import org.onap.svnfm.simulator.controller.SvnfmController;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.cache.annotation.EnableCaching;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.onap.so.security.MSOSpringFirewall;
+import org.onap.so.security.WebSecurityConfig;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 
 /**
- * The spring boot application for the VNF LCM.
- * <p>
- * The VNFM receives requests through its REST API {@link SvnfmController}
- *
- * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
- * @author ronan.kenny@est.tech
+ * Configure the web security for the application.
  */
-@SpringBootApplication(scanBasePackages = {"org.onap"})
-@EnableJpaRepositories("org.onap.svnfm.simulator")
-@EntityScan("org.onap.svnfm.simulator.model")
-@EnableCaching
-public class SvnfmApplication {
-    public static void main(final String[] args) {
-        SpringApplication.run(SvnfmApplication.class, args);
+@EnableWebSecurity
+public class WebSecurityConfigImpl extends WebSecurityConfig {
+
+    @Override
+    protected void configure(final HttpSecurity http) throws Exception {
+        http.csrf().disable().authorizeRequests().antMatchers("/**").permitAll();
     }
+
+    @Override
+    public void configure(final WebSecurity web) throws Exception {
+        super.configure(web);
+        final StrictHttpFirewall firewall = new MSOSpringFirewall();
+        web.httpFirewall(firewall);
+    }
+
 }

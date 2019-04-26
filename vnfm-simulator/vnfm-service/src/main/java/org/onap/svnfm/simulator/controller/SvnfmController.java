@@ -22,30 +22,37 @@ package org.onap.svnfm.simulator.controller;
 
 import java.util.UUID;
 import javax.ws.rs.core.MediaType;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse2001;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
+import org.onap.svnfm.simulator.constants.Constant;
 import org.onap.svnfm.simulator.repository.VnfmCacheRepository;
 import org.onap.svnfm.simulator.services.SvnfmService;
-import org.onap.vnfm.v1.model.CreateVnfRequest;
-import org.onap.vnfm.v1.model.InlineResponse201;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 
+ *
  * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
  * @author Ronan Kenny (ronan.kenny@est.tech)
  */
 @RestController
-@RequestMapping("/svnfm")
+@RequestMapping(path = Constant.BASE_URL, produces = MediaType.APPLICATION_JSON, consumes = MediaType.APPLICATION_JSON)
 public class SvnfmController {
 
     @Autowired
@@ -57,25 +64,30 @@ public class SvnfmController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SvnfmController.class);
 
     /**
-     * 
-     * @param createVNFRequest
-     * @return
+     * To create the Vnf and stores the response in cache
+     *
+     * @param CreateVnfRequest
+     * @return InlineResponse201
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/vnf_instances")
+    @PostMapping(value = "/vnf_instances")
     public ResponseEntity<InlineResponse201> createVnf(@RequestBody final CreateVnfRequest createVNFRequest) {
-        LOGGER.info("Start createVnf------");
+        LOGGER.info("Start createVnf {}", createVNFRequest);
+        final String id = UUID.randomUUID().toString();
         final HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(vnfmCacheRepository.createVnf(createVNFRequest), headers, HttpStatus.CREATED);
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        final ResponseEntity<InlineResponse201> responseEntity =
+                new ResponseEntity<>(vnfmCacheRepository.createVnf(createVNFRequest, id), headers, HttpStatus.CREATED);
+        LOGGER.info("Finished create {}", responseEntity);
+        return responseEntity;
     }
 
     /**
-     * 
+     * Get the vnf by id from cache
+     *
      * @param vnfId
-     * @return vnfm cache repository
+     * @return InlineResponse201
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/vnf_instances/{vnfInstanceId}",
-            produces = MediaType.APPLICATION_JSON)
+    @GetMapping(value = "/vnf_instances/{vnfInstanceId}")
     @ResponseStatus(code = HttpStatus.OK)
     public InlineResponse201 getVnf(@PathVariable("vnfInstanceId") final String vnfId) {
         LOGGER.info("Start getVnf------");
@@ -83,42 +95,29 @@ public class SvnfmController {
     }
 
     /**
-     * 
+     * To instantiate the vnf and returns the operation id
+     *
      * @param vnfId
-     * @return response entity
      * @throws InterruptedException
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/vnf_instances/{vnfInstanceId}/instantiate")
-    public ResponseEntity<Object> instantiateVnf(@PathVariable("vnfInstanceId") final String vnfId)
-            throws InterruptedException {
-        LOGGER.info("Start instantiateVNFRequest");
-        final String instantiateJobId = UUID.randomUUID().toString();
+    @PostMapping(value = "/vnf_instances/{vnfInstanceId}/instantiate")
+    public ResponseEntity<Void> instantiateVnf(@PathVariable("vnfInstanceId") final String vnfId,
+            @RequestBody final InstantiateVnfRequest instantiateVNFRequest) {
+        LOGGER.info("Start instantiateVNFRequest {} ", instantiateVNFRequest);
+
         final HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", MediaType.APPLICATION_JSON);
-        headers.add("Location", instantiateJobId);
-        return new ResponseEntity<>(svnfmService.instatiateVnf(vnfId, instantiateJobId), headers, HttpStatus.ACCEPTED);
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        headers.add(HttpHeaders.LOCATION, svnfmService.instantiateVnf(vnfId, instantiateVNFRequest));
+        return new ResponseEntity<>(headers, HttpStatus.ACCEPTED);
     }
 
     /**
-     * 
-     * @param jobId
-     * @return response entity
-     * @throws InterruptedException
-     */
-    public ResponseEntity<Object> getJobStatus(@PathVariable("jobId") final String jobId) throws InterruptedException {
-        LOGGER.info("Start getJobStatus");
-        final HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", MediaType.APPLICATION_JSON);
-        return new ResponseEntity<>(svnfmService.getJobStatus(jobId), headers, HttpStatus.ACCEPTED);
-    }
-
-    /**
-     * 
+     * To delete the vnf by id
+     *
      * @param vnfId
-     * @return delete VNF
+     * @return InlineResponse201
      */
-    @RequestMapping(method = RequestMethod.DELETE, value = "/vnf_instances/{vnfInstanceId}",
-            produces = MediaType.APPLICATION_JSON)
+    @DeleteMapping(value = "/vnf_instances/{vnfInstanceId}")
     @ResponseStatus(code = HttpStatus.OK)
     public InlineResponse201 deleteVnf(@PathVariable("vnfInstanceId") final String vnfId) {
         LOGGER.info("Start deleting Vnf------");
@@ -126,17 +125,45 @@ public class SvnfmController {
     }
 
     /**
-     * 
+     * To terminate the vnf by id
+     *
      * @param vnfId
-     * @return response entity
      * @throws InterruptedException
      */
-    @RequestMapping(method = RequestMethod.POST, value = "/vnf_instances/{vnfInstanceId}/terminate")
-    public ResponseEntity<Object> terminateVnf(@PathVariable("vnfInstanceId") final String vnfId)
-            throws InterruptedException {
+    @PostMapping(value = "/vnf_instances/{vnfInstanceId}/terminate")
+    public ResponseEntity<Object> terminateVnf(@PathVariable("vnfInstanceId") final String vnfId) {
         LOGGER.info("Start terminateVNFRequest");
         final HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Type", MediaType.APPLICATION_JSON);
         return new ResponseEntity<>(svnfmService.terminateVnf(vnfId), headers, HttpStatus.ACCEPTED);
+    }
+
+
+    /**
+     * To get the status of the operation by id
+     *
+     * @param operationId
+     * @return response entity
+     * @throws InterruptedException
+     */
+    @GetMapping(value = "/vnf_lcm_op_occs/{vnfLcmOpOccId}")
+    public ResponseEntity<InlineResponse200> getOperationStatus(
+            @PathVariable("vnfLcmOpOccId") final String operationId) {
+        LOGGER.info("Start getOperationStatus");
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(svnfmService.getOperationStatus(operationId), headers, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/subscriptions")
+    public ResponseEntity<InlineResponse2001> subscribeForNotifications(
+            @RequestBody final LccnSubscriptionRequest lccnSubscriptionRequest) {
+        LOGGER.info("Subscription request received: {}", lccnSubscriptionRequest);
+        svnfmService.registerSubscription(lccnSubscriptionRequest);
+        final InlineResponse2001 response = new InlineResponse2001();
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        return new ResponseEntity<>(response, headers, HttpStatus.OK);
     }
 }

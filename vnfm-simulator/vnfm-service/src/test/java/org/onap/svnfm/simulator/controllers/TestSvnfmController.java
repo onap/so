@@ -20,10 +20,13 @@
 
 package org.onap.svnfm.simulator.controllers;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,15 +34,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.svnfm.simulator.constants.Constant;
 import org.onap.svnfm.simulator.controller.SvnfmController;
 import org.onap.svnfm.simulator.repository.VnfmCacheRepository;
 import org.onap.svnfm.simulator.services.SvnfmService;
-import org.onap.vnfm.v1.model.CreateVnfRequest;
-import org.onap.vnfm.v1.model.InlineResponse201;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TestSvnfmController {
@@ -69,14 +72,12 @@ public class TestSvnfmController {
         createVnfRequest.setVnfInstanceName("createVnfInstanceTest");
         createVnfRequest.setVnfInstanceDescription("createVnfInstanceTest");
 
-        when(vnfmCacheRepository.createVnf(createVnfRequest)).thenReturn(new InlineResponse201());
-
-        svnfmService.createVnf(createVnfRequest);
+        when(vnfmCacheRepository.createVnf(eq(createVnfRequest), anyString())).thenReturn(new InlineResponse201());
 
         final String body = (new ObjectMapper()).valueToTree(createVnfRequest).toString();
         this.mockMvc
-                .perform(post("/svnfm/vnf_instances").content(body).contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                .perform(post(Constant.BASE_URL + "/vnf_instances").content(body)
+                        .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 }

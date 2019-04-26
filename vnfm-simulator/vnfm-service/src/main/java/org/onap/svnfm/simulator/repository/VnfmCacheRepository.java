@@ -20,15 +20,21 @@
 
 package org.onap.svnfm.simulator.repository;
 
+import java.util.List;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201.InstantiationStateEnum;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201InstantiatedVnfInfo;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201VimConnectionInfo;
+import org.onap.svnfm.simulator.constants.Constant;
 import org.onap.svnfm.simulator.services.SvnfmService;
-import org.onap.vnfm.v1.model.CreateVnfRequest;
-import org.onap.vnfm.v1.model.InlineResponse201;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
 /**
- * 
+ *
  * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
  * @author Ronan Kenny (ronan.kenny@est.tech)
  */
@@ -38,12 +44,21 @@ public class VnfmCacheRepository {
     @Autowired
     private SvnfmService svnfmService;
 
-    @Cacheable(value = "inlineResponse201", key = "#createVnfRequest.vnfdId")
-    public InlineResponse201 createVnf(final CreateVnfRequest createVnfRequest) {
-        return svnfmService.createVnf(createVnfRequest);
+    @Cacheable(value = Constant.IN_LINE_RESPONSE_201_CACHE, key = "#id")
+    public InlineResponse201 createVnf(final CreateVnfRequest createVnfRequest, final String id) {
+        return svnfmService.createVnf(createVnfRequest, id);
     }
 
-    @Cacheable(value = "inlineResponse201", key = "#id")
+    @CachePut(value = Constant.IN_LINE_RESPONSE_201_CACHE, key = "#id")
+    public InlineResponse201 updateVnf(final InlineResponse201InstantiatedVnfInfo instantiatedVnfInfo, final String id,
+            final List<InlineResponse201VimConnectionInfo> vimConnectionInfo) {
+        final InlineResponse201 vnf = getVnf(id);
+        vnf.setInstantiatedVnfInfo(instantiatedVnfInfo);
+        vnf.setInstantiationState(InstantiationStateEnum.INSTANTIATED);
+        vnf.setVimConnectionInfo(vimConnectionInfo);
+        return vnf;
+    }
+
     public InlineResponse201 getVnf(final String id) {
         return svnfmService.getVnf(id);
     }
@@ -52,7 +67,7 @@ public class VnfmCacheRepository {
      * @param vnfId
      * @return
      */
-    public InlineResponse201 deleteVnf(String vnfId) {
+    public InlineResponse201 deleteVnf(final String vnfId) {
         // TODO
         return null;
     }
