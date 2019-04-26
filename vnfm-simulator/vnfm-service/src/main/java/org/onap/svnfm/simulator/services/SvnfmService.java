@@ -21,22 +21,35 @@
 package org.onap.svnfm.simulator.services;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.modelmapper.ModelMapper;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.CreateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse200;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InlineResponse201;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.InstantiateVnfRequest;
+import org.onap.so.adapters.vnfmadapter.extclients.vnfm.model.LccnSubscriptionRequest;
+import org.onap.svnfm.simulator.config.ApplicationConfig;
+import org.onap.svnfm.simulator.constants.Constant;
 import org.onap.svnfm.simulator.model.VnfInstance;
-import org.onap.svnfm.simulator.model.VnfJob;
+import org.onap.svnfm.simulator.model.VnfOperation;
+import org.onap.svnfm.simulator.model.Vnfds;
 import org.onap.svnfm.simulator.notifications.VnfInstantiationNotification;
 import org.onap.svnfm.simulator.notifications.VnfmAdapterCreationNotification;
-import org.onap.svnfm.simulator.repository.VnfJobRepository;
+import org.onap.svnfm.simulator.repository.VnfOperationRepository;
+import org.onap.svnfm.simulator.repository.VnfmCacheRepository;
 import org.onap.svnfm.simulator.repository.VnfmRepository;
-import org.onap.vnfm.v1.model.CreateVnfRequest;
-import org.onap.vnfm.v1.model.InlineResponse201;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.support.SimpleValueWrapper;
 import org.springframework.stereotype.Service;
 
 /**
- * 
+ *
  * @author Lathishbabu Ganesan (lathishbabu.ganesan@est.tech)
  * @author Ronan Kenny (ronan.kenny@est.tech)
  */
@@ -47,27 +60,44 @@ public class SvnfmService {
     VnfmRepository vnfmRepository;
 
     @Autowired
-    VnfJobRepository vnfJobRepository;
+    VnfmCacheRepository vnfRepository;
+
+    @Autowired
+    VnfOperationRepository vnfOperationRepository;
 
     @Autowired
     private VnfmHelper vnfmHelper;
 
+    @Autowired
+    ApplicationConfig applicationConfig;
+
+    @Autowired
+    CacheManager cacheManager;
+
+    @Autowired
+    Vnfds vnfds;
+
+    @Autowired
+    SubscriptionService subscriptionService;
+
+    private final ExecutorService executor = Executors.newCachedThreadPool();
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SvnfmService.class);
 
     /**
-     * 
+     *
      * @param createVNFRequest
      * @return inlineResponse201
      */
-    public InlineResponse201 createVnf(final CreateVnfRequest createVNFRequest) {
+    public InlineResponse201 createVnf(final CreateVnfRequest createVNFRequest, final String id) {
         InlineResponse201 inlineResponse201 = null;
         try {
-            final VnfInstance vnfInstance = vnfmHelper.createVnfInstance(createVNFRequest);
+            final VnfInstance vnfInstance = vnfmHelper.createVnfInstance(createVNFRequest, id);
             vnfmRepository.save(vnfInstance);
             final Thread creationNotification = new Thread(new VnfmAdapterCreationNotification());
             creationNotification.start();
             inlineResponse201 = vnfmHelper.getInlineResponse201(vnfInstance);
-            LOGGER.debug("Response from Create VNF", inlineResponse201);
+            LOGGER.debug("Response from Create VNF {}", inlineResponse201);
         } catch (IllegalAccessException | InvocationTargetException e) {
             LOGGER.error("Failed in Create Vnf", e);
         }
@@ -75,94 +105,80 @@ public class SvnfmService {
     }
 
     /**
-     * 
+     *
      * @param vnfId
-     * @param instantiateJobId
+     * @param instantiateVNFRequest
+     * @param operationId
      * @throws InterruptedException
      */
-    public Object instatiateVnf(final String vnfId, final String instantiateJobId) throws InterruptedException {
-        final VnfJob vnfJob = buildVnfInstantiation(vnfId, instantiateJobId);
-        vnfJobRepository.save(vnfJob);
-        getJobStatus(vnfJob.getJobId());
-        return null;
+    public String instantiateVnf(final String vnfId, final InstantiateVnfRequest instantiateVNFRequest) {
+        final VnfOperation vnfOperation = buildVnfOperation(InlineResponse200.OperationEnum.INSTANTIATE, vnfId);
+        vnfOperationRepository.save(vnfOperation);
+        executor.submit(new OperationProgressor(vnfOperation, vnfRepository, vnfOperationRepository, applicationConfig,
+                vnfds, subscriptionService));
+        return vnfOperation.getId();
     }
 
     /**
-     * 
+     * vnfOperationRepository
+     *
      * @param vnfId
-     * @param instantiateJobId
+     * @param instantiateOperationId
      */
-    public VnfJob buildVnfInstantiation(final String vnfId, final String instantiateJobId) {
-        final VnfJob vnfJob = new VnfJob();
-        final Optional<VnfInstance> vnfInstance = vnfmRepository.findById(vnfId);
-
-        if (vnfInstance.isPresent()) {
-            vnfJob.setJobId(instantiateJobId);
-            for (final VnfInstance instance : vnfmRepository.findAll()) {
-                if (instance.getId().equals(vnfId)) {
-                    vnfJob.setVnfInstanceId(instance.getVnfInstanceDescription());
-                }
-            }
-            vnfJob.setVnfId(vnfId);
-            vnfJob.setStatus("STARTING");
-        }
-        return vnfJob;
+    public VnfOperation buildVnfOperation(final InlineResponse200.OperationEnum operation, final String vnfId) {
+        final VnfOperation vnfOperation = new VnfOperation();
+        vnfOperation.setId(UUID.randomUUID().toString());
+        vnfOperation.setOperation(operation);
+        vnfOperation.setOperationState(InlineResponse200.OperationStateEnum.STARTING);
+        vnfOperation.setVnfInstanceId(vnfId);
+        return vnfOperation;
     }
 
     /**
-     * 
-     * @param jobId
+     *
+     * @param operationId
      * @throws InterruptedException
      */
-    public Object getJobStatus(final String jobId) throws InterruptedException {
-        LOGGER.info("Getting job status with id: " + jobId);
-        for (int i = 0; i < 5; i++) {
-            LOGGER.info("Instantiation status: RUNNING");
-            Thread.sleep(5000);
-            for (final VnfJob job : vnfJobRepository.findAll()) {
-                if (job.getJobId().equals(jobId)) {
-                    job.setStatus("RUNNING");
-                    vnfJobRepository.save(job);
-                }
-            }
-        }
+    public InlineResponse200 getOperationStatus(final String operationId) {
+        LOGGER.info("Getting operation status with id: {}", operationId);
         final Thread instantiationNotification = new Thread(new VnfInstantiationNotification());
         instantiationNotification.start();
-        for (final VnfJob job : vnfJobRepository.findAll()) {
-            if (job.getJobId().equals(jobId)) {
-                job.setStatus("COMPLETE");
-                vnfJobRepository.save(job);
+        for (final VnfOperation operation : vnfOperationRepository.findAll()) {
+            LOGGER.info("Operation found: {}", operation);
+            if (operation.getId().equals(operationId)) {
+                final ModelMapper modelMapper = new ModelMapper();
+                return modelMapper.map(operation, InlineResponse200.class);
             }
         }
         return null;
     }
 
     /**
-     * 
+     *
      * @param vnfId
      * @return inlineResponse201
      */
     public InlineResponse201 getVnf(final String vnfId) {
-        InlineResponse201 inlineResponse201 = null;
-
-        final Optional<VnfInstance> vnfInstance = vnfmRepository.findById(vnfId);
-        try {
-            if (vnfInstance.isPresent()) {
-                inlineResponse201 = vnfmHelper.getInlineResponse201(vnfInstance.get());
-                LOGGER.debug("Response from get VNF", inlineResponse201);
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            LOGGER.error("Failed in get Vnf", e);
+        final Cache ca = cacheManager.getCache(Constant.IN_LINE_RESPONSE_201_CACHE);
+        final SimpleValueWrapper wrapper = (SimpleValueWrapper) ca.get(vnfId);
+        final InlineResponse201 inlineResponse201 = (InlineResponse201) wrapper.get();
+        if (inlineResponse201 != null) {
+            LOGGER.info("Cache Read Successful");
+            return inlineResponse201;
         }
-        return inlineResponse201;
+        return null;
     }
 
     /**
      * @param vnfId
      * @return
      */
-    public Object terminateVnf(String vnfId) {
+    public Object terminateVnf(final String vnfId) {
         // TODO
         return null;
+    }
+
+    public void registerSubscription(final LccnSubscriptionRequest subscription) {
+        subscriptionService.registerSubscription(subscription);
     }
 }
