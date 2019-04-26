@@ -1,0 +1,58 @@
+{
+  "serviceResources": {
+    "modelInfo": {
+      "modelName": "NSService",
+      "modelUuid": "0bad8c92-7d22-49f0-b092-b64e6ca564a7",
+      "modelInvariantUuid": "69161960-515b-4bf3-91f1-313b813f5e1d",
+      "modelVersion": "1.0"
+    },
+    "serviceType": "",
+    "serviceRole": "",
+    "environmentContext": "General_Revenue-Bearing",
+    "resourceOrder": "NF",
+    "workloadContext": "Production",
+    "serviceVnfs": [
+      {
+        "modelInfo": {
+          "modelName": "",
+          "modelUuid": "123",
+          "modelInvariantUuid": "",
+          "modelVersion": "",
+          "modelCustomizationUuid": "1234",
+          "modelInstanceName": "test"
+        },
+        "toscaNodeType": "",
+        "nfFunction": "",
+        "nfType": "",
+        "nfRole": "",
+        "nfNamingCode": "",
+        "multiStageDesign": "",
+        "resourceInput": "",
+        "vfModules": [],
+        "groups": [
+          {
+            "modelInfo": {
+              "modelName": "test",
+              "modelUuid": "11",
+              "modelInvariantUuid": "11",
+              "modelVersion": "2"
+            },
+            "vnfcs": [
+              {
+                "modelInfo": {
+                  "modelName": "xfs",
+                  "modelUuid": "22",
+                  "modelInvariantUuid": "2222",
+                  "modelVersion": "22222",
+                  "modelCustomizationUuid": "2222"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "serviceNetworks": [],
+    "serviceAllottedResources": []
+  }
+}
